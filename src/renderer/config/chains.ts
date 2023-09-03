@@ -5,8 +5,8 @@ import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
 import { ChainID } from 'types';
 import { AnyData } from 'types/notifications';
-import { ReactComponent as PolkadotIcon } from '../svg/polkadotIcon.svg';
-import { ReactComponent as PolkadotAppIcon } from './ledger/polkadot.svg';
+import { ReactComponent as PolkadotIcon } from  '../svg/polkadotIcon.svg';
+import { ReactComponent as PolkadotAppIcon } from '../svg/ledger/polkadot.svg';
 
 export const ChainList: Record<ChainID, AnyData> = {
   Polkadot: {
