@@ -26,7 +26,7 @@
  * ```
  */
 
-import './index.css';
+import './index.scss';
 import { createRoot } from 'react-dom/client';
 
 const rootElement = document.getElementById('root');
