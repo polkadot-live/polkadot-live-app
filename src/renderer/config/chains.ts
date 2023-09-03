@@ -3,8 +3,7 @@
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
-import { ChainID } from 'types';
-import { AnyData } from 'types/notifications';
+import { ChainID, AnyData } from '../../types/index';
 import { ReactComponent as PolkadotIcon } from  '../svg/polkadotIcon.svg';
 import { ReactComponent as PolkadotAppIcon } from '../svg/ledger/polkadot.svg';
 
@@ -29,18 +28,14 @@ export const ChainList: Record<ChainID, AnyData> = {
   },
 };
 
-export const chainIcon = (chain: ChainID) => {
-  return ChainList[chain]?.icon;
-};
+export const chainIcon = (chain: ChainID) => 
+  ChainList[chain]?.icon;
 
-export const chainCurrency = (chain: ChainID) => {
-  return ChainList[chain]?.unit;
-};
+export const chainCurrency = (chain: ChainID) => 
+  ChainList[chain]?.unit;
 
-export const chainUnits = (chain: ChainID) => {
-  return ChainList[chain]?.units;
-};
+export const chainUnits = (chain: ChainID) => 
+  ChainList[chain]?.units;
 
-export const chainCategory = (chain: ChainID, category: string) => {
-  return ChainList[chain]?.categories[category];
-};
+export const chainCategory = (chain: ChainID, category: string) => 
+  ChainList[chain]?.categories[category];
