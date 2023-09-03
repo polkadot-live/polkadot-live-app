@@ -2,8 +2,8 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { AnyFunction } from '@polkadot-live/types';
-import { Accounts } from './main/controller/Accounts';
-import { Windows } from './main/controller/Windows';
+import { Accounts } from './controller/Accounts';
+import { Windows } from './controller/Windows';
 
 // Initialise Electron store.
 export const store = new Store();

@@ -7,9 +7,9 @@ import {
   ApiSubscription,
   ConcreteAccount,
   RawAccount,
-} from '@polkadotlive/types';
+} from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
-import { MainDebug } from '../debug';
+import { MainDebug } from '../debugging';
 import { LiveReporter } from '../model/LiveReporter';
 import { APIs } from './APIs';
 import { Accounts } from './Accounts';

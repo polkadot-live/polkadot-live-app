@@ -3,12 +3,12 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { rmCommas } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadotlive/types';
+import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
-import { ChainID, ChainStatus } from 'types/index';
+import { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import { APIConstants } from '@polkadot-live/types/chains/polkadot';
 import { Windows } from '../controller/Windows';
-import { MainDebug } from '../debug';
+import { MainDebug } from '../debugging';
 
 const debug = MainDebug.extend('API');
 

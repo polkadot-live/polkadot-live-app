@@ -1,8 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AnyJson, IMatch, SubscriptionDelegate } from '@polkadotlive/types';
-import {
+import { AnyJson, IMatch, SubscriptionDelegate ,
   ReportDelegator,
   AccountConfig,
   AccountSource,
@@ -11,8 +10,8 @@ import {
   ImportedAccounts,
   StoredAccounts,
 } from '@polkadot-live/types';
-import { store } from '../../main';
-import { MainDebug } from '../debug';
+import { store } from '../main';
+import { MainDebug } from '../debugging';
 import { Account } from '../model/Account';
 import { APIs } from './APIs';
 import { Windows } from './Windows';

@@ -7,7 +7,7 @@ import {
   IMatch,
   MatchOutcome,
   MethodSubscription,
-} from '@polkadotlive/types';
+} from '@polkadot-live/types';
 
 export class Match implements IMatch {
   // The name of the pallet.

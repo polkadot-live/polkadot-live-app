@@ -2,19 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { planckToUnit } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadotlive/types';
+import { AnyJson , AccountType } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
-import { chainCurrency, chainUnits } from '../../../config/chains';
+import { chainCurrency, chainUnits } from '../../config/chains';
 import { ChainID } from '@polkadot-live/types/chains';
 import { APIs } from '../../controller/APIs';
 import { Accounts } from '../../controller/Accounts';
 import { Windows } from '../../controller/Windows';
-import { MainDebug as debug } from '../../debug';
+import { MainDebug as debug } from '../../debugging';
 import { Account } from '../../model/Account';
 import { PolkadotAccountState } from './types';
 import { getPoolAccounts } from './utils';
-import { AccountType } from '@polkadot-live/types';
 
 /**
  * A static class to provide callback functions for Polkadot subscriptions and discovery.

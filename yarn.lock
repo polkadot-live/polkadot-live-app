@@ -1771,6 +1771,11 @@
   resolved "https://registry.npmjs.org/@polkadot-cloud/utils/-/utils-0.0.6.tgz#ea0fc18c6af7cd6a1d14ae6674f19b1b3ef82347"
   integrity sha512-alm1zdqRcuBm9a59jy0yPKWY4FTenQTKvLSrX/+8aV0YbkwQ6vBkUwhs3FMi5GI52pC68X6VO5DzwVscg6kvEg==
 
+"@polkadot-live/types@0.1.6":
+  version "0.1.6"
+  resolved "https://registry.npmjs.org/@polkadot-live/types/-/types-0.1.6.tgz#25b5d00125ab0475d7fac3ba36f65d1a3b993b54"
+  integrity sha512-+uFw+PaAggL6a8P3E2l/jzPlw+YYUMmngnmgKv/t/WzJAXj/niez8S+n4dzkiJB2puB3lWkpkqQXLbZrP6K+eg==
+
 "@polkadot/api-augment@10.9.1":
   version "10.9.1"
   resolved "https://registry.npmjs.org/@polkadot/api-augment/-/api-augment-10.9.1.tgz#9fc81b81903229bb23b0b16783e97ec52a5d4f1b"
@@ -2095,11 +2100,6 @@
     "@polkadot/x-global" "12.4.2"
     tslib "^2.6.2"
     ws "^8.13.0"
-
-"@polkadotlive/types@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/@polkadotlive/types/-/types-0.1.1.tgz#c506bf4b127f0b824bf0e81da4f6681a16d87347"
-  integrity sha512-aCGjbjd1z4FxiNhfT3z3zzTR1J/iOAigitnw4QzE/DTnoEgqWkcNVZ/nQjlndF3DQIcx3cjlVRdBJIDHtaPp/g==
 
 "@remix-run/router@1.8.0":
   version "1.8.0"
@@ -3000,9 +3000,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"

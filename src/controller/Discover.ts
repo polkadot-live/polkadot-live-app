@@ -1,9 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { All, AnyJson, MethodSubscription } from '@polkadotlive/types';
+import { All, AnyJson, MethodSubscription } from '@polkadot-live/types';
 import { ChainID, SomeChainState } from '@polkadot-live/types/chains';
-import { MainDebug } from '../debug';
+import { MainDebug } from '../debugging';
 import { Account } from '../model/Account';
 import { APIs } from './APIs';
 import { Accounts } from './Accounts';

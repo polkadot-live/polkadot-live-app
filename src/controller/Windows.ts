@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AnyJson, AnyWindow } from '@polkadotlive/types';
+import { AnyJson, AnyWindow } from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
 
 // A window helper to manage which windows are open and their current state.

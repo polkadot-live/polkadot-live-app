@@ -13,16 +13,14 @@ import {
   GenericNotification,
   MatchOutcome,
   MethodSubscription,
-} from '@polkadotlive/types';
-import { ChainID } from '@polkadot-live/types/chains';
-import {
+
   AnyData,
   EventInner,
   ExtrinsicInner,
   NotificationReport,
-  Reporter,
-} from '@polkadot-live/types';
-import { MainDebug } from '../debug';
+  Reporter} from '@polkadot-live/types';
+import { ChainID } from '@polkadot-live/types/chains';
+import { MainDebug } from '../debugging';
 import {
   matchEventToAccount,
   matchExtrinsicToAccount,

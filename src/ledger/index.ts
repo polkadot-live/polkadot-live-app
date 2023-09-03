@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import { AnyFunction, AnyJson, LedgerTask } from '@polkadotlive/types';
+import { AnyFunction, AnyJson, LedgerTask } from '@polkadot-live/types';
 import { newSubstrateApp } from '@zondax/ledger-substrate';
 import { BrowserWindow } from 'electron';
 // import { listen } from "@ledgerhq/logs";
