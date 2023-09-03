@@ -5,7 +5,9 @@ const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
 const root = createRoot(rootElement);
 
-root.render(<>
-  <h1>💖 Hello World!</h1>
-  <p>Welcome to your Electron application.</p>
-</>);
+root.render(
+  <>
+    <h1>💖 Hello World!</h1>
+    <p>Welcome to your Electron application.</p>
+  </>
+);

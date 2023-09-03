@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "target": "ES6",
     "allowJs": true,
     "jsx": "react-jsx",
@@ -7,10 +8,15 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true
+  },
+  "paths": {
+    "*": [
+      "node_modules/*",
+      "src/*"
+    ],
   },
   "include": ["src"]
 }

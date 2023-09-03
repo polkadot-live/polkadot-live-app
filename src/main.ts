@@ -1,5 +1,12 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import Store from 'electron-store';
+import { AnyFunction } from '@polkadot-live/types';
+import { Accounts } from './main/controller/Accounts';
+import { Windows } from './main/controller/Windows';
+
+// Initialise Electron store.
+export const store = new Store();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -20,7 +27,9 @@ const createWindow = () => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    mainWindow.loadFile(
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+    );
   }
 
   // Open the DevTools.
@@ -49,5 +58,17 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+// Call a function for all windows.
+export const reportAllWindows = (callback: AnyFunction) => {
+  for (const { id } of Windows?.active || []) {
+    callback(id);
+  }
+};
+
+// Report imported accounts to renderer.
+export const reportImportedAccounts = (id: string) => {
+  Windows.get(id)?.webContents?.send(
+    'reportImportedAccounts',
+    Accounts.getAll()
+  );
+};

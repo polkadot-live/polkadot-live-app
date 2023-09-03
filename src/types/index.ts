@@ -1,9 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AnyJson } from '@polkadotlive/types';
-import { PolkadotAccountState } from 'main/chains/Polkadot/types';
-import { Account } from 'main/model/Account';
+import { PolkadotAccountState } from '@polkadot-live/types/chains/polkadot';
 
 // Chain types
 
@@ -17,31 +15,6 @@ export enum AccountType {
   User,
   Delegate,
 }
-
-// Account types
-
-export type AccountSource = 'vault' | 'ledger' | 'system';
-
-export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
-
-export type ImportedAccounts = Record<string, Account[]>;
-
-export type StoredAccounts = Record<ChainID, StoredAccount[]>;
-
-export interface AccountConfig {
-  config: AnyData;
-  chainState: AnyData;
-}
-
-export interface StoredAccount {
-  _type: AccountType;
-  _source: AccountSource;
-  _address: string;
-  _name: string;
-  _config: AnyJson;
-  _chainState: AnyJson;
-}
-
 // Transaction types
 
 export type TxStatus =
@@ -50,7 +23,6 @@ export type TxStatus =
   | 'in_block'
   | 'finalized'
   | 'error';
-
 
 // Any types
 
