@@ -3,9 +3,10 @@
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
-import { ChainID, AnyData } from '@/types/index';
+import { AnyData } from '@polkadot-live/types';
 import PolkadotIcon from './svg/polkadotIcon.svg';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg';
+import { ChainID } from '@polkadot-live/types/chains';
 
 interface Chain {
   icon: typeof import("*.svg"),

@@ -1770,10 +1770,10 @@
   resolved "https://registry.npmjs.org/@polkadot-cloud/utils/-/utils-0.0.9.tgz#e0d4b7a15fc42b4f321eb8b0182329b4367c573b"
   integrity sha512-14EowuGj6jl+zf6qXEikaDKkvFREqj8YXs9Z8vgQpdQ55LgXD47M0D5SSKFIfrOCNFymgAXePYru5U0SfxWoLg==
 
-"@polkadot-live/types@0.1.6":
-  version "0.1.6"
-  resolved "https://registry.npmjs.org/@polkadot-live/types/-/types-0.1.6.tgz#25b5d00125ab0475d7fac3ba36f65d1a3b993b54"
-  integrity sha512-+uFw+PaAggL6a8P3E2l/jzPlw+YYUMmngnmgKv/t/WzJAXj/niez8S+n4dzkiJB2puB3lWkpkqQXLbZrP6K+eg==
+"@polkadot-live/types@0.1.8":
+  version "0.1.8"
+  resolved "https://registry.npmjs.org/@polkadot-live/types/-/types-0.1.8.tgz#35f517ba9eadc4e3a3b38f6a3dc68c8f026661a4"
+  integrity sha512-W/5SJjX2/YE5kIfwK/XQqOGRhSNDpmRyf5xIkIbDqvZUaM/M0NGJ/AqhnvKv0Jtx9VjqBh0qpCFRq11+PIaHRw==
 
 "@polkadot/api-augment@10.9.1":
   version "10.9.1"
@@ -2999,9 +2999,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"

@@ -12,7 +12,7 @@ import { Accounts } from '@/controller/Accounts';
 import { Windows } from '@/controller/Windows';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { PolkadotAccountState } from './types';
+import { PolkadotAccountState } from '@polkadot-live/types/chains/polkadot';
 import { getPoolAccounts } from './utils';
 
 /**
