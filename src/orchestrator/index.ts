@@ -3,12 +3,12 @@
 
 import { Notification } from 'electron';
 import { Subject } from 'rxjs';
-import { reportAllWindows, reportImportedAccounts } from 'main';
-import { ChainList } from 'config/chains';
-import { APIs } from '../controller/APIs';
-import { Accounts } from '../controller/Accounts';
-import { Discover } from '../controller/Discover';
-import { Subscriptions } from '../controller/Subscriptions';
+import { reportAllWindows, reportImportedAccounts } from '@/main';
+import { ChainList } from '@/config/chains';
+import { APIs } from '@/controller/APIs';
+import { Accounts } from '@/controller/Accounts';
+import { Discover } from '@/controller/Discover';
+import { Subscriptions } from '@/controller/Subscriptions';
 import {
   ImportNewAddressArg,
   OrchestratorArg,

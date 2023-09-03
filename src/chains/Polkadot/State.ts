@@ -5,9 +5,9 @@ import { rmCommas } from '@polkadot-cloud/utils';
 import { AnyFunction, AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { ChainID } from '@polkadot-live/types/chains';
-import { APIs } from '../../controller/APIs';
-import { Windows } from '../../controller/Windows';
-import { MainDebug } from '../../debugging';
+import { APIs } from '@/controller/APIs';
+import { Windows } from '@/controller/Windows';
+import { MainDebug } from '@/debugging';
 
 const debug = MainDebug.extend('PolkadotState');
 

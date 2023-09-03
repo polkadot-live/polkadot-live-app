@@ -3,7 +3,7 @@
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
-import { ChainID, AnyData } from '../types/index';
+import { ChainID, AnyData } from '@/types/index';
 import PolkadotIcon from './svg/polkadotIcon.svg';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg';
 

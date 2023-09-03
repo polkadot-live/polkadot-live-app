@@ -6,8 +6,8 @@ import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { Notification } from 'electron';
 import { ChainID } from '@polkadot-live/types/chains';
-import { chainUnits } from '../config/chains';
-import { MainDebug } from '../debugging';
+import { chainUnits } from '@/config/chains';
+import { MainDebug } from '@/debugging';
 import { APIs } from './APIs';
 import { Windows } from './Windows';
 

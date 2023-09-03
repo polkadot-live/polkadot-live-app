@@ -3,8 +3,8 @@
 
 import { All, AnyJson, MethodSubscription } from '@polkadot-live/types';
 import { ChainID, SomeChainState } from '@polkadot-live/types/chains';
-import { MainDebug } from '../debugging';
-import { Account } from '../model/Account';
+import { MainDebug } from '@/debugging';
+import { Account } from '@/model/Account';
 import { APIs } from './APIs';
 import { Accounts } from './Accounts';
 import { ChainState } from './ChainState';

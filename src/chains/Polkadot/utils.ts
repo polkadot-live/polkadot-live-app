@@ -4,7 +4,7 @@
 import { bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
 import { BN } from 'bn.js';
-import { APIs } from '../../controller/APIs';
+import { APIs } from '@/controller/APIs';
 
 /**
  * @name getPoolAccounts

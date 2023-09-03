@@ -7,8 +7,8 @@ import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import { APIConstants } from '@polkadot-live/types/chains/polkadot';
-import { Windows } from '../controller/Windows';
-import { MainDebug } from '../debugging';
+import { Windows } from '@/controller/Windows';
+import { MainDebug } from '@/debugging';
 
 const debug = MainDebug.extend('API');
 

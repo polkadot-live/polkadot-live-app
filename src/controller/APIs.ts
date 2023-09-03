@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
-import { store } from '../main';
-import { ChainList } from '../config/chains';
-import { API } from '../model/API';
+import { store } from '@/main';
+import { ChainList } from '@/config/chains';
+import { API } from '@/model/API';
 import { Accounts } from './Accounts';
 import { Discover } from './Discover';
 import { Windows } from './Windows';
 import { ChainID } from '@polkadot-live/types/chains';
 import { AnyData } from '@polkadot-live/types';
-import { MainDebug } from '../debugging';
+import { MainDebug } from '@/debugging';
 
 const debug = MainDebug.extend('APIs');
 

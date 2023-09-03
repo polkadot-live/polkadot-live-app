@@ -11,8 +11,8 @@ import { AnyJson, IMatch, SubscriptionDelegate ,
   StoredAccounts,
 } from '@polkadot-live/types';
 import { store } from '@/main';
-import { MainDebug } from '../debugging';
-import { Account } from '../model/Account';
+import { MainDebug } from '@/debugging';
+import { Account } from '@/model/Account';
 import { APIs } from './APIs';
 import { Windows } from './Windows';
 import { ChainID } from '@polkadot-live/types/chains';

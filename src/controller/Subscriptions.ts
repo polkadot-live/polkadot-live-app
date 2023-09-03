@@ -9,8 +9,8 @@ import {
   RawAccount,
 } from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
-import { MainDebug } from '../debugging';
-import { LiveReporter } from '../model/LiveReporter';
+import { MainDebug } from '@/debugging';
+import { LiveReporter } from '@/model/LiveReporter';
 import { APIs } from './APIs';
 import { Accounts } from './Accounts';
 import { BlockStream } from './BlockStream';

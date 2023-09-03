@@ -3,8 +3,8 @@
 
 import { Notification } from 'electron';
 import { Report, Reporter } from '@polkadot-live/types';
-import { PolkadotCallbacks } from '../chains/Polkadot/Callbacks';
-import { MainDebug } from '../debugging';
+import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
+import { MainDebug } from '@/debugging';
 
 const debug = MainDebug.extend('LiveReporter');
 
