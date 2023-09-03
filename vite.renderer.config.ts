@@ -8,13 +8,6 @@ import path from 'node:path';
 export default defineConfig({
   plugins: [
     svgr(),
-    react(),
-    viteStaticCopy({
-    targets: [
-      {
-        src: path.resolve(__dirname, './src/fonts') ,
-        dest: path.resolve(__dirname, './vite/build/fonts') ,
-      }
-    ]
-  })]
+    react()
+  ]
 });
