@@ -1751,14 +1751,13 @@
   resolved "https://registry.npmjs.org/@polkadot-cloud/core/-/core-0.1.12.tgz#ecb4a345f7b518249a0a5e1d53dd7eea24316e81"
   integrity sha512-HRLF0t6ezFxJnu4yPS6eubzW5ZRWWhr6ZbjvKeJ4u6pj7fNcCeZaFYVTIaVzpoDVYFeGNEe/6MQ1ENSY7fyhXg==
 
-"@polkadot-cloud/react@^0.1.29", "@polkadot-cloud/react@^0.1.32":
-  version "0.1.32"
-  resolved "https://registry.npmjs.org/@polkadot-cloud/react/-/react-0.1.32.tgz#231444a1d52eee990b2dd3ceaa601f5a8b089d4b"
-  integrity sha512-S2GcangOrOLXu4sm8BtAx8C1I2rwfTiwHlH2OSbmgBucpyObJPlWfhUwOET9XcMaUc2bJve8tYqe1Dbe1t9HXw==
+"@polkadot-cloud/react@^0.1.32":
+  version "0.1.33"
+  resolved "https://registry.npmjs.org/@polkadot-cloud/react/-/react-0.1.33.tgz#3c1594fc8cae3df89809e409bd1a713c7dce30ea"
+  integrity sha512-2B56I5orjwrplHuNjQA9jBUDAOcShBCII6J0FSPzlEhXr/xYl4ZcgEoAc4U7lDqzX4Ihz9UQOdpvQtL49ipP3A==
   dependencies:
     "@polkadot-cloud/core" "^0.1.12"
-    "@polkadot-cloud/react" "^0.1.29"
-    "@polkadot-cloud/utils" "^0.0.6"
+    "@polkadot-cloud/utils" "^0.0.9"
     react-error-boundary "^4.0.11"
 
 "@polkadot-cloud/utils@^0.0.11":
@@ -1766,10 +1765,10 @@
   resolved "https://registry.npmjs.org/@polkadot-cloud/utils/-/utils-0.0.11.tgz#1b5afeffb12f6df8958eb6285a8020c28d06eadf"
   integrity sha512-h73gDY5IDUIVS3KboPE7F5ks0CwVyqYE+jVpGI1kiV5aUseluSaOqRj3enZNWm2q04m358ZUgVxjZ9g9vSoJeA==
 
-"@polkadot-cloud/utils@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/@polkadot-cloud/utils/-/utils-0.0.6.tgz#ea0fc18c6af7cd6a1d14ae6674f19b1b3ef82347"
-  integrity sha512-alm1zdqRcuBm9a59jy0yPKWY4FTenQTKvLSrX/+8aV0YbkwQ6vBkUwhs3FMi5GI52pC68X6VO5DzwVscg6kvEg==
+"@polkadot-cloud/utils@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.npmjs.org/@polkadot-cloud/utils/-/utils-0.0.9.tgz#e0d4b7a15fc42b4f321eb8b0182329b4367c573b"
+  integrity sha512-14EowuGj6jl+zf6qXEikaDKkvFREqj8YXs9Z8vgQpdQ55LgXD47M0D5SSKFIfrOCNFymgAXePYru5U0SfxWoLg==
 
 "@polkadot-live/types@0.1.6":
   version "0.1.6"
@@ -3000,9 +2999,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
+"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
   version "0.0.4"
-  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
+  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
@@ -4183,6 +4182,11 @@ eslint-plugin-prettier@^5.0.0:
   dependencies:
     prettier-linter-helpers "^1.0.0"
     synckit "^0.8.5"
+
+eslint-plugin-react-hooks@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.0.tgz#4c3e697ad95b77e93f8646aaa1630c1ba607edd3"
+  integrity sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==
 
 eslint-plugin-react@^7.33.2:
   version "7.33.2"

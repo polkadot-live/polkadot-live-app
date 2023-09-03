@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "node": true
@@ -21,21 +22,35 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": "tsconfig.json"
+        "project": [
+          "tsconfig.json"
+        ]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module",
+    "ecmaVersion": "latest",
     "ecmaFeatures": {
       "jsx": true,
       "arrowFunctions": true
-    },
-    "sourceType": "module",
-    "ecmaVersion": "latest",
-    "project": "./tsconfig.json"
+    }
   },
   "rules": {
-    "import/no-named-as-default": "off"
+    "import/no-named-as-default": "off",
+    "import/no-unresolved": "error",
+    "unused-imports/no-unused-imports": "error",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
   }
 }

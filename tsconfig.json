@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "target": "ES6",
     "allowJs": true,
     "jsx": "react-jsx",
@@ -9,14 +9,13 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
-  },
-  "paths": {
-    "*": [
-      "node_modules/*",
-      "src/*"
-    ],
+    "resolveJsonModule": true,
+    "moduleResolution": "Node",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./src/*"],
+    },
   },
   "include": ["src"]
 }

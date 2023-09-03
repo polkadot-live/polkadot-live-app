@@ -10,7 +10,7 @@ import { AnyJson, IMatch, SubscriptionDelegate ,
   ImportedAccounts,
   StoredAccounts,
 } from '@polkadot-live/types';
-import { store } from '../main';
+import { store } from '@/main';
 import { MainDebug } from '../debugging';
 import { Account } from '../model/Account';
 import { APIs } from './APIs';
