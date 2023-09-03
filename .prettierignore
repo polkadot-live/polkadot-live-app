@@ -6,3 +6,4 @@
 **/.eslintrc.js
 **/tsconfig.json
 dist
+out

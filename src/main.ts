@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, protocol } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { AnyFunction } from '@polkadot-live/types';
@@ -12,6 +12,32 @@ export const store = new Store();
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+// Enable priviledges.
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'http',
+    privileges: {
+      standard: true,
+      bypassCSP: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      stream: true,
+    },
+  },
+  {
+    scheme: 'https',
+    privileges: {
+      standard: true,
+      bypassCSP: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      stream: true,
+    },
+  },
+]);
 
 const createWindow = () => {
   // Create the browser window.

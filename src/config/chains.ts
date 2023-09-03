@@ -9,9 +9,9 @@ import PolkadotAppIcon from './svg/ledger/polkadot.svg';
 import { ChainID } from '@polkadot-live/types/chains';
 
 interface Chain {
-  icon: typeof import("*.svg"),
+  icon: typeof import('*.svg');
   ledger: {
-    icon: typeof import("*.svg"),
+    icon: typeof import('*.svg');
   };
   endpoints: {
     rpc: string;

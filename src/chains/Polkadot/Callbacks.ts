@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { planckToUnit } from '@polkadot-cloud/utils';
-import { AnyJson , AccountType } from '@polkadot-live/types';
+import { AnyJson, AccountType } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';

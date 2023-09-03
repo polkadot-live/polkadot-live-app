@@ -1,7 +1,10 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AnyJson, IMatch, SubscriptionDelegate ,
+import {
+  AnyJson,
+  IMatch,
+  SubscriptionDelegate,
   ReportDelegator,
   AccountConfig,
   AccountSource,

@@ -13,12 +13,12 @@ import {
   GenericNotification,
   MatchOutcome,
   MethodSubscription,
-
   AnyData,
   EventInner,
   ExtrinsicInner,
   NotificationReport,
-  Reporter} from '@polkadot-live/types';
+  Reporter,
+} from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '../debugging';
 import {
