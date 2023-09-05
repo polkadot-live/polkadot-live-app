@@ -127,7 +127,11 @@ const initializeState = (id: string) => {
 // Initialise menubar window.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
+console.log(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+console.log(MAIN_WINDOW_VITE_NAME);
+
 const mb = menubar({
+  index: MAIN_WINDOW_VITE_DEV_SERVER_URL,
   // NOTE: use `process.platform` to determine windows icons.
   icon: path.resolve(__dirname, 'assets/IconTemplate.png'),
   browserWindow: {
@@ -145,6 +149,9 @@ const mb = menubar({
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
+    webPreferences: {
+      preload: `${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/`,
+    },
   },
 });
 
@@ -184,7 +191,7 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
       w.loadURL(
         path.join(
           __dirname,
-          `../renderer/${MAIN_WINDOW_VITE_NAME}/#/${name}${args}`
+          `./renderer/${MAIN_WINDOW_VITE_NAME}/#/${name}${args}`
         )
       );
       w.show();

@@ -1,0 +1,148 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
+
+export const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  padding: 0 1rem 5rem 1rem;
+`;
+
+export const NoEventsWrapper = styled.div`
+  margin-top: 6rem;
+  z-index: 1;
+
+  button {
+    font-family: InterSemiBold, sans-serif;
+    z-index: 1;
+    padding: 0.5rem 1.75rem !important;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 0;
+  }
+  h3 {
+    text-align: center;
+    margin: 2rem 0 1rem 0;
+  }
+  h5 {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    a {
+      color: var(--text-color-primary);
+    }
+  }
+  p {
+    text-align: center;
+    margin: 0.65rem 0;
+  }
+`;
+
+export const EventGroup = styled.div`
+  width: 100%;
+  border-radius: 0.9rem;
+  margin: 1rem 0;
+  z-index: 2;
+  padding: 0 0.5rem;
+`;
+
+export const EventItem = styled(motion.div)`
+  --event-item-height: 9rem;
+  --event-item-left-width: 4rem;
+
+  position: relative;
+
+  > div {
+    background: var(--background-default);
+    height: var(--event-item-height);
+    width: 100%;
+    border-radius: 1.75rem;
+    padding: 0 1.25rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    > section {
+      display: flex;
+
+      &:last-child {
+        margin: 0.7rem 0 0.1rem 0;
+        padding-left: 3.75rem;
+        button {
+          margin-right: 0.9rem;
+        }
+      }
+
+      > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        &:first-child {
+          width: var(--event-item-left-width);
+          display: flex;
+          justify-content: center;
+
+          > .icon {
+            position: relative;
+            width: 3.25rem;
+
+            > .tooltip {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              z-index: 99;
+            }
+
+            .eventIcon {
+              background: var(--background-default);
+              border: 1px solid var(--border-primary-color);
+              border-radius: 50%;
+              position: absolute;
+              bottom: -0.65rem;
+              right: -0.1rem;
+              width: 1.75rem;
+              height: 1.75rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              svg {
+                width: 60%;
+                height: 60%;
+                color: var(--text-color-primary);
+              }
+            }
+          }
+        }
+        &:last-child {
+          flex-grow: 1;
+        }
+        h5 {
+          color: var(--text-color-secondary);
+          margin-bottom: 0.35rem;
+        }
+        h4 {
+          color: var(--text-color-primary);
+          font-weight: 600;
+        }
+        p {
+          font-weight: 600;
+          margin: 0.2rem 0 0 0;
+        }
+      }
+    }
+  }
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;

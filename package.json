@@ -61,7 +61,11 @@
     "vite-plugin-svgr": "^3.2.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@ledgerhq/hw-transport-node-hid": "^6.27.21",
     "@polkadot-cloud/react": "^0.1.32",
     "@polkadot-cloud/utils": "^0.0.11",
@@ -83,6 +87,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "electron-unhandled": "^4.0.1",
+    "framer-motion": "^10.16.4",
     "menubar": "^9.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

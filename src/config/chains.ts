@@ -4,14 +4,19 @@
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
 import { AnyData } from '@polkadot-live/types';
-import PolkadotIcon from './svg/polkadotIcon.svg';
-import PolkadotAppIcon from './svg/ledger/polkadot.svg';
+import { ReactComponent as PolkadotIcon } from './svg/polkadotIcon.svg';
+import { ReactComponent as PolkadotAppIcon } from './svg/ledger/polkadot.svg';
 import { ChainID } from '@polkadot-live/types/chains';
+import { FunctionComponent, SVGProps } from 'react';
 
 interface Chain {
-  icon: typeof import('*.svg');
+  icon: FunctionComponent<
+    SVGProps<SVGSVGElement> & { title?: string | undefined }
+  >;
   ledger: {
-    icon: typeof import('*.svg');
+    icon: FunctionComponent<
+      SVGProps<SVGSVGElement> & { title?: string | undefined }
+    >;
   };
   endpoints: {
     rpc: string;

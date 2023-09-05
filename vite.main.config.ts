@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import { resolve } from 'path'
+import svgr from "vite-plugin-svgr";
 
 // https://vitejs.dev/config
 export default defineConfig({
@@ -13,9 +14,14 @@ export default defineConfig({
         find: "@",
         replacement: resolve(__dirname, "./src"),
       },
+      {
+        find: "@app",
+        replacement: resolve(__dirname, "./src/renderer"),
+      },
     ],
   },
   plugins: [ 
-    eslint()
+    eslint(),
+    svgr(),
   ],
 });
