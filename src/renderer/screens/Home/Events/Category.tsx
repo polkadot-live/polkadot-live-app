@@ -1,5 +1,5 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 import { chainCategory, chainIcon } from '@/config/chains';
 import { HeadingWrapper } from '../Wrappers';

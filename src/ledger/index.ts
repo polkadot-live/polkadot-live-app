@@ -1,5 +1,5 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import { AnyFunction, AnyJson, LedgerTask } from '@polkadot-live/types';

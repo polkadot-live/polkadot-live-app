@@ -1,5 +1,5 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 import { Identicon as IdenticonDefault } from '@polkadot/react-identicon';
 import styled from 'styled-components';

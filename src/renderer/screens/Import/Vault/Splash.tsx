@@ -1,5 +1,5 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert, ButtonPrimary } from '@polkadot-cloud/react';
