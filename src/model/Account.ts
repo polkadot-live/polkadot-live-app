@@ -19,13 +19,13 @@ import { ChainID } from '@polkadot-live/types/chains';
 export class Account {
   private _chain: ChainID;
 
-  private _type: AccountType;
+  private _type!: AccountType;
 
   private _source: AccountSource;
 
-  private _address: string;
+  private _address!: string;
 
-  private _name: string;
+  private _name!: string;
 
   private _config: AnyJson | null = null;
 

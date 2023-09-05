@@ -22,15 +22,15 @@ const debug = MainDebug.extend('API');
  * @property {APIConstants | null} consts - the constants of the chain.
  */
 export class API {
-  private _endpoint: string;
+  private _endpoint!: string;
 
-  private _provider: WsProvider;
+  private _provider!: WsProvider;
 
-  private _api: ApiPromise | null = null;
+  private _api!: ApiPromise;
 
+  private _chain!: ChainID;
+  
   private _status: ChainStatus = 'disconnected';
-
-  private _chain: ChainID | null = null;
 
   private _consts: APIConstants | null = null;
 
@@ -48,7 +48,7 @@ export class API {
     this._endpoint = value;
   }
 
-  get api() {
+  get api(): ApiPromise {
     return this._api;
   }
 
