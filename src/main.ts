@@ -2,16 +2,9 @@ import 'websocket-polyfill';
 import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
-import { Accounts } from './controller/Accounts';
 import { Windows } from './controller/Windows';
 import unhandled from 'electron-unhandled';
-import {
-  AccountType,
-  AnyFunction,
-  AnyJson,
-  DismissEvent,
-} from '@polkadot-live/types';
-import { MainDebug as debug } from './debugging';
+import { AnyJson, DismissEvent } from '@polkadot-live/types';
 import { menubar } from 'menubar';
 import { APIs } from './controller/APIs';
 import { orchestrator } from './orchestrator';
@@ -23,6 +16,13 @@ import { ChainID } from '@polkadot-live/types/chains';
 import { Extrinsic } from './controller/Extrinsic';
 import { Discover } from './controller/Discover';
 import AutoLaunch from 'auto-launch';
+import {
+  handleMenuBounds,
+  initializeState,
+  moveToMenuBounds,
+  reportAllWindows,
+  reportImportedAccounts,
+} from './Utils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -71,63 +71,15 @@ orchestrator.next({
   task: 'initialize',
 });
 
-// Report imported accounts to renderer.
-export const reportImportedAccounts = (id: string) => {
-  Windows.get(id)?.webContents?.send(
-    'reportImportedAccounts',
-    Accounts.getAll()
-  );
-};
-
 // Report dismissed event to renderer.
 const reportDismissEvent = (eventData: DismissEvent) => {
   Windows.get('menu')?.webContents?.send('reportDismissEvent', eventData);
 };
 
-const reportAccountsState = (id: string) => {
-  Object.values(Accounts.accounts).forEach((chainAccounts) => {
-    chainAccounts.forEach(({ chain, address, state, type }) => {
-      if (type === AccountType.User) {
-        Object.entries(state.getAllState()).forEach(([key, value]) => {
-          debug('🏦 Reporting account state %o', key, value);
-          Windows.get(id)?.webContents?.send(
-            'reportAccountState',
-            chain,
-            address,
-            key,
-            value
-          );
-        });
-      }
-    });
-  });
-};
-
-// // Call a function for all windows.
-export const reportAllWindows = (callback: AnyFunction) => {
-  for (const { id } of Windows?.active || []) {
-    callback(id);
-  }
-};
-
-// Report active chains to renderer.
-const reportActiveInstances = (id: string) => {
-  for (const { chain } of APIs.instances) {
-    Windows.get(id)?.webContents?.send('syncChain', chain);
-  }
-};
-
-// Initalize store items
-const initializeState = (id: string) => {
-  reportImportedAccounts(id);
-  reportActiveInstances(id);
-  reportAccountsState(id);
-};
-
 // Initialise menubar window.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
-const mb = menubar({
+export const mb = menubar({
   index: MAIN_WINDOW_VITE_DEV_SERVER_URL,
   // NOTE: use `process.platform` to determine windows icons.
   icon: path.resolve(__dirname, 'assets/IconTemplate.png'),
@@ -215,21 +167,6 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
       });
     }
   });
-};
-
-// Save current menu position to store.
-const handleMenuBounds = async (w: BrowserWindow) => {
-  if (w.isFocused()) {
-    store.set('menu_bounds', mb?.window?.getBounds());
-  }
-};
-
-const moveToMenuBounds = () => {
-  // Move window into position.
-  const storeMenuPos: AnyJson = store.get('menu_bounds');
-  if (storeMenuPos) {
-    mb?.window?.setPosition(storeMenuPos.x, storeMenuPos.y, false);
-  }
 };
 
 mb.on('ready', () => {

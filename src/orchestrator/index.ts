@@ -3,7 +3,7 @@
 
 import { Notification } from 'electron';
 import { Subject } from 'rxjs';
-import { reportAllWindows, reportImportedAccounts } from '@/main';
+import { reportAllWindows, reportImportedAccounts } from '@/Utils';
 import { ChainList } from '@/config/chains';
 import { APIs } from '@/controller/APIs';
 import { Accounts } from '@/controller/Accounts';
@@ -47,8 +47,8 @@ const initialize = async () => {
   // Initialize required chain `APIs` from persisted state.
   await APIs.initialize();
 
-  // Initialize discovery of subscriptions for saved accounts..
-  // Subscriptions.initialize();
+  // Initialize discovery of subscriptions for saved accounts.
+  Subscriptions.initialize();
 };
 
 /**
