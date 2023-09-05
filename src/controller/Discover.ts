@@ -49,6 +49,8 @@ export class Discover {
    * @param {string=} chain - restrict bootstrapping to a chain.
    */
   static bootstrapEvents = (chain?: ChainID) => {
+    if (!chain) return;
+
     const handleBootstrap = (c: ChainID) => {
       if (c && !APIs.get(c)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is

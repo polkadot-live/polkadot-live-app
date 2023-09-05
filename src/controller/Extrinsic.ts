@@ -38,7 +38,9 @@ export class Extrinsic {
     args: AnyJson[]
   ) => {
     try {
-      const { api } = APIs.get(chain);
+      const { api } = APIs.get(chain) || {};
+      if (!api) return;
+
       debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
 
       // Instantiate tx.
@@ -80,7 +82,7 @@ export class Extrinsic {
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = APIs.get(chain);
+    const { api } = APIs.get(chain) || {};
 
     if (!api || !this.tx) {
       return;

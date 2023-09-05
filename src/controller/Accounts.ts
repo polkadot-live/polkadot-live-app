@@ -46,7 +46,7 @@ export class Accounts {
       return;
     }
 
-    let initAccounts: ImportedAccounts;
+    let initAccounts: ImportedAccounts = {};
     for (const chain of Object.keys(storeAccounts) as ChainID[]) {
       const initChain = [];
       for (const a of storeAccounts[chain]) {
@@ -65,7 +65,7 @@ export class Accounts {
           initChain.push(account);
         }
       }
-      if (!initAccounts) {
+      if (!Object.values(initAccounts)) {
         initAccounts = { [chain]: initChain };
       } else {
         initAccounts[chain] = initChain;

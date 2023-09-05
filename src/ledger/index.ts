@@ -113,7 +113,7 @@ export const handleGetAddress = async (
 ) => {
   const substrateApp = newSubstrateApp(transport, appName);
   const { deviceModel } = transport;
-  const { id, productName } = deviceModel;
+  const { id, productName } = deviceModel || {};
 
   window.webContents.send(
     'reportLedgerStatus',

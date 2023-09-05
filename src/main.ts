@@ -182,7 +182,7 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         center: true,
         webPreferences: {
           preload: path.join(__dirname, 'preload.js'),
-        }
+        },
       });
 
       // Format args into URL if present.

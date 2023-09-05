@@ -29,7 +29,7 @@ export class API {
   private _api!: ApiPromise;
 
   private _chain!: ChainID;
-  
+
   private _status: ChainStatus = 'disconnected';
 
   private _consts: APIConstants | null = null;

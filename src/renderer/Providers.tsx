@@ -32,7 +32,6 @@ export const ThemedRouter: React.FC = () => {
       setStateWithRef(event.matches ? 'dark' : 'light', setMode, modeRef);
     });
 
-
   return (
     <ThemeProvider theme={{ mode: modeRef.current }}>
       <div className="theme-polkadot">
