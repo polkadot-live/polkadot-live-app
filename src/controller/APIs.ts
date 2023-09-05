@@ -9,8 +9,8 @@ import { Accounts } from './Accounts';
 import { Discover } from './Discover';
 import { Windows } from './Windows';
 import { ChainID } from '@polkadot-live/types/chains';
-import { AnyData } from '@polkadot-live/types';
 import { MainDebug } from '@/debugging';
+import { AnyData } from '@polkadot-live/types';
 
 const debug = MainDebug.extend('APIs');
 
@@ -59,8 +59,9 @@ export class APIs {
     const instance = new API(endpoint);
 
     const api = await ApiPromise.create({ provider: instance.provider });
-    const chain = (await api.rpc.system.chain()).toString();
 
+    const chain = (await api.rpc.system.chain()).toString();
+    
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
       !Object.keys(ChainList).includes(chain) ||

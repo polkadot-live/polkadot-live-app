@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "checkJs": false,
     "target": "ES6",
+    "strict": true,
     "allowJs": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
@@ -17,5 +19,6 @@
       "@/*": ["./src/*"],
     },
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", ".vite/**/*", "out/**/*"]
 }

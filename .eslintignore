@@ -12,6 +12,7 @@
 *.html
 *.webmanifest
 LICENSE
+.vite
 dist
 build
 out

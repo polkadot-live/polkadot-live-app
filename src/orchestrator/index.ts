@@ -48,7 +48,7 @@ const initialize = async () => {
   await APIs.initialize();
 
   // Initialize discovery of subscriptions for saved accounts..
-  Subscriptions.initialize();
+  // Subscriptions.initialize();
 };
 
 /**
