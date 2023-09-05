@@ -137,10 +137,11 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         },
       });
 
-      // Format args into URL if present.
-      args = args ? `?${new URLSearchParams(args).toString()}` : '';
-
-      w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${name}${args}`);
+      w.loadURL(
+        `${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${name}${
+          args ? `?${new URLSearchParams(args).toString()}` : ''
+        }`
+      );
       w.show();
 
       Windows.add(w, name);
