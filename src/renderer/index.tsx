@@ -1,5 +1,3 @@
-import './index.scss';
-
 // Network themes.
 import '@polkadot-cloud/core/theme/polkadot-relay/index.css';
 import '@polkadot-cloud/core/theme/kusama-relay/index.css';
@@ -12,6 +10,8 @@ import '@polkadot-cloud/core/template/default/index.css';
 
 // Polkadot Cloud core styles.
 import '@polkadot-cloud/core/css/styles/index.css';
+
+import './index.scss';
 
 import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
