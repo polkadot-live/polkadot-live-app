@@ -17,9 +17,9 @@ export const MainInterfaceWrapper = styled.div`
 
 // A component that consumes the height of the window, can sit in-between the header and footer.
 export const BodyInterfaceWrapper = styled.div<{
-  maxHeight?: boolean;
+  $maxHeight?: boolean;
 }>`
-  max-height: ${(props) => (props.maxHeight ? '100vh' : 'auto')};
+  max-height: ${(props) => (props.$maxHeight ? '100vh' : 'auto')};
   width: 100%;
   max-width: 100%;
   flex: 1;

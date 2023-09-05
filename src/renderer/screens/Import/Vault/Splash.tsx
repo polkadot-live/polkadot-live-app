@@ -18,7 +18,7 @@ export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
   return (
     <>
       <Header />
-      <BodyInterfaceWrapper maxHeight>
+      <BodyInterfaceWrapper $maxHeight>
         <SplashWrapper>
           <div className="icon">
             <LogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />

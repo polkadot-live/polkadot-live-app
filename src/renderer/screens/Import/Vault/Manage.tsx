@@ -25,7 +25,7 @@ export const Manage = ({
   return (
     <>
       <DragClose windowName="import" />
-      <BodyInterfaceWrapper maxHeight>
+      <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
             <div className="heading">

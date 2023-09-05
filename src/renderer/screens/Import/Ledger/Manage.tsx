@@ -23,7 +23,7 @@ export const Manage = ({
 }: AnyJson) => (
   <>
     <DragClose windowName="import" />
-    <BodyInterfaceWrapper maxHeight>
+    <BodyInterfaceWrapper $maxHeight>
       {addresses.length ? (
         <AddressWrapper>
           <div className="heading">

@@ -14,7 +14,7 @@ export const Splash = ({ statusCodes, setSection }: SplashProps) => {
   return (
     <>
       <Header showMenu />
-      <BodyInterfaceWrapper maxHeight>
+      <BodyInterfaceWrapper $maxHeight>
         <SplashWrapper>
           <div className="icon">
             <LogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />

@@ -87,7 +87,7 @@ export const Home = () => {
           <span>Manage</span>
         </button>
       </TabsWrapper>
-      <BodyInterfaceWrapper maxHeight>
+      <BodyInterfaceWrapper $maxHeight>
         <CarouselWrapper
           animate={section === 0 ? 'home' : 'next'}
           transition={{
