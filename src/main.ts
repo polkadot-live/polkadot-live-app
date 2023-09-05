@@ -1,20 +1,28 @@
-import "websocket-polyfill";
+import 'websocket-polyfill';
 import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { Accounts } from './controller/Accounts';
 import { Windows } from './controller/Windows';
 import unhandled from 'electron-unhandled';
-import { AccountType, AnyFunction, AnyJson, DismissEvent } from '@polkadot-live/types';
-import { MainDebug as debug } from "./debugging";
-import { menubar } from "menubar";
-import { APIs } from "./controller/APIs";
-import { orchestrator } from "./orchestrator";
-import { register as registerLocalShortcut, unregisterAll as unregisterAllLocalShortcut } from 'electron-localshortcut';
-import { ChainID } from "@polkadot-live/types/chains";
-import { Extrinsic } from "./controller/Extrinsic";
-import { Discover } from "./controller/Discover";
-import AutoLaunch from "auto-launch";
+import {
+  AccountType,
+  AnyFunction,
+  AnyJson,
+  DismissEvent,
+} from '@polkadot-live/types';
+import { MainDebug as debug } from './debugging';
+import { menubar } from 'menubar';
+import { APIs } from './controller/APIs';
+import { orchestrator } from './orchestrator';
+import {
+  register as registerLocalShortcut,
+  unregisterAll as unregisterAllLocalShortcut,
+} from 'electron-localshortcut';
+import { ChainID } from '@polkadot-live/types/chains';
+import { Extrinsic } from './controller/Extrinsic';
+import { Discover } from './controller/Discover';
+import AutoLaunch from 'auto-launch';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -62,7 +70,6 @@ export const store = new Store();
 orchestrator.next({
   task: 'initialize',
 });
-
 
 // Report imported accounts to renderer.
 export const reportImportedAccounts = (id: string) => {
@@ -174,7 +181,12 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
       // Format args into URL if present.
       args = args ? `?${new URLSearchParams(args).toString()}` : '';
 
-      w.loadURL(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/#/${name}${args}`));
+      w.loadURL(
+        path.join(
+          __dirname,
+          `../renderer/${MAIN_WINDOW_VITE_NAME}/#/${name}${args}`
+        )
+      );
       w.show();
 
       Windows.add(w, name);
@@ -228,8 +240,7 @@ mb.on('ready', () => {
   });
 
   mb.on('show', () => {
-    if(mb?.window) {
-
+    if (mb?.window) {
       Windows.add(mb.window, 'menu');
       Windows.focus('menu');
 
@@ -241,13 +252,11 @@ mb.on('ready', () => {
 
       // Listen to window movements.
       mb.window.addListener('move', () => {
-        if (mb?.window)
-          handleMenuBounds(mb.window);
+        if (mb?.window) handleMenuBounds(mb.window);
       });
 
       mb.window.addListener('resize', () => {
-        if (mb?.window)
-          handleMenuBounds(mb.window);
+        if (mb?.window) handleMenuBounds(mb.window);
       });
     }
   });
@@ -289,8 +298,7 @@ mb.on('ready', () => {
   ipcMain.on('closeWindow', (_, id) => {
     Windows.close(id);
     mb?.window?.removeListener('will-move', () => {
-      if (mb?.window)
-        handleMenuBounds(mb.window)
+      if (mb?.window) handleMenuBounds(mb.window);
     });
   });
 

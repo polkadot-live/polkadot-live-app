@@ -61,7 +61,7 @@ export class APIs {
     const api = await ApiPromise.create({ provider: instance.provider });
 
     const chain = (await api.rpc.system.chain()).toString();
-    
+
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
       !Object.keys(ChainList).includes(chain) ||
