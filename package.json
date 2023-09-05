@@ -18,7 +18,7 @@
     "name": "Ross Bulat",
     "email": "ross@parity.io"
   },
-  "license": "LGPL-3.0-only",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "@electron-forge/cli": "^6.4.1",
     "@electron-forge/maker-deb": "^6.4.1",
