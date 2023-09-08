@@ -34,7 +34,7 @@ export const ThemedRouter: React.FC = () => {
 
   return (
     <ThemeProvider theme={{ mode: modeRef.current }}>
-      <div className="theme-polkadot">
+      <div className="theme-polkadot-relay">
         <Router />
       </div>
     </ThemeProvider>
