@@ -180,28 +180,26 @@ mb.on('ready', () => {
   });
 
   mb.on('show', () => {
-    if (mb?.window) {
-      Windows.add(mb.window, 'menu');
-      Windows.focus('menu');
+    Windows.add(mb.window, 'menu');
+    Windows.focus('menu');
 
-      // Bootstrap account events for all chains.
-      Discover.bootstrapEvents();
-
-      // Populate items from store.
-      initializeState('menu');
-
-      // Listen to window movements.
-      mb.window.addListener('move', () => {
-        if (mb?.window) handleMenuBounds(mb.window);
-      });
-
-      mb.window.addListener('resize', () => {
-        if (mb?.window) handleMenuBounds(mb.window);
-      });
-    }
+    // Populate items from store.
+    initializeState('menu');
   });
 
   mb.on('after-show', () => {
+    // Bootstrap account events for all chains.
+    Discover.bootstrapEvents();
+
+    // Listen to window movements.
+    mb.window?.addListener('move', () => {
+      if (mb?.window) handleMenuBounds(mb.window);
+    });
+
+    mb.window?.addListener('resize', () => {
+      if (mb?.window) handleMenuBounds(mb.window);
+    });
+
     // Move window to saved position.
     moveToMenuBounds();
   });
