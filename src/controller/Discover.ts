@@ -49,8 +49,6 @@ export class Discover {
    * @param {string=} chain - restrict bootstrapping to a chain.
    */
   static bootstrapEvents = (chain?: ChainID) => {
-    if (!chain) return;
-
     const handleBootstrap = (c: ChainID) => {
       if (c && !APIs.get(c)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is
@@ -61,15 +59,12 @@ export class Discover {
       debug(`💳 Bootstrapping for accounts, chain ${chain || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?. Cache should be updaed in the
-      ChainState.bootstrap(chain);
+      if (c) ChainState.bootstrap(c);
     };
 
     if (!chain) {
-      for (const c of Object.keys(Accounts.accounts)) {
+      for (const c of Object.keys(Accounts.accounts))
         handleBootstrap(c as ChainID);
-      }
-    } else {
-      handleBootstrap(chain);
-    }
+    } else handleBootstrap(chain);
   };
 }

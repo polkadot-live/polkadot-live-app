@@ -118,9 +118,10 @@ export class PolkadotCallbacks {
    */
   static unclaimedPoolRewards = async (address: string) => {
     debug(`💸 Checking for unclaimed pool rewards...`);
-    const { api } = APIs.instances.find(
-      (instance) => instance.chain === this.chain
-    );
+    const { api } =
+      APIs.instances.find((instance) => instance.chain === this.chain) || {};
+    if (!api) return;
+
     const result = await api.call.nominationPoolsApi.pendingRewards(address);
 
     debug('💵 Fetched unclaimed pool rewards: %o', result.toString());
@@ -172,6 +173,7 @@ export class PolkadotCallbacks {
         },
       ],
     };
+
     Windows.get('menu')?.webContents?.send('reportNewEvent', newEvent);
   };
 }
