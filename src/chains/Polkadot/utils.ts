@@ -12,7 +12,12 @@ import { APIs } from '@/controller/APIs';
  * @param {number} poolId - id of the pool.
  */
 export const getPoolAccounts = (poolId: number) => {
-  const { api, consts } = APIs.get('Polkadot');
+  const apiInstance = APIs.get('Polkadot');
+
+  if (!apiInstance) return;
+
+  const api = apiInstance.api;
+  const consts = apiInstance.consts;
 
   const createAccount = (pId: BigNumber, index: number): string => {
     const EmptyH256 = new Uint8Array(32);

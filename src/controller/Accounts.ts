@@ -129,7 +129,9 @@ export class Accounts {
     address: string,
     name: string
   ): Account | false => {
-    if (!this.accountExists(chain, address)) {
+    if (this.accountExists(chain, address)) {
+      return false;
+    } else {
       const account = new Account(
         chain,
         AccountType.User,
@@ -140,12 +142,11 @@ export class Accounts {
       this.setAccounts(this.pushAccount(chain, account));
       return account;
     }
-    return false;
   };
 
   /**
    * @name remove
-   * @summary Removes an account from the list of imported accounts it it exists.
+   * @summary Removes an account from the list of imported accounts if it exists.
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} address - the account address.
    */

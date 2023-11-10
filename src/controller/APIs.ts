@@ -17,7 +17,7 @@ const debug = MainDebug.extend('APIs');
 /**
  *  A static class that manages active api providers.
  * @class
- * @property {ImportedAccounts} instances - a list of the active chain instances.
+ * @property {API} instances - a list of the active chain instances.
  */
 export class APIs {
   static instances: API[] = [];
@@ -118,8 +118,8 @@ export class APIs {
 
   /**
    * @name get
-   * @summary Gets an account from the `accounts` property.
-   * @param {ChainID} chain - the chain the account belongs to.
+   * @summary Gets an API instance from the `instances` property.
+   * @param {ChainID} chain - the chain the instance belongs to.
    * @returns {(API|undefined)}
    */
   static get = (chain: ChainID): API | undefined => {
