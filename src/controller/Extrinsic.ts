@@ -4,7 +4,7 @@
 import { planckToUnit } from '@polkadot-cloud/utils';
 import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
-import { Notification } from 'electron';
+import { NotificationsController } from './NotificationsController';
 import { ChainID } from '@polkadot-live/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/debugging';
@@ -160,10 +160,7 @@ export class Extrinsic {
         const unsub = await this.tx.send(({ status }: AnyJson) => {
           if (status.isInBlock) {
             // In block, send notification.
-            new Notification({
-              title: 'In Block',
-              body: `Transaction is in block`,
-            }).show();
+            NotificationsController.transactionStatus('in-block');
 
             // Report Tx Status to Action UI.
             Windows.get('action')?.webContents?.send(
@@ -172,10 +169,8 @@ export class Extrinsic {
             );
           } else if (status.isFinalized) {
             // Finalized - send notification and unsub.
-            new Notification({
-              title: 'Finalized',
-              body: `Transaction was finalised`,
-            });
+            NotificationsController.transactionStatus('finalized');
+
             // Report Tx Status to Action UI.
             Windows.get('action')?.webContents?.send(
               'reportTxStatus',
@@ -185,10 +180,8 @@ export class Extrinsic {
           }
         });
 
-        new Notification({
-          title: 'Transaction Submitted',
-          body: `Transaction has been submitted and processing.`,
-        });
+        NotificationsController.transactionSubmitted();
+
         // Report Tx Status to Action UI.
         Windows.get('action')?.webContents?.send('reportTxStatus', 'submitted');
         this.reset();

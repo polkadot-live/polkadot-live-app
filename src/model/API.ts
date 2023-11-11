@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { Codec } from '@polkadot/types-codec/types';
 import { rmCommas } from '@polkadot-cloud/utils';
 import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
@@ -91,7 +92,7 @@ export class API {
   /**
    * @name setApi
    * @summary Set instance API properties.
-   * @param {string} api - the api instance.
+   * @param {ApiPromise} api - the api instance.
    * @param {ChainID} chain - the chain the account belongs to.
    */
   setApi = (api: ApiPromise, chain: ChainID) => {
@@ -149,18 +150,21 @@ export class API {
       api.consts.nominationPools.palletId,
     ]);
 
-    const bondDuration = new BigNumber(rmCommas(result[0].toString()));
-    const maxNominations = new BigNumber(rmCommas(result[1].toString()));
-    const sessionsPerEra = new BigNumber(rmCommas(result[2].toString()));
-    const maxNominatorRewardedPerValidator = new BigNumber(
-      rmCommas(result[3].toString())
-    );
-    const maxElectingVoters = new BigNumber(rmCommas(result[4].toString()));
-    const expectedBlockTime = new BigNumber(rmCommas(result[5].toString()));
-    const epochDuration = new BigNumber(rmCommas(result[6].toString()));
-    const existentialDeposit = new BigNumber(rmCommas(result[7].toString()));
-    const historyDepth = new BigNumber(rmCommas(result[8].toString()));
-    const fastUnstakeDeposit = new BigNumber(rmCommas(result[9].toString()));
+    const takeResult = (result: Codec[], index: number) => {
+      return BigNumber(rmCommas(result[index].toString()));
+    };
+
+    const bondDuration = takeResult(result, 0);
+    const maxNominations = takeResult(result, 1);
+    const sessionsPerEra = takeResult(result, 2);
+    const maxNominatorRewardedPerValidator = takeResult(result, 3);
+
+    const maxElectingVoters = takeResult(result, 4);
+    const expectedBlockTime = takeResult(result, 5);
+    const epochDuration = takeResult(result, 6);
+    const existentialDeposit = takeResult(result, 7);
+    const historyDepth = takeResult(result, 8);
+    const fastUnstakeDeposit = takeResult(result, 9);
     const poolsPalletId = result[10].toU8a();
 
     const consts = {

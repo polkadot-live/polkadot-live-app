@@ -1,10 +1,10 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Notification } from 'electron';
 import { Report, Reporter } from '@polkadot-live/types';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { MainDebug } from '@/debugging';
+import { NotificationsController } from '@/controller/NotificationsController';
 
 const debug = MainDebug.extend('LiveReporter');
 
@@ -21,10 +21,7 @@ export class LiveReporter implements Reporter {
       for (const { account, pallet, method } of report.details) {
         if (account !== 'Wildcard') {
           const clipped = account.nickname;
-          new Notification({
-            title: 'New Chain Notification',
-            body: `Account ${clipped} with ${pallet}.${method}.`,
-          }).show();
+          NotificationsController.chainNotification(clipped, pallet, method);
         }
       }
 

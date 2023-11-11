@@ -61,11 +61,12 @@ export class PolkadotCallbacks {
         poolId,
       };
 
-      const { reward: rewardAddress } = getPoolAccounts(poolId);
+      // TODO: Handle non-null assertion
+      const { reward: rewardAddress } = getPoolAccounts(poolId)!;
 
       debug(`💵 Pool ${poolId} reward account is ${rewardAddress}`);
 
-      // add reward acount to delegators with `unclaimed_rewards` callback.
+      // add reward account to delegators with `unclaimed_rewards` callback.
       const newDelegator = {
         address,
         delegate: {

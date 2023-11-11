@@ -1,7 +1,6 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Notification } from 'electron';
 import { Subject } from 'rxjs';
 import { reportAllWindows, reportImportedAccounts } from '@/Utils';
 import { ChainList } from '@/config/chains';
@@ -9,6 +8,7 @@ import { APIs } from '@/controller/APIs';
 import { Accounts } from '@/controller/Accounts';
 import { Discover } from '@/controller/Discover';
 import { Subscriptions } from '@/controller/Subscriptions';
+import { NotificationsController } from '@/controller/NotificationsController';
 import {
   ImportNewAddressArg,
   OrchestratorArg,
@@ -85,10 +85,7 @@ const importNewAddress = async ({
   Subscriptions.addAccountToService(chain, address);
 
   // Show notification.
-  new Notification({
-    title: 'New Account Imported',
-    body: `${name} was imported successfully.`,
-  }).show();
+  NotificationsController.accountImported(name);
 
   // Report account again with chain state.
   reportAllWindows(reportImportedAccounts);
