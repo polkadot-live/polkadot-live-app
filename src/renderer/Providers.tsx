@@ -14,6 +14,7 @@ import { withProviders } from '@app/library/Hooks/withProviders';
 import { useRef, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
 
+// TODO: add new Themes.tsx file and move theming to it.
 export const ThemedRouter: React.FC = () => {
   // check whether system is initially on dark mode.
   const { matches: isDarkMode } = window.matchMedia(

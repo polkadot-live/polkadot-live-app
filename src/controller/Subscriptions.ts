@@ -46,14 +46,14 @@ export class Subscriptions {
       debug('💳 API instance accounts pre discover: %o', accounts.length);
 
       const rawAccounts: RawAccount[] = [];
-      for (const a of accounts) {
+      for (const account of accounts) {
         // Re-discover config from on-chain state.
-        const { chainState, config } = await Discover.start(chain, a);
+        const { chainState, config } = await Discover.start(chain, account);
 
         // Update config for account.
-        a.config = config;
-        a.chainState = chainState;
-        Accounts.set(chain, a);
+        account.config = config;
+        account.chainState = chainState;
+        Accounts.set(chain, account);
 
         debug(
           '🗓️ Bootstrap events for an account with chainState: %o',
@@ -62,8 +62,8 @@ export class Subscriptions {
 
         // Convert `Account` into `RawAccount`.
         rawAccounts.push({
-          address: a.address,
-          nickname: a.name,
+          address: account.address,
+          nickname: account.name,
           config,
         });
       }

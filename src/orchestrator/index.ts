@@ -21,12 +21,15 @@ export const orchestrator = new Subject<OrchestratorArg>();
 orchestrator.subscribe({
   next: ({ task, data = {} }) => {
     switch (task) {
+      // Initialize app: should only be called once when the app is starting up.
       case 'initialize':
         initialize();
         break;
+      // Handle new account import.
       case 'newAddressImported':
         importNewAddress(data);
         break;
+      // Handle remove imported account.
       case 'removeImportedAccount':
         removeImportedAccount(data);
         break;

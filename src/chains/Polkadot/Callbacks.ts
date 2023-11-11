@@ -133,7 +133,6 @@ export class PolkadotCallbacks {
     );
 
     // Dismiss and exit early if pending rewards is zero.
-    // TODO: test and log with LiveReporter when rewards become available again.
     if (pendingRewards.isZero()) {
       Windows.get('menu')?.webContents?.send('reportDismissEvent', {
         who: {

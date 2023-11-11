@@ -29,6 +29,7 @@ export class Discover {
   };
 
   // From chain state, configure subscription config to apply to an account.
+  // TODO: remove this, fall back to what is in the store.
   static getSubscriptionConfig = (chainState: SomeChainState) => {
     debug(`🧑🏻‍🔧 Configuring account config with chain state:`);
     debug('⛓️ %o', chainState);
@@ -58,7 +59,7 @@ export class Discover {
       }
       debug(`💳 Bootstrapping for accounts, chain ${chain || 'all chains'}`);
 
-      // TODO: new `eventsCache` to stop querying every time?. Cache should be updaed in the
+      // TODO: new `eventsCache` to stop querying every time?.
       if (c) ChainState.bootstrap(c);
     };
 

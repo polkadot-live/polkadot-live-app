@@ -24,6 +24,7 @@ export const Home = () => {
   const [section, setSection] = useState<number>(0);
 
   // Listen for changes in chains.
+  // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
     window.myAPI.syncChain((_: Event, name: ChainID) => {
       addChain(name, 'connected');

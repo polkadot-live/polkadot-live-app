@@ -3,7 +3,6 @@ import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { Windows } from './controller/Windows';
-import unhandled from 'electron-unhandled';
 import { AnyJson, DismissEvent } from '@polkadot-live/types';
 import { menubar } from 'menubar';
 import { APIs } from './controller/APIs';
@@ -23,6 +22,7 @@ import {
   reportAllWindows,
   reportImportedAccounts,
 } from './Utils';
+import unhandled from 'electron-unhandled';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -30,6 +30,9 @@ if (require('electron-squirrel-startup')) {
 }
 
 // Enable priviledges.
+//
+// NOTE: These were added for production envrionment. Not a priority to revise, but worth revising
+// before the initial release.
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'http',
@@ -63,6 +66,8 @@ unhandled({
   showDialog: false,
 });
 
+// Start app boostrapping.
+
 // Initialise Electron store.
 export const store = new Store();
 
@@ -72,11 +77,14 @@ orchestrator.next({
 });
 
 // Report dismissed event to renderer.
+// TODO: move to a Utils file.
 const reportDismissEvent = (eventData: DismissEvent) => {
   Windows.get('menu')?.webContents?.send('reportDismissEvent', eventData);
 };
 
 // Initialise menubar window.
+// TODO: move to a Utils  / store helper file.
+// TODO: replace AnyJson with concrete type.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
 export const mb = menubar({
@@ -105,7 +113,9 @@ export const mb = menubar({
 });
 
 // Initialise a window.
+// TODO: replace AnyJson with currently used options.
 const handleOpenWindow = (name: string, options?: AnyJson) => {
+  // Create a call for the window to open.
   ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
     // Ensure menu is hidden.
     mb.hideWindow();
