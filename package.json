@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "main": ".vite/build/main.js",
+  "contributors": [
+    "Ross Bulat<ross@parity.io>",
+    "Dane Bulat<danebulat@gmail.com>"
+  ],
   "scripts": {
     "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
     "debug": "DEBUG=main:* electron-forge start",
