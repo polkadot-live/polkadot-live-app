@@ -61,52 +61,58 @@ export class PolkadotCallbacks {
         poolId,
       };
 
-      // TODO: Handle non-null assertion
-      const { reward: rewardAddress } = getPoolAccounts(poolId)!;
+      const poolAccounts = getPoolAccounts(poolId);
+      const rewardAddress = poolAccounts?.reward;
 
-      debug(`💵 Pool ${poolId} reward account is ${rewardAddress}`);
+      // If the API instance is not yet initialised, reward address will be undefined. We therefore
+      // need to check here.
+      if (rewardAddress) {
+        debug(`💵 Pool ${poolId} reward account is ${rewardAddress}`);
 
-      // add reward account to delegators with `unclaimed_rewards` callback.
-      const newDelegator = {
-        address,
-        delegate: {
-          address: rewardAddress,
-          match: {
-            pallet: 'balances',
-            method: 'transfer',
-          },
-          callback: 'unclaimed_rewards',
-        },
-      };
-
-      if (!Accounts.delegators.find((d) => d === newDelegator)) {
-        Accounts.delegators.push(newDelegator);
-      }
-
-      // add reward account to the corresponding chain's accounts list, with `balances:transfer`
-      // config, if it has not been already.
-      if (
-        !Accounts.getAll()[this.chain].find((a) => a.address === rewardAddress)
-      ) {
-        const delegate = new Account(
-          this.chain,
-          AccountType.Delegate,
-          'system',
-          rewardAddress,
-          'Reward Account'
-        );
-        delegate.config = {
-          type: 'only',
-          only: [
-            {
+        // add reward account to delegators with `unclaimed_rewards` callback.
+        const newDelegator = {
+          address,
+          delegate: {
+            address: rewardAddress,
+            match: {
               pallet: 'balances',
               method: 'transfer',
             },
-          ],
+            callback: 'unclaimed_rewards',
+          },
         };
 
-        const newAccounts = Accounts.pushAccount(this.chain, delegate);
-        Accounts.setAccounts(newAccounts);
+        if (!Accounts.delegators.find((d) => d === newDelegator)) {
+          Accounts.delegators.push(newDelegator);
+        }
+
+        // add reward account to the corresponding chain's accounts list, with `balances:transfer`
+        // config, if it has not been already.
+        if (
+          !Accounts.getAll()[this.chain].find(
+            (a) => a.address === rewardAddress
+          )
+        ) {
+          const delegate = new Account(
+            this.chain,
+            AccountType.Delegate,
+            'system',
+            rewardAddress,
+            'Reward Account'
+          );
+          delegate.config = {
+            type: 'only',
+            only: [
+              {
+                pallet: 'balances',
+                method: 'transfer',
+              },
+            ],
+          };
+
+          const newAccounts = Accounts.pushAccount(this.chain, delegate);
+          Accounts.setAccounts(newAccounts);
+        }
       }
     }
     return chainState;
