@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { All, AnyJson, MethodSubscription } from '@polkadot-live/types';
-import { ChainID, SomeChainState } from '@polkadot-live/types/chains';
+import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { APIs } from './APIs';
@@ -23,25 +23,13 @@ export class Discover {
     const chainState = await ChainState.get(chain, address);
 
     // Calculate config from account's chain state.
-    const config = Discover.getSubscriptionConfig(chainState);
-
-    return { chainState, config };
-  };
-
-  // From chain state, configure subscription config to apply to an account.
-  // TODO: remove this, fall back to what is in the store.
-  static getSubscriptionConfig = (chainState: SomeChainState) => {
-    debug(`🧑🏻‍🔧 Configuring account config with chain state:`);
-    debug('⛓️ %o', chainState);
-
-    if (chainState.inNominationPool) {
-      debug(`🏖️ This account is in a nomination pool! add events to config...`);
-    }
-
-    // Return `all` for now.
-    return {
+    //
+    // TODO: fetch from store. No store item should mean that all events are subscribed to.
+    const config = {
       type: 'all',
     } as All;
+
+    return { chainState, config };
   };
 
   /**
