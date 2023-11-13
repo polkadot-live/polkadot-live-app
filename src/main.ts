@@ -12,7 +12,7 @@ import {
   unregisterAll as unregisterAllLocalShortcut,
 } from 'electron-localshortcut';
 import { ChainID } from '@polkadot-live/types/chains';
-import { Extrinsic } from './controller/Extrinsic';
+import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import { Discover } from './controller/Discover';
 import AutoLaunch from 'auto-launch';
 import {
@@ -296,18 +296,18 @@ mb.on('ready', () => {
 
   // Initiate a transaction.
   ipcMain.on('requestInitTx', (_, chain, from, nonce, pallet, method, args) => {
-    Extrinsic.new(chain, from, nonce, pallet, method, args);
+    ExtrinsicsController.new(chain, from, nonce, pallet, method, args);
   });
 
   // Reset transaction.
   ipcMain.on('requestResetTx', () => {
-    Extrinsic.reset();
+    ExtrinsicsController.reset();
   });
 
   // Submit Vault transaction
   ipcMain.on('reportSignedVaultTx', (_, signature) => {
-    Extrinsic.setSignature(signature);
-    Extrinsic.submit();
+    ExtrinsicsController.setSignature(signature);
+    ExtrinsicsController.submit();
   });
 
   //Request dismiss event

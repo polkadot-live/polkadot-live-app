@@ -13,7 +13,8 @@ import { WindowsController } from './WindowsController';
 
 const debug = MainDebug.extend('Extrinsic');
 
-export class Extrinsic {
+// TODO: Create an Extrinsic model and instantiate when constructing a transaction.
+export class ExtrinsicsController {
   static chain: ChainID | null = null;
 
   static tx: AnyJson | null = null;
