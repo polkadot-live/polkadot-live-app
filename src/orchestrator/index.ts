@@ -7,7 +7,7 @@ import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
-import { Subscriptions } from '@/controller/Subscriptions';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import {
   ImportNewAddressArg,
@@ -51,7 +51,7 @@ const initialize = async () => {
   await APIsController.initialize();
 
   // Initialize discovery of subscriptions for saved accounts.
-  Subscriptions.initialize();
+  SubscriptionsController.initialize();
 };
 
 /**
@@ -85,7 +85,7 @@ const importNewAddress = async ({
   AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
-  Subscriptions.addAccountToService(chain, address);
+  SubscriptionsController.addAccountToService(chain, address);
 
   // Show notification.
   NotificationsController.accountImported(name);
@@ -106,7 +106,7 @@ const removeImportedAccount = ({
   AccountsController.remove(chain, address);
 
   // Remove config from `Subscriptions`.
-  Subscriptions.removeAccountFromService(chain, address);
+  SubscriptionsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

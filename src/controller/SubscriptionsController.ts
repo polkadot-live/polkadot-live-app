@@ -27,7 +27,7 @@ type Service = { chain: ChainID; instance: BlockStream };
  * @class
  * @property {Service[]} services - list of active BlockStream services.
  */
-export class Subscriptions {
+export class SubscriptionsController {
   static services: Service[] = [];
 
   /**
