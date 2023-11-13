@@ -5,7 +5,7 @@ import { rmCommas } from '@polkadot-cloud/utils';
 import { AnyFunction, AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { ChainID } from '@polkadot-live/types/chains';
-import { APIs } from '@/controller/APIs';
+import { APIsController } from '@/controller/APIsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';
 
@@ -95,7 +95,7 @@ export class PolkadotState {
 
   async subscribe() {
     debug('📩 Subscribe to account %o ', this.address);
-    const apiInstance = APIs.get(this.chain);
+    const apiInstance = APIsController.get(this.chain);
 
     if (this.subscribed || !apiInstance) {
       return;

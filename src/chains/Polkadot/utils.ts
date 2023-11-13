@@ -4,7 +4,7 @@
 import { bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
 import { BN } from 'bn.js';
-import { APIs } from '@/controller/APIs';
+import { APIsController } from '@/controller/APIsController';
 
 /**
  * @name getPoolAccounts
@@ -12,7 +12,7 @@ import { APIs } from '@/controller/APIs';
  * @param {number} poolId - id of the pool.
  */
 export const getPoolAccounts = (poolId: number) => {
-  const apiInstance = APIs.get('Polkadot');
+  const apiInstance = APIsController.get('Polkadot');
 
   if (!apiInstance) return;
 

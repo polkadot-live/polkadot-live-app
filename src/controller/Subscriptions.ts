@@ -11,7 +11,7 @@ import {
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { LiveReporter } from '@/model/LiveReporter';
-import { APIs } from './APIs';
+import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
 import { BlockStream } from './BlockStream';
 import { Discover } from './Discover';
@@ -38,7 +38,7 @@ export class Subscriptions {
     debug('🕕 Initializing subscriptions');
 
     // Instantiate `BlockStream` services from initial chains and account configs.
-    APIs.instances.forEach(async ({ chain, api }) => {
+    APIsController.instances.forEach(async ({ chain, api }) => {
       debug('🔴 Using instance %o', chain);
 
       // Get accounts for `chain` and instantiate service.
@@ -120,7 +120,9 @@ export class Subscriptions {
       });
     } else {
       // get api instance and start service.
-      const apiInstance = APIs.instances.find((i) => i.chain === chain);
+      const apiInstance = APIsController.instances.find(
+        (i) => i.chain === chain
+      );
 
       if (apiInstance) {
         const rawAccount = {

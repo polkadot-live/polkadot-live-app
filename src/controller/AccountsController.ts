@@ -16,7 +16,7 @@ import {
 import { store } from '@/main';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { APIs } from './APIs';
+import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
 import { ChainID } from '@polkadot-live/types/chains';
 
@@ -192,7 +192,7 @@ export class AccountsController {
 
       // Remove chain if no more accounts exist.
       if (!this.accounts[chain]?.length) {
-        APIs.close(chain);
+        APIsController.close(chain);
 
         // Report to active windows that chain has been removed.
         WindowsController.active.forEach(({ id }: AnyJson) => {

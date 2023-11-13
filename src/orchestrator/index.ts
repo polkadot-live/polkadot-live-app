@@ -4,7 +4,7 @@
 import { Subject } from 'rxjs';
 import { reportAllWindows, reportImportedAccounts } from '@/Utils';
 import { ChainList } from '@/config/chains';
-import { APIs } from '@/controller/APIs';
+import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
 import { Subscriptions } from '@/controller/Subscriptions';
@@ -48,7 +48,7 @@ const initialize = async () => {
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  await APIs.initialize();
+  await APIsController.initialize();
 
   // Initialize discovery of subscriptions for saved accounts.
   Subscriptions.initialize();
@@ -74,8 +74,8 @@ const importNewAddress = async ({
   reportAllWindows(reportImportedAccounts);
 
   // Add chain instance if it does not already exist.
-  if (!APIs.chainExists(chain)) {
-    await APIs.new(ChainList[chain].endpoints.rpc);
+  if (!APIsController.chainExists(chain)) {
+    await APIsController.new(ChainList[chain].endpoints.rpc);
   }
 
   // Trigger Discovery and generate config.

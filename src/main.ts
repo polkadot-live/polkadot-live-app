@@ -5,7 +5,7 @@ import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
 import { AnyJson, DismissEvent } from '@polkadot-live/types';
 import { menubar } from 'menubar';
-import { APIs } from './controller/APIs';
+import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import {
   register as registerLocalShortcut,
@@ -259,7 +259,7 @@ mb.on('ready', () => {
 
   // Handles the closing of a chain.
   ipcMain.on('chain:remove', (_, chain) => {
-    APIs.close(chain);
+    APIsController.close(chain);
   });
 
   // Execute communication with a Ledger device.

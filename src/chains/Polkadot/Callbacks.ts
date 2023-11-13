@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { ChainID } from '@polkadot-live/types/chains';
-import { APIs } from '@/controller/APIs';
+import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
@@ -41,7 +41,7 @@ export class PolkadotCallbacks {
   }
 
   static getChainState = async (address: string) => {
-    const apiInstance = APIs.get(this.chain);
+    const apiInstance = APIsController.get(this.chain);
 
     const chainState = this.defaultChainState;
 
@@ -131,7 +131,9 @@ export class PolkadotCallbacks {
   static unclaimedPoolRewards = async (address: string) => {
     debug(`💸 Checking for unclaimed pool rewards...`);
     const { api } =
-      APIs.instances.find((instance) => instance.chain === this.chain) || {};
+      APIsController.instances.find(
+        (instance) => instance.chain === this.chain
+      ) || {};
     if (!api) return;
 
     const result = await api.call.nominationPoolsApi.pendingRewards(address);

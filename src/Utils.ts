@@ -3,7 +3,7 @@
 
 import { AccountType, AnyFunction, AnyJson } from '@polkadot-live/types';
 import { WindowsController } from './controller/WindowsController';
-import { APIs } from './controller/APIs';
+import { APIsController } from './controller/APIsController';
 import { mb, store } from './main';
 import { BrowserWindow } from 'electron';
 import { AccountsController } from './controller/AccountsController';
@@ -68,7 +68,7 @@ export const reportAllWindows = (callback: AnyFunction) => {
 
 // Report active chains to renderer.
 export const reportActiveInstances = (id: string) => {
-  for (const { chain } of APIs.instances) {
+  for (const { chain } of APIsController.instances) {
     WindowsController.get(id)?.webContents?.send('syncChain', chain);
   }
 };

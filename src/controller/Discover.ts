@@ -5,7 +5,7 @@ import { All, AnyJson, MethodSubscription } from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { APIs } from './APIs';
+import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
 import { ChainState } from './ChainState';
 
@@ -39,7 +39,7 @@ export class Discover {
    */
   static bootstrapEvents = (chain?: ChainID) => {
     const handleBootstrap = (c: ChainID) => {
-      if (c && !APIs.get(c)?.api.isReady) {
+      if (c && !APIsController.get(c)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is
         // connected and `isReady`.
         debug(`❗️ Api for ${c} not ready, skipping bootstrap`);

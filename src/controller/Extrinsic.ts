@@ -8,7 +8,7 @@ import { NotificationsController } from './NotificationsController';
 import { ChainID } from '@polkadot-live/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/debugging';
-import { APIs } from './APIs';
+import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
 
 const debug = MainDebug.extend('Extrinsic');
@@ -38,7 +38,7 @@ export class Extrinsic {
     args: AnyJson[]
   ) => {
     try {
-      const { api } = APIs.get(chain) || {};
+      const { api } = APIsController.get(chain) || {};
       if (!api) return;
 
       debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
@@ -82,7 +82,7 @@ export class Extrinsic {
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = APIs.get(chain) || {};
+    const { api } = APIsController.get(chain) || {};
 
     if (!api || !this.tx) {
       return;

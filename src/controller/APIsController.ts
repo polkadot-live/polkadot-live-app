@@ -19,7 +19,7 @@ const debug = MainDebug.extend('APIs');
  * @class
  * @property {API} instances - a list of the active chain instances.
  */
-export class APIs {
+export class APIsController {
   static instances: API[] = [];
 
   /**
@@ -44,7 +44,7 @@ export class APIs {
    * @param {ChainID} chain - the chain ID.
    */
   static chainExists = (chain: ChainID) => {
-    return !!APIs.instances.find((a) => a.chain === chain);
+    return !!APIsController.instances.find((a) => a.chain === chain);
   };
 
   /**
