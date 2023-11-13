@@ -8,12 +8,13 @@ import { NotificationsController } from './NotificationsController';
 import { ChainID } from '@polkadot-live/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/debugging';
-import { APIs } from './APIs';
-import { Windows } from './Windows';
+import { APIsController } from './APIsController';
+import { WindowsController } from './WindowsController';
 
 const debug = MainDebug.extend('Extrinsic');
 
-export class Extrinsic {
+// TODO: Create an Extrinsic model and instantiate when constructing a transaction.
+export class ExtrinsicsController {
   static chain: ChainID | null = null;
 
   static tx: AnyJson | null = null;
@@ -38,7 +39,7 @@ export class Extrinsic {
     args: AnyJson[]
   ) => {
     try {
-      const { api } = APIs.get(chain) || {};
+      const { api } = APIsController.get(chain) || {};
       if (!api) return;
 
       debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
@@ -63,7 +64,7 @@ export class Extrinsic {
       await this.buildPayload(chain, from, accountNonce);
 
       // Report Tx to Action UI.
-      Windows.get('action')?.webContents?.send('reportTx', {
+      WindowsController.get('action')?.webContents?.send('reportTx', {
         estimatedFee: estimatedFee.toString(),
         txId: this.txId,
         payload: this.payload.toU8a(),
@@ -82,7 +83,7 @@ export class Extrinsic {
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = APIs.get(chain) || {};
+    const { api } = APIsController.get(chain) || {};
 
     if (!api || !this.tx) {
       return;
@@ -163,7 +164,7 @@ export class Extrinsic {
             NotificationsController.transactionStatus('in-block');
 
             // Report Tx Status to Action UI.
-            Windows.get('action')?.webContents?.send(
+            WindowsController.get('action')?.webContents?.send(
               'reportTxStatus',
               'in_block'
             );
@@ -172,7 +173,7 @@ export class Extrinsic {
             NotificationsController.transactionStatus('finalized');
 
             // Report Tx Status to Action UI.
-            Windows.get('action')?.webContents?.send(
+            WindowsController.get('action')?.webContents?.send(
               'reportTxStatus',
               'finalized'
             );
@@ -183,10 +184,16 @@ export class Extrinsic {
         NotificationsController.transactionSubmitted();
 
         // Report Tx Status to Action UI.
-        Windows.get('action')?.webContents?.send('reportTxStatus', 'submitted');
+        WindowsController.get('action')?.webContents?.send(
+          'reportTxStatus',
+          'submitted'
+        );
         this.reset();
       } catch (e) {
-        Windows.get('action')?.webContents?.send('reportTxStatus', 'error');
+        WindowsController.get('action')?.webContents?.send(
+          'reportTxStatus',
+          'error'
+        );
         console.log(e);
         // Handle error.
       }

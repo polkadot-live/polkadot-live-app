@@ -5,7 +5,7 @@ import { ChainID } from '@polkadot-live/types/chains';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { PolkadotState } from '@/chains/Polkadot/State';
 
-export class ChainState {
+export class ChainsController {
   static new(chain: ChainID, address: string) {
     switch (chain) {
       default:
@@ -13,7 +13,7 @@ export class ChainState {
     }
   }
 
-  static async get(chain: ChainID, address: string) {
+  static async getChainState(chain: ChainID, address: string) {
     switch (chain) {
       default:
         return PolkadotCallbacks.getChainState(address);

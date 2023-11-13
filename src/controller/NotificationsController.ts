@@ -1,7 +1,7 @@
 import { Notification } from 'electron';
 
 /**
- * A static class to manage Electron nofications.
+ * A static class to manage Electron notifications.
  * @class
  */
 export class NotificationsController {

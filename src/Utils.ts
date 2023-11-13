@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountType, AnyFunction, AnyJson } from '@polkadot-live/types';
-import { Windows } from './controller/Windows';
-import { APIs } from './controller/APIs';
+import { WindowsController } from './controller/WindowsController';
+import { APIsController } from './controller/APIsController';
 import { mb, store } from './main';
 import { BrowserWindow } from 'electron';
-import { Accounts } from './controller/Accounts';
+import { AccountsController } from './controller/AccountsController';
 import { MainDebug as debug } from './debugging';
 
 // Initalize store items.
@@ -18,12 +18,12 @@ export const initializeState = (id: string) => {
 
 // Report connected account state.
 export const reportAccountsState = (id: string) => {
-  Object.values(Accounts.accounts).forEach((chainAccounts) => {
+  Object.values(AccountsController.accounts).forEach((chainAccounts) => {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
         Object.entries(state.getAllState()).forEach(([key, value]) => {
           debug('🏦 Reporting account state %o', key, value);
-          Windows.get(id)?.webContents?.send(
+          WindowsController.get(id)?.webContents?.send(
             'reportAccountState',
             chain,
             address,
@@ -38,9 +38,9 @@ export const reportAccountsState = (id: string) => {
 
 // Report imported accounts to renderer.
 export const reportImportedAccounts = (id: string) => {
-  Windows.get(id)?.webContents?.send(
+  WindowsController.get(id)?.webContents?.send(
     'reportImportedAccounts',
-    Accounts.getAll()
+    AccountsController.getAll()
   );
 };
 
@@ -61,14 +61,14 @@ export const moveToMenuBounds = () => {
 
 // Call a function for all windows.
 export const reportAllWindows = (callback: AnyFunction) => {
-  for (const { id } of Windows?.active || []) {
+  for (const { id } of WindowsController?.active || []) {
     callback(id);
   }
 };
 
 // Report active chains to renderer.
 export const reportActiveInstances = (id: string) => {
-  for (const { chain } of APIs.instances) {
-    Windows.get(id)?.webContents?.send('syncChain', chain);
+  for (const { chain } of APIsController.instances) {
+    WindowsController.get(id)?.webContents?.send('syncChain', chain);
   }
 };

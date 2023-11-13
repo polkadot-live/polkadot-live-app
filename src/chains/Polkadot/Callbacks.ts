@@ -7,9 +7,9 @@ import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { ChainID } from '@polkadot-live/types/chains';
-import { APIs } from '@/controller/APIs';
-import { Accounts } from '@/controller/Accounts';
-import { Windows } from '@/controller/Windows';
+import { APIsController } from '@/controller/APIsController';
+import { AccountsController } from '@/controller/AccountsController';
+import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { PolkadotAccountState } from '@polkadot-live/types/chains/polkadot';
@@ -27,7 +27,9 @@ export class PolkadotCallbacks {
   };
 
   static async bootstrap() {
-    for (const { type, address, chainState } of Accounts.accounts[this.chain]) {
+    for (const { type, address, chainState } of AccountsController.accounts[
+      this.chain
+    ]) {
       // Delegates are not needed to bootstrap cached chain state.
       if (type === AccountType.Delegate) {
         continue;
@@ -39,7 +41,7 @@ export class PolkadotCallbacks {
   }
 
   static getChainState = async (address: string) => {
-    const apiInstance = APIs.get(this.chain);
+    const apiInstance = APIsController.get(this.chain);
 
     const chainState = this.defaultChainState;
 
@@ -82,14 +84,14 @@ export class PolkadotCallbacks {
           },
         };
 
-        if (!Accounts.delegators.find((d) => d === newDelegator)) {
-          Accounts.delegators.push(newDelegator);
+        if (!AccountsController.delegators.find((d) => d === newDelegator)) {
+          AccountsController.delegators.push(newDelegator);
         }
 
         // add reward account to the corresponding chain's accounts list, with `balances:transfer`
         // config, if it has not been already.
         if (
-          !Accounts.getAll()[this.chain].find(
+          !AccountsController.getAll()[this.chain].find(
             (a) => a.address === rewardAddress
           )
         ) {
@@ -110,8 +112,11 @@ export class PolkadotCallbacks {
             ],
           };
 
-          const newAccounts = Accounts.pushAccount(this.chain, delegate);
-          Accounts.setAccounts(newAccounts);
+          const newAccounts = AccountsController.pushAccount(
+            this.chain,
+            delegate
+          );
+          AccountsController.setAccounts(newAccounts);
         }
       }
     }
@@ -126,7 +131,9 @@ export class PolkadotCallbacks {
   static unclaimedPoolRewards = async (address: string) => {
     debug(`💸 Checking for unclaimed pool rewards...`);
     const { api } =
-      APIs.instances.find((instance) => instance.chain === this.chain) || {};
+      APIsController.instances.find(
+        (instance) => instance.chain === this.chain
+      ) || {};
     if (!api) return;
 
     const result = await api.call.nominationPoolsApi.pendingRewards(address);
@@ -140,7 +147,7 @@ export class PolkadotCallbacks {
 
     // Dismiss and exit early if pending rewards is zero.
     if (pendingRewards.isZero()) {
-      Windows.get('menu')?.webContents?.send('reportDismissEvent', {
+      WindowsController.get('menu')?.webContents?.send('reportDismissEvent', {
         who: {
           chain: this.chain,
           address,
@@ -180,6 +187,9 @@ export class PolkadotCallbacks {
       ],
     };
 
-    Windows.get('menu')?.webContents?.send('reportNewEvent', newEvent);
+    WindowsController.get('menu')?.webContents?.send(
+      'reportNewEvent',
+      newEvent
+    );
   };
 }

@@ -5,9 +5,9 @@ import { ApiPromise } from '@polkadot/api';
 import { store } from '@/main';
 import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
-import { Accounts } from './Accounts';
+import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
-import { Windows } from './Windows';
+import { WindowsController } from './WindowsController';
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { AnyData } from '@polkadot-live/types';
@@ -19,7 +19,7 @@ const debug = MainDebug.extend('APIs');
  * @class
  * @property {API} instances - a list of the active chain instances.
  */
-export class APIs {
+export class APIsController {
   static instances: API[] = [];
 
   /**
@@ -44,7 +44,7 @@ export class APIs {
    * @param {ChainID} chain - the chain ID.
    */
   static chainExists = (chain: ChainID) => {
-    return !!APIs.instances.find((a) => a.chain === chain);
+    return !!APIsController.instances.find((a) => a.chain === chain);
   };
 
   /**
@@ -87,10 +87,10 @@ export class APIs {
     Discover.bootstrapEvents(chainId);
 
     // Report to app that chain has been added.
-    Windows.reportAll(chainId, 'chainAdded');
+    WindowsController.reportAll(chainId, 'chainAdded');
 
     // Subscribe to existing chain accounts state.
-    Accounts.accounts[chain]?.forEach((account) => {
+    AccountsController.accounts[chain]?.forEach((account) => {
       account.state.subscribe();
     });
 
@@ -111,7 +111,7 @@ export class APIs {
     if (instance) {
       await instance.disconnect();
       this.instances = this.instances.filter((i) => i !== instance);
-      Windows.reportAll(chain, 'chainRemoved');
+      WindowsController.reportAll(chain, 'chainRemoved');
       return;
     }
   };
@@ -142,7 +142,7 @@ export class APIs {
    */
   static reportAllConnections = () => {
     for (const { chain } of this.instances) {
-      Windows.reportAll(chain, 'syncChain');
+      WindowsController.reportAll(chain, 'syncChain');
     }
   };
 }

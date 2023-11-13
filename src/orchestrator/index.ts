@@ -4,10 +4,10 @@
 import { Subject } from 'rxjs';
 import { reportAllWindows, reportImportedAccounts } from '@/Utils';
 import { ChainList } from '@/config/chains';
-import { APIs } from '@/controller/APIs';
-import { Accounts } from '@/controller/Accounts';
+import { APIsController } from '@/controller/APIsController';
+import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
-import { Subscriptions } from '@/controller/Subscriptions';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import {
   ImportNewAddressArg,
@@ -45,13 +45,13 @@ orchestrator.subscribe({
  */
 const initialize = async () => {
   // Initialize `Accounts` from persisted state.
-  Accounts.initialize();
+  AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  await APIs.initialize();
+  await APIsController.initialize();
 
   // Initialize discovery of subscriptions for saved accounts.
-  Subscriptions.initialize();
+  SubscriptionsController.initialize();
 };
 
 /**
@@ -65,7 +65,7 @@ const importNewAddress = async ({
   name,
 }: ImportNewAddressArg) => {
   // Add address to `Accounts` and give immediate feedback to app.
-  const account = Accounts.add(chain, source, address, name);
+  const account = AccountsController.add(chain, source, address, name);
 
   // If account was unsuccessfully added, exit early.
   if (!account) return;
@@ -74,18 +74,18 @@ const importNewAddress = async ({
   reportAllWindows(reportImportedAccounts);
 
   // Add chain instance if it does not already exist.
-  if (!APIs.chainExists(chain)) {
-    await APIs.new(ChainList[chain].endpoints.rpc);
+  if (!APIsController.chainExists(chain)) {
+    await APIsController.new(ChainList[chain].endpoints.rpc);
   }
 
   // Trigger Discovery and generate config.
   const config = await Discover.start(chain, account);
 
   // Update account's config and chain state.
-  Accounts.setAccountConfig(config, account);
+  AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
-  Subscriptions.addAccountToService(chain, address);
+  SubscriptionsController.addAccountToService(chain, address);
 
   // Show notification.
   NotificationsController.accountImported(name);
@@ -103,10 +103,10 @@ const removeImportedAccount = ({
   address,
 }: RemoveImportedAccountArg) => {
   // Remove address from store.
-  Accounts.remove(chain, address);
+  AccountsController.remove(chain, address);
 
   // Remove config from `Subscriptions`.
-  Subscriptions.removeAccountFromService(chain, address);
+  SubscriptionsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

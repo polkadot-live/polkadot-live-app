@@ -2,17 +2,17 @@ import 'websocket-polyfill';
 import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
 import path from 'path';
 import Store from 'electron-store';
-import { Windows } from './controller/Windows';
+import { WindowsController } from './controller/WindowsController';
 import { AnyJson, DismissEvent } from '@polkadot-live/types';
 import { menubar } from 'menubar';
-import { APIs } from './controller/APIs';
+import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
 } from 'electron-localshortcut';
 import { ChainID } from '@polkadot-live/types/chains';
-import { Extrinsic } from './controller/Extrinsic';
+import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import { Discover } from './controller/Discover';
 import AutoLaunch from 'auto-launch';
 import {
@@ -79,7 +79,10 @@ orchestrator.next({
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.
 const reportDismissEvent = (eventData: DismissEvent) => {
-  Windows.get('menu')?.webContents?.send('reportDismissEvent', eventData);
+  WindowsController.get('menu')?.webContents?.send(
+    'reportDismissEvent',
+    eventData
+  );
 };
 
 // Initialise menubar window.
@@ -121,8 +124,8 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
     mb.hideWindow();
 
     // Either creates a window or focuses an existing one.
-    if (Windows.get(name)) {
-      Windows.get(name).show();
+    if (WindowsController.get(name)) {
+      WindowsController.get(name).show();
     } else {
       // Handle window.
       const w = new BrowserWindow({
@@ -154,10 +157,14 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
       );
       w.show();
 
-      Windows.add(w, name);
+      WindowsController.add(w, name);
 
-      registerLocalShortcut(w, 'CmdOrCtrl+Q', () => Windows.close(name));
-      registerLocalShortcut(w, 'CmdOrCtrl+W', () => Windows.close(name));
+      registerLocalShortcut(w, 'CmdOrCtrl+Q', () =>
+        WindowsController.close(name)
+      );
+      registerLocalShortcut(w, 'CmdOrCtrl+W', () =>
+        WindowsController.close(name)
+      );
 
       // populate items from store and report.
       w.on('ready-to-show', () => {
@@ -165,16 +172,16 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
       });
 
       w.on('focus', () => {
-        Windows.focus(name);
+        WindowsController.focus(name);
       });
       w.on('blur', () => {
-        Windows.blur(name);
+        WindowsController.blur(name);
       });
       w.on('close', () => {
         unregisterAllLocalShortcut(w);
       });
       w.on('closed', () => {
-        Windows.remove(name);
+        WindowsController.remove(name);
       });
     }
   });
@@ -190,8 +197,8 @@ mb.on('ready', () => {
   });
 
   mb.on('show', () => {
-    Windows.add(mb.window, 'menu');
-    Windows.focus('menu');
+    WindowsController.add(mb.window, 'menu');
+    WindowsController.focus('menu');
 
     // Populate items from store.
     initializeState('menu');
@@ -215,7 +222,7 @@ mb.on('ready', () => {
   });
 
   mb.on('focus-lost', () => {
-    Windows.blur('menu');
+    WindowsController.blur('menu');
   });
 
   // Handle Ledger account import.
@@ -239,12 +246,12 @@ mb.on('ready', () => {
 
   // Hides a window by its key.
   ipcMain.on('hideWindow', (_, id) => {
-    Windows.hideAndBlur(id);
+    WindowsController.hideAndBlur(id);
   });
 
   // Closes a window by its key.
   ipcMain.on('closeWindow', (_, id) => {
-    Windows.close(id);
+    WindowsController.close(id);
     mb?.window?.removeListener('will-move', () => {
       if (mb?.window) handleMenuBounds(mb.window);
     });
@@ -252,7 +259,7 @@ mb.on('ready', () => {
 
   // Handles the closing of a chain.
   ipcMain.on('chain:remove', (_, chain) => {
-    APIs.close(chain);
+    APIsController.close(chain);
   });
 
   // Execute communication with a Ledger device.
@@ -289,18 +296,18 @@ mb.on('ready', () => {
 
   // Initiate a transaction.
   ipcMain.on('requestInitTx', (_, chain, from, nonce, pallet, method, args) => {
-    Extrinsic.new(chain, from, nonce, pallet, method, args);
+    ExtrinsicsController.new(chain, from, nonce, pallet, method, args);
   });
 
   // Reset transaction.
   ipcMain.on('requestResetTx', () => {
-    Extrinsic.reset();
+    ExtrinsicsController.reset();
   });
 
   // Submit Vault transaction
   ipcMain.on('reportSignedVaultTx', (_, signature) => {
-    Extrinsic.setSignature(signature);
-    Extrinsic.submit();
+    ExtrinsicsController.setSignature(signature);
+    ExtrinsicsController.submit();
   });
 
   //Request dismiss event

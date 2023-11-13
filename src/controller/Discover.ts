@@ -5,9 +5,9 @@ import { All, AnyJson, MethodSubscription } from '@polkadot-live/types';
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { APIs } from './APIs';
-import { Accounts } from './Accounts';
-import { ChainState } from './ChainState';
+import { APIsController } from './APIsController';
+import { AccountsController } from './AccountsController';
+import { ChainsController } from './ChainsController';
 
 const debug = MainDebug.extend('Discover');
 
@@ -20,7 +20,7 @@ export class Discover {
     const { address } = account;
 
     // Discover on-chain state for account.
-    const chainState = await ChainState.get(chain, address);
+    const chainState = await ChainsController.getChainState(chain, address);
 
     // Calculate config from account's chain state.
     //
@@ -39,7 +39,7 @@ export class Discover {
    */
   static bootstrapEvents = (chain?: ChainID) => {
     const handleBootstrap = (c: ChainID) => {
-      if (c && !APIs.get(c)?.api.isReady) {
+      if (c && !APIsController.get(c)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is
         // connected and `isReady`.
         debug(`❗️ Api for ${c} not ready, skipping bootstrap`);
@@ -48,11 +48,11 @@ export class Discover {
       debug(`💳 Bootstrapping for accounts, chain ${chain || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?.
-      if (c) ChainState.bootstrap(c);
+      if (c) ChainsController.bootstrap(c);
     };
 
     if (!chain) {
-      for (const c of Object.keys(Accounts.accounts))
+      for (const c of Object.keys(AccountsController.accounts))
         handleBootstrap(c as ChainID);
     } else handleBootstrap(chain);
   };
