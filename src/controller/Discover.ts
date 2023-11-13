@@ -7,7 +7,7 @@ import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
-import { ChainState } from './ChainState';
+import { ChainsController } from './ChainsController';
 
 const debug = MainDebug.extend('Discover');
 
@@ -20,7 +20,7 @@ export class Discover {
     const { address } = account;
 
     // Discover on-chain state for account.
-    const chainState = await ChainState.get(chain, address);
+    const chainState = await ChainsController.getChainState(chain, address);
 
     // Calculate config from account's chain state.
     //
@@ -48,7 +48,7 @@ export class Discover {
       debug(`💳 Bootstrapping for accounts, chain ${chain || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?.
-      if (c) ChainState.bootstrap(c);
+      if (c) ChainsController.bootstrap(c);
     };
 
     if (!chain) {

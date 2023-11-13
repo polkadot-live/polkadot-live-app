@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AnyJson, AccountSource, AccountType } from '@polkadot-live/types';
-import { ChainState } from '@/controller/ChainState';
+import { ChainsController } from '@/controller/ChainsController';
 import { ChainID } from '@polkadot-live/types/chains';
 
 /**
@@ -47,7 +47,7 @@ export class Account {
     this.name = name;
 
     if (type === AccountType.User) {
-      this.state = ChainState.new(chain, address);
+      this.state = ChainsController.new(chain, address);
     }
   }
 
