@@ -8,7 +8,7 @@ import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { ChainID } from '@polkadot-live/types/chains';
 import { APIs } from '@/controller/APIs';
-import { Accounts } from '@/controller/Accounts';
+import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
@@ -27,7 +27,9 @@ export class PolkadotCallbacks {
   };
 
   static async bootstrap() {
-    for (const { type, address, chainState } of Accounts.accounts[this.chain]) {
+    for (const { type, address, chainState } of AccountsController.accounts[
+      this.chain
+    ]) {
       // Delegates are not needed to bootstrap cached chain state.
       if (type === AccountType.Delegate) {
         continue;
@@ -82,14 +84,14 @@ export class PolkadotCallbacks {
           },
         };
 
-        if (!Accounts.delegators.find((d) => d === newDelegator)) {
-          Accounts.delegators.push(newDelegator);
+        if (!AccountsController.delegators.find((d) => d === newDelegator)) {
+          AccountsController.delegators.push(newDelegator);
         }
 
         // add reward account to the corresponding chain's accounts list, with `balances:transfer`
         // config, if it has not been already.
         if (
-          !Accounts.getAll()[this.chain].find(
+          !AccountsController.getAll()[this.chain].find(
             (a) => a.address === rewardAddress
           )
         ) {
@@ -110,8 +112,11 @@ export class PolkadotCallbacks {
             ],
           };
 
-          const newAccounts = Accounts.pushAccount(this.chain, delegate);
-          Accounts.setAccounts(newAccounts);
+          const newAccounts = AccountsController.pushAccount(
+            this.chain,
+            delegate
+          );
+          AccountsController.setAccounts(newAccounts);
         }
       }
     }

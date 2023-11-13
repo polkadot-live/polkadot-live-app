@@ -26,7 +26,7 @@ import {
   matchExtrinsicToAccount,
   subscriptionFilter,
 } from '../model/Match';
-import { Accounts } from './Accounts';
+import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
 
 const MAX_SKIPPED_BLOCKS = 5;
@@ -239,7 +239,7 @@ export class BlockStream {
           report.details.push(reportInput);
 
           // determine delegators & prepare report with delegator events.
-          report.delegators = Accounts.getDelegatorsOfAddress(
+          report.delegators = AccountsController.getDelegatorsOfAddress(
             account.address.toString(),
             { pallet, method }
           );

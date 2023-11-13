@@ -29,7 +29,7 @@ const debug = MainDebug.extend('Accounts');
  * @property {SubscriptionDelegate[]} delegators - list of delegators, their delegate and the event
  * they are listening to.
  */
-export class Accounts {
+export class AccountsController {
   static accounts: ImportedAccounts;
 
   static delegators: SubscriptionDelegate[] = [];
@@ -171,7 +171,7 @@ export class Accounts {
         );
 
         // Update delegator record.
-        this.delegators = Accounts.delegators.filter(
+        this.delegators = AccountsController.delegators.filter(
           (d) => !delegatorsForRemoval.includes(d)
         );
 
@@ -288,7 +288,7 @@ export class Accounts {
   ) => {
     account.config = config;
     account.chainState = chainState;
-    Accounts.set(account.chain, account);
+    AccountsController.set(account.chain, account);
 
     debug('🆕 Accounted account config: %o', account);
   };

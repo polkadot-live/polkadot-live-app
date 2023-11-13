@@ -5,7 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 import { store } from '@/main';
 import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
-import { Accounts } from './Accounts';
+import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 import { ChainID } from '@polkadot-live/types/chains';
@@ -90,7 +90,7 @@ export class APIs {
     WindowsController.reportAll(chainId, 'chainAdded');
 
     // Subscribe to existing chain accounts state.
-    Accounts.accounts[chain]?.forEach((account) => {
+    AccountsController.accounts[chain]?.forEach((account) => {
       account.state.subscribe();
     });
 

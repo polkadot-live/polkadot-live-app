@@ -12,7 +12,7 @@ import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIs } from './APIs';
-import { Accounts } from './Accounts';
+import { AccountsController } from './AccountsController';
 import { BlockStream } from './BlockStream';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
@@ -42,7 +42,7 @@ export class Subscriptions {
       debug('🔴 Using instance %o', chain);
 
       // Get accounts for `chain` and instantiate service.
-      const accounts = Accounts.accounts[chain];
+      const accounts = AccountsController.accounts[chain];
       debug('💳 API instance accounts pre discover: %o', accounts.length);
 
       const rawAccounts: RawAccount[] = [];
@@ -53,7 +53,7 @@ export class Subscriptions {
         // Update config for account.
         account.config = config;
         account.chainState = chainState;
-        Accounts.set(chain, account);
+        AccountsController.set(chain, account);
 
         debug(
           '🗓️ Bootstrap events for an account with chainState: %o',
@@ -79,7 +79,7 @@ export class Subscriptions {
       for (const { id } of WindowsController.active) {
         WindowsController.get(id)?.webContents?.send(
           'reportImportedAccounts',
-          Accounts.getAll()
+          AccountsController.getAll()
         );
       }
     });
@@ -95,7 +95,7 @@ export class Subscriptions {
   static addAccountToService = async (chain: ChainID, address: string) => {
     const service = this.services.find((s) => s.chain === chain);
 
-    const account = Accounts.get(chain, address);
+    const account = AccountsController.get(chain, address);
     if (!account) {
       return false;
     }

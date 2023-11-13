@@ -6,7 +6,7 @@ import { WindowsController } from './controller/WindowsController';
 import { APIs } from './controller/APIs';
 import { mb, store } from './main';
 import { BrowserWindow } from 'electron';
-import { Accounts } from './controller/Accounts';
+import { AccountsController } from './controller/AccountsController';
 import { MainDebug as debug } from './debugging';
 
 // Initalize store items.
@@ -18,7 +18,7 @@ export const initializeState = (id: string) => {
 
 // Report connected account state.
 export const reportAccountsState = (id: string) => {
-  Object.values(Accounts.accounts).forEach((chainAccounts) => {
+  Object.values(AccountsController.accounts).forEach((chainAccounts) => {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
         Object.entries(state.getAllState()).forEach(([key, value]) => {
@@ -40,7 +40,7 @@ export const reportAccountsState = (id: string) => {
 export const reportImportedAccounts = (id: string) => {
   WindowsController.get(id)?.webContents?.send(
     'reportImportedAccounts',
-    Accounts.getAll()
+    AccountsController.getAll()
   );
 };
 

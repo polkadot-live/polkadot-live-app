@@ -6,7 +6,7 @@ import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { APIs } from './APIs';
-import { Accounts } from './Accounts';
+import { AccountsController } from './AccountsController';
 import { ChainState } from './ChainState';
 
 const debug = MainDebug.extend('Discover');
@@ -52,7 +52,7 @@ export class Discover {
     };
 
     if (!chain) {
-      for (const c of Object.keys(Accounts.accounts))
+      for (const c of Object.keys(AccountsController.accounts))
         handleBootstrap(c as ChainID);
     } else handleBootstrap(chain);
   };

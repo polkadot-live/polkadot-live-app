@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { reportAllWindows, reportImportedAccounts } from '@/Utils';
 import { ChainList } from '@/config/chains';
 import { APIs } from '@/controller/APIs';
-import { Accounts } from '@/controller/Accounts';
+import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
 import { Subscriptions } from '@/controller/Subscriptions';
 import { NotificationsController } from '@/controller/NotificationsController';
@@ -45,7 +45,7 @@ orchestrator.subscribe({
  */
 const initialize = async () => {
   // Initialize `Accounts` from persisted state.
-  Accounts.initialize();
+  AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
   await APIs.initialize();
@@ -65,7 +65,7 @@ const importNewAddress = async ({
   name,
 }: ImportNewAddressArg) => {
   // Add address to `Accounts` and give immediate feedback to app.
-  const account = Accounts.add(chain, source, address, name);
+  const account = AccountsController.add(chain, source, address, name);
 
   // If account was unsuccessfully added, exit early.
   if (!account) return;
@@ -82,7 +82,7 @@ const importNewAddress = async ({
   const config = await Discover.start(chain, account);
 
   // Update account's config and chain state.
-  Accounts.setAccountConfig(config, account);
+  AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
   Subscriptions.addAccountToService(chain, address);
@@ -103,7 +103,7 @@ const removeImportedAccount = ({
   address,
 }: RemoveImportedAccountArg) => {
   // Remove address from store.
-  Accounts.remove(chain, address);
+  AccountsController.remove(chain, address);
 
   // Remove config from `Subscriptions`.
   Subscriptions.removeAccountFromService(chain, address);
