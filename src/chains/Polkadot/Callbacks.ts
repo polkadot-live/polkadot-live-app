@@ -9,7 +9,7 @@ import { chainCurrency, chainUnits } from '@/config/chains';
 import { ChainID } from '@polkadot-live/types/chains';
 import { APIs } from '@/controller/APIs';
 import { Accounts } from '@/controller/Accounts';
-import { Windows } from '@/controller/Windows';
+import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { PolkadotAccountState } from '@polkadot-live/types/chains/polkadot';
@@ -140,7 +140,7 @@ export class PolkadotCallbacks {
 
     // Dismiss and exit early if pending rewards is zero.
     if (pendingRewards.isZero()) {
-      Windows.get('menu')?.webContents?.send('reportDismissEvent', {
+      WindowsController.get('menu')?.webContents?.send('reportDismissEvent', {
         who: {
           chain: this.chain,
           address,
@@ -180,6 +180,9 @@ export class PolkadotCallbacks {
       ],
     };
 
-    Windows.get('menu')?.webContents?.send('reportNewEvent', newEvent);
+    WindowsController.get('menu')?.webContents?.send(
+      'reportNewEvent',
+      newEvent
+    );
   };
 }

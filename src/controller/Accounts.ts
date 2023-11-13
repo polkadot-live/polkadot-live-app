@@ -17,7 +17,7 @@ import { store } from '@/main';
 import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { APIs } from './APIs';
-import { Windows } from './Windows';
+import { WindowsController } from './WindowsController';
 import { ChainID } from '@polkadot-live/types/chains';
 
 const debug = MainDebug.extend('Accounts');
@@ -195,8 +195,8 @@ export class Accounts {
         APIs.close(chain);
 
         // Report to active windows that chain has been removed.
-        Windows.active.forEach(({ id }: AnyJson) => {
-          Windows.get(id)?.webContents?.send('removeChain', chain);
+        WindowsController.active.forEach(({ id }: AnyJson) => {
+          WindowsController.get(id)?.webContents?.send('removeChain', chain);
         });
       }
     }

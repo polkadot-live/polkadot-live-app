@@ -15,7 +15,7 @@ import { APIs } from './APIs';
 import { Accounts } from './Accounts';
 import { BlockStream } from './BlockStream';
 import { Discover } from './Discover';
-import { Windows } from './Windows';
+import { WindowsController } from './WindowsController';
 
 const debug = MainDebug.extend('Subscriptions');
 
@@ -76,8 +76,8 @@ export class Subscriptions {
       }
 
       // Report accounts to windows with updated configs.
-      for (const { id } of Windows.active) {
-        Windows.get(id)?.webContents?.send(
+      for (const { id } of WindowsController.active) {
+        WindowsController.get(id)?.webContents?.send(
           'reportImportedAccounts',
           Accounts.getAll()
         );

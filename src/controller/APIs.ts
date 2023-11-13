@@ -7,7 +7,7 @@ import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
 import { Accounts } from './Accounts';
 import { Discover } from './Discover';
-import { Windows } from './Windows';
+import { WindowsController } from './WindowsController';
 import { ChainID } from '@polkadot-live/types/chains';
 import { MainDebug } from '@/debugging';
 import { AnyData } from '@polkadot-live/types';
@@ -87,7 +87,7 @@ export class APIs {
     Discover.bootstrapEvents(chainId);
 
     // Report to app that chain has been added.
-    Windows.reportAll(chainId, 'chainAdded');
+    WindowsController.reportAll(chainId, 'chainAdded');
 
     // Subscribe to existing chain accounts state.
     Accounts.accounts[chain]?.forEach((account) => {
@@ -111,7 +111,7 @@ export class APIs {
     if (instance) {
       await instance.disconnect();
       this.instances = this.instances.filter((i) => i !== instance);
-      Windows.reportAll(chain, 'chainRemoved');
+      WindowsController.reportAll(chain, 'chainRemoved');
       return;
     }
   };
@@ -142,7 +142,7 @@ export class APIs {
    */
   static reportAllConnections = () => {
     for (const { chain } of this.instances) {
-      Windows.reportAll(chain, 'syncChain');
+      WindowsController.reportAll(chain, 'syncChain');
     }
   };
 }

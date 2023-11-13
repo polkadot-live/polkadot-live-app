@@ -11,7 +11,7 @@ import { ChainID } from '@polkadot-live/types/chains';
   focused: boolean
 }
 */
-export class Windows {
+export class WindowsController {
   // The currently active (showing) windows.
   static active: AnyJson = [];
 

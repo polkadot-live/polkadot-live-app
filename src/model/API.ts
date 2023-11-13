@@ -8,7 +8,7 @@ import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import { APIConstants } from '@polkadot-live/types/chains/polkadot';
-import { Windows } from '@/controller/Windows';
+import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';
 
 const debug = MainDebug.extend('API');
@@ -112,19 +112,19 @@ export class API {
     this.provider.on('connected', () => {
       debug('⭕ %o', this.endpoint, ' CONNECTED');
       this.status = 'connected';
-      Windows.reportAll(this.chain, 'connnected');
+      WindowsController.reportAll(this.chain, 'connnected');
     });
 
     this.provider.on('disconnected', () => {
       debug('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
-      Windows.reportAll(this.chain, 'disconnnected');
+      WindowsController.reportAll(this.chain, 'disconnnected');
     });
 
     this.provider.on('error', () => {
       debug('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
-      Windows.reportAll(this.chain, 'disconnnected');
+      WindowsController.reportAll(this.chain, 'disconnnected');
     });
   };
 

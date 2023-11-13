@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountType, AnyFunction, AnyJson } from '@polkadot-live/types';
-import { Windows } from './controller/Windows';
+import { WindowsController } from './controller/WindowsController';
 import { APIs } from './controller/APIs';
 import { mb, store } from './main';
 import { BrowserWindow } from 'electron';
@@ -23,7 +23,7 @@ export const reportAccountsState = (id: string) => {
       if (type === AccountType.User) {
         Object.entries(state.getAllState()).forEach(([key, value]) => {
           debug('🏦 Reporting account state %o', key, value);
-          Windows.get(id)?.webContents?.send(
+          WindowsController.get(id)?.webContents?.send(
             'reportAccountState',
             chain,
             address,
@@ -38,7 +38,7 @@ export const reportAccountsState = (id: string) => {
 
 // Report imported accounts to renderer.
 export const reportImportedAccounts = (id: string) => {
-  Windows.get(id)?.webContents?.send(
+  WindowsController.get(id)?.webContents?.send(
     'reportImportedAccounts',
     Accounts.getAll()
   );
@@ -61,7 +61,7 @@ export const moveToMenuBounds = () => {
 
 // Call a function for all windows.
 export const reportAllWindows = (callback: AnyFunction) => {
-  for (const { id } of Windows?.active || []) {
+  for (const { id } of WindowsController?.active || []) {
     callback(id);
   }
 };
@@ -69,6 +69,6 @@ export const reportAllWindows = (callback: AnyFunction) => {
 // Report active chains to renderer.
 export const reportActiveInstances = (id: string) => {
   for (const { chain } of APIs.instances) {
-    Windows.get(id)?.webContents?.send('syncChain', chain);
+    WindowsController.get(id)?.webContents?.send('syncChain', chain);
   }
 };
