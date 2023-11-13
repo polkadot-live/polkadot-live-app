@@ -13,7 +13,7 @@ import { MainDebug } from '@/debugging';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
-import { BlockStream } from './BlockStream';
+import { BlockStream } from '../blockstream/BlockStream';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 

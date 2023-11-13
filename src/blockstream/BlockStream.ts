@@ -26,8 +26,8 @@ import {
   matchExtrinsicToAccount,
   subscriptionFilter,
 } from '../model/Match';
-import { AccountsController } from './AccountsController';
-import { Discover } from './Discover';
+import { AccountsController } from '../controller/AccountsController';
+import { Discover } from '../controller/Discover';
 
 const MAX_SKIPPED_BLOCKS = 5;
 
