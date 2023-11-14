@@ -29,6 +29,12 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// Expose Electron API to wdio tests
+const isTest = process.env.NODE_ENV === 'test';
+if (isTest) {
+  require('wdio-electron-service/main');
+}
+
 // Enable priviledges.
 //
 // NOTE: These were added for production envrionment. Not a priority to revise, but worth revising
@@ -110,6 +116,8 @@ export const mb = menubar({
     maximizable: false,
     fullscreenable: false,
     webPreferences: {
+      // turn off sandboxing if testing with wdio.
+      sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
   },

@@ -20,6 +20,6 @@
       "@app/*": ["./src/renderer/*"],
     },
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "exclude": ["node_modules", ".vite/**/*", "out/**/*"]
 }
