@@ -16,9 +16,9 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "wdio": "NODE_ENV=test wdio run ./test/wdio.conf.ts",
+    "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
     "package:dev": "NODE_ENV=test electron-forge package",
-    "test": "mocha --require ts-node/register --config test/.mocharc.jsonc test/unit/**/*.test.ts"
+    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts"
   },
   "keywords": [],
   "author": {
