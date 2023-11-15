@@ -8,6 +8,11 @@ import { DismissEvent } from '@polkadot-live/types';
 import { contextBridge, ipcRenderer } from 'electron';
 import { PreloadAPI } from '@polkadot-live/types/preload';
 
+// Expose Electron API to wdio tests
+if (process.env.NODE_ENV === 'test') {
+  require('wdio-electron-service/preload');
+}
+
 contextBridge.exposeInMainWorld('myAPI', {
   // Window lifecycle
 
