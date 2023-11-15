@@ -1,0 +1,10 @@
+// Example: https://github.com/mochajs/mocha/blob/master/example/config/.mocharc.js
+
+{
+  "color": true,
+  "parallel": false,
+  "recursive": true,
+  "reporter": "spec",
+  "slow": 75,
+  "timeout": 3000
+}
