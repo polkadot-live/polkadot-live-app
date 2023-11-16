@@ -29,6 +29,12 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// Expose Electron API to wdio tests
+const isTest = process.env.NODE_ENV === 'test';
+if (isTest) {
+  require('wdio-electron-service/main');
+}
+
 // Enable priviledges.
 //
 // NOTE: These were added for production envrionment. Not a priority to revise, but worth revising
@@ -90,6 +96,11 @@ const reportDismissEvent = (eventData: DismissEvent) => {
 // TODO: replace AnyJson with concrete type.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
+// Whether to apply `webSecurity` to browser windows.
+// Note: Would be good to look into a more secure solution. More information:
+// https://stackoverflow.com/questions/61623156/electron-throws-not-allowed-to-load-local-resource-when-using-showopendialog
+const webSecurity = false;
+
 export const mb = menubar({
   index: MAIN_WINDOW_VITE_DEV_SERVER_URL,
   // NOTE: use `process.platform` to determine windows icons.
@@ -110,6 +121,10 @@ export const mb = menubar({
     maximizable: false,
     fullscreenable: false,
     webPreferences: {
+      // temporary fix. disable web security.
+      webSecurity,
+      // turn off sandboxing if testing with wdio.
+      sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
   },
@@ -146,15 +161,24 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         fullscreenable: false,
         center: true,
         webPreferences: {
+          webSecurity,
           preload: path.join(__dirname, 'preload.js'),
         },
       });
 
-      w.loadURL(
-        `${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${name}${
-          args ? `?${new URLSearchParams(args).toString()}` : ''
-        }`
-      );
+      const route = `/#/${name}${
+        args ? `?${new URLSearchParams(args).toString()}` : ''
+      }`;
+
+      // Development: load from vite dev server.
+      if (!app.isPackaged && MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+        w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${route}`);
+      } else {
+        // Production: load from app build.
+        w.loadFile(
+          path.join(__dirname, `../${MAIN_WINDOW_VITE_NAME}/index.html${route}`)
+        );
+      }
       w.show();
 
       WindowsController.add(w, name);
