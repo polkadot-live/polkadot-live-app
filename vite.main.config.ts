@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import { resolve } from 'path'
@@ -24,4 +26,8 @@ export default defineConfig({
     eslint(),
     svgr(),
   ],
+  test: {
+    exclude: [ 'test/spec/**' ],
+    include: [ 'test/unit/**' ],
+  }
 });

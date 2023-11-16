@@ -1,7 +1,7 @@
-import assert from 'node:assert';
+import { expect, describe, test } from 'vitest';
 
 describe('World', function () {
-  it('should pass the assertion', function () {
-    assert.strictEqual(true, true);
+  test('it should pass the assertion', function () {
+    expect(2 + 2).toBe(4);
   });
 });
