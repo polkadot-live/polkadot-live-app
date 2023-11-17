@@ -139,8 +139,9 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
     mb.hideWindow();
 
     // Either creates a window or focuses an existing one.
-    if (WindowsController.get(name)) {
-      WindowsController.get(name).show();
+    const window = WindowsController.get(name);
+    if (window) {
+      window.show();
     } else {
       // Handle window.
       const w = new BrowserWindow({
@@ -221,6 +222,9 @@ mb.on('ready', () => {
   });
 
   mb.on('show', () => {
+    // TODO: Throw error
+    if (!mb.window) return;
+
     WindowsController.add(mb.window, 'menu');
     WindowsController.focus('menu');
 
@@ -334,7 +338,7 @@ mb.on('ready', () => {
     ExtrinsicsController.submit();
   });
 
-  //Request dismiss event
+  // Request dismiss event
   ipcMain.on('requestDismissEvent', (_, eventData: DismissEvent) => {
     reportDismissEvent(eventData);
   });
