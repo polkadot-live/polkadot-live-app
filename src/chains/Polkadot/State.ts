@@ -84,7 +84,7 @@ export class PolkadotState {
   reportAccountState(key: keyof PolkadotState) {
     for (const { id } of WindowsController?.active || []) {
       WindowsController.get(id)?.webContents?.send(
-        'reportAccountState',
+        'renderer:account:state',
         this.chain,
         this.address,
         key,

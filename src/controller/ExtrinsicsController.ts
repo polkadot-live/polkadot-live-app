@@ -64,12 +64,15 @@ export class ExtrinsicsController {
       await this.buildPayload(chain, from, accountNonce);
 
       // Report Tx to Action UI.
-      WindowsController.get('action')?.webContents?.send('reportTx', {
-        estimatedFee: estimatedFee.toString(),
-        txId: this.txId,
-        payload: this.payload.toU8a(),
-        genesisHash: this.payload.genesisHash,
-      });
+      WindowsController.get('action')?.webContents?.send(
+        'renderer:tx:report:data',
+        {
+          estimatedFee: estimatedFee.toString(),
+          txId: this.txId,
+          payload: this.payload.toU8a(),
+          genesisHash: this.payload.genesisHash,
+        }
+      );
     } catch (e) {
       debug('📝 Error: %o', e);
       // Send error to action window?
@@ -165,7 +168,7 @@ export class ExtrinsicsController {
 
             // Report Tx Status to Action UI.
             WindowsController.get('action')?.webContents?.send(
-              'reportTxStatus',
+              'renderer:tx:report:status',
               'in_block'
             );
           } else if (status.isFinalized) {
@@ -174,7 +177,7 @@ export class ExtrinsicsController {
 
             // Report Tx Status to Action UI.
             WindowsController.get('action')?.webContents?.send(
-              'reportTxStatus',
+              'renderer:tx:report:status',
               'finalized'
             );
             unsub();
@@ -185,13 +188,13 @@ export class ExtrinsicsController {
 
         // Report Tx Status to Action UI.
         WindowsController.get('action')?.webContents?.send(
-          'reportTxStatus',
+          'renderer:tx:report:status',
           'submitted'
         );
         this.reset();
       } catch (e) {
         WindowsController.get('action')?.webContents?.send(
-          'reportTxStatus',
+          'renderer:tx:report:status',
           'error'
         );
         console.log(e);
