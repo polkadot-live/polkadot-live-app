@@ -6,13 +6,14 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-cloud/react';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import { useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
 import { AnyJson } from '@/types/misc';
+import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
+import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 
 export const SignOverlay = ({ from }: { from: string }) => {
   const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();
