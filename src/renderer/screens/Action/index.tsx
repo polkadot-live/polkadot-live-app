@@ -4,7 +4,7 @@
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionItem, ButtonMonoInvert, Tx } from '@polkadot-cloud/react';
-import { clipAddress } from '@polkadot-cloud/utils';
+import { ellipsisFn } from '@polkadot-cloud/utils';
 import { chainIcon } from '@/config/chains';
 import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';
@@ -40,7 +40,7 @@ export const Action = () => {
   const nonce = getAccountStateKey('Polkadot', from, 'account')?.nonce;
 
   const fromAccount = getAddress(from);
-  const fromName = fromAccount?.name || clipAddress(from);
+  const fromName = fromAccount?.name || ellipsisFn(from);
 
   // Store the estimated tx fee.
   const [estimatedFee, setEstimatedFee] = useState<string>('...');

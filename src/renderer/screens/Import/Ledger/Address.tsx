@@ -3,7 +3,7 @@
 
 import { HardwareAddress } from '@polkadot-cloud/react';
 import {
-  clipAddress,
+  ellipsisFn,
   localStorageOrDefault,
   unescape,
 } from '@polkadot-cloud/utils';
@@ -22,7 +22,7 @@ export const Address = ({ address, index }: AddressProps) => {
 
   // store the current name of the address
   const initialName = () => {
-    const defaultName = clipAddress(address);
+    const defaultName = ellipsisFn(address);
     const localLedger = localStorageOrDefault(
       'ledger_addresses',
       [],
