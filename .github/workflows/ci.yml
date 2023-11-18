@@ -26,6 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
       - run: yarn lint
+      - run: yarn make
 
   all:
     # This job ensures that all jobs above (now we have just build) are successful.
