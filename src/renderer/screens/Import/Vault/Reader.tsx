@@ -4,7 +4,7 @@
 import { QrScanSignature } from '@polkadot/react-qr';
 import { ButtonSecondary } from '@polkadot-cloud/react';
 import { isValidAddress } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadot-live/types';
+import { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useState } from 'react';
@@ -58,12 +58,12 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
       qrData === undefined
         ? 'Waiting for QR Code'
         : isValidAddress(qrData)
-        ? formatAccountSs58(qrData, 0)
-          ? 'Different Network Address'
-          : addressExists(qrData)
-          ? 'Account Already Added'
-          : 'Address Received:'
-        : 'Invalid Address'
+          ? formatAccountSs58(qrData, 0)
+            ? 'Different Network Address'
+            : addressExists(qrData)
+              ? 'Account Already Added'
+              : 'Address Received:'
+          : 'Invalid Address'
     );
 
     if (valid) {

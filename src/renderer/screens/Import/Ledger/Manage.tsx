@@ -3,7 +3,7 @@
 
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText, HardwareStatusBar } from '@polkadot-cloud/react';
-import { AnyJson } from '@polkadot-live/types';
+import { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { ReactComponent as AppSVG } from '@/config/svg/ledger/polkadot.svg';
 import { ReactComponent as IconSVG } from '@app/svg/ledgerIcon.svg';
@@ -57,8 +57,8 @@ export const Manage = ({
                 addresses.length === 1 ? '' : 's'
               }`
             : !statusCodes.length
-            ? 'Connecting...'
-            : determineStatusFromCodes(statusCodes, true).title
+              ? 'Connecting...'
+              : determineStatusFromCodes(statusCodes, true).title
         }
         inProgress={false}
         handleCancel={() => cancelImport()}

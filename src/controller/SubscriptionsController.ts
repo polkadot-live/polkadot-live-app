@@ -3,12 +3,7 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { Address } from '@polkadot/types/interfaces/runtime';
-import {
-  ApiSubscription,
-  ConcreteAccount,
-  RawAccount,
-} from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { MainDebug } from '@/debugging';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from './APIsController';
@@ -16,6 +11,11 @@ import { AccountsController } from './AccountsController';
 import { BlockStream } from '../blockstream/BlockStream';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
+import {
+  ApiSubscription,
+  ConcreteAccount,
+  RawAccount,
+} from '@/types/blockstream';
 
 const debug = MainDebug.extend('Subscriptions');
 

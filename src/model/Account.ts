@@ -1,9 +1,10 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnyJson, AccountSource, AccountType } from '@polkadot-live/types';
 import { ChainsController } from '@/controller/ChainsController';
-import { ChainID } from '@polkadot-live/types/chains';
+import { AccountSource, AccountType } from '@/types/accounts';
+import { ChainID } from '@/types/chains';
+import { AnyJson } from '@/types/misc';
 
 /**
  * Creates an account.

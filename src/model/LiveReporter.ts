@@ -1,10 +1,10 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Report, Reporter } from '@polkadot-live/types';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { MainDebug } from '@/debugging';
 import { NotificationsController } from '@/controller/NotificationsController';
+import { Report, Reporter } from '@/types/reporter';
 
 const debug = MainDebug.extend('LiveReporter');
 

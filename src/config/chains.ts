@@ -3,11 +3,11 @@
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
-import { AnyData } from '@polkadot-live/types';
 import { ReactComponent as PolkadotIcon } from './svg/polkadotIcon.svg';
 import { ReactComponent as PolkadotAppIcon } from './svg/ledger/polkadot.svg';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { FunctionComponent, SVGProps } from 'react';
+import { AnyData } from '@/types/misc';
 
 interface Chain {
   icon: FunctionComponent<

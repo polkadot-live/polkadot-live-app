@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { setStateWithRef } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadot-live/types';
 import { useContext, createContext, useState, useRef } from 'react';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { AccountState, AccountStateContextInterface } from './types';
 import { defaultAccountState } from './defaults';
+import { AnyJson } from '@/types/misc';
 
 export const AccountStateContext =
   createContext<AccountStateContextInterface>(defaultAccountState);

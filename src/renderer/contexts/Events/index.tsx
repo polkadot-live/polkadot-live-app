@@ -9,8 +9,8 @@ import {
   EventsState,
   SortedChainEvents,
 } from './types';
-import { DismissEvent, EventCallback } from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
+import { DismissEvent, EventCallback } from '@/types/reporter';
 
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext

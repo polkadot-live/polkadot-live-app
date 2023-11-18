@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonText } from '@polkadot-cloud/react';
-import { AnyJson } from '@polkadot-live/types';
+import { AnyJson } from '@/types/misc';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 
 export const Permissions = ({ setSection }: AnyJson) => {

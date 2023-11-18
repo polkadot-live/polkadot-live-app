@@ -1,14 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnyJson } from '@polkadot-live/types';
 import { useEvents } from '@app/contexts/Events';
 import React from 'react';
 import { NoAccounts } from '../NoAccounts';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { Wrapper } from './Wrappers';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
+import { AnyJson } from '@/types/misc';
 
 export const Events = ({ addresses }: AnyJson) => {
   const { events, sortChainEvents } = useEvents();

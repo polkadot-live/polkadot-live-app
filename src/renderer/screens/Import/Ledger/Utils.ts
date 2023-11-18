@@ -1,4 +1,5 @@
-import { AnyJson, LedgerResponse } from '@polkadot-live/types';
+import { LedgerResponse } from '@/types/ledger';
+import { AnyJson } from '@/types/misc';
 
 // formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (

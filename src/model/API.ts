@@ -4,12 +4,12 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Codec } from '@polkadot/types-codec/types';
 import { rmCommas } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
-import { ChainID, ChainStatus } from '@polkadot-live/types/chains';
-import { APIConstants } from '@polkadot-live/types/chains/polkadot';
+import { ChainID, ChainStatus } from '@/types/chains';
+import { APIConstants } from '@/types/chains/polkadot';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';
+import { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('API');
 

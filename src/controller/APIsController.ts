@@ -8,9 +8,9 @@ import { API } from '@/model/API';
 import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { MainDebug } from '@/debugging';
-import { AnyData } from '@polkadot-live/types';
+import { AnyData } from '@/types/misc';
 
 const debug = MainDebug.extend('APIs');
 

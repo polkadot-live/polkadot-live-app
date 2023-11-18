@@ -16,8 +16,9 @@ import { useLocation } from 'react-router-dom';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { Signer } from './Signer';
 import { SubmittedTxWrapper } from './Wrappers';
-import { ChainID } from '@polkadot-live/types/chains';
-import { AnyJson, TxStatus } from '@polkadot-live/types';
+import { ChainID } from '@/types/chains';
+import { TxStatus } from '@/types/tx';
+import { AnyJson } from '@/types/misc';
 
 export const Action = () => {
   const { search } = useLocation();
