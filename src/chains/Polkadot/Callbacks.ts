@@ -191,7 +191,7 @@ export class PolkadotCallbacks {
     };
 
     WindowsController.get('menu')?.webContents?.send(
-      'reportNewEvent',
+      'renderer:event:new',
       newEvent
     );
   };

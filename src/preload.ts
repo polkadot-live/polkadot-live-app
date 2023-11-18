@@ -92,7 +92,7 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => {
-    return ipcRenderer.on('reportNewEvent', callback);
+    return ipcRenderer.on('renderer:event:new', callback);
   },
 
   // Reports a dismiss event.
@@ -127,12 +127,12 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Report a transaction to a window.
   reportTx: (callback) => {
-    return ipcRenderer.on('reportTx', callback);
+    return ipcRenderer.on('renderer:tx:report:data', callback);
   },
 
   // Report a transaction status to a window.
   reportTxStatus: (callback) => {
-    return ipcRenderer.on('reportTxStatus', callback);
+    return ipcRenderer.on('renderer:tx:report:status', callback);
   },
 
   // Requests a transaction signed by Polkadot Vault.
