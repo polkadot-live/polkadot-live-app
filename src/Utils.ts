@@ -66,9 +66,9 @@ export const reportAllWindows = (callback: AnyFunction) => {
   }
 };
 
-// Report active chains to renderer.
+// Report active chains to a window.
 export const reportActiveInstances = (id: string) => {
   for (const { chain } of APIsController.instances) {
-    WindowsController.get(id)?.webContents?.send('syncChain', chain);
+    WindowsController.get(id)?.webContents?.send('chain:sync', chain);
   }
 };

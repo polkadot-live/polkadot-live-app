@@ -29,22 +29,25 @@ contextBridge.exposeInMainWorld('myAPI', {
   // Chain management
 
   syncChain: (callback) => {
-    return ipcRenderer.on('syncChain', callback);
+    return ipcRenderer.on('chain:sync', callback);
   },
   chainAdded: (callback) => {
-    return ipcRenderer.on('chainAdded', callback);
+    return ipcRenderer.on('chain:added', callback);
   },
   chainRemoved: (callback) => {
-    return ipcRenderer.on('chainRemoved', callback);
+    return ipcRenderer.on('chain:removed', callback);
   },
+  // NOTE: Not being called (chain:connected not sent from main)
   chainConnected: (callback) => {
-    return ipcRenderer.on('chainConnected', callback);
+    return ipcRenderer.on('chain:connected', callback);
   },
+  // NOTE: Not being called (chain:disconnected not sent from main)
   chainDisconnected: (callback) => {
-    return ipcRenderer.on('chainDisconnected', callback);
+    return ipcRenderer.on('chain:disconnected', callback);
   },
+  // NOTE: Not being called in any renderers (main doesn't receive chain:do-remove)
   removeChain: (chain) => {
-    return ipcRenderer.send('chain:remove', chain);
+    return ipcRenderer.send('chain:do-remove', chain);
   },
 
   // Opens a window.

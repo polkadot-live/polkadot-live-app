@@ -283,7 +283,7 @@ mb.on('ready', () => {
   });
 
   // Handles the closing of a chain.
-  ipcMain.on('chain:remove', (_, chain) => {
+  ipcMain.on('chain:do-remove', (_, chain) => {
     APIsController.close(chain);
   });
 
