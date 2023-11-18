@@ -17,13 +17,13 @@ contextBridge.exposeInMainWorld('myAPI', {
   // Window lifecycle
 
   quitApp: (): void => {
-    ipcRenderer.invoke('quit-app');
+    ipcRenderer.invoke('app:quit');
   },
   hideWindow: (id) => {
-    return ipcRenderer.send('hideWindow', id);
+    return ipcRenderer.send('window:hide', id);
   },
   closeWindow: (id: string) => {
-    return ipcRenderer.send('closeWindow', id);
+    return ipcRenderer.send('window:close', id);
   },
 
   // Chain management

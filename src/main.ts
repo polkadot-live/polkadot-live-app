@@ -266,23 +266,20 @@ mb.on('ready', () => {
   // IPC handlers.
 
   // General quit app handler.
-  ipcMain.handle('quit-app', () => {
+  ipcMain.handle('app:quit', () => {
     app.quit();
   });
 
   // Window management handlers.
 
   // Hides a window by its key.
-  ipcMain.on('hideWindow', (_, id) => {
+  ipcMain.on('window:hide', (_, id) => {
     WindowsController.hideAndBlur(id);
   });
 
   // Closes a window by its key.
-  ipcMain.on('closeWindow', (_, id) => {
+  ipcMain.on('window:close', (_, id) => {
     WindowsController.close(id);
-    mb?.window?.removeListener('will-move', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
-    });
   });
 
   // Handles the closing of a chain.
