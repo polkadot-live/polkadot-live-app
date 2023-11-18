@@ -195,7 +195,10 @@ export class AccountsController {
 
         // Report to active windows that chain has been removed.
         WindowsController.active.forEach(({ id }: AnyJson) => {
-          WindowsController.get(id)?.webContents?.send('removeChain', chain);
+          WindowsController.get(id)?.webContents?.send(
+            'renderer:chain:removed',
+            chain
+          );
         });
       }
     }

@@ -78,7 +78,7 @@ export class SubscriptionsController {
       // Report accounts to windows with updated configs.
       for (const { id } of WindowsController.active) {
         WindowsController.get(id)?.webContents?.send(
-          'reportImportedAccounts',
+          'renderer:broadcast:accounts',
           AccountsController.getAll()
         );
       }

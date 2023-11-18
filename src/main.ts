@@ -87,7 +87,7 @@ orchestrator.next({
 // TODO: move to a Utils file.
 const reportDismissEvent = (eventData: DismissEvent) => {
   WindowsController.get('menu')?.webContents?.send(
-    'reportDismissEvent',
+    'renderer:event:dismiss',
     eventData
   );
 };
@@ -267,32 +267,29 @@ mb.on('ready', () => {
   // IPC handlers.
 
   // General quit app handler.
-  ipcMain.handle('quit-app', () => {
+  ipcMain.handle('app:quit', () => {
     app.quit();
   });
 
   // Window management handlers.
 
   // Hides a window by its key.
-  ipcMain.on('hideWindow', (_, id) => {
+  ipcMain.on('app:window:hide', (_, id) => {
     WindowsController.hideAndBlur(id);
   });
 
   // Closes a window by its key.
-  ipcMain.on('closeWindow', (_, id) => {
+  ipcMain.on('app:window:close', (_, id) => {
     WindowsController.close(id);
-    mb?.window?.removeListener('will-move', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
-    });
   });
 
   // Handles the closing of a chain.
-  ipcMain.on('chain:remove', (_, chain) => {
+  ipcMain.on('app:chain:remove', (_, chain) => {
     APIsController.close(chain);
   });
 
   // Execute communication with a Ledger device.
-  ipcMain.on('ledger:doLedgerLoop', (_, accountIndex, tasks) => {
+  ipcMain.on('app:ledger:do-loop', (_, accountIndex, tasks) => {
     console.debug(accountIndex, tasks);
     // executeLedgerLoop(Windows.get('import'), 'Polkadot', tasks, {
     //   accountIndex,
@@ -301,7 +298,7 @@ mb.on('ready', () => {
 
   // Attempt an account import.
   ipcMain.on(
-    'newAddressImported',
+    'app:account:import',
     async (_, chain: ChainID, source, address, name) => {
       orchestrator.next({
         task: 'newAddressImported',
@@ -311,7 +308,7 @@ mb.on('ready', () => {
   );
 
   // Attempt an account removal.
-  ipcMain.on('removeImportedAccount', (_, chain, address) => {
+  ipcMain.on('app:account:remove', (_, chain, address) => {
     orchestrator.next({
       task: 'removeImportedAccount',
       data: { chain, address },
@@ -319,33 +316,33 @@ mb.on('ready', () => {
   });
 
   // Broadcast to all active windows that an address has been updated.
-  ipcMain.on('app:requestImportedAccounts', () => {
+  ipcMain.on('app:request:accounts', () => {
     reportAllWindows(reportImportedAccounts);
   });
 
   // Initiate a transaction.
-  ipcMain.on('requestInitTx', (_, chain, from, nonce, pallet, method, args) => {
+  ipcMain.on('app:tx:init', (_, chain, from, nonce, pallet, method, args) => {
     ExtrinsicsController.new(chain, from, nonce, pallet, method, args);
   });
 
   // Reset transaction.
-  ipcMain.on('requestResetTx', () => {
+  ipcMain.on('app:tx:reset', () => {
     ExtrinsicsController.reset();
   });
 
   // Submit Vault transaction
-  ipcMain.on('reportSignedVaultTx', (_, signature) => {
+  ipcMain.on('app:tx:vault:submit', (_, signature) => {
     ExtrinsicsController.setSignature(signature);
     ExtrinsicsController.submit();
   });
 
   // Request dismiss event
-  ipcMain.on('requestDismissEvent', (_, eventData: DismissEvent) => {
+  ipcMain.on('app:event:dismiss', (_, eventData: DismissEvent) => {
     reportDismissEvent(eventData);
   });
 
   // Open a browser window.
-  ipcMain.on('openBrowserURL', (_, url) => {
+  ipcMain.on('app:url:open', (_, url) => {
     shell.openExternal(url);
   });
 });
