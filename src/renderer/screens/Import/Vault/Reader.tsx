@@ -1,7 +1,6 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QrScanSignature } from '@polkadot/react-qr';
 import { ButtonSecondary } from '@polkadot-cloud/react';
 import { isValidAddress } from '@polkadot-cloud/utils';
 import { AnyJson } from '@/types/misc';
@@ -9,6 +8,7 @@ import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
+import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
   const { formatAccountSs58, addressExists } = useAddresses();

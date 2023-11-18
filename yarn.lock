@@ -1170,19 +1170,6 @@
     styled-components "^6.1.1"
     tslib "^2.6.2"
 
-"@polkadot/react-qr@^3.6.2":
-  version "3.6.4"
-  resolved "https://registry.yarnpkg.com/@polkadot/react-qr/-/react-qr-3.6.4.tgz#5420c8b8add57c6f9ad54babf92f4a531df9f225"
-  integrity sha512-wm7APVc2sQZy5h7jslH5EB/BaVgs1pXcvzw9fXXTmZ1nTRG5Pzq6rjG+2PcawZbW6Aln46DGiLmRTV6pfdpwNA==
-  dependencies:
-    "@polkadot/ui-settings" "3.6.4"
-    "@polkadot/util" "^12.6.1"
-    "@polkadot/util-crypto" "^12.6.1"
-    qrcode-generator "^1.4.4"
-    react-qr-reader "^2.2.1"
-    styled-components "^6.1.1"
-    tslib "^2.6.2"
-
 "@polkadot/rpc-augment@10.11.1":
   version "10.11.1"
   resolved "https://registry.yarnpkg.com/@polkadot/rpc-augment/-/rpc-augment-10.11.1.tgz#f100165e60777a58583ea97cb672692a31a185f2"
@@ -1855,16 +1842,16 @@
   integrity sha512-xKU7bUjiFTIttpWaIZ9qvgg+22O1nmbA+HRxdlR+u6TWsGfmFdXrheJoK4fFxrHNVIOBDvDNKZG+LYBpMHpX3w==
 
 "@types/node@*", "@types/node@^20.1.0", "@types/node@^20.1.1":
-  version "20.9.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.9.1.tgz#9d578c610ce1e984adda087f685ace940954fe19"
-  integrity sha512-HhmzZh5LSJNS5O8jQKpJ/3ZcrrlG6L70hpGqMIAoM9YVD0YBRNWYsfwcXq8VnSjlNpCpgLzMXdiPo+dxcvSmiA==
+  version "20.9.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.9.2.tgz#002815c8e87fe0c9369121c78b52e800fadc0ac6"
+  integrity sha512-WHZXKFCEyIUJzAwh3NyyTHYSR35SevJ6mZ1nWwJafKtiQbqRTIKSRcw3Ma3acqgsent3RRDqeVwpHntMk+9irg==
   dependencies:
     undici-types "~5.26.4"
 
 "@types/node@^18.11.18":
-  version "18.18.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.9.tgz#5527ea1832db3bba8eb8023ce8497b7d3f299592"
-  integrity sha512-0f5klcuImLnG4Qreu9hPj/rEfFq6YRc5n2mAjSsH+ec/mJL+3voBH0+8T7o8RpFjH7ovc+TRsL/c7OYIQsPTfQ==
+  version "18.18.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.10.tgz#4971bffdf3a43977c4c8166aa714b2c0b05b3256"
+  integrity sha512-luANqZxPmjTll8bduz4ACs/lNTCLuWssCyjqTY9yLdsv1xnViQp3ISKwsEWOIecO13JWUqjVdig/Vjjc09o8uA==
   dependencies:
     undici-types "~5.26.4"
 
@@ -1882,6 +1869,13 @@
   version "18.2.15"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.2.15.tgz#921af67f9ee023ac37ea84b1bc0cc40b898ea522"
   integrity sha512-HWMdW+7r7MR5+PZqJF6YFNSCtjz1T0dsvo/f1BV6HkV+6erD/nA7wd9NM00KVG83zf2nJ7uATPO9ttdIPvi3gg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-qr-reader@^2.1.7":
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@types/react-qr-reader/-/react-qr-reader-2.1.7.tgz#1472a47ddbc0f96ddd246309f35826f01113837e"
+  integrity sha512-6K6DQeqP7c2oohcfvBpExlOawVsB2/C+7ZZL/fkCkNzYYAKDJnNHnuP3F5ChMl0mpoYEdqkqkllxqfM0VslEiw==
   dependencies:
     "@types/react" "*"
 
@@ -7644,7 +7638,7 @@ react-copy-to-clipboard@^5.1.0:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
-react-dom@^18.2.0:
+react-dom@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -7678,7 +7672,7 @@ react-qr-reader@^2.2.1:
     prop-types "^15.7.2"
     webrtc-adapter "^7.2.1"
 
-react-router-dom@^6.15.0:
+react-router-dom@^6.19.0:
   version "6.19.0"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.19.0.tgz#ee807e36ae7dd954db7a3f770e38b7cc026c66a8"
   integrity sha512-N6dWlcgL2w0U5HZUUqU2wlmOrSb3ighJmtQ438SWbhB1yuLTXQ8yyTBMK3BSvVjp7gBtKurT554nCtMOgxCZmQ==
@@ -7693,7 +7687,7 @@ react-router@6.19.0:
   dependencies:
     "@remix-run/router" "1.12.0"
 
-react@^18.2.0:
+react@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
