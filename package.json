@@ -80,7 +80,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@ledgerhq/hw-transport-node-hid": "^6.27.21",
     "@polkadot-cloud/react": "^0.1.32",
-    "@polkadot-cloud/utils": "^0.0.11",
+    "@polkadot-cloud/utils": "^0.0.25",
     "@polkadot/api": "^10.9.1",
     "@polkadot/keyring": "^12.4.2",
     "@polkadot/react-identicon": "^3.6.2",
