@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  clipAddress,
+  ellipsisFn,
   localStorageOrDefault,
   setStateWithRef,
 } from '@polkadot-cloud/utils';
@@ -81,7 +81,7 @@ export const ImportLedger = ({
         ...device,
         pubKey,
         address,
-        name: clipAddress(address),
+        name: ellipsisFn(address),
       }));
 
       const newAddresses = addressesRef.current
