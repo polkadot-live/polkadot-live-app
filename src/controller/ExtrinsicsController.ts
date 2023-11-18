@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { planckToUnit } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { NotificationsController } from './NotificationsController';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/debugging';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
+import { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('Extrinsic');
 

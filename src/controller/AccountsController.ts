@@ -1,24 +1,23 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { store } from '@/main';
+import { MainDebug } from '@/debugging';
+import { Account } from '@/model/Account';
+import { APIsController } from './APIsController';
+import { WindowsController } from './WindowsController';
+import { ChainID } from '@/types/chains';
 import {
-  AnyJson,
-  IMatch,
-  SubscriptionDelegate,
-  ReportDelegator,
   AccountConfig,
   AccountSource,
   AccountStatus,
   AccountType,
   ImportedAccounts,
   StoredAccounts,
-} from '@polkadot-live/types';
-import { store } from '@/main';
-import { MainDebug } from '@/debugging';
-import { Account } from '@/model/Account';
-import { APIsController } from './APIsController';
-import { WindowsController } from './WindowsController';
-import { ChainID } from '@polkadot-live/types/chains';
+} from '@/types/accounts';
+import { IMatch, SubscriptionDelegate } from '@/types/blockstream';
+import { AnyJson } from '@/types/misc';
+import { ReportDelegator } from '@/types/reporter';
 
 const debug = MainDebug.extend('Accounts');
 

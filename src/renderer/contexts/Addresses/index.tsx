@@ -6,9 +6,9 @@ import { setStateWithRef } from '@polkadot-cloud/utils';
 import { Account } from '@/model/Account';
 import * as defaults from './defaults';
 import { AddressesContextInterface } from './types';
-import { AccountSource, ImportedAccounts } from '@polkadot-live/types';
 import { useContext, createContext, useState, useRef } from 'react';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
+import { AccountSource, ImportedAccounts } from '@/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext

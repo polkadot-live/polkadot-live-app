@@ -1,13 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountType, AnyFunction, AnyJson } from '@polkadot-live/types';
+import { AnyFunction, AnyJson } from '@/types/misc';
 import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
 import { mb, store } from './main';
 import { BrowserWindow } from 'electron';
 import { AccountsController } from './controller/AccountsController';
 import { MainDebug as debug } from './debugging';
+import { AccountType } from './types/accounts';
 
 // Initalize store items.
 export const initializeState = (id: string) => {

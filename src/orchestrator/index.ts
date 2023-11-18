@@ -13,7 +13,7 @@ import {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,
-} from '@polkadot-live/types';
+} from '@/types/orchestrator';
 
 // Initialise RxJS subject to orchestrate app events.
 export const orchestrator = new Subject<OrchestratorArg>();

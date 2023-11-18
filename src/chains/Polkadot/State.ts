@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { rmCommas } from '@polkadot-cloud/utils';
-import { AnyFunction, AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';
+import type { AnyFunction, AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('PolkadotState');
 

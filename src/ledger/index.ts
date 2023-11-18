@@ -1,8 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { LedgerTask } from '@/types/ledger';
+import { AnyFunction, AnyJson } from '@/types/misc';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import { AnyFunction, AnyJson, LedgerTask } from '@polkadot-live/types';
 import { newSubstrateApp } from '@zondax/ledger-substrate';
 import { BrowserWindow } from 'electron';
 // import { listen } from "@ledgerhq/logs";

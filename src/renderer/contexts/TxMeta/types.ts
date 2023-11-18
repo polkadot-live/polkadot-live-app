@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@polkadot-live/types';
+import { AnyJson } from '@/types/misc';
 import type BigNumber from 'bignumber.js';
 
 export interface TxMetaContextInterface {

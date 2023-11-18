@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { setStateWithRef } from '@polkadot-cloud/utils';
-import type { AnyJson } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import React, {
   createContext,
@@ -13,6 +12,7 @@ import React, {
 } from 'react';
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
+import { AnyJson } from '@/types/misc';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta

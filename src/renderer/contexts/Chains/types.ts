@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainStatus } from '@polkadot-live/types/chains';
+import { ChainStatus } from '@/types/chains';
 
 export interface ChainInstance {
   name: string;

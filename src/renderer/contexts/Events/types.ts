@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 
-import { AnyJson, DismissEvent, EventCallback } from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { AnyJson, DismissEvent, EventCallback } from '@/types';
+import { ChainID } from '@/types/chains';
 
 export interface EventsContextInterface {
   events: AnyJson;

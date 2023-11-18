@@ -7,7 +7,7 @@ import {
   localStorageOrDefault,
   unescape,
 } from '@polkadot-cloud/utils';
-import { AnyJson } from '@polkadot-live/types';
+import { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';

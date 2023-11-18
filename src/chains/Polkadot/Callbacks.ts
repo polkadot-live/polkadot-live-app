@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { planckToUnit } from '@polkadot-cloud/utils';
-import { AnyJson, AccountType } from '@polkadot-live/types';
 import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { PolkadotAccountState } from '@polkadot-live/types/chains/polkadot';
+import { PolkadotAccountState } from '@/types/chains/polkadot';
 import { getPoolAccounts } from './utils';
+import { AccountType } from '@/types/accounts';
+import { AnyJson } from '@/types/misc';
 
 /**
  * A static class to provide callback functions for Polkadot subscriptions and discovery.
@@ -92,7 +93,7 @@ export class PolkadotCallbacks {
         // config, if it has not been already.
         if (
           !AccountsController.getAll()[this.chain].find(
-            (a) => a.address === rewardAddress
+            ({ address }: Account) => address === rewardAddress
           )
         ) {
           const delegate = new Account(

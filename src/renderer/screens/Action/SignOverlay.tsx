@@ -8,11 +8,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-cloud/react';
-import type { AnyJson } from '@polkadot-live/types';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import { useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
+import { AnyJson } from '@/types/misc';
 
 export const SignOverlay = ({ from }: { from: string }) => {
   const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();

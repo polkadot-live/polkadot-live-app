@@ -5,21 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 import { GenericEvent, GenericExtrinsic } from '@polkadot/types';
 import { Codec } from '@polkadot/types-codec/types';
 import { Header } from '@polkadot/types/interfaces/runtime';
-import {
-  ApiSubscription,
-  BlockStreamConfig,
-  ConcreteAccount,
-  ExtendedAccount,
-  GenericNotification,
-  MatchOutcome,
-  MethodSubscription,
-  AnyData,
-  EventInner,
-  ExtrinsicInner,
-  NotificationReport,
-  Reporter,
-} from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { MainDebug } from '../debugging';
 import {
   matchEventToAccount,
@@ -28,6 +14,22 @@ import {
 } from '../model/Match';
 import { AccountsController } from '../controller/AccountsController';
 import { Discover } from '../controller/Discover';
+import type {
+  EventInner,
+  ExtrinsicInner,
+  NotificationReport,
+  Reporter,
+} from '@/types/reporter';
+import {
+  ApiSubscription,
+  BlockStreamConfig,
+  ConcreteAccount,
+  ExtendedAccount,
+  GenericNotification,
+  MatchOutcome,
+  MethodSubscription,
+} from '@/types/blockstream';
+import type { AnyData } from '@/types/misc';
 
 const MAX_SKIPPED_BLOCKS = 5;
 

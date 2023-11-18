@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { PolkadotState } from '@/chains/Polkadot/State';
 

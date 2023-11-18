@@ -6,15 +6,11 @@ import {
   localStorageOrDefault,
   setStateWithRef,
 } from '@polkadot-cloud/utils';
-import {
-  AnyFunction,
-  AnyJson,
-  LedgerResponse,
-  LedgerTask,
-} from '@polkadot-live/types';
 import { useEffect, useRef, useState } from 'react';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
+import { AnyFunction, AnyJson } from '@/types/misc';
+import { LedgerResponse, LedgerTask } from '@/types/ledger';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 

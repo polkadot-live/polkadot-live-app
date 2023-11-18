@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 
 import { Account } from '@/model/Account';
-import { AccountSource, ImportedAccounts } from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { AccountSource, ImportedAccounts } from '@/types/accounts';
+import { ChainID } from '@/types/chains';
 
 export interface AddressesContextInterface {
   addresses: ImportedAccounts;

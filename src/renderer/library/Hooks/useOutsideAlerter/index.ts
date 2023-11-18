@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnyElement, AnyFunction } from '@polkadot-live/types';
+import { AnyElement, AnyFunction } from '@/types/misc';
 import { useEffect } from 'react';
 
 // A hook that alerts clicks outside of the passed ref.

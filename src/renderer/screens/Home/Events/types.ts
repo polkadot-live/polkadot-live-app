@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { AnyJson, EventAction, EventCallback } from '@polkadot-live/types';
-import { ChainID } from '@polkadot-live/types/chains';
+import { ChainID } from '@/types/chains';
+import { EventAction, EventCallback } from '@/types/reporter';
+import { AnyJson } from '@/types/misc';
 
 export interface EventCategoryProps {
   chain: ChainID;

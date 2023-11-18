@@ -4,9 +4,9 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { DismissEvent } from '@polkadot-live/types';
 import { contextBridge, ipcRenderer } from 'electron';
-import { PreloadAPI } from '@polkadot-live/types/preload';
+import { PreloadAPI } from '@/types/preload';
+import { DismissEvent } from '@/types/reporter';
 
 // Expose Electron API to wdio tests
 if (process.env.NODE_ENV === 'test') {
