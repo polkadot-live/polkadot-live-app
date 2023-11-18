@@ -147,13 +147,16 @@ export class PolkadotCallbacks {
 
     // Dismiss and exit early if pending rewards is zero.
     if (pendingRewards.isZero()) {
-      WindowsController.get('menu')?.webContents?.send('reportDismissEvent', {
-        who: {
-          chain: this.chain,
-          address,
-        },
-        uid: 'nominationPools_pendingRewards',
-      });
+      WindowsController.get('menu')?.webContents?.send(
+        'renderer:event:dismiss',
+        {
+          who: {
+            chain: this.chain,
+            address,
+          },
+          uid: 'nominationPools_pendingRewards',
+        }
+      );
       return;
     }
 

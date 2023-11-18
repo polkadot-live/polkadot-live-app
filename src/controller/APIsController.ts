@@ -87,7 +87,7 @@ export class APIsController {
     Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.
-    WindowsController.reportAll(chainId, 'chain:added');
+    WindowsController.reportAll(chainId, 'renderer:chain:added');
 
     // Subscribe to existing chain accounts state.
     AccountsController.accounts[chain]?.forEach((account) => {
@@ -111,7 +111,7 @@ export class APIsController {
     if (instance) {
       await instance.disconnect();
       this.instances = this.instances.filter((i) => i !== instance);
-      WindowsController.reportAll(chain, 'chain:removed');
+      WindowsController.reportAll(chain, 'renderer:chain:removed');
       return;
     }
   };
@@ -142,7 +142,7 @@ export class APIsController {
    */
   static reportAllConnections = () => {
     for (const { chain } of this.instances) {
-      WindowsController.reportAll(chain, 'chain:sync');
+      WindowsController.reportAll(chain, 'renderer:chain:sync');
     }
   };
 }

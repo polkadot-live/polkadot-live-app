@@ -20,7 +20,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
 
     if (errStr.startsWith('TypeError: cannot open device with path')) {
       window.webContents.send(
-        'reportLedgerStatus',
+        'renderer:ledger:report:status',
         JSON.stringify({
           ack: 'failure',
           statusCode: 'DeviceNotConnected',
@@ -29,7 +29,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
       );
     } else if (errStr.startsWith('Error: LockedDeviceError')) {
       window.webContents.send(
-        'reportLedgerStatus',
+        'renderer:ledger:report:status',
         JSON.stringify({
           ack: 'failure',
           statusCode: 'DeviceLocked',
@@ -41,7 +41,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
       switch (err?.id) {
         case 'NoDevice':
           window.webContents.send(
-            'reportLedgerStatus',
+            'renderer:ledger:report:status',
             JSON.stringify({
               ack: 'failure',
               statusCode: 'DeviceNotConnected',
@@ -51,7 +51,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
           break;
         default:
           window.webContents.send(
-            'reportLedgerStatus',
+            'renderer:ledger:report:status',
             JSON.stringify({
               ack: 'failure',
               statusCode: 'AppNotOpen',
@@ -87,7 +87,7 @@ export const executeLedgerLoop = async (
       );
       if (result) {
         window.webContents.send(
-          'reportLedgerStatus',
+          'renderer:ledger:report:status',
           JSON.stringify({
             ack: 'success',
             options,
@@ -116,7 +116,7 @@ export const handleGetAddress = async (
   const { id, productName } = deviceModel || {};
 
   window.webContents.send(
-    'reportLedgerStatus',
+    'renderer:ledger:report:status',
     JSON.stringify({
       ack: 'success',
       statusCode: 'GettingAddress',

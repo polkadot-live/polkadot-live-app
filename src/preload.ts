@@ -20,34 +20,34 @@ contextBridge.exposeInMainWorld('myAPI', {
     ipcRenderer.invoke('app:quit');
   },
   hideWindow: (id) => {
-    return ipcRenderer.send('window:hide', id);
+    return ipcRenderer.send('app:window:hide', id);
   },
   closeWindow: (id: string) => {
-    return ipcRenderer.send('window:close', id);
+    return ipcRenderer.send('app:window:close', id);
   },
 
   // Chain management
 
   syncChain: (callback) => {
-    return ipcRenderer.on('chain:sync', callback);
+    return ipcRenderer.on('renderer:chain:sync', callback);
   },
   chainAdded: (callback) => {
-    return ipcRenderer.on('chain:added', callback);
+    return ipcRenderer.on('renderer:chain:added', callback);
   },
   chainRemoved: (callback) => {
-    return ipcRenderer.on('chain:removed', callback);
+    return ipcRenderer.on('renderer:chain:removed', callback);
   },
-  // NOTE: Not being called (chain:connected not sent from main)
+  // NOTE: Not being called (renderer:chain:connected not sent from main)
   chainConnected: (callback) => {
-    return ipcRenderer.on('chain:connected', callback);
+    return ipcRenderer.on('renderer:chain:connected', callback);
   },
-  // NOTE: Not being called (chain:disconnected not sent from main)
+  // NOTE: Not being called (renderer:chain:disconnected not sent from main)
   chainDisconnected: (callback) => {
-    return ipcRenderer.on('chain:disconnected', callback);
+    return ipcRenderer.on('renderer:chain:disconnected', callback);
   },
-  // NOTE: Not being called in any renderers (main doesn't receive chain:do-remove)
+  // NOTE: Not being called in any renderers (main doesn't receive app:chain:remove)
   removeChain: (chain) => {
-    return ipcRenderer.send('chain:do-remove', chain);
+    return ipcRenderer.send('app:chain:remove', chain);
   },
 
   // Opens a window.
@@ -57,37 +57,37 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Performs a Ledger loop.
   doLedgerLoop: (accountIndex, tasks) => {
-    return ipcRenderer.send('ledger:doLedgerLoop', accountIndex, tasks);
+    return ipcRenderer.send('app:ledger:do-loop', accountIndex, tasks);
   },
 
   // Reports a Ledger device result to all open windows.
   reportLedgerStatus: (callback) => {
-    return ipcRenderer.on('reportLedgerStatus', callback);
+    return ipcRenderer.on('renderer:ledger:report:status', callback);
   },
 
-  // Requests to main process to report imported accounts.
+  // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => {
-    return ipcRenderer.send('app:requestImportedAccounts');
+    return ipcRenderer.send('app:request:accounts');
   },
 
   // Attempts to import a new account.
   newAddressImported: (chain, source, address, name) => {
-    ipcRenderer.send('newAddressImported', chain, source, address, name);
+    ipcRenderer.send('app:account:import', chain, source, address, name);
   },
 
   // Attempts to remove an imported account.
   removeImportedAccount: (chain, account) => {
-    return ipcRenderer.send('removeImportedAccount', chain, account);
+    return ipcRenderer.send('app:account:remove', chain, account);
   },
 
   // Syncs imported accounts with all open windows.
   reportImportedAccounts: (callback) => {
-    return ipcRenderer.on('reportImportedAccounts', callback);
+    return ipcRenderer.on('renderer:broadcast:accounts', callback);
   },
 
   // Syncs account state with all open windows.
   reportAccountState: (callback) => {
-    return ipcRenderer.on('reportAccountState', callback);
+    return ipcRenderer.on('renderer:account:state', callback);
   },
 
   // Reports a new event to all open windows.
@@ -97,7 +97,7 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Reports a dismiss event.
   reportDismissEvent: (callback) => {
-    return ipcRenderer.on('reportDismissEvent', callback);
+    return ipcRenderer.on('renderer:event:dismiss', callback);
   },
 
   // Transactions
@@ -105,7 +105,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   // Requests to main process to initiate a transaction.
   requestInitTx: (chain, from, nonce, pallet, method, args) => {
     return ipcRenderer.send(
-      'requestInitTx',
+      'app:tx:init',
       chain,
       from,
       nonce,
@@ -117,12 +117,12 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Resets all tx data.
   requestResetTx: () => {
-    return ipcRenderer.send('requestResetTx');
+    return ipcRenderer.send('app:tx:reset');
   },
 
   // Reports a dismissed event to the main process.
   requestDismissEvent: (eventData: DismissEvent) => {
-    return ipcRenderer.send('requestDismissEvent', eventData);
+    return ipcRenderer.send('app:event:dismiss', eventData);
   },
 
   // Report a transaction to a window.
@@ -137,13 +137,13 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Requests a transaction signed by Polkadot Vault.
   reportSignedVaultTx: (signature) => {
-    return ipcRenderer.send('reportSignedVaultTx', signature);
+    return ipcRenderer.send('app:tx:vault:submit', signature);
   },
 
   // Miscellaneous
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => {
-    return ipcRenderer.send('openBrowserURL', url);
+    return ipcRenderer.send('app:url:open', url);
   },
 } as PreloadAPI);

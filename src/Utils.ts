@@ -24,7 +24,7 @@ export const reportAccountsState = (id: string) => {
         Object.entries(state.getAllState()).forEach(([key, value]) => {
           debug('🏦 Reporting account state %o', key, value);
           WindowsController.get(id)?.webContents?.send(
-            'reportAccountState',
+            'renderer:account:state',
             chain,
             address,
             key,
@@ -39,7 +39,7 @@ export const reportAccountsState = (id: string) => {
 // Report imported accounts to renderer.
 export const reportImportedAccounts = (id: string) => {
   WindowsController.get(id)?.webContents?.send(
-    'reportImportedAccounts',
+    'renderer:broadcast:accounts',
     AccountsController.getAll()
   );
 };
@@ -69,6 +69,6 @@ export const reportAllWindows = (callback: AnyFunction) => {
 // Report active chains to a window.
 export const reportActiveInstances = (id: string) => {
   for (const { chain } of APIsController.instances) {
-    WindowsController.get(id)?.webContents?.send('chain:sync', chain);
+    WindowsController.get(id)?.webContents?.send('renderer:chain:sync', chain);
   }
 };
