@@ -2692,9 +2692,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
@@ -3780,11 +3780,6 @@ electron-localshortcut@^3.2.1:
     electron-is-accelerator "^0.1.0"
     keyboardevent-from-electron-accelerator "^2.0.0"
     keyboardevents-areequal "^0.2.1"
-
-electron-positioner@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/electron-positioner/-/electron-positioner-4.1.0.tgz#e158f8f6aabd6725a8a9b4f2279b9504bcbea1b0"
-  integrity sha512-726DfbI9ZNoCg+Fcu6XLuTKTnzf+6nFqv7h+K/V6Ug7IbaPMI7s9S8URnGtWFCy5N5PL4HSzRFF2mXuinftDdg==
 
 electron-squirrel-startup@^1.0.0:
   version "1.0.0"
@@ -6454,13 +6449,6 @@ mem@^4.3.0:
     map-age-cleaner "^0.1.1"
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
-
-menubar@^9.3.0:
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/menubar/-/menubar-9.3.0.tgz#a245be0cedbfeb3900d23a37e87a71d2a0f0c7a5"
-  integrity sha512-TC7R5YR+OKVfFIyGiZ+HkKmY0hMLhOseX6wN0DxWzzF1CNhZ2Tm3hMB6erc35jzBmrsMDghRm89dtSeY0VjmjQ==
-  dependencies:
-    electron-positioner "^4.1.0"
 
 merge-descriptors@1.0.1:
   version "1.0.1"
