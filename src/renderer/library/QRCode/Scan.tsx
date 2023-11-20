@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { memo, useCallback, useMemo } from 'react';
-import Reader from 'react-qr-reader';
+//import Reader from 'react-qr-reader';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
 import { createImgSize } from './util.js';
 
+// eslint-disable-next-line
 const DEFAULT_DELAY = 150;
 
 const DEFAULT_ERROR = (error: Error): void => {
@@ -15,19 +16,23 @@ const DEFAULT_ERROR = (error: Error): void => {
 
 const Scan = ({
   className = '',
+  // eslint-disable-next-line
   delay = DEFAULT_DELAY,
   onError = DEFAULT_ERROR,
   onScan,
   size,
+  // eslint-disable-next-line
   style = {},
 }: ScanProps): React.ReactElement<ScanProps> => {
   const containerStyle = useMemo(() => createImgSize(size), [size]);
 
+  // eslint-disable-next-line
   const onErrorCallback = useCallback(
     (error: Error) => onError(error),
     [onError]
   );
 
+  // eslint-disable-next-line
   const onScanCallback = useCallback(
     (data: string | null) => data && onScan(data),
     [onScan]
@@ -35,13 +40,13 @@ const Scan = ({
 
   return (
     <ScanWrapper className={className} style={containerStyle}>
-      <Reader
+      {/*<Reader
         className="ui--qr-Scan"
         delay={delay}
         onError={onErrorCallback}
         onScan={onScanCallback}
         style={style}
-      />
+      />*/}
     </ScanWrapper>
   );
 };
