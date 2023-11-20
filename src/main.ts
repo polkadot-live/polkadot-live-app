@@ -104,11 +104,6 @@ const reportDismissEvent = (eventData: DismissEvent) => {
 // TODO: replace AnyJson with concrete type.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
-// Whether to apply `webSecurity` to browser windows.
-// Note: Would be good to look into a more secure solution. More information:
-// https://stackoverflow.com/questions/61623156/electron-throws-not-allowed-to-load-local-resource-when-using-showopendialog
-const webSecurity = false;
-
 const createMenuBar = () => {
   const mb = new BrowserWindow({
     alwaysOnTop: true,
@@ -208,7 +203,8 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         center: true,
         backgroundColor: '#2b2b2b',
         webPreferences: {
-          webSecurity,
+          // turn off sandboxing if testing with wdio.
+          sandbox: !isTest,
           preload: path.join(__dirname, 'preload.js'),
         },
       });
