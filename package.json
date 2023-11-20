@@ -100,7 +100,6 @@
     "electron-store": "^8.1.0",
     "electron-unhandled": "^4.0.1",
     "framer-motion": "^10.16.4",
-    "menubar": "^9.3.0",
     "qrcode-generator": "^1.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

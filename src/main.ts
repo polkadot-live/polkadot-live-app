@@ -1,9 +1,16 @@
 import 'websocket-polyfill';
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  nativeImage,
+  protocol,
+  shell,
+  Tray,
+} from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
-import { menubar } from 'menubar';
 import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import {
@@ -102,34 +109,53 @@ const initialMenuBounds: AnyJson = store.get('menu_bounds');
 // https://stackoverflow.com/questions/61623156/electron-throws-not-allowed-to-load-local-resource-when-using-showopendialog
 const webSecurity = false;
 
-export const mb = menubar({
-  index: MAIN_WINDOW_VITE_DEV_SERVER_URL,
-  // NOTE: use `process.platform` to determine windows icons.
-  icon: path.resolve(__dirname, 'assets/IconTemplate.png'),
-  browserWindow: {
+const createMenuBar = () => {
+  return new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
     x: initialMenuBounds?.x || undefined,
     y: initialMenuBounds?.y || undefined,
     width: initialMenuBounds?.height || 420,
+    height: initialMenuBounds?.height || 475,
     minWidth: 420,
     maxWidth: 420,
-    height: initialMenuBounds?.height || 475,
     minHeight: 475,
     maxHeight: 1200,
     resizable: true,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
+    skipTaskbar: true,
+    backgroundColor: '#000',
     webPreferences: {
-      // temporary fix. disable web security.
-      webSecurity,
       // turn off sandboxing if testing with wdio.
       sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
-  },
-});
+  });
+};
+
+// TODO: Create menu bar model.
+export let mb: BrowserWindow;
+
+const createTray = () => {
+  const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
+  const icon = nativeImage.createFromPath(iconPath);
+  const tray = new Tray(icon);
+
+  tray.setToolTip('Polkadot Live');
+
+  tray.addListener('mouse-up', () => {
+    // TODO: Throw error
+    if (!mb) return;
+
+    if (mb?.isVisible()) {
+      WindowsController.hideAndBlur('menu');
+    } else {
+      WindowsController.show('menu');
+    }
+  });
+};
 
 // Initialise a window.
 // TODO: replace AnyJson with currently used options.
@@ -137,7 +163,9 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
   // Create a call for the window to open.
   ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
     // Ensure menu is hidden.
-    mb.hideWindow();
+    if (mb.isVisible()) {
+      mb.hide();
+    }
 
     // Either creates a window or focuses an existing one.
     const window = WindowsController.get(name);
@@ -213,7 +241,7 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
   });
 };
 
-mb.on('ready', () => {
+app.whenReady().then(() => {
   // Auto launch app on login.
   const autoLaunch = new AutoLaunch({
     name: 'Polkadot Live',
@@ -222,36 +250,40 @@ mb.on('ready', () => {
     if (!isEnabled) autoLaunch.enable();
   });
 
+  // Create menu bar and tray.
+  mb = createMenuBar();
+  WindowsController.add(mb, 'menu');
+  createTray();
+
   mb.on('show', () => {
     // TODO: Throw error
-    if (!mb.window) return;
-
-    WindowsController.add(mb.window, 'menu');
-    WindowsController.focus('menu');
+    if (!mb) return;
 
     // Populate items from store.
     initializeState('menu');
-  });
 
-  mb.on('after-show', () => {
     // Bootstrap account events for all chains.
     Discover.bootstrapEvents();
 
     // Listen to window movements.
-    mb.window?.addListener('move', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
+    mb?.addListener('move', () => {
+      if (mb) handleMenuBounds(mb);
     });
 
-    mb.window?.addListener('resize', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
+    mb?.addListener('resize', () => {
+      if (mb) handleMenuBounds(mb);
     });
 
     // Move window to saved position.
     moveToMenuBounds();
   });
 
-  mb.on('focus-lost', () => {
+  mb.on('blur', () => {
     WindowsController.blur('menu');
+  });
+
+  mb.on('focus', () => {
+    WindowsController.focus('menu');
   });
 
   // Handle Ledger account import.

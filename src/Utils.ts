@@ -48,7 +48,7 @@ export const reportImportedAccounts = (id: string) => {
 // Save current menu position to store.
 export const handleMenuBounds = async (w: BrowserWindow) => {
   if (w.isFocused()) {
-    store.set('menu_bounds', mb?.window?.getBounds());
+    store.set('menu_bounds', mb?.getBounds());
   }
 };
 
@@ -56,7 +56,7 @@ export const handleMenuBounds = async (w: BrowserWindow) => {
 export const moveToMenuBounds = () => {
   const storeMenuPos: AnyJson = store.get('menu_bounds');
   if (storeMenuPos) {
-    mb?.window?.setPosition(storeMenuPos.x, storeMenuPos.y, false);
+    mb?.setPosition(storeMenuPos.x, storeMenuPos.y, false);
   }
 };
 
