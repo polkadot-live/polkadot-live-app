@@ -40,7 +40,7 @@
     }
   },
   "rules": {
-    "react-hooks/exhaustive-deps": "none",
+    "react-hooks/exhaustive-deps": "off",
     "import/no-named-as-default": "off",
     "import/no-unresolved": "error",
     "unused-imports/no-unused-imports": "error",
