@@ -110,7 +110,7 @@ const initialMenuBounds: AnyJson = store.get('menu_bounds');
 const webSecurity = false;
 
 const createMenuBar = () => {
-  return new BrowserWindow({
+  const mb = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
     x: initialMenuBounds?.x || undefined,
@@ -126,13 +126,29 @@ const createMenuBar = () => {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    backgroundColor: '#000',
+    backgroundColor: '#2b2b2b',
     webPreferences: {
       // turn off sandboxing if testing with wdio.
       sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mb.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    mb.loadURL(
+      `file://${path.join(
+        __dirname,
+        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`
+      )}`
+    );
+  }
+
+  // Initially hide the menu bar.
+  mb.hide();
+
+  return mb;
 };
 
 // TODO: Create menu bar model.
@@ -190,23 +206,29 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         movable: true,
         fullscreenable: false,
         center: true,
+        backgroundColor: '#2b2b2b',
         webPreferences: {
           webSecurity,
           preload: path.join(__dirname, 'preload.js'),
         },
       });
 
-      const route = `/#/${name}${
+      // NOTE: Dev server routes start with /#/
+      //       Production routes start with #/
+      const route = `${name}${
         args ? `?${new URLSearchParams(args).toString()}` : ''
       }`;
 
       // Development: load from vite dev server.
       if (!app.isPackaged && MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-        w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${route}`);
+        w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${route}`);
       } else {
         // Production: load from app build.
-        w.loadFile(
-          path.join(__dirname, `../${MAIN_WINDOW_VITE_NAME}/index.html${route}`)
+        w.loadURL(
+          `file://${path.join(
+            __dirname,
+            `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#/${route}`
+          )}`
         );
       }
       w.show();
