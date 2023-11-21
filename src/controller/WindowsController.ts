@@ -71,11 +71,11 @@ export class WindowsController {
 
   // Show a window
   static show = (id: string) => {
-const window = this.active.find((w) => w.id === id)?.window;
-if (window) {
-   window.show();
-   this.focus(id);
-}
+    const window = this.active.find((w) => w.id === id)?.window;
+    if (window) {
+      window.show();
+      this.focus(id);
+    }
   };
 
   // Close window of a id and remove from active.
