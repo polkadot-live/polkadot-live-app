@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Identicon as IdenticonDefault } from '@polkadot/react-identicon';
+import { Polkicon } from '@polkadot-cloud/react';
 import styled from 'styled-components';
 import { IdenticonProps } from './types';
 
@@ -13,11 +13,6 @@ const Wrapper = styled.div`
 
 export const Identicon = ({ value, size }: IdenticonProps) => (
   <Wrapper style={{ width: `${size}px`, height: `${size}px` }}>
-    <IdenticonDefault
-      value={value}
-      size={size}
-      theme="polkadot"
-      style={{ cursor: 'default' }}
-    />
+    <Polkicon address={value} size={size} />
   </Wrapper>
 );

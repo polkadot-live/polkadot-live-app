@@ -1,9 +1,16 @@
 import 'websocket-polyfill';
-import { app, BrowserWindow, ipcMain, protocol, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  nativeImage,
+  protocol,
+  shell,
+  Tray,
+} from 'electron';
 import path from 'path';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
-import { menubar } from 'menubar';
 import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import {
@@ -97,39 +104,69 @@ const reportDismissEvent = (eventData: DismissEvent) => {
 // TODO: replace AnyJson with concrete type.
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
-// Whether to apply `webSecurity` to browser windows.
-// Note: Would be good to look into a more secure solution. More information:
-// https://stackoverflow.com/questions/61623156/electron-throws-not-allowed-to-load-local-resource-when-using-showopendialog
-const webSecurity = false;
-
-export const mb = menubar({
-  index: MAIN_WINDOW_VITE_DEV_SERVER_URL,
-  // NOTE: use `process.platform` to determine windows icons.
-  icon: path.resolve(__dirname, 'assets/IconTemplate.png'),
-  browserWindow: {
+const createMenuBar = () => {
+  const mb = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
     x: initialMenuBounds?.x || undefined,
     y: initialMenuBounds?.y || undefined,
     width: initialMenuBounds?.height || 420,
+    height: initialMenuBounds?.height || 475,
     minWidth: 420,
     maxWidth: 420,
-    height: initialMenuBounds?.height || 475,
     minHeight: 475,
     maxHeight: 1200,
     resizable: true,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,
+    skipTaskbar: true,
+    backgroundColor: '#2b2b2b', // TODO: Make theme setting
     webPreferences: {
-      // temporary fix. disable web security.
-      webSecurity,
       // turn off sandboxing if testing with wdio.
       sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
-  },
-});
+  });
+
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mb.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    mb.loadURL(
+      `file://${path.join(
+        __dirname,
+        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`
+      )}`
+    );
+  }
+
+  // Initially hide the menu bar.
+  mb.hide();
+
+  return mb;
+};
+
+// TODO: Create menu bar model.
+export let mb: BrowserWindow;
+
+const createTray = () => {
+  const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
+  const icon = nativeImage.createFromPath(iconPath);
+  const tray = new Tray(icon);
+
+  tray.setToolTip('Polkadot Live');
+
+  tray.addListener('mouse-up', () => {
+    // TODO: Throw error
+    if (!mb) return;
+
+    if (mb?.isVisible()) {
+      WindowsController.hideAndBlur('menu');
+    } else {
+      WindowsController.show('menu');
+    }
+  });
+};
 
 // Initialise a window.
 // TODO: replace AnyJson with currently used options.
@@ -137,7 +174,9 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
   // Create a call for the window to open.
   ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
     // Ensure menu is hidden.
-    mb.hideWindow();
+    if (mb.isVisible()) {
+      mb.hide();
+    }
 
     // Either creates a window or focuses an existing one.
     const window = WindowsController.get(name);
@@ -162,23 +201,30 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         movable: true,
         fullscreenable: false,
         center: true,
+        backgroundColor: '#2b2b2b', // TODO: Make theme setting
         webPreferences: {
-          webSecurity,
+          // turn off sandboxing if testing with wdio.
+          sandbox: !isTest,
           preload: path.join(__dirname, 'preload.js'),
         },
       });
 
-      const route = `/#/${name}${
+      // NOTE: Dev server routes start with /#/
+      //       Production routes start with #/
+      const route = `${name}${
         args ? `?${new URLSearchParams(args).toString()}` : ''
       }`;
 
       // Development: load from vite dev server.
       if (!app.isPackaged && MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-        w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}${route}`);
+        w.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${route}`);
       } else {
         // Production: load from app build.
-        w.loadFile(
-          path.join(__dirname, `../${MAIN_WINDOW_VITE_NAME}/index.html${route}`)
+        w.loadURL(
+          `file://${path.join(
+            __dirname,
+            `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#/${route}`
+          )}`
         );
       }
       w.show();
@@ -213,7 +259,7 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
   });
 };
 
-mb.on('ready', () => {
+app.whenReady().then(() => {
   // Auto launch app on login.
   const autoLaunch = new AutoLaunch({
     name: 'Polkadot Live',
@@ -222,36 +268,40 @@ mb.on('ready', () => {
     if (!isEnabled) autoLaunch.enable();
   });
 
+  // Create menu bar and tray.
+  mb = createMenuBar();
+  WindowsController.add(mb, 'menu');
+  createTray();
+
   mb.on('show', () => {
     // TODO: Throw error
-    if (!mb.window) return;
-
-    WindowsController.add(mb.window, 'menu');
-    WindowsController.focus('menu');
+    if (!mb) return;
 
     // Populate items from store.
     initializeState('menu');
-  });
 
-  mb.on('after-show', () => {
     // Bootstrap account events for all chains.
     Discover.bootstrapEvents();
 
     // Listen to window movements.
-    mb.window?.addListener('move', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
+    mb?.addListener('move', () => {
+      if (mb) handleMenuBounds(mb);
     });
 
-    mb.window?.addListener('resize', () => {
-      if (mb?.window) handleMenuBounds(mb.window);
+    mb?.addListener('resize', () => {
+      if (mb) handleMenuBounds(mb);
     });
 
     // Move window to saved position.
     moveToMenuBounds();
   });
 
-  mb.on('focus-lost', () => {
+  mb.on('blur', () => {
     WindowsController.blur('menu');
+  });
+
+  mb.on('focus', () => {
+    WindowsController.focus('menu');
   });
 
   // Handle Ledger account import.
