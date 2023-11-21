@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainsContextInterface } from './types';
+import type { ChainsContextInterface } from './types';
 
 export const defaultChainsContext: ChainsContextInterface = {
   chains: [],

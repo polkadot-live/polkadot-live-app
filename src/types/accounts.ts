@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainID } from './chains';
-import { AnyData, AnyJson } from './misc';
+import type { ChainID } from './chains';
+import type { AnyData, AnyJson } from './misc';
 
 export enum AccountType {
   User,

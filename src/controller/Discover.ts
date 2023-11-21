@@ -1,14 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainID } from '@/types/chains';
+import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/debugging';
-import { Account } from '@/model/Account';
+import type { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
 import { ChainsController } from './ChainsController';
-import { AnyJson } from '@/types/misc';
-import { All, MethodSubscription } from '@/types/blockstream';
+import type { AnyJson } from '@/types/misc';
+import type { All, MethodSubscription } from '@/types/blockstream';
 
 const debug = MainDebug.extend('Discover');
 

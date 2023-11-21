@@ -4,7 +4,7 @@
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { MainDebug } from '@/debugging';
 import { NotificationsController } from '@/controller/NotificationsController';
-import { Report, Reporter } from '@/types/reporter';
+import type { Report, Reporter } from '@/types/reporter';
 
 const debug = MainDebug.extend('LiveReporter');
 

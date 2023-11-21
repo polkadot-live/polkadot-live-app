@@ -5,16 +5,16 @@ import { planckToUnit } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
 import { getUnixTime } from 'date-fns';
 import { chainCurrency, chainUnits } from '@/config/chains';
-import { ChainID } from '@/types/chains';
+import type { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug as debug } from '@/debugging';
 import { Account } from '@/model/Account';
-import { PolkadotAccountState } from '@/types/chains/polkadot';
+import type { PolkadotAccountState } from '@/types/chains/polkadot';
 import { getPoolAccounts } from './utils';
 import { AccountType } from '@/types/accounts';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 /**
  * A static class to provide callback functions for Polkadot subscriptions and discovery.

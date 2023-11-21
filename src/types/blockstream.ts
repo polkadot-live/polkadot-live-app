@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { GenericEvent, GenericExtrinsic } from '@polkadot/types';
-import { Address } from '@polkadot/types/interfaces/runtime';
+import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
+import type { Address } from '@polkadot/types/interfaces/runtime';
 
 // An account can either be a concrete account (a @polkadot `Address`) or a wildcard.
 export type ExtendedAccount = ConcreteAccount | 'Wildcard';

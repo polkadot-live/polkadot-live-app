@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
-import { HeaderProps } from './types';
+import type { HeaderProps } from './types';
 
 export const Header = ({ showMenu }: HeaderProps) => {
   const { pathname } = useLocation();

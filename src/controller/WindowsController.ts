@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainID } from '@/types/chains';
-import { BrowserWindow } from 'electron';
+import type { ChainID } from '@/types/chains';
+import type { BrowserWindow } from 'electron';
 
 // A window helper to manage which windows are open and their current state.
 type StoredWindow = {

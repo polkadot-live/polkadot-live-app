@@ -4,10 +4,10 @@
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText } from '@polkadot-cloud/react';
 import { Identicon } from '@app/library/Identicon';
-import { Account } from '@/model/Account';
+import type { Account } from '@/model/Account';
 import { ReactComponent as PolkadotIcon } from '@app/svg/polkadotIcon.svg';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 export const Accounts = ({ setSection, addresses }: AnyJson) => {
   return (

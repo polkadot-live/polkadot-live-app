@@ -8,7 +8,7 @@ import { isValidHttpUrl } from '@polkadot-cloud/utils';
 import { useTooltip } from '@app/contexts/Tooltip';
 import { Identicon } from '@app/library/Identicon';
 import { EventItem } from './Wrappers';
-import { EventItemProps } from './types';
+import type { EventItemProps } from './types';
 
 export const Item = ({
   who,

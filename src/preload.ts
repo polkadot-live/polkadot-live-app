@@ -5,8 +5,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron';
-import { PreloadAPI } from '@/types/preload';
-import { DismissEvent } from '@/types/reporter';
+import type { PreloadAPI } from '@/types/preload';
+import type { DismissEvent } from '@/types/reporter';
 
 // Expose Electron API to wdio tests
 if (process.env.NODE_ENV === 'test') {

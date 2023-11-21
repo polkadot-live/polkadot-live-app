@@ -1,13 +1,13 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
+import type {
   ExtendedAccount,
   IMatch,
   MatchOutcome,
   MethodSubscription,
 } from '@/types/blockstream';
-import { GenericEvent, GenericExtrinsic } from '@polkadot/types';
+import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
 
 export class Match implements IMatch {
   // The name of the pallet.

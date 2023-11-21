@@ -3,7 +3,7 @@
 
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert, ButtonPrimary } from '@polkadot-cloud/react';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Header } from '@app/library/Header';

@@ -4,12 +4,12 @@
 import { planckToUnit } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
 import { NotificationsController } from './NotificationsController';
-import { ChainID } from '@/types/chains';
+import type { ChainID } from '@/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/debugging';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('Extrinsic');
 

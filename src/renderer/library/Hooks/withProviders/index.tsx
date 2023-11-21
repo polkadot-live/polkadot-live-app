@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnyElement } from '@/types/misc';
+import type { AnyElement } from '@/types/misc';
 
 /*
  * A hook that wraps multiple context providers to a component and makes each parent context accessible.

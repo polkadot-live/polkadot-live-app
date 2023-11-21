@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AddressesContextInterface } from './types';
+import type { AddressesContextInterface } from './types';
 
 export const defaultAddressesContext: AddressesContextInterface = {
   addresses: {},

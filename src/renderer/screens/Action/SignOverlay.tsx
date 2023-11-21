@@ -11,7 +11,7 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import { useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 

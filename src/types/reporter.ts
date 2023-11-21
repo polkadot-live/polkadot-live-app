@@ -1,9 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ExtendedAccount } from './blockstream';
-import { ChainID } from './chains';
-import { AnyData, AnyJson } from './misc';
+import type { ExtendedAccount } from './blockstream';
+import type { ChainID } from './chains';
+import type { AnyData, AnyJson } from './misc';
 
 // Batch notification config.
 export interface BatchConfig {

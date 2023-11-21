@@ -3,8 +3,8 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { defaultOverlayContext } from './defaults';
-import { OverlayContextInterface } from './types';
-import { AnyJson } from '@/types/misc';
+import type { OverlayContextInterface } from './types';
+import type { AnyJson } from '@/types/misc';
 
 export const OverlayContext = createContext<OverlayContextInterface>(
   defaultOverlayContext

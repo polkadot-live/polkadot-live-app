@@ -6,7 +6,7 @@ import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
-import { ConfirmProps } from './types';
+import type { ConfirmProps } from './types';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {
   const { importAddress } = useAddresses();

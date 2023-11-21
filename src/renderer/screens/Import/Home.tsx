@@ -12,7 +12,7 @@ import {
   ModalConnectItem,
   ModalHardwareItem,
 } from '@polkadot-cloud/react';
-import { AnyFunction } from '@/types/misc';
+import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { ReactComponent as LedgerLogoSVG } from '@app/svg/ledgerLogo.svg';

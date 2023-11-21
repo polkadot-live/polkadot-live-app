@@ -3,7 +3,7 @@
 
 import { ButtonSecondary } from '@polkadot-cloud/react';
 import { isValidAddress } from '@polkadot-cloud/utils';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useState } from 'react';

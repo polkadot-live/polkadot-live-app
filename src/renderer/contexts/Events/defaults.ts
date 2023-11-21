@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { EventsContextInterface } from './types';
+import type { EventsContextInterface } from './types';
 
 export const defaultEventsContext: EventsContextInterface = {
   events: {},

@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainID } from '@/types/chains';
-import { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { AnyJson } from '@/types/misc';
 
 export type AccountStateContextInterface = {
   setAccountStateKey: (

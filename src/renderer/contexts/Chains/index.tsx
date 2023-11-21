@@ -3,8 +3,8 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import * as defaults from './defaults';
-import { ChainInstance, ChainsContextInterface } from './types';
-import { ChainStatus } from '@/types/chains';
+import type { ChainInstance, ChainsContextInterface } from './types';
+import type { ChainStatus } from '@/types/chains';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext
