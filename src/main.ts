@@ -121,7 +121,7 @@ const createMenuBar = () => {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: '#2b2b2b', // TODO: Make theme setting
     webPreferences: {
       // turn off sandboxing if testing with wdio.
       sandbox: !isTest,
@@ -201,7 +201,7 @@ const handleOpenWindow = (name: string, options?: AnyJson) => {
         movable: true,
         fullscreenable: false,
         center: true,
-        backgroundColor: '#2b2b2b',
+        backgroundColor: '#2b2b2b', // TODO: Make theme setting
         webPreferences: {
           // turn off sandboxing if testing with wdio.
           sandbox: !isTest,
