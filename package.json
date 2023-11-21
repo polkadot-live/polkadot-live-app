@@ -38,7 +38,7 @@
     "@types/auto-launch": "^5.0.2",
     "@types/electron-localshortcut": "^3.1.0",
     "@types/react": "^18.2.38",
-    "@types/react-dom": "^18.2.7",
+    "@types/react-dom": "^18.2.16",
     "@types/styled-components": "^5.1.31",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
