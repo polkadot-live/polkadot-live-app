@@ -1,8 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
-import { U8aLike } from '@polkadot/util/types';
+import type BigNumber from 'bignumber.js';
+import type { U8aLike } from '@polkadot/util/types';
 
 export interface PolkadotAccountState {
   inNominationPool: null | {

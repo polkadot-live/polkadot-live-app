@@ -5,7 +5,7 @@ import { localStorageOrDefault, setStateWithRef } from '@polkadot-cloud/utils';
 import { useRef, useState } from 'react';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyFunction, AnyJson } from '@/types/misc';
 
 export const ImportVault = ({
   section,

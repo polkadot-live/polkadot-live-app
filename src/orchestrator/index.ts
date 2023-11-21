@@ -9,7 +9,7 @@ import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { NotificationsController } from '@/controller/NotificationsController';
-import {
+import type {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,

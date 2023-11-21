@@ -6,18 +6,18 @@ import { MainDebug } from '@/debugging';
 import { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
-import { ChainID } from '@/types/chains';
-import {
+import type { ChainID } from '@/types/chains';
+import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
-  AccountType,
   ImportedAccounts,
   StoredAccounts,
 } from '@/types/accounts';
-import { IMatch, SubscriptionDelegate } from '@/types/blockstream';
-import { AnyJson } from '@/types/misc';
-import { ReportDelegator } from '@/types/reporter';
+import { AccountType } from '@/types/accounts';
+import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
+import type { AnyJson } from '@/types/misc';
+import type { ReportDelegator } from '@/types/reporter';
 
 const debug = MainDebug.extend('Accounts');
 

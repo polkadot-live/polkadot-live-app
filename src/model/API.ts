@@ -1,15 +1,16 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { Codec } from '@polkadot/types-codec/types';
+import type { ApiPromise } from '@polkadot/api';
+import { WsProvider } from '@polkadot/api';
+import type { Codec } from '@polkadot/types-codec/types';
 import { rmCommas } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
-import { ChainID, ChainStatus } from '@/types/chains';
-import { APIConstants } from '@/types/chains/polkadot';
+import type { ChainID, ChainStatus } from '@/types/chains';
+import type { APIConstants } from '@/types/chains/polkadot';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('API');
 

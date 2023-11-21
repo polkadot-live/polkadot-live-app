@@ -9,8 +9,8 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import { AnyFunction, AnyJson } from '@/types/misc';
-import { LedgerResponse, LedgerTask } from '@/types/ledger';
+import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { LedgerResponse, LedgerTask } from '@/types/ledger';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 

@@ -17,7 +17,6 @@ import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
 } from 'electron-localshortcut';
-import { ChainID } from '@/types/chains';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import { Discover } from './controller/Discover';
 import AutoLaunch from 'auto-launch';
@@ -30,6 +29,7 @@ import {
 } from './Utils';
 import unhandled from 'electron-unhandled';
 import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.

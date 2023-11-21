@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
-import { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@/types/accounts';
 
 export const Import: React.FC = () => {
   const [source, setSource] = useState<AccountSource | undefined>('ledger');

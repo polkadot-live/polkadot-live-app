@@ -1,5 +1,5 @@
-import { LedgerResponse } from '@/types/ledger';
-import { AnyJson } from '@/types/misc';
+import type { LedgerResponse } from '@/types/ledger';
+import type { AnyJson } from '@/types/misc';
 
 // formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (

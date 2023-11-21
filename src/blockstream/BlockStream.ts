@@ -1,11 +1,11 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ApiPromise } from '@polkadot/api';
-import { GenericEvent, GenericExtrinsic } from '@polkadot/types';
-import { Codec } from '@polkadot/types-codec/types';
-import { Header } from '@polkadot/types/interfaces/runtime';
-import { ChainID } from '@/types/chains';
+import type { ApiPromise } from '@polkadot/api';
+import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
+import type { Codec } from '@polkadot/types-codec/types';
+import type { Header } from '@polkadot/types/interfaces/runtime';
+import type { ChainID } from '@/types/chains';
 import { MainDebug } from '../debugging';
 import {
   matchEventToAccount,
@@ -20,8 +20,7 @@ import type {
   NotificationReport,
   Reporter,
 } from '@/types/reporter';
-import {
-  ApiSubscription,
+import type {
   BlockStreamConfig,
   ConcreteAccount,
   ExtendedAccount,
@@ -29,6 +28,7 @@ import {
   MatchOutcome,
   MethodSubscription,
 } from '@/types/blockstream';
+import { ApiSubscription } from '@/types/blockstream';
 import type { AnyData } from '@/types/misc';
 
 const MAX_SKIPPED_BLOCKS = 5;

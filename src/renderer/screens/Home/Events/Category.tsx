@@ -5,7 +5,7 @@ import { chainCategory, chainIcon } from '@/config/chains';
 import { HeadingWrapper } from '../Wrappers';
 import { Item } from './Item';
 import { EventGroup } from './Wrappers';
-import { EventCategoryProps } from './types';
+import type { EventCategoryProps } from './types';
 
 export const Category = ({
   chain,

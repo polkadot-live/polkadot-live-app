@@ -3,12 +3,12 @@
 
 import Keyring from '@polkadot/keyring';
 import { setStateWithRef } from '@polkadot-cloud/utils';
-import { Account } from '@/model/Account';
+import type { Account } from '@/model/Account';
 import * as defaults from './defaults';
-import { AddressesContextInterface } from './types';
+import type { AddressesContextInterface } from './types';
 import { useContext, createContext, useState, useRef } from 'react';
-import { ChainID } from '@/types/chains';
-import { AccountSource, ImportedAccounts } from '@/types/accounts';
+import type { ChainID } from '@/types/chains';
+import type { AccountSource, ImportedAccounts } from '@/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext

@@ -4,13 +4,13 @@
 import { setStateWithRef } from '@polkadot-cloud/utils';
 import React, { createContext, useContext, useRef, useState } from 'react';
 import * as defaults from './defaults';
-import {
+import type {
   EventsContextInterface,
   EventsState,
   SortedChainEvents,
 } from './types';
-import { ChainID } from '@/types/chains';
-import { DismissEvent, EventCallback } from '@/types/reporter';
+import type { ChainID } from '@/types/chains';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext

@@ -1,13 +1,13 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { IpcRendererEvent } from 'electron';
-import { ChainID } from './chains';
-import { AnyJson } from './misc';
-import { LedgerTask } from './ledger';
-import { AccountSource, ImportedAccounts } from './accounts';
-import { DismissEvent, EventCallback } from './reporter';
-import { TxStatus } from './tx';
+import type { IpcRendererEvent } from 'electron';
+import type { ChainID } from './chains';
+import type { AnyJson } from './misc';
+import type { LedgerTask } from './ledger';
+import type { AccountSource, ImportedAccounts } from './accounts';
+import type { DismissEvent, EventCallback } from './reporter';
+import type { TxStatus } from './tx';
 
 export interface PreloadAPI {
   quitApp: ApiEmptyRequest;

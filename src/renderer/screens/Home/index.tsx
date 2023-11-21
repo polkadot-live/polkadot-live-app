@@ -12,8 +12,8 @@ import { ReactComponent as IconSVG } from '@app/svg/polkadotIcon.svg';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
-import { AnyJson } from '@/types/misc';
-import { ChainID } from '@/types/chains';
+import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();

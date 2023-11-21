@@ -3,7 +3,7 @@
 
 import { rmCommas } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
-import { ChainID } from '@/types/chains';
+import type { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/debugging';

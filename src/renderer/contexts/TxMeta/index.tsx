@@ -12,7 +12,7 @@ import React, {
 } from 'react';
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta

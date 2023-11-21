@@ -13,8 +13,8 @@ import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
-import { AddressProps } from '../Addresses/types';
-import { AnyJson } from '@/types/misc';
+import type { AddressProps } from '../Addresses/types';
+import type { AnyJson } from '@/types/misc';
 
 export const Address = ({ address, index }: AddressProps) => {
   const { openOverlayWith } = useOverlay();

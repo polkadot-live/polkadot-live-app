@@ -9,16 +9,16 @@ import { chainIcon } from '@/config/chains';
 import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import { IpcRendererEvent } from 'electron';
+import type { IpcRendererEvent } from 'electron';
 import { DragClose } from '@app/library/DragClose';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { Signer } from './Signer';
 import { SubmittedTxWrapper } from './Wrappers';
-import { ChainID } from '@/types/chains';
-import { TxStatus } from '@/types/tx';
-import { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { TxStatus } from '@/types/tx';
+import type { AnyJson } from '@/types/misc';
 
 export const Action = () => {
   const { search } = useLocation();

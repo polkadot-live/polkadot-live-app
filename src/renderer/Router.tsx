@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 import { MainInterfaceWrapper } from '@app/Wrappers';
 import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';
@@ -13,7 +13,7 @@ import { Action } from '@app/screens/Action';
 import { Home } from '@app/screens/Home';
 import { Import } from '@app/screens/Import';
 import { useTheme } from 'styled-components';
-import { ChainID } from '@/types/chains';
+import type { ChainID } from '@/types/chains';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();

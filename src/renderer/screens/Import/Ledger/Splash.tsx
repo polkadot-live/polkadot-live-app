@@ -7,7 +7,7 @@ import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { Header } from '@app/library/Header';
 import { ReactComponent as LogoSVG } from '@app/svg/ledgerLogo.svg';
 import { SplashWrapper } from '../Wrappers';
-import { SplashProps } from '../types';
+import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => {

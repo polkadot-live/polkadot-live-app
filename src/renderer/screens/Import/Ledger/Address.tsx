@@ -7,14 +7,14 @@ import {
   localStorageOrDefault,
   unescape,
 } from '@polkadot-cloud/utils';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
-import { AddressProps } from '../Addresses/types';
+import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ address, index }: AddressProps) => {
   const { openOverlayWith } = useOverlay();

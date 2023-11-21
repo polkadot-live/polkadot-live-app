@@ -7,8 +7,8 @@ import { NoAccounts } from '../NoAccounts';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { Wrapper } from './Wrappers';
-import { ChainID } from '@/types/chains';
-import { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { AnyJson } from '@/types/misc';
 
 export const Events = ({ addresses }: AnyJson) => {
   const { events, sortChainEvents } = useEvents();

@@ -7,7 +7,7 @@ import { chainCurrency } from '@/config/chains';
 import { useOverlay } from '@app/contexts/Overlay';
 import { SignOverlay } from './SignOverlay';
 import { EstimatedFee } from './Wrappers';
-import { SubmitProps } from './types';
+import type { SubmitProps } from './types';
 
 export const Signer = ({
   valid,

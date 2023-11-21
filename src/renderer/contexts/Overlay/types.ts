@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React from 'react';
+import type React from 'react';
 
 export interface OverlayContextInterface {
   openOverlayWith: (o: React.ReactNode | null, s?: string, t?: boolean) => void;

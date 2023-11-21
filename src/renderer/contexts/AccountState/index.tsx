@@ -3,10 +3,10 @@
 
 import { setStateWithRef } from '@polkadot-cloud/utils';
 import { useContext, createContext, useState, useRef } from 'react';
-import { ChainID } from '@/types/chains';
-import { AccountState, AccountStateContextInterface } from './types';
+import type { ChainID } from '@/types/chains';
+import type { AccountState, AccountStateContextInterface } from './types';
 import { defaultAccountState } from './defaults';
-import { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@/types/misc';
 
 export const AccountStateContext =
   createContext<AccountStateContextInterface>(defaultAccountState);
