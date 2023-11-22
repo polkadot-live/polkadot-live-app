@@ -5,7 +5,7 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert } from '@polkadot-cloud/react';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { Header } from '@app/library/Header';
-import { ReactComponent as LogoSVG } from '@app/svg/ledgerLogo.svg';
+import LogoSVG from '@app/svg/ledgerLogo.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';

@@ -5,7 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText } from '@polkadot-cloud/react';
 import { Identicon } from '@app/library/Identicon';
 import type { Account } from '@/model/Account';
-import { ReactComponent as PolkadotIcon } from '@app/svg/polkadotIcon.svg';
+import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 

@@ -15,9 +15,9 @@ import {
 import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import { ReactComponent as LedgerLogoSVG } from '@app/svg/ledgerLogo.svg';
-import { ReactComponent as VaultSVG } from '@app/svg/polkadotVault.svg';
-import { ReactComponent as VaultLogoSVG } from '@app/svg/polkadotVaultLogo.svg';
+import LedgerLogoSVG from '@app/svg/ledgerLogo.svg?react';
+import VaultSVG from '@app/svg/polkadotVault.svg?react';
+import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
 
 export const Home = ({
   setSection,

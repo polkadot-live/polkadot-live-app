@@ -8,7 +8,7 @@ import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Header } from '@app/library/Header';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ReactComponent as LogoSVG } from '@app/svg/polkadotVault.svg';
+import LogoSVG from '@app/svg/polkadotVault.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { Reader } from './Reader';
 

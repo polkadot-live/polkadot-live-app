@@ -8,7 +8,7 @@ import { useEvents } from '@app/contexts/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
 import { useEffect, useState } from 'react';
-import { ReactComponent as IconSVG } from '@app/svg/polkadotIcon.svg';
+import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
