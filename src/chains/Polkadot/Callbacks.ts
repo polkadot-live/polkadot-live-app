@@ -9,7 +9,7 @@ import type { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
-import { MainDebug as debug } from '@/debugging';
+import { MainDebug as debug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { PolkadotAccountState } from '@/types/chains/polkadot';
 import { getPoolAccounts } from './utils';

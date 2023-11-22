@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import type { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { WindowsController } from '@/controller/WindowsController';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { AnyFunction, AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('PolkadotState');

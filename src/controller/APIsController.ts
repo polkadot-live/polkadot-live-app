@@ -9,7 +9,7 @@ import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { AnyData } from '@/types/misc';
 
 const debug = MainDebug.extend('APIs');

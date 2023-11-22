@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@/types/chains';
+import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { BrowserWindow } from 'electron';
+import { store } from '@/main';
 
 // A window helper to manage which windows are open and their current state.
 type StoredWindow = {
@@ -111,5 +113,46 @@ export class WindowsController {
     for (const { id } of this.active) {
       this.get(id)?.webContents?.send(event, chain);
     }
+  };
+
+  // Toggle a window's visibility.
+  static toggleVisible = (id: string) => {
+    const window = this.get(id);
+
+    if (!window) {
+      throw new Error(
+        `WindowsController.toggleVisible - Window not found with id: ${id}`
+      );
+    }
+
+    window.isVisible() ? this.hideAndBlur(id) : this.show(id);
+  };
+
+  // Handle the main window's bounds.
+  static persistMenuBounds = () => {
+    const mainWindow = this.get('menu');
+
+    if (!mainWindow) {
+      throw new Error(
+        `WindowsController.handleMenuBounds - Main window doesn't exist`
+      );
+    }
+
+    if (mainWindow.isFocused()) {
+      store.set('menu_bounds', mainWindow.getBounds());
+    }
+  };
+
+  // Move main window to menu bounds persisted in the store.
+  static moveToMenuBounds = () => {
+    const mainWindow = this.get('menu');
+    if (!mainWindow) {
+      throw new Error(
+        `WindowsController.moveToMenuBounds - Main window doesn't exist`
+      );
+    }
+
+    const storeMenuPos: AnyJson = store.get('menu_bounds');
+    mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
   };
 }

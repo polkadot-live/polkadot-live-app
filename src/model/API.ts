@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js';
 import type { ChainID, ChainStatus } from '@/types/chains';
 import type { APIConstants } from '@/types/chains/polkadot';
 import { WindowsController } from '@/controller/WindowsController';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('API');
