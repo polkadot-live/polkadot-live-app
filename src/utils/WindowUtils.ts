@@ -61,9 +61,8 @@ export const createMainWindow = (isTest: boolean) => {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    backgroundColor: '#2b2b2b', // TODO: Make theme setting
+    backgroundColor: '#2b2b2b',
     webPreferences: {
-      // turn off sandboxing if testing with wdio.
       sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -161,9 +160,8 @@ export const handleWindowOnIPC = (
       movable: true,
       fullscreenable: false,
       center: true,
-      backgroundColor: '#2b2b2b', // TODO: Make theme setting
+      backgroundColor: '#2b2b2b',
       webPreferences: {
-        // turn off sandboxing if testing with wdio.
         sandbox: !isTest,
         preload: path.join(__dirname, 'preload.js'),
       },
