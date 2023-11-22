@@ -10,7 +10,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/Chains';
 import { useState } from 'react';
-import { ReactComponent as PolkadotIcon } from '../../svg/polkadotIcon.svg';
+import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 export const Footer = () => {
   const { chains } = useChains();
