@@ -1,11 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyFunction } from '@/types/misc';
 import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
-import { mb, store } from './main';
-import type { BrowserWindow } from 'electron';
 import { AccountsController } from './controller/AccountsController';
 import { MainDebug as debug } from './debugging';
 import { AccountType } from './types/accounts';
@@ -43,21 +41,6 @@ export const reportImportedAccounts = (id: string) => {
     'renderer:broadcast:accounts',
     AccountsController.getAll()
   );
-};
-
-// Save current menu position to store.
-export const handleMenuBounds = async (w: BrowserWindow) => {
-  if (w.isFocused()) {
-    store.set('menu_bounds', mb?.getBounds());
-  }
-};
-
-// Move window into position from existing `store` value.
-export const moveToMenuBounds = () => {
-  const storeMenuPos: AnyJson = store.get('menu_bounds');
-  if (storeMenuPos) {
-    mb?.setPosition(storeMenuPos.x, storeMenuPos.y, false);
-  }
 };
 
 // Call a function for all windows.

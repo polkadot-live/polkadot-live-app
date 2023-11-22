@@ -21,9 +21,7 @@ import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import { Discover } from './controller/Discover';
 import AutoLaunch from 'auto-launch';
 import {
-  handleMenuBounds,
   initializeState,
-  moveToMenuBounds,
   reportAllWindows,
   reportImportedAccounts,
 } from './Utils';
@@ -105,7 +103,7 @@ const reportDismissEvent = (eventData: DismissEvent) => {
 const initialMenuBounds: AnyJson = store.get('menu_bounds');
 
 const createMenuBar = () => {
-  const mb = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
     x: initialMenuBounds?.x || undefined,
@@ -130,9 +128,9 @@ const createMenuBar = () => {
   });
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mb.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    mb.loadURL(
+    mainWindow.loadURL(
       `file://${path.join(
         __dirname,
         `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`
@@ -141,13 +139,50 @@ const createMenuBar = () => {
   }
 
   // Initially hide the menu bar.
-  mb.hide();
+  mainWindow.hide();
 
-  return mb;
+  mainWindow.on('show', () => {
+    // Populate items from store.
+    initializeState('menu');
+
+    // Bootstrap account events for all chains.
+    Discover.bootstrapEvents();
+  });
+
+  mainWindow.on('move', () => {
+    try {
+      WindowsController.persistMenuBounds();
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  mainWindow.on('resize', () => {
+    try {
+      WindowsController.persistMenuBounds();
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  mainWindow.on('blur', () => {
+    WindowsController.blur('menu');
+  });
+
+  mainWindow.on('focus', () => {
+    WindowsController.focus('menu');
+  });
+
+  // Have windows controller handle menu bar.
+  WindowsController.add(mainWindow, 'menu');
+
+  try {
+    // Move window to saved position.
+    WindowsController.moveToMenuBounds();
+  } catch (e) {
+    console.error(e);
+  }
 };
-
-// TODO: Create menu bar model.
-export let mb: BrowserWindow;
 
 const createTray = () => {
   const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
@@ -157,13 +192,10 @@ const createTray = () => {
   tray.setToolTip('Polkadot Live');
 
   tray.addListener('mouse-up', () => {
-    // TODO: Throw error
-    if (!mb) return;
-
-    if (mb?.isVisible()) {
-      WindowsController.hideAndBlur('menu');
-    } else {
-      WindowsController.show('menu');
+    try {
+      WindowsController.toggleVisible('menu');
+    } catch (e) {
+      console.error(e);
     }
   });
 };
@@ -173,10 +205,8 @@ const createTray = () => {
 const handleOpenWindow = (name: string, options?: AnyJson) => {
   // Create a call for the window to open.
   ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
-    // Ensure menu is hidden.
-    if (mb.isVisible()) {
-      mb.hide();
-    }
+    // Ensure main window is hidden.
+    WindowsController.hideAndBlur('menu');
 
     // Either creates a window or focuses an existing one.
     const window = WindowsController.get(name);
@@ -269,40 +299,8 @@ app.whenReady().then(() => {
   });
 
   // Create menu bar and tray.
-  mb = createMenuBar();
-  WindowsController.add(mb, 'menu');
+  createMenuBar();
   createTray();
-
-  mb.on('show', () => {
-    // TODO: Throw error
-    if (!mb) return;
-
-    // Populate items from store.
-    initializeState('menu');
-
-    // Bootstrap account events for all chains.
-    Discover.bootstrapEvents();
-
-    // Listen to window movements.
-    mb?.addListener('move', () => {
-      if (mb) handleMenuBounds(mb);
-    });
-
-    mb?.addListener('resize', () => {
-      if (mb) handleMenuBounds(mb);
-    });
-
-    // Move window to saved position.
-    moveToMenuBounds();
-  });
-
-  mb.on('blur', () => {
-    WindowsController.blur('menu');
-  });
-
-  mb.on('focus', () => {
-    WindowsController.focus('menu');
-  });
 
   // Handle Ledger account import.
   handleOpenWindow('import');
