@@ -6,7 +6,7 @@ import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
 import type { Codec } from '@polkadot/types-codec/types';
 import type { Header } from '@polkadot/types/interfaces/runtime';
 import type { ChainID } from '@/types/chains';
-import { MainDebug } from '../debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import {
   matchEventToAccount,
   matchExtrinsicToAccount,

@@ -5,7 +5,7 @@ import type { AnyFunction } from '@/types/misc';
 import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
 import { AccountsController } from './controller/AccountsController';
-import { MainDebug as debug } from './debugging';
+import { MainDebug as debug } from '@/utils/DebugUtils';
 import { AccountType } from './types/accounts';
 
 // Initalize store items.

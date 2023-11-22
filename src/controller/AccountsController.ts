@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';

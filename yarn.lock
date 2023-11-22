@@ -1706,6 +1706,13 @@
     "@types/node" "*"
     "@types/responselike" "^1.0.0"
 
+"@types/debug@^4.1.12":
+  version "4.1.12"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.12.tgz#a155f21690871953410df4b6b6f53187f0500917"
+  integrity sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==
+  dependencies:
+    "@types/ms" "*"
+
 "@types/electron-localshortcut@^3.1.0":
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/@types/electron-localshortcut/-/electron-localshortcut-3.1.3.tgz#f248a9c8016ff28cd783708d8664b806e45c4787"
@@ -1799,6 +1806,11 @@
   version "10.0.5"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-10.0.5.tgz#43c22b06b7616496e4b75b28d9c72aa06b5d96fd"
   integrity sha512-JUI82qwkRhYJYesuKSeFy46fKbhLaV9RU1gAh2PHmyoEECvlTf5UYeIivYlMszp1WT2CwJ4ziC3zoxsodhsGwg==
+
+"@types/ms@*":
+  version "0.7.34"
+  resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.34.tgz#10964ba0dee6ac4cd462e2795b6bebd407303433"
+  integrity sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==
 
 "@types/node@*", "@types/node@^20.1.0", "@types/node@^20.1.1":
   version "20.9.3"

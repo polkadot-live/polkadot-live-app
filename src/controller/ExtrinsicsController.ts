@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { NotificationsController } from './NotificationsController';
 import type { ChainID } from '@/types/chains';
 import { chainUnits } from '@/config/chains';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
 import type { AnyJson } from '@/types/misc';

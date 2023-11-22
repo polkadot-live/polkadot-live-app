@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import { NotificationsController } from '@/controller/NotificationsController';
 import type { Report, Reporter } from '@/types/reporter';
 

@@ -4,7 +4,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { Address } from '@polkadot/types/interfaces/runtime';
 import type { ChainID } from '@/types/chains';
-import { MainDebug } from '@/debugging';
+import { MainDebug } from '@/utils/DebugUtils';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
