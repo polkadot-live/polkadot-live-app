@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { memo, useCallback, useMemo, useEffect } from 'react';
+import React, { memo, useCallback, useMemo, useEffect, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
@@ -62,20 +62,46 @@ type Html5QrScannerProps = {
 };
 
 const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
+  const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
+
   useEffect(() => {
     // Success callback is required.
     if (!props.qrCodeSuccessCallback) {
       throw 'qrCodeSuccessCallback is required callback.';
     }
 
-    let html5QrCode: Html5Qrcode | null = null;
+    // Instantiate Html5Qrcode once when component loads.
+    setHtml5QrCode(new Html5Qrcode(qrcodeRegionId));
+
+    // Cleanup function when component will unmount.
+    return () => {
+      if (html5QrCode) {
+        html5QrCode
+          .stop()
+          .then(() => {
+            // QR code scanning is stopped
+          })
+          .catch((err) => {
+            // stop failed
+            console.error(err);
+          });
+      }
+    };
+  }, []);
+
+  // Start QR scanner when API object is instantiated.
+  useEffect(() => {
+    handleHtmlQrCode();
+  }, [html5QrCode]);
+
+  const handleHtmlQrCode = () => {
+    if (html5QrCode === null) return;
 
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices && devices.length) {
           const cameraId = devices[0].id;
 
-          html5QrCode = new Html5Qrcode(qrcodeRegionId);
           html5QrCode
             .start(
               cameraId,
@@ -101,22 +127,7 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
       .catch((err) => {
         console.error(err);
       });
-
-    // Cleanup function when component will unmount.
-    return () => {
-      if (html5QrCode) {
-        html5QrCode
-          .stop()
-          .then(() => {
-            // QR code scanning is stopped
-          })
-          .catch((err) => {
-            // stop failed
-            console.error(err);
-          });
-      }
-    };
-  });
+  };
 
   return <div id={qrcodeRegionId} />;
 };
