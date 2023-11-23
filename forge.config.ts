@@ -8,6 +8,17 @@ import { VitePlugin } from '@electron-forge/plugin-vite';
 const config: ForgeConfig = {
   packagerConfig: {
     prune: process.env.NODE_ENV !== 'test',
+
+    osxSign: {
+      optionsForFile: (filepath) => {
+        // Here, we keep it simple and return a single entitlements.plist file.
+        // You can use this callback to map different sets of entitlements
+        // to specific files in your packaged app.
+        return {
+          entitlements: 'entitlements/default.darwin.plist'
+        }
+      }
+    }
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
