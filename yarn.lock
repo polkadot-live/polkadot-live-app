@@ -2064,13 +2064,13 @@
     glob "^10.2.2"
     import-meta-resolve "^3.0.0"
 
-"@wdio/dot-reporter@^8.21.0":
-  version "8.23.1"
-  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.23.1.tgz#85418e063b649409ed6910e3ce61beda01c511a8"
-  integrity sha512-vvJZ0omFplFyo3x35mP4Hv6ZC+2AV9IuetbLrgeVdjypvZxsqA680ksfqUyzt34VtVKdGeuWcssP34vMimKtvA==
+"@wdio/dot-reporter@^8.24.0":
+  version "8.24.0"
+  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.24.0.tgz#c634d5789a6893780119475be3ca0ba8ab5014f9"
+  integrity sha512-TI0yV4RCxU2JmNEuF91EulADG0QKgPZgytexsHtM4pyyaf4PDXzz6GyEMv5VWee9XKIukf0SzsbFEpIu+xtagQ==
   dependencies:
-    "@wdio/reporter" "8.23.1"
-    "@wdio/types" "8.23.1"
+    "@wdio/reporter" "8.24.0"
+    "@wdio/types" "8.24.0"
     chalk "^5.0.1"
 
 "@wdio/globals@8.23.4":
@@ -2148,6 +2148,17 @@
     diff "^5.0.0"
     object-inspect "^1.12.0"
 
+"@wdio/reporter@8.24.0":
+  version "8.24.0"
+  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.24.0.tgz#2e87abcedc821516456c53cb868185cbb1139dae"
+  integrity sha512-yQhUwV5W1oDnVzr1pPBaOOCDwAE0Iyri9sAzIHb4pF1ezdUNTVe8ZfoWZSD4i7oC3riK8MlH8hXfGNCfrFrWlg==
+  dependencies:
+    "@types/node" "^20.1.0"
+    "@wdio/logger" "8.16.17"
+    "@wdio/types" "8.24.0"
+    diff "^5.0.0"
+    object-inspect "^1.12.0"
+
 "@wdio/runner@8.23.5":
   version "8.23.5"
   resolved "https://registry.yarnpkg.com/@wdio/runner/-/runner-8.23.5.tgz#db1db61b5844aaa32eb9121c7c2aa298329a3dfa"
@@ -2180,6 +2191,13 @@
   version "8.23.1"
   resolved "https://registry.yarnpkg.com/@wdio/types/-/types-8.23.1.tgz#cde1a25e187904bba2bb9465d900c33c93e43bcd"
   integrity sha512-ym3tWSUGvmKwQ9vNPQfcKvJwGNK/Fh3e5WloNj3zoaUTKgD0aJeFQ0+Dz6KGlNowA0j5VkcqTTXo+UZ3l4Cx9A==
+  dependencies:
+    "@types/node" "^20.1.0"
+
+"@wdio/types@8.24.0":
+  version "8.24.0"
+  resolved "https://registry.yarnpkg.com/@wdio/types/-/types-8.24.0.tgz#c3440f9bd7daf7fcca68ee2592bc4bfa5b0ea8f1"
+  integrity sha512-FXbJnQCS1b39RKqBlW9HTNEP4vukxjFc+GiwvPS+XPtY+3Vn7eOyBv3X3CiH1K7C+tzelqlio/HgP68pV5cXsQ==
   dependencies:
     "@types/node" "^20.1.0"
 
@@ -2647,9 +2665,10 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  uid "0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
