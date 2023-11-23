@@ -49,7 +49,7 @@
     "@wdio/mocha-framework": "^8.24.0",
     "@wdio/spec-reporter": "^8.21.0",
     "debug": "^4.3.4",
-    "electron": "27.1.0",
+    "electron": "27.1.2",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",
