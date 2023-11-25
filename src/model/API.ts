@@ -113,19 +113,19 @@ export class API {
     this.provider.on('connected', () => {
       debug('⭕ %o', this.endpoint, ' CONNECTED');
       this.status = 'connected';
-      WindowsController.reportAll(this.chain, 'connnected');
+      WindowsController.reportAll(this.chain, 'renderer:chain:connnected');
     });
 
     this.provider.on('disconnected', () => {
       debug('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
-      WindowsController.reportAll(this.chain, 'disconnnected');
+      WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
     });
 
     this.provider.on('error', () => {
       debug('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
-      WindowsController.reportAll(this.chain, 'disconnnected');
+      WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
     });
   };
 
