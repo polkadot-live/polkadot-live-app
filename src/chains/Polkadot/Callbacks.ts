@@ -53,6 +53,7 @@ export class PolkadotCallbacks {
 
     // check whether account is currently in a nomination pool.
     debug(`📑 Checking if ${address} is in a nomination pool`);
+    // result: PalletNominationPoolMember (@polkadot/types-augment)
     const result: AnyJson = (
       await api.query.nominationPools.poolMembers(address)
     ).toJSON();

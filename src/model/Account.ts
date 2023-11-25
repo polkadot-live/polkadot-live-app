@@ -15,7 +15,7 @@ import type { AnyJson } from '@/types/misc';
  * @property {string} name - the account name.
  * @property {AnyJson | null} config - the account's subscription config.
  * @property {AnyJson | null} chainState - the cached chain state of the account.
- * @property {AnyJson | null} chainState - instantiated class object that subscribes to base account
+ * @property {AnyJson | null} state - instantiated class object that subscribes to base account
  * state.
  */
 export class Account {
