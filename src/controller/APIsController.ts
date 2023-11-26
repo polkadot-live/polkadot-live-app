@@ -90,8 +90,9 @@ export class APIsController {
     WindowsController.reportAll(chainId, 'renderer:chain:added');
 
     // Subscribe to existing chain accounts state.
+    // TODO: Throw error if account doesn't have state object
     AccountsController.accounts[chain]?.forEach((account) => {
-      account.state.subscribe();
+      account.state && account.state.subscribe();
     });
 
     debug(

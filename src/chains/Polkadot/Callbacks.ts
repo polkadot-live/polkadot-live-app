@@ -13,6 +13,7 @@ import { MainDebug as debug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { PolkadotAccountState } from '@/types/chains/polkadot';
 import { getPoolAccounts } from './utils';
+import type { FormattedAccount } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { AnyJson } from '@/types/misc';
 
@@ -93,8 +94,8 @@ export class PolkadotCallbacks {
         // add reward account to the corresponding chain's accounts list, with `balances:transfer`
         // config, if it has not been already.
         if (
-          !AccountsController.getAll()[this.chain].find(
-            ({ address }: Account) => address === rewardAddress
+          !AccountsController.getAllFormatted()[this.chain].find(
+            ({ address }: FormattedAccount) => address === rewardAddress
           )
         ) {
           const delegate = new Account(
