@@ -4,6 +4,7 @@
 import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
+import type { ImportedAccounts, StoredAccounts } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
@@ -11,8 +12,6 @@ import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
-  ImportedAccounts,
-  StoredAccounts,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';

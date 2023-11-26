@@ -2,10 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainsController } from '@/controller/ChainsController';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource, StoredAccount } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
+
+/**
+ * Account collection types.
+ */
+export type ImportedAccounts = Record<string, Account[]>;
+
+export type StoredAccounts = Record<ChainID, StoredAccount[]>;
 
 /**
  * Creates an account.

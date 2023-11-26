@@ -1,7 +1,6 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from './chains';
 import type { AnyData, AnyJson } from './misc';
 
 export enum AccountType {
@@ -12,11 +11,6 @@ export enum AccountType {
 export type AccountSource = 'vault' | 'ledger' | 'system';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
-
-// TODO: `AnyData` here should be `Account model`.
-export type ImportedAccounts = Record<string, AnyData[]>;
-
-export type StoredAccounts = Record<ChainID, StoredAccount[]>;
 
 export interface AccountConfig {
   config: AnyData;
