@@ -98,6 +98,7 @@ export class PolkadotState {
     const apiInstance = APIsController.get(this.chain);
 
     if (this.subscribed || !apiInstance) {
+      console.log('initially no API instance');
       return;
     }
 
