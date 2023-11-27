@@ -90,7 +90,7 @@ app.whenReady().then(() => {
   });
 
   // Ask for camera permission (Mac OS)
-  if (process.platform === 'darwin') {
+  if (process.platform === 'darwin' && !isTest) {
     systemPreferences
       .askForMediaAccess('camera')
       .then((result) => {
@@ -117,7 +117,10 @@ app.whenReady().then(() => {
     maxHeight: 375,
   });
 
+  // ------------------------------
   // WDIO Custom Electron API
+  // ------------------------------
+
   if (isTest) {
     ipcMain.handle('wdio-electron', (_: IpcMainInvokeEvent, cmd: string) => {
       if (cmd === 'toggleMainWindow') {
