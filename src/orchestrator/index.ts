@@ -7,13 +7,14 @@ import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
+import * as AccountUtils from '@/utils/AccountUtils';
 
 // Initialise RxJS subject to orchestrate app events.
 export const orchestrator = new Subject<OrchestratorArg>();
@@ -50,8 +51,11 @@ const initialize = async () => {
   // Initialize required chain `APIs` from persisted state.
   await APIsController.initialize();
 
+  // Initialize account chainState and config (requires api controller)
+  await AccountUtils.initializeConfigsAndChainStates();
+
   // Initialize discovery of subscriptions for saved accounts.
-  SubscriptionsController.initialize();
+  BlockStreamsController.initialize();
 };
 
 /**
@@ -85,7 +89,7 @@ const importNewAddress = async ({
   AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
-  SubscriptionsController.addAccountToService(chain, address);
+  BlockStreamsController.addAccountToService(chain, address);
 
   // Show notification.
   NotificationsController.accountImported(name);
@@ -106,7 +110,7 @@ const removeImportedAccount = ({
   AccountsController.remove(chain, address);
 
   // Remove config from `Subscriptions`.
-  SubscriptionsController.removeAccountFromService(chain, address);
+  BlockStreamsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

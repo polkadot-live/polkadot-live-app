@@ -83,7 +83,7 @@ export class APIsController {
     // Get api constants.
     await instance.getConsts();
 
-    // Bootstrap events for connected accounts.
+    // Bootstrap events for connected accounts (checks pending rewards)
     Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.
