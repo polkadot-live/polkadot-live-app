@@ -1,6 +1,6 @@
 import 'websocket-polyfill';
 import type { IpcMainInvokeEvent } from 'electron';
-import { app, ipcMain, protocol, shell } from 'electron';
+import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
@@ -88,6 +88,16 @@ app.whenReady().then(() => {
   autoLaunch.isEnabled().then((isEnabled: boolean) => {
     if (!isEnabled) autoLaunch.enable();
   });
+
+  // Ask for camera permission (Mac OS)
+  if (process.platform === 'darwin') {
+    systemPreferences
+      .askForMediaAccess('camera')
+      .then((result) => {
+        console.log(`camera permission enabled: ${result}`);
+      })
+      .catch((err) => console.error(err));
+  }
 
   // ------------------------------
   // Create windows
