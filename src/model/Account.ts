@@ -7,7 +7,7 @@ import type {
   StoredAccount,
   AccountChainState,
   AccountChainInstanceState,
-  FormattedAccount,
+  FlattenedAccountData,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { MethodSubscription } from '@/types/blockstream';
@@ -122,12 +122,12 @@ export class Account {
     this._chainState = value;
   }
 
-  format = () =>
+  flattenData = () =>
     ({
       address: this.address,
       name: this.name,
       type: this.type,
       config: this.config,
       chainState: this.chainState,
-    }) as FormattedAccount;
+    }) as FlattenedAccountData;
 }

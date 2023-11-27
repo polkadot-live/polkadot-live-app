@@ -54,7 +54,7 @@ export interface AccountChainInstanceState {
 }
 
 // Type storing only essential data for an account.
-export interface FormattedAccount {
+export interface FlattenedAccountData {
   address: string;
   name: string;
   type: AccountType;
@@ -62,4 +62,4 @@ export interface FormattedAccount {
   chainState: AccountChainState;
 }
 
-export type FormattedAccounts = Record<string, FormattedAccount[]>;
+export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;

@@ -42,7 +42,7 @@ export const reportAccountsState = (id: string) => {
 export const reportImportedAccounts = (id: string) => {
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:accounts',
-    AccountsController.getAllFormatted()
+    AccountsController.getAllFlattenedAccountData()
   );
 };
 

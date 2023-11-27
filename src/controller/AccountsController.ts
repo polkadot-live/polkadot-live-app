@@ -12,7 +12,7 @@ import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
-  FormattedAccounts,
+  FlattenedAccounts,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
@@ -87,14 +87,14 @@ export class AccountsController {
     this.accounts[chain]?.find((a) => a.address === address) || undefined;
 
   /**
-   * @name getAllFormatted
-   * @summary Gets all essential account data (formatted) for ease of use.
+   * @name getAllFlattenedAccountData
+   * @summary Gets all essential account data (flattened) for ease of use.
    * @returns {ImportedAccounts}
    */
-  static getAllFormatted = (): FormattedAccounts => {
-    const accounts: FormattedAccounts = {};
+  static getAllFlattenedAccountData = (): FlattenedAccounts => {
+    const accounts: FlattenedAccounts = {};
     for (const chain of Object.keys(this.accounts)) {
-      accounts[chain] = this.accounts[chain].map((a) => a.format());
+      accounts[chain] = this.accounts[chain].map((a) => a.flattenData());
     }
     return accounts;
   };

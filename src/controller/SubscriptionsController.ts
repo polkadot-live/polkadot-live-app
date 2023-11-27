@@ -76,7 +76,7 @@ export class SubscriptionsController {
       for (const { id } of WindowsController.active) {
         WindowsController.get(id)?.webContents?.send(
           'renderer:broadcast:accounts',
-          AccountsController.getAllFormatted()
+          AccountsController.getAllFlattenedAccountData()
         );
       }
     });
