@@ -2064,13 +2064,13 @@
     glob "^10.2.2"
     import-meta-resolve "^3.0.0"
 
-"@wdio/dot-reporter@^8.24.0":
-  version "8.24.0"
-  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.24.0.tgz#c634d5789a6893780119475be3ca0ba8ab5014f9"
-  integrity sha512-TI0yV4RCxU2JmNEuF91EulADG0QKgPZgytexsHtM4pyyaf4PDXzz6GyEMv5VWee9XKIukf0SzsbFEpIu+xtagQ==
+"@wdio/dot-reporter@^8.24.2":
+  version "8.24.2"
+  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.24.2.tgz#8bd7a29b0b098c28d817e1b2ee281905d68866cd"
+  integrity sha512-RV0IYyHwifXS06wxZOhFZd9FQBV8+KgZVsc05AP/2VCVjm8EJ6zE2mGgTTDAcEbceWgNF7x+BubPeIzlSq+GOQ==
   dependencies:
-    "@wdio/reporter" "8.24.0"
-    "@wdio/types" "8.24.0"
+    "@wdio/reporter" "8.24.2"
+    "@wdio/types" "8.24.2"
     chalk "^5.0.1"
 
 "@wdio/globals@8.24.2", "@wdio/globals@^8.23.1":
@@ -2129,17 +2129,6 @@
   dependencies:
     "@types/node" "^20.1.0"
 
-"@wdio/reporter@8.24.0":
-  version "8.24.0"
-  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.24.0.tgz#2e87abcedc821516456c53cb868185cbb1139dae"
-  integrity sha512-yQhUwV5W1oDnVzr1pPBaOOCDwAE0Iyri9sAzIHb4pF1ezdUNTVe8ZfoWZSD4i7oC3riK8MlH8hXfGNCfrFrWlg==
-  dependencies:
-    "@types/node" "^20.1.0"
-    "@wdio/logger" "8.16.17"
-    "@wdio/types" "8.24.0"
-    diff "^5.0.0"
-    object-inspect "^1.12.0"
-
 "@wdio/reporter@8.24.2":
   version "8.24.2"
   resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.24.2.tgz#a6025a5f7340a718ab7c562c6093a19f5e3119f9"
@@ -2178,13 +2167,6 @@
     chalk "^5.1.2"
     easy-table "^1.2.0"
     pretty-ms "^7.0.0"
-
-"@wdio/types@8.24.0":
-  version "8.24.0"
-  resolved "https://registry.yarnpkg.com/@wdio/types/-/types-8.24.0.tgz#c3440f9bd7daf7fcca68ee2592bc4bfa5b0ea8f1"
-  integrity sha512-FXbJnQCS1b39RKqBlW9HTNEP4vukxjFc+GiwvPS+XPtY+3Vn7eOyBv3X3CiH1K7C+tzelqlio/HgP68pV5cXsQ==
-  dependencies:
-    "@types/node" "^20.1.0"
 
 "@wdio/types@8.24.2":
   version "8.24.2"
