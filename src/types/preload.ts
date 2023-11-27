@@ -5,7 +5,8 @@ import type { IpcRendererEvent } from 'electron';
 import type { ChainID } from './chains';
 import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
-import type { AccountSource, ImportedAccounts } from './accounts';
+import type { AccountSource } from './accounts';
+import type { ImportedAccounts } from '@/model/Account';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
 

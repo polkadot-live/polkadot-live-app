@@ -20,6 +20,9 @@ export const reportAccountsState = (id: string) => {
   Object.values(AccountsController.accounts).forEach((chainAccounts) => {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
+        // TODO: Throw error if state not found
+        if (!state) return;
+
         Object.entries(state.getAllState()).forEach(([key, value]) => {
           debug('🏦 Reporting account state %o', key, value);
           WindowsController.get(id)?.webContents?.send(
@@ -39,7 +42,7 @@ export const reportAccountsState = (id: string) => {
 export const reportImportedAccounts = (id: string) => {
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:accounts',
-    AccountsController.getAll()
+    AccountsController.getAllFlattenedAccountData()
   );
 };
 

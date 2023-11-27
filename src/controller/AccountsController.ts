@@ -4,6 +4,7 @@
 import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
+import type { ImportedAccounts, StoredAccounts } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
@@ -11,8 +12,7 @@ import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
-  ImportedAccounts,
-  StoredAccounts,
+  FlattenedAccounts,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
@@ -39,16 +39,20 @@ export class AccountsController {
    */
   static initialize() {
     // Get accounts from store.
-    const storeAccounts = store.get('imported_accounts') as StoredAccounts;
-    if (!storeAccounts) {
+    const storedAccountsMap = store.get('imported_accounts') as StoredAccounts;
+    if (!storedAccountsMap) {
       this.accounts = {};
       return;
     }
 
-    let initAccounts: ImportedAccounts = {};
-    for (const chain of Object.keys(storeAccounts) as ChainID[]) {
-      const initChain = [];
-      for (const a of storeAccounts[chain]) {
+    // Structure to receive stored account data.
+    const accountsMap: ImportedAccounts = {};
+
+    // Iterate stored data and populate structure.
+    for (const chain of Object.keys(storedAccountsMap) as ChainID[]) {
+      const accountsFromStore = [];
+
+      for (const a of storedAccountsMap[chain]) {
         // Ignore delegate accounts: they are instantiated in `Discovery.start()`.
         if (a._type !== AccountType.Delegate) {
           // Instantiate account.
@@ -61,18 +65,15 @@ export class AccountsController {
           );
           account.config = a._config;
           account.chainState = a._chainState;
-          initChain.push(account);
+          accountsFromStore.push(account);
         }
       }
-      if (!Object.values(initAccounts)) {
-        initAccounts = { [chain]: initChain };
-      } else {
-        initAccounts[chain] = initChain;
-      }
+
+      accountsMap[chain] = accountsFromStore;
     }
 
     // Inject accounts into class.
-    this.accounts = initAccounts;
+    this.accounts = accountsMap;
   }
 
   /**
@@ -86,14 +87,14 @@ export class AccountsController {
     this.accounts[chain]?.find((a) => a.address === address) || undefined;
 
   /**
-   * @name getAll
-   * @summary Gets all accounts.
+   * @name getAllFlattenedAccountData
+   * @summary Gets all essential account data (flattened) for ease of use.
    * @returns {ImportedAccounts}
    */
-  static getAll = (): ImportedAccounts => {
-    const accounts: AnyJson = {};
+  static getAllFlattenedAccountData = (): FlattenedAccounts => {
+    const accounts: FlattenedAccounts = {};
     for (const chain of Object.keys(this.accounts)) {
-      accounts[chain] = this.accounts[chain].map((a) => a.format());
+      accounts[chain] = this.accounts[chain].map((a) => a.flattenData());
     }
     return accounts;
   };

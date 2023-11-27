@@ -1,4 +1,5 @@
 import 'websocket-polyfill';
+import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
@@ -89,7 +90,7 @@ app.whenReady().then(() => {
   });
 
   // Ask for camera permission (Mac OS)
-  if (process.platform === 'darwin') {
+  if (process.platform === 'darwin' && !isTest) {
     systemPreferences
       .askForMediaAccess('camera')
       .then((result) => {
@@ -115,6 +116,18 @@ app.whenReady().then(() => {
     minHeight: 375,
     maxHeight: 375,
   });
+
+  // ------------------------------
+  // WDIO Custom Electron API
+  // ------------------------------
+
+  if (isTest) {
+    ipcMain.handle('wdio-electron', (_: IpcMainInvokeEvent, cmd: string) => {
+      if (cmd === 'toggleMainWindow') {
+        WindowsController.toggleVisible('menu');
+      }
+    });
+  }
 
   // ------------------------------
   // IPC handlers

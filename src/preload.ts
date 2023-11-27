@@ -9,7 +9,8 @@ import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent } from '@/types/reporter';
 
 // Expose Electron API to wdio tests
-if (process.env.NODE_ENV === 'test') {
+const isTest = process.env.NODE_ENV === 'test';
+if (isTest) {
   require('wdio-electron-service/preload');
 }
 
@@ -37,11 +38,9 @@ contextBridge.exposeInMainWorld('myAPI', {
   chainRemoved: (callback) => {
     return ipcRenderer.on('renderer:chain:removed', callback);
   },
-  // NOTE: Not being called (renderer:chain:connected not sent from main)
   chainConnected: (callback) => {
     return ipcRenderer.on('renderer:chain:connected', callback);
   },
-  // NOTE: Not being called (renderer:chain:disconnected not sent from main)
   chainDisconnected: (callback) => {
     return ipcRenderer.on('renderer:chain:disconnected', callback);
   },

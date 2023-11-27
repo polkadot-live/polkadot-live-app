@@ -2,10 +2,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainsController } from '@/controller/ChainsController';
-import type { AccountSource } from '@/types/accounts';
+import type {
+  AccountSource,
+  StoredAccount,
+  AccountChainState,
+  AccountChainInstanceState,
+  FlattenedAccountData,
+} from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
+import type { MethodSubscription } from '@/types/blockstream';
 import type { ChainID } from '@/types/chains';
-import type { AnyJson } from '@/types/misc';
+
+/**
+ * Account collection types.
+ */
+export type ImportedAccounts = Record<string, Account[]>;
+
+export type StoredAccounts = Record<ChainID, StoredAccount[]>;
 
 /**
  * Creates an account.
@@ -13,9 +26,9 @@ import type { AnyJson } from '@/types/misc';
  * @property {AccountType} type - the type of account.
  * @property {string} address - the account address.
  * @property {string} name - the account name.
- * @property {AnyJson | null} config - the account's subscription config.
- * @property {AnyJson | null} chainState - the cached chain state of the account.
- * @property {AnyJson | null} chainState - instantiated class object that subscribes to base account
+ * @property {MethodSubscription} config - the account's subscription config.
+ * @property {AccountChainState | null} chainState - the cached chain state of the account.
+ * @property {AccountChainInstanceState | null} state - instantiated class object that subscribes to base account
  * state.
  */
 export class Account {
@@ -29,11 +42,15 @@ export class Account {
 
   private _name!: string;
 
-  private _config: AnyJson | null = null;
+  // TODO: Test default method subscription 'all'.
+  // Type matches `ConcreteAccount` and `RawAccount`
+  private _config: MethodSubscription = { type: 'all' };
 
-  private _chainState: AnyJson | null = null;
+  // TODO: Rename either `_chainState` or `state` properties to
+  // convey more meaning.
+  private _chainState: AccountChainState | null = null;
 
-  state: AnyJson | null = null;
+  state: AccountChainInstanceState | null = null;
 
   constructor(
     chain: ChainID,
@@ -93,7 +110,7 @@ export class Account {
     return this._config;
   }
 
-  set config(value: AnyJson) {
+  set config(value: MethodSubscription) {
     this._config = value;
   }
 
@@ -101,15 +118,16 @@ export class Account {
     return this._chainState;
   }
 
-  set chainState(value: AnyJson) {
+  set chainState(value: AccountChainState | null) {
     this._chainState = value;
   }
 
-  format = () => ({
-    address: this.address,
-    name: this.name,
-    type: this.type,
-    config: this.config,
-    chainState: this.chainState,
-  });
+  flattenData = () =>
+    ({
+      address: this.address,
+      name: this.name,
+      type: this.type,
+      config: this.config,
+      chainState: this.chainState,
+    }) as FlattenedAccountData;
 }

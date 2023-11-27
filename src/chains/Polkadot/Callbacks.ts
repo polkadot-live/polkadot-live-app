@@ -13,6 +13,7 @@ import { MainDebug as debug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { PolkadotAccountState } from '@/types/chains/polkadot';
 import { getPoolAccounts } from './utils';
+import type { FlattenedAccountData } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { AnyJson } from '@/types/misc';
 
@@ -53,6 +54,7 @@ export class PolkadotCallbacks {
 
     // check whether account is currently in a nomination pool.
     debug(`📑 Checking if ${address} is in a nomination pool`);
+    // result: PalletNominationPoolMember (@polkadot/types-augment)
     const result: AnyJson = (
       await api.query.nominationPools.poolMembers(address)
     ).toJSON();
@@ -92,8 +94,8 @@ export class PolkadotCallbacks {
         // add reward account to the corresponding chain's accounts list, with `balances:transfer`
         // config, if it has not been already.
         if (
-          !AccountsController.getAll()[this.chain].find(
-            ({ address }: Account) => address === rewardAddress
+          !AccountsController.getAllFlattenedAccountData()[this.chain].find(
+            ({ address }: FlattenedAccountData) => address === rewardAddress
           )
         ) {
           const delegate = new Account(
