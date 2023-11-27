@@ -9,7 +9,8 @@ import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent } from '@/types/reporter';
 
 // Expose Electron API to wdio tests
-if (process.env.NODE_ENV === 'test') {
+const isTest = process.env.NODE_ENV === 'test';
+if (isTest) {
   require('wdio-electron-service/preload');
 }
 

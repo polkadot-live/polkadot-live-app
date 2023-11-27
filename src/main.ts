@@ -1,4 +1,5 @@
 import 'websocket-polyfill';
+import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
@@ -105,6 +106,15 @@ app.whenReady().then(() => {
     minHeight: 375,
     maxHeight: 375,
   });
+
+  // WDIO Custom Electron API
+  if (isTest) {
+    ipcMain.handle('wdio-electron', (_: IpcMainInvokeEvent, cmd: string) => {
+      if (cmd === 'toggleMainWindow') {
+        WindowsController.toggleVisible('menu');
+      }
+    });
+  }
 
   // ------------------------------
   // IPC handlers
