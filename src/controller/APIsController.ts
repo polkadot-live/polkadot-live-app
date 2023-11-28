@@ -91,7 +91,7 @@ export class APIsController {
 
     // Subscribe to existing chain accounts state.
     // TODO: Throw error if account doesn't have state object
-    AccountsController.accounts[chain]?.forEach((account) => {
+    AccountsController.accounts.get(chain)?.forEach((account) => {
       account.state && account.state.subscribe();
     });
 

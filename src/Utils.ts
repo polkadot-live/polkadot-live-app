@@ -17,7 +17,7 @@ export const initializeState = (id: string) => {
 
 // Report connected account state.
 export const reportAccountsState = (id: string) => {
-  Object.values(AccountsController.accounts).forEach((chainAccounts) => {
+  for (const chainAccounts of AccountsController.accounts.values()) {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
         // TODO: Throw error if state not found
@@ -35,7 +35,7 @@ export const reportAccountsState = (id: string) => {
         });
       }
     });
-  });
+  }
 };
 
 // Report imported accounts to renderer.

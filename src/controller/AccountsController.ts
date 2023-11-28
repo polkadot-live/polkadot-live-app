@@ -41,12 +41,12 @@ export class AccountsController {
     // Get accounts from store.
     const storedAccountsMap = store.get('imported_accounts') as StoredAccounts;
     if (!storedAccountsMap) {
-      this.accounts = {};
+      this.accounts = new Map();
       return;
     }
 
     // Structure to receive stored account data.
-    const accountsMap: ImportedAccounts = {};
+    const accountsMap: ImportedAccounts = new Map();
 
     // Iterate stored data and populate structure.
     for (const chain of Object.keys(storedAccountsMap) as ChainID[]) {
@@ -69,7 +69,7 @@ export class AccountsController {
         }
       }
 
-      accountsMap[chain] = accountsFromStore;
+      accountsMap.set(chain, accountsFromStore);
     }
 
     // Inject accounts into class.
@@ -83,8 +83,9 @@ export class AccountsController {
    * @param {string} address - the account address.
    * @returns {(Account|undefined)}
    */
+  // TODO: Remove `|| undefined` after test
   static get = (chain: ChainID, address: string): Account | undefined =>
-    this.accounts[chain]?.find((a) => a.address === address) || undefined;
+    this.accounts.get(chain)?.find((a) => a.address === address) || undefined;
 
   /**
    * @name getAllFlattenedAccountData
@@ -92,11 +93,12 @@ export class AccountsController {
    * @returns {ImportedAccounts}
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
-    const accounts: FlattenedAccounts = {};
-    for (const chain of Object.keys(this.accounts)) {
-      accounts[chain] = this.accounts[chain].map((a) => a.flattenData());
+    const flattened: FlattenedAccounts = {};
+
+    for (const [chain, accounts] of this.accounts) {
+      flattened[chain] = accounts.map((a) => a.flattenData());
     }
-    return accounts;
+    return flattened;
   };
 
   /**
@@ -106,10 +108,12 @@ export class AccountsController {
    * @param {Account} account - the account to set.
    */
   static set = (chain: ChainID, account: Account) => {
-    this.accounts[chain] =
-      this.accounts[chain]?.map((a) =>
-        a.address === account.address ? account : a
-      ) || [];
+    this.accounts.set(
+      chain,
+      this.accounts
+        .get(chain)
+        ?.map((a) => (a.address === account.address ? account : a)) || []
+    );
     store.set('imported_accounts', this.accounts);
   };
 
@@ -191,7 +195,7 @@ export class AccountsController {
       }
 
       // Remove chain if no more accounts exist.
-      if (!this.accounts[chain]?.length) {
+      if (!this.accounts.get(chain)?.length) {
         APIsController.close(chain);
 
         // Report to active windows that chain has been removed.
@@ -230,16 +234,13 @@ export class AccountsController {
    * @returns {AccountStatus}
    */
   static pushAccount = (chain: ChainID, account: Account): ImportedAccounts => {
-    let newAccounts: ImportedAccounts = this.accounts;
-    const chainAccounts = newAccounts[chain] || [];
-    newAccounts = Object.assign(
-      newAccounts,
-      {},
-      {
-        [chain]: chainAccounts.concat(account),
-      }
-    );
-    return newAccounts;
+    const updated: ImportedAccounts = this.accounts;
+
+    updated.get(chain)
+      ? updated.get(chain)?.push(account)
+      : updated.set(chain, [account]);
+
+    return updated;
   };
 
   /**
@@ -249,14 +250,16 @@ export class AccountsController {
    * @returns {ImportedAccounts}
    */
   static spliceAccount = (address: string): ImportedAccounts => {
-    return Object.fromEntries(
-      Object.entries({ ...this.accounts }).map(([n, imported]) => {
-        return [
-          n,
-          imported.filter((account: Account) => account.address !== address),
-        ];
-      })
-    );
+    const filtered: ImportedAccounts = new Map();
+
+    for (const [chain, accounts] of this.accounts) {
+      filtered.set(
+        chain,
+        accounts.filter((a) => a.address !== address)
+      );
+    }
+
+    return filtered;
   };
 
   /**
@@ -323,10 +326,11 @@ export class AccountsController {
     const matchStatus = (item: Account) =>
       status !== undefined ? this.status(chain, item.address) === status : true;
 
-    return (
-      Object.values(this.accounts).find((items) =>
-        items.find((item) => item.address === address && matchStatus(item))
-      ) !== undefined
-    );
+    for (const accounts of this.accounts.values()) {
+      if (accounts.find((a) => a.address === address && matchStatus(a)))
+        return true;
+    }
+
+    return false;
   };
 }
