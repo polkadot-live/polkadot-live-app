@@ -83,9 +83,8 @@ export class AccountsController {
    * @param {string} address - the account address.
    * @returns {(Account|undefined)}
    */
-  // TODO: Remove `|| undefined` after test
   static get = (chain: ChainID, address: string): Account | undefined =>
-    this.accounts.get(chain)?.find((a) => a.address === address) || undefined;
+    this.accounts.get(chain)?.find((a) => a.address === address);
 
   /**
    * @name getAllFlattenedAccountData

@@ -142,6 +142,29 @@ app.whenReady().then(() => {
 
             return account ? account.flattenData() : false;
           }
+          case 'AccountsController#get1': {
+            AccountsController.add(
+              params.chainId,
+              params.source,
+              params.address,
+              params.name
+            );
+
+            const account = AccountsController.get(
+              params.chainId,
+              params.address
+            );
+
+            return account ? account.flattenData() : false;
+          }
+          case 'AccountsController#get2': {
+            const account = AccountsController.get(
+              params.chainId,
+              params.address
+            );
+
+            return account ? account.flattenData() : false;
+          }
         }
       }
     );
