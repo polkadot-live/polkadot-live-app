@@ -165,6 +165,33 @@ app.whenReady().then(() => {
 
             return account ? account.flattenData() : false;
           }
+          case 'AccountsController#set': {
+            AccountsController.add(
+              params.original.chainId,
+              params.original.source,
+              params.original.address,
+              params.original.name
+            );
+
+            const account = AccountsController.get(
+              params.original.chainId,
+              params.original.address
+            );
+
+            if (!account) return false;
+
+            account.name = params.updated.name;
+            account.source = params.updated.source;
+
+            AccountsController.set(params.original.chainId, account);
+
+            const updated = AccountsController.get(
+              params.original.chainId,
+              params.original.address
+            );
+
+            return updated ? updated.flattenData() : false;
+          }
         }
       }
     );
