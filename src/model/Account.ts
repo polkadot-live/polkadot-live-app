@@ -16,7 +16,7 @@ import type { ChainID } from '@/types/chains';
 /**
  * Account collection types.
  */
-export type ImportedAccounts = Map<string, Account[]>;
+export type ImportedAccounts = Map<ChainID, Account[]>;
 
 export type StoredAccounts = Record<ChainID, StoredAccount[]>;
 
