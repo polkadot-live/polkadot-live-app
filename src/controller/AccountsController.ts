@@ -46,11 +46,11 @@ export class AccountsController {
     }
 
     // Structure to receive stored account data.
-    const accountsMap: ImportedAccounts = new Map();
+    const importedAccounts: ImportedAccounts = new Map();
 
     // Iterate stored data and populate structure.
     for (const chain of Object.keys(storedAccountsMap) as ChainID[]) {
-      const accountsFromStore = [];
+      const imported: Account[] = [];
 
       for (const a of storedAccountsMap[chain]) {
         // Ignore delegate accounts: they are instantiated in `Discovery.start()`.
@@ -65,15 +65,15 @@ export class AccountsController {
           );
           account.config = a._config;
           account.chainState = a._chainState;
-          accountsFromStore.push(account);
+          imported.push(account);
         }
       }
 
-      accountsMap.set(chain, accountsFromStore);
+      importedAccounts.set(chain, imported);
     }
 
     // Inject accounts into class.
-    this.accounts = accountsMap;
+    this.accounts = importedAccounts;
   }
 
   /**
