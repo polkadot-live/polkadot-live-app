@@ -88,4 +88,31 @@ describe('Account Tests', function () {
       expect(account.address).toBe(params.address);
     });
   });
+
+  describe('AccountsController#pushAccount', function () {
+    it('should add an account to the accounts collection', async function () {
+      const anotherAccount = {
+        address: '1DcVoTjzxJSYYvFwUQBwWcq1WhcUgUAsdBZDTM4xeJh8tx3',
+        name: 'Bob',
+        source: 'vault' as AccountSource,
+      };
+
+      const result = await browser.electron.api(
+        'AccountsController#pushAccount',
+        {
+          acc1: { ...params },
+          acc2: { ...anotherAccount },
+        }
+      );
+
+      const flattenedAccounts = result as FlattenedAccountData[];
+
+      expect(flattenedAccounts).toHaveLength(2);
+    });
+  });
+
+  // Pending tests
+  describe('AccountsController#remove', function () {
+    it('should remove an account from the accounts property successfully');
+  });
 });
