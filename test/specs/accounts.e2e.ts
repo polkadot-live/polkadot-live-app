@@ -112,7 +112,23 @@ describe('Account Tests', function () {
   });
 
   // Pending tests
+  describe('AccountsController#spliceAccount', function () {
+    it('should remove an account from the imported accounts map successfully');
+  });
+
+  describe('AccountsController#setAccountConfig', function () {
+    it("should update an account's subscription method successfully");
+  });
+
+  describe('AccountsController#status', function () {
+    it("should return the correct account status based on an account's config");
+  });
+
   describe('AccountsController#remove', function () {
     it('should remove an account from the accounts property successfully');
+  });
+
+  describe('AccountsController#getDelegatorsOfAddress', function () {
+    it('should get delegators for a delegate address');
   });
 });
