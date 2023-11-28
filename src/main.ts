@@ -12,6 +12,8 @@ import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
 import * as WindowUtils from '@/utils/WindowUtils';
+import { AccountsController } from './controller/AccountsController';
+import type { AnyData } from './types/misc';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -122,11 +124,27 @@ app.whenReady().then(() => {
   // ------------------------------
 
   if (isTest) {
-    ipcMain.handle('wdio-electron', (_: IpcMainInvokeEvent, cmd: string) => {
-      if (cmd === 'toggleMainWindow') {
-        WindowsController.toggleVisible('menu');
+    ipcMain.handle(
+      'wdio-electron',
+      (_: IpcMainInvokeEvent, cmd: string, params?: AnyData) => {
+        switch (cmd) {
+          case 'toggleMainWindow': {
+            WindowsController.toggleVisible('menu');
+            break;
+          }
+          case 'AccountsController#add': {
+            const account = AccountsController.add(
+              params.chainId,
+              params.source,
+              params.address,
+              params.name
+            );
+
+            return account ? account.flattenData() : false;
+          }
+        }
       }
-    });
+    );
   }
 
   // ------------------------------
