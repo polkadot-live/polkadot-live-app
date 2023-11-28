@@ -11,12 +11,9 @@ import { reportAllWindows, reportImportedAccounts } from './Utils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
-import * as WindowUtils from '@/utils/WindowUtils';
-import { AccountsController } from './controller/AccountsController';
 import type { AnyData } from './types/misc';
-import { Account } from './model/Account';
-import { AccountType } from './types/accounts';
-import type { FlattenedAccountData } from './types/accounts';
+import * as WindowUtils from '@/utils/WindowUtils';
+import * as WdioUtils from '@/utils/WdioUtils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -130,101 +127,7 @@ app.whenReady().then(() => {
     ipcMain.handle(
       'wdio-electron',
       (_: IpcMainInvokeEvent, cmd: string, params?: AnyData) => {
-        switch (cmd) {
-          case 'toggleMainWindow': {
-            WindowsController.toggleVisible('menu');
-            break;
-          }
-          case 'AccountsController#add': {
-            const account = AccountsController.add(
-              params.chainId,
-              params.source,
-              params.address,
-              params.name
-            );
-
-            return account ? account.flattenData() : false;
-          }
-          case 'AccountsController#get1': {
-            AccountsController.add(
-              params.chainId,
-              params.source,
-              params.address,
-              params.name
-            );
-
-            const account = AccountsController.get(
-              params.chainId,
-              params.address
-            );
-
-            return account ? account.flattenData() : false;
-          }
-          case 'AccountsController#get2': {
-            const account = AccountsController.get(
-              params.chainId,
-              params.address
-            );
-
-            return account ? account.flattenData() : false;
-          }
-          case 'AccountsController#set': {
-            AccountsController.add(
-              params.original.chainId,
-              params.original.source,
-              params.original.address,
-              params.original.name
-            );
-
-            const account = AccountsController.get(
-              params.original.chainId,
-              params.original.address
-            );
-
-            if (!account) return false;
-
-            account.name = params.updated.name;
-            account.source = params.updated.source;
-
-            AccountsController.set(params.original.chainId, account);
-
-            const updated = AccountsController.get(
-              params.original.chainId,
-              params.original.address
-            );
-
-            return updated ? updated.flattenData() : false;
-          }
-          case 'AccountsController#pushAccount': {
-            const chainId = params.acc1.chainId;
-
-            // Add first account to accounts controller
-            AccountsController.add(
-              chainId,
-              params.acc1.source,
-              params.acc1.address,
-              params.acc1.name
-            );
-
-            // Second account for manually passing to pushAccount
-            const acc2 = new Account(
-              chainId,
-              AccountType.User,
-              params.acc2.source,
-              params.acc2.address,
-              params.acc2.name
-            );
-
-            const result = AccountsController.pushAccount(chainId, acc2);
-            const flattened: FlattenedAccountData[] = [];
-
-            for (const accounts of result.values()) {
-              accounts.forEach((a) => flattened.push(a.flattenData()));
-            }
-
-            return flattened;
-          }
-        }
+        return WdioUtils.handleWdioApi(cmd, params);
       }
     );
   }
