@@ -29,9 +29,11 @@ export class PolkadotCallbacks {
   };
 
   static async bootstrap() {
-    for (const { type, address, chainState } of AccountsController.accounts[
-      this.chain
-    ]) {
+    const chainAccounts = AccountsController.accounts.get(this.chain);
+
+    if (!chainAccounts) return;
+
+    for (const { type, address, chainState } of chainAccounts) {
       // Delegates are not needed to bootstrap cached chain state.
       if (type === AccountType.Delegate) {
         continue;

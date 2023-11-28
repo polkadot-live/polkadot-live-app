@@ -37,7 +37,10 @@ export class BlockStreamsController {
       debug('🔴 Using instance %o', chain);
 
       // Get accounts for `chain` and instantiate service.
-      const accounts = AccountsController.accounts[chain];
+      const accounts = AccountsController.accounts.get(chain);
+
+      if (!accounts) return;
+
       debug('💳 API instance accounts pre discover: %o', accounts.length);
 
       const rawAccounts: RawAccount[] = [];
