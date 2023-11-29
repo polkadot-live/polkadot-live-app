@@ -177,7 +177,39 @@ describe('Account Tests', function () {
   });
 
   describe('AccountsController#status', function () {
-    it("should return the correct account status based on an account's config");
+    it("should return 'active' for newly added accounts with default config 'all'", async function () {
+      const newAccount = {
+        address: '1E1Vb1mHSYbDUwHEhZ39v1pyKtQoMn5ZD7PX8z7R5C1Bnfr',
+        chainId: 'Polkadot' as ChainID,
+        name: 'Alice',
+        source: 'vault' as AccountSource,
+      };
+
+      const result = await browser.electron.api(
+        'AccountsController#status1',
+        newAccount
+      );
+
+      const status = result as string;
+
+      expect(status).toBe('active');
+    });
+
+    it("should return 'active' for an account with a set config", async function () {
+      const config: MethodSubscription = {
+        type: 'ignore',
+        ignore: [{ pallet: 'balances', method: 'palletVersion' }],
+      };
+
+      const result = await browser.electron.api('AccountsController#status2', {
+        config,
+        newAccount: { ...params },
+      });
+
+      const status = result as string;
+
+      expect(status).toBe('active');
+    });
   });
 
   describe('AccountsController#remove', function () {
