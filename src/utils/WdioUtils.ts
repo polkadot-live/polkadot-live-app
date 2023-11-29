@@ -151,5 +151,30 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       return flattened;
     }
+    case 'AccountsController#setAccountConfig': {
+      const chainId = params.newAccount.chainId;
+      const address = params.newAccount.address;
+
+      // Add account to accounts controller
+      AccountsController.add(
+        chainId,
+        params.newAccount.source,
+        address,
+        params.newAccount.name
+      );
+
+      // Get added account
+      const account = AccountsController.get(chainId, address);
+      if (!account) return false;
+
+      // Change account config
+      const config = params.newConfig;
+      const chainState = { inNominationPool: null };
+      AccountsController.setAccountConfig({ config, chainState }, account);
+
+      // Retrieve updated account
+      const updated = AccountsController.get(chainId, address);
+      return updated ? updated.flattenData() : false;
+    }
   }
 }

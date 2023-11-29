@@ -2,6 +2,7 @@ import { browser } from '@wdio/globals';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
 import type { AccountSource } from '@polkadot-cloud/react/types';
+import type { Ignore, MethodSubscription } from '@/types/blockstream';
 
 describe('Account Tests', function () {
   const params = {
@@ -151,7 +152,28 @@ describe('Account Tests', function () {
   });
 
   describe('AccountsController#setAccountConfig', function () {
-    it("should update an account's subscription method successfully");
+    it("should update an account's subscription method successfully", async function () {
+      const newConfig: MethodSubscription = {
+        type: 'ignore',
+        ignore: [{ pallet: 'balances', method: 'palletVersion' }],
+      };
+
+      const result = await browser.electron.api(
+        'AccountsController#setAccountConfig',
+        {
+          newConfig: newConfig,
+          newAccount: { ...params },
+        }
+      );
+
+      const account = result as FlattenedAccountData;
+      const config = account.config as Ignore;
+
+      expect(config.type).toBe('ignore');
+      expect(config.ignore.length).toBe(1);
+      expect(config.ignore[0].pallet).toBe('balances');
+      expect(config.ignore[0].method).toBe('palletVersion');
+    });
   });
 
   describe('AccountsController#status', function () {
