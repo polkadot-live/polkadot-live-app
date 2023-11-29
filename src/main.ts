@@ -7,7 +7,7 @@ import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
-import { reportAllWindows, reportImportedAccounts } from './Utils';
+import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';

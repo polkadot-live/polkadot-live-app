@@ -5,8 +5,6 @@ import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { ImportedAccounts, StoredAccounts } from '@/model/Account';
-import { APIsController } from './APIsController';
-import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
 import type {
   AccountConfig,
@@ -16,7 +14,6 @@ import type {
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
-import type { AnyJson } from '@/types/misc';
 import type { ReportDelegator } from '@/types/reporter';
 
 const debug = MainDebug.extend('Accounts');
@@ -191,19 +188,6 @@ export class AccountsController {
             this.setAccounts(this.spliceAccount(d.address));
           }
         }
-      }
-
-      // Remove chain if no more accounts exist.
-      if (!this.accounts.get(chain)?.length) {
-        APIsController.close(chain);
-
-        // Report to active windows that chain has been removed.
-        WindowsController.active.forEach(({ id }: AnyJson) => {
-          WindowsController.get(id)?.webContents?.send(
-            'renderer:chain:removed',
-            chain
-          );
-        });
       }
     }
   };

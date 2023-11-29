@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Subject } from 'rxjs';
-import { reportAllWindows, reportImportedAccounts } from '@/Utils';
+import {
+  removeChainApiCheck,
+  reportAllWindows,
+  reportImportedAccounts,
+} from '@/utils/SystemUtils';
 import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
@@ -20,15 +24,15 @@ import * as AccountUtils from '@/utils/AccountUtils';
 export const orchestrator = new Subject<OrchestratorArg>();
 
 orchestrator.subscribe({
-  next: ({ task, data = {} }) => {
+  next: async ({ task, data = {} }) => {
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
       case 'initialize':
-        initialize();
+        await initialize();
         break;
       // Handle new account import.
       case 'newAddressImported':
-        importNewAddress(data);
+        await importNewAddress(data);
         break;
       // Handle remove imported account.
       case 'removeImportedAccount':
@@ -108,6 +112,9 @@ const removeImportedAccount = ({
 }: RemoveImportedAccountArg) => {
   // Remove address from store.
   AccountsController.remove(chain, address);
+
+  // Remove chain's API instance if no more accounts require it
+  removeChainApiCheck(chain);
 
   // Remove config from `Subscriptions`.
   BlockStreamsController.removeAccountFromService(chain, address);
