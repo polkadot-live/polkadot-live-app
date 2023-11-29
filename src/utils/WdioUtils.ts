@@ -4,6 +4,7 @@ import { Account } from '@/model/Account';
 import { AccountType } from '@/types/accounts';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { AnyData } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 
 export function handleWdioApi(cmd: string, params?: AnyData) {
   switch (cmd) {
@@ -20,7 +21,52 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     // Account Tests
     //--------------------------------------------------
 
-    case 'AccountsController#add': {
+    case 'wdio:accounts:clear': {
+      const addressMap: Map<ChainID, string[]> = new Map();
+
+      // Collect addresses to remove from accounts controller
+      for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+        addressMap.set(
+          chainId,
+          accounts.map((a) => a.address)
+        );
+      }
+
+      // Remove addresses from accounts controller
+      for (const [chainId, addresses] of addressMap.entries()) {
+        for (const address of addresses) {
+          AccountsController.remove(chainId, address);
+        }
+      }
+
+      break;
+    }
+
+    case 'wdio:accounts:add': {
+      for (const account of params) {
+        AccountsController.add(
+          account.chainId,
+          account.source,
+          account.address,
+          account.name
+        );
+      }
+      break;
+    }
+
+    case 'AccountsController#add1': {
+      const account = AccountsController.add(
+        params.chainId,
+        params.source,
+        params.address,
+        params.name
+      );
+
+      return account ? account.flattenData() : false;
+    }
+
+    case 'AccountsController#add2': {
+      // Try adding the same account
       const account = AccountsController.add(
         params.chainId,
         params.source,
@@ -32,13 +78,6 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     }
 
     case 'AccountsController#get1': {
-      AccountsController.add(
-        params.chainId,
-        params.source,
-        params.address,
-        params.name
-      );
-
       const account = AccountsController.get(params.chainId, params.address);
 
       return account ? account.flattenData() : false;
@@ -51,13 +90,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     }
 
     case 'AccountsController#set': {
-      AccountsController.add(
-        params.original.chainId,
-        params.original.source,
-        params.original.address,
-        params.original.name
-      );
-
+      // Retrieve added account
       const account = AccountsController.get(
         params.original.chainId,
         params.original.address
@@ -65,37 +98,32 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       if (!account) return false;
 
+      // Update account's information
       account.name = params.updated.name;
       account.source = params.updated.source;
 
       AccountsController.set(params.original.chainId, account);
 
+      // Get updated account
       const updated = AccountsController.get(
         params.original.chainId,
         params.original.address
       );
 
+      // Return updated account's flattened data
       return updated ? updated.flattenData() : false;
     }
 
     case 'AccountsController#pushAccount': {
-      const chainId = params.acc1.chainId;
-
-      // Add first account to accounts controller
-      AccountsController.add(
-        chainId,
-        params.acc1.source,
-        params.acc1.address,
-        params.acc1.name
-      );
+      const chainId = params.chainId;
 
       // Manually pass second account to pushAccount
       const acc2 = new Account(
         chainId,
         AccountType.User,
-        params.acc2.source,
-        params.acc2.address,
-        params.acc2.name
+        params.source,
+        params.address,
+        params.name
       );
 
       const result = AccountsController.pushAccount(chainId, acc2);
@@ -109,18 +137,8 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     }
 
     case 'AccountsController#spliceAccount1': {
-      // Add two accounts to accounts controller
-      for (const account of params) {
-        AccountsController.add(
-          account.chainId,
-          account.source,
-          account.address,
-          account.name
-        );
-      }
-
       // Splice first account
-      const result = AccountsController.spliceAccount(params[0].address);
+      const result = AccountsController.spliceAccount(params.address);
       const flattened: FlattenedAccountData[] = [];
 
       for (const accounts of result.values()) {
@@ -131,16 +149,6 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     }
 
     case 'AccountsController#spliceAccount2': {
-      // Add two accounts to accounts controller
-      for (const account of params) {
-        AccountsController.add(
-          account.chainId,
-          account.source,
-          account.address,
-          account.name
-        );
-      }
-
       // Splice address not managed by accounts controller
       const result = AccountsController.spliceAccount('1000');
       const flattened: FlattenedAccountData[] = [];
@@ -151,17 +159,10 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       return flattened;
     }
+
     case 'AccountsController#setAccountConfig': {
       const chainId = params.newAccount.chainId;
       const address = params.newAccount.address;
-
-      // Add account to accounts controller
-      AccountsController.add(
-        chainId,
-        params.newAccount.source,
-        address,
-        params.newAccount.name
-      );
 
       // Get added account
       const account = AccountsController.get(chainId, address);
@@ -184,21 +185,13 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       // Add account to accounts controller
       AccountsController.add(chainId, params.source, address, params.name);
 
-      // Returnadded account status
+      // Return added account status
       return AccountsController.status(chainId, address);
     }
 
     case 'AccountsController#status2': {
       const chainId = params.newAccount.chainId;
       const address = params.newAccount.address;
-
-      // Add account to accounts controller
-      AccountsController.add(
-        chainId,
-        params.newAccount.source,
-        address,
-        params.newAccount.name
-      );
 
       // Get added account
       const account = AccountsController.get(chainId, address);
@@ -211,6 +204,22 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       // Get account status
       return AccountsController.status(chainId, address);
+    }
+
+    case 'AccountsController#remove': {
+      // Remove the first account
+      const chainId = params[0].chainId;
+      const address = params[0].address;
+
+      AccountsController.remove(chainId, address);
+
+      // Return flattened data of remaining accounts
+      const flattened: FlattenedAccountData[] = [];
+      for (const accounts of AccountsController.accounts.values()) {
+        accounts.forEach((a) => flattened.push(a.flattenData()));
+      }
+
+      return flattened;
     }
   }
 }

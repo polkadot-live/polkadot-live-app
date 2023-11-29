@@ -155,7 +155,7 @@ export class AccountsController {
    */
   static remove = async (chain: ChainID, address: string) => {
     if (this.accountExists(chain, address)) {
-      // Remove account from record.
+      // Remove account from map.
       this.setAccounts(this.spliceAccount(address));
 
       // Get entries from delegators` where address is the delegator.
