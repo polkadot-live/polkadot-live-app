@@ -11,6 +11,13 @@ describe('Account Tests', function () {
     source: 'vault' as AccountSource,
   };
 
+  const params2 = {
+    address: '1DcVoTjzxJSYYvFwUQBwWcq1WhcUgUAsdBZDTM4xeJh8tx3',
+    chainId: 'Polkadot' as ChainID,
+    name: 'Bob',
+    source: 'vault' as AccountSource,
+  };
+
   describe('AccountsController#add', async function () {
     it('should store an account and return it successfully', async function () {
       // Try adding a new account, expect return value to be account
@@ -113,7 +120,34 @@ describe('Account Tests', function () {
 
   // Pending tests
   describe('AccountsController#spliceAccount', function () {
-    it('should remove an account from the imported accounts map successfully');
+    it('should remove an account from the accounts map successfully', async function () {
+      const accounts = [{ ...params }, { ...params2 }];
+
+      const result = await browser.electron.api(
+        'AccountsController#spliceAccount1',
+        accounts
+      );
+
+      const flattened = result as FlattenedAccountData[];
+
+      expect(flattened.length).toBe(1);
+      expect(flattened[0].address).toBe(accounts[1].address);
+    });
+
+    it("shouldn't modify the accounts map if the provided address doesn't exist", async function () {
+      const accounts = [{ ...params }, { ...params2 }];
+
+      const result = await browser.electron.api(
+        'AccountsController#spliceAccount2',
+        accounts
+      );
+
+      const flattened = result as FlattenedAccountData[];
+
+      expect(flattened.length).toBe(2);
+      expect(flattened[0].address).toBe(accounts[0].address);
+      expect(flattened[1].address).toBe(accounts[1].address);
+    });
   });
 
   describe('AccountsController#setAccountConfig', function () {

@@ -107,5 +107,49 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       return flattened;
     }
+
+    case 'AccountsController#spliceAccount1': {
+      // Add two accounts to accounts controller
+      for (const account of params) {
+        AccountsController.add(
+          account.chainId,
+          account.source,
+          account.address,
+          account.name
+        );
+      }
+
+      // Splice first account
+      const result = AccountsController.spliceAccount(params[0].address);
+      const flattened: FlattenedAccountData[] = [];
+
+      for (const accounts of result.values()) {
+        accounts.forEach((a) => flattened.push(a.flattenData()));
+      }
+
+      return flattened;
+    }
+
+    case 'AccountsController#spliceAccount2': {
+      // Add two accounts to accounts controller
+      for (const account of params) {
+        AccountsController.add(
+          account.chainId,
+          account.source,
+          account.address,
+          account.name
+        );
+      }
+
+      // Splice address not managed by accounts controller
+      const result = AccountsController.spliceAccount('1000');
+      const flattened: FlattenedAccountData[] = [];
+
+      for (const accounts of result.values()) {
+        accounts.forEach((a) => flattened.push(a.flattenData()));
+      }
+
+      return flattened;
+    }
   }
 }
