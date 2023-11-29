@@ -28,11 +28,11 @@ orchestrator.subscribe({
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
       case 'initialize':
-        await initialize();
+        initialize();
         break;
       // Handle new account import.
       case 'newAddressImported':
-        await importNewAddress(data);
+        importNewAddress(data);
         break;
       // Handle remove imported account.
       case 'removeImportedAccount':
@@ -53,7 +53,15 @@ const initialize = async () => {
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  await APIsController.initialize();
+  const chainIds = AccountsController.getAccountChainIds();
+  await APIsController.initialize(chainIds);
+
+  // Subscribe accounts to API now API instances are instantiated
+  AccountsController.subscribeAccounts();
+
+  /*-----------------------------------
+   BlockStream Specific Initialisation
+   ------------------------------------*/
 
   // Initialize account chainState and config (requires api controller)
   await AccountUtils.initializeConfigsAndChainStates();

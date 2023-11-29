@@ -4,13 +4,14 @@
 import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
-import type { ImportedAccounts, StoredAccounts } from '@/model/Account';
+import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
   FlattenedAccounts,
+  StoredAccount,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
@@ -35,24 +36,25 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static initialize() {
-    // Get accounts from store.
-    const storedAccountsMap = store.get('imported_accounts') as StoredAccounts;
-    if (!storedAccountsMap) {
+    const stored = store.get('imported_accounts') as string;
+
+    // Instantiate empty map if no accounts found in store
+    if (!stored) {
       this.accounts = new Map();
       return;
     }
 
-    // Structure to receive stored account data.
+    // Parse serialised data into a map of StoredAccounts
+    // NOTE: Cannot directly deserialise to Account instances
+    const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
     const importedAccounts: ImportedAccounts = new Map();
 
-    // Iterate stored data and populate structure.
-    for (const chain of Object.keys(storedAccountsMap) as ChainID[]) {
+    for (const [chain, accounts] of parsed) {
       const imported: Account[] = [];
 
-      for (const a of storedAccountsMap[chain]) {
-        // Ignore delegate accounts: they are instantiated in `Discovery.start()`.
+      for (const a of accounts) {
         if (a._type !== AccountType.Delegate) {
-          // Instantiate account.
+          // Instantiate account
           const account = new Account(
             chain,
             AccountType.User,
@@ -69,8 +71,16 @@ export class AccountsController {
       importedAccounts.set(chain, imported);
     }
 
-    // Inject accounts into class.
+    // Inject imported accounts into controller
     this.accounts = importedAccounts;
+  }
+
+  static subscribeAccounts() {
+    for (const accounts of this.accounts.values()) {
+      for (const account of accounts) {
+        account.initState();
+      }
+    }
   }
 
   /**
@@ -97,6 +107,17 @@ export class AccountsController {
     return flattened;
   };
 
+  // Get an array of imported chain IDs
+  static getAccountChainIds = () => {
+    const chainIds: ChainID[] = [];
+
+    for (const chainId of this.accounts.keys()) {
+      chainIds.push(chainId);
+    }
+
+    return chainIds;
+  };
+
   /**
    * @name set
    * @summary Updates an Account in the `accounts` property.
@@ -110,7 +131,7 @@ export class AccountsController {
         .get(chain)
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
-    store.set('imported_accounts', this.accounts);
+    store.set('imported_accounts', this.serializeAccounts());
   };
 
   /**
@@ -139,6 +160,7 @@ export class AccountsController {
         address,
         name
       );
+      account.initState();
       this.setAccounts(this.pushAccount(chain, account));
       return account;
     }
@@ -289,7 +311,7 @@ export class AccountsController {
    */
   static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
-    store.set('imported_accounts', this.accounts);
+    store.set('imported_accounts', this.serializeAccounts());
     debug('🆕 Accounts updated: %o', accounts);
   };
 
@@ -315,5 +337,12 @@ export class AccountsController {
     }
 
     return false;
+  };
+
+  // Serialise imported accounts for Electron store
+  // NOTE: Account implements toJSON method for serialising account data correctly.
+  private static serializeAccounts = () => {
+    const serialized = JSON.stringify(Array.from(this.accounts.entries()));
+    return serialized;
   };
 }
