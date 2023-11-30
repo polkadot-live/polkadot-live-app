@@ -49,12 +49,11 @@ orchestrator.subscribe({
  * @summary Initializes app state.
  */
 const initialize = async () => {
-  // Initialize `Accounts` from persisted state.
+  // Initialize `Account`s from persisted state.
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  const chainIds = AccountsController.getAccountChainIds();
-  await APIsController.initialize(chainIds);
+  await APIsController.initialize(AccountsController.getAccountChainIds());
 
   // Now API instances are instantiated, subscribe accounts to API.
   AccountsController.subscribeAccounts();
@@ -80,7 +79,7 @@ const importNewAddress = async ({
   address,
   name,
 }: ImportNewAddressArg) => {
-  // Add address to `Accounts` and give immediate feedback to app.
+  // Add address to `AccountsController` and give immediate feedback to app.
   const account = AccountsController.add(chain, source, address, name);
 
   // If account was unsuccessfully added, exit early.
@@ -90,8 +89,9 @@ const importNewAddress = async ({
   reportAllWindows(reportImportedAccounts);
 
   // Add chain instance if it does not already exist.
+  // TODO: Error checking instead of `!`
   if (!APIsController.chainExists(chain)) {
-    await APIsController.new(ChainList[chain].endpoints.rpc);
+    await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
 
   // Trigger Discovery and generate config.

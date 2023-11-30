@@ -25,9 +25,9 @@ export class APIsController {
    * @summary Instantiates and stores API Instances from persisted imported accounts.
    */
   static initialize = async (chainIds: ChainID[]) => {
-    for (const i of chainIds) {
-      console.log(`New API: ${i}`);
-      await this.new((ChainList[i] as AnyData).endpoints?.rpc);
+    for (const chainId of chainIds) {
+      console.log(`New API: ${chainId}`);
+      await this.new((ChainList.get(chainId) as AnyData).endpoints?.rpc);
     }
   };
 
@@ -57,8 +57,8 @@ export class APIsController {
 
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
-      !Object.keys(ChainList).includes(chain) ||
-      this.instances.find((s) => s.chain === chain)
+      !Array.from(ChainList.keys()).includes(chain) ||
+      this.instances.find((api) => api.chain === chain)
     ) {
       await instance.disconnect();
       return;

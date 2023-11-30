@@ -27,32 +27,35 @@ interface Chain {
   categories: AnyData;
 }
 
-export const ChainList: Record<string, Chain> = {
-  Polkadot: {
-    icon: PolkadotIcon,
-    ledger: {
-      icon: PolkadotAppIcon,
-    },
-    endpoints: {
-      rpc: 'wss://apps-rpc.polkadot.io',
-      lightClient: Sc.WellKnownChain.polkadot,
-    },
-    units: 10,
-    unit: 'DOT',
-    categories: {
-      nominationPools: {
-        name: 'Nomination Pools',
-        icon: faUserGroup,
+export const ChainList: Map<string, Chain> = new Map([
+  [
+    'Polkadot',
+    {
+      icon: PolkadotIcon,
+      ledger: {
+        icon: PolkadotAppIcon,
+      },
+      endpoints: {
+        rpc: 'wss://apps-rpc.polkadot.io',
+        lightClient: Sc.WellKnownChain.polkadot,
+      },
+      units: 10,
+      unit: 'DOT',
+      categories: {
+        nominationPools: {
+          name: 'Nomination Pools',
+          icon: faUserGroup,
+        },
       },
     },
-  },
-};
+  ],
+]);
 
-export const chainIcon = (chain: ChainID) => ChainList[chain]?.icon;
+export const chainIcon = (chain: ChainID) => ChainList.get(chain)?.icon;
 
-export const chainCurrency = (chain: ChainID) => ChainList[chain]?.unit;
+export const chainCurrency = (chain: ChainID) => ChainList.get(chain)?.unit;
 
-export const chainUnits = (chain: ChainID) => ChainList[chain]?.units;
+export const chainUnits = (chain: ChainID) => ChainList.get(chain)?.units;
 
 export const chainCategory = (chain: ChainID, category: string) =>
-  ChainList[chain]?.categories[category];
+  ChainList.get(chain)?.categories[category];
