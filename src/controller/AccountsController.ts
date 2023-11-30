@@ -38,14 +38,14 @@ export class AccountsController {
   static initialize() {
     const stored = store.get('imported_accounts') as string;
 
-    // Instantiate empty map if no accounts found in store
+    // Instantiate empty map if no accounts found in store.
     if (!stored) {
       this.accounts = new Map();
       return;
     }
 
-    // Parse serialised data into a map of StoredAccounts
-    // NOTE: Cannot directly deserialise to Account instances
+    // Parse serialized data into a map of StoredAccounts.
+    // NOTE: Cannot directly deserialize to Account instances.
     const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
     const importedAccounts: ImportedAccounts = new Map();
 
@@ -54,7 +54,7 @@ export class AccountsController {
 
       for (const a of accounts) {
         if (a._type !== AccountType.Delegate) {
-          // Instantiate account
+          // Instantiate account.
           const account = new Account(
             chain,
             AccountType.User,
@@ -71,7 +71,7 @@ export class AccountsController {
       importedAccounts.set(chain, imported);
     }
 
-    // Inject imported accounts into controller
+    // Inject imported accounts into controller.
     this.accounts = importedAccounts;
   }
 
@@ -102,7 +102,7 @@ export class AccountsController {
     const flattened: FlattenedAccounts = {};
 
     for (const [chain, accounts] of this.accounts) {
-      flattened[chain] = accounts.map((a) => a.flattenData());
+      flattened[chain] = accounts.map((a) => a.flatten());
     }
     return flattened;
   };
@@ -241,9 +241,7 @@ export class AccountsController {
   static pushAccount = (chain: ChainID, account: Account): ImportedAccounts => {
     const updated: ImportedAccounts = this.accounts;
 
-    updated.get(chain)
-      ? updated.get(chain)?.push(account)
-      : updated.set(chain, [account]);
+    updated.get(chain)?.push(account) || updated.set(chain, [account]);
 
     return updated;
   };
@@ -339,8 +337,8 @@ export class AccountsController {
     return false;
   };
 
-  // Serialise imported accounts for Electron store
-  // NOTE: Account implements toJSON method for serialising account data correctly.
+  // Serialize imported accounts for Electron store
+  // NOTE: Account implements toJSON method for serializing account data correctly.
   private static serializeAccounts = () => {
     const serialized = JSON.stringify(Array.from(this.accounts.entries()));
     return serialized;

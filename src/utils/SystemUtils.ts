@@ -62,7 +62,7 @@ export const reportActiveInstances = (id: string) => {
 };
 
 // Remove chain's API instance if no more accounts require it
-export const removeChainApiCheck = (chain: ChainID) => {
+export const removeUnusedApi = (chain: ChainID) => {
   if (!AccountsController.accounts.get(chain)?.length) {
     APIsController.close(chain);
 

@@ -3,7 +3,7 @@
 
 import { Subject } from 'rxjs';
 import {
-  removeChainApiCheck,
+  removeUnusedApi,
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
@@ -56,7 +56,7 @@ const initialize = async () => {
   const chainIds = AccountsController.getAccountChainIds();
   await APIsController.initialize(chainIds);
 
-  // Subscribe accounts to API now API instances are instantiated
+  // Now API instances are instantiated, subscribe accounts to API.
   AccountsController.subscribeAccounts();
 
   /*-----------------------------------
@@ -121,8 +121,8 @@ const removeImportedAccount = ({
   // Remove address from store.
   AccountsController.remove(chain, address);
 
-  // Remove chain's API instance if no more accounts require it
-  removeChainApiCheck(chain);
+  // Remove chain's API instance if no more accounts require it.
+  removeUnusedApi(chain);
 
   // Remove config from `Subscriptions`.
   BlockStreamsController.removeAccountFromService(chain, address);

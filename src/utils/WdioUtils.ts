@@ -62,7 +62,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
         params.name
       );
 
-      return account ? account.flattenData() : false;
+      return account ? account.flatten() : false;
     }
 
     case 'AccountsController#add2': {
@@ -74,19 +74,19 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
         params.name
       );
 
-      return account ? account.flattenData() : false;
+      return account ? account.flatten() : false;
     }
 
     case 'AccountsController#get1': {
       const account = AccountsController.get(params.chainId, params.address);
 
-      return account ? account.flattenData() : false;
+      return account ? account.flatten() : false;
     }
 
     case 'AccountsController#get2': {
       const account = AccountsController.get(params.chainId, params.address);
 
-      return account ? account.flattenData() : false;
+      return account ? account.flatten() : false;
     }
 
     case 'AccountsController#set': {
@@ -111,7 +111,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       );
 
       // Return updated account's flattened data
-      return updated ? updated.flattenData() : false;
+      return updated ? updated.flatten() : false;
     }
 
     case 'AccountsController#pushAccount': {
@@ -130,7 +130,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       const flattened: FlattenedAccountData[] = [];
 
       for (const accounts of result.values()) {
-        accounts.forEach((a) => flattened.push(a.flattenData()));
+        accounts.forEach((a) => flattened.push(a.flatten()));
       }
 
       return flattened;
@@ -142,7 +142,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       const flattened: FlattenedAccountData[] = [];
 
       for (const accounts of result.values()) {
-        accounts.forEach((a) => flattened.push(a.flattenData()));
+        accounts.forEach((a) => flattened.push(a.flatten()));
       }
 
       return flattened;
@@ -154,7 +154,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       const flattened: FlattenedAccountData[] = [];
 
       for (const accounts of result.values()) {
-        accounts.forEach((a) => flattened.push(a.flattenData()));
+        accounts.forEach((a) => flattened.push(a.flatten()));
       }
 
       return flattened;
@@ -175,7 +175,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       // Retrieve updated account
       const updated = AccountsController.get(chainId, address);
-      return updated ? updated.flattenData() : false;
+      return updated ? updated.flatten() : false;
     }
 
     case 'AccountsController#status1': {
@@ -216,7 +216,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       // Return flattened data of remaining accounts
       const flattened: FlattenedAccountData[] = [];
       for (const accounts of AccountsController.accounts.values()) {
-        accounts.forEach((a) => flattened.push(a.flattenData()));
+        accounts.forEach((a) => flattened.push(a.flatten()));
       }
 
       return flattened;

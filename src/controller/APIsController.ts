@@ -25,12 +25,6 @@ export class APIsController {
    * @summary Instantiates and stores API Instances from persisted imported accounts.
    */
   static initialize = async (chainIds: ChainID[]) => {
-    // Instantiate API Instances from stored imported accounts.
-    //const instances =
-    //  (Object.keys(store.get('imported_accounts') || {}) as ChainID[])?.filter(
-    //    (c) => Object.keys(ChainList).includes(c)
-    //  ) || [];
-
     for (const i of chainIds) {
       console.log(`New API: ${i}`);
       await this.new((ChainList[i] as AnyData).endpoints?.rpc);
@@ -82,7 +76,7 @@ export class APIsController {
     // Get api constants.
     await instance.getConsts();
 
-    // Bootstrap events for connected accounts (checks pending rewards)
+    // Bootstrap events for connected accounts (checks pending rewards).
     Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.

@@ -69,7 +69,7 @@ export class Account {
     }
   };
 
-  flattenData = () =>
+  flatten = () =>
     ({
       address: this.address,
       name: this.name,
@@ -78,17 +78,15 @@ export class Account {
       chainState: this.chainState,
     }) as FlattenedAccountData;
 
-  toJSON = () => {
-    return {
-      _type: this._type,
-      _source: this._source,
-      _address: this._address,
-      _name: this._name,
-      _config: this._config,
-      _chainState: this._chainState,
-      _chain: this._chain,
-    };
-  };
+  toJSON = () => ({
+    _type: this._type,
+    _source: this._source,
+    _address: this._address,
+    _name: this._name,
+    _config: this._config,
+    _chainState: this._chainState,
+    _chain: this._chain,
+  });
 
   get chain() {
     return this._chain;
