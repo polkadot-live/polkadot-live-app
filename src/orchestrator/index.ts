@@ -53,7 +53,12 @@ const initialize = async () => {
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  await APIsController.initialize(AccountsController.getAccountChainIds());
+  const chainIds = AccountsController.getAccountChainIds();
+
+  await APIsController.initialize(chainIds);
+
+  // Bootstrap events for connected accounts (checks pending rewards).
+  Discover.bootstrapEvents(chainIds);
 
   // Now API instances are instantiated, subscribe accounts to API.
   AccountsController.subscribeAccounts();
@@ -93,6 +98,12 @@ const importNewAddress = async ({
   if (!APIsController.chainExists(chain)) {
     await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
+
+  // Check any pending rewards.
+  Discover.bootstrapEventsForAccount(chain, account);
+
+  // Instantiate PolkadotState and call subscribe().
+  account.initState();
 
   // Trigger Discovery and generate config.
   const config = await Discover.start(chain, account);

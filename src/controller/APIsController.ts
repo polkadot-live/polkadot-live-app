@@ -4,7 +4,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
-import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/utils/DebugUtils';
@@ -68,16 +67,13 @@ export class APIsController {
     const chainId = chain as ChainID;
 
     // Set remaining instance properties and add to instances.
-    this.instances = this.instances.concat(instance);
+    this.instances.push(instance);
 
     // Set the api and bootstrap chain.
     instance.setApi(api, chainId);
 
     // Get api constants.
     await instance.getConsts();
-
-    // Bootstrap events for connected accounts (checks pending rewards).
-    Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.
     WindowsController.reportAll(chainId, 'renderer:chain:added');

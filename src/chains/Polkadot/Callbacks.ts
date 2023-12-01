@@ -28,8 +28,10 @@ export class PolkadotCallbacks {
     inNominationPool: null,
   };
 
-  static async bootstrap() {
-    const chainAccounts = AccountsController.accounts.get(this.chain);
+  static async bootstrap(account?: Account) {
+    const chainAccounts = account
+      ? [account]
+      : AccountsController.accounts.get(this.chain);
 
     if (!chainAccounts) return;
 
@@ -147,7 +149,7 @@ export class PolkadotCallbacks {
 
     const pendingRewards = planckToUnit(
       new BigNumber(result.toString()),
-      chainUnits(this.chain)
+      chainUnits(this.chain)!
     );
 
     // Dismiss and exit early if pending rewards is zero.

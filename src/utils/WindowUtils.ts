@@ -9,6 +9,7 @@ import { initializeState } from '@/utils/SystemUtils';
 import { Discover } from '@/controller/Discover';
 import { WindowsController } from '@/controller/WindowsController';
 import type { AnyJson } from '@polkadot-cloud/react/types';
+import { AccountsController } from '@/controller/AccountsController';
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -79,7 +80,7 @@ export const createMainWindow = (isTest: boolean) => {
     initializeState('menu');
 
     // Bootstrap account events for all chains.
-    Discover.bootstrapEvents();
+    Discover.bootstrapEvents(Array.from(AccountsController.accounts.keys()));
   });
 
   mainWindow.on('move', () => {

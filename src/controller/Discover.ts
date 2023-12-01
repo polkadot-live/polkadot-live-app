@@ -5,7 +5,6 @@ import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import type { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
-import { AccountsController } from './AccountsController';
 import { ChainsController } from './ChainsController';
 import type { All, MethodSubscription } from '@/types/blockstream';
 import type { PolkadotAccountState } from '@/types/chains/polkadot';
@@ -41,23 +40,29 @@ export class Discover {
    * @summary Bootstrap events for all accounts on a chain to prepare the app UI.
    * @param {string=} chain - restrict bootstrapping to a chain.
    */
-  static bootstrapEvents = (chain?: ChainID) => {
-    const handleBootstrap = (c: ChainID) => {
-      if (c && !APIsController.get(c)?.api.isReady) {
+  static bootstrapEvents = (chainIds: ChainID[]) => {
+    const handleBootstrap = (chainId: ChainID) => {
+      if (!APIsController.get(chainId)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is
         // connected and `isReady`.
-        debug(`❗️ Api for ${c} not ready, skipping bootstrap`);
+        debug(`❗️ Api for ${chainId} not ready, skipping bootstrap`);
         return;
       }
-      debug(`💳 Bootstrapping for accounts, chain ${chain || 'all chains'}`);
+      debug(`💳 Bootstrapping for accounts, chain ${chainId || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?.
-      if (c) ChainsController.bootstrap(c);
+      if (chainId) ChainsController.bootstrap(chainId);
     };
 
-    if (!chain) {
-      for (const c of Object.keys(AccountsController.accounts))
-        handleBootstrap(c as ChainID);
-    } else handleBootstrap(chain);
+    // Iterate accounts and chain IDs
+    for (const chainId of chainIds) {
+      handleBootstrap(chainId);
+    }
   };
+
+  // Bootstrap events for a particular account.
+  // Called when account is imported via the frontend, so API will be available.
+  static bootstrapEventsForAccount(chainId: ChainID, account: Account) {
+    ChainsController.bootstrap(chainId, account);
+  }
 }
