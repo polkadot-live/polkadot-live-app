@@ -4,19 +4,17 @@
 import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
-import type { ImportedAccounts, StoredAccounts } from '@/model/Account';
-import { APIsController } from './APIsController';
-import { WindowsController } from './WindowsController';
+import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type {
   AccountConfig,
   AccountSource,
   AccountStatus,
   FlattenedAccounts,
+  StoredAccount,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
-import type { AnyJson } from '@/types/misc';
 import type { ReportDelegator } from '@/types/reporter';
 
 const debug = MainDebug.extend('Accounts');
@@ -29,7 +27,7 @@ const debug = MainDebug.extend('Accounts');
  * they are listening to.
  */
 export class AccountsController {
-  static accounts: ImportedAccounts;
+  static accounts: ImportedAccounts = new Map();
 
   static delegators: SubscriptionDelegate[] = [];
 
@@ -38,22 +36,23 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static initialize() {
-    // Get accounts from store.
-    const storedAccountsMap = store.get('imported_accounts') as StoredAccounts;
-    if (!storedAccountsMap) {
-      this.accounts = {};
+    const stored = store.get('imported_accounts') as string;
+
+    // Instantiate empty map if no accounts found in store.
+    if (!stored) {
+      this.accounts = new Map();
       return;
     }
 
-    // Structure to receive stored account data.
-    const accountsMap: ImportedAccounts = {};
+    // Parse serialized data into a map of StoredAccounts.
+    // NOTE: Cannot directly deserialize to Account instances.
+    const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
+    const importedAccounts: ImportedAccounts = new Map();
 
-    // Iterate stored data and populate structure.
-    for (const chain of Object.keys(storedAccountsMap) as ChainID[]) {
-      const accountsFromStore = [];
+    for (const [chain, accounts] of parsed) {
+      const imported: Account[] = [];
 
-      for (const a of storedAccountsMap[chain]) {
-        // Ignore delegate accounts: they are instantiated in `Discovery.start()`.
+      for (const a of accounts) {
         if (a._type !== AccountType.Delegate) {
           // Instantiate account.
           const account = new Account(
@@ -65,15 +64,23 @@ export class AccountsController {
           );
           account.config = a._config;
           account.chainState = a._chainState;
-          accountsFromStore.push(account);
+          imported.push(account);
         }
       }
 
-      accountsMap[chain] = accountsFromStore;
+      importedAccounts.set(chain, imported);
     }
 
-    // Inject accounts into class.
-    this.accounts = accountsMap;
+    // Inject imported accounts into controller.
+    this.accounts = importedAccounts;
+  }
+
+  static subscribeAccounts() {
+    for (const accounts of this.accounts.values()) {
+      for (const account of accounts) {
+        account.initState();
+      }
+    }
   }
 
   /**
@@ -84,7 +91,7 @@ export class AccountsController {
    * @returns {(Account|undefined)}
    */
   static get = (chain: ChainID, address: string): Account | undefined =>
-    this.accounts[chain]?.find((a) => a.address === address) || undefined;
+    this.accounts.get(chain)?.find((a) => a.address === address);
 
   /**
    * @name getAllFlattenedAccountData
@@ -92,11 +99,23 @@ export class AccountsController {
    * @returns {ImportedAccounts}
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
-    const accounts: FlattenedAccounts = {};
-    for (const chain of Object.keys(this.accounts)) {
-      accounts[chain] = this.accounts[chain].map((a) => a.flattenData());
+    const flattened: FlattenedAccounts = {};
+
+    for (const [chain, accounts] of this.accounts) {
+      flattened[chain] = accounts.map((a) => a.flatten());
     }
-    return accounts;
+    return flattened;
+  };
+
+  // Get an array of imported chain IDs
+  static getAccountChainIds = () => {
+    const chainIds: ChainID[] = [];
+
+    for (const chainId of this.accounts.keys()) {
+      chainIds.push(chainId);
+    }
+
+    return chainIds;
   };
 
   /**
@@ -106,11 +125,13 @@ export class AccountsController {
    * @param {Account} account - the account to set.
    */
   static set = (chain: ChainID, account: Account) => {
-    this.accounts[chain] =
-      this.accounts[chain]?.map((a) =>
-        a.address === account.address ? account : a
-      ) || [];
-    store.set('imported_accounts', this.accounts);
+    this.accounts.set(
+      chain,
+      this.accounts
+        .get(chain)
+        ?.map((a) => (a.address === account.address ? account : a)) || []
+    );
+    store.set('imported_accounts', this.serializeAccounts());
   };
 
   /**
@@ -139,6 +160,7 @@ export class AccountsController {
         address,
         name
       );
+      account.initState();
       this.setAccounts(this.pushAccount(chain, account));
       return account;
     }
@@ -152,7 +174,7 @@ export class AccountsController {
    */
   static remove = async (chain: ChainID, address: string) => {
     if (this.accountExists(chain, address)) {
-      // Remove account from record.
+      // Remove account from map.
       this.setAccounts(this.spliceAccount(address));
 
       // Get entries from delegators` where address is the delegator.
@@ -189,19 +211,6 @@ export class AccountsController {
           }
         }
       }
-
-      // Remove chain if no more accounts exist.
-      if (!this.accounts[chain]?.length) {
-        APIsController.close(chain);
-
-        // Report to active windows that chain has been removed.
-        WindowsController.active.forEach(({ id }: AnyJson) => {
-          WindowsController.get(id)?.webContents?.send(
-            'renderer:chain:removed',
-            chain
-          );
-        });
-      }
     }
   };
 
@@ -230,16 +239,11 @@ export class AccountsController {
    * @returns {AccountStatus}
    */
   static pushAccount = (chain: ChainID, account: Account): ImportedAccounts => {
-    let newAccounts: ImportedAccounts = this.accounts;
-    const chainAccounts = newAccounts[chain] || [];
-    newAccounts = Object.assign(
-      newAccounts,
-      {},
-      {
-        [chain]: chainAccounts.concat(account),
-      }
-    );
-    return newAccounts;
+    const updated: ImportedAccounts = this.accounts;
+
+    updated.get(chain)?.push(account) || updated.set(chain, [account]);
+
+    return updated;
   };
 
   /**
@@ -249,14 +253,16 @@ export class AccountsController {
    * @returns {ImportedAccounts}
    */
   static spliceAccount = (address: string): ImportedAccounts => {
-    return Object.fromEntries(
-      Object.entries({ ...this.accounts }).map(([n, imported]) => {
-        return [
-          n,
-          imported.filter((account: Account) => account.address !== address),
-        ];
-      })
-    );
+    const filtered: ImportedAccounts = new Map();
+
+    for (const [chain, accounts] of this.accounts) {
+      filtered.set(
+        chain,
+        accounts.filter((a) => a.address !== address)
+      );
+    }
+
+    return filtered;
   };
 
   /**
@@ -303,7 +309,7 @@ export class AccountsController {
    */
   static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
-    store.set('imported_accounts', this.accounts);
+    store.set('imported_accounts', this.serializeAccounts());
     debug('🆕 Accounts updated: %o', accounts);
   };
 
@@ -323,10 +329,18 @@ export class AccountsController {
     const matchStatus = (item: Account) =>
       status !== undefined ? this.status(chain, item.address) === status : true;
 
-    return (
-      Object.values(this.accounts).find((items) =>
-        items.find((item) => item.address === address && matchStatus(item))
-      ) !== undefined
-    );
+    for (const accounts of this.accounts.values()) {
+      if (accounts.find((a) => a.address === address && matchStatus(a)))
+        return true;
+    }
+
+    return false;
+  };
+
+  // Serialize imported accounts for Electron store
+  // NOTE: Account implements toJSON method for serializing account data correctly.
+  private static serializeAccounts = () => {
+    const serialized = JSON.stringify(Array.from(this.accounts.entries()));
+    return serialized;
   };
 }

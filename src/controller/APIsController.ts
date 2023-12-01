@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ApiPromise } from '@polkadot/api';
-import { store } from '@/main';
 import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
-import { AccountsController } from './AccountsController';
 import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
@@ -26,14 +24,9 @@ export class APIsController {
    * @name initialize
    * @summary Instantiates and stores API Instances from persisted imported accounts.
    */
-  static initialize = async () => {
-    // Instantiate API Instances from stored imported accounts.
-    const instances =
-      (Object.keys(store.get('imported_accounts') || {}) as ChainID[])?.filter(
-        (c) => Object.keys(ChainList).includes(c)
-      ) || [];
-
-    for (const i of instances) {
+  static initialize = async (chainIds: ChainID[]) => {
+    for (const i of chainIds) {
+      console.log(`New API: ${i}`);
       await this.new((ChainList[i] as AnyData).endpoints?.rpc);
     }
   };
@@ -83,17 +76,11 @@ export class APIsController {
     // Get api constants.
     await instance.getConsts();
 
-    // Bootstrap events for connected accounts.
+    // Bootstrap events for connected accounts (checks pending rewards).
     Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.
     WindowsController.reportAll(chainId, 'renderer:chain:added');
-
-    // Subscribe to existing chain accounts state.
-    // TODO: Throw error if account doesn't have state object
-    AccountsController.accounts[chain]?.forEach((account) => {
-      account.state && account.state.subscribe();
-    });
 
     debug(
       '🔧 New api instances: %o',

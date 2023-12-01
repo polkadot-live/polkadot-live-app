@@ -6,6 +6,7 @@ import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { AnyFunction } from './misc';
 import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
+import type { ChainID } from './chains';
 
 export enum AccountType {
   User,
@@ -27,6 +28,7 @@ export interface StoredAccount {
   _name: string;
   _config: MethodSubscription;
   _chainState: AccountChainState;
+  _chain: ChainID;
 }
 
 export interface AccountConfig {

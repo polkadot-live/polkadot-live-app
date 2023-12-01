@@ -14,6 +14,7 @@ import { Home } from '@app/screens/Home';
 import { Import } from '@app/screens/Import';
 import { useTheme } from 'styled-components';
 import type { ChainID } from '@/types/chains';
+import type { FlattenedAccounts } from '@/types/accounts';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -22,9 +23,11 @@ export const RouterInner = () => {
 
   useEffect(() => {
     // handle initial responses to populate state from store.
-    window.myAPI.reportImportedAccounts((_: Event, accounts: AnyJson) => {
-      setAddresses(accounts);
-    });
+    window.myAPI.reportImportedAccounts(
+      (_: Event, accounts: FlattenedAccounts) => {
+        setAddresses(accounts);
+      }
+    );
     window.myAPI.reportAccountState(
       (
         _: Event,

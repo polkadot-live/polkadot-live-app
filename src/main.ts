@@ -7,11 +7,13 @@ import { APIsController } from './controller/APIsController';
 import { orchestrator } from './orchestrator';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
-import { reportAllWindows, reportImportedAccounts } from './Utils';
+import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
+import type { AnyData } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
+import * as WdioUtils from '@/utils/WdioUtils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -122,11 +124,12 @@ app.whenReady().then(() => {
   // ------------------------------
 
   if (isTest) {
-    ipcMain.handle('wdio-electron', (_: IpcMainInvokeEvent, cmd: string) => {
-      if (cmd === 'toggleMainWindow') {
-        WindowsController.toggleVisible('menu');
+    ipcMain.handle(
+      'wdio-electron',
+      (_: IpcMainInvokeEvent, cmd: string, params?: AnyData) => {
+        return WdioUtils.handleWdioApi(cmd, params);
       }
-    });
+    );
   }
 
   // ------------------------------
@@ -168,7 +171,7 @@ app.whenReady().then(() => {
     'app:account:import',
     async (_, chain: ChainID, source, address, name) => {
       orchestrator.next({
-        task: 'newAddressImported',
+        task: 'app:account:import',
         data: { chain, source, address, name },
       });
     }
@@ -177,7 +180,7 @@ app.whenReady().then(() => {
   // Attempt an account removal.
   ipcMain.on('app:account:remove', (_, chain, address) => {
     orchestrator.next({
-      task: 'removeImportedAccount',
+      task: 'app:account:remove',
       data: { chain, address },
     });
   });

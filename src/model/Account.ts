@@ -4,7 +4,6 @@
 import { ChainsController } from '@/controller/ChainsController';
 import type {
   AccountSource,
-  StoredAccount,
   AccountChainState,
   AccountChainInstanceState,
   FlattenedAccountData,
@@ -16,9 +15,7 @@ import type { ChainID } from '@/types/chains';
 /**
  * Account collection types.
  */
-export type ImportedAccounts = Record<string, Account[]>;
-
-export type StoredAccounts = Record<ChainID, StoredAccount[]>;
+export type ImportedAccounts = Map<ChainID, Account[]>;
 
 /**
  * Creates an account.
@@ -64,11 +61,32 @@ export class Account {
     this._source = source;
     this.address = address;
     this.name = name;
-
-    if (type === AccountType.User) {
-      this.state = ChainsController.new(chain, address);
-    }
   }
+
+  initState = () => {
+    if (this.type === AccountType.User) {
+      this.state = ChainsController.new(this.chain, this.address);
+    }
+  };
+
+  flatten = () =>
+    ({
+      address: this.address,
+      name: this.name,
+      type: this.type,
+      config: this.config,
+      chainState: this.chainState,
+    }) as FlattenedAccountData;
+
+  toJSON = () => ({
+    _type: this._type,
+    _source: this._source,
+    _address: this._address,
+    _name: this._name,
+    _config: this._config,
+    _chainState: this._chainState,
+    _chain: this._chain,
+  });
 
   get chain() {
     return this._chain;
@@ -121,13 +139,4 @@ export class Account {
   set chainState(value: AccountChainState | null) {
     this._chainState = value;
   }
-
-  flattenData = () =>
-    ({
-      address: this.address,
-      name: this.name,
-      type: this.type,
-      config: this.config,
-      chainState: this.chainState,
-    }) as FlattenedAccountData;
 }

@@ -7,8 +7,8 @@ import type { Account } from '@/model/Account';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
 import { ChainsController } from './ChainsController';
-import type { AnyJson } from '@/types/misc';
 import type { All, MethodSubscription } from '@/types/blockstream';
+import type { PolkadotAccountState } from '@/types/chains/polkadot';
 
 const debug = MainDebug.extend('Discover');
 
@@ -17,7 +17,10 @@ export class Discover {
   static start = async (
     chain: ChainID,
     account: Account
-  ): Promise<{ chainState: AnyJson; config: MethodSubscription }> => {
+  ): Promise<{
+    chainState: PolkadotAccountState;
+    config: MethodSubscription;
+  }> => {
     const { address } = account;
 
     // Discover on-chain state for account.

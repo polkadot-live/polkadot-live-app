@@ -97,8 +97,10 @@ export class PolkadotState {
     debug('📩 Subscribe to account %o ', this.address);
     const apiInstance = APIsController.get(this.chain);
 
+    // TODO: this could be handled better. These are 2 separate concerns and warrant their own
+    // handles. E.g. a missing API instance is much more severe than already being subscribed.
     if (this.subscribed || !apiInstance) {
-      console.log('initially no API instance');
+      console.log('no API instance');
       return;
     }
 

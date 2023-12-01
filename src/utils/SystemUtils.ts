@@ -1,12 +1,13 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@/types/misc';
-import { WindowsController } from './controller/WindowsController';
-import { APIsController } from './controller/APIsController';
-import { AccountsController } from './controller/AccountsController';
+import type { AnyFunction, AnyJson } from '@/types/misc';
+import { WindowsController } from '../controller/WindowsController';
+import { APIsController } from '../controller/APIsController';
+import { AccountsController } from '../controller/AccountsController';
 import { MainDebug as debug } from '@/utils/DebugUtils';
-import { AccountType } from './types/accounts';
+import { AccountType } from '../types/accounts';
+import type { ChainID } from '@/types/chains';
 
 // Initalize store items.
 export const initializeState = (id: string) => {
@@ -17,7 +18,7 @@ export const initializeState = (id: string) => {
 
 // Report connected account state.
 export const reportAccountsState = (id: string) => {
-  Object.values(AccountsController.accounts).forEach((chainAccounts) => {
+  for (const chainAccounts of AccountsController.accounts.values()) {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
         // TODO: Throw error if state not found
@@ -35,7 +36,7 @@ export const reportAccountsState = (id: string) => {
         });
       }
     });
-  });
+  }
 };
 
 // Report imported accounts to renderer.
@@ -57,5 +58,20 @@ export const reportAllWindows = (callback: AnyFunction) => {
 export const reportActiveInstances = (id: string) => {
   for (const { chain } of APIsController.instances) {
     WindowsController.get(id)?.webContents?.send('renderer:chain:sync', chain);
+  }
+};
+
+// Remove chain's API instance if no more accounts require it
+export const removeUnusedApi = (chain: ChainID) => {
+  if (!AccountsController.accounts.get(chain)?.length) {
+    APIsController.close(chain);
+
+    // Report to active windows that chain has been removed.
+    WindowsController.active.forEach(({ id }: AnyJson) => {
+      WindowsController.get(id)?.webContents?.send(
+        'renderer:chain:removed',
+        chain
+      );
+    });
   }
 };

@@ -9,8 +9,6 @@ import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
 import { BlockStream } from '../blockstream/BlockStream';
-import { Discover } from './Discover';
-import { WindowsController } from './WindowsController';
 import type { ConcreteAccount, RawAccount } from '@/types/blockstream';
 import { ApiSubscription } from '@/types/blockstream';
 
@@ -24,12 +22,12 @@ type Service = { chain: ChainID; instance: BlockStream };
  * @class
  * @property {Service[]} services - list of active BlockStream services.
  */
-export class SubscriptionsController {
+export class BlockStreamsController {
   static services: Service[] = [];
 
   /**
    * @name initialize
-   * @summary Initializes subscription services.
+   * @summary Initializes a BlockStream subscription services.
    */
   static initialize = async () => {
     debug('🕕 Initializing subscriptions');
@@ -39,29 +37,24 @@ export class SubscriptionsController {
       debug('🔴 Using instance %o', chain);
 
       // Get accounts for `chain` and instantiate service.
-      const accounts = AccountsController.accounts[chain];
+      const accounts = AccountsController.accounts.get(chain);
+
+      if (!accounts) return;
+
       debug('💳 API instance accounts pre discover: %o', accounts.length);
 
       const rawAccounts: RawAccount[] = [];
       for (const account of accounts) {
-        // Re-discover config from on-chain state.
-        const { chainState, config } = await Discover.start(chain, account);
-
-        // Update config for account.
-        account.config = config;
-        account.chainState = chainState;
-        AccountsController.set(chain, account);
-
         debug(
           '🗓️ Bootstrap events for an account with chainState: %o',
-          chainState
+          account.chainState
         );
 
         // Convert `Account` into `RawAccount`.
         rawAccounts.push({
           address: account.address,
           nickname: account.name,
-          config,
+          config: account.config,
         });
       }
 
@@ -70,14 +63,6 @@ export class SubscriptionsController {
       // Start BlockStream services with raw accounts.
       if (rawAccounts) {
         this.startService(chain, api, rawAccounts);
-      }
-
-      // Report accounts to windows with updated configs.
-      for (const { id } of WindowsController.active) {
-        WindowsController.get(id)?.webContents?.send(
-          'renderer:broadcast:accounts',
-          AccountsController.getAllFlattenedAccountData()
-        );
       }
     });
   };
@@ -137,8 +122,8 @@ export class SubscriptionsController {
 
   /**
    * @name removeAccountFromService
-   * @summary Removes an account from a subscription service. Shuts down service if there are no
-   * more accounts in it.
+   * @summary Removes an account from a BlockStream subscription service. Shuts down service
+   * if there are no more accounts in it.
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} address - the account address.
    */
@@ -164,7 +149,7 @@ export class SubscriptionsController {
    * @summary Starts a service.
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} api - the api instance to use in a service.
-   * @param {RawAccount[]} accounts - the accounts listening to this subscription.
+   * @param {RawAccount[]} accounts - the accounts listening to this BlockStream subscription.
    */
   private static startService = async (
     chain: ChainID,

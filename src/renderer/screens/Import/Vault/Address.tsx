@@ -79,7 +79,7 @@ export const Address = ({ address, index }: AddressProps) => {
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={name} source="ledger" />,
+          <Confirm address={address} name={name} source="vault" />,
           'small'
         )
       }

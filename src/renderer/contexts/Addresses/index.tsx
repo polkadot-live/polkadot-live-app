@@ -3,12 +3,15 @@
 
 import Keyring from '@polkadot/keyring';
 import { setStateWithRef } from '@polkadot-cloud/utils';
-import type { Account, ImportedAccounts } from '@/model/Account';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
 import { useContext, createContext, useState, useRef } from 'react';
 import type { ChainID } from '@/types/chains';
-import type { AccountSource } from '@/types/accounts';
+import type {
+  AccountSource,
+  FlattenedAccountData,
+  FlattenedAccounts,
+} from '@/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -22,11 +25,11 @@ export const AddressesProvider = ({
   children: React.ReactNode;
 }) => {
   // Store the currently imported addresses
-  const [addresses, setAddressesState] = useState<ImportedAccounts>({});
+  const [addresses, setAddressesState] = useState<FlattenedAccounts>({});
   const addressesRef = useRef(addresses);
 
   // Setter to update addresses state and ref.
-  const setAddresses = (value: ImportedAccounts) => {
+  const setAddresses = (value: FlattenedAccounts) => {
     setStateWithRef(value, setAddressesState, addressesRef);
   };
 
@@ -53,13 +56,15 @@ export const AddressesProvider = ({
 
   // Get current addresses
   const getAddresses = () => {
-    let listAddresses: Account[] = [];
+    let listAddresses: FlattenedAccountData[] = [];
+
     Object.values(addresses).forEach((items) => {
       const newItems = items
         .map((account) => getAddress(account.address))
-        .filter((a) => a !== null) as Account[];
+        .filter((a) => a !== null) as FlattenedAccountData[];
       listAddresses = listAddresses.concat(newItems);
     });
+
     return listAddresses;
   };
 
@@ -72,7 +77,7 @@ export const AddressesProvider = ({
       return null;
     }
 
-    const result: Account[] = [];
+    const result: FlattenedAccountData[] = [];
     Object.values(addressesRef.current).forEach((accounts) => {
       result.push(...accounts);
     });

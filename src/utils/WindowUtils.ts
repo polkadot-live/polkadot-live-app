@@ -5,7 +5,7 @@ import {
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import { initializeState } from '@/Utils';
+import { initializeState } from '@/utils/SystemUtils';
 import { Discover } from '@/controller/Discover';
 import { WindowsController } from '@/controller/WindowsController';
 import type { AnyJson } from '@polkadot-cloud/react/types';
