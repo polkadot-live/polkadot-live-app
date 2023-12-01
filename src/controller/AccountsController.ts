@@ -27,7 +27,7 @@ const debug = MainDebug.extend('Accounts');
  * they are listening to.
  */
 export class AccountsController {
-  static accounts: ImportedAccounts;
+  static accounts: ImportedAccounts = new Map();
 
   static delegators: SubscriptionDelegate[] = [];
 

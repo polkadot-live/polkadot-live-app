@@ -153,6 +153,8 @@ export class WindowsController {
     }
 
     const storeMenuPos: AnyJson = store.get('menu_bounds');
-    mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
+    if (storeMenuPos?.x && storeMenuPos?.y) {
+      mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
+    }
   };
 }
