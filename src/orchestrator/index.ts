@@ -31,11 +31,11 @@ orchestrator.subscribe({
         initialize();
         break;
       // Handle new account import.
-      case 'newAddressImported':
+      case 'app:account:import':
         importNewAddress(data);
         break;
       // Handle remove imported account.
-      case 'removeImportedAccount':
+      case 'app:account:remove':
         removeImportedAccount(data);
         break;
       default:

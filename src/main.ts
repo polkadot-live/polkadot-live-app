@@ -171,7 +171,7 @@ app.whenReady().then(() => {
     'app:account:import',
     async (_, chain: ChainID, source, address, name) => {
       orchestrator.next({
-        task: 'newAddressImported',
+        task: 'app:account:import',
         data: { chain, source, address, name },
       });
     }
@@ -180,7 +180,7 @@ app.whenReady().then(() => {
   // Attempt an account removal.
   ipcMain.on('app:account:remove', (_, chain, address) => {
     orchestrator.next({
-      task: 'removeImportedAccount',
+      task: 'app:account:remove',
       data: { chain, address },
     });
   });
