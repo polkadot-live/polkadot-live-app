@@ -20,6 +20,13 @@ import type {
 } from '@/types/orchestrator';
 import * as AccountUtils from '@/utils/AccountUtils';
 
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import type {
+  SubscriptionTask,
+  SubscriptionNextStatus,
+} from '@/controller/SubscriptionsController';
+import type { ChainID } from '@/types/chains';
+
 // Initialise RxJS subject to orchestrate app events.
 export const orchestrator = new Subject<OrchestratorArg>();
 
@@ -63,8 +70,30 @@ const initialize = async () => {
   // Now API instances are instantiated, subscribe accounts to API.
   AccountsController.subscribeAccounts();
 
-  /*-----------------------------------
-   BlockStream Specific Initialisation
+  /*-------------------------------------
+   SubscriptionsController Initialization
+   ------------------------------------*/
+
+  SubscriptionsController.initialize();
+
+  const task1: SubscriptionTask = {
+    action: 'subscribe:query.timestamp.now',
+    chainId: 'Polkadot' as ChainID,
+    status: 'enable' as SubscriptionNextStatus,
+  };
+
+  const task2: SubscriptionTask = {
+    action: 'subscribe:query.babe.currentSlot',
+    chainId: 'Polkadot' as ChainID,
+    status: 'enable' as SubscriptionNextStatus,
+  };
+
+  for (const task of [task1, task2]) {
+    SubscriptionsController.performTask(task);
+  }
+
+  /*-------------------------------------
+   BlockStream Specific Initialization
    ------------------------------------*/
 
   // Initialize account chainState and config (requires api controller)

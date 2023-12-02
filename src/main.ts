@@ -68,11 +68,6 @@ unhandled({
 // Initialise Electron store.
 export const store = new Store();
 
-// App initialization process.
-orchestrator.next({
-  task: 'initialize',
-});
-
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.
 const reportDismissEvent = (eventData: DismissEvent) => {
@@ -89,6 +84,11 @@ app.whenReady().then(() => {
   });
   autoLaunch.isEnabled().then((isEnabled: boolean) => {
     if (!isEnabled) autoLaunch.enable();
+  });
+
+  // App initialization process.
+  orchestrator.next({
+    task: 'initialize',
   });
 
   // Ask for camera permission (Mac OS)

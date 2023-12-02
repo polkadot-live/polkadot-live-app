@@ -2693,7 +2693,6 @@ bindings@^1.5.0:
 
 "bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  uid "0949df01b5c93885339bc28116690292088f6134"
   resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
@@ -8989,20 +8988,6 @@ web-streams-polyfill@^3.0.3:
   resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.2.1.tgz#71c2718c52b45fd49dbeee88634b3a60ceab42a6"
   integrity sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==
 
-<<<<<<< HEAD
-webdriver@8.24.5:
-  version "8.24.5"
-  resolved "https://registry.yarnpkg.com/webdriver/-/webdriver-8.24.5.tgz#8d0c2e7eea563545a255c3c8e6bb98a6e072e3f1"
-  integrity sha512-UGR3lyKodHRJt1IabMGVIUnmtYUIGgJMpye7RNVLFESEFq59HfWUCoWOjBb8vd4MVOoE8MUCR0ccMrkyvw8oTw==
-  dependencies:
-    "@types/node" "^20.1.0"
-    "@types/ws" "^8.5.3"
-    "@wdio/config" "8.24.5"
-    "@wdio/logger" "8.16.17"
-    "@wdio/protocols" "8.23.0"
-    "@wdio/types" "8.24.2"
-    "@wdio/utils" "8.24.5"
-=======
 webdriver@8.24.6:
   version "8.24.6"
   resolved "https://registry.yarnpkg.com/webdriver/-/webdriver-8.24.6.tgz#7c14dd917111f2316e5d7356bddf364dd46f002c"
@@ -9015,21 +9000,11 @@ webdriver@8.24.6:
     "@wdio/protocols" "8.23.0"
     "@wdio/types" "8.24.2"
     "@wdio/utils" "8.24.6"
->>>>>>> main
     deepmerge-ts "^5.1.0"
     got "^ 12.6.1"
     ky "^0.33.0"
     ws "^8.8.0"
 
-<<<<<<< HEAD
-webdriverio@8.24.5, webdriverio@^8.23.1:
-  version "8.24.5"
-  resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-8.24.5.tgz#c5038a9875b530cb12be89f72c2f4154e5b1d3fd"
-  integrity sha512-HGkxeC6x520d+SItIDolKz94dbjYSqD4Q10DuXalotxFjwDkDKiY/7RBWCVa5h0QMBJO0r068yv/7XY2+rdosg==
-  dependencies:
-    "@types/node" "^20.1.0"
-    "@wdio/config" "8.24.5"
-=======
 webdriverio@8.24.6, webdriverio@^8.23.1:
   version "8.24.6"
   resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-8.24.6.tgz#c45dd92ab8dc79f8dee7c90620ef6be7b29c9df1"
@@ -9037,16 +9012,11 @@ webdriverio@8.24.6, webdriverio@^8.23.1:
   dependencies:
     "@types/node" "^20.1.0"
     "@wdio/config" "8.24.6"
->>>>>>> main
     "@wdio/logger" "8.16.17"
     "@wdio/protocols" "8.23.0"
     "@wdio/repl" "8.23.1"
     "@wdio/types" "8.24.2"
-<<<<<<< HEAD
-    "@wdio/utils" "8.24.5"
-=======
     "@wdio/utils" "8.24.6"
->>>>>>> main
     archiver "^6.0.0"
     aria-query "^5.0.0"
     css-shorthand-properties "^1.1.1"
@@ -9063,11 +9033,7 @@ webdriverio@8.24.6, webdriverio@^8.23.1:
     resq "^1.9.1"
     rgb2hex "0.2.5"
     serialize-error "^11.0.1"
-<<<<<<< HEAD
-    webdriver "8.24.5"
-=======
     webdriver "8.24.6"
->>>>>>> main
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
