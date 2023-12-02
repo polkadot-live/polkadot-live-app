@@ -127,8 +127,6 @@ export class SubscriptionsController {
       const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
 
       const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
-        console.log(data);
-
         // Work out task to handle
         const { callEntries } = this.queryMultiSubscriptions.get(chainId)!;
 
@@ -179,7 +177,7 @@ export class SubscriptionsController {
     apiCall: AnyFunction
   ) {
     // Return if api call already exists.
-    if (this.apiCallExistsInQueryMulti(task.action)) {
+    if (this.apiCallExistsInQueryMulti(task)) {
       console.log('>> API call already exists.');
       return;
     }
@@ -202,10 +200,10 @@ export class SubscriptionsController {
       return;
     }
 
+    console.log('>> Update queryMulti map with new API entry.');
+
     // Otherwise update query multi map.
     for (const [chainId, callData] of this.queryMultiSubscriptions) {
-      console.log('>> Update queryMulti map with new API entry.');
-
       if (chainId === task.chainId) {
         const newEntry: ApiCallEntry = {
           action: task.action,
@@ -221,8 +219,48 @@ export class SubscriptionsController {
     }
   }
 
-  // TODO: removeQueryMulti
-  // Unsubscribe from rpc if chain has no more entries.
+  // --------------------------------------------------
+  // removeQueryMulti
+  // --------------------------------------------------
+
+  // Unsubscribe from query multi if chain has no more entries.
+  private static removeQueryMulti(task: SubscriptionTask) {
+    const chainId = task.chainId;
+    const action = task.action;
+
+    if (this.apiCallExistsInQueryMulti(task)) {
+      console.log(">> API call doesn't exist.");
+      return;
+    }
+
+    // Remove action from query multi map
+    let unsubFromChain: boolean = false;
+
+    const entry = this.queryMultiSubscriptions.get(chainId);
+
+    if (entry) {
+      // Remove task from entry.
+      const updated: QueryMultiEntry = {
+        unsub: entry.unsub,
+        callEntries: entry.callEntries.filter((e) => e.action !== action),
+      };
+
+      // Mark chain for unsubscription.
+      if (updated.callEntries.length === 0) unsubFromChain = true;
+
+      // Update chain's query multi entry.
+      this.queryMultiSubscriptions.set(chainId, updated);
+    }
+
+    // Handle chain unsubscription if necessary.
+    if (unsubFromChain) {
+      this.queryMultiSubscriptions.get(chainId)?.unsub();
+
+      if (this.queryMultiSubscriptions.delete(chainId)) {
+        console.log(`Query multi unsubscribed for ${chainId}`);
+      }
+    }
+  }
 
   // --------------------------------------------------
   // Utils
@@ -246,13 +284,13 @@ export class SubscriptionsController {
   }
 
   // Check if query multi already contains a polkadot api function.
-  private static apiCallExistsInQueryMulti(action: string) {
-    for (const callData of this.queryMultiSubscriptions.values()) {
-      callData.callEntries.forEach((entry) => {
-        if (entry.action === action) {
-          return true;
-        }
-      });
+  private static apiCallExistsInQueryMulti(task: SubscriptionTask) {
+    const entry = this.queryMultiSubscriptions.get(task.chainId);
+
+    if (entry) {
+      for (const metadata of entry.callEntries) {
+        if (metadata.action === task.action) return true;
+      }
     }
 
     return false;
