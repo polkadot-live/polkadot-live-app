@@ -128,6 +128,31 @@ export class SubscriptionsController {
 
       const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
         console.log(data);
+
+        // Work out task to handle
+        const { callEntries } = this.queryMultiSubscriptions.get(chainId)!;
+
+        const actions = callEntries.map((entry) => entry.action);
+
+        for (const [index, action] of actions.entries()) {
+          switch (action) {
+            case 'subscribe:query.timestamp.now': {
+              const now = new Date(data[index] * 1000).toDateString();
+              console.log(`Now: ${now}`);
+
+              break;
+            }
+            case 'subscribe:query.babe.currentSlot': {
+              const currentSlot = data[index];
+
+              currentSlot
+                ? console.log(`Current Sot: ${data[index]}`)
+                : console.log('Current Slot: Not received yet');
+
+              break;
+            }
+          }
+        }
       });
 
       // Cache the `unsub` function (TODO: Put in helper function)
@@ -262,7 +287,7 @@ export class SubscriptionsController {
     }
   }
 
-  // api.query.babse.currentSlot
+  // api.query.babe.currentSlot
   private static async subscribe_query_babe_currentSlot(
     task: SubscriptionTask
   ) {
