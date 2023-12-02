@@ -5,6 +5,7 @@ import type { AnyFunction } from '@polkadot-cloud/react/types';
 import { ChainList } from '@/config/chains';
 import type { AnyData } from '@/types/misc';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
+import BigNumber from 'bignumber.js';
 
 /*-------------------------------------------------- 
  Types
@@ -24,6 +25,7 @@ export interface ApiCallEntry {
   action: string;
   actionArgs?: string[];
   apiCall: AnyFunction;
+  curVal: AnyData | null;
 }
 
 // TODO: May need to store api isntance reference.
@@ -138,23 +140,39 @@ export class SubscriptionsController {
       // Work out task to handle
       const { callEntries } = this.queryMultiSubscriptions.get(chainId)!;
 
-      const actions: string[] = callEntries.map((entry) => entry.action);
+      for (const [index, entry] of callEntries.entries()) {
+        const { action } = entry;
 
-      for (const [index, action] of actions.entries()) {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
+            const newVal = new BigNumber(data[index]);
+            const curVal = this.getEntryVal(action, chainId);
+
+            // TODO: Compare hashes instead of string
+            if (curVal && curVal.toString() === newVal.toString()) break;
+
+            this.setEntryVal(entry, newVal, chainId);
+
             const now = new Date(data[index] * 1000).toDateString();
-            console.log(`Now: ${now}`);
+            console.log(`Now: ${now} | ${data[index]}`);
 
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            const currentSlot = data[index];
+            const newVal = new BigNumber(data[index]);
+            const curVal = this.getEntryVal(action, chainId);
 
-            currentSlot
-              ? console.log(`Current Sot: ${data[index]}`)
-              : console.log('Current Slot: Not received yet');
+            // TODO: Compare hashes instead of string
+            if (
+              !data[index] ||
+              (curVal && curVal.toString() === newVal.toString())
+            ) {
+              break;
+            }
 
+            this.setEntryVal(entry, newVal, chainId);
+
+            console.log(`Current Sot: ${newVal}`);
             break;
           }
         }
@@ -198,6 +216,7 @@ export class SubscriptionsController {
             action: task.action,
             actionArgs: task.actionArgs,
             apiCall,
+            curVal: null,
           },
         ],
       });
@@ -216,6 +235,7 @@ export class SubscriptionsController {
         action: task.action,
         actionArgs: task.actionArgs,
         apiCall,
+        curVal: null,
       };
 
       // Add entry to chain's query multi.
@@ -267,6 +287,41 @@ export class SubscriptionsController {
         console.log(`Query multi unsubscribed for ${chainId}`);
       }
     }
+  }
+
+  // --------------------------------------------------
+  // updateEntryVal
+  // --------------------------------------------------
+
+  private static setEntryVal(
+    entry: ApiCallEntry,
+    newVal: AnyData,
+    chainId: ChainID
+  ) {
+    const retrieved = this.queryMultiSubscriptions.get(chainId);
+
+    if (retrieved) {
+      const newEntries = retrieved.callEntries.map((e) => {
+        return e.action === entry.action ? { ...e, curVal: newVal } : e;
+      });
+
+      this.queryMultiSubscriptions.set(chainId, {
+        unsub: retrieved.unsub,
+        callEntries: newEntries,
+      });
+    }
+  }
+
+  private static getEntryVal(action: string, chainId: ChainID) {
+    const entry = this.queryMultiSubscriptions.get(chainId);
+    if (entry) {
+      for (const { action: a, curVal } of entry.callEntries) {
+        if (a === action) {
+          return curVal;
+        }
+      }
+    }
+    return null;
   }
 
   // --------------------------------------------------
