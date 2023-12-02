@@ -139,10 +139,10 @@ export class API {
     debug.extend(this.chain)('🛠️ Bootstrapping constants');
     const result = await Promise.all([
       api.consts.staking.bondingDuration,
-      api.consts.staking.maxNominations,
+      //api.consts.staking.maxNominations,
       api.consts.staking.sessionsPerEra,
       api.consts.staking.maxNominatorRewardedPerValidator,
-      api.consts.electionProviderMultiPhase.maxElectingVoters,
+      //api.consts.electionProviderMultiPhase.maxElectingVoters,
       api.consts.babe.expectedBlockTime,
       api.consts.babe.epochDuration,
       api.consts.balances.existentialDeposit,
@@ -152,29 +152,28 @@ export class API {
     ]);
 
     const takeResult = (result: Codec[], index: number) => {
-      return BigNumber(rmCommas(result[index].toString()));
+      return new BigNumber(rmCommas(result[index].toString()));
     };
 
     const bondDuration = takeResult(result, 0);
-    const maxNominations = takeResult(result, 1);
-    const sessionsPerEra = takeResult(result, 2);
-    const maxNominatorRewardedPerValidator = takeResult(result, 3);
-
-    const maxElectingVoters = takeResult(result, 4);
-    const expectedBlockTime = takeResult(result, 5);
-    const epochDuration = takeResult(result, 6);
-    const existentialDeposit = takeResult(result, 7);
-    const historyDepth = takeResult(result, 8);
-    const fastUnstakeDeposit = takeResult(result, 9);
-    const poolsPalletId = result[10].toU8a();
+    //const maxNominations = takeResult(result, -1);
+    const sessionsPerEra = takeResult(result, 1);
+    const maxNominatorRewardedPerValidator = takeResult(result, 2);
+    //const maxElectingVoters = takeResult(result, -1);
+    const expectedBlockTime = takeResult(result, 3);
+    const epochDuration = takeResult(result, 4);
+    const existentialDeposit = takeResult(result, 5);
+    const historyDepth = takeResult(result, 6);
+    const fastUnstakeDeposit = takeResult(result, 7);
+    const poolsPalletId = result[8].toU8a();
 
     const consts = {
       bondDuration,
-      maxNominations,
+      //maxNominations,
       sessionsPerEra,
       maxNominatorRewardedPerValidator,
       historyDepth,
-      maxElectingVoters,
+      //maxElectingVoters,
       epochDuration,
       expectedBlockTime,
       poolsPalletId,
