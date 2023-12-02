@@ -29,7 +29,7 @@ export interface ApiCallEntry {
 // TODO: May need to store api isntance reference.
 export interface QueryMultiEntry {
   callEntries: ApiCallEntry[];
-  unsub: AnyFunction;
+  unsub: AnyFunction | null;
 }
 
 /*-------------------------------------------------- 
@@ -93,15 +93,14 @@ export class SubscriptionsController {
   // rebuildQueryMulti
   // --------------------------------------------------
 
-  // Dynamically rebuild queryMulti. Once the `queryMultiSubscriptions` map
-  // is updated, the queryMulti can be re-subscribed.
+  // Dynamically re-call queryMulti based on the query multi map.
   private static async rebuildQueryMulti(chainId: ChainID) {
     if (this.queryMultiSubscriptions.size === 0) {
       console.log('>> queryMulti map is empty.');
       return;
     }
 
-    // Construct the argument for `queryMulti`.
+    // Construct the argument for new queryMulti call.
     const queryMultiArg: AnyData = [];
     console.log('>> Construct queryMulti argument.');
 
@@ -119,51 +118,57 @@ export class SubscriptionsController {
       }
     }
 
-    // Make the call to `queryMulti`.
-    try {
-      console.log('>> Make call to queryMulti.');
+    // Unsubscribe from previous queryMulti if exists.
+    const prevUnsub = this.queryMultiSubscriptions.get(chainId)?.unsub;
+    if (prevUnsub !== null) {
+      prevUnsub();
+    }
 
-      const instance = await this.getApiInstance(chainId);
-      const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
+    // Make the new call to queryMulti.
+    console.log('>> Make call to queryMulti.');
 
-      const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
-        // Work out task to handle
-        const { callEntries } = this.queryMultiSubscriptions.get(chainId)!;
+    const instance = await this.getApiInstance(chainId);
+    const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
 
-        const actions = callEntries.map((entry) => entry.action);
+    const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
+      /*--------------------------------
+       The Chain's queryMulti Callback
+       -------------------------------*/
 
-        for (const [index, action] of actions.entries()) {
-          switch (action) {
-            case 'subscribe:query.timestamp.now': {
-              const now = new Date(data[index] * 1000).toDateString();
-              console.log(`Now: ${now}`);
+      // Work out task to handle
+      const { callEntries } = this.queryMultiSubscriptions.get(chainId)!;
 
-              break;
-            }
-            case 'subscribe:query.babe.currentSlot': {
-              const currentSlot = data[index];
+      const actions: string[] = callEntries.map((entry) => entry.action);
 
-              currentSlot
-                ? console.log(`Current Sot: ${data[index]}`)
-                : console.log('Current Slot: Not received yet');
+      for (const [index, action] of actions.entries()) {
+        switch (action) {
+          case 'subscribe:query.timestamp.now': {
+            const now = new Date(data[index] * 1000).toDateString();
+            console.log(`Now: ${now}`);
 
-              break;
-            }
+            break;
+          }
+          case 'subscribe:query.babe.currentSlot': {
+            const currentSlot = data[index];
+
+            currentSlot
+              ? console.log(`Current Sot: ${data[index]}`)
+              : console.log('Current Slot: Not received yet');
+
+            break;
           }
         }
-      });
-
-      // Cache the `unsub` function (TODO: Put in helper function)
-      for (const [c, callData] of this.queryMultiSubscriptions.entries()) {
-        if (c === chainId) {
-          this.queryMultiSubscriptions.set(chainId, {
-            unsub,
-            callEntries: [...callData.callEntries],
-          });
-        }
       }
-    } catch (err) {
-      console.log(err);
+    });
+
+    // Cache the `unsub` function (TODO: Put in helper function)
+    for (const [c, callData] of this.queryMultiSubscriptions.entries()) {
+      if (c === chainId) {
+        this.queryMultiSubscriptions.set(chainId, {
+          unsub,
+          callEntries: [...callData.callEntries],
+        });
+      }
     }
   }
 
@@ -203,19 +208,21 @@ export class SubscriptionsController {
     console.log('>> Update queryMulti map with new API entry.');
 
     // Otherwise update query multi map.
-    for (const [chainId, callData] of this.queryMultiSubscriptions) {
-      if (chainId === task.chainId) {
-        const newEntry: ApiCallEntry = {
-          action: task.action,
-          actionArgs: task.actionArgs,
-          apiCall,
-        };
+    const entry = this.queryMultiSubscriptions.get(task.chainId);
 
-        this.queryMultiSubscriptions.set(chainId, {
-          unsub: callData.unsub,
-          callEntries: [...callData.callEntries, newEntry],
-        });
-      }
+    if (entry) {
+      // Construct new api call entry.
+      const newEntry: ApiCallEntry = {
+        action: task.action,
+        actionArgs: task.actionArgs,
+        apiCall,
+      };
+
+      // Add entry to chain's query multi.
+      this.queryMultiSubscriptions.set(task.chainId, {
+        unsub: entry.unsub,
+        callEntries: [...entry.callEntries, newEntry],
+      });
     }
   }
 
@@ -252,7 +259,7 @@ export class SubscriptionsController {
       this.queryMultiSubscriptions.set(chainId, updated);
     }
 
-    // Handle chain unsubscription if necessary.
+    // Handle chain unsubscription if necessary and delete chain from map.
     if (unsubFromChain) {
       this.queryMultiSubscriptions.get(chainId)?.unsub();
 
