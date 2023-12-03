@@ -8,23 +8,21 @@ import {
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
 import { ChainList } from '@/config/chains';
+import { Discover } from '@/controller/Discover';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
-import { Discover } from '@/controller/Discover';
 import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import * as AccountUtils from '@/utils/AccountUtils';
 import type { ChainID } from '@/types/chains';
+import type { SubscriptionNextStatus } from '@/types/subscriptions';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import type {
-  SubscriptionTask,
-  SubscriptionNextStatus,
-} from '@/types/subscriptions';
 
 // Initialise RxJS subject to orchestrate app events.
 export const orchestrator = new Subject<OrchestratorArg>();
@@ -73,23 +71,20 @@ const initialize = async () => {
    SubscriptionsController Initialization
    ------------------------------------*/
 
-  SubscriptionsController.initialize();
+  const globalSubscriptions = new QueryMultiWrapper([
+    {
+      action: 'subscribe:query.timestamp.now',
+      chainId: 'Polkadot' as ChainID,
+      status: 'enable' as SubscriptionNextStatus,
+    },
+    {
+      action: 'subscribe:query.babe.currentSlot',
+      chainId: 'Polkadot' as ChainID,
+      status: 'enable' as SubscriptionNextStatus,
+    },
+  ]);
 
-  const task1: SubscriptionTask = {
-    action: 'subscribe:query.timestamp.now',
-    chainId: 'Polkadot' as ChainID,
-    status: 'enable' as SubscriptionNextStatus,
-  };
-
-  const task2: SubscriptionTask = {
-    action: 'subscribe:query.babe.currentSlot',
-    chainId: 'Polkadot' as ChainID,
-    status: 'enable' as SubscriptionNextStatus,
-  };
-
-  for (const task of [task1, task2]) {
-    SubscriptionsController.performTask(task);
-  }
+  SubscriptionsController.addGlobal(globalSubscriptions);
 
   /*-------------------------------------
    BlockStream Specific Initialization
@@ -99,7 +94,7 @@ const initialize = async () => {
   await AccountUtils.initializeConfigsAndChainStates();
 
   // Initialize discovery of subscriptions for saved accounts.
-  BlockStreamsController.initialize();
+  // BlockStreamsController.initialize();
 };
 
 /**
