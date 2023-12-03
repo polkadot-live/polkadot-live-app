@@ -12,7 +12,6 @@ import * as ApiUtils from '@/utils/ApiUtils';
 
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
-// TODO: Rename `args` to `actionArgs`
 export interface SubscriptionTask {
   action: string;
   actionArgs?: string[];
@@ -91,7 +90,7 @@ export class SubscriptionsController {
    --------------------------------------------------*/
 
   // --------------------------------------------------
-  // rebuildQueryMulti
+  // buildQueryMulti
   // --------------------------------------------------
 
   // Dynamically re-call queryMulti based on the query multi map.
@@ -138,25 +137,25 @@ export class SubscriptionsController {
             this.setActionCallbackVal(entry, newVal, chainId);
 
             const now = new Date(data[index] * 1000).toDateString();
-            console.log(`Now: ${now} | ${data[index]}`);
+            console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
 
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            const newVal = new BigNumber(data[index]);
+            const currentSlot = new BigNumber(data[1]);
             const curVal = this.getActionCallbackVal(action, chainId);
 
             // TODO: Compare hashes instead of string
             if (
               !data[index] ||
-              (curVal && curVal.toString() === newVal.toString())
+              (curVal && curVal.toString() === currentSlot.toString())
             ) {
               break;
             }
 
-            this.setActionCallbackVal(entry, newVal, chainId);
+            this.setActionCallbackVal(entry, currentSlot, chainId);
 
-            console.log(`Current Sot: ${newVal}`);
+            console.log(`Current Sot: ${currentSlot} (index: ${index})`);
             break;
           }
         }
@@ -168,7 +167,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // insertQueryMulti
+  // insertIntoQueryMulti
   // --------------------------------------------------
 
   // Insert a polkadot api function into queryMulti
@@ -177,7 +176,7 @@ export class SubscriptionsController {
     apiCall: AnyFunction
   ) {
     // Return if api call already exists.
-    if (this.apiCallExistsInQueryMulti(task.chainId, task.action)) {
+    if (this.actionExistsInQueryMulti(task.chainId, task.action)) {
       console.log('>> API call already exists.');
       return;
     }
@@ -217,12 +216,12 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // removeQueryMulti
+  // removeFromQueryMulti
   // --------------------------------------------------
 
   // Unsubscribe from query multi if chain has no more entries.
-  private static removeFromQueryMulti({ chainId, action }: SubscriptionTask) {
-    if (this.apiCallExistsInQueryMulti(chainId, action)) {
+  private static removeFromQueryMulti(chainId: ChainID, action: string) {
+    if (this.actionExistsInQueryMulti(chainId, action)) {
       console.log(">> API call doesn't exist.");
       return;
     }
@@ -254,7 +253,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // setActionCallbackVal
+  // Util: setActionCallbackVal
   // --------------------------------------------------
 
   private static setActionCallbackVal(
@@ -277,7 +276,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // getActionCallbackVal
+  // Util: getActionCallbackVal
   // --------------------------------------------------
 
   private static getActionCallbackVal(action: string, chainId: ChainID) {
@@ -293,7 +292,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // setUnsub
+  // Util: setUnsub
   // --------------------------------------------------
 
   private static setUnsub(chainId: ChainID, unsub: AnyFunction) {
@@ -308,7 +307,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // buildQueryMultiArg
+  // Util: buildQueryMultiArg
   // --------------------------------------------------
 
   private static buildQueryMultiArg(chainId: ChainID) {
@@ -330,7 +329,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // unsubAndRemoveMultiQuery
+  // Util: unsubAndRemoveMultiQuery
   // --------------------------------------------------
 
   private static unsubAndRemoveMultiQuery(chainId: ChainID) {
@@ -342,11 +341,11 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // Utils
+  // Util: actionExistsInQueryMulti
   // --------------------------------------------------
 
-  // Check if query multi already contains a polkadot api function.
-  private static apiCallExistsInQueryMulti(chainId: ChainID, action: string) {
+  // Check if a chain is already subscribed to an action.
+  private static actionExistsInQueryMulti(chainId: ChainID, action: string) {
     const entry = this.queryMultiSubscriptions.get(chainId);
 
     if (entry) {
@@ -358,6 +357,27 @@ export class SubscriptionsController {
     return false;
   }
 
+  // --------------------------------------------------
+  // Util: handleTask
+  // --------------------------------------------------
+
+  private static handleTask(task: SubscriptionTask, apiCall: AnyFunction) {
+    switch (task.status) {
+      // Add this action to the chain's subscriptions.
+      case 'enable': {
+        this.insertIntoQueryMulti(task, apiCall);
+        this.buildQueryMulti(task.chainId);
+        break;
+      }
+      // Remove this action from the chain's subscriptions.
+      case 'disable': {
+        this.removeFromQueryMulti(task.chainId, task.action);
+        this.buildQueryMulti(task.chainId);
+        break;
+      }
+    }
+  }
+
   /*-------------------------------------------------- 
    Handlers
    --------------------------------------------------*/
@@ -367,19 +387,9 @@ export class SubscriptionsController {
     switch (task.chainId) {
       case 'Polkadot': {
         try {
-          console.log('Rebuild queryMulti (query.timestamp.now)');
-
-          if (task.status === 'enable') {
-            // Add subscription to query multi.
-            const inst = await ApiUtils.getApiInstance(task.chainId);
-
-            this.insertIntoQueryMulti(task, inst.api.query.timestamp.now);
-            this.buildQueryMulti(task.chainId);
-          } else {
-            // TODO: Remove this subscription from query multi cache
-          }
-
-          console.log(task.status);
+          console.log('>> Rebuild queryMulti');
+          const instance = await ApiUtils.getApiInstance(task.chainId);
+          this.handleTask(task, instance.api.query.timestamp.now);
         } catch (err) {
           console.error(err);
         }
@@ -394,17 +404,9 @@ export class SubscriptionsController {
     switch (task.chainId) {
       case 'Polkadot': {
         try {
-          console.log('Rebuild queryMulti (query.babe.currentSlot)');
-
-          if (task.status === 'enable') {
-            // Add subscription to query multi.
-            const inst = await ApiUtils.getApiInstance(task.chainId);
-
-            this.insertIntoQueryMulti(task, inst.api.query.babe.currentSlot);
-            this.buildQueryMulti(task.chainId);
-          } else {
-            // TODO: Remove this subscription from query multi cache
-          }
+          console.log('>> Rebuild queryMulti');
+          const instance = await ApiUtils.getApiInstance(task.chainId);
+          this.handleTask(task, instance.api.query.babe.currentSlot);
         } catch (err) {
           console.error(err);
         }
