@@ -103,22 +103,7 @@ export class SubscriptionsController {
     }
 
     // Construct the argument for new queryMulti call.
-    const queryMultiArg: AnyData = [];
-    console.log('>> Construct queryMulti argument.');
-
-    for (const [cid, callData] of this.queryMultiSubscriptions.entries()) {
-      if (cid === chainId) {
-        for (const { apiCall, actionArgs } of callData.callEntries) {
-          let callArray = [apiCall];
-
-          if (actionArgs) {
-            callArray = callArray.concat(actionArgs);
-          }
-
-          queryMultiArg.push(callArray);
-        }
-      }
-    }
+    const queryMultiArg: AnyData = this.buildQueryMultiArg(chainId);
 
     // Unsubscribe from previous queryMulti if exists.
     const prevUnsub = this.queryMultiSubscriptions.get(chainId)?.unsub;
@@ -179,15 +164,8 @@ export class SubscriptionsController {
       }
     });
 
-    // Cache the `unsub` function (TODO: Put in helper function)
-    for (const [c, callData] of this.queryMultiSubscriptions.entries()) {
-      if (c === chainId) {
-        this.queryMultiSubscriptions.set(chainId, {
-          unsub,
-          callEntries: [...callData.callEntries],
-        });
-      }
-    }
+    // Cache the unsub function
+    this.setUnsub(chainId, unsub);
   }
 
   // --------------------------------------------------
@@ -290,7 +268,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // updateEntryVal
+  // setEntryVal
   // --------------------------------------------------
 
   private static setEntryVal(
@@ -312,6 +290,10 @@ export class SubscriptionsController {
     }
   }
 
+  // --------------------------------------------------
+  // getEntryVal
+  // --------------------------------------------------
+
   private static getEntryVal(action: string, chainId: ChainID) {
     const entry = this.queryMultiSubscriptions.get(chainId);
     if (entry) {
@@ -322,6 +304,45 @@ export class SubscriptionsController {
       }
     }
     return null;
+  }
+
+  // --------------------------------------------------
+  // setUnsub
+  // --------------------------------------------------
+
+  private static setUnsub(chainId: ChainID, unsub: AnyFunction) {
+    const entry = this.queryMultiSubscriptions.get(chainId);
+
+    if (entry) {
+      this.queryMultiSubscriptions.set(chainId, {
+        unsub,
+        callEntries: [...entry!.callEntries],
+      });
+    }
+  }
+
+  // --------------------------------------------------
+  // buildQueryMultiArg
+  // --------------------------------------------------
+
+  private static buildQueryMultiArg(chainId: ChainID) {
+    const queryMultiArg: AnyData = [];
+
+    const entry = this.queryMultiSubscriptions.get(chainId);
+
+    if (entry) {
+      for (const { apiCall, actionArgs } of entry.callEntries) {
+        let callArray = [apiCall];
+
+        if (actionArgs) {
+          callArray = callArray.concat(actionArgs);
+        }
+
+        queryMultiArg.push(callArray);
+      }
+    }
+
+    return queryMultiArg;
   }
 
   // --------------------------------------------------
