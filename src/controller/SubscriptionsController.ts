@@ -96,7 +96,7 @@ export class SubscriptionsController {
   // --------------------------------------------------
 
   // Dynamically re-call queryMulti based on the query multi map.
-  private static async rebuildQueryMulti(chainId: ChainID) {
+  private static async buildQueryMulti(chainId: ChainID) {
     if (this.queryMultiSubscriptions.size === 0) {
       console.log('>> queryMulti map is empty.');
       return;
@@ -131,12 +131,12 @@ export class SubscriptionsController {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getEntryVal(action, chainId);
+            const curVal = this.getActionCallbackVal(action, chainId);
 
             // TODO: Compare hashes instead of string
             if (curVal && curVal.toString() === newVal.toString()) break;
 
-            this.setEntryVal(entry, newVal, chainId);
+            this.setActionCallbackVal(entry, newVal, chainId);
 
             const now = new Date(data[index] * 1000).toDateString();
             console.log(`Now: ${now} | ${data[index]}`);
@@ -145,7 +145,7 @@ export class SubscriptionsController {
           }
           case 'subscribe:query.babe.currentSlot': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getEntryVal(action, chainId);
+            const curVal = this.getActionCallbackVal(action, chainId);
 
             // TODO: Compare hashes instead of string
             if (
@@ -155,7 +155,7 @@ export class SubscriptionsController {
               break;
             }
 
-            this.setEntryVal(entry, newVal, chainId);
+            this.setActionCallbackVal(entry, newVal, chainId);
 
             console.log(`Current Sot: ${newVal}`);
             break;
@@ -173,7 +173,7 @@ export class SubscriptionsController {
   // --------------------------------------------------
 
   // Insert a polkadot api function into queryMulti
-  private static insertQueryMulti(
+  private static insertIntoQueryMulti(
     task: SubscriptionTask,
     apiCall: AnyFunction
   ) {
@@ -183,20 +183,21 @@ export class SubscriptionsController {
       return;
     }
 
+    // Construct new ApiCallEntry.
+    const newEntry: ApiCallEntry = {
+      action: task.action,
+      actionArgs: task.actionArgs,
+      apiCall,
+      curVal: null,
+    };
+
     // Insert new key if chain isn't cached yet.
     if (!this.queryMultiSubscriptions.has(task.chainId)) {
       console.log('>> Add chain and API entry to queryMulti map.');
 
       this.queryMultiSubscriptions.set(task.chainId, {
         unsub: null,
-        callEntries: [
-          {
-            action: task.action,
-            actionArgs: task.actionArgs,
-            apiCall,
-            curVal: null,
-          },
-        ],
+        callEntries: [newEntry],
       });
 
       return;
@@ -208,14 +209,6 @@ export class SubscriptionsController {
     const entry = this.queryMultiSubscriptions.get(task.chainId);
 
     if (entry) {
-      // Construct new api call entry.
-      const newEntry: ApiCallEntry = {
-        action: task.action,
-        actionArgs: task.actionArgs,
-        apiCall,
-        curVal: null,
-      };
-
       // Add entry to chain's query multi.
       this.queryMultiSubscriptions.set(task.chainId, {
         unsub: entry.unsub,
@@ -229,7 +222,7 @@ export class SubscriptionsController {
   // --------------------------------------------------
 
   // Unsubscribe from query multi if chain has no more entries.
-  private static removeQueryMulti(task: SubscriptionTask) {
+  private static removeFromQueryMulti(task: SubscriptionTask) {
     const chainId = task.chainId;
     const action = task.action;
 
@@ -271,7 +264,7 @@ export class SubscriptionsController {
   // setEntryVal
   // --------------------------------------------------
 
-  private static setEntryVal(
+  private static setActionCallbackVal(
     entry: ApiCallEntry,
     newVal: AnyData,
     chainId: ChainID
@@ -294,7 +287,7 @@ export class SubscriptionsController {
   // getEntryVal
   // --------------------------------------------------
 
-  private static getEntryVal(action: string, chainId: ChainID) {
+  private static getActionCallbackVal(action: string, chainId: ChainID) {
     const entry = this.queryMultiSubscriptions.get(chainId);
     if (entry) {
       for (const { action: a, curVal } of entry.callEntries) {
@@ -392,10 +385,10 @@ export class SubscriptionsController {
 
           if (task.status === 'enable') {
             // Add subscription to query multi.
-            const instance = await this.getApiInstance(task.chainId);
+            const inst = await this.getApiInstance(task.chainId);
 
-            this.insertQueryMulti(task, instance.api.query.timestamp.now);
-            this.rebuildQueryMulti(task.chainId);
+            this.insertIntoQueryMulti(task, inst.api.query.timestamp.now);
+            this.buildQueryMulti(task.chainId);
           } else {
             // TODO: Remove this subscription from query multi cache
           }
@@ -419,10 +412,10 @@ export class SubscriptionsController {
 
           if (task.status === 'enable') {
             // Add subscription to query multi.
-            const instance = await this.getApiInstance(task.chainId);
+            const inst = await this.getApiInstance(task.chainId);
 
-            this.insertQueryMulti(task, instance.api.query.babe.currentSlot);
-            this.rebuildQueryMulti(task.chainId);
+            this.insertIntoQueryMulti(task, inst.api.query.babe.currentSlot);
+            this.buildQueryMulti(task.chainId);
           } else {
             // TODO: Remove this subscription from query multi cache
           }
