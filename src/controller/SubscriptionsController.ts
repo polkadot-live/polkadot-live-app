@@ -1,11 +1,10 @@
 import { Subject } from 'rxjs';
-import { APIsController } from './APIsController';
 import type { ChainID } from '@/types/chains';
 import type { AnyFunction } from '@polkadot-cloud/react/types';
-import { ChainList } from '@/config/chains';
 import type { AnyData } from '@/types/misc';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
 import BigNumber from 'bignumber.js';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 /*-------------------------------------------------- 
  Types
@@ -114,7 +113,7 @@ export class SubscriptionsController {
     // Make the new call to queryMulti.
     console.log('>> Make call to queryMulti.');
 
-    const instance = await this.getApiInstance(chainId);
+    const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
 
     const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
@@ -261,7 +260,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // setEntryVal
+  // setActionCallbackVal
   // --------------------------------------------------
 
   private static setActionCallbackVal(
@@ -284,7 +283,7 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
-  // getEntryVal
+  // getActionCallbackVal
   // --------------------------------------------------
 
   private static getActionCallbackVal(action: string, chainId: ChainID) {
@@ -327,9 +326,7 @@ export class SubscriptionsController {
       for (const { apiCall, actionArgs } of entry.callEntries) {
         let callArray = [apiCall];
 
-        if (actionArgs) {
-          callArray = callArray.concat(actionArgs);
-        }
+        if (actionArgs) callArray = callArray.concat(actionArgs);
 
         queryMultiArg.push(callArray);
       }
@@ -341,23 +338,6 @@ export class SubscriptionsController {
   // --------------------------------------------------
   // Utils
   // --------------------------------------------------
-
-  // Get API instance (TODO: Put in another file)
-  private static async getApiInstance(chainId: ChainID) {
-    if (!APIsController.chainExists(chainId)) {
-      await APIsController.new(ChainList.get(chainId)!.endpoints.rpc);
-    }
-
-    const instance = APIsController.get(chainId);
-
-    if (!instance) {
-      throw new Error(
-        `SubscriptionsController: ${chainId} API instance couldn't be created`
-      );
-    }
-
-    return instance;
-  }
 
   // Check if query multi already contains a polkadot api function.
   private static apiCallExistsInQueryMulti(task: SubscriptionTask) {
@@ -385,7 +365,7 @@ export class SubscriptionsController {
 
           if (task.status === 'enable') {
             // Add subscription to query multi.
-            const inst = await this.getApiInstance(task.chainId);
+            const inst = await ApiUtils.getApiInstance(task.chainId);
 
             this.insertIntoQueryMulti(task, inst.api.query.timestamp.now);
             this.buildQueryMulti(task.chainId);
@@ -412,7 +392,7 @@ export class SubscriptionsController {
 
           if (task.status === 'enable') {
             // Add subscription to query multi.
-            const inst = await this.getApiInstance(task.chainId);
+            const inst = await ApiUtils.getApiInstance(task.chainId);
 
             this.insertIntoQueryMulti(task, inst.api.query.babe.currentSlot);
             this.buildQueryMulti(task.chainId);
