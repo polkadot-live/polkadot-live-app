@@ -177,7 +177,7 @@ export class SubscriptionsController {
     apiCall: AnyFunction
   ) {
     // Return if api call already exists.
-    if (this.apiCallExistsInQueryMulti(task)) {
+    if (this.apiCallExistsInQueryMulti(task.chainId, task.action)) {
       console.log('>> API call already exists.');
       return;
     }
@@ -221,18 +221,16 @@ export class SubscriptionsController {
   // --------------------------------------------------
 
   // Unsubscribe from query multi if chain has no more entries.
-  private static removeFromQueryMulti(task: SubscriptionTask) {
-    const chainId = task.chainId;
-    const action = task.action;
-
-    if (this.apiCallExistsInQueryMulti(task)) {
+  private static removeFromQueryMulti({ chainId, action }: SubscriptionTask) {
+    if (this.apiCallExistsInQueryMulti(chainId, action)) {
       console.log(">> API call doesn't exist.");
       return;
     }
 
-    // Remove action from query multi map
+    // Flag to signal an unsubscription.
     let unsubFromChain: boolean = false;
 
+    // Remove action from query multi map.
     const entry = this.queryMultiSubscriptions.get(chainId);
 
     if (entry) {
@@ -251,11 +249,7 @@ export class SubscriptionsController {
 
     // Handle chain unsubscription if necessary and delete chain from map.
     if (unsubFromChain) {
-      this.queryMultiSubscriptions.get(chainId)?.unsub();
-
-      if (this.queryMultiSubscriptions.delete(chainId)) {
-        console.log(`Query multi unsubscribed for ${chainId}`);
-      }
+      this.unsubAndRemoveMultiQuery(chainId);
     }
   }
 
@@ -336,16 +330,28 @@ export class SubscriptionsController {
   }
 
   // --------------------------------------------------
+  // unsubAndRemoveMultiQuery
+  // --------------------------------------------------
+
+  private static unsubAndRemoveMultiQuery(chainId: ChainID) {
+    this.queryMultiSubscriptions.get(chainId)?.unsub();
+
+    if (this.queryMultiSubscriptions.delete(chainId)) {
+      console.log(`Query multi unsubscribed for ${chainId}`);
+    }
+  }
+
+  // --------------------------------------------------
   // Utils
   // --------------------------------------------------
 
   // Check if query multi already contains a polkadot api function.
-  private static apiCallExistsInQueryMulti(task: SubscriptionTask) {
-    const entry = this.queryMultiSubscriptions.get(task.chainId);
+  private static apiCallExistsInQueryMulti(chainId: ChainID, action: string) {
+    const entry = this.queryMultiSubscriptions.get(chainId);
 
     if (entry) {
       for (const metadata of entry.callEntries) {
-        if (metadata.action === task.action) return true;
+        if (metadata.action === action) return true;
       }
     }
 
