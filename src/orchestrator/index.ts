@@ -56,7 +56,7 @@ orchestrator.subscribe({
  * @summary Initializes app state.
  */
 const initialize = async () => {
-  // Initialize `Account`s from persisted state.
+  // Initialize accounts from persisted state.
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.

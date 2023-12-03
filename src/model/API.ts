@@ -139,10 +139,8 @@ export class API {
     debug.extend(this.chain)('🛠️ Bootstrapping constants');
     const result = await Promise.all([
       api.consts.staking.bondingDuration,
-      //api.consts.staking.maxNominations,
       api.consts.staking.sessionsPerEra,
       api.consts.staking.maxNominatorRewardedPerValidator,
-      //api.consts.electionProviderMultiPhase.maxElectingVoters,
       api.consts.babe.expectedBlockTime,
       api.consts.babe.epochDuration,
       api.consts.balances.existentialDeposit,
@@ -156,10 +154,8 @@ export class API {
     };
 
     const bondDuration = takeResult(result, 0);
-    //const maxNominations = takeResult(result, -1);
     const sessionsPerEra = takeResult(result, 1);
     const maxNominatorRewardedPerValidator = takeResult(result, 2);
-    //const maxElectingVoters = takeResult(result, -1);
     const expectedBlockTime = takeResult(result, 3);
     const epochDuration = takeResult(result, 4);
     const existentialDeposit = takeResult(result, 5);
@@ -169,11 +165,9 @@ export class API {
 
     const consts = {
       bondDuration,
-      //maxNominations,
       sessionsPerEra,
       maxNominatorRewardedPerValidator,
       historyDepth,
-      //maxElectingVoters,
       epochDuration,
       expectedBlockTime,
       poolsPalletId,

@@ -31,11 +31,9 @@ export interface BalanceLock {
 
 export interface APIConstants {
   bondDuration: BigNumber;
-  maxNominations?: BigNumber; // deprecated
   sessionsPerEra: BigNumber;
   maxNominatorRewardedPerValidator: BigNumber;
   historyDepth: BigNumber;
-  maxElectingVoters?: BigNumber; // deprecated
   expectedBlockTime: BigNumber;
   epochDuration: BigNumber;
   existentialDeposit: BigNumber;
