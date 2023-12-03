@@ -13,19 +13,18 @@ import { AccountsController } from '@/controller/AccountsController';
 import { Discover } from '@/controller/Discover';
 import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import * as AccountUtils from '@/utils/AccountUtils';
+import type { ChainID } from '@/types/chains';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import * as AccountUtils from '@/utils/AccountUtils';
-
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   SubscriptionTask,
   SubscriptionNextStatus,
-} from '@/controller/SubscriptionsController';
-import type { ChainID } from '@/types/chains';
+} from '@/types/subscriptions';
 
 // Initialise RxJS subject to orchestrate app events.
 export const orchestrator = new Subject<OrchestratorArg>();

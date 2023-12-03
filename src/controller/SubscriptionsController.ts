@@ -5,32 +5,11 @@ import type { AnyData } from '@/types/misc';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
 import BigNumber from 'bignumber.js';
 import * as ApiUtils from '@/utils/ApiUtils';
-
-/*-------------------------------------------------- 
- Types
- --------------------------------------------------*/
-
-export type SubscriptionNextStatus = 'enable' | 'disable';
-
-export interface SubscriptionTask {
-  action: string;
-  actionArgs?: string[];
-  chainId: ChainID;
-  status: SubscriptionNextStatus;
-}
-
-export interface ApiCallEntry {
-  action: string;
-  actionArgs?: string[];
-  apiCall: AnyFunction;
-  curVal: AnyData | null;
-}
-
-// TODO: May need to store api isntance reference.
-export interface QueryMultiEntry {
-  callEntries: ApiCallEntry[];
-  unsub: AnyFunction | null;
-}
+import type {
+  SubscriptionTask,
+  QueryMultiEntry,
+  ApiCallEntry,
+} from '@/types/subscriptions';
 
 /*-------------------------------------------------- 
  Static Class 
@@ -41,7 +20,7 @@ export class SubscriptionsController {
    Initialization
    --------------------------------------------------*/
 
-  // Subject receiving tasks.
+  // RxJS Subject receiving tasks.
   private static manager = new Subject<SubscriptionTask>();
 
   // Cache subscriptions associated their chain.
