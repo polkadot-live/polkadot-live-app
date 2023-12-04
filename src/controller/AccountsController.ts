@@ -16,6 +16,7 @@ import type {
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
+import type { SubscriptionNextStatus } from '@/types/subscriptions';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -78,7 +79,25 @@ export class AccountsController {
   static subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
+        // ----------------------
+        // Old subscription model
+        // ----------------------
+
         account.initState();
+
+        // ----------------------
+        // New subscription model
+        // ----------------------
+
+        // Subscribe to account balance changes by default.
+        account.initSubscriptions([
+          {
+            action: 'subscribe:query.system.account',
+            actionArgs: [account.address],
+            chainId: 'Polkadot' as ChainID,
+            status: 'enable' as SubscriptionNextStatus,
+          },
+        ]);
       }
     }
   }

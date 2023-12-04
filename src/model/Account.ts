@@ -11,6 +11,8 @@ import type {
 import { AccountType } from '@/types/accounts';
 import type { MethodSubscription } from '@/types/blockstream';
 import type { ChainID } from '@/types/chains';
+import type { SubscriptionTask } from '@/types/subscriptions';
+import { QueryMultiWrapper } from './QueryMultiWrapper';
 
 /**
  * Account collection types.
@@ -39,6 +41,8 @@ export class Account {
 
   private _name!: string;
 
+  private _queryMulti: QueryMultiWrapper | null = null;
+
   // TODO: Test default method subscription 'all'.
   // Type matches `ConcreteAccount` and `RawAccount`
   private _config: MethodSubscription = { type: 'all' };
@@ -62,6 +66,12 @@ export class Account {
     this.address = address;
     this.name = name;
   }
+
+  initSubscriptions = (tasks?: SubscriptionTask[]) => {
+    tasks
+      ? (this._queryMulti = new QueryMultiWrapper(tasks))
+      : (this._queryMulti = new QueryMultiWrapper());
+  };
 
   initState = () => {
     if (this.type === AccountType.User) {

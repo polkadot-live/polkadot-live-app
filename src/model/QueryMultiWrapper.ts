@@ -17,11 +17,13 @@ export class QueryMultiWrapper {
   // Cache subscriptions associated their chain.
   private subscriptions: Map<ChainID, QueryMultiEntry> = new Map();
 
-  constructor(tasks: SubscriptionTask[]) {
+  constructor(tasks?: SubscriptionTask[]) {
     this.initialize();
 
-    for (const task of tasks) {
-      this.performTask(task);
+    if (tasks) {
+      for (const task of tasks) {
+        this.subscribeTask(task);
+      }
     }
   }
 
@@ -46,6 +48,12 @@ export class QueryMultiWrapper {
             break;
           }
 
+          case 'subscribe:query.system.account': {
+            console.log('subscribe account balance');
+            await QueryMultiWrapper.subscribe_query_system_account(task, this);
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -55,7 +63,7 @@ export class QueryMultiWrapper {
   }
 
   // Wrapper around calling subject's next method.
-  performTask(task: SubscriptionTask) {
+  subscribeTask(task: SubscriptionTask) {
     this.manager.next(task);
   }
 
@@ -121,7 +129,7 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            const currentSlot = new BigNumber(data[1]);
+            const currentSlot = new BigNumber(data[index]);
             const curVal = this.getActionCallbackVal(action, chainId);
 
             // TODO: Compare hashes instead of string
@@ -133,8 +141,18 @@ export class QueryMultiWrapper {
             }
 
             this.setActionCallbackVal(entry, currentSlot, chainId);
-
             console.log(`Current Sot: ${currentSlot} (index: ${index})`);
+
+            break;
+          }
+          case 'subscribe:query.system.account': {
+            const free = new BigNumber(data[index].free);
+            const reserved = new BigNumber(data[index].reserved);
+
+            console.log(
+              `Account: Free balance is ${free} with ${reserved} reserved.`
+            );
+
             break;
           }
         }
@@ -387,6 +405,24 @@ export class QueryMultiWrapper {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
           wrapper.handleTask(task, instance.api.query.babe.currentSlot);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  }
+
+  // api.query.system.account
+  private static async subscribe_query_system_account(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    switch (task.chainId) {
+      case 'Polkadot': {
+        try {
+          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
+          const instance = await ApiUtils.getApiInstance(task.chainId);
+          wrapper.handleTask(task, instance.api.query.balances.account);
         } catch (err) {
           console.error(err);
         }
