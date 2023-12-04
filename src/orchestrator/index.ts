@@ -14,10 +14,7 @@ import { AccountsController } from '@/controller/AccountsController';
 import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
-import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import * as AccountUtils from '@/utils/AccountUtils';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionNextStatus } from '@/types/subscriptions';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
@@ -71,20 +68,7 @@ const initialize = async () => {
    SubscriptionsController Initialization
    ------------------------------------*/
 
-  const globalSubscriptions = new QueryMultiWrapper([
-    {
-      action: 'subscribe:query.timestamp.now',
-      chainId: 'Polkadot' as ChainID,
-      status: 'enable' as SubscriptionNextStatus,
-    },
-    {
-      action: 'subscribe:query.babe.currentSlot',
-      chainId: 'Polkadot' as ChainID,
-      status: 'enable' as SubscriptionNextStatus,
-    },
-  ]);
-
-  SubscriptionsController.addGlobal(globalSubscriptions);
+  SubscriptionsController.initGlobalSubscriptions();
 
   /*-------------------------------------
    BlockStream Specific Initialization
