@@ -9,6 +9,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
+import { compareHashes } from '@/utils/CryptoUtils';
 
 export class QueryMultiWrapper {
   // RxJS Subject receiving tasks.
@@ -118,8 +119,7 @@ export class QueryMultiWrapper {
             const newVal = new BigNumber(data[index]);
             const curVal = this.getActionCallbackVal(action, chainId);
 
-            // TODO: Compare hashes instead of string
-            if (curVal && curVal.toString() === newVal.toString()) break;
+            if (compareHashes(newVal, curVal)) break;
 
             this.setActionCallbackVal(entry, newVal, chainId);
 
@@ -129,19 +129,13 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            const currentSlot = new BigNumber(data[index]);
+            const newVal = new BigNumber(data[index]);
             const curVal = this.getActionCallbackVal(action, chainId);
 
-            // TODO: Compare hashes instead of string
-            if (
-              !data[index] ||
-              (curVal && curVal.toString() === currentSlot.toString())
-            ) {
-              break;
-            }
+            if (!data[index] || compareHashes(newVal, curVal)) break;
 
-            this.setActionCallbackVal(entry, currentSlot, chainId);
-            console.log(`Current Sot: ${currentSlot} (index: ${index})`);
+            this.setActionCallbackVal(entry, newVal, chainId);
+            console.log(`Current Sot: ${newVal} (index: ${index})`);
 
             break;
           }
