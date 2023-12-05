@@ -140,11 +140,12 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:query.system.account': {
-            const free = new BigNumber(data[index].free);
-            const reserved = new BigNumber(data[index].reserved);
+            const free = new BigNumber(data[index].data.free);
+            const reserved = new BigNumber(data[index].data.reserved);
+            const nonce = data[index].nonce;
 
             console.log(
-              `Account: Free balance is ${free} with ${reserved} reserved.`
+              `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
             );
 
             break;
@@ -416,7 +417,7 @@ export class QueryMultiWrapper {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
-          wrapper.handleTask(task, instance.api.query.balances.account);
+          wrapper.handleTask(task, instance.api.query.system.account);
         } catch (err) {
           console.error(err);
         }
