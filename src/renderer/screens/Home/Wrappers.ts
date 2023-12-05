@@ -16,6 +16,13 @@ export const CarouselWrapper = styled(motion.div)`
     overflow-y: scroll;
     overflow-x: hidden;
     position: relative;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   > div {
     position: relative;
