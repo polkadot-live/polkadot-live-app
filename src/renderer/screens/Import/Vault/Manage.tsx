@@ -9,7 +9,7 @@ import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
 import { useOverlay } from '@app/contexts/Overlay';
 import { DragClose } from '@app/library/DragClose';
 import { ErrorBoundary } from 'react-error-boundary';
-import IconSVG from '@app/svg/polkadotVault.svg?react';
+import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';
@@ -64,7 +64,7 @@ export const Manage = ({
 
         <HardwareStatusBar
           show={section === 1}
-          Icon={IconSVG}
+          Icon={PolkadotVaultSVG}
           text={`${addresses.length} Account${
             addresses.length == 1 ? '' : 's'
           } Imported`}

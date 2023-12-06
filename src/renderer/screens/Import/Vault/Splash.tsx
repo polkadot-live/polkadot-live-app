@@ -8,7 +8,7 @@ import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Header } from '@app/library/Header';
 import { ErrorBoundary } from 'react-error-boundary';
-import LogoSVG from '@app/svg/polkadotVault.svg?react';
+import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { Reader } from './Reader';
 
@@ -21,7 +21,10 @@ export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
       <BodyInterfaceWrapper $maxHeight>
         <SplashWrapper>
           <div className="icon">
-            <LogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />
+            <PolkadotVaultSVG
+              style={{ transform: 'scale(0.7)' }}
+              opacity={0.25}
+            />
           </div>
 
           <div className="content">

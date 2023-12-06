@@ -15,9 +15,9 @@ import {
 import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import LedgerLogoSVG from '@app/svg/ledgerLogo.svg?react';
-import VaultSVG from '@app/svg/polkadotVault.svg?react';
+import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
+import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
 
 export const Home = ({
   setSection,
@@ -44,7 +44,7 @@ export const Home = ({
                   />
                 </div>
                 <div className="row">
-                  <VaultSVG className="logo vault" />
+                  <PolkadotVaultSVG className="logo vault" />
                 </div>
                 <div className="row">
                   <VaultLogoSVG className="svg-title" />
