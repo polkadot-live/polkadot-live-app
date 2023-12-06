@@ -1055,6 +1055,11 @@
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/assets/-/assets-0.1.35.tgz#5718e6e0b80ac9c01e7fed150012bb2b7563a160"
   integrity sha512-ImyHYQ01s1kFetDE5qlk5x8s/H3WDFcbCcm+GquaJxm4b/QeznSJsBP0ZeaArihsCPcSWux9nFG6P1mfToVhtw==
 
+"@polkadot-cloud/assets@^0.1.36":
+  version "0.1.36"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/assets/-/assets-0.1.36.tgz#7b75af8cbb8db8584b2293f5224594f75c7f6688"
+  integrity sha512-Ahi+O3Kbut6Hr6epuCwrckfw9Yq25wsY0RDxF4UivNVbquArZ6pwmR5OSO/ItUFWhoK6l9RWmV2A2VOYUwZe7Q==
+
 "@polkadot-cloud/core@^1.0.48":
   version "1.0.49"
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/core/-/core-1.0.49.tgz#3e2cc218225cb56c3eb330b660e13309be84aed6"
@@ -2761,9 +2766,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"
