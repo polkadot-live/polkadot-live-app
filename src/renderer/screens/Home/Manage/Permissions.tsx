@@ -12,7 +12,7 @@ import type { AnyJson } from '@/types/misc';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 
 export const Permissions = ({ setSection }: AnyJson) => {
-  const permissions = ['Nomination Pools'];
+  const permissions = ['Transfers', 'Nomination Pools'];
   return (
     <AccountsWrapper>
       <HeadingWrapper>

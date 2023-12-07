@@ -95,6 +95,13 @@ export const AccountWrapper = styled(motion.div)`
           }
         }
 
+        span > .chain-icon {
+          height: var(--item-height);
+          width: 22px;
+          fill: rgb(160, 37, 90);
+          margin-right: 4px;
+        }
+
         .content {
           height: var(--item-height);
           flex: 1;
