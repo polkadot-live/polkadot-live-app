@@ -102,6 +102,7 @@ export class AccountsController {
             actionArgs: [account.address],
             chainId: 'Polkadot' as ChainID,
             status: 'enable' as SubscriptionNextStatus,
+            label: 'Transfers',
           },
         ];
 

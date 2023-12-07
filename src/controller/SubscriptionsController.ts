@@ -23,11 +23,13 @@ export class SubscriptionsController {
         action: 'subscribe:query.timestamp.now',
         chainId: 'Polkadot' as ChainID,
         status: 'enable' as SubscriptionNextStatus,
+        label: 'Timestamps',
       },
       {
         action: 'subscribe:query.babe.currentSlot',
         chainId: 'Polkadot' as ChainID,
         status: 'enable' as SubscriptionNextStatus,
+        label: 'Current Slot',
       },
     ];
 

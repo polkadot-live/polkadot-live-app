@@ -9,7 +9,7 @@ export interface SubscriptionTask {
   actionArgs?: string[];
   chainId: ChainID;
   status: SubscriptionNextStatus;
-  label?: string;
+  label: string;
 }
 
 export interface ApiCallEntry {
