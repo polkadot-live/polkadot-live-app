@@ -17,6 +17,49 @@ export const Permissions = ({
   subscriptionTasks,
   breadcrumb,
 }: AnyJson) => {
+  // Renders a list of subscription tasks that can be toggled.
+  const renderSubscriptionTasks = (tasks: SubscriptionTask[]) => {
+    return (
+      <>
+        {tasks.map((subscription: SubscriptionTask, i: number) => (
+          <AccountWrapper
+            whileHover={{ scale: 1.01 }}
+            key={`manage_permission_${i}`}
+          >
+            <div className="inner">
+              <div>
+                <span className="icon">
+                  <FontAwesomeIcon icon={faUserGroup} />
+                </span>
+                <div className="content">
+                  <h3>{subscription.label}</h3>
+                </div>
+              </div>
+              <div>
+                {/* TEMP: Disable Westend toggle switches */}
+                {subscription.chainId !== 'Westend' && (
+                  <Switch
+                    type="secondary"
+                    isOn={subscription.status === 'enable'}
+                    handleToggle={() => console.log(subscription)}
+                  />
+                )}
+                {subscription.chainId === 'Westend' && (
+                  <Switch
+                    type="secondary"
+                    isOn={subscription.status === 'enable'}
+                    handleToggle={() => console.log(subscription)}
+                    disabled
+                  />
+                )}
+              </div>
+            </div>
+          </AccountWrapper>
+        ))}
+      </>
+    );
+  };
+
   return (
     <>
       <BreadcrumbsWrapper>
@@ -41,43 +84,7 @@ export const Permissions = ({
       </BreadcrumbsWrapper>
       <AccountsWrapper>
         <div style={{ padding: '0 0.75rem' }}>
-          {subscriptionTasks.map(
-            (subscription: SubscriptionTask, i: number) => (
-              <AccountWrapper
-                whileHover={{ scale: 1.01 }}
-                key={`manage_permission_${i}`}
-              >
-                <div className="inner">
-                  <div>
-                    <span className="icon">
-                      <FontAwesomeIcon icon={faUserGroup} />
-                    </span>
-                    <div className="content">
-                      <h3>{subscription.label}</h3>
-                    </div>
-                  </div>
-                  <div>
-                    {/* TEMP: Disable Westend toggle switches */}
-                    {subscription.chainId !== 'Westend' && (
-                      <Switch
-                        type="secondary"
-                        isOn={subscription.status === 'enable'}
-                        handleToggle={() => console.log(subscription)}
-                      />
-                    )}
-                    {subscription.chainId === 'Westend' && (
-                      <Switch
-                        type="secondary"
-                        isOn={subscription.status === 'enable'}
-                        handleToggle={() => console.log(subscription)}
-                        disabled
-                      />
-                    )}
-                  </div>
-                </div>
-              </AccountWrapper>
-            )
-          )}
+          {renderSubscriptionTasks(subscriptionTasks)}
         </div>
       </AccountsWrapper>
     </>

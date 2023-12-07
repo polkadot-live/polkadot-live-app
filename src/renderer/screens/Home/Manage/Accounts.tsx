@@ -18,38 +18,20 @@ export const Accounts = ({
   addresses,
 }: AnyJson) => {
   const chains = ['Polkadot', 'Westend'];
-  const { getChainSubscriptions } = useSubscriptions();
+  const { getChainSubscriptions, getAccountSubscriptions } = useSubscriptions();
 
-  // temporary solution to visualize account subscriptions.
-  const getPermissionsForAccount = () => {
-    return [
-      {
-        action: 'subscribe:query.system.account',
-        actionArgs: ['<address>'],
-        chainId: 'Polkadot',
-        status: 'disable',
-        label: 'Transfers',
-      },
-      {
-        action: 'subscribe:query.system.account',
-        actionArgs: ['<address>'],
-        chainId: 'Polkadot',
-        status: 'disable',
-        label: 'Pool Rewards',
-      },
-    ];
-  };
-
+  // Set parent subscription tasks state when a chain is clicked.
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
 
-    setBreadcrumb(chain);
     setSubscriptionTasks(tasks);
+    setBreadcrumb(chain);
     setSection(1);
   };
 
-  const handleClickAccount = (accountName: string) => {
-    const tasks = getPermissionsForAccount();
+  // Set account subscription tasks state when an account is clicked.
+  const handleClickAccount = (accountName: string, address: string) => {
+    const tasks = getAccountSubscriptions(address);
 
     setSubscriptionTasks(tasks);
     setBreadcrumb(accountName);
@@ -111,7 +93,7 @@ export const Accounts = ({
             >
               <button
                 type="button"
-                onClick={() => handleClickAccount(name)}
+                onClick={() => handleClickAccount(name, address)}
               ></button>
               <div className="inner">
                 <div>

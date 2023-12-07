@@ -14,6 +14,8 @@ export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+
+  // State to store the selected chain of account's subscriptions.
   const [subscriptionTasks, setSubscriptionTasks] = useState<
     SubscriptionTask[]
   >([]);
