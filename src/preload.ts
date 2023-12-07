@@ -99,6 +99,10 @@ contextBridge.exposeInMainWorld('myAPI', {
     return ipcRenderer.on('renderer:event:dismiss', callback);
   },
 
+  reportChainSubscriptionState: (callback) => {
+    return ipcRenderer.on('renderer:broadcast:subscriptions:chains', callback);
+  },
+
   // Transactions
 
   // Requests to main process to initiate a transaction.

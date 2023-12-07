@@ -15,11 +15,14 @@ import { Import } from '@app/screens/Import';
 import { useTheme } from 'styled-components';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccounts } from '@/types/accounts';
+import { useSubscriptions } from './contexts/Subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
   const { setAccountStateKey } = useAccountState();
+  const { setChainSubscriptions } = useSubscriptions();
 
   useEffect(() => {
     // handle initial responses to populate state from store.
@@ -37,6 +40,15 @@ export const RouterInner = () => {
         value: AnyJson
       ) => {
         setAccountStateKey(chain, address, key, value);
+      }
+    );
+    window.myAPI.reportChainSubscriptionState(
+      (_: Event, serialized: AnyJson) => {
+        const parsed: Map<ChainID, SubscriptionTask[]> = new Map(
+          JSON.parse(serialized)
+        );
+
+        setChainSubscriptions(parsed);
       }
     );
   }, []);

@@ -8,6 +8,7 @@ import { AccountsController } from '../controller/AccountsController';
 import { MainDebug as debug } from '@/utils/DebugUtils';
 import { AccountType } from '../types/accounts';
 import type { ChainID } from '@/types/chains';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 
 // Initalize store items.
 export const initializeState = (id: string) => {
@@ -44,6 +45,18 @@ export const reportImportedAccounts = (id: string) => {
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:accounts',
     AccountsController.getAllFlattenedAccountData()
+  );
+};
+
+// Report chain subscription tasks to renderer.
+export const reportChainSubscriptions = (id: string) => {
+  const serialized = JSON.stringify(
+    Array.from(SubscriptionsController.getChainSubscriptionTasks())
+  );
+
+  WindowsController.get(id)?.webContents?.send(
+    'renderer:broadcast:subscriptions:chains',
+    serialized
   );
 };
 

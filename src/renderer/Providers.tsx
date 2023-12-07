@@ -6,6 +6,7 @@ import { AddressesProvider } from '@app/contexts/Addresses';
 import { ChainsProvider } from '@app/contexts/Chains';
 import { EventsProvider } from '@app/contexts/Events';
 import { OverlayProvider } from '@app/contexts/Overlay';
+import { SubscriptionsProvider } from './contexts/Subscriptions';
 import { TooltipProvider } from '@app/contexts/Tooltip';
 import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
@@ -16,6 +17,7 @@ export const Providers = withProviders(
   AddressesProvider,
   AccountStateProvider,
   ChainsProvider,
+  SubscriptionsProvider,
   EventsProvider,
   TxMetaProvider,
   TooltipProvider

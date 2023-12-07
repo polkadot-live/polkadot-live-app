@@ -8,6 +8,7 @@ import { store } from '@/main';
 
 export class SubscriptionsController {
   static globalSubscriptions: QueryMultiWrapper | null = null;
+  static globalSubscriptionTasks: SubscriptionTask[] = [];
 
   static addGlobal(wrapper: QueryMultiWrapper) {
     SubscriptionsController.globalSubscriptions = wrapper;
@@ -37,6 +38,28 @@ export class SubscriptionsController {
     for (const task of tasks) {
       this.globalSubscriptions.subscribeTask(task);
     }
+
+    // Cache global subscription tasks.
+    this.globalSubscriptionTasks = tasks;
+  }
+
+  // Construct and return a Map<ChainID, SubscriptionTask[]> from
+  // this.globalSubscriptionTasks.
+  static getChainSubscriptionTasks() {
+    const map: Map<ChainID, SubscriptionTask[]> = new Map();
+
+    for (const task of this.globalSubscriptionTasks) {
+      let updated = [task];
+
+      const current = map.get(task.chainId);
+      if (current) {
+        updated = [...current, task];
+      }
+
+      map.set(task.chainId, updated);
+    }
+
+    return map;
   }
 
   /* Key naming convention of subscription tasks in store:
