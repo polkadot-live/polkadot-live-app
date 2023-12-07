@@ -4,7 +4,7 @@
 import type { PolkadotAccountState } from './polkadot';
 
 // Supported chains as string literals.
-export type ChainID = 'Polkadot';
+export type ChainID = 'Polkadot' | 'Westend';
 
 // Supported chain states.
 export type SomeChainState = PolkadotAccountState;

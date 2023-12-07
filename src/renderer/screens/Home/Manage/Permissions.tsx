@@ -5,14 +5,85 @@ import { faAngleLeft, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type {
+  SubscriptionNextStatus,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 import {
   AccountWrapper,
   AccountsWrapper,
   BreadcrumbsWrapper,
 } from './Wrappers';
 
+/*-------------------------------------------------- 
+ TEMP: Default chain subscription state for front-end
+ --------------------------------------------------*/
+
+// TODO: Make dynamic by querying persisted state for
+// initial subscription settings.
+const initialChainSubscriptions: SubscriptionTask[] = [
+  {
+    chainId: 'Polkadot' as ChainID,
+    action: 'subscribe:query.timestamp.now',
+    status: 'disable' as SubscriptionNextStatus,
+    label: 'Timestamps',
+  },
+  {
+    chainId: 'Polkadot' as ChainID,
+    action: 'subscribe:query.babe.currentSlot',
+    status: 'disable' as SubscriptionNextStatus,
+    label: 'Current Slot',
+  },
+  {
+    chainId: 'Westend' as ChainID,
+    action: 'subscribe:query.timestamp.now',
+    status: 'disable' as SubscriptionNextStatus,
+    label: 'Timestamps',
+  },
+  {
+    chainId: 'Westend' as ChainID,
+    action: 'subscribe:query.babe.currentSlot',
+    status: 'disable' as SubscriptionNextStatus,
+    label: 'Current Slot',
+  },
+];
+
 export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
-  const permissions = ['Transfers', 'Nomination Pools'];
+  const initialChainSubs: SubscriptionTask[] = [...initialChainSubscriptions];
+
+  // TODO: Put data in context.
+  // Currently a temporary solution to visualize app behavior.
+  const getPermissionsForBreadcrumb = () => {
+    switch (breadcrumb) {
+      case 'Polkadot': {
+        return initialChainSubs.filter(({ chainId }) => chainId === 'Polkadot');
+      }
+      case 'Westend': {
+        return initialChainSubs.filter(({ chainId }) => chainId === 'Westend');
+      }
+      default: {
+        // Render placeholder permission for now.
+        return [
+          {
+            action: 'subscribe:query.system.account',
+            actionArgs: ['<address>'],
+            chainId: 'Polkadot',
+            status: 'disable',
+            label: 'Transfers',
+          },
+          {
+            action: 'subscribe:query.system.account',
+            actionArgs: ['<address>'],
+            chainId: 'Polkadot',
+            status: 'disable',
+            label: 'Pool Rewards',
+          },
+        ];
+      }
+    }
+  };
+
   return (
     <>
       <BreadcrumbsWrapper>
@@ -37,7 +108,7 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
       </BreadcrumbsWrapper>
       <AccountsWrapper>
         <div style={{ padding: '0 0.75rem' }}>
-          {permissions.map((permission: string, i) => (
+          {getPermissionsForBreadcrumb().map((subscription, i) => (
             <AccountWrapper
               whileHover={{ scale: 1.01 }}
               key={`manage_permission_${i}`}
@@ -48,11 +119,24 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
                     <FontAwesomeIcon icon={faUserGroup} />
                   </span>
                   <div className="content">
-                    <h3>{permission}</h3>
+                    <h3>{subscription.label}</h3>
                   </div>
                 </div>
                 <div>
-                  <Switch type="secondary" isOn={true} />
+                  {/* TEMP: Disable Westend toggle switches */}
+                  {subscription.chainId !== 'Westend' && (
+                    <Switch
+                      type="secondary"
+                      isOn={subscription.status === 'enable'}
+                    />
+                  )}
+                  {subscription.chainId === 'Westend' && (
+                    <Switch
+                      type="secondary"
+                      isOn={subscription.status === 'enable'}
+                      disabled
+                    />
+                  )}
                 </div>
               </div>
             </AccountWrapper>
