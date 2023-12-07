@@ -9,8 +9,18 @@ import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 
-export const Accounts = ({ setSection, addresses }: AnyJson) => {
+export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const chains = ['Polkadot', 'Westend'];
+
+  const handleClickChain = (chain: string) => {
+    setBreadcrumb(chain);
+    setSection(1);
+  };
+
+  const handleClickAccount = (accountName: string) => {
+    setBreadcrumb(accountName);
+    setSection(1);
+  };
 
   return (
     <AccountsWrapper>
@@ -26,7 +36,10 @@ export const Accounts = ({ setSection, addresses }: AnyJson) => {
             whileHover={{ scale: 1.01 }}
             key={`manage_chain_${i}`}
           >
-            <button type="button" onClick={() => setSection(1)}></button>
+            <button
+              type="button"
+              onClick={() => handleClickChain(chain)}
+            ></button>
             <div className="inner">
               <div>
                 <span>
@@ -62,7 +75,10 @@ export const Accounts = ({ setSection, addresses }: AnyJson) => {
               whileHover={{ scale: 1.01 }}
               key={`manage_account_${i}`}
             >
-              <button type="button" onClick={() => setSection(1)}></button>
+              <button
+                type="button"
+                onClick={() => handleClickAccount(name)}
+              ></button>
               <div className="inner">
                 <div>
                   <span className="icon">

@@ -12,36 +12,43 @@ import { Wrapper } from './Wrappers';
 export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
   const [section, setSection] = useState<number>(0);
+  const [breadcrumb, setBreadcrumb] = useState<string>('');
 
   return (
-    <CarouselWrapper
-      animate={section === 0 ? 'home' : 'next'}
-      transition={{
-        duration: 0.35,
-        type: 'spring',
-        bounce: 0.1,
-      }}
-      variants={{
-        home: {
-          left: 0,
-        },
-        next: {
-          left: '-100%',
-        },
-      }}
-    >
-      <div>
-        {addresses.length ? (
-          <Wrapper className="scrollable">
-            <Accounts setSection={setSection} addresses={addresses} />
-          </Wrapper>
-        ) : (
-          <NoAccounts />
-        )}
-      </div>
-      <div>
-        <Permissions setSection={setSection} />
-      </div>
-    </CarouselWrapper>
+    <>
+      <CarouselWrapper
+        animate={section === 0 ? 'home' : 'next'}
+        transition={{
+          duration: 0.35,
+          type: 'spring',
+          bounce: 0.1,
+        }}
+        variants={{
+          home: {
+            left: 0,
+          },
+          next: {
+            left: '-100%',
+          },
+        }}
+      >
+        <div>
+          {addresses.length ? (
+            <Wrapper className="scrollable">
+              <Accounts
+                setSection={setSection}
+                setBreadcrumb={setBreadcrumb}
+                addresses={addresses}
+              />
+            </Wrapper>
+          ) : (
+            <NoAccounts />
+          )}
+        </div>
+        <div>
+          <Permissions setSection={setSection} breadcrumb={breadcrumb} />
+        </div>
+      </CarouselWrapper>
+    </>
   );
 };

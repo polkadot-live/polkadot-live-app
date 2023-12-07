@@ -17,6 +17,36 @@ export const Wrapper = styled.div`
   padding-right: 5%;
 `;
 
+export const BreadcrumbsWrapper = styled.div`
+  background-color: rgba(57, 52, 58, 0.4);
+  padding: 0.75rem 1.75rem;
+
+  color: var(--text-color-primary);
+  font-size: 0.92rem;
+  line-height: 1.02rem;
+  font-weight: 500;
+
+  ul {
+    margin: 4px 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+
+    li {
+      opacity: 0.6;
+    }
+    li:first-of-type > button {
+      left: 0 !important;
+    }
+    li:last-child {
+      opacity: 1;
+      color: var(--text-color-primary);
+    }
+  }
+`;
+
 export const HeadingWrapper = styled.div`
   position: sticky;
   width: 100%;
