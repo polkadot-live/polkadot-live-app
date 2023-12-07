@@ -25,6 +25,8 @@ export const SubscriptionsProvider = ({
   const setChainSubscriptions = (
     subscriptions: Map<ChainID, SubscriptionTask[]>
   ) => {
+    console.log(subscriptions);
+
     setChainSubscriptionsState(subscriptions);
   };
 

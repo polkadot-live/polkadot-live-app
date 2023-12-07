@@ -63,19 +63,19 @@ export class SubscriptionsController {
   }
 
   /* Key naming convention of subscription tasks in store:
-
-    'subscriptions_global'
-      Key that stores global chain subscription tasks.
-
-    'subscriptions_<account_address>'
-      Key that stores an account's subscription tasks.
-     
-    Ex: const serialized = store.get('subscriptions_global');
-
-    When subscription tasks are retrieved and deserialised,
-    they can be passed to the appropriate `QueryMultiWrapper`
-    instance, where the API call will be re-built.
-  */
+   *
+   * 'subscriptions_global'
+   *   Key that stores global chain subscription tasks.
+   *
+   * 'subscriptions_<account_address>'
+   *   Key that stores an account's subscription tasks.
+   *
+   * Ex: const serialized = store.get('subscriptions_global');
+   *
+   * When subscription tasks are retrieved and deserialised,
+   * they can be passed to the appropriate `QueryMultiWrapper`
+   * instance, where the API call will be re-built.
+   */
 
   // TODO: Call when frontend is able to add subscriptions.
   static persistTasksToStore(key: string, tasks: SubscriptionTask[]) {

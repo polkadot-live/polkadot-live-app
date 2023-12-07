@@ -5,10 +5,14 @@ import type { AnyFunction, AnyJson } from '@/types/misc';
 import { WindowsController } from '../controller/WindowsController';
 import { APIsController } from '../controller/APIsController';
 import { AccountsController } from '../controller/AccountsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { MainDebug as debug } from '@/utils/DebugUtils';
 import { AccountType } from '../types/accounts';
 import type { ChainID } from '@/types/chains';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import type {
+  SubscriptionNextStatus,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 
 // Initalize store items.
 export const initializeState = (id: string) => {
@@ -50,13 +54,33 @@ export const reportImportedAccounts = (id: string) => {
 
 // Report chain subscription tasks to renderer.
 export const reportChainSubscriptions = (id: string) => {
-  const serialized = JSON.stringify(
-    Array.from(SubscriptionsController.getChainSubscriptionTasks())
-  );
+  //--------------------------------------------------
+  // TEMPORARY static tasks for Westend network
+  //--------------------------------------------------
+  const westendTasks: SubscriptionTask[] = [
+    {
+      action: 'subscribe:query.timestamp.now',
+      chainId: 'Westend' as ChainID,
+      status: 'enable' as SubscriptionNextStatus,
+      label: 'Timestamps',
+    },
+    {
+      action: 'subscribe:query.babe.currentSlot',
+      chainId: 'Westend' as ChainID,
+      status: 'enable' as SubscriptionNextStatus,
+      label: 'Current Slot',
+    },
+  ];
+  //--------------------------------------------------
+  // END TEMPORARY
+  //--------------------------------------------------
+
+  const map = SubscriptionsController.getChainSubscriptionTasks();
+  map.set('Westend', westendTasks);
 
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:subscriptions:chains',
-    serialized
+    JSON.stringify(Array.from(map))
   );
 };
 

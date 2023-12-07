@@ -8,11 +8,15 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+  const [subscriptionTasks, setSubscriptionTasks] = useState<
+    SubscriptionTask[]
+  >([]);
 
   return (
     <>
@@ -38,6 +42,7 @@ export const Manage = ({ addresses }: AnyJson) => {
               <Accounts
                 setSection={setSection}
                 setBreadcrumb={setBreadcrumb}
+                setSubscriptionTasks={setSubscriptionTasks}
                 addresses={addresses}
               />
             </Wrapper>
@@ -46,7 +51,11 @@ export const Manage = ({ addresses }: AnyJson) => {
           )}
         </div>
         <div>
-          <Permissions setSection={setSection} breadcrumb={breadcrumb} />
+          <Permissions
+            setSection={setSection}
+            breadcrumb={breadcrumb}
+            subscriptionTasks={subscriptionTasks}
+          />
         </div>
       </CarouselWrapper>
     </>
