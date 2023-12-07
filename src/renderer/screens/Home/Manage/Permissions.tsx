@@ -1,13 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  faAngleLeft,
-  faCheckCircle,
-  faUserGroup,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonText } from '@polkadot-cloud/react';
+import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import {
   AccountWrapper,
@@ -46,12 +42,6 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
               whileHover={{ scale: 1.01 }}
               key={`manage_permission_${i}`}
             >
-              <button
-                type="button"
-                onClick={() => {
-                  /* TODO: toggle permission */
-                }}
-              ></button>
               <div className="inner">
                 <div>
                   <span className="icon">
@@ -62,7 +52,7 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
                   </div>
                 </div>
                 <div>
-                  <FontAwesomeIcon icon={faCheckCircle} transform="grow-4" />
+                  <Switch type="secondary" isOn={true} />
                 </div>
               </div>
             </AccountWrapper>

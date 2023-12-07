@@ -161,11 +161,16 @@ export const AccountWrapper = styled(motion.div)`
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        max-width: 2rem;
         padding-bottom: 0.25rem;
+        flex-shrink: 0;
 
         &.permission {
           top: 0.3rem;
+        }
+
+        /* Scale the Switch component */
+        label {
+          scale: 0.9;
         }
       }
     }
