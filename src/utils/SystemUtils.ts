@@ -9,10 +9,6 @@ import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { MainDebug as debug } from '@/utils/DebugUtils';
 import { AccountType } from '../types/accounts';
 import type { ChainID } from '@/types/chains';
-import type {
-  SubscriptionNextStatus,
-  SubscriptionTask,
-} from '@/types/subscriptions';
 
 // Initalize store items.
 export const initializeState = (id: string) => {
@@ -64,29 +60,7 @@ export const reportAccountSubscriptions = (id: string) => {
 
 // Report chain subscription tasks to renderer.
 export const reportChainSubscriptions = (id: string) => {
-  //--------------------------------------------------
-  // TEMPORARY static tasks for Westend network
-  //--------------------------------------------------
-  const westendTasks: SubscriptionTask[] = [
-    {
-      action: 'subscribe:query.timestamp.now',
-      chainId: 'Westend' as ChainID,
-      status: 'enable' as SubscriptionNextStatus,
-      label: 'Timestamps',
-    },
-    {
-      action: 'subscribe:query.babe.currentSlot',
-      chainId: 'Westend' as ChainID,
-      status: 'enable' as SubscriptionNextStatus,
-      label: 'Current Slot',
-    },
-  ];
-  //--------------------------------------------------
-  // END TEMPORARY
-  //--------------------------------------------------
-
   const map = SubscriptionsController.getChainSubscriptionTasks();
-  map.set('Westend', westendTasks);
 
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:subscriptions:chains',

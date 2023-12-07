@@ -5,7 +5,10 @@ import { faAngleLeft, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type {
+  SubscriptionTask,
+  CachedSubscriptions,
+} from '@/types/subscriptions';
 import {
   AccountWrapper,
   AccountsWrapper,
@@ -18,10 +21,10 @@ export const Permissions = ({
   breadcrumb,
 }: AnyJson) => {
   // Renders a list of subscription tasks that can be toggled.
-  const renderSubscriptionTasks = (tasks: SubscriptionTask[]) => {
+  const renderSubscriptionTasks = (cached: CachedSubscriptions) => {
     return (
       <>
-        {tasks.map((subscription: SubscriptionTask, i: number) => (
+        {cached.tasks.map((subscription: SubscriptionTask, i: number) => (
           <AccountWrapper
             whileHover={{ scale: 1.01 }}
             key={`manage_permission_${i}`}
@@ -36,22 +39,18 @@ export const Permissions = ({
                 </div>
               </div>
               <div>
-                {/* TEMP: Disable Westend toggle switches */}
-                {subscription.chainId !== 'Westend' && (
-                  <Switch
-                    type="secondary"
-                    isOn={subscription.status === 'enable'}
-                    handleToggle={() => console.log(subscription)}
-                  />
-                )}
-                {subscription.chainId === 'Westend' && (
-                  <Switch
-                    type="secondary"
-                    isOn={subscription.status === 'enable'}
-                    handleToggle={() => console.log(subscription)}
-                    disabled
-                  />
-                )}
+                <Switch
+                  type="secondary"
+                  isOn={subscription.status === 'enable'}
+                  handleToggle={() => {
+                    subscription.status =
+                      subscription.status === 'enable' ? 'disable' : 'enable';
+
+                    console.log('type:', cached.type);
+                    cached.address && console.log('address:', cached.address);
+                    console.log(subscription);
+                  }}
+                />
               </div>
             </div>
           </AccountWrapper>
@@ -84,7 +83,11 @@ export const Permissions = ({
       </BreadcrumbsWrapper>
       <AccountsWrapper>
         <div style={{ padding: '0 0.75rem' }}>
-          {renderSubscriptionTasks(subscriptionTasks)}
+          {subscriptionTasks.tasks.length > 0 ? (
+            renderSubscriptionTasks(subscriptionTasks)
+          ) : (
+            <p>No subscriptions for this item</p>
+          )}
         </div>
       </AccountsWrapper>
     </>

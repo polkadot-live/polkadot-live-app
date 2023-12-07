@@ -24,7 +24,7 @@ export const Accounts = ({
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
 
-    setSubscriptionTasks(tasks);
+    setSubscriptionTasks({ type: 'chain', tasks });
     setBreadcrumb(chain);
     setSection(1);
   };
@@ -33,7 +33,7 @@ export const Accounts = ({
   const handleClickAccount = (accountName: string, address: string) => {
     const tasks = getAccountSubscriptions(address);
 
-    setSubscriptionTasks(tasks);
+    setSubscriptionTasks({ type: 'account', address, tasks });
     setBreadcrumb(accountName);
     setSection(1);
   };

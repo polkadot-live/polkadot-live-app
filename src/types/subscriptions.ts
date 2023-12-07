@@ -26,3 +26,10 @@ export interface QueryMultiEntry {
   callEntries: ApiCallEntry[];
   unsub: AnyFunction | null;
 }
+
+// Used in React app.
+export interface CachedSubscriptions {
+  type: 'chain' | 'account' | '';
+  address?: string;
+  tasks: SubscriptionTask[];
+}
