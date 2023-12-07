@@ -42,6 +42,7 @@ export interface PreloadAPI {
   reportTxStatus: ApiReportTxStatus;
 
   reportChainSubscriptionState: ApiReportChainSubscriptions;
+  reportAccountSubscriptionsState: ApiReportAccountSubscriptions;
 
   openBrowserURL: ApiOpenBrowserWindow;
 }
@@ -131,3 +132,5 @@ type APIReportTxData = {
 type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 
 type ApiReportChainSubscriptions = (callback: AnyJson) => void;
+
+type ApiReportAccountSubscriptions = (callback: AnyJson) => void;

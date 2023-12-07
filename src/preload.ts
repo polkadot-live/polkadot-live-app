@@ -103,6 +103,13 @@ contextBridge.exposeInMainWorld('myAPI', {
     return ipcRenderer.on('renderer:broadcast:subscriptions:chains', callback);
   },
 
+  reportAccountSubscriptionsState: (callback) => {
+    return ipcRenderer.on(
+      'renderer:broadcast:subscriptions:accounts',
+      callback
+    );
+  },
+
   // Transactions
 
   // Requests to main process to initiate a transaction.

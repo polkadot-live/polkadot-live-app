@@ -62,14 +62,14 @@ export const Permissions = ({
                       <Switch
                         type="secondary"
                         isOn={subscription.status === 'enable'}
-                        handleToggle={() => console.log('TODO')}
+                        handleToggle={() => console.log(subscription)}
                       />
                     )}
                     {subscription.chainId === 'Westend' && (
                       <Switch
                         type="secondary"
                         isOn={subscription.status === 'enable'}
-                        handleToggle={() => console.log('TODO')}
+                        handleToggle={() => console.log(subscription)}
                         disabled
                       />
                     )}

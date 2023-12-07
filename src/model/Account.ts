@@ -67,12 +67,16 @@ export class Account {
     this.name = name;
   }
 
+  initSubscriptionMachinery = () => {
+    this._queryMulti = new QueryMultiWrapper();
+  };
+
   subscribeToTask = (task: SubscriptionTask) => {
     this._queryMulti?.subscribeTask(task);
   };
 
-  initSubscriptionMachinery = () => {
-    this._queryMulti = new QueryMultiWrapper();
+  getSubscriptionTasks = () => {
+    return this._queryMulti?.getSubscriptionTasks();
   };
 
   initState = () => {

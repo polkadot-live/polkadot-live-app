@@ -17,21 +17,39 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  // Store the received state of chain subscriptions.
+  // Store received chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
   >(new Map());
 
+  // Store received account subscriptions (key is account address).
+  const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
+    Map<string, SubscriptionTask[]>
+  >(new Map());
+
+  // Set chain subscription tasks.
   const setChainSubscriptions = (
     subscriptions: Map<ChainID, SubscriptionTask[]>
   ) => {
-    console.log(subscriptions);
-
     setChainSubscriptionsState(subscriptions);
   };
 
+  // Get subscription tasks for a specific chain.
   const getChainSubscriptions = (chainId: ChainID) => {
     const subscriptions = chainSubscriptionsState.get(chainId);
+    return subscriptions ? subscriptions : [];
+  };
+
+  // Set subscription tasks for all accounts.
+  const setAccountSubscriptions = (
+    subscriptions: Map<string, SubscriptionTask[]>
+  ) => {
+    setAccountSubscriptionsState(subscriptions);
+  };
+
+  // Get subscription tasks for a specific account.
+  const getAccountSubscriptions = (address: string) => {
+    const subscriptions = accountSubscriptionsState.get(address);
     return subscriptions ? subscriptions : [];
   };
 
@@ -39,8 +57,11 @@ export const SubscriptionsProvider = ({
     <SubscriptionsContext.Provider
       value={{
         chainSubscriptions: chainSubscriptionsState,
+        accountSubscriptions: accountSubscriptionsState,
         setChainSubscriptions,
         getChainSubscriptions,
+        setAccountSubscriptions,
+        getAccountSubscriptions,
       }}
     >
       {children}

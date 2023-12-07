@@ -74,6 +74,22 @@ export class QueryMultiWrapper {
   }
 
   /*-------------------------------------------------- 
+   Accessors
+   --------------------------------------------------*/
+
+  getSubscriptionTasks() {
+    const result: SubscriptionTask[] = [];
+
+    for (const entry of this.subscriptions.values()) {
+      for (const { task } of entry.callEntries) {
+        result.push({ ...task });
+      }
+    }
+
+    return result;
+  }
+
+  /*-------------------------------------------------- 
    Helpers
    --------------------------------------------------*/
 
@@ -176,6 +192,7 @@ export class QueryMultiWrapper {
       actionArgs: task.actionArgs,
       apiCall,
       curVal: null,
+      task,
     };
 
     // Insert new key if chain isn't cached yet.

@@ -5,7 +5,11 @@ import {
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import { initializeState, reportChainSubscriptions } from '@/utils/SystemUtils';
+import {
+  initializeState,
+  reportAccountSubscriptions,
+  reportChainSubscriptions,
+} from '@/utils/SystemUtils';
 import { Discover } from '@/controller/Discover';
 import { WindowsController } from '@/controller/WindowsController';
 import type { AnyJson } from '@polkadot-cloud/react/types';
@@ -81,6 +85,9 @@ export const createMainWindow = (isTest: boolean) => {
 
     // Report chain subscriptions.
     reportChainSubscriptions('menu');
+
+    // Report account subscriptions.
+    reportAccountSubscriptions('menu');
 
     // Bootstrap account events for all chains.
     Discover.bootstrapEvents(Array.from(AccountsController.accounts.keys()));

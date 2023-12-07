@@ -12,11 +12,13 @@ export interface SubscriptionTask {
   label: string;
 }
 
+// TODO: Refactor (action + actionArgs also in task)
 export interface ApiCallEntry {
   action: string;
   actionArgs?: string[];
   apiCall: AnyFunction;
   curVal: AnyData | null;
+  task: SubscriptionTask; // Cache the associated task
 }
 
 // TODO: May need to store api isntance reference.

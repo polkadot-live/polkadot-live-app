@@ -52,6 +52,16 @@ export const reportImportedAccounts = (id: string) => {
   );
 };
 
+// Report subscription tasks for all accounts to renderer.
+export const reportAccountSubscriptions = (id: string) => {
+  const map = AccountsController.getAccountSubscriptions();
+
+  WindowsController.get(id)?.webContents?.send(
+    'renderer:broadcast:subscriptions:accounts',
+    JSON.stringify(Array.from(map))
+  );
+};
+
 // Report chain subscription tasks to renderer.
 export const reportChainSubscriptions = (id: string) => {
   //--------------------------------------------------

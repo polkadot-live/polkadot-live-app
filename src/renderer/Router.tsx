@@ -22,7 +22,7 @@ export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
   const { setAccountStateKey } = useAccountState();
-  const { setChainSubscriptions } = useSubscriptions();
+  const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
 
   useEffect(() => {
     // handle initial responses to populate state from store.
@@ -49,6 +49,15 @@ export const RouterInner = () => {
         );
 
         setChainSubscriptions(parsed);
+      }
+    );
+    window.myAPI.reportAccountSubscriptionsState(
+      (_: Event, serialized: AnyJson) => {
+        const parsed: Map<string, SubscriptionTask[]> = new Map(
+          JSON.parse(serialized)
+        );
+
+        setAccountSubscriptions(parsed);
       }
     );
   }, []);

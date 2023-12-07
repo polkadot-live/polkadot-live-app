@@ -79,6 +79,22 @@ export class AccountsController {
     this.accounts = importedAccounts;
   }
 
+  static getAccountSubscriptions() {
+    const map: Map<string, SubscriptionTask[]> = new Map();
+
+    for (const accounts of this.accounts.values()) {
+      for (const account of accounts) {
+        const tasks = account.getSubscriptionTasks();
+
+        if (tasks) {
+          map.set(account.address, tasks);
+        }
+      }
+    }
+
+    return map;
+  }
+
   static subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
