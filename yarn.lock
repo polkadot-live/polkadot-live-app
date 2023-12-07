@@ -1515,10 +1515,10 @@
   resolved "https://registry.yarnpkg.com/@substrate/connect-extension-protocol/-/connect-extension-protocol-1.0.1.tgz#fa5738039586c648013caa6a0c95c43265dbe77d"
   integrity sha512-161JhCC1csjH3GE5mPLEd7HbWtwNSPJBg3p1Ksz9SFlTzj/bgEwudiRN2y5i0MoLGCIJRYKyKGMxVnd29PzNjg==
 
-"@substrate/connect-known-chains@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@substrate/connect-known-chains/-/connect-known-chains-1.0.1.tgz#11d90c24586fe23a774ab676173879dfa9b5ed03"
-  integrity sha512-dT/d21SbA1dm8HegTWoVkAvQV9PgPVpAdZrTx+0UtWOfHhfRAMHGujJmXWVaoR6qzYf4nyJfFHmUPd4myItVmA==
+"@substrate/connect-known-chains@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@substrate/connect-known-chains/-/connect-known-chains-1.0.2.tgz#f962394c46a6cbeb1f3dc63071a0c82ded937838"
+  integrity sha512-BfEFvwHzImksMtoxnu38byfQnuUmk0/jJdXEHSkcBPyHIeUSIoAntUaWLAJjA8dLvqIz+MM8h96ZrsQqqykQNw==
 
 "@substrate/connect@0.7.35":
   version "0.7.35"
@@ -1528,13 +1528,13 @@
     "@substrate/connect-extension-protocol" "^1.0.1"
     smoldot "2.0.7"
 
-"@substrate/connect@^0.8.0":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@substrate/connect/-/connect-0.8.1.tgz#b4fe446f74a964a38e02412f1992f83ccf400d93"
-  integrity sha512-DyrBlQyHkL3fySdQTFmLp1tUhNR4lXJ8Pcxzbmmy6sLRZgq415DB15wqojfWfe5sOqTk/hOlLsBxfb1wC6O+aw==
+"@substrate/connect@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@substrate/connect/-/connect-0.8.2.tgz#3b69fd3bde51fea42232f88a7f7089521dd7bb93"
+  integrity sha512-GWNANq1aETmm+jySvm1lqvEizWnvQE6/yfdhhUuOWLYsFXDg1MAVT70nhrOemOP3zHBblJwY1jb8LbRwmxVTOw==
   dependencies:
     "@substrate/connect-extension-protocol" "^1.0.1"
-    "@substrate/connect-known-chains" "^1.0.1"
+    "@substrate/connect-known-chains" "^1.0.2"
     smoldot "2.0.13"
 
 "@substrate/ss58-registry@^1.44.0":
