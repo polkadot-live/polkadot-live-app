@@ -7,7 +7,6 @@ import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
-  CachedSubscriptions,
   CachedSubscription,
 } from '@/types/subscriptions';
 import {
@@ -15,6 +14,7 @@ import {
   AccountsWrapper,
   BreadcrumbsWrapper,
 } from './Wrappers';
+import { v4 as uuidv4 } from 'uuid';
 
 export const Permissions = ({
   setSection,
@@ -23,8 +23,6 @@ export const Permissions = ({
 }: AnyJson) => {
   // Handle a toggle, which sends a subscription task to the back-end.
   const handleToggle = async (cached: CachedSubscription) => {
-    console.log('type:', cached.type);
-
     // Invert the task status.
     cached.task.status = cached.task.status === 'enable' ? 'disable' : 'enable';
 
@@ -36,40 +34,31 @@ export const Permissions = ({
   };
 
   // Renders a list of subscription tasks that can be toggled.
-  const renderSubscriptionTasks = (cached: CachedSubscriptions) => {
+  const renderSubscriptionTasks = () => {
+    const { type, tasks, address } = subscriptionTasks;
+
     return (
       <>
-        {cached.tasks.map((subscription: SubscriptionTask, i: number) => (
-          <AccountWrapper
-            whileHover={{ scale: 1.01 }}
-            key={`manage_permission_${i}`}
-          >
+        {tasks.map((task: SubscriptionTask, i: number) => (
+          <AccountWrapper whileHover={{ scale: 1.01 }} key={`${i}_${uuidv4()}`}>
             <div className="inner">
               <div>
                 <span className="icon">
                   <FontAwesomeIcon icon={faUserGroup} />
                 </span>
                 <div className="content">
-                  <h3>{subscription.label}</h3>
+                  <h3>{task.label}</h3>
                 </div>
               </div>
               <div>
                 <Switch
                   type="secondary"
-                  isOn={subscription.status === 'enable'}
+                  isOn={task.status === 'enable'}
                   handleToggle={() => {
-                    const isAccountTask = cached.type === 'account';
-
                     // Send an account or chain subscription task.
-                    if (isAccountTask) {
-                      handleToggle({
-                        type: 'account',
-                        address: cached.address,
-                        task: subscription,
-                      });
-                    } else {
-                      handleToggle({ type: 'chain', task: subscription });
-                    }
+                    type === 'account'
+                      ? handleToggle({ type, address, task })
+                      : handleToggle({ type, task });
                   }}
                 />
               </div>
@@ -105,9 +94,9 @@ export const Permissions = ({
       <AccountsWrapper>
         <div style={{ padding: '0 0.75rem' }}>
           {subscriptionTasks.tasks.length > 0 ? (
-            renderSubscriptionTasks(subscriptionTasks)
+            renderSubscriptionTasks()
           ) : (
-            <p>No subscriptions for this item</p>
+            <p>No subscriptions for this item.</p>
           )}
         </div>
       </AccountsWrapper>

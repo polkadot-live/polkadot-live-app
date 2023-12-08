@@ -10,6 +10,7 @@ import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import type { ChainID } from '@/types/chains';
+import type { CachedSubscriptions } from '@/types/subscriptions';
 
 export const Accounts = ({
   setSection,
@@ -24,7 +25,9 @@ export const Accounts = ({
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
 
-    setSubscriptionTasks({ type: 'chain', tasks });
+    console.log(tasks);
+
+    setSubscriptionTasks({ type: 'chain', tasks } as CachedSubscriptions);
     setBreadcrumb(chain);
     setSection(1);
   };
@@ -33,7 +36,13 @@ export const Accounts = ({
   const handleClickAccount = (accountName: string, address: string) => {
     const tasks = getAccountSubscriptions(address);
 
-    setSubscriptionTasks({ type: 'account', address, tasks });
+    console.log(tasks);
+
+    setSubscriptionTasks({
+      type: 'account',
+      address,
+      tasks,
+    } as CachedSubscriptions);
     setBreadcrumb(accountName);
     setSection(1);
   };
