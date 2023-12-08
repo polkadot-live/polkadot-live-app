@@ -16,6 +16,7 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { CachedSubscription } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
+import { AccountsController } from './controller/AccountsController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -153,12 +154,13 @@ app.whenReady().then(() => {
           return true;
         }
         case 'account': {
-          console.log('built account task and return');
+          AccountsController.subscribeToTaskForAccount(data);
           return true;
         }
       }
 
-      return true;
+      // Something went wrong if code reaches here.
+      return false;
     }
   );
 

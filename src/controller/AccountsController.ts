@@ -17,6 +17,7 @@ import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
 import type {
+  CachedSubscription,
   SubscriptionNextStatus,
   SubscriptionTask,
 } from '@/types/subscriptions';
@@ -128,6 +129,18 @@ export class AccountsController {
         }
       }
     }
+  }
+
+  static subscribeToTaskForAccount(cached: CachedSubscription) {
+    // TODO: Error if address not provided.
+    if (!cached.address) return;
+
+    const account = this.get(cached.task.chainId, cached.address);
+
+    console.log('SUBSCRIBE TO TASK:');
+    console.log(cached.task);
+
+    account && account.subscribeToTask(cached.task);
   }
 
   /**
