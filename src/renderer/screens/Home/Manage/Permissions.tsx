@@ -8,29 +8,81 @@ import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
   CachedSubscription,
+  CachedSubscriptions,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
   AccountsWrapper,
   BreadcrumbsWrapper,
 } from './Wrappers';
-import { v4 as uuidv4 } from 'uuid';
+import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 
 export const Permissions = ({
   setSection,
   subscriptionTasks,
+  setSubscriptionTasks,
   breadcrumb,
 }: AnyJson) => {
-  // Handle a toggle, which sends a subscription task to the back-end.
+  const { updateTask } = useSubscriptions();
+
+  /* 
+   Handle a toggle, which sends a subscription task to the back-end
+   and updates the front-end subscriptions state. 
+   */
+
   const handleToggle = async (cached: CachedSubscription) => {
     // Invert the task status.
-    cached.task.status = cached.task.status === 'enable' ? 'disable' : 'enable';
+    const newStatus = cached.task.status === 'enable' ? 'disable' : 'enable';
+
+    // Reference to actionArgs.
+    const args = cached.task.actionArgs;
+
+    // Copy task and set new status.
+    const newTask: SubscriptionTask = {
+      ...cached.task,
+      actionArgs: args ? [...args] : undefined,
+      status: newStatus,
+    };
+
+    // Copy cached subscription and new task.
+    const newCached: CachedSubscription = {
+      ...cached,
+      address: cached.address ? cached.address : undefined,
+      task: {
+        ...newTask,
+        actionArgs: args ? [...args] : undefined,
+        status: newStatus,
+      },
+    };
 
     // Send task and its associated data to backend.
-    const result = await window.myAPI.invokeSubscriptionTask(cached);
+    const result = await window.myAPI.invokeSubscriptionTask(newCached);
 
-    console.log('RESULT:');
-    console.log(result);
+    if (result) {
+      // Update subscriptions context state.
+      cached.address
+        ? updateTask(cached.type, newTask, cached.address)
+        : updateTask(cached.type, newTask);
+
+      // Update rendererd subscription tasks state.
+      setSubscriptionTasks((prev: CachedSubscriptions) => ({
+        ...newCached,
+        tasks: prev.tasks.map((t) =>
+          t.action === newTask.action ? newTask : t
+        ),
+      }));
+    }
+  };
+
+  const getKey = (
+    type: string,
+    action: string,
+    chainId: string,
+    address: string
+  ) => {
+    return address
+      ? `${type}_${chainId}_${address}_${action}`
+      : `${type}_${chainId}_${action}`;
   };
 
   // Renders a list of subscription tasks that can be toggled.
@@ -40,7 +92,10 @@ export const Permissions = ({
     return (
       <>
         {tasks.map((task: SubscriptionTask, i: number) => (
-          <AccountWrapper whileHover={{ scale: 1.01 }} key={`${i}_${uuidv4()}`}>
+          <AccountWrapper
+            whileHover={{ scale: 1.01 }}
+            key={`${i}_${getKey(type, task.action, task.chainId, address)}`}
+          >
             <div className="inner">
               <div>
                 <span className="icon">

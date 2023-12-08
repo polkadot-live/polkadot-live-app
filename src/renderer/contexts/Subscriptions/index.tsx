@@ -53,6 +53,34 @@ export const SubscriptionsProvider = ({
     return subscriptions ? subscriptions : [];
   };
 
+  // Update state of a task.
+  // TODO: Remove `!` non-null assertions.
+  const updateTask = (
+    type: string,
+    task: SubscriptionTask,
+    address?: string
+  ) => {
+    if (type === 'account') {
+      setAccountSubscriptionsState((prev) => {
+        const tasks = prev.get(address!)!;
+        prev.set(
+          address!,
+          tasks.map((t) => (t.action === task.action ? task : t))
+        );
+        return prev;
+      });
+    } else {
+      setChainSubscriptionsState((prev) => {
+        const tasks = prev.get(task.chainId)!;
+        prev.set(
+          task.chainId,
+          tasks.map((t) => (t.action === task.action ? task : t))
+        );
+        return prev;
+      });
+    }
+  };
+
   return (
     <SubscriptionsContext.Provider
       value={{
@@ -62,6 +90,7 @@ export const SubscriptionsProvider = ({
         getChainSubscriptions,
         setAccountSubscriptions,
         getAccountSubscriptions,
+        updateTask,
       }}
     >
       {children}

@@ -58,6 +58,7 @@ export const Manage = ({ addresses }: AnyJson) => {
             setSection={setSection}
             breadcrumb={breadcrumb}
             subscriptionTasks={subscriptionTasks}
+            setSubscriptionTasks={setSubscriptionTasks}
           />
         </div>
       </CarouselWrapper>

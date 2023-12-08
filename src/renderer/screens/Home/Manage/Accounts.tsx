@@ -10,7 +10,10 @@ import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import type { ChainID } from '@/types/chains';
-import type { CachedSubscriptions } from '@/types/subscriptions';
+import type {
+  CachedSubscriptions,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 
 export const Accounts = ({
   setSection,
@@ -21,13 +24,20 @@ export const Accounts = ({
   const chains = ['Polkadot', 'Westend'];
   const { getChainSubscriptions, getAccountSubscriptions } = useSubscriptions();
 
+  // Utility: Copy tasks.
+  const copyTasks = (tasks: SubscriptionTask[]) => {
+    return tasks.map((t) => ({
+      ...t,
+      actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
+    }));
+  };
+
   // Set parent subscription tasks state when a chain is clicked.
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
+    const copy = copyTasks(tasks);
 
-    console.log(tasks);
-
-    setSubscriptionTasks({ type: 'chain', tasks } as CachedSubscriptions);
+    setSubscriptionTasks({ type: 'chain', tasks: copy } as CachedSubscriptions);
     setBreadcrumb(chain);
     setSection(1);
   };
@@ -35,13 +45,12 @@ export const Accounts = ({
   // Set account subscription tasks state when an account is clicked.
   const handleClickAccount = (accountName: string, address: string) => {
     const tasks = getAccountSubscriptions(address);
-
-    console.log(tasks);
+    const copy = copyTasks(tasks);
 
     setSubscriptionTasks({
       type: 'account',
       address,
-      tasks,
+      tasks: copy,
     } as CachedSubscriptions);
     setBreadcrumb(accountName);
     setSection(1);

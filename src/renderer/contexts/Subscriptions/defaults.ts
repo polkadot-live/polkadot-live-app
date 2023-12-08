@@ -7,4 +7,5 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   getChainSubscriptions: () => [],
   setAccountSubscriptions: () => {},
   getAccountSubscriptions: () => [],
+  updateTask: () => {},
 };
