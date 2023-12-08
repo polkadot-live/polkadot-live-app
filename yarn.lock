@@ -2079,10 +2079,10 @@
   dependencies:
     "@swc/core" "^1.3.96"
 
-"@wdio/cli@8.24.13":
-  version "8.24.13"
-  resolved "https://registry.yarnpkg.com/@wdio/cli/-/cli-8.24.13.tgz#ac657c9e8be88d37b6188297c5192e77ad5c0e52"
-  integrity sha512-UG4dvnT6KfnKDsNVn/GeUidi21Pso6N6eu1O5oin9+fP612zpPFrx3/TuYrAfjJb+qmy1QkKq3zX99y+xlp7og==
+"@wdio/cli@8.24.16":
+  version "8.24.16"
+  resolved "https://registry.yarnpkg.com/@wdio/cli/-/cli-8.24.16.tgz#2ef5170f7af9b0e82219c48334f3f20e56022774"
+  integrity sha512-DaXSdkWMlI0pPiTWMJRP5kBGpBrzEJfPdF1VqIw+HBC9vn4OWyZWAOlA3TZ1uKifTJQ3ydaXpclbDW0/x31YhQ==
   dependencies:
     "@types/node" "^20.1.1"
     "@wdio/config" "8.24.12"
