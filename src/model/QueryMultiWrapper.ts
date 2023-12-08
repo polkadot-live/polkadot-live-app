@@ -107,12 +107,6 @@ export class QueryMultiWrapper {
     // Construct the argument for new queryMulti call.
     const queryMultiArg: AnyData = this.buildQueryMultiArg(chainId);
 
-    // Unsubscribe from previous queryMulti if exists.
-    const prevUnsub = this.subscriptions.get(chainId)?.unsub;
-    if (prevUnsub !== null) {
-      prevUnsub();
-    }
-
     // Make the new call to queryMulti.
     console.log('>> QueryMultiWrapper: Call to queryMulti.');
 
@@ -213,9 +207,12 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(task.chainId);
 
     if (entry) {
+      // Unsubscribe to current query multi.
+      if (entry.unsub) entry.unsub();
+
       // Add entry to chain's query multi.
       this.subscriptions.set(task.chainId, {
-        unsub: entry.unsub,
+        unsub: null,
         callEntries: [...entry.callEntries, newEntry],
       });
     }
@@ -227,34 +224,30 @@ export class QueryMultiWrapper {
 
   // Unsubscribe from query multi if chain has no more entries.
   private remove(chainId: ChainID, action: string) {
-    if (this.actionExists(chainId, action)) {
+    if (!this.actionExists(chainId, action)) {
       console.log(">> API call doesn't exist.");
       return;
     }
-
-    // Flag to signal an unsubscription.
-    let unsubFromChain: boolean = false;
 
     // Remove action from query multi map.
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
+      // Unsubscribe from current query multi.
+      if (entry.unsub) entry.unsub();
+
       // Remove task from entry.
       const updated: QueryMultiEntry = {
-        unsub: entry.unsub,
+        unsub: null,
         callEntries: entry.callEntries.filter((e) => e.action !== action),
       };
 
-      // Mark chain for unsubscription.
-      if (updated.callEntries.length === 0) unsubFromChain = true;
-
       // Update chain's query multi entry.
       this.subscriptions.set(chainId, updated);
-    }
 
-    // Handle chain unsubscription if necessary and delete chain from map.
-    if (unsubFromChain) {
-      this.unsubAndRemoveChain(chainId);
+      if (entry.callEntries.length === 0) {
+        this.subscriptions.delete(chainId);
+      }
     }
   }
 
@@ -305,6 +298,9 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
+      // Unsubscribe from pervious query multi.
+      if (entry.unsub) entry.unsub();
+
       this.subscriptions.set(chainId, {
         unsub,
         callEntries: [...entry!.callEntries],

@@ -43,6 +43,10 @@ export class SubscriptionsController {
     this.globalSubscriptionTasks = tasks;
   }
 
+  static subscribeChainTask(task: SubscriptionTask) {
+    this.globalSubscriptions?.subscribeTask(task);
+  }
+
   // Construct and return a Map<ChainID, SubscriptionTask[]> from
   // this.globalSubscriptionTasks.
   static getChainSubscriptionTasks() {

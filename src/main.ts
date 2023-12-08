@@ -11,9 +11,11 @@ import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
-import type { AnyData, AnyJson } from './types/misc';
+import type { AnyData } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
+import type { CachedSubscription } from './types/subscriptions';
+import { SubscriptionsController } from './controller/SubscriptionsController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -142,11 +144,23 @@ app.whenReady().then(() => {
   });
 
   // Subscription handlers.
-  ipcMain.handle('app:subscriptions:task:handle', (_, data: AnyJson) => {
-    console.log(data);
+  ipcMain.handle(
+    'app:subscriptions:task:handle',
+    (_, data: CachedSubscription) => {
+      switch (data.type) {
+        case 'chain': {
+          SubscriptionsController.subscribeChainTask(data.task);
+          return true;
+        }
+        case 'account': {
+          console.log('built account task and return');
+          return true;
+        }
+      }
 
-    return true;
-  });
+      return true;
+    }
+  );
 
   // Window management handlers.
 
