@@ -8,6 +8,7 @@ import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
   CachedSubscriptions,
+  CachedSubscription,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
@@ -20,6 +21,20 @@ export const Permissions = ({
   subscriptionTasks,
   breadcrumb,
 }: AnyJson) => {
+  // Handle a toggle, which sends a subscription task to the back-end.
+  const handleToggle = async (cached: CachedSubscription) => {
+    console.log('type:', cached.type);
+
+    // Invert the task status.
+    cached.task.status = cached.task.status === 'enable' ? 'disable' : 'enable';
+
+    // Send task and its associated data to backend.
+    const result = await window.myAPI.invokeSubscriptionTask(cached);
+
+    console.log('RESULT:');
+    console.log(result);
+  };
+
   // Renders a list of subscription tasks that can be toggled.
   const renderSubscriptionTasks = (cached: CachedSubscriptions) => {
     return (
@@ -43,12 +58,18 @@ export const Permissions = ({
                   type="secondary"
                   isOn={subscription.status === 'enable'}
                   handleToggle={() => {
-                    subscription.status =
-                      subscription.status === 'enable' ? 'disable' : 'enable';
+                    const isAccountTask = cached.type === 'account';
 
-                    console.log('type:', cached.type);
-                    cached.address && console.log('address:', cached.address);
-                    console.log(subscription);
+                    // Send an account or chain subscription task.
+                    if (isAccountTask) {
+                      handleToggle({
+                        type: 'account',
+                        address: cached.address,
+                        task: subscription,
+                      });
+                    } else {
+                      handleToggle({ type: 'chain', task: subscription });
+                    }
                   }}
                 />
               </div>

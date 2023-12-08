@@ -13,6 +13,8 @@ import type { CachedSubscriptions } from '@/types/subscriptions';
 export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
   const [section, setSection] = useState<number>(0);
+
+  // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
 
   // State to store the selected chain of account's subscriptions.

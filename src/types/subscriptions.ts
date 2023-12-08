@@ -21,7 +21,7 @@ export interface ApiCallEntry {
   task: SubscriptionTask; // Cache the associated task
 }
 
-// TODO: May need to store api isntance reference.
+// TODO: May need to store api instance reference.
 export interface QueryMultiEntry {
   callEntries: ApiCallEntry[];
   unsub: AnyFunction | null;
@@ -32,4 +32,11 @@ export interface CachedSubscriptions {
   type: 'chain' | 'account' | '';
   address?: string;
   tasks: SubscriptionTask[];
+}
+
+// A single subscription task and its data to be sent to back-end.
+export interface CachedSubscription {
+  type: 'chain' | 'account' | '';
+  address?: string;
+  task: SubscriptionTask;
 }

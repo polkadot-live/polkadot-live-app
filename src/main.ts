@@ -11,7 +11,7 @@ import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
-import type { AnyData } from './types/misc';
+import type { AnyData, AnyJson } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 
@@ -139,6 +139,13 @@ app.whenReady().then(() => {
   // General quit app handler.
   ipcMain.handle('app:quit', () => {
     app.quit();
+  });
+
+  // Subscription handlers.
+  ipcMain.handle('app:subscriptions:task:handle', (_, data: AnyJson) => {
+    console.log(data);
+
+    return true;
   });
 
   // Window management handlers.
