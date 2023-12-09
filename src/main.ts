@@ -147,14 +147,14 @@ app.whenReady().then(() => {
   // Subscription handlers.
   ipcMain.handle(
     'app:subscriptions:task:handle',
-    (_, data: CachedSubscription) => {
+    async (_, data: CachedSubscription) => {
       switch (data.type) {
         case 'chain': {
-          SubscriptionsController.subscribeChainTask(data.task);
+          await SubscriptionsController.subscribeChainTask(data.task);
           return true;
         }
         case 'account': {
-          AccountsController.subscribeToTaskForAccount(data);
+          await AccountsController.subscribeToTaskForAccount(data);
           return true;
         }
       }

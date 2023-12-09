@@ -96,7 +96,7 @@ export class AccountsController {
     return map;
   }
 
-  static subscribeAccounts() {
+  static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
         // ----------------------
@@ -125,13 +125,15 @@ export class AccountsController {
 
         // Subscribe to account balance changes by default.
         for (const task of tasks) {
-          account.subscribeToTask(task);
+          await account.subscribeToTask(task);
         }
       }
     }
   }
 
-  static subscribeToTaskForAccount(cached: CachedSubscription) {
+  // TODO: Rename to easier readability - make it obvious that
+  // it is called when IPC message received from renderer.
+  static async subscribeToTaskForAccount(cached: CachedSubscription) {
     // TODO: Error if address not provided.
     if (!cached.address) return;
 
@@ -140,7 +142,7 @@ export class AccountsController {
     console.log('SUBSCRIBE TO TASK:');
     console.log(cached.task);
 
-    account && account.subscribeToTask(cached.task);
+    if (account) await account.subscribeToTask(cached.task);
   }
 
   /**

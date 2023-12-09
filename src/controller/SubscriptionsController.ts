@@ -13,7 +13,7 @@ export class SubscriptionsController {
     SubscriptionsController.globalSubscriptions = wrapper;
   }
 
-  static initGlobalSubscriptions() {
+  static async initGlobalSubscriptions() {
     // Instantiate QueryMultiWrapper.
     this.globalSubscriptions = new QueryMultiWrapper();
 
@@ -21,12 +21,14 @@ export class SubscriptionsController {
     const tasks: SubscriptionTask[] = [
       {
         action: 'subscribe:query.timestamp.now',
+        actionArgs: undefined,
         chainId: 'Polkadot' as ChainID,
         status: 'enable' as SubscriptionNextStatus,
         label: 'Timestamps',
       },
       {
         action: 'subscribe:query.babe.currentSlot',
+        actionArgs: undefined,
         chainId: 'Polkadot' as ChainID,
         status: 'enable' as SubscriptionNextStatus,
         label: 'Current Slot',
@@ -35,12 +37,12 @@ export class SubscriptionsController {
 
     // Subscribe to tasks.
     for (const task of tasks) {
-      this.globalSubscriptions.subscribeTask(task);
+      await this.globalSubscriptions.subscribeTask(task);
     }
   }
 
-  static subscribeChainTask(task: SubscriptionTask) {
-    this.globalSubscriptions?.subscribeTask(task);
+  static async subscribeChainTask(task: SubscriptionTask) {
+    await this.globalSubscriptions?.subscribeTask(task);
   }
 
   // Construct and return a Map<ChainID, SubscriptionTask[]> from

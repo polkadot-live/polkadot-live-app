@@ -1,4 +1,3 @@
-import { Subject } from 'rxjs';
 import BigNumber from 'bignumber.js';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ChainID } from '@/types/chains';
@@ -12,65 +11,38 @@ import type {
 import { compareHashes } from '@/utils/CryptoUtils';
 
 export class QueryMultiWrapper {
-  // RxJS Subject receiving tasks.
-  private manager = new Subject<SubscriptionTask>();
-
   // Cache subscriptions associated their chain.
   private subscriptions: Map<ChainID, QueryMultiEntry> = new Map();
 
-  constructor(tasks?: SubscriptionTask[]) {
-    this.initialize();
+  private async next(task: SubscriptionTask) {
+    switch (task.action) {
+      case 'subscribe:query.timestamp.now': {
+        console.log('subscribe timestamp now');
+        await QueryMultiWrapper.subscribe_query_timestamp_now(task, this);
+        break;
+      }
 
-    if (tasks) {
-      for (const task of tasks) {
-        this.subscribeTask(task);
+      case 'subscribe:query.babe.currentSlot': {
+        console.log('subscribe babe currentSlot');
+        await QueryMultiWrapper.subscribe_query_babe_currentSlot(task, this);
+        break;
+      }
+
+      case 'subscribe:query.system.account': {
+        console.log('subscribe account balance');
+        await QueryMultiWrapper.subscribe_query_system_account(task, this);
+        break;
+      }
+
+      default: {
+        throw new Error('Subscription action not found');
       }
     }
   }
 
-  private initialize() {
-    console.log('>> QueryMultiWrapper: initialize');
-
-    this.manager.subscribe({
-      next: async (task) => {
-        switch (task.action) {
-          case 'subscribe:query.timestamp.now': {
-            console.log('subscribe timestamp now');
-            await QueryMultiWrapper.subscribe_query_timestamp_now(task, this);
-            break;
-          }
-
-          case 'subscribe:query.babe.currentSlot': {
-            console.log('subscribe babe currentSlot');
-            await QueryMultiWrapper.subscribe_query_babe_currentSlot(
-              task,
-              this
-            );
-            break;
-          }
-
-          case 'subscribe:query.system.account': {
-            console.log('subscribe account balance');
-            await QueryMultiWrapper.subscribe_query_system_account(task, this);
-            break;
-          }
-
-          default: {
-            throw new Error('Subscription action not found');
-          }
-        }
-      },
-    });
-  }
-
   // Wrapper around calling subject's next method.
-  subscribeTask(task: SubscriptionTask) {
-    this.manager.next(task);
-  }
-
-  // Unsubscribe subject.
-  destroy() {
-    this.manager.unsubscribe();
+  async subscribeTask(task: SubscriptionTask) {
+    await this.next(task);
   }
 
   /*-------------------------------------------------- 
@@ -99,7 +71,7 @@ export class QueryMultiWrapper {
 
   // Dynamically re-call queryMulti based on the query multi map.
   private async build(chainId: ChainID) {
-    if (this.subscriptions.size === 0) {
+    if (!this.subscriptions.get(chainId)) {
       console.log('>> QueryMultiWrapper: queryMulti map is empty.');
       return;
     }
@@ -164,8 +136,8 @@ export class QueryMultiWrapper {
       }
     });
 
-    // Cache the unsub function
-    this.setUnsub(chainId, unsub);
+    // Replace the entry's unsub function
+    this.replaceUnsub(chainId, unsub);
   }
 
   // --------------------------------------------------
@@ -183,7 +155,7 @@ export class QueryMultiWrapper {
     // Construct new ApiCallEntry.
     const newEntry: ApiCallEntry = {
       action: task.action,
-      actionArgs: task.actionArgs,
+      actionArgs: task.actionArgs ? [...task.actionArgs] : undefined,
       apiCall,
       curVal: null,
       task,
@@ -207,13 +179,16 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(task.chainId);
 
     if (entry) {
-      // Unsubscribe to current query multi.
-      if (entry.unsub) entry.unsub();
-
       // Add entry to chain's query multi.
       this.subscriptions.set(task.chainId, {
-        unsub: null,
-        callEntries: [...entry.callEntries, newEntry],
+        unsub: entry.unsub,
+        callEntries: [
+          ...entry.callEntries.map((e: ApiCallEntry) => ({
+            ...e,
+            actionArgs: e.actionArgs ? [...e.actionArgs] : undefined,
+          })),
+          newEntry,
+        ],
       });
     }
   }
@@ -226,26 +201,23 @@ export class QueryMultiWrapper {
   private remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
       console.log(">> API call doesn't exist.");
-      return;
-    }
+    } else {
+      // Remove action from query multi map.
+      const entry = this.subscriptions.get(chainId)!;
 
-    // Remove action from query multi map.
-    const entry = this.subscriptions.get(chainId);
-
-    if (entry) {
       // Unsubscribe from current query multi.
-      if (entry.unsub) entry.unsub();
+      entry.unsub();
 
       // Remove task from entry.
       const updated: QueryMultiEntry = {
-        unsub: null,
+        unsub: entry.unsub,
         callEntries: entry.callEntries.filter((e) => e.action !== action),
       };
 
       // Update chain's query multi entry.
       this.subscriptions.set(chainId, updated);
 
-      if (entry.callEntries.length === 0) {
+      if (updated.callEntries.length === 0) {
         this.subscriptions.delete(chainId);
       }
     }
@@ -294,18 +266,16 @@ export class QueryMultiWrapper {
   // Util: setUnsub
   // --------------------------------------------------
 
-  private setUnsub(chainId: ChainID, unsub: AnyFunction) {
-    const entry = this.subscriptions.get(chainId);
+  private replaceUnsub(chainId: ChainID, newUnsub: AnyFunction) {
+    const entry = this.subscriptions.get(chainId)!;
 
-    if (entry) {
-      // Unsubscribe from pervious query multi.
-      if (entry.unsub) entry.unsub();
+    // Unsubscribe from pervious query multi.
+    if (entry.unsub !== null) entry.unsub();
 
-      this.subscriptions.set(chainId, {
-        unsub,
-        callEntries: [...entry!.callEntries],
-      });
-    }
+    this.subscriptions.set(chainId, {
+      unsub: newUnsub,
+      callEntries: [...entry!.callEntries],
+    });
   }
 
   // --------------------------------------------------
@@ -331,18 +301,6 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: unsubAndRemoveChain
-  // --------------------------------------------------
-
-  private unsubAndRemoveChain(chainId: ChainID) {
-    this.subscriptions.get(chainId)?.unsub();
-
-    if (this.subscriptions.delete(chainId)) {
-      console.log(`QueryMultiWrapper: Unsubscribed for chain ${chainId}.`);
-    }
-  }
-
-  // --------------------------------------------------
   // Util: actionExists
   // --------------------------------------------------
 
@@ -363,18 +321,18 @@ export class QueryMultiWrapper {
   // Util: handleTask
   // --------------------------------------------------
 
-  private handleTask(task: SubscriptionTask, apiCall: AnyFunction) {
+  private async handleTask(task: SubscriptionTask, apiCall: AnyFunction) {
     switch (task.status) {
       // Add this action to the chain's subscriptions.
       case 'enable': {
         this.insert(task, apiCall);
-        this.build(task.chainId);
+        await this.build(task.chainId);
         break;
       }
       // Remove this action from the chain's subscriptions.
       case 'disable': {
         this.remove(task.chainId, task.action);
-        this.build(task.chainId);
+        await this.build(task.chainId);
         break;
       }
     }
@@ -394,7 +352,7 @@ export class QueryMultiWrapper {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
-          wrapper.handleTask(task, instance.api.query.timestamp.now);
+          await wrapper.handleTask(task, instance.api.query.timestamp.now);
         } catch (err) {
           console.error(err);
         }
@@ -412,7 +370,7 @@ export class QueryMultiWrapper {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
-          wrapper.handleTask(task, instance.api.query.babe.currentSlot);
+          await wrapper.handleTask(task, instance.api.query.babe.currentSlot);
         } catch (err) {
           console.error(err);
         }
@@ -430,7 +388,7 @@ export class QueryMultiWrapper {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
-          wrapper.handleTask(task, instance.api.query.system.account);
+          await wrapper.handleTask(task, instance.api.query.system.account);
         } catch (err) {
           console.error(err);
         }

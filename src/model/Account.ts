@@ -71,8 +71,8 @@ export class Account {
     this._queryMulti = new QueryMultiWrapper();
   };
 
-  subscribeToTask = (task: SubscriptionTask) => {
-    this._queryMulti?.subscribeTask(task);
+  subscribeToTask = async (task: SubscriptionTask) => {
+    await this._queryMulti?.subscribeTask(task);
   };
 
   getSubscriptionTasks = () => {

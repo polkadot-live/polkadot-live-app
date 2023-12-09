@@ -62,13 +62,13 @@ const initialize = async () => {
   Discover.bootstrapEvents(chainIds);
 
   // Now API instances are instantiated, subscribe accounts to API.
-  AccountsController.subscribeAccounts();
+  await AccountsController.subscribeAccounts();
 
   /*-------------------------------------
    SubscriptionsController Initialization
    ------------------------------------*/
 
-  SubscriptionsController.initGlobalSubscriptions();
+  await SubscriptionsController.initGlobalSubscriptions();
 
   /*-------------------------------------
    BlockStream Specific Initialization
@@ -106,6 +106,7 @@ const importNewAddress = async ({
     await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
 
+  /* START: OLD SUBSCRIPTION MODEL ------------------------------- */
   // Check any pending rewards.
   Discover.bootstrapEventsForAccount(chain, account);
 
@@ -120,6 +121,7 @@ const importNewAddress = async ({
 
   // Add Account to a `BlockStream` service.
   BlockStreamsController.addAccountToService(chain, address);
+  /* END: OLD SUBSCRIPTION MODEL --------------------------------- */
 
   // Show notification.
   NotificationsController.accountImported(name);
