@@ -109,9 +109,6 @@ export class AccountsController {
         // New subscription model
         // ----------------------
 
-        // Instantiate account's query multi wrapper.
-        account.initSubscriptionMachinery();
-
         // TODO: Replace with store.get('subscription_<account_address>')
         const tasks: SubscriptionTask[] = [
           {
@@ -138,9 +135,6 @@ export class AccountsController {
     if (!cached.address) return;
 
     const account = this.get(cached.task.chainId, cached.address);
-
-    console.log('SUBSCRIBE TO TASK:');
-    console.log(cached.task);
 
     if (account) await account.subscribeToTask(cached.task);
   }

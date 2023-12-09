@@ -44,7 +44,15 @@ export const SubscriptionsProvider = ({
   const setAccountSubscriptions = (
     subscriptions: Map<string, SubscriptionTask[]>
   ) => {
-    setAccountSubscriptionsState(subscriptions);
+    setAccountSubscriptionsState((prev) => {
+      prev.clear();
+
+      for (const [address, tasks] of subscriptions.entries()) {
+        prev.set(address, tasks);
+      }
+
+      return prev;
+    });
   };
 
   // Get subscription tasks for a specific account.

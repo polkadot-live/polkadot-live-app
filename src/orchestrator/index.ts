@@ -1,9 +1,9 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Subject } from 'rxjs';
 import {
   removeUnusedApi,
+  reportAccountSubscriptions,
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
@@ -20,20 +20,22 @@ import type {
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
+import type { ChainID } from '@/types/chains';
+import type { SubscriptionNextStatus } from '@/types/subscriptions';
 
 // Initialise RxJS subject to orchestrate app events.
-export const orchestrator = new Subject<OrchestratorArg>();
+//export const orchestrator = new Subject<OrchestratorArg>();
 
-orchestrator.subscribe({
-  next: async ({ task, data = {} }) => {
+export class Orchestrator {
+  static async next({ task, data = {} }: OrchestratorArg) {
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
       case 'initialize':
-        initialize();
+        await initialize();
         break;
       // Handle new account import.
       case 'app:account:import':
-        importNewAddress(data);
+        await importNewAddress(data);
         break;
       // Handle remove imported account.
       case 'app:account:remove':
@@ -42,8 +44,8 @@ orchestrator.subscribe({
       default:
         break;
     }
-  },
-});
+  }
+}
 
 /**
  * @name initialize
@@ -105,6 +107,18 @@ const importNewAddress = async ({
   if (!APIsController.chainExists(chain)) {
     await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
+
+  // Subscribe to transfer notifications.
+  await account.subscribeToTask({
+    action: 'subscribe:query.system.account',
+    actionArgs: [account.address],
+    chainId: 'Polkadot' as ChainID,
+    status: 'enable' as SubscriptionNextStatus,
+    label: 'Transfers',
+  });
+
+  // Report account subscriptions to renderer.
+  reportAccountSubscriptions('menu');
 
   /* START: OLD SUBSCRIPTION MODEL ------------------------------- */
   // Check any pending rewards.

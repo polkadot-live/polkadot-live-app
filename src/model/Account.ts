@@ -65,11 +65,8 @@ export class Account {
     this._source = source;
     this.address = address;
     this.name = name;
-  }
-
-  initSubscriptionMachinery = () => {
     this._queryMulti = new QueryMultiWrapper();
-  };
+  }
 
   subscribeToTask = async (task: SubscriptionTask) => {
     await this._queryMulti?.subscribeTask(task);
