@@ -18,9 +18,9 @@ import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
 import type {
   CachedSubscription,
-  SubscriptionNextStatus,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import { accountTasks as allAccountTasks } from '@/config/accountTasks';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -50,7 +50,6 @@ export class AccountsController {
     }
 
     // Parse serialized data into a map of StoredAccounts.
-    // NOTE: Cannot directly deserialize to Account instances.
     const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
     const importedAccounts: ImportedAccounts = new Map();
 
@@ -80,21 +79,63 @@ export class AccountsController {
     this.accounts = importedAccounts;
   }
 
+  /*------------------------------------------------------------
+   Return a map of all correctly configured tasks possible for
+   an account. Active subscriptions need to be included in the
+   array.
+
+   // TODO: Put in subscriptions controller.
+   ------------------------------------------------------------*/
+
   static getAccountSubscriptions() {
     const map: Map<string, SubscriptionTask[]> = new Map();
 
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const tasks = account.getSubscriptionTasks();
+        const activeTasks = account.getSubscriptionTasks();
 
-        if (tasks) {
-          map.set(account.address, tasks);
-        }
+        // Tasks need to be populated with their correct arguments
+        // before being sent to the renderer.
+        const allTasksWithArgs = allAccountTasks.map((t) => {
+          switch (t.action) {
+            case 'subscribe:query.system.account': {
+              return {
+                ...t,
+                actionArgs: [account.address],
+              };
+            }
+            default: {
+              return t;
+            }
+          }
+        });
+
+        // Merge inactive and active tasks.
+        const allTasks = activeTasks
+          ? allTasksWithArgs.map((t) => {
+              for (const active of activeTasks) {
+                if (
+                  active.action === t.action &&
+                  active.chainId === t.chainId
+                ) {
+                  return active;
+                }
+              }
+              return t;
+            })
+          : allTasksWithArgs;
+
+        map.set(account.address, allTasks);
       }
     }
 
     return map;
   }
+
+  /*------------------------------------------------------------
+   Fetched persisted tasks from the store and re-subscribe to
+   them.
+   ------------------------------------------------------------*/
 
   static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
@@ -109,27 +150,22 @@ export class AccountsController {
         // New subscription model
         // ----------------------
 
-        // TODO: Replace with store.get('subscription_<account_address>')
-        const tasks: SubscriptionTask[] = [
-          {
-            action: 'subscribe:query.system.account',
-            actionArgs: [account.address],
-            chainId: 'Polkadot' as ChainID,
-            status: 'enable' as SubscriptionNextStatus,
-            label: 'Transfers',
-          },
-        ];
-
-        // Subscribe to account balance changes by default.
-        for (const task of tasks) {
-          await account.subscribeToTask(task);
-        }
+        // TODO: Call store.get('subscription_<account_address>')
+        // and subscribe to persisted subscriptions:
+        //
+        //for (const task of tasks) {
+        //  await account.subscribeToTask(task);
+        //}
       }
     }
   }
 
-  // TODO: Rename to easier readability - make it obvious that
-  // it is called when IPC message received from renderer.
+  /*------------------------------------------------------------
+   Subscribe to a task received from the renderer.
+   TODO: Rename to easier readability - make it obvious that
+   it is called when IPC message received from renderer.
+   ------------------------------------------------------------*/
+
   static async subscribeToTaskForAccount(cached: CachedSubscription) {
     // TODO: Error if address not provided.
     if (!cached.address) return;
