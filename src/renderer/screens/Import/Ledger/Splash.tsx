@@ -5,7 +5,7 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert } from '@polkadot-cloud/react';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { Header } from '@app/library/Header';
-import LogoSVG from '@app/svg/ledgerLogo.svg?react';
+import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';
@@ -17,7 +17,7 @@ export const Splash = ({ statusCodes, setSection }: SplashProps) => {
       <BodyInterfaceWrapper $maxHeight>
         <SplashWrapper>
           <div className="icon">
-            <LogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />
+            <LedgerLogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />
           </div>
 
           <div className="content">
