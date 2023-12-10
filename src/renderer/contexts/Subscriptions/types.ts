@@ -10,6 +10,7 @@ export interface SubscriptionsContextInterface {
   renderedSubscriptions: WrappedSubscriptionTasks;
   setRenderedSubscriptions: (a: WrappedSubscriptionTasks) => void;
   updateRenderedSubscriptions: (a: SubscriptionTask) => void;
+  getRenderedSubscriptions: () => WrappedSubscriptionTasks;
   setChainSubscriptions: (a: Map<ChainID, SubscriptionTask[]>) => void;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
   setAccountSubscriptions: (a: Map<string, SubscriptionTask[]>) => void;

@@ -3,7 +3,6 @@
 
 import type { AnyJson } from '@/types/misc';
 import { useState } from 'react';
-import { NoAccounts } from '../NoAccounts';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
@@ -35,20 +34,20 @@ export const Manage = ({ addresses }: AnyJson) => {
         }}
       >
         <div>
-          {addresses.length ? (
-            <Wrapper className="scrollable">
-              <Accounts
-                setSection={setSection}
-                setBreadcrumb={setBreadcrumb}
-                addresses={addresses}
-              />
-            </Wrapper>
-          ) : (
-            <NoAccounts />
-          )}
+          <Wrapper className="scrollable">
+            <Accounts
+              setSection={setSection}
+              setBreadcrumb={setBreadcrumb}
+              addresses={addresses}
+            />
+          </Wrapper>
         </div>
         <div>
-          <Permissions setSection={setSection} breadcrumb={breadcrumb} />
+          <Permissions
+            setSection={setSection}
+            section={section}
+            breadcrumb={breadcrumb}
+          />
         </div>
       </CarouselWrapper>
     </>

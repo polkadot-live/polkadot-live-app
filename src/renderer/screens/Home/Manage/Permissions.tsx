@@ -15,10 +15,17 @@ import {
   BreadcrumbsWrapper,
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
+import { useEffect } from 'react';
 
-export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
+export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask, updateRenderedSubscriptions, renderedSubscriptions } =
     useSubscriptions();
+
+  useEffect(() => {
+    if (section === 1 && renderedSubscriptions.type == '') {
+      setSection(0);
+    }
+  }, [renderedSubscriptions]);
 
   /* 
    Handle a toggle, which sends a subscription task to the back-end

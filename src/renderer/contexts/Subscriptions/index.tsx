@@ -90,6 +90,10 @@ export const SubscriptionsProvider = ({
     setRenderedSubscriptionsState({ ...wrapped });
   };
 
+  const getRenderedSubscriptions = () => {
+    return renderedSubscriptionsState;
+  };
+
   // Update state of a task.
   // TODO: Remove `!` non-null assertions.
   const updateTask = (
@@ -128,6 +132,7 @@ export const SubscriptionsProvider = ({
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
         renderedSubscriptions: renderedSubscriptionsState,
+        getRenderedSubscriptions,
         setRenderedSubscriptions,
         updateRenderedSubscriptions,
         setChainSubscriptions,

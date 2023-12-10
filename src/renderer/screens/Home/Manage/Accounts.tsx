@@ -1,6 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { NoAccounts } from '../NoAccounts';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText } from '@polkadot-cloud/react';
 import { Identicon } from '@app/library/Identicon';
@@ -54,6 +55,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
       address,
       tasks: copy,
     } as WrappedSubscriptionTasks);
+
     setBreadcrumb(accountName);
     setSection(1);
   };
@@ -97,44 +99,50 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
         ))}
       </div>
 
-      <HeadingWrapper>
-        <h5 style={{ marginBottom: '0.5rem' }}>
-          <PolkadotIcon className="icon" />
-          Polkadot Accounts
-        </h5>
-      </HeadingWrapper>
-      <div style={{ padding: '0 0.75rem' }}>
-        {addresses
-          .filter(({ type }: FlattenedAccountData) => type === 0)
-          .map(({ address, name }: FlattenedAccountData, i: number) => (
-            <AccountWrapper
-              whileHover={{ scale: 1.01 }}
-              key={`manage_account_${i}`}
-            >
-              <button
-                type="button"
-                onClick={() => handleClickAccount(name, address)}
-              ></button>
-              <div className="inner">
-                <div>
-                  <span className="icon">
-                    <Identicon value={address} size={26} />
-                  </span>
-                  <div className="content">
-                    <h3>{name}</h3>
+      {addresses.length ? (
+        <>
+          <HeadingWrapper>
+            <h5 style={{ marginBottom: '0.5rem' }}>
+              <PolkadotIcon className="icon" />
+              Polkadot Accounts
+            </h5>
+          </HeadingWrapper>
+          <div style={{ padding: '0 0.75rem' }}>
+            {addresses
+              .filter(({ type }: FlattenedAccountData) => type === 0)
+              .map(({ address, name }: FlattenedAccountData, i: number) => (
+                <AccountWrapper
+                  whileHover={{ scale: 1.01 }}
+                  key={`manage_account_${i}`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleClickAccount(name, address)}
+                  ></button>
+                  <div className="inner">
+                    <div>
+                      <span className="icon">
+                        <Identicon value={address} size={26} />
+                      </span>
+                      <div className="content">
+                        <h3>{name}</h3>
+                      </div>
+                    </div>
+                    <div>
+                      <ButtonText
+                        text=""
+                        iconRight={faChevronRight}
+                        iconTransform="shrink-3"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <ButtonText
-                    text=""
-                    iconRight={faChevronRight}
-                    iconTransform="shrink-3"
-                  />
-                </div>
-              </div>
-            </AccountWrapper>
-          ))}
-      </div>
+                </AccountWrapper>
+              ))}
+          </div>
+        </>
+      ) : (
+        <NoAccounts />
+      )}
     </AccountsWrapper>
   );
 };
