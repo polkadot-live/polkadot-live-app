@@ -20,9 +20,7 @@ import type {
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
 
-// Initialise RxJS subject to orchestrate app events.
-//export const orchestrator = new Subject<OrchestratorArg>();
-
+// Orchestrate class to perform high-level app tasks.
 export class Orchestrator {
   static async next({ task, data = {} }: OrchestratorArg) {
     switch (task) {
@@ -67,7 +65,7 @@ const initialize = async () => {
    SubscriptionsController Initialization
    ------------------------------------*/
 
-  await SubscriptionsController.initGlobalSubscriptions();
+  await SubscriptionsController.initChainSubscriptions();
 
   /*-------------------------------------
    BlockStream Specific Initialization

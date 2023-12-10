@@ -1,14 +1,14 @@
 import type { ChainID } from '@/types/chains';
 import type {
-  CachedSubscriptions,
+  WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
 
 export interface SubscriptionsContextInterface {
   chainSubscriptions: Map<ChainID, SubscriptionTask[]>;
   accountSubscriptions: Map<string, SubscriptionTask[]>;
-  renderedSubscriptions: CachedSubscriptions;
-  setRenderedSubscriptions: (a: CachedSubscriptions) => void;
+  renderedSubscriptions: WrappedSubscriptionTasks;
+  setRenderedSubscriptions: (a: WrappedSubscriptionTasks) => void;
   updateRenderedSubscriptions: (a: SubscriptionTask) => void;
   setChainSubscriptions: (a: Map<ChainID, SubscriptionTask[]>) => void;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];

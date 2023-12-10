@@ -12,13 +12,12 @@ export interface SubscriptionTask {
   label: string;
 }
 
-// TODO: Refactor (action + actionArgs also in task)
+// Stores an actual Polkadot JS API function, it's current
+// cached value, and associated subscription task.
 export interface ApiCallEntry {
-  action: string;
-  actionArgs?: string[];
   apiCall: AnyFunction;
   curVal: AnyData | null;
-  task: SubscriptionTask; // Cache the associated task
+  task: SubscriptionTask;
 }
 
 // TODO: May need to store api instance reference.
@@ -27,15 +26,18 @@ export interface QueryMultiEntry {
   unsub: AnyFunction | null;
 }
 
-// Used in React app.
-export interface CachedSubscriptions {
+// Wraps an array of subscription tasks along with their
+// associated type (chain or account) and possible account
+// address.
+export interface WrappedSubscriptionTasks {
   type: 'chain' | 'account' | '';
   address?: string;
   tasks: SubscriptionTask[];
 }
 
-// A single subscription task and its data to be sent to back-end.
-export interface CachedSubscription {
+// Wraps a single subscription task along with its associated
+// type (chain or account) and possible account address.
+export interface WrappedSubscriptionTask {
   type: 'chain' | 'account' | '';
   address?: string;
   task: SubscriptionTask;

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
 import type { SubscriptionsContextInterface } from './types';
 import type {
-  CachedSubscriptions,
+  WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
 import type { ChainID } from '@/types/chains';
@@ -36,7 +36,7 @@ export const SubscriptionsProvider = ({
 
   // Subscription tasks being rendered under the Manage tab.
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
-    useState<CachedSubscriptions>({ type: '', tasks: [] });
+    useState<WrappedSubscriptionTasks>({ type: '', tasks: [] });
 
   /*------------------------------------------------------------ 
    Functions
@@ -86,8 +86,8 @@ export const SubscriptionsProvider = ({
   };
 
   // Set rendered subscriptions.
-  const setRenderedSubscriptions = (cached: CachedSubscriptions) => {
-    setRenderedSubscriptionsState({ ...cached });
+  const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
+    setRenderedSubscriptionsState({ ...wrapped });
   };
 
   // Update state of a task.

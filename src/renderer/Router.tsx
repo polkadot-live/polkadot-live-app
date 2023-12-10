@@ -22,13 +22,19 @@ export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
   const { setAccountStateKey } = useAccountState();
-  const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
+  const {
+    setChainSubscriptions,
+    setAccountSubscriptions,
+    setRenderedSubscriptions,
+  } = useSubscriptions();
 
   useEffect(() => {
     // handle initial responses to populate state from store.
     window.myAPI.reportImportedAccounts(
       (_: Event, accounts: FlattenedAccounts) => {
         setAddresses(accounts);
+
+        setRenderedSubscriptions({ type: '', tasks: [] });
       }
     );
     window.myAPI.reportAccountState(

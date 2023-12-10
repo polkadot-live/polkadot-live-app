@@ -50,7 +50,9 @@ export const reportImportedAccounts = (id: string) => {
 
 // Report subscription tasks for all accounts to renderer.
 export const reportAccountSubscriptions = (id: string) => {
-  const map = AccountsController.getAccountSubscriptions();
+  const map = SubscriptionsController.getAccountSubscriptions(
+    AccountsController.accounts
+  );
 
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:subscriptions:accounts',
@@ -60,7 +62,7 @@ export const reportAccountSubscriptions = (id: string) => {
 
 // Report chain subscription tasks to renderer.
 export const reportChainSubscriptions = (id: string) => {
-  const map = SubscriptionsController.getChainSubscriptionTasks();
+  const map = SubscriptionsController.getChainSubscriptions();
 
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:subscriptions:chains',

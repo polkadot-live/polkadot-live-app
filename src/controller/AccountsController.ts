@@ -16,11 +16,7 @@ import type {
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
-import type {
-  CachedSubscription,
-  SubscriptionTask,
-} from '@/types/subscriptions';
-import { accountTasks as allAccountTasks } from '@/config/accountTasks';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -80,59 +76,6 @@ export class AccountsController {
   }
 
   /*------------------------------------------------------------
-   Return a map of all correctly configured tasks possible for
-   an account. Active subscriptions need to be included in the
-   array.
-
-   // TODO: Put in subscriptions controller.
-   ------------------------------------------------------------*/
-
-  static getAccountSubscriptions() {
-    const map: Map<string, SubscriptionTask[]> = new Map();
-
-    for (const accounts of this.accounts.values()) {
-      for (const account of accounts) {
-        const activeTasks = account.getSubscriptionTasks();
-
-        // Tasks need to be populated with their correct arguments
-        // before being sent to the renderer.
-        const allTasksWithArgs = allAccountTasks.map((t) => {
-          switch (t.action) {
-            case 'subscribe:query.system.account': {
-              return {
-                ...t,
-                actionArgs: [account.address],
-              };
-            }
-            default: {
-              return t;
-            }
-          }
-        });
-
-        // Merge inactive and active tasks.
-        const allTasks = activeTasks
-          ? allTasksWithArgs.map((t) => {
-              for (const active of activeTasks) {
-                if (
-                  active.action === t.action &&
-                  active.chainId === t.chainId
-                ) {
-                  return active;
-                }
-              }
-              return t;
-            })
-          : allTasksWithArgs;
-
-        map.set(account.address, allTasks);
-      }
-    }
-
-    return map;
-  }
-
-  /*------------------------------------------------------------
    Fetched persisted tasks from the store and re-subscribe to
    them.
    ------------------------------------------------------------*/
@@ -158,21 +101,6 @@ export class AccountsController {
         //}
       }
     }
-  }
-
-  /*------------------------------------------------------------
-   Subscribe to a task received from the renderer.
-   TODO: Rename to easier readability - make it obvious that
-   it is called when IPC message received from renderer.
-   ------------------------------------------------------------*/
-
-  static async subscribeToTaskForAccount(cached: CachedSubscription) {
-    // TODO: Error if address not provided.
-    if (!cached.address) return;
-
-    const account = this.get(cached.task.chainId, cached.address);
-
-    if (account) await account.subscribeToTask(cached.task);
   }
 
   /*------------------------------------------------------------

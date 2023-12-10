@@ -11,7 +11,7 @@ import type { AnyJson } from '@/types/misc';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import type { ChainID } from '@/types/chains';
 import type {
-  CachedSubscriptions,
+  WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
 
@@ -39,7 +39,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
     setRenderedSubscriptions({
       type: 'chain',
       tasks: copy,
-    } as CachedSubscriptions);
+    } as WrappedSubscriptionTasks);
     setBreadcrumb(chain);
     setSection(1);
   };
@@ -53,7 +53,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
       type: 'account',
       address,
       tasks: copy,
-    } as CachedSubscriptions);
+    } as WrappedSubscriptionTasks);
     setBreadcrumb(accountName);
     setSection(1);
   };

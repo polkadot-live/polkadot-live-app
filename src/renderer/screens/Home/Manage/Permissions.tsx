@@ -7,7 +7,7 @@ import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
-  CachedSubscription,
+  WrappedSubscriptionTask,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
@@ -25,7 +25,7 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
    and updates the front-end subscriptions state. 
    */
 
-  const handleToggle = async (cached: CachedSubscription) => {
+  const handleToggle = async (cached: WrappedSubscriptionTask) => {
     // Invert the task status.
     const newStatus = cached.task.status === 'enable' ? 'disable' : 'enable';
 
@@ -39,8 +39,8 @@ export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
       status: newStatus,
     };
 
-    // Copy cached subscription and new task.
-    const newCached: CachedSubscription = {
+    // Copy the wrapped subscription and set the new task.
+    const newCached: WrappedSubscriptionTask = {
       ...cached,
       address: cached.address ? cached.address : undefined,
       task: {

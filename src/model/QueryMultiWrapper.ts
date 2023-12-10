@@ -94,16 +94,16 @@ export class QueryMultiWrapper {
       const { callEntries } = this.subscriptions.get(chainId)!;
 
       for (const [index, entry] of callEntries.entries()) {
-        const { action } = entry;
+        const { action } = entry.task;
 
         switch (action) {
           case 'subscribe:query.timestamp.now': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getActionCallbackVal(action, chainId);
+            const curVal = this.getChainTaskCurrentVal(action, chainId);
 
             if (compareHashes(newVal, curVal)) break;
 
-            this.setActionCallbackVal(entry, newVal, chainId);
+            this.setChainTaskVal(entry, newVal, chainId);
 
             const now = new Date(data[index] * 1000).toDateString();
             console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
@@ -112,11 +112,11 @@ export class QueryMultiWrapper {
           }
           case 'subscribe:query.babe.currentSlot': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getActionCallbackVal(action, chainId);
+            const curVal = this.getChainTaskCurrentVal(action, chainId);
 
             if (!data[index] || compareHashes(newVal, curVal)) break;
 
-            this.setActionCallbackVal(entry, newVal, chainId);
+            this.setChainTaskVal(entry, newVal, chainId);
             console.log(`Current Sot: ${newVal} (index: ${index})`);
 
             break;
@@ -154,11 +154,12 @@ export class QueryMultiWrapper {
 
     // Construct new ApiCallEntry.
     const newEntry: ApiCallEntry = {
-      action: task.action,
-      actionArgs: task.actionArgs ? [...task.actionArgs] : undefined,
       apiCall,
       curVal: null,
-      task,
+      task: {
+        ...task,
+        actionArgs: task.actionArgs ? [...task.actionArgs] : undefined,
+      },
     };
 
     // Insert new key if chain isn't cached yet.
@@ -185,7 +186,7 @@ export class QueryMultiWrapper {
         callEntries: [
           ...entry.callEntries.map((e: ApiCallEntry) => ({
             ...e,
-            actionArgs: e.actionArgs ? [...e.actionArgs] : undefined,
+            actionArgs: e.task.actionArgs ? [...e.task.actionArgs] : undefined,
           })),
           newEntry,
         ],
@@ -211,7 +212,7 @@ export class QueryMultiWrapper {
       // Remove task from entry.
       const updated: QueryMultiEntry = {
         unsub: entry.unsub,
-        callEntries: entry.callEntries.filter((e) => e.action !== action),
+        callEntries: entry.callEntries.filter((e) => e.task.action !== action),
       };
 
       // Update chain's query multi entry.
@@ -227,7 +228,7 @@ export class QueryMultiWrapper {
   // Util: setActionCallbackVal
   // --------------------------------------------------
 
-  private setActionCallbackVal(
+  private setChainTaskVal(
     entry: ApiCallEntry,
     newVal: AnyData,
     chainId: ChainID
@@ -236,7 +237,9 @@ export class QueryMultiWrapper {
 
     if (retrieved) {
       const newEntries = retrieved.callEntries.map((e) => {
-        return e.action === entry.action ? { ...e, curVal: newVal } : e;
+        return e.task.action === entry.task.action
+          ? { ...e, curVal: newVal }
+          : e;
       });
 
       this.subscriptions.set(chainId, {
@@ -250,11 +253,11 @@ export class QueryMultiWrapper {
   // Util: getActionCallbackVal
   // --------------------------------------------------
 
-  private getActionCallbackVal(action: string, chainId: ChainID) {
+  private getChainTaskCurrentVal(action: string, chainId: ChainID) {
     const entry = this.subscriptions.get(chainId);
     if (entry) {
-      for (const { action: a, curVal } of entry.callEntries) {
-        if (a === action) {
+      for (const { task: t, curVal } of entry.callEntries) {
+        if (t.action === action) {
           return curVal;
         }
       }
@@ -288,10 +291,10 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
-      for (const { apiCall, actionArgs } of entry.callEntries) {
+      for (const { apiCall, task } of entry.callEntries) {
         let callArray = [apiCall];
 
-        if (actionArgs) callArray = callArray.concat(actionArgs);
+        if (task.actionArgs) callArray = callArray.concat(task.actionArgs);
 
         argument.push(callArray);
       }
@@ -309,8 +312,8 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
-      for (const metadata of entry.callEntries) {
-        if (metadata.action === action) return true;
+      for (const e of entry.callEntries) {
+        if (e.task.action === action) return true;
       }
     }
 
