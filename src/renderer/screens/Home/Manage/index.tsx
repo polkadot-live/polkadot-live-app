@@ -8,7 +8,6 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
-import type { CachedSubscriptions } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
@@ -16,10 +15,6 @@ export const Manage = ({ addresses }: AnyJson) => {
 
   // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
-
-  // State to store the selected chain of account's subscriptions.
-  const [subscriptionTasks, setSubscriptionTasks] =
-    useState<CachedSubscriptions>({ type: '', tasks: [] });
 
   return (
     <>
@@ -45,7 +40,6 @@ export const Manage = ({ addresses }: AnyJson) => {
               <Accounts
                 setSection={setSection}
                 setBreadcrumb={setBreadcrumb}
-                setSubscriptionTasks={setSubscriptionTasks}
                 addresses={addresses}
               />
             </Wrapper>
@@ -54,12 +48,7 @@ export const Manage = ({ addresses }: AnyJson) => {
           )}
         </div>
         <div>
-          <Permissions
-            setSection={setSection}
-            breadcrumb={breadcrumb}
-            subscriptionTasks={subscriptionTasks}
-            setSubscriptionTasks={setSubscriptionTasks}
-          />
+          <Permissions setSection={setSection} breadcrumb={breadcrumb} />
         </div>
       </CarouselWrapper>
     </>

@@ -11,7 +11,6 @@ import { ChainList } from '@/config/chains';
 import { Discover } from '@/controller/Discover';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
-import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import * as AccountUtils from '@/utils/AccountUtils';
@@ -20,8 +19,6 @@ import type {
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionNextStatus } from '@/types/subscriptions';
 
 // Initialise RxJS subject to orchestrate app events.
 //export const orchestrator = new Subject<OrchestratorArg>();
@@ -39,7 +36,7 @@ export class Orchestrator {
         break;
       // Handle remove imported account.
       case 'app:account:remove':
-        removeImportedAccount(data);
+        await removeImportedAccount(data);
         break;
       default:
         break;
@@ -108,15 +105,6 @@ const importNewAddress = async ({
     await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
 
-  // Subscribe to transfer notifications.
-  await account.subscribeToTask({
-    action: 'subscribe:query.system.account',
-    actionArgs: [account.address],
-    chainId: 'Polkadot' as ChainID,
-    status: 'enable' as SubscriptionNextStatus,
-    label: 'Transfers',
-  });
-
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
 
@@ -134,7 +122,7 @@ const importNewAddress = async ({
   AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
-  BlockStreamsController.addAccountToService(chain, address);
+  //BlockStreamsController.addAccountToService(chain, address);
   /* END: OLD SUBSCRIPTION MODEL --------------------------------- */
 
   // Show notification.
@@ -148,18 +136,29 @@ const importNewAddress = async ({
  * @name removeImportedAccount
  * @summary Removes an imported account.
  */
-const removeImportedAccount = ({
+const removeImportedAccount = async ({
   chain,
   address,
 }: RemoveImportedAccountArg) => {
+  // Retrieve the account.
+  const account = AccountsController.get(chain, address);
+
+  if (!account) return;
+
+  // Unsubscribe from all active tasks.
+  await AccountsController.removeAllSubscriptions(account);
+
   // Remove address from store.
   AccountsController.remove(chain, address);
+
+  // Report account subscriptions to renderer.
+  reportAccountSubscriptions('menu');
 
   // Remove chain's API instance if no more accounts require it.
   removeUnusedApi(chain);
 
   // Remove config from `Subscriptions`.
-  BlockStreamsController.removeAccountFromService(chain, address);
+  //BlockStreamsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

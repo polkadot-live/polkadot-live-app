@@ -175,6 +175,29 @@ export class AccountsController {
     if (account) await account.subscribeToTask(cached.task);
   }
 
+  /*------------------------------------------------------------
+   Unsubscribe from all active tasks. 
+   Called when an imported account is removed.
+   ------------------------------------------------------------*/
+
+  static async removeAllSubscriptions(account: Account) {
+    // Get all active tasks and set their status to `disable`.
+    const tasks = account.getSubscriptionTasks()?.map(
+      (task) =>
+        ({
+          ...task,
+          status: 'disable',
+        }) as SubscriptionTask
+    );
+
+    // Send tasks to query multi wrapper for removal.
+    if (tasks) {
+      for (const task of tasks) {
+        await account.subscribeToTask(task);
+      }
+    }
+  }
+
   /**
    * @name get
    * @summary Gets an account from the `accounts` property.
@@ -264,7 +287,7 @@ export class AccountsController {
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} address - the account address.
    */
-  static remove = async (chain: ChainID, address: string) => {
+  static remove = (chain: ChainID, address: string) => {
     if (this.accountExists(chain, address)) {
       // Remove account from map.
       this.setAccounts(this.spliceAccount(address));

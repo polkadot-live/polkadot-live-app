@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
 import type { SubscriptionsContextInterface } from './types';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type {
+  CachedSubscriptions,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 import type { ChainID } from '@/types/chains';
 import * as defaults from './defaults';
 
@@ -17,6 +20,10 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  /*------------------------------------------------------------ 
+   State
+   ------------------------------------------------------------*/
+
   // Store received chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
@@ -26,6 +33,14 @@ export const SubscriptionsProvider = ({
   const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
     Map<string, SubscriptionTask[]>
   >(new Map());
+
+  // Subscription tasks being rendered under the Manage tab.
+  const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
+    useState<CachedSubscriptions>({ type: '', tasks: [] });
+
+  /*------------------------------------------------------------ 
+   Functions
+   ------------------------------------------------------------*/
 
   // Set chain subscription tasks.
   const setChainSubscriptions = (
@@ -44,6 +59,7 @@ export const SubscriptionsProvider = ({
   const setAccountSubscriptions = (
     subscriptions: Map<string, SubscriptionTask[]>
   ) => {
+    // Set new state for imported accounts and their subscriptions.
     setAccountSubscriptionsState((prev) => {
       prev.clear();
 
@@ -59,6 +75,19 @@ export const SubscriptionsProvider = ({
   const getAccountSubscriptions = (address: string) => {
     const subscriptions = accountSubscriptionsState.get(address);
     return subscriptions ? subscriptions : [];
+  };
+
+  // Update a task in the the rendered subscription tasks.
+  const updateRenderedSubscriptions = (task: SubscriptionTask) => {
+    setRenderedSubscriptionsState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((t) => (t.action === task.action ? task : t)),
+    }));
+  };
+
+  // Set rendered subscriptions.
+  const setRenderedSubscriptions = (cached: CachedSubscriptions) => {
+    setRenderedSubscriptionsState({ ...cached });
   };
 
   // Update state of a task.
@@ -89,11 +118,18 @@ export const SubscriptionsProvider = ({
     }
   };
 
+  /*------------------------------------------------------------ 
+   Provider
+   ------------------------------------------------------------*/
+
   return (
     <SubscriptionsContext.Provider
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
+        renderedSubscriptions: renderedSubscriptionsState,
+        setRenderedSubscriptions,
+        updateRenderedSubscriptions,
         setChainSubscriptions,
         getChainSubscriptions,
         setAccountSubscriptions,

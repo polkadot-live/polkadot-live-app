@@ -8,7 +8,6 @@ import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
   CachedSubscription,
-  CachedSubscriptions,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
@@ -17,13 +16,9 @@ import {
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 
-export const Permissions = ({
-  setSection,
-  subscriptionTasks,
-  setSubscriptionTasks,
-  breadcrumb,
-}: AnyJson) => {
-  const { updateTask } = useSubscriptions();
+export const Permissions = ({ setSection, breadcrumb }: AnyJson) => {
+  const { updateTask, updateRenderedSubscriptions, renderedSubscriptions } =
+    useSubscriptions();
 
   /* 
    Handle a toggle, which sends a subscription task to the back-end
@@ -65,12 +60,7 @@ export const Permissions = ({
         : updateTask(cached.type, newTask);
 
       // Update rendererd subscription tasks state.
-      setSubscriptionTasks((prev: CachedSubscriptions) => ({
-        ...newCached,
-        tasks: prev.tasks.map((t) =>
-          t.action === newTask.action ? newTask : t
-        ),
-      }));
+      updateRenderedSubscriptions(newTask);
     }
   };
 
@@ -78,7 +68,7 @@ export const Permissions = ({
     type: string,
     action: string,
     chainId: string,
-    address: string
+    address: string | undefined
   ) => {
     return address
       ? `${type}_${chainId}_${address}_${action}`
@@ -87,7 +77,7 @@ export const Permissions = ({
 
   // Renders a list of subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => {
-    const { type, tasks, address } = subscriptionTasks;
+    const { type, tasks, address } = renderedSubscriptions;
 
     return (
       <>
@@ -148,7 +138,7 @@ export const Permissions = ({
       </BreadcrumbsWrapper>
       <AccountsWrapper>
         <div style={{ padding: '0 0.75rem' }}>
-          {subscriptionTasks.tasks.length > 0 ? (
+          {renderedSubscriptions.tasks.length > 0 ? (
             renderSubscriptionTasks()
           ) : (
             <p>No subscriptions for this item.</p>
