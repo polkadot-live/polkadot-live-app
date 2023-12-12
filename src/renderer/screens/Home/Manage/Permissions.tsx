@@ -47,7 +47,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     };
 
     // Copy the wrapped subscription and set the new task.
-    const newCached: WrappedSubscriptionTask = {
+    const newWrapped: WrappedSubscriptionTask = {
       ...cached,
       address: cached.address ? cached.address : undefined,
       task: {
@@ -58,7 +58,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     };
 
     // Send task and its associated data to backend.
-    const result = await window.myAPI.invokeSubscriptionTask(newCached);
+    const result = await window.myAPI.invokeSubscriptionTask(newWrapped);
 
     if (result) {
       // Update subscriptions context state.

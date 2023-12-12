@@ -7,7 +7,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent } from '@/types/reporter';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { WrappedSubscriptionTask } from './types/subscriptions';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -116,7 +116,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   },
 
   // Handle subscription task.
-  invokeSubscriptionTask: (data: AnyJson) =>
+  invokeSubscriptionTask: (data: WrappedSubscriptionTask) =>
     ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
   // Transactions
