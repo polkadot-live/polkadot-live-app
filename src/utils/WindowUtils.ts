@@ -79,7 +79,7 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   mainWindow.hide();
 
-  mainWindow.on('show', () => {
+  mainWindow.on('show', async () => {
     // Populate items from store.
     initializeState('menu');
 
@@ -90,7 +90,9 @@ export const createMainWindow = (isTest: boolean) => {
     reportAccountSubscriptions('menu');
 
     // Bootstrap account events for all chains.
-    Discover.bootstrapEvents(Array.from(AccountsController.accounts.keys()));
+    await Discover.bootstrapEvents(
+      Array.from(AccountsController.accounts.keys())
+    );
   });
 
   mainWindow.on('move', () => {

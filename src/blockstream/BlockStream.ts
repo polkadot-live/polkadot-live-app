@@ -123,7 +123,7 @@ export class BlockStream {
           }
         } else {
           // Too many skipped blocks. Trigger event bootstrap for the chain to keep events in sync.
-          Discover.bootstrapEvents([this.chain]);
+          await Discover.bootstrapEvents([this.chain]);
         }
 
         // Now caught up, set last block.

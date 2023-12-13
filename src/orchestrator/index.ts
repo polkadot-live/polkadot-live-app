@@ -56,7 +56,7 @@ const initialize = async () => {
   await APIsController.initialize(chainIds);
 
   // Bootstrap events for connected accounts (checks pending rewards).
-  Discover.bootstrapEvents(chainIds);
+  await Discover.bootstrapEvents(chainIds);
 
   // Now API instances are instantiated, subscribe accounts to API.
   await AccountsController.subscribeAccounts();
@@ -108,7 +108,7 @@ const importNewAddress = async ({
 
   /* START: OLD SUBSCRIPTION MODEL ------------------------------- */
   // Check any pending rewards.
-  Discover.bootstrapEventsForAccount(chain, account);
+  await Discover.bootstrapEventsForAccount(chain, account);
 
   // Instantiate PolkadotState and call subscribe().
   account.initState();

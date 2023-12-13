@@ -17,14 +17,14 @@ export class ChainsController {
   static async getChainState(chain: ChainID, address: string) {
     switch (chain) {
       default:
-        return PolkadotCallbacks.getChainState(address);
+        return await PolkadotCallbacks.getChainState(address);
     }
   }
 
   static async bootstrap(chain: ChainID, account?: Account) {
     switch (chain) {
       default:
-        return PolkadotCallbacks.bootstrap(account);
+        return await PolkadotCallbacks.bootstrap(account);
     }
   }
 }

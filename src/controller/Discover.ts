@@ -40,8 +40,8 @@ export class Discover {
    * @summary Bootstrap events for all accounts on a chain to prepare the app UI.
    * @param {string=} chain - restrict bootstrapping to a chain.
    */
-  static bootstrapEvents = (chainIds: ChainID[]) => {
-    const handleBootstrap = (chainId: ChainID) => {
+  static bootstrapEvents = async (chainIds: ChainID[]) => {
+    const handleBootstrap = async (chainId: ChainID) => {
       if (!APIsController.get(chainId)?.api.isReady) {
         // Note: this happens when the user opens the menu or app window before the API instance is
         // connected and `isReady`.
@@ -51,18 +51,18 @@ export class Discover {
       debug(`💳 Bootstrapping for accounts, chain ${chainId || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?.
-      if (chainId) ChainsController.bootstrap(chainId);
+      if (chainId) await ChainsController.bootstrap(chainId);
     };
 
     // Iterate accounts and chain IDs
     for (const chainId of chainIds) {
-      handleBootstrap(chainId);
+      await handleBootstrap(chainId);
     }
   };
 
   // Bootstrap events for a particular account.
   // Called when account is imported via the frontend, so API will be available.
-  static bootstrapEventsForAccount(chainId: ChainID, account: Account) {
-    ChainsController.bootstrap(chainId, account);
+  static async bootstrapEventsForAccount(chainId: ChainID, account: Account) {
+    await ChainsController.bootstrap(chainId, account);
   }
 }
