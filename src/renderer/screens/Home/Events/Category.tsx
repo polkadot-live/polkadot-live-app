@@ -13,7 +13,7 @@ export const Category = ({
   events,
   i,
 }: EventCategoryProps) => {
-  const ChainIcon = chainIcon(chain)!;
+  const ChainIcon = chainIcon(chain);
   const { name, icon } = chainCategory(chain, category);
 
   return (

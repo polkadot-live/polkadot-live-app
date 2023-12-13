@@ -149,7 +149,7 @@ export class PolkadotCallbacks {
 
     const pendingRewards = planckToUnit(
       new BigNumber(result.toString()),
-      chainUnits(this.chain)!
+      chainUnits(this.chain)
     );
 
     // Dismiss and exit early if pending rewards is zero.

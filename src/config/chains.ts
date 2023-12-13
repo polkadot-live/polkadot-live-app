@@ -51,12 +51,14 @@ export const ChainList: Map<ChainID, Chain> = new Map([
   ],
 ]);
 
-// TODO: Remove `?` and `!` throughout app where an invocation is made.
-export const chainIcon = (chain: ChainID) => ChainList.get(chain)?.icon;
+export const chainIcon = (chain: ChainID) =>
+  (ChainList.get(chain) as Chain).icon;
 
-export const chainCurrency = (chain: ChainID) => ChainList.get(chain)?.unit;
+export const chainCurrency = (chain: ChainID) =>
+  (ChainList.get(chain) as Chain).unit;
 
-export const chainUnits = (chain: ChainID) => ChainList.get(chain)?.units;
+export const chainUnits = (chain: ChainID) =>
+  (ChainList.get(chain) as Chain).units;
 
 export const chainCategory = (chain: ChainID, category: string) =>
-  ChainList.get(chain)?.categories[category];
+  (ChainList.get(chain) as Chain).categories[category];
