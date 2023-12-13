@@ -27,7 +27,7 @@ interface Chain {
   categories: AnyData;
 }
 
-export const ChainList: Map<string, Chain> = new Map([
+export const ChainList: Map<ChainID, Chain> = new Map([
   [
     'Polkadot',
     {
@@ -51,7 +51,7 @@ export const ChainList: Map<string, Chain> = new Map([
   ],
 ]);
 
-// TODO: Remove `?` and correct invocations throughout app with `!`
+// TODO: Remove `?` and `!` throughout app where an invocation is made.
 export const chainIcon = (chain: ChainID) => ChainList.get(chain)?.icon;
 
 export const chainCurrency = (chain: ChainID) => ChainList.get(chain)?.unit;
