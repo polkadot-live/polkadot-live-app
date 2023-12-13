@@ -26,11 +26,13 @@ export interface QueryMultiEntry {
   unsub: AnyFunction | null;
 }
 
+export type SubscriptionTaskType = 'chain' | 'account' | '';
+
 // Wraps an array of subscription tasks along with their
 // associated type (chain or account) and possible account
 // address.
 export interface WrappedSubscriptionTasks {
-  type: 'chain' | 'account' | '';
+  type: SubscriptionTaskType;
   address?: string;
   tasks: SubscriptionTask[];
 }
@@ -38,7 +40,7 @@ export interface WrappedSubscriptionTasks {
 // Wraps a single subscription task along with its associated
 // type (chain or account) and possible account address.
 export interface WrappedSubscriptionTask {
-  type: 'chain' | 'account' | '';
+  type: SubscriptionTaskType;
   address?: string;
   task: SubscriptionTask;
 }
