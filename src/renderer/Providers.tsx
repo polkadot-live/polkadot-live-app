@@ -7,6 +7,7 @@ import { ChainsProvider } from '@app/contexts/Chains';
 import { EventsProvider } from '@app/contexts/Events';
 import { OverlayProvider } from '@app/contexts/Overlay';
 import { SubscriptionsProvider } from './contexts/Subscriptions';
+import { ManageProvider } from './screens/Home/Manage/provider';
 import { TooltipProvider } from '@app/contexts/Tooltip';
 import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
@@ -18,6 +19,7 @@ export const Providers = withProviders(
   AccountStateProvider,
   ChainsProvider,
   SubscriptionsProvider,
+  ManageProvider,
   EventsProvider,
   TxMetaProvider,
   TooltipProvider

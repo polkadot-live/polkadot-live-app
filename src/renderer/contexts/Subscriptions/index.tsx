@@ -1,10 +1,7 @@
 import type { ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
 import type { SubscriptionsContextInterface } from './types';
-import type {
-  WrappedSubscriptionTasks,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 import type { ChainID } from '@/types/chains';
 import * as defaults from './defaults';
 
@@ -20,10 +17,6 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  /*------------------------------------------------------------ 
-   State
-   ------------------------------------------------------------*/
-
   // Store received chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
@@ -33,14 +26,6 @@ export const SubscriptionsProvider = ({
   const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
     Map<string, SubscriptionTask[]>
   >(new Map());
-
-  // Subscription tasks being rendered under the Manage tab.
-  const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
-    useState<WrappedSubscriptionTasks>({ type: '', tasks: [] });
-
-  /*------------------------------------------------------------ 
-   Functions
-   ------------------------------------------------------------*/
 
   // Set chain subscription tasks.
   const setChainSubscriptions = (
@@ -77,23 +62,6 @@ export const SubscriptionsProvider = ({
     return subscriptions ? subscriptions : [];
   };
 
-  // Update a task in the the rendered subscription tasks.
-  const updateRenderedSubscriptions = (task: SubscriptionTask) => {
-    setRenderedSubscriptionsState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((t) => (t.action === task.action ? task : t)),
-    }));
-  };
-
-  // Set rendered subscriptions.
-  const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
-    setRenderedSubscriptionsState({ ...wrapped });
-  };
-
-  const getRenderedSubscriptions = () => {
-    return renderedSubscriptionsState;
-  };
-
   // Update state of a task.
   // TODO: Remove `!` non-null assertions.
   const updateTask = (
@@ -122,19 +90,11 @@ export const SubscriptionsProvider = ({
     }
   };
 
-  /*------------------------------------------------------------ 
-   Provider
-   ------------------------------------------------------------*/
-
   return (
     <SubscriptionsContext.Provider
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
-        renderedSubscriptions: renderedSubscriptionsState,
-        getRenderedSubscriptions,
-        setRenderedSubscriptions,
-        updateRenderedSubscriptions,
         setChainSubscriptions,
         getChainSubscriptions,
         setAccountSubscriptions,

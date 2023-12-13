@@ -16,10 +16,11 @@ import {
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
+import { useManage } from './provider';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
-  const { updateTask, updateRenderedSubscriptions, renderedSubscriptions } =
-    useSubscriptions();
+  const { updateTask } = useSubscriptions();
+  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {

@@ -15,14 +15,13 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import { useManage } from './provider';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const chains = ['Polkadot', 'Westend'];
-  const {
-    getChainSubscriptions,
-    getAccountSubscriptions,
-    setRenderedSubscriptions,
-  } = useSubscriptions();
+
+  const { getChainSubscriptions, getAccountSubscriptions } = useSubscriptions();
+  const { setRenderedSubscriptions } = useManage();
 
   // Utility: Copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) => {

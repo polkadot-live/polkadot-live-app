@@ -17,16 +17,15 @@ import type { ChainID } from '@/types/chains';
 import type { FlattenedAccounts } from '@/types/accounts';
 import { useSubscriptions } from './contexts/Subscriptions';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { useManage } from '@app/screens/Home/Manage/provider';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
   const { setAccountStateKey } = useAccountState();
-  const {
-    setChainSubscriptions,
-    setAccountSubscriptions,
-    setRenderedSubscriptions,
-  } = useSubscriptions();
+
+  const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
+  const { setRenderedSubscriptions } = useManage();
 
   useEffect(() => {
     // handle initial responses to populate state from store.
