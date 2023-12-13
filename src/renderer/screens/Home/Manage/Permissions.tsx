@@ -135,12 +135,6 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
               onClick={() => setSection(0)}
               iconLeft={faAngleLeft}
               iconTransform="shrink-3"
-              style={{
-                fontSize: '0.92rem',
-                fontWeight: 500,
-                position: 'relative',
-                left: '-0.5rem',
-              }}
             />
           </li>
           <li>/</li>
