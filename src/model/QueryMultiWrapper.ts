@@ -311,13 +311,7 @@ export class QueryMultiWrapper {
   private actionExists(chainId: ChainID, action: string) {
     const entry = this.subscriptions.get(chainId);
 
-    if (entry) {
-      for (const e of entry.callEntries) {
-        if (e.task.action === action) return true;
-      }
-    }
-
-    return false;
+    return Boolean(entry?.callEntries.some((e) => e.task.action === action));
   }
 
   // --------------------------------------------------

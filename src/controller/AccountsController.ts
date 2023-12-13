@@ -133,7 +133,7 @@ export class AccountsController {
    * @param {string} address - the account address.
    * @returns {(Account|undefined)}
    */
-  static get = (chain: ChainID, address: string): Account | undefined =>
+  static get = (chain: ChainID, address?: string): Account | undefined =>
     this.accounts.get(chain)?.find((a) => a.address === address);
 
   /**

@@ -157,7 +157,7 @@ app.whenReady().then(async () => {
           // Fetch account task belongs to.
           const account = AccountsController.get(
             data.tasks[0].chainId,
-            data.address!
+            data.address
           );
 
           if (!account) return false;

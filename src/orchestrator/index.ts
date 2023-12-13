@@ -74,6 +74,7 @@ const initialize = async () => {
   // Initialize account chainState and config (requires api controller)
   await AccountUtils.initializeConfigsAndChainStates();
 
+  // NOTE: Blockstream currently disabled.
   // Initialize discovery of subscriptions for saved accounts.
   // BlockStreamsController.initialize();
 };
