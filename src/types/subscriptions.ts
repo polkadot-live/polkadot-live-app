@@ -36,11 +36,3 @@ export interface WrappedSubscriptionTasks {
   address?: string;
   tasks: SubscriptionTask[];
 }
-
-// Wraps a single subscription task along with its associated
-// type (chain or account) and possible account address.
-export interface WrappedSubscriptionTask {
-  type: SubscriptionTaskType;
-  address?: string;
-  task: SubscriptionTask;
-}

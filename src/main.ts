@@ -13,7 +13,7 @@ import type { DismissEvent } from '@/types/reporter';
 import type { AnyData } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
-import type { WrappedSubscriptionTask } from './types/subscriptions';
+import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
 import { Orchestrator } from './orchestrator';
@@ -147,16 +147,16 @@ app.whenReady().then(async () => {
   // Subscription handlers.
   ipcMain.handle(
     'app:subscriptions:task:handle',
-    async (_, data: WrappedSubscriptionTask) => {
+    async (_, data: WrappedSubscriptionTasks) => {
       switch (data.type) {
         case 'chain': {
-          await SubscriptionsController.subscribeChainTask(data.task);
+          await SubscriptionsController.subscribeChainTask(data.tasks[0]);
           return true;
         }
         case 'account': {
           // Fetch account task belongs to.
           const account = AccountsController.get(
-            data.task.chainId,
+            data.tasks[0].chainId,
             data.address!
           );
 
@@ -164,7 +164,7 @@ app.whenReady().then(async () => {
 
           // Subscribe to the task.
           await SubscriptionsController.subscribeAccountTask(
-            data.task,
+            data.tasks[0],
             account
           );
           return true;

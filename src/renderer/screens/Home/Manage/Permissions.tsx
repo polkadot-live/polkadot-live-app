@@ -7,7 +7,7 @@ import { ButtonText, Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
-  WrappedSubscriptionTask,
+  WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
@@ -32,29 +32,32 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
    and updates the front-end subscriptions state. 
    */
 
-  const handleToggle = async (cached: WrappedSubscriptionTask) => {
+  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
     // Invert the task status.
-    const newStatus = cached.task.status === 'enable' ? 'disable' : 'enable';
+    const newStatus =
+      cached.tasks[0].status === 'enable' ? 'disable' : 'enable';
 
     // Reference to actionArgs.
-    const args = cached.task.actionArgs;
+    const args = cached.tasks[0].actionArgs;
 
     // Copy task and set new status.
     const newTask: SubscriptionTask = {
-      ...cached.task,
+      ...cached.tasks[0],
       actionArgs: args ? [...args] : undefined,
       status: newStatus,
     };
 
     // Copy the wrapped subscription and set the new task.
-    const newWrapped: WrappedSubscriptionTask = {
+    const newWrapped: WrappedSubscriptionTasks = {
       ...cached,
       address: cached.address ? cached.address : undefined,
-      task: {
-        ...newTask,
-        actionArgs: args ? [...args] : undefined,
-        status: newStatus,
-      },
+      tasks: [
+        {
+          ...newTask,
+          actionArgs: args ? [...args] : undefined,
+          status: newStatus,
+        },
+      ],
     };
 
     // Send task and its associated data to backend.
@@ -109,8 +112,8 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                   handleToggle={() => {
                     // Send an account or chain subscription task.
                     type === 'account'
-                      ? handleToggle({ type, address, task })
-                      : handleToggle({ type, task });
+                      ? handleToggle({ type, address, tasks: [task] })
+                      : handleToggle({ type, tasks: [task] });
                   }}
                 />
               </div>

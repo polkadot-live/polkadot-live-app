@@ -9,7 +9,7 @@ import type { AccountSource } from './accounts';
 import type { ImportedAccounts } from '@/model/Account';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
-import type { WrappedSubscriptionTask } from './subscriptions';
+import type { WrappedSubscriptionTasks } from './subscriptions';
 
 export interface PreloadAPI {
   quitApp: ApiEmptyRequest;
@@ -141,4 +141,4 @@ type ApiReportAccountSubscriptions = (
   callback: (_: IpcRendererEvent, serialized: AnyJson) => void
 ) => void;
 
-type ApiInvokeSubscriptionTask = (data: WrappedSubscriptionTask) => void;
+type ApiInvokeSubscriptionTask = (data: WrappedSubscriptionTasks) => void;
