@@ -119,7 +119,7 @@ export class AccountsController {
     );
 
     // Send tasks to query multi wrapper for removal.
-    if (tasks) {
+    if (tasks && tasks?.length !== 0) {
       for (const task of tasks) {
         await account.subscribeToTask(task);
       }

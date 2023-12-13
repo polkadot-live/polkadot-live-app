@@ -56,7 +56,7 @@ export class APIsController {
 
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
-      !ChainList.get(chain) ||
+      !ChainList.get(chain as ChainID) ||
       this.instances.find((api) => api.chain === chain)
     ) {
       await instance.disconnect();

@@ -84,6 +84,7 @@ export const reportActiveInstances = (id: string) => {
   }
 };
 
+// TODO: Fix when chain removal is implemented on back-end.
 // Remove chain's API instance if no more accounts require it
 export const removeUnusedApi = (chain: ChainID) => {
   if (!AccountsController.accounts.get(chain)?.length) {

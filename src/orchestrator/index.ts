@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  removeUnusedApi,
   reportAccountSubscriptions,
   reportAllWindows,
   reportImportedAccounts,
@@ -153,8 +152,9 @@ const removeImportedAccount = async ({
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
 
+  // TODO: Fix when chain removal is implemented on back-end.
   // Remove chain's API instance if no more accounts require it.
-  removeUnusedApi(chain);
+  //removeUnusedApi(chain);
 
   // Remove config from `Subscriptions`.
   //BlockStreamsController.removeAccountFromService(chain, address);
