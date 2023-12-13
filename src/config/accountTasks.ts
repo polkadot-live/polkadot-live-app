@@ -1,15 +1,10 @@
-import type { ChainID } from '@/types/chains';
-import type {
-  SubscriptionNextStatus,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const accountTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:query.system.account',
-    actionArgs: undefined,
-    chainId: 'Polkadot' as ChainID,
-    status: 'disable' as SubscriptionNextStatus,
+    chainId: 'Polkadot',
+    status: 'disable',
     label: 'Transfers',
   },
 ];

@@ -1,22 +1,16 @@
-import type { ChainID } from '@/types/chains';
-import type {
-  SubscriptionNextStatus,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:query.timestamp.now',
-    actionArgs: undefined,
-    chainId: 'Polkadot' as ChainID,
-    status: 'disable' as SubscriptionNextStatus,
+    chainId: 'Polkadot',
+    status: 'disable',
     label: 'Timestamps',
   },
   {
     action: 'subscribe:query.babe.currentSlot',
-    actionArgs: undefined,
-    chainId: 'Polkadot' as ChainID,
-    status: 'disable' as SubscriptionNextStatus,
+    chainId: 'Polkadot',
+    status: 'disable',
     label: 'Current Slot',
   },
 ];
