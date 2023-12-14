@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@/types/chains';
+import type { Account } from '@/model/Account';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { PolkadotState } from '@/chains/Polkadot/State';
 
@@ -16,14 +17,14 @@ export class ChainsController {
   static async getChainState(chain: ChainID, address: string) {
     switch (chain) {
       default:
-        return PolkadotCallbacks.getChainState(address);
+        return await PolkadotCallbacks.getChainState(address);
     }
   }
 
-  static async bootstrap(chain: ChainID) {
+  static async bootstrap(chain: ChainID, account?: Account) {
     switch (chain) {
       default:
-        return PolkadotCallbacks.bootstrap();
+        return await PolkadotCallbacks.bootstrap(account);
     }
   }
 }

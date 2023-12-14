@@ -31,11 +31,9 @@ export interface BalanceLock {
 
 export interface APIConstants {
   bondDuration: BigNumber;
-  maxNominations: BigNumber;
   sessionsPerEra: BigNumber;
   maxNominatorRewardedPerValidator: BigNumber;
   historyDepth: BigNumber;
-  maxElectingVoters: BigNumber;
   expectedBlockTime: BigNumber;
   epochDuration: BigNumber;
   existentialDeposit: BigNumber;

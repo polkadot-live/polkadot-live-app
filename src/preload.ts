@@ -7,6 +7,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent } from '@/types/reporter';
+import type { WrappedSubscriptionTask } from './types/subscriptions';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -98,6 +99,25 @@ contextBridge.exposeInMainWorld('myAPI', {
   reportDismissEvent: (callback) => {
     return ipcRenderer.on('renderer:event:dismiss', callback);
   },
+
+  // Subscription communication
+
+  // Report chain subscriptions to renderer.
+  reportChainSubscriptionState: (callback) => {
+    return ipcRenderer.on('renderer:broadcast:subscriptions:chains', callback);
+  },
+
+  // Report account subscriptions to renderer.
+  reportAccountSubscriptionsState: (callback) => {
+    return ipcRenderer.on(
+      'renderer:broadcast:subscriptions:accounts',
+      callback
+    );
+  },
+
+  // Handle subscription task.
+  invokeSubscriptionTask: (data: WrappedSubscriptionTask) =>
+    ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
   // Transactions
 

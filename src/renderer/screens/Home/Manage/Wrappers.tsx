@@ -17,6 +17,39 @@ export const Wrapper = styled.div`
   padding-right: 5%;
 `;
 
+export const BreadcrumbsWrapper = styled.div`
+  color: var(--text-color-primary);
+  background-color: rgba(57, 52, 58, 0.4);
+  padding: 0.75rem 1.75rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.02rem;
+
+  ul {
+    margin: 4px 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+
+    li {
+      opacity: 0.6;
+
+      &:first-child > button {
+        margin-left: -0.5rem;
+        font-weight: 500;
+        position: 'relative';
+      }
+
+      &:last-child {
+        color: var(--text-color-primary);
+        opacity: 1;
+      }
+    }
+  }
+`;
+
 export const HeadingWrapper = styled.div`
   position: sticky;
   width: 100%;
@@ -34,10 +67,10 @@ export const HeadingWrapper = styled.div`
       margin-right: 0.5rem;
     }
     .icon {
+      fill: var(--text-color-primary);
       width: 0.95rem;
       height: 0.95rem;
       margin-right: 0.5rem;
-      fill: var(--text-color-primary);
     }
   }
 `;
@@ -95,6 +128,13 @@ export const AccountWrapper = styled(motion.div)`
           }
         }
 
+        span > .chain-icon {
+          height: var(--item-height);
+          width: 22px;
+          fill: rgb(160, 37, 90);
+          margin-right: 4px;
+        }
+
         .content {
           height: var(--item-height);
           flex: 1;
@@ -124,11 +164,16 @@ export const AccountWrapper = styled(motion.div)`
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        max-width: 2rem;
         padding-bottom: 0.25rem;
+        flex-shrink: 0;
 
         &.permission {
           top: 0.3rem;
+        }
+
+        /* Scale the Switch component */
+        label {
+          scale: 0.9;
         }
       }
     }

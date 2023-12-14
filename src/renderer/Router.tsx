@@ -15,17 +15,25 @@ import { Import } from '@app/screens/Import';
 import { useTheme } from 'styled-components';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccounts } from '@/types/accounts';
+import { useSubscriptions } from './contexts/Subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
+import { useManage } from '@app/screens/Home/Manage/provider';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
   const { setAccountStateKey } = useAccountState();
 
+  const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
+  const { setRenderedSubscriptions } = useManage();
+
   useEffect(() => {
     // handle initial responses to populate state from store.
     window.myAPI.reportImportedAccounts(
       (_: Event, accounts: FlattenedAccounts) => {
         setAddresses(accounts);
+
+        setRenderedSubscriptions({ type: '', tasks: [] });
       }
     );
     window.myAPI.reportAccountState(
@@ -37,6 +45,24 @@ export const RouterInner = () => {
         value: AnyJson
       ) => {
         setAccountStateKey(chain, address, key, value);
+      }
+    );
+    window.myAPI.reportChainSubscriptionState(
+      (_: Event, serialized: AnyJson) => {
+        const parsed: Map<ChainID, SubscriptionTask[]> = new Map(
+          JSON.parse(serialized)
+        );
+
+        setChainSubscriptions(parsed);
+      }
+    );
+    window.myAPI.reportAccountSubscriptionsState(
+      (_: Event, serialized: AnyJson) => {
+        const parsed: Map<string, SubscriptionTask[]> = new Map(
+          JSON.parse(serialized)
+        );
+
+        setAccountSubscriptions(parsed);
       }
     );
   }, []);
