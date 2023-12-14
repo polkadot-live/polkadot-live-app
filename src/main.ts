@@ -172,6 +172,13 @@ app.whenReady().then(async () => {
             data.tasks[0],
             account
           );
+
+          // Update account's tasks in store.
+          SubscriptionsController.updateAccountTaskInStore(
+            data.tasks[0],
+            account
+          );
+
           return true;
         }
       }

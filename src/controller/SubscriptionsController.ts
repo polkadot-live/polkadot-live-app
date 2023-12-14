@@ -156,20 +156,66 @@ export class SubscriptionsController {
     const key = 'chain_subscriptions';
 
     // Deserialize all tasks from store.
-    let tasks: SubscriptionTask[] = store.get(key)
+    const tasks: SubscriptionTask[] = store.get(key)
       ? JSON.parse(store.get(key) as string)
       : [];
 
-    // Add or remove task depending on its status.
+    this.updateTaskInStore(tasks, task, key);
+  }
+
+  // Called when an account subscription task is received from renderer.
+  static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
+    const key = `${account.address}_subscriptions`;
+
+    // Deserialize the account's tasks from store.
+    const tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
+
+    this.updateTaskInStore(tasks, task, key);
+  }
+
+  /*------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------*/
+
+  private static updateTaskInStore(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask,
+    key: string
+  ) {
+    // Add or remove task depending on its status
     if (task.status === 'enable') {
+      // Remove task from array if it already exists.
+      this.taskExistsInArray(tasks, task) &&
+        (tasks = this.removeTaskFromArray(tasks, task));
+
       tasks.push(task);
     } else {
       tasks = tasks.filter(
-        (t) => t.action === task.action && t.chainId === task.chainId
+        (t) => !(t.action === task.action && t.chainId === task.chainId)
       );
     }
 
     // Persist new array to store.
     store.set(key, JSON.stringify(tasks));
+  }
+
+  private static taskExistsInArray(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask
+  ) {
+    return tasks.some(
+      (t) => t.action === task.action && t.chainId === t.chainId
+    );
+  }
+
+  private static removeTaskFromArray(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask
+  ) {
+    return tasks.filter(
+      (t) => !(t.action === task.action && t.chainId === task.chainId)
+    );
   }
 }
