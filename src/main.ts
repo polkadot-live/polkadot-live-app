@@ -150,7 +150,15 @@ app.whenReady().then(async () => {
     async (_, data: WrappedSubscriptionTasks) => {
       switch (data.type) {
         case 'chain': {
+          // Subscribe to task.
           await SubscriptionsController.subscribeChainTask(data.tasks[0]);
+
+          // Update tasks in store.
+          SubscriptionsController.updateTaskInStore(
+            'global_subscriptions',
+            data.tasks[0]
+          );
+
           return true;
         }
         case 'account': {

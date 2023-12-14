@@ -1,9 +1,6 @@
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { ChainID } from '@/types/chains';
-import type {
-  SubscriptionNextStatus,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 import { store } from '@/main';
 import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
@@ -21,20 +18,20 @@ export class SubscriptionsController {
     this.chainSubscriptions = new QueryMultiWrapper();
 
     // TODO: Replace with store.get('subscription_globals')
-    const tasks: SubscriptionTask[] = [
-      {
-        action: 'subscribe:query.timestamp.now',
-        actionArgs: undefined,
-        chainId: 'Polkadot' as ChainID,
-        status: 'enable' as SubscriptionNextStatus,
-        label: 'Timestamps',
-      },
-    ];
+    //const tasks: SubscriptionTask[] = [
+    //  {
+    //    action: 'subscribe:query.timestamp.now',
+    //    actionArgs: undefined,
+    //    chainId: 'Polkadot' as ChainID,
+    //    status: 'enable' as SubscriptionNextStatus,
+    //    label: 'Timestamps',
+    //  },
+    //];
 
-    // Subscribe to tasks.
-    for (const task of tasks) {
-      await this.chainSubscriptions.subscribeTask(task);
-    }
+    //// Subscribe to tasks.
+    //for (const task of tasks) {
+    //  await this.chainSubscriptions.subscribeTask(task);
+    //}
   }
 
   /*------------------------------------------------------------
@@ -159,7 +156,22 @@ export class SubscriptionsController {
    ------------------------------------------------------------*/
 
   // TODO: Call when frontend is able to add subscriptions.
-  static persistTasksToStore(key: string, tasks: SubscriptionTask[]) {
+  static updateTaskInStore(key: string, task: SubscriptionTask) {
+    // Deserialize all tasks from store.
+    let tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
+
+    // Add or remove task depending on its status.
+    if (task.status === 'enable') {
+      tasks.push(task);
+    } else {
+      tasks = tasks.filter(
+        (t) => t.action === task.action && t.chainId === task.chainId
+      );
+    }
+
+    // Persist new array to store.
     store.set(key, JSON.stringify(tasks));
   }
 }
