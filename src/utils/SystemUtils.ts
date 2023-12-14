@@ -5,6 +5,7 @@ import type { AnyFunction, AnyJson } from '@/types/misc';
 import { WindowsController } from '../controller/WindowsController';
 import { APIsController } from '../controller/APIsController';
 import { AccountsController } from '../controller/AccountsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { MainDebug as debug } from '@/utils/DebugUtils';
 import { AccountType } from '../types/accounts';
 import type { ChainID } from '@/types/chains';
@@ -47,6 +48,28 @@ export const reportImportedAccounts = (id: string) => {
   );
 };
 
+// Report subscription tasks for all accounts to renderer.
+export const reportAccountSubscriptions = (id: string) => {
+  const map = SubscriptionsController.getAccountSubscriptions(
+    AccountsController.accounts
+  );
+
+  WindowsController.get(id)?.webContents?.send(
+    'renderer:broadcast:subscriptions:accounts',
+    JSON.stringify(Array.from(map))
+  );
+};
+
+// Report chain subscription tasks to renderer.
+export const reportChainSubscriptions = (id: string) => {
+  const map = SubscriptionsController.getChainSubscriptions();
+
+  WindowsController.get(id)?.webContents?.send(
+    'renderer:broadcast:subscriptions:chains',
+    JSON.stringify(Array.from(map))
+  );
+};
+
 // Call a function for all windows.
 export const reportAllWindows = (callback: AnyFunction) => {
   for (const { id } of WindowsController?.active || []) {
@@ -61,6 +84,7 @@ export const reportActiveInstances = (id: string) => {
   }
 };
 
+// TODO: Fix when chain removal is implemented on back-end.
 // Remove chain's API instance if no more accounts require it
 export const removeUnusedApi = (chain: ChainID) => {
   if (!AccountsController.accounts.get(chain)?.length) {

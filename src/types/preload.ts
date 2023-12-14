@@ -9,6 +9,7 @@ import type { AccountSource } from './accounts';
 import type { ImportedAccounts } from '@/model/Account';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
+import type { WrappedSubscriptionTasks } from './subscriptions';
 
 export interface PreloadAPI {
   quitApp: ApiEmptyRequest;
@@ -40,6 +41,10 @@ export interface PreloadAPI {
   reportSignedVaultTx: ApRreportSignedVaultTx;
   reportTx: APIReportTx;
   reportTxStatus: ApiReportTxStatus;
+
+  reportChainSubscriptionState: ApiReportChainSubscriptions;
+  reportAccountSubscriptionsState: ApiReportAccountSubscriptions;
+  invokeSubscriptionTask: ApiInvokeSubscriptionTask;
 
   openBrowserURL: ApiOpenBrowserWindow;
 }
@@ -127,3 +132,13 @@ type APIReportTxData = {
 };
 
 type ApRreportSignedVaultTx = (signature: AnyJson) => void;
+
+type ApiReportChainSubscriptions = (
+  callback: (_: IpcRendererEvent, serialized: AnyJson) => void
+) => void;
+
+type ApiReportAccountSubscriptions = (
+  callback: (_: IpcRendererEvent, serialized: AnyJson) => void
+) => void;
+
+type ApiInvokeSubscriptionTask = (data: WrappedSubscriptionTasks) => void;

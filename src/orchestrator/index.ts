@@ -1,73 +1,81 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Subject } from 'rxjs';
 import {
-  removeUnusedApi,
+  reportAccountSubscriptions,
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
 import { ChainList } from '@/config/chains';
+import { Discover } from '@/controller/Discover';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
-import { Discover } from '@/controller/Discover';
-import { BlockStreamsController } from '@/controller/BlockStreamsController';
 import { NotificationsController } from '@/controller/NotificationsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import * as AccountUtils from '@/utils/AccountUtils';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import * as AccountUtils from '@/utils/AccountUtils';
 
-// Initialise RxJS subject to orchestrate app events.
-export const orchestrator = new Subject<OrchestratorArg>();
-
-orchestrator.subscribe({
-  next: async ({ task, data = {} }) => {
+// Orchestrate class to perform high-level app tasks.
+export class Orchestrator {
+  static async next({ task, data = {} }: OrchestratorArg) {
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
       case 'initialize':
-        initialize();
+        await initialize();
         break;
       // Handle new account import.
       case 'app:account:import':
-        importNewAddress(data);
+        await importNewAddress(data);
         break;
       // Handle remove imported account.
       case 'app:account:remove':
-        removeImportedAccount(data);
+        await removeImportedAccount(data);
         break;
       default:
         break;
     }
-  },
-});
+  }
+}
 
 /**
  * @name initialize
  * @summary Initializes app state.
  */
 const initialize = async () => {
-  // Initialize `Accounts` from persisted state.
+  // Initialize accounts from persisted state.
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
   const chainIds = AccountsController.getAccountChainIds();
+
   await APIsController.initialize(chainIds);
 
-  // Now API instances are instantiated, subscribe accounts to API.
-  AccountsController.subscribeAccounts();
+  // Bootstrap events for connected accounts (checks pending rewards).
+  await Discover.bootstrapEvents(chainIds);
 
-  /*-----------------------------------
-   BlockStream Specific Initialisation
+  // Now API instances are instantiated, subscribe accounts to API.
+  await AccountsController.subscribeAccounts();
+
+  /*-------------------------------------
+   SubscriptionsController Initialization
+   ------------------------------------*/
+
+  await SubscriptionsController.initChainSubscriptions();
+
+  /*-------------------------------------
+   BlockStream Specific Initialization
    ------------------------------------*/
 
   // Initialize account chainState and config (requires api controller)
   await AccountUtils.initializeConfigsAndChainStates();
 
+  // NOTE: Blockstream currently disabled.
   // Initialize discovery of subscriptions for saved accounts.
-  BlockStreamsController.initialize();
+  // BlockStreamsController.initialize();
 };
 
 /**
@@ -80,7 +88,7 @@ const importNewAddress = async ({
   address,
   name,
 }: ImportNewAddressArg) => {
-  // Add address to `Accounts` and give immediate feedback to app.
+  // Add address to `AccountsController` and give immediate feedback to app.
   const account = AccountsController.add(chain, source, address, name);
 
   // If account was unsuccessfully added, exit early.
@@ -90,9 +98,20 @@ const importNewAddress = async ({
   reportAllWindows(reportImportedAccounts);
 
   // Add chain instance if it does not already exist.
+  // TODO: Error checking instead of `!`
   if (!APIsController.chainExists(chain)) {
-    await APIsController.new(ChainList[chain].endpoints.rpc);
+    await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
   }
+
+  // Report account subscriptions to renderer.
+  reportAccountSubscriptions('menu');
+
+  /* START: OLD SUBSCRIPTION MODEL ------------------------------- */
+  // Check any pending rewards.
+  await Discover.bootstrapEventsForAccount(chain, account);
+
+  // Instantiate PolkadotState and call subscribe().
+  account.initState();
 
   // Trigger Discovery and generate config.
   const config = await Discover.start(chain, account);
@@ -101,7 +120,8 @@ const importNewAddress = async ({
   AccountsController.setAccountConfig(config, account);
 
   // Add Account to a `BlockStream` service.
-  BlockStreamsController.addAccountToService(chain, address);
+  //BlockStreamsController.addAccountToService(chain, address);
+  /* END: OLD SUBSCRIPTION MODEL --------------------------------- */
 
   // Show notification.
   NotificationsController.accountImported(name);
@@ -114,18 +134,30 @@ const importNewAddress = async ({
  * @name removeImportedAccount
  * @summary Removes an imported account.
  */
-const removeImportedAccount = ({
+const removeImportedAccount = async ({
   chain,
   address,
 }: RemoveImportedAccountArg) => {
+  // Retrieve the account.
+  const account = AccountsController.get(chain, address);
+
+  if (!account) return;
+
+  // Unsubscribe from all active tasks.
+  await AccountsController.removeAllSubscriptions(account);
+
   // Remove address from store.
   AccountsController.remove(chain, address);
 
+  // Report account subscriptions to renderer.
+  reportAccountSubscriptions('menu');
+
+  // TODO: Fix when chain removal is implemented on back-end.
   // Remove chain's API instance if no more accounts require it.
-  removeUnusedApi(chain);
+  //removeUnusedApi(chain);
 
   // Remove config from `Subscriptions`.
-  BlockStreamsController.removeAccountFromService(chain, address);
+  //BlockStreamsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

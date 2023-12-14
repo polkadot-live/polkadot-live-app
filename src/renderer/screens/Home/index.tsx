@@ -109,7 +109,7 @@ export const Home = () => {
             <IconWrapper>
               <IconSVG width={175} opacity={0.08} />
             </IconWrapper>
-            <Events addresses={getAddresses()} />
+            <Events />
           </div>
           <div>
             <div className="container">

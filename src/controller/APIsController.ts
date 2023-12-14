@@ -4,7 +4,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { ChainList } from '@/config/chains';
 import { API } from '@/model/API';
-import { Discover } from './Discover';
 import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/utils/DebugUtils';
@@ -25,9 +24,9 @@ export class APIsController {
    * @summary Instantiates and stores API Instances from persisted imported accounts.
    */
   static initialize = async (chainIds: ChainID[]) => {
-    for (const i of chainIds) {
-      console.log(`New API: ${i}`);
-      await this.new((ChainList[i] as AnyData).endpoints?.rpc);
+    for (const chainId of chainIds) {
+      console.log(`New API: ${chainId}`);
+      await this.new((ChainList.get(chainId) as AnyData).endpoints?.rpc);
     }
   };
 
@@ -57,8 +56,8 @@ export class APIsController {
 
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
-      !Object.keys(ChainList).includes(chain) ||
-      this.instances.find((s) => s.chain === chain)
+      !ChainList.get(chain as ChainID) ||
+      this.instances.find((api) => api.chain === chain)
     ) {
       await instance.disconnect();
       return;
@@ -68,16 +67,13 @@ export class APIsController {
     const chainId = chain as ChainID;
 
     // Set remaining instance properties and add to instances.
-    this.instances = this.instances.concat(instance);
+    this.instances.push(instance);
 
     // Set the api and bootstrap chain.
     instance.setApi(api, chainId);
 
     // Get api constants.
     await instance.getConsts();
-
-    // Bootstrap events for connected accounts (checks pending rewards).
-    Discover.bootstrapEvents(chainId);
 
     // Report to all windows that chain has been added.
     WindowsController.reportAll(chainId, 'renderer:chain:added');

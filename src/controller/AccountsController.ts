@@ -16,6 +16,7 @@ import type {
 import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -45,7 +46,6 @@ export class AccountsController {
     }
 
     // Parse serialized data into a map of StoredAccounts.
-    // NOTE: Cannot directly deserialize to Account instances.
     const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
     const importedAccounts: ImportedAccounts = new Map();
 
@@ -75,10 +75,53 @@ export class AccountsController {
     this.accounts = importedAccounts;
   }
 
-  static subscribeAccounts() {
+  /*------------------------------------------------------------
+   Fetched persisted tasks from the store and re-subscribe to
+   them.
+   ------------------------------------------------------------*/
+
+  static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
+        // ----------------------
+        // Old subscription model
+        // ----------------------
+
         account.initState();
+
+        // ----------------------
+        // New subscription model
+        // ----------------------
+
+        // TODO: Call store.get('subscription_<account_address>')
+        // and subscribe to persisted subscriptions:
+        //
+        //for (const task of tasks) {
+        //  await account.subscribeToTask(task);
+        //}
+      }
+    }
+  }
+
+  /*------------------------------------------------------------
+   Unsubscribe from all active tasks. 
+   Called when an imported account is removed.
+   ------------------------------------------------------------*/
+
+  static async removeAllSubscriptions(account: Account) {
+    // Get all active tasks and set their status to `disable`.
+    const tasks = account.getSubscriptionTasks()?.map(
+      (task) =>
+        ({
+          ...task,
+          status: 'disable',
+        }) as SubscriptionTask
+    );
+
+    // Send tasks to query multi wrapper for removal.
+    if (tasks && tasks?.length !== 0) {
+      for (const task of tasks) {
+        await account.subscribeToTask(task);
       }
     }
   }
@@ -90,7 +133,7 @@ export class AccountsController {
    * @param {string} address - the account address.
    * @returns {(Account|undefined)}
    */
-  static get = (chain: ChainID, address: string): Account | undefined =>
+  static get = (chain: ChainID, address?: string): Account | undefined =>
     this.accounts.get(chain)?.find((a) => a.address === address);
 
   /**
@@ -172,7 +215,7 @@ export class AccountsController {
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} address - the account address.
    */
-  static remove = async (chain: ChainID, address: string) => {
+  static remove = (chain: ChainID, address: string) => {
     if (this.accountExists(chain, address)) {
       // Remove account from map.
       this.setAccounts(this.spliceAccount(address));

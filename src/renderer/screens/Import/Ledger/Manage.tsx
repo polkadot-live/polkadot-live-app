@@ -6,7 +6,7 @@ import { ButtonText, HardwareStatusBar } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
-import IconSVG from '@app/svg/ledgerIcon.svg?react';
+import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledgersquare.svg?react';
 import { DragClose } from '../../../library/DragClose';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
@@ -50,7 +50,7 @@ export const Manage = ({
 
       <HardwareStatusBar
         show={section === 1}
-        Icon={IconSVG}
+        Icon={LedgerLogoSVG}
         text={
           !isImporting
             ? `Displaying ${addresses.length} Ledger Account${

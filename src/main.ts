@@ -4,7 +4,6 @@ import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
-import { orchestrator } from './orchestrator';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
 import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
@@ -14,6 +13,10 @@ import type { DismissEvent } from '@/types/reporter';
 import type { AnyData } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
+import type { WrappedSubscriptionTasks } from './types/subscriptions';
+import { SubscriptionsController } from './controller/SubscriptionsController';
+import { AccountsController } from './controller/AccountsController';
+import { Orchestrator } from './orchestrator';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -68,11 +71,6 @@ unhandled({
 // Initialise Electron store.
 export const store = new Store();
 
-// App initialization process.
-orchestrator.next({
-  task: 'initialize',
-});
-
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.
 const reportDismissEvent = (eventData: DismissEvent) => {
@@ -82,13 +80,18 @@ const reportDismissEvent = (eventData: DismissEvent) => {
   );
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Auto launch app on login.
   const autoLaunch = new AutoLaunch({
     name: 'Polkadot Live',
   });
   autoLaunch.isEnabled().then((isEnabled: boolean) => {
     if (!isEnabled) autoLaunch.enable();
+  });
+
+  // App initialization process.
+  await Orchestrator.next({
+    task: 'initialize',
   });
 
   // Ask for camera permission (Mac OS)
@@ -141,6 +144,38 @@ app.whenReady().then(() => {
     app.quit();
   });
 
+  // Subscription handlers.
+  ipcMain.handle(
+    'app:subscriptions:task:handle',
+    async (_, data: WrappedSubscriptionTasks) => {
+      switch (data.type) {
+        case 'chain': {
+          await SubscriptionsController.subscribeChainTask(data.tasks[0]);
+          return true;
+        }
+        case 'account': {
+          // Fetch account task belongs to.
+          const account = AccountsController.get(
+            data.tasks[0].chainId,
+            data.address
+          );
+
+          if (!account) return false;
+
+          // Subscribe to the task.
+          await SubscriptionsController.subscribeAccountTask(
+            data.tasks[0],
+            account
+          );
+          return true;
+        }
+      }
+
+      // Something went wrong if code reaches here.
+      return false;
+    }
+  );
+
   // Window management handlers.
 
   // Hides a window by its key.
@@ -170,7 +205,7 @@ app.whenReady().then(() => {
   ipcMain.on(
     'app:account:import',
     async (_, chain: ChainID, source, address, name) => {
-      orchestrator.next({
+      await Orchestrator.next({
         task: 'app:account:import',
         data: { chain, source, address, name },
       });
@@ -178,8 +213,8 @@ app.whenReady().then(() => {
   );
 
   // Attempt an account removal.
-  ipcMain.on('app:account:remove', (_, chain, address) => {
-    orchestrator.next({
+  ipcMain.on('app:account:remove', async (_, chain, address) => {
+    await Orchestrator.next({
       task: 'app:account:remove',
       data: { chain, address },
     });

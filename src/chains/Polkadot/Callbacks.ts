@@ -28,8 +28,10 @@ export class PolkadotCallbacks {
     inNominationPool: null,
   };
 
-  static async bootstrap() {
-    const chainAccounts = AccountsController.accounts.get(this.chain);
+  static async bootstrap(account?: Account) {
+    const chainAccounts = account
+      ? [account]
+      : AccountsController.accounts.get(this.chain);
 
     if (!chainAccounts) return;
 
