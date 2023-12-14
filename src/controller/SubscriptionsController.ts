@@ -176,6 +176,15 @@ export class SubscriptionsController {
   }
 
   /*------------------------------------------------------------
+   Clears an account's persisted subscriptions in the store 
+   when it is removed.
+   ------------------------------------------------------------*/
+
+  static clearAccountTasksInStore(account: Account) {
+    store.delete(`${account.address}_subscriptions`);
+  }
+
+  /*------------------------------------------------------------
    Utilities
    ------------------------------------------------------------*/
 
