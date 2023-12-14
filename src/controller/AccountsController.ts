@@ -93,12 +93,16 @@ export class AccountsController {
         // New subscription model
         // ----------------------
 
-        // TODO: Call store.get('subscription_<account_address>')
-        // and subscribe to persisted subscriptions:
-        //
-        //for (const task of tasks) {
-        //  await account.subscribeToTask(task);
-        //}
+        // Subscribe to persisted subscriptions for account.
+        const key = `${account.address}_subscriptions`;
+
+        const tasks: SubscriptionTask[] = store.get(key)
+          ? JSON.parse(store.get(key) as string)
+          : [];
+
+        for (const task of tasks) {
+          await account.subscribeToTask(task);
+        }
       }
     }
   }
