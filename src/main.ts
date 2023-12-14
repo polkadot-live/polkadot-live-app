@@ -153,11 +153,8 @@ app.whenReady().then(async () => {
           // Subscribe to task.
           await SubscriptionsController.subscribeChainTask(data.tasks[0]);
 
-          // Update tasks in store.
-          SubscriptionsController.updateTaskInStore(
-            'global_subscriptions',
-            data.tasks[0]
-          );
+          // Update chain tasks in store.
+          SubscriptionsController.updateChainTaskInStore(data.tasks[0]);
 
           return true;
         }

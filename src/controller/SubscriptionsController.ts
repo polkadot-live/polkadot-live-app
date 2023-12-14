@@ -14,24 +14,20 @@ export class SubscriptionsController {
   }
 
   static async initChainSubscriptions() {
+    const key = 'chain_subscriptions';
+
     // Instantiate QueryMultiWrapper.
     this.chainSubscriptions = new QueryMultiWrapper();
 
-    // TODO: Replace with store.get('subscription_globals')
-    //const tasks: SubscriptionTask[] = [
-    //  {
-    //    action: 'subscribe:query.timestamp.now',
-    //    actionArgs: undefined,
-    //    chainId: 'Polkadot' as ChainID,
-    //    status: 'enable' as SubscriptionNextStatus,
-    //    label: 'Timestamps',
-    //  },
-    //];
+    // Get and deserialize chain tasks from store.
+    const tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
 
-    //// Subscribe to tasks.
-    //for (const task of tasks) {
-    //  await this.chainSubscriptions.subscribeTask(task);
-    //}
+    // Subscribe to tasks.
+    for (const task of tasks) {
+      await this.chainSubscriptions.subscribeTask(task);
+    }
   }
 
   /*------------------------------------------------------------
@@ -142,21 +138,23 @@ export class SubscriptionsController {
   /*------------------------------------------------------------
    Key naming convention of subscription tasks in store:
   
-   'subscriptions_global'
+   'chain_subscriptions'
      Key that stores global chain subscription tasks.
   
-   'subscriptions_<account_address>'
+   '<account_address>_subscriptions'
      Key that stores an account's subscription tasks.
   
-   Ex: const serialized = store.get('subscriptions_global');
+   Ex: const serialized = store.get('chain_subscriptions');
   
    When subscription tasks are retrieved and deserialised,
    they can be passed to the appropriate `QueryMultiWrapper`
    instance, where the API call will be re-built.
    ------------------------------------------------------------*/
 
-  // TODO: Call when frontend is able to add subscriptions.
-  static updateTaskInStore(key: string, task: SubscriptionTask) {
+  // Called when a chain subscription task is received from renderer.
+  static updateChainTaskInStore(task: SubscriptionTask) {
+    const key = 'chain_subscriptions';
+
     // Deserialize all tasks from store.
     let tasks: SubscriptionTask[] = store.get(key)
       ? JSON.parse(store.get(key) as string)
