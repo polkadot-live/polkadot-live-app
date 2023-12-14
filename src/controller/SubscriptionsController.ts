@@ -176,8 +176,8 @@ export class SubscriptionsController {
   }
 
   /*------------------------------------------------------------
-   Clears an account's persisted subscriptions in the store 
-   when it is removed.
+   Clears an account's persisted subscriptions in the store.
+   Invoked when an account is removed.
    ------------------------------------------------------------*/
 
   static clearAccountTasksInStore(account: Account) {
@@ -193,7 +193,7 @@ export class SubscriptionsController {
     task: SubscriptionTask,
     key: string
   ) {
-    // Add or remove task depending on its status
+    // Add or remove task depending on its status.
     if (task.status === 'enable') {
       // Remove task from array if it already exists.
       this.taskExistsInArray(tasks, task) &&

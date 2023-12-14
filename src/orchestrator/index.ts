@@ -57,13 +57,10 @@ const initialize = async () => {
   // Bootstrap events for connected accounts (checks pending rewards).
   await Discover.bootstrapEvents(chainIds);
 
-  // Now API instances are instantiated, subscribe accounts to API.
+  // Initialize persisted account subscriptions.
   await AccountsController.subscribeAccounts();
 
-  /*-------------------------------------
-   SubscriptionsController Initialization
-   ------------------------------------*/
-
+  // Initialize persisted chain subscriptions.
   await SubscriptionsController.initChainSubscriptions();
 
   /*-------------------------------------
