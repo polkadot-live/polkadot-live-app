@@ -57,6 +57,12 @@ export const EventItem = styled(motion.div)`
 
   position: relative;
 
+  > button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+
   > div {
     background: var(--background-default);
     max-height: var(--event-item-height);

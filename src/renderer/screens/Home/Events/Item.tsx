@@ -1,7 +1,7 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ButtonMono, ButtonMonoInvert } from '@polkadot-cloud/react';
 import { isValidHttpUrl } from '@polkadot-cloud/utils';
@@ -9,6 +9,8 @@ import { useTooltip } from '@app/contexts/Tooltip';
 import { Identicon } from '@app/library/Identicon';
 import { EventItem } from './Wrappers';
 import type { EventItemProps } from './types';
+import type { DismissEvent } from '@/types/reporter';
+import { useEvents } from '@/renderer/contexts/Events';
 
 export const Item = ({
   who,
@@ -24,9 +26,17 @@ export const Item = ({
 }: EventItemProps) => {
   const { address } = who;
   const { setTooltipTextAndOpen } = useTooltip();
+  const { dismissEvent } = useEvents();
+
+  const handleDismissEvent = (dismiss: DismissEvent) => {
+    dismissEvent(dismiss);
+  };
 
   return (
     <EventItem whileHover={{ scale: 1.01 }}>
+      <button type="button" onClick={() => handleDismissEvent({ uid, who })}>
+        <FontAwesomeIcon icon={faTimes} />
+      </button>
       <div>
         <section>
           <div>
