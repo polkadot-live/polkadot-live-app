@@ -59,7 +59,8 @@ export const EventItem = styled(motion.div)`
 
   > div {
     background: var(--background-default);
-    height: var(--event-item-height);
+    max-height: var(--event-item-height);
+    min-height: 65px;
     width: 100%;
     border-radius: 1.75rem;
     padding: 0 1.25rem;

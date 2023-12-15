@@ -78,7 +78,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     setEvents(Object.assign({}, eventsRef.current, { [chain]: networkEvents }));
   };
 
-  // Order chain evnts by category and sorts them via timestamp.
+  // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!eventsRef.current[chain]) {
       return [];

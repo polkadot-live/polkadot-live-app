@@ -9,6 +9,8 @@ import type {
   ApiCallEntry,
 } from '@/types/subscriptions';
 import { compareHashes } from '@/utils/CryptoUtils';
+import { WindowsController } from '@/controller/WindowsController';
+import { getUnixTime } from 'date-fns';
 
 export class QueryMultiWrapper {
   // Cache subscriptions associated their chain.
@@ -101,12 +103,33 @@ export class QueryMultiWrapper {
             const newVal = new BigNumber(data[index]);
             const curVal = this.getChainTaskCurrentVal(action, chainId);
 
-            if (compareHashes(newVal, curVal)) break;
+            if (!newVal || compareHashes(newVal, curVal)) break;
 
             this.setChainTaskVal(entry, newVal, chainId);
 
             const now = new Date(data[index] * 1000).toDateString();
             console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
+
+            const newEvent = {
+              uid: `chainEvents_timestamp_${newVal}`,
+              category: 'timestamp',
+              who: {
+                chain: entry.task.chainId,
+                address: 'none',
+              },
+              title: `${entry.task.chainId}: New Timestamp`,
+              subtitle: `${newVal}`,
+              data: {
+                timestamp: `${newVal}`,
+              },
+              timestamp: getUnixTime(new Date()),
+              actions: [],
+            };
+
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              newEvent
+            );
 
             break;
           }
@@ -118,6 +141,27 @@ export class QueryMultiWrapper {
 
             this.setChainTaskVal(entry, newVal, chainId);
             console.log(`Current Sot: ${newVal} (index: ${index})`);
+
+            const newEvent = {
+              uid: `chainEvents_currentSlot_${newVal}`,
+              category: 'currentSlot',
+              who: {
+                chain: entry.task.chainId,
+                address: 'none',
+              },
+              title: `${entry.task.chainId}: Current Slot`,
+              subtitle: `${newVal}`,
+              data: {
+                timestamp: `${newVal}`,
+              },
+              timestamp: getUnixTime(new Date()),
+              actions: [],
+            };
+
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              newEvent
+            );
 
             break;
           }
