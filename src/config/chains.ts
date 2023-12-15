@@ -54,6 +54,10 @@ export const ChainList: Map<ChainID, Chain> = new Map([
           name: 'Current Slots',
           icon: faUserGroup,
         },
+        account: {
+          name: 'Transfers',
+          icon: faUserGroup,
+        },
       },
     },
   ],

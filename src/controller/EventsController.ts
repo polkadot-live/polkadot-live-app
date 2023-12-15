@@ -1,8 +1,10 @@
+import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
+import { ellipsisFn } from '@polkadot-cloud/utils';
 import { getUnixTime } from 'date-fns';
 
 export class EventsController {
-  static getEvent(entry: ApiCallEntry, newVal: string) {
+  static getEvent(entry: ApiCallEntry, newVal: AnyData) {
     switch (entry.task.action) {
       /*-------------------------------------------------- 
        subscribe:query.timestamp.now
@@ -42,6 +44,30 @@ export class EventsController {
           subtitle: `${newVal}`,
           data: {
             timestamp: `${newVal}`,
+          },
+          timestamp: getUnixTime(new Date()),
+          actions: [],
+        };
+      }
+
+      /*-------------------------------------------------- 
+       subscribe:query.system.account
+       --------------------------------------------------*/
+
+      case 'subscribe:query.system.account': {
+        const address = entry.task.actionArgs!.at(0)!;
+
+        return {
+          uid: `accountEvents_account_${ellipsisFn(address)}_${newVal.nonce}`,
+          category: 'account',
+          who: {
+            chain: entry.task.chainId,
+            address,
+          },
+          title: `${ellipsisFn(address)}`,
+          subtitle: `Free: ${newVal.free}, Reserved: ${newVal.reserved}, Nonce: ${newVal.nonce}`,
+          data: {
+            balances: newVal,
           },
           timestamp: getUnixTime(new Date()),
           actions: [],

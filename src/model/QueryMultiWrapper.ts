@@ -155,10 +155,21 @@ export class QueryMultiWrapper {
           case 'subscribe:query.system.account': {
             const free = new BigNumber(data[index].data.free);
             const reserved = new BigNumber(data[index].data.reserved);
-            const nonce = data[index].nonce;
+            const nonce = new BigNumber(data[index].nonce);
 
+            // Debugging.
             console.log(
               `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
+            );
+
+            // Construct and send event to renderer.
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              EventsController.getEvent(entry, {
+                nonce,
+                free,
+                reserved,
+              })
             );
 
             break;
