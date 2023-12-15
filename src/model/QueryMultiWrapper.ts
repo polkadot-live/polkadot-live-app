@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
 import * as ApiUtils from '@/utils/ApiUtils';
+import { EventsController } from '@/controller/EventsController';
+import { WindowsController } from '@/controller/WindowsController';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
@@ -9,8 +11,6 @@ import type {
   ApiCallEntry,
 } from '@/types/subscriptions';
 import { compareHashes } from '@/utils/CryptoUtils';
-import { WindowsController } from '@/controller/WindowsController';
-import { getUnixTime } from 'date-fns';
 
 export class QueryMultiWrapper {
   // Cache subscriptions associated their chain.
@@ -111,36 +111,23 @@ export class QueryMultiWrapper {
             const timeBuffer = 20;
 
             if (
-              !newVal ||
+              !data[index] ||
               compareHashes(newVal, curVal) ||
               newVal.minus(curVal).lte(timeBuffer)
             )
               break;
 
+            // Cache new value.
             this.setChainTaskVal(entry, newVal, chainId);
 
+            // Debugging.
             const now = new Date(data[index] * 1000).toDateString();
             console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
 
-            const newEvent = {
-              uid: `chainEvents_timestamp_${newVal}`,
-              category: 'timestamp',
-              who: {
-                chain: entry.task.chainId,
-                address: 'none',
-              },
-              title: `${entry.task.chainId}: New Timestamp`,
-              subtitle: `${newVal}`,
-              data: {
-                timestamp: `${newVal}`,
-              },
-              timestamp: getUnixTime(new Date()),
-              actions: [],
-            };
-
+            // Construct and send event to renderer.
             WindowsController.get('menu')?.webContents?.send(
               'renderer:event:new',
-              newEvent
+              EventsController.getEvent(entry, String(newVal))
             );
 
             break;
@@ -151,28 +138,16 @@ export class QueryMultiWrapper {
 
             if (!data[index] || compareHashes(newVal, curVal)) break;
 
+            // Cache new value.
             this.setChainTaskVal(entry, newVal, chainId);
+
+            // Debugging.
             console.log(`Current Sot: ${newVal} (index: ${index})`);
 
-            const newEvent = {
-              uid: `chainEvents_currentSlot_${newVal}`,
-              category: 'currentSlot',
-              who: {
-                chain: entry.task.chainId,
-                address: 'none',
-              },
-              title: `${entry.task.chainId}: Current Slot`,
-              subtitle: `${newVal}`,
-              data: {
-                timestamp: `${newVal}`,
-              },
-              timestamp: getUnixTime(new Date()),
-              actions: [],
-            };
-
+            // Construct and send event to renderer.
             WindowsController.get('menu')?.webContents?.send(
               'renderer:event:new',
-              newEvent
+              EventsController.getEvent(entry, String(newVal))
             );
 
             break;
