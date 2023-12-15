@@ -101,9 +101,21 @@ export class QueryMultiWrapper {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getChainTaskCurrentVal(action, chainId);
+            const curVal = new BigNumber(
+              this.getChainTaskCurrentVal(action, chainId)
+            );
 
-            if (!newVal || compareHashes(newVal, curVal)) break;
+            // If the difference of newVal - curVal is lte
+            // to this buffer, skip event processing.
+            // Prevents "double" timestamps being rendered.
+            const timeBuffer = 20;
+
+            if (
+              !newVal ||
+              compareHashes(newVal, curVal) ||
+              newVal.minus(curVal).lte(timeBuffer)
+            )
+              break;
 
             this.setChainTaskVal(entry, newVal, chainId);
 
