@@ -1,9 +1,6 @@
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { ChainID } from '@/types/chains';
-import type {
-  SubscriptionNextStatus,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 import { store } from '@/main';
 import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
@@ -17,19 +14,15 @@ export class SubscriptionsController {
   }
 
   static async initChainSubscriptions() {
+    const key = 'chain_subscriptions';
+
     // Instantiate QueryMultiWrapper.
     this.chainSubscriptions = new QueryMultiWrapper();
 
-    // TODO: Replace with store.get('subscription_globals')
-    const tasks: SubscriptionTask[] = [
-      {
-        action: 'subscribe:query.timestamp.now',
-        actionArgs: undefined,
-        chainId: 'Polkadot' as ChainID,
-        status: 'enable' as SubscriptionNextStatus,
-        label: 'Timestamps',
-      },
-    ];
+    // Get and deserialize chain tasks from store.
+    const tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
 
     // Subscribe to tasks.
     for (const task of tasks) {
@@ -145,21 +138,93 @@ export class SubscriptionsController {
   /*------------------------------------------------------------
    Key naming convention of subscription tasks in store:
   
-   'subscriptions_global'
+   'chain_subscriptions'
      Key that stores global chain subscription tasks.
   
-   'subscriptions_<account_address>'
+   '<account_address>_subscriptions'
      Key that stores an account's subscription tasks.
   
-   Ex: const serialized = store.get('subscriptions_global');
+   Ex: const serialized = store.get('chain_subscriptions');
   
    When subscription tasks are retrieved and deserialised,
    they can be passed to the appropriate `QueryMultiWrapper`
    instance, where the API call will be re-built.
    ------------------------------------------------------------*/
 
-  // TODO: Call when frontend is able to add subscriptions.
-  static persistTasksToStore(key: string, tasks: SubscriptionTask[]) {
+  // Called when a chain subscription task is received from renderer.
+  static updateChainTaskInStore(task: SubscriptionTask) {
+    const key = 'chain_subscriptions';
+
+    // Deserialize all tasks from store.
+    const tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
+
+    this.updateTaskInStore(tasks, task, key);
+  }
+
+  // Called when an account subscription task is received from renderer.
+  static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
+    const key = `${account.address}_subscriptions`;
+
+    // Deserialize the account's tasks from store.
+    const tasks: SubscriptionTask[] = store.get(key)
+      ? JSON.parse(store.get(key) as string)
+      : [];
+
+    this.updateTaskInStore(tasks, task, key);
+  }
+
+  /*------------------------------------------------------------
+   Clears an account's persisted subscriptions in the store.
+   Invoked when an account is removed.
+   ------------------------------------------------------------*/
+
+  static clearAccountTasksInStore(account: Account) {
+    store.delete(`${account.address}_subscriptions`);
+  }
+
+  /*------------------------------------------------------------
+   Utilities
+   ------------------------------------------------------------*/
+
+  private static updateTaskInStore(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask,
+    key: string
+  ) {
+    // Add or remove task depending on its status.
+    if (task.status === 'enable') {
+      // Remove task from array if it already exists.
+      this.taskExistsInArray(tasks, task) &&
+        (tasks = this.removeTaskFromArray(tasks, task));
+
+      tasks.push(task);
+    } else {
+      tasks = tasks.filter(
+        (t) => !(t.action === task.action && t.chainId === task.chainId)
+      );
+    }
+
+    // Persist new array to store.
     store.set(key, JSON.stringify(tasks));
+  }
+
+  private static taskExistsInArray(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask
+  ) {
+    return tasks.some(
+      (t) => t.action === task.action && t.chainId === t.chainId
+    );
+  }
+
+  private static removeTaskFromArray(
+    tasks: SubscriptionTask[],
+    task: SubscriptionTask
+  ) {
+    return tasks.filter(
+      (t) => !(t.action === task.action && t.chainId === task.chainId)
+    );
   }
 }

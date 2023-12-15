@@ -150,7 +150,12 @@ app.whenReady().then(async () => {
     async (_, data: WrappedSubscriptionTasks) => {
       switch (data.type) {
         case 'chain': {
+          // Subscribe to task.
           await SubscriptionsController.subscribeChainTask(data.tasks[0]);
+
+          // Update chain tasks in store.
+          SubscriptionsController.updateChainTaskInStore(data.tasks[0]);
+
           return true;
         }
         case 'account': {
@@ -167,6 +172,13 @@ app.whenReady().then(async () => {
             data.tasks[0],
             account
           );
+
+          // Update account's tasks in store.
+          SubscriptionsController.updateAccountTaskInStore(
+            data.tasks[0],
+            account
+          );
+
           return true;
         }
       }
