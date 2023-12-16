@@ -76,7 +76,7 @@ export const Item = ({
           }
           transition={{
             duration: FADE_TRANSITION * 0.001,
-            type: [0.1, 1, 0.1, 1],
+            ease: 'easeInOut',
           }}
         >
           <button type="button" onClick={() => handleDismissEvent()}>
