@@ -62,9 +62,8 @@ export const Item = ({
           variants={{
             hidden: { opacity: 0, height: 0 },
             show: {
-              height: remToUnit(itemHeight), // Doesn't play well with `rem` units.
-              scaleY: 1,
               opacity: 1,
+              height: remToUnit(itemHeight), // Doesn't play well with `rem` units.
             },
           }}
           animate={
