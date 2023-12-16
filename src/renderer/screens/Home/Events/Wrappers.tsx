@@ -52,7 +52,6 @@ export const EventGroup = styled.div`
 `;
 
 export const EventItem = styled(motion.div)`
-  --event-item-height: 9rem;
   --event-item-left-width: 4rem;
 
   position: relative;
@@ -65,8 +64,6 @@ export const EventItem = styled(motion.div)`
 
   > div {
     background: var(--background-default);
-    max-height: var(--event-item-height);
-    min-height: 65px;
     width: 100%;
     border-radius: 1.75rem;
     padding: 0 1.25rem;
