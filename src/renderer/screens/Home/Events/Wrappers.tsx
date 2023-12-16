@@ -76,8 +76,8 @@ export const EventItem = styled(motion.div)`
     > section {
       display: flex;
 
-      &:last-child {
-        margin: 0.7rem 0 0.1rem 0;
+      &.actions {
+        margin: 0.7rem 0 0rem 0;
         padding-left: 3.75rem;
         button {
           margin-right: 0.9rem;

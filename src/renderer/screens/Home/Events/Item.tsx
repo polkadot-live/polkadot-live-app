@@ -42,7 +42,7 @@ export const Item = ({
 
   // Manually define event item height. Add extra height if actions are present.
   // This could be refactored into a helper function in the future.
-  const itemHeight = actions.length ? '9rem' : '6rem';
+  const itemHeight = actions.length ? '9.25rem' : '6.25rem';
 
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event
   // _after_ the fade-out ensures there will be no race conditions. E.g. the UI rendering and
@@ -82,7 +82,7 @@ export const Item = ({
           <button type="button" onClick={() => handleDismissEvent()}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
-          <div style={{ height: itemHeight }}>
+          <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>
             <section>
               <div>
                 <div className="icon ">
@@ -102,40 +102,42 @@ export const Item = ({
                 <p>{subtitle}</p>
               </div>
             </section>
-            <section>
-              {actions.map(({ uri, text }, i) => {
-                const isUrl = isValidHttpUrl(uri);
-                if (isUrl) {
-                  return (
-                    <ButtonMonoInvert
-                      key={`${chain}_cat_${categoryKey}_event_${eventKey}_action_${i}`}
-                      text={text || ''}
-                      iconRight={faExternalLinkAlt}
-                      onClick={() => {
-                        window.myAPI.closeWindow('menu');
-                        window.myAPI.openBrowserURL(uri);
-                      }}
-                    />
-                  );
-                } else {
-                  return (
-                    <ButtonMono
-                      key={`event_action_${i}`}
-                      text={text || ''}
-                      onClick={() => {
-                        window.myAPI.openWindow('action', {
-                          uid,
-                          action: `${uid}_${uri}`,
-                          chain,
-                          address,
-                          data: JSON.stringify(data),
-                        });
-                      }}
-                    />
-                  );
-                }
-              })}
-            </section>
+            {actions.length > 0 && (
+              <section className="actions">
+                {actions.map(({ uri, text }, i) => {
+                  const isUrl = isValidHttpUrl(uri);
+                  if (isUrl) {
+                    return (
+                      <ButtonMonoInvert
+                        key={`${chain}_cat_${categoryKey}_event_${eventKey}_action_${i}`}
+                        text={text || ''}
+                        iconRight={faExternalLinkAlt}
+                        onClick={() => {
+                          window.myAPI.closeWindow('menu');
+                          window.myAPI.openBrowserURL(uri);
+                        }}
+                      />
+                    );
+                  } else {
+                    return (
+                      <ButtonMono
+                        key={`event_action_${i}`}
+                        text={text || ''}
+                        onClick={() => {
+                          window.myAPI.openWindow('action', {
+                            uid,
+                            action: `${uid}_${uri}`,
+                            chain,
+                            address,
+                            data: JSON.stringify(data),
+                          });
+                        }}
+                      />
+                    );
+                  }
+                })}
+              </section>
+            )}
           </div>
         </EventItem>
       )}
