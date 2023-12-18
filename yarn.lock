@@ -2287,13 +2287,13 @@
     glob "^10.2.2"
     import-meta-resolve "^4.0.0"
 
-"@wdio/dot-reporter@^8.24.2":
-  version "8.24.12"
-  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.24.12.tgz#5579681dea3327e8662577bb8bdd3954fc0df85f"
-  integrity sha512-sM0zBtb3UCSNReO8b2Nar2xsQfMq7OtgoW69NvQZTIcH1curBiahaXYKoNnnB/1Kap3BwBazu5STL0P1YNmY+w==
+"@wdio/dot-reporter@^8.26.2":
+  version "8.26.2"
+  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.26.2.tgz#421a63726910b845909e6ccb4d267f34b831d3f7"
+  integrity sha512-qKbwUPPCQOv5vhU8Qc7Wuorsbls/hY7Qb3HSGWILePTLeOyMMWJFaqrDFB+sJrYpxpzHhkZrfPuNNfDKd5Qslg==
   dependencies:
-    "@wdio/reporter" "8.24.12"
-    "@wdio/types" "8.24.12"
+    "@wdio/reporter" "8.26.2"
+    "@wdio/types" "8.26.2"
     chalk "^5.0.1"
 
 "@wdio/globals@8.26.1":
@@ -2359,17 +2359,6 @@
   integrity sha512-321F3sWafnlw93uRTSjEBVuvWCxTkWNDs7ektQS15drrroL3TMeFOynu4rDrIz0jXD9Vas0HCD2Tq/P0uxFLdw==
   dependencies:
     "@types/node" "^20.1.0"
-
-"@wdio/reporter@8.24.12":
-  version "8.24.12"
-  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.24.12.tgz#363189ba738f5a82d60517caa3b8e5e9629f5217"
-  integrity sha512-FtLzDTBXdgxXf4T9HJQ2bNpYYSKEw//jojFm9XzB4fPwzPeFY3HC+dbePucVW1SSLrVzVxqIOyHiwCLqQ/4cQw==
-  dependencies:
-    "@types/node" "^20.1.0"
-    "@wdio/logger" "8.24.12"
-    "@wdio/types" "8.24.12"
-    diff "^5.0.0"
-    object-inspect "^1.12.0"
 
 "@wdio/reporter@8.26.2":
   version "8.26.2"
