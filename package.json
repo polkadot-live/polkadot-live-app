@@ -89,7 +89,7 @@
     "@zondax/ledger-substrate": "^0.41.1",
     "auto-launch": "^5.0.6",
     "bignumber.js": "^9.1.2",
-    "date-fns": "^2.30.0",
+    "date-fns": "^3.0.0",
     "electron-localshortcut": "^3.2.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
