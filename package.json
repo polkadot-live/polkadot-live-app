@@ -78,7 +78,7 @@
     "@polkadot-cloud/assets": "^0.1.39",
     "@polkadot-cloud/react": "0.1.144",
     "@polkadot-cloud/utils": "^0.0.34",
-    "@polkadot/api": "^10.11.1",
+    "@polkadot/api": "^10.11.2",
     "@polkadot/keyring": "^12.4.2",
     "@polkadot/rpc-provider": "^10.11.2",
     "@polkadot/types": "^10.11.2",
