@@ -82,7 +82,7 @@
     "@polkadot/keyring": "^12.4.2",
     "@polkadot/rpc-provider": "^10.9.1",
     "@polkadot/types": "^10.9.1",
-    "@polkadot/types-codec": "^10.9.1",
+    "@polkadot/types-codec": "^10.11.2",
     "@polkadot/util": "^12.4.2",
     "@substrate/connect": "^0.8.3",
     "@vitejs/plugin-react-swc": "^3.3.2",
