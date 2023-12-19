@@ -210,6 +210,13 @@
     "@polkadot/extension-inject" "^0.46.5"
     "@polkadot/types-augment" "^10.9.1"
 
+"@chainsafe/metamask-polkadot-types@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@chainsafe/metamask-polkadot-types/-/metamask-polkadot-types-0.6.0.tgz#e6e950024c363e076ba6727c3b1b8b57eb6c29b0"
+  integrity sha512-DhLNF2LcybGMOs3aBMh5iIAqEw0/a2W6mb5FccOGVTYQqT6W/lcwKC5Ves4KmpGbH/DtNJdbC0L9YMS0F8bXEg==
+  dependencies:
+    "@polkadot/api" "^10.9.1"
+
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"
@@ -1114,12 +1121,13 @@
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/core/-/core-1.0.52.tgz#628a4e63482a9ccd4a8ba568c50950a4592e9658"
   integrity sha512-Wcuhxic9Nq3OdJN9Yz0/Z503FIGFjG2uFKFg6RT1lBqnSlPal5vtsTRad6Qm+0aZmISCH6c7rPKEL0tZN9OdzQ==
 
-"@polkadot-cloud/react@0.1.147":
-  version "0.1.147"
-  resolved "https://registry.yarnpkg.com/@polkadot-cloud/react/-/react-0.1.147.tgz#d5a9b723e98908720e9a0ef57ed8bb1625e0a6ce"
-  integrity sha512-OIbTH7iTefGHq9FZermJTz4Wx43zEHQXTEz0RAn3pIrhhORuCtEdvgONANw0RlibJjgfXhUT990TL+UGjCP7lA==
+"@polkadot-cloud/react@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/react/-/react-0.2.0.tgz#3dfbde49550a0d0cdc27bb5122baabb024852855"
+  integrity sha512-emc/ZqR3gjIfF3OZ/pDy+9aKIExLrDLJaD8qfBy6DeDMaA4pMbOwh92H8unkmtnIPOfycr3skWLG7djEgs0UPw==
   dependencies:
     "@chainsafe/metamask-polkadot-adapter" "^0.6.0"
+    "@chainsafe/metamask-polkadot-types" "^0.6.0"
     "@fortawesome/fontawesome-svg-core" "^6.5.1"
     "@fortawesome/free-brands-svg-icons" "^6.5.1"
     "@fortawesome/free-regular-svg-icons" "^6.5.1"
@@ -1132,6 +1140,7 @@
     "@polkadot/util" "^12.5.1"
     "@polkadot/util-crypto" "^12.5.1"
     framer-motion "^10.16.16"
+    react-error-boundary "^4.0.12"
 
 "@polkadot-cloud/utils@^0.0.34":
   version "0.0.34"
