@@ -1151,6 +1151,15 @@
     "@polkadot/util" "^12.5.1"
     bignumber.js "^9.1.1"
 
+"@polkadot-cloud/utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/utils/-/utils-0.1.0.tgz#f96eb31a7ad8fabfb23b4ca34659cb3f8d5621d6"
+  integrity sha512-sornlr2n3oE0JKhgy5mhSksbd6i3efeFGXl9nxs+EBUs3RHoNH+s0DiiZhZv9bdZC54wSh1rTPnkJHlre3fbQQ==
+  dependencies:
+    "@polkadot/keyring" "^12.6.1"
+    "@polkadot/util" "^12.5.1"
+    bignumber.js "^9.1.1"
+
 "@polkadot/api-augment@10.11.2":
   version "10.11.2"
   resolved "https://registry.yarnpkg.com/@polkadot/api-augment/-/api-augment-10.11.2.tgz#9ea6f3a25edb61a03d571f06f6ec87ced6d29a2a"
