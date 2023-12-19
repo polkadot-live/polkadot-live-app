@@ -2283,13 +2283,13 @@
     webdriver "8.26.2"
     webdriverio "8.26.2"
 
-"@wdio/spec-reporter@^8.26.2":
-  version "8.26.2"
-  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-8.26.2.tgz#4fa87c46e31952d92c4c22413de3de8fc6877250"
-  integrity sha512-GysWLoBukPNgxuXyobt7xPI776kW2NBsdvNYn8ECpYXWh7Of+ANSOGgGNWrN70Chct1NbGA5W4WwuDWcMeDDwg==
+"@wdio/spec-reporter@^8.26.3":
+  version "8.26.3"
+  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-8.26.3.tgz#2add4921495f38fd829a49f8ff15464c9806bd7e"
+  integrity sha512-YfKlBOmxGyJk08BpDnsjPsp85XyhG7Cu2qoAVxtJ8kkJOZaGfUg9TBV9DXDqvdZcxCMnPfDfQIda6LzfkZf58Q==
   dependencies:
-    "@wdio/reporter" "8.26.2"
-    "@wdio/types" "8.26.2"
+    "@wdio/reporter" "8.26.3"
+    "@wdio/types" "8.26.3"
     chalk "^5.1.2"
     easy-table "^1.2.0"
     pretty-ms "^7.0.0"
