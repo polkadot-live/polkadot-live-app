@@ -2170,13 +2170,13 @@
     glob "^10.2.2"
     import-meta-resolve "^4.0.0"
 
-"@wdio/dot-reporter@^8.26.2":
-  version "8.26.2"
-  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.26.2.tgz#421a63726910b845909e6ccb4d267f34b831d3f7"
-  integrity sha512-qKbwUPPCQOv5vhU8Qc7Wuorsbls/hY7Qb3HSGWILePTLeOyMMWJFaqrDFB+sJrYpxpzHhkZrfPuNNfDKd5Qslg==
+"@wdio/dot-reporter@^8.26.3":
+  version "8.26.3"
+  resolved "https://registry.yarnpkg.com/@wdio/dot-reporter/-/dot-reporter-8.26.3.tgz#c45b5fedd52e28af281a3b600b7922bb0810787f"
+  integrity sha512-jN73/+mPZ6nsxj3SyA1qGgTT5flZO68U/EuUMNAFL9FDgiafBm26oI6papAGch3tFZMuMAe8D8B4WK9iEu8WHw==
   dependencies:
-    "@wdio/reporter" "8.26.2"
-    "@wdio/types" "8.26.2"
+    "@wdio/reporter" "8.26.3"
+    "@wdio/types" "8.26.3"
     chalk "^5.0.1"
 
 "@wdio/globals@8.26.2", "@wdio/globals@^8.23.1":
@@ -2246,6 +2246,17 @@
     diff "^5.0.0"
     object-inspect "^1.12.0"
 
+"@wdio/reporter@8.26.3":
+  version "8.26.3"
+  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.26.3.tgz#39281d636cd9a213af00035e4544f62f8b9d56f2"
+  integrity sha512-F/sF1Hwxp1osM2wto4JydONQGxqkbOhwbLM0o4Y8eHPgK7/m+Kn9uygBDqPVpgQnpf0kUfhpICe9gaZzG4Jt+g==
+  dependencies:
+    "@types/node" "^20.1.0"
+    "@wdio/logger" "8.24.12"
+    "@wdio/types" "8.26.3"
+    diff "^5.0.0"
+    object-inspect "^1.12.0"
+
 "@wdio/runner@8.26.2":
   version "8.26.2"
   resolved "https://registry.yarnpkg.com/@wdio/runner/-/runner-8.26.2.tgz#e78c634d73195a8c8dfcb57c7bf26950c6100c77"
@@ -2285,6 +2296,13 @@
   version "8.26.2"
   resolved "https://registry.yarnpkg.com/@wdio/types/-/types-8.26.2.tgz#412bd2f7d0a783bf8c411f5adbaa8a234cd126fd"
   integrity sha512-LBaoTr4jrPu9knQBN1/7BD3SLkaGoQPcbE3GKIxeaOu0fRMOtEr22HxoONahOlQDvyPoOBmSoZw8wUvIfwhrRw==
+  dependencies:
+    "@types/node" "^20.1.0"
+
+"@wdio/types@8.26.3":
+  version "8.26.3"
+  resolved "https://registry.yarnpkg.com/@wdio/types/-/types-8.26.3.tgz#dd1beddc43b91f36cac04ba477b4e9b663a31a73"
+  integrity sha512-WOxvSV4sKJ5QCRNTJHeKCzgO2TZmcK1eDlJ+FObt9Pnt+4pCRy/881eVY/Aj2bozn2hhzq0AK/h6oPAUV/gjCg==
   dependencies:
     "@types/node" "^20.1.0"
 
