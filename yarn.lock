@@ -1106,25 +1106,25 @@
   resolved "https://registry.yarnpkg.com/@polkadot-api/utils/-/utils-0.0.1-1718606f2ef825e6c65185bec5892a77853694f4.1.0.tgz#5ec8a8cc061ed9c4b44294ade1d0a26a4a9087f0"
   integrity sha512-uW9k7cDyClcoQrKKiElbEqcDDtUjwAlyCXEwWen6RaavJC7ihHorvAwhJXoheRSREtnvQCzsKsw/Jbv0BsiCfA==
 
-"@polkadot-cloud/assets@0.1.35":
-  version "0.1.35"
-  resolved "https://registry.yarnpkg.com/@polkadot-cloud/assets/-/assets-0.1.35.tgz#5718e6e0b80ac9c01e7fed150012bb2b7563a160"
-  integrity sha512-ImyHYQ01s1kFetDE5qlk5x8s/H3WDFcbCcm+GquaJxm4b/QeznSJsBP0ZeaArihsCPcSWux9nFG6P1mfToVhtw==
+"@polkadot-cloud/assets@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/assets/-/assets-0.2.0.tgz#3907b2e93269b0c16e8ac60f243297a7a1ff271c"
+  integrity sha512-4dXb4zFRJAZS4icxz1cPZN6mdlhZIfW81jGgAkv6zKuRhJ9lMZO248gnxf8hZnNUEOotXph9tTLynAdMf31Tag==
 
 "@polkadot-cloud/assets@^0.2.1":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/assets/-/assets-0.2.1.tgz#a2225c98cebcf6a3ef15cfbdbd18d5ea6de017ab"
   integrity sha512-fvOLAidlw+WUoBfOyCVPnlfMDAZ/H3t1dVC13RoLt47gtg48Dsp+kMve7UKIB4ozbjeW9bzj2I4OviycCxQyow==
 
-"@polkadot-cloud/core@^1.0.52":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@polkadot-cloud/core/-/core-1.0.52.tgz#628a4e63482a9ccd4a8ba568c50950a4592e9658"
-  integrity sha512-Wcuhxic9Nq3OdJN9Yz0/Z503FIGFjG2uFKFg6RT1lBqnSlPal5vtsTRad6Qm+0aZmISCH6c7rPKEL0tZN9OdzQ==
+"@polkadot-cloud/core@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/core/-/core-1.1.0.tgz#ac830cc5b6998aad29e6809dd766e00c0dd5a594"
+  integrity sha512-be4UNM5K4UDDfB46LW97vAGwtz8WYffM3hHy2FSWlcm3ZK/NP5TrudqCSXGtruQsxm6b7N7Bb79wa6gdruXyAQ==
 
-"@polkadot-cloud/react@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@polkadot-cloud/react/-/react-0.2.0.tgz#3dfbde49550a0d0cdc27bb5122baabb024852855"
-  integrity sha512-emc/ZqR3gjIfF3OZ/pDy+9aKIExLrDLJaD8qfBy6DeDMaA4pMbOwh92H8unkmtnIPOfycr3skWLG7djEgs0UPw==
+"@polkadot-cloud/react@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/react/-/react-0.2.1.tgz#caeda9c13a7c57f506558420ec1326feb9bd993f"
+  integrity sha512-vkzMQX4XuBLMjjO8HlSejTbnVRE9AlL6GI1F2wJygRQylugfN3cWOjdHEHTUN6FgtbiIHemxQJlSWjOiOerb3A==
   dependencies:
     "@chainsafe/metamask-polkadot-adapter" "^0.6.0"
     "@chainsafe/metamask-polkadot-types" "^0.6.0"
@@ -1133,25 +1133,16 @@
     "@fortawesome/free-regular-svg-icons" "^6.5.1"
     "@fortawesome/free-solid-svg-icons" "^6.5.1"
     "@fortawesome/react-fontawesome" "^0.2.0"
-    "@polkadot-cloud/assets" "0.1.35"
-    "@polkadot-cloud/core" "^1.0.52"
-    "@polkadot-cloud/utils" "^0.0.34"
-    "@polkadot/keyring" "^12.6.1"
-    "@polkadot/util" "^12.5.1"
-    "@polkadot/util-crypto" "^12.5.1"
+    "@polkadot-cloud/assets" "0.2.0"
+    "@polkadot-cloud/core" "^1.1.0"
+    "@polkadot-cloud/utils" "^0.1.0"
+    "@polkadot/keyring" "^12.6.2"
+    "@polkadot/util" "^12.6.2"
+    "@polkadot/util-crypto" "^12.6.2"
     framer-motion "^10.16.16"
     react-error-boundary "^4.0.12"
 
-"@polkadot-cloud/utils@^0.0.34":
-  version "0.0.34"
-  resolved "https://registry.yarnpkg.com/@polkadot-cloud/utils/-/utils-0.0.34.tgz#92e7d3bda00d198a733e98f05bce978b8ad4f374"
-  integrity sha512-C2F1gtg3sGA8awyCR1/IzZ0J1Fy27uvUgjtIOb1VvZsygrsTBo7EWmNhHuUGDJaH3TgrsO3yQK2KM3AuOGNXDw==
-  dependencies:
-    "@polkadot/keyring" "^12.6.1"
-    "@polkadot/util" "^12.5.1"
-    bignumber.js "^9.1.1"
-
-"@polkadot-cloud/utils@^0.1.1":
+"@polkadot-cloud/utils@^0.1.0", "@polkadot-cloud/utils@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/utils/-/utils-0.1.1.tgz#dd1b055657c09d89f95d845e2534d2a394692b40"
   integrity sha512-4vqX7c+N3ZUCgbXgVs5zgU3pKh/m9njXrDAQgaWGWm7LX4M/sBdp6KOrz2qLmb3WiElM+C+IuZ7OMBhpZSbQAw==
@@ -1236,7 +1227,7 @@
     "@polkadot/x-global" "^12.6.1"
     tslib "^2.6.2"
 
-"@polkadot/keyring@^12.4.2", "@polkadot/keyring@^12.6.1", "@polkadot/keyring@^12.6.2":
+"@polkadot/keyring@^12.4.2", "@polkadot/keyring@^12.6.2":
   version "12.6.2"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-12.6.2.tgz#6067e6294fee23728b008ac116e7e9db05cecb9b"
   integrity sha512-O3Q7GVmRYm8q7HuB3S0+Yf/q/EB2egKRRU3fv9b3B7V+A52tKzA+vIwEmNVaD1g5FKW9oB97rmpggs0zaKFqHw==
@@ -1359,7 +1350,7 @@
     rxjs "^7.8.1"
     tslib "^2.6.2"
 
-"@polkadot/util-crypto@12.6.2", "@polkadot/util-crypto@^12.5.1", "@polkadot/util-crypto@^12.6.1", "@polkadot/util-crypto@^12.6.2":
+"@polkadot/util-crypto@12.6.2", "@polkadot/util-crypto@^12.6.1", "@polkadot/util-crypto@^12.6.2":
   version "12.6.2"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-12.6.2.tgz#d2d51010e8e8ca88951b7d864add797dad18bbfc"
   integrity sha512-FEWI/dJ7wDMNN1WOzZAjQoIcCP/3vz3wvAp5QQm+lOrzOLj0iDmaIGIcBkz8HVm3ErfSe/uKP0KS4jgV/ib+Mg==
@@ -1375,7 +1366,7 @@
     "@scure/base" "^1.1.5"
     tslib "^2.6.2"
 
-"@polkadot/util@12.6.2", "@polkadot/util@^12.4.2", "@polkadot/util@^12.5.1", "@polkadot/util@^12.6.1", "@polkadot/util@^12.6.2":
+"@polkadot/util@12.6.2", "@polkadot/util@^12.4.2", "@polkadot/util@^12.6.1", "@polkadot/util@^12.6.2":
   version "12.6.2"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-12.6.2.tgz#9396eff491221e1f0fd28feac55fc16ecd61a8dc"
   integrity sha512-l8TubR7CLEY47240uki0TQzFvtnxFIO7uI/0GoWzpYD/O62EIAMRsuY01N4DuwgKq2ZWD59WhzsLYmA5K6ksdw==
