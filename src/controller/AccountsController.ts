@@ -46,7 +46,7 @@ export class AccountsController {
     }
 
     // Parse serialized data into a map of StoredAccounts.
-    const parsed: Map<ChainID, StoredAccount[]> = new Map(JSON.parse(stored));
+    const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(stored));
     const importedAccounts: ImportedAccounts = new Map();
 
     for (const [chain, accounts] of parsed) {
@@ -377,8 +377,9 @@ export class AccountsController {
       status !== undefined ? this.status(chain, item.address) === status : true;
 
     for (const accounts of this.accounts.values()) {
-      if (accounts.find((a) => a.address === address && matchStatus(a)))
+      if (accounts.find((a) => a.address === address && matchStatus(a))) {
         return true;
+      }
     }
 
     return false;

@@ -36,7 +36,9 @@ export const Tooltip = () => {
 
     if (tooltipRef?.current) {
       setTooltipPosition(pageX, pageY - (tooltipRef.current.offsetHeight || 0));
-      if (!show) showTooltip();
+      if (!show) {
+        showTooltip();
+      }
     }
 
     const isTriggerElement = target?.classList.contains(
@@ -51,22 +53,20 @@ export const Tooltip = () => {
   };
 
   return (
-    <>
-      {!!open && (
-        <Wrapper
-          className="tooltip-trigger-element"
-          ref={tooltipRef}
-          style={{
-            position: 'absolute',
-            left: `${position[0]}px`,
-            top: `${position[1]}px`,
-            zIndex: 99,
-            opacity: show ? 1 : 0,
-          }}
-        >
-          <h3 className="tooltip-trigger-element">{text}</h3>
-        </Wrapper>
-      )}
-    </>
+    !!open && (
+      <Wrapper
+        className="tooltip-trigger-element"
+        ref={tooltipRef}
+        style={{
+          position: 'absolute',
+          left: `${position[0]}px`,
+          top: `${position[1]}px`,
+          zIndex: 99,
+          opacity: show ? 1 : 0,
+        }}
+      >
+        <h3 className="tooltip-trigger-element">{text}</h3>
+      </Wrapper>
+    )
   );
 };

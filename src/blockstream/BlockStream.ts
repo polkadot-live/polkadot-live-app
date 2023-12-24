@@ -68,12 +68,10 @@ export class BlockStream {
     this.apiSubscription = config.apiSubscription;
 
     // Take raw accounts and convert to concrete accounts.
-    this.accounts = config.accounts.map((raw) => {
-      return {
-        ...raw,
-        address: api.createType('Address', raw.address),
-      };
-    });
+    this.accounts = config.accounts.map((raw) => ({
+      ...raw,
+      address: api.createType('Address', raw.address),
+    }));
 
     this.api = api;
     this.chain = chain;

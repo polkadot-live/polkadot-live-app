@@ -72,9 +72,7 @@ export class Account {
     await this._queryMulti?.subscribeTask(task);
   };
 
-  getSubscriptionTasks = () => {
-    return this._queryMulti?.getSubscriptionTasks();
-  };
+  getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
 
   initState = () => {
     if (this.type === AccountType.User) {

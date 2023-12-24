@@ -49,7 +49,7 @@ export const RouterInner = () => {
     );
     window.myAPI.reportChainSubscriptionState(
       (_: Event, serialized: AnyJson) => {
-        const parsed: Map<ChainID, SubscriptionTask[]> = new Map(
+        const parsed = new Map<ChainID, SubscriptionTask[]>(
           JSON.parse(serialized)
         );
 
@@ -58,7 +58,7 @@ export const RouterInner = () => {
     );
     window.myAPI.reportAccountSubscriptionsState(
       (_: Event, serialized: AnyJson) => {
-        const parsed: Map<string, SubscriptionTask[]> = new Map(
+        const parsed = new Map<string, SubscriptionTask[]>(
           JSON.parse(serialized)
         );
 
@@ -80,11 +80,9 @@ export const RouterInner = () => {
   );
 };
 
-export const Router = () => {
-  return (
-    <HashRouter basename="/">
-      <RouterInner />
-    </HashRouter>
-  );
-};
+export const Router = () => (
+  <HashRouter basename="/">
+    <RouterInner />
+  </HashRouter>
+);
 export default Router;

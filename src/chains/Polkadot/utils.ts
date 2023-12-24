@@ -14,7 +14,9 @@ import { APIsController } from '@/controller/APIsController';
 export const getPoolAccounts = (poolId: number) => {
   const apiInstance = APIsController.get('Polkadot');
 
-  if (!apiInstance) return;
+  if (!apiInstance) {
+    return;
+  }
 
   const api = apiInstance.api;
   const consts = apiInstance.consts;

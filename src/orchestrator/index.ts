@@ -89,7 +89,9 @@ const importNewAddress = async ({
   const account = AccountsController.add(chain, source, address, name);
 
   // If account was unsuccessfully added, exit early.
-  if (!account) return;
+  if (!account) {
+    return;
+  }
 
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
@@ -138,7 +140,9 @@ const removeImportedAccount = async ({
   // Retrieve the account.
   const account = AccountsController.get(chain, address);
 
-  if (!account) return;
+  if (!account) {
+    return;
+  }
 
   // Unsubscribe from all active tasks.
   await AccountsController.removeAllSubscriptions(account);

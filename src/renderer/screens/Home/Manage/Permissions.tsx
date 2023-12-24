@@ -80,11 +80,10 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     action: string,
     chainId: string,
     address: string | undefined
-  ) => {
-    return address
+  ) =>
+    address
       ? `${type}_${chainId}_${address}_${action}`
       : `${type}_${chainId}_${action}`;
-  };
 
   // Renders a list of subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => {

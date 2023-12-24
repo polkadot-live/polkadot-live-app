@@ -35,9 +35,8 @@ export class APIsController {
    * @summary Checks whether an API instace for the provided chain exists.
    * @param {ChainID} chain - the chain ID.
    */
-  static chainExists = (chain: ChainID) => {
-    return !!APIsController.instances.find((a) => a.chain === chain);
-  };
+  static chainExists = (chain: ChainID) =>
+    !!APIsController.instances.find((a) => a.chain === chain);
 
   /**
    * @name new
@@ -57,7 +56,7 @@ export class APIsController {
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
     if (
       !ChainList.get(chain as ChainID) ||
-      this.instances.find((api) => api.chain === chain)
+      this.instances.find(({ chain: instanceChain }) => instanceChain === chain)
     ) {
       await instance.disconnect();
       return;
@@ -106,9 +105,8 @@ export class APIsController {
    * @param {ChainID} chain - the chain the instance belongs to.
    * @returns {(API|undefined)}
    */
-  static get = (chain: ChainID): API | undefined => {
-    return this.instances?.find((c) => c.chain === chain) || undefined;
-  };
+  static get = (chain: ChainID): API | undefined =>
+    this.instances?.find((c) => c.chain === chain) || undefined;
 
   /**
    * @name set

@@ -24,22 +24,18 @@ export const ImportVault = ({
     setStateWithRef(value, setAddressesState, addressesRef);
   };
 
-  return (
-    <>
-      {!addressesRef.current.length ? (
-        <Splash
-          addresses={addressesRef.current}
-          setAddresses={setAddresses}
-          setSection={setSection}
-        />
-      ) : (
-        <Manage
-          section={section}
-          setSection={setSection}
-          addresses={addresses}
-          setAddresses={setAddresses}
-        />
-      )}
-    </>
+  return !addressesRef.current.length ? (
+    <Splash
+      addresses={addressesRef.current}
+      setAddresses={setAddresses}
+      setSection={setSection}
+    />
+  ) : (
+    <Manage
+      section={section}
+      setSection={setSection}
+      addresses={addresses}
+      setAddresses={setAddresses}
+    />
   );
 };

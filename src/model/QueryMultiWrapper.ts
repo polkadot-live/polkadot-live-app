@@ -12,7 +12,7 @@ import { compareHashes } from '@/utils/CryptoUtils';
 
 export class QueryMultiWrapper {
   // Cache subscriptions associated their chain.
-  private subscriptions: Map<ChainID, QueryMultiEntry> = new Map();
+  private subscriptions = new Map<ChainID, QueryMultiEntry>();
 
   private async next(task: SubscriptionTask) {
     switch (task.action) {
@@ -101,7 +101,9 @@ export class QueryMultiWrapper {
             const newVal = new BigNumber(data[index]);
             const curVal = this.getChainTaskCurrentVal(action, chainId);
 
-            if (compareHashes(newVal, curVal)) break;
+            if (compareHashes(newVal, curVal)) {
+              break;
+            }
 
             this.setChainTaskVal(entry, newVal, chainId);
 
@@ -114,7 +116,9 @@ export class QueryMultiWrapper {
             const newVal = new BigNumber(data[index]);
             const curVal = this.getChainTaskCurrentVal(action, chainId);
 
-            if (!data[index] || compareHashes(newVal, curVal)) break;
+            if (!data[index] || compareHashes(newVal, curVal)) {
+              break;
+            }
 
             this.setChainTaskVal(entry, newVal, chainId);
             console.log(`Current Sot: ${newVal} (index: ${index})`);
@@ -236,11 +240,9 @@ export class QueryMultiWrapper {
     const retrieved = this.subscriptions.get(chainId);
 
     if (retrieved) {
-      const newEntries = retrieved.callEntries.map((e) => {
-        return e.task.action === entry.task.action
-          ? { ...e, curVal: newVal }
-          : e;
-      });
+      const newEntries = retrieved.callEntries.map((e) =>
+        e.task.action === entry.task.action ? { ...e, curVal: newVal } : e
+      );
 
       this.subscriptions.set(chainId, {
         unsub: retrieved.unsub,
@@ -273,7 +275,9 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId)!;
 
     // Unsubscribe from pervious query multi.
-    if (entry.unsub !== null) entry.unsub();
+    if (entry.unsub !== null) {
+      entry.unsub();
+    }
 
     this.subscriptions.set(chainId, {
       unsub: newUnsub,
@@ -294,7 +298,9 @@ export class QueryMultiWrapper {
       for (const { apiCall, task } of entry.callEntries) {
         let callArray = [apiCall];
 
-        if (task.actionArgs) callArray = callArray.concat(task.actionArgs);
+        if (task.actionArgs) {
+          callArray = callArray.concat(task.actionArgs);
+        }
 
         argument.push(callArray);
       }

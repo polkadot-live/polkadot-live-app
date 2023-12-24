@@ -14,7 +14,7 @@ export const Overlay = () => {
   } = useOverlay();
 
   if (status === 0) {
-    return <></>;
+    return null;
   }
 
   return (

@@ -24,12 +24,11 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const { setRenderedSubscriptions } = useManage();
 
   // Utility: Copy tasks.
-  const copyTasks = (tasks: SubscriptionTask[]) => {
-    return tasks.map((t) => ({
+  const copyTasks = (tasks: SubscriptionTask[]) =>
+    tasks.map((t) => ({
       ...t,
       actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
     }));
-  };
 
   // Set parent subscription tasks state when a chain is clicked.
   const handleClickChain = (chain: string) => {
