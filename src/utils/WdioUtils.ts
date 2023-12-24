@@ -22,7 +22,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     //--------------------------------------------------
 
     case 'wdio:accounts:clear': {
-      const addressMap: Map<ChainID, string[]> = new Map();
+      const addressMap = new Map<ChainID, string[]>();
 
       // Collect addresses to remove from accounts controller
       for (const [chainId, accounts] of AccountsController.accounts.entries()) {
@@ -96,7 +96,9 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
         params.original.address
       );
 
-      if (!account) return false;
+      if (!account) {
+        return false;
+      }
 
       // Update account's information
       account.name = params.updated.name;
@@ -166,7 +168,9 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       // Get added account
       const account = AccountsController.get(chainId, address);
-      if (!account) return false;
+      if (!account) {
+        return false;
+      }
 
       // Change account config
       const config = params.newConfig;
@@ -195,7 +199,9 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       // Get added account
       const account = AccountsController.get(chainId, address);
-      if (!account) return false;
+      if (!account) {
+        return false;
+      }
 
       // Change account config
       const config = params.config;

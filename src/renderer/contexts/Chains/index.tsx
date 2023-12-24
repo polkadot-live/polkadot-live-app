@@ -33,9 +33,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Gets a chain
-  const getChain = (name: string) => {
-    return chains.find((c) => c.name === name);
-  };
+  const getChain = (name: string) => chains.find((c) => c.name === name);
 
   // Updates an existing chain.
   const setChain = (chain: ChainInstance) => {

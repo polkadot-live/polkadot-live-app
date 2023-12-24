@@ -124,12 +124,12 @@ type ApiReportTxStatus = (
   callback: (_: IpcRendererEvent, status: TxStatus) => void
 ) => Electron.IpcRenderer;
 
-type APIReportTxData = {
+interface APIReportTxData {
   estimatedFee: AnyJson;
   txId: AnyJson;
   payload: AnyJson;
   setGenesisHash: AnyJson;
-};
+}
 
 type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 

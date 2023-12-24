@@ -1,18 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
 import type { TooltipContextInterface } from './types';
 
 export const defaultTooltipContext: TooltipContextInterface = {
-  // eslint-disable-next-line
   openTooltip: () => {},
-  // eslint-disable-next-line
   closeTooltip: () => {},
-  // eslint-disable-next-line
   setTooltipPosition: (x, y) => {},
-  // eslint-disable-next-line
   showTooltip: () => {},
-  // eslint-disable-next-line
   setTooltipTextAndOpen: (t) => {},
   open: 0,
   show: 0,

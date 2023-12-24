@@ -9,6 +9,5 @@ export const getSHA256Hash = (val: string) => {
 };
 
 // Return true if both sets of data output the same hash.
-export const compareHashes = (x: AnyData, y: AnyData) => {
-  return getSHA256Hash(String(x)) === getSHA256Hash(String(y));
-};
+export const compareHashes = (x: AnyData, y: AnyData) =>
+  getSHA256Hash(String(x)) === getSHA256Hash(String(y));

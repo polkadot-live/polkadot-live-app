@@ -23,7 +23,9 @@ export const reportAccountsState = (id: string) => {
     chainAccounts.forEach(({ chain, address, state, type }) => {
       if (type === AccountType.User) {
         // TODO: Throw error if state not found
-        if (!state) return;
+        if (!state) {
+          return;
+        }
 
         Object.entries(state.getAllState()).forEach(([key, value]) => {
           debug('🏦 Reporting account state %o', key, value);

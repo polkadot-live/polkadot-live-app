@@ -51,7 +51,9 @@ export class Discover {
       debug(`💳 Bootstrapping for accounts, chain ${chainId || 'all chains'}`);
 
       // TODO: new `eventsCache` to stop querying every time?.
-      if (chainId) await ChainsController.bootstrap(chainId);
+      if (chainId) {
+        await ChainsController.bootstrap(chainId);
+      }
     };
 
     // Iterate accounts and chain IDs

@@ -4,7 +4,7 @@
 import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
 
-export type AccountStateContextInterface = {
+export interface AccountStateContextInterface {
   setAccountStateKey: (
     chain: ChainID,
     address: string,
@@ -12,6 +12,6 @@ export type AccountStateContextInterface = {
     value: AnyJson
   ) => void;
   getAccountStateKey: (chain: ChainID, address: string, key: string) => AnyJson;
-};
+}
 
 export type AccountState = Record<ChainID, Record<string, AnyJson>>;

@@ -58,9 +58,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setTxFees(new BigNumber(0));
   };
 
-  const getTxPayload = () => {
-    return txPayloadRef.current?.payload || null;
-  };
+  const getTxPayload = () => txPayloadRef.current?.payload || null;
 
   const setTxPayload = (txId: number, payload: AnyJson) => {
     setStateWithRef(
@@ -77,17 +75,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setStateWithRef(null, setTxPayloadState, txPayloadRef);
   };
 
-  const getGenesisHash = () => {
-    return genesisHashRef.current;
-  };
+  const getGenesisHash = () => genesisHashRef.current;
 
   const setGenesisHash = (v: AnyJson) => {
     setStateWithRef(v, setGenesisHashState, genesisHashRef);
   };
 
-  const getTxSignature = () => {
-    return txSignatureRef.current;
-  };
+  const getTxSignature = () => txSignatureRef.current;
 
   const setTxSignature = (s: AnyJson) => {
     setStateWithRef(s, setTxSignatureState, txSignatureRef);

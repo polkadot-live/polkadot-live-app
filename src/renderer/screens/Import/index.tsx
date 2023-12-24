@@ -21,51 +21,49 @@ export const Import: React.FC = () => {
   }, [section]);
 
   return (
-    <>
-      <ModalSection type="carousel">
-        <ModalMotionTwoSection
-          animate={section === 0 ? 'home' : 'next'}
-          transition={{
-            duration: 0.5,
-            type: 'spring',
-            bounce: 0.1,
-          }}
-          variants={{
-            home: {
-              left: 0,
-            },
-            next: {
-              left: '-100%',
-            },
+    <ModalSection type="carousel">
+      <ModalMotionTwoSection
+        animate={section === 0 ? 'home' : 'next'}
+        transition={{
+          duration: 0.5,
+          type: 'spring',
+          bounce: 0.1,
+        }}
+        variants={{
+          home: {
+            left: 0,
+          },
+          next: {
+            left: '-100%',
+          },
+        }}
+      >
+        <div
+          style={{
+            flexBasis: '50%',
+            minWidth: '50%',
+            height: 'auto',
+            flexGrow: 1,
           }}
         >
-          <div
-            style={{
-              flexBasis: '50%',
-              minWidth: '50%',
-              height: 'auto',
-              flexGrow: 1,
-            }}
-          >
-            <Home setSection={setSection} setSource={setSource} />
-          </div>
-          <div
-            style={{
-              flexBasis: '50%',
-              minWidth: '50%',
-              height: 'auto',
-              flexGrow: 1,
-            }}
-          >
-            {source === 'ledger' && (
-              <ImportLedger section={section} setSection={setSection} />
-            )}
-            {source === 'vault' && (
-              <ImportVault section={section} setSection={setSection} />
-            )}
-          </div>
-        </ModalMotionTwoSection>
-      </ModalSection>
-    </>
+          <Home setSection={setSection} setSource={setSource} />
+        </div>
+        <div
+          style={{
+            flexBasis: '50%',
+            minWidth: '50%',
+            height: 'auto',
+            flexGrow: 1,
+          }}
+        >
+          {source === 'ledger' && (
+            <ImportLedger section={section} setSection={setSection} />
+          )}
+          {source === 'vault' && (
+            <ImportVault section={section} setSection={setSection} />
+          )}
+        </div>
+      </ModalMotionTwoSection>
+    </ModalSection>
   );
 };

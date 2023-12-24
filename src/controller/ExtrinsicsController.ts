@@ -40,7 +40,9 @@ export class ExtrinsicsController {
   ) => {
     try {
       const { api } = APIsController.get(chain) || {};
-      if (!api) return;
+      if (!api) {
+        return;
+      }
 
       debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
 

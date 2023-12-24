@@ -25,115 +25,113 @@ export const Home = ({
 }: {
   setSection: AnyFunction;
   setSource: AnyFunction;
-}) => {
-  return (
-    <>
-      <DragClose windowName="import" />
-      <ContentWrapper>
-        <h3>Manage Accounts</h3>
-        <ActionItem text={'Hardware'} style={{ marginTop: '1.75rem' }} />
-        <div style={{ display: 'flex' }}>
-          <ModalConnectItem>
-            <ModalHardwareItem>
-              <div className="body">
-                <div className="status">
-                  <ButtonHelp
-                    onClick={() => {
-                      /* Empty */
-                    }}
-                  />
-                </div>
-                <div className="row">
-                  <PolkadotVaultSVG className="logo vault" />
-                </div>
-                <div className="row">
-                  <VaultLogoSVG className="svg-title" />
-                </div>
-                <div className="row margin">
-                  <ButtonMonoInvert
-                    text="Manage"
-                    onClick={() => {
-                      setSource('vault');
-                      setSection(1);
-                    }}
-                    iconLeft={faQrcode}
-                    iconTransform="shrink-1"
-                  />
-                </div>
+}) => (
+  <>
+    <DragClose windowName="import" />
+    <ContentWrapper>
+      <h3>Manage Accounts</h3>
+      <ActionItem text={'Hardware'} style={{ marginTop: '1.75rem' }} />
+      <div style={{ display: 'flex' }}>
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    /* Empty */
+                  }}
+                />
               </div>
-              <div className="foot">
-                <a
-                  className="link"
-                  href={`https://$signer.parity.io`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  signer.parity.io
-                  <FontAwesomeIcon
-                    icon={faExternalLinkAlt}
-                    transform="shrink-6"
-                  />
-                </a>
+              <div className="row">
+                <PolkadotVaultSVG className="logo vault" />
               </div>
-            </ModalHardwareItem>
-          </ModalConnectItem>
-          <ModalConnectItem>
-            <ModalHardwareItem>
-              <div className="body">
-                <div className="status">
-                  <ButtonHelp
-                    onClick={() => {
-                      /* Empty */
-                    }}
-                  />
-                </div>
-                <div className="row">
-                  <LedgerLogoSVG className="logo mono" />
-                </div>
-                <div className="row">
-                  <ButtonText
-                    text="BETA"
-                    disabled
-                    marginRight
-                    style={{ opacity: 0.5 }}
-                  />
-                  <ButtonText
-                    text="Chrome / Brave"
-                    disabled
-                    iconLeft={faChrome}
-                    style={{ opacity: 0.5 }}
-                  />
-                </div>
-                <div className="row margin">
-                  <ButtonMonoInvert
-                    text="USB"
-                    onClick={() => {
-                      setSource('ledger');
-                      setSection(1);
-                    }}
-                    iconLeft={faUsb}
-                    iconTransform="shrink-1"
-                  />
-                </div>
+              <div className="row">
+                <VaultLogoSVG className="svg-title" />
               </div>
-              <div className="foot">
-                <a
-                  className="link"
-                  href={`https://ledger.com`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  ledger.com
-                  <FontAwesomeIcon
-                    icon={faExternalLinkAlt}
-                    transform="shrink-6"
-                  />
-                </a>
+              <div className="row margin">
+                <ButtonMonoInvert
+                  text="Manage"
+                  onClick={() => {
+                    setSource('vault');
+                    setSection(1);
+                  }}
+                  iconLeft={faQrcode}
+                  iconTransform="shrink-1"
+                />
               </div>
-            </ModalHardwareItem>
-          </ModalConnectItem>
-        </div>
-      </ContentWrapper>
-    </>
-  );
-};
+            </div>
+            <div className="foot">
+              <a
+                className="link"
+                href={`https://$signer.parity.io`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                signer.parity.io
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
+            </div>
+          </ModalHardwareItem>
+        </ModalConnectItem>
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    /* Empty */
+                  }}
+                />
+              </div>
+              <div className="row">
+                <LedgerLogoSVG className="logo mono" />
+              </div>
+              <div className="row">
+                <ButtonText
+                  text="BETA"
+                  disabled
+                  marginRight
+                  style={{ opacity: 0.5 }}
+                />
+                <ButtonText
+                  text="Chrome / Brave"
+                  disabled
+                  iconLeft={faChrome}
+                  style={{ opacity: 0.5 }}
+                />
+              </div>
+              <div className="row margin">
+                <ButtonMonoInvert
+                  text="USB"
+                  onClick={() => {
+                    setSource('ledger');
+                    setSection(1);
+                  }}
+                  iconLeft={faUsb}
+                  iconTransform="shrink-1"
+                />
+              </div>
+            </div>
+            <div className="foot">
+              <a
+                className="link"
+                href={`https://ledger.com`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                ledger.com
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
+            </div>
+          </ModalHardwareItem>
+        </ModalConnectItem>
+      </div>
+    </ContentWrapper>
+  </>
+);
