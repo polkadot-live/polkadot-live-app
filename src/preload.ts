@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   quitApp: (): void => {
     ipcRenderer.invoke('app:quit');
   },
+
   hideWindow: (id) => ipcRenderer.send('app:window:hide', id),
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
