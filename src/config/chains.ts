@@ -27,7 +27,7 @@ interface Chain {
   categories: AnyData;
 }
 
-export const ChainList: Map<ChainID, Chain> = new Map([
+export const ChainList = new Map<ChainID, Chain>([
   [
     'Polkadot',
     {

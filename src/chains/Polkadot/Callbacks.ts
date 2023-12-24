@@ -33,7 +33,9 @@ export class PolkadotCallbacks {
       ? [account]
       : AccountsController.accounts.get(this.chain);
 
-    if (!chainAccounts) return;
+    if (!chainAccounts) {
+      return;
+    }
 
     for (const { type, address, chainState } of chainAccounts) {
       // Delegates are not needed to bootstrap cached chain state.
@@ -99,7 +101,8 @@ export class PolkadotCallbacks {
         // config, if it has not been already.
         if (
           !AccountsController.getAllFlattenedAccountData()[this.chain].find(
-            ({ address }: FlattenedAccountData) => address === rewardAddress
+            ({ address: chainAddress }: FlattenedAccountData) =>
+              chainAddress === rewardAddress
           )
         ) {
           const delegate = new Account(
@@ -141,7 +144,9 @@ export class PolkadotCallbacks {
       APIsController.instances.find(
         (instance) => instance.chain === this.chain
       ) || {};
-    if (!api) return;
+    if (!api) {
+      return;
+    }
 
     const result = await api.call.nominationPoolsApi.pendingRewards(address);
 

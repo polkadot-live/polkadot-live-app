@@ -15,8 +15,12 @@ interface ManageContextInterface {
 // Default context value.
 const defaultManageContext: ManageContextInterface = {
   renderedSubscriptions: { type: '', tasks: [] },
-  setRenderedSubscriptions: () => {},
-  updateRenderedSubscriptions: () => {},
+  setRenderedSubscriptions: () => {
+    // do nothing
+  },
+  updateRenderedSubscriptions: () => {
+    // do nothing
+  },
 };
 
 // Hook to manage context.

@@ -55,11 +55,11 @@ export const QrScan = memo(Scan);
 
 const qrcodeRegionId = 'html5qr-code-full-region';
 
-type Html5QrScannerProps = {
+interface Html5QrScannerProps {
   fps: number;
   qrCodeSuccessCallback: (data: string | null) => void | '' | null;
   qrCodeErrorCallback: (error: string) => void;
-};
+}
 
 const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
   const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
@@ -95,7 +95,9 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
   }, [html5QrCode]);
 
   const handleHtmlQrCode = () => {
-    if (html5QrCode === null) return;
+    if (html5QrCode === null) {
+      return;
+    }
 
     Html5Qrcode.getCameras()
       .then((devices) => {

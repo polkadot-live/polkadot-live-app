@@ -62,21 +62,24 @@ export class SubscriptionsController {
     const allTasks = activeTasks
       ? allChainTasks.map((t) => {
           for (const active of activeTasks) {
-            if (active.action === t.action && active.chainId === t.chainId)
+            if (active.action === t.action && active.chainId === t.chainId) {
               return active;
+            }
           }
           return t;
         })
       : allChainTasks;
 
     // Construct map from tasks array.
-    const map: Map<ChainID, SubscriptionTask[]> = new Map();
+    const map = new Map<ChainID, SubscriptionTask[]>();
 
     for (const task of allTasks) {
       let updated = [task];
 
       const current = map.get(task.chainId);
-      if (current) updated = [...current, task];
+      if (current) {
+        updated = [...current, task];
+      }
 
       map.set(task.chainId, updated);
     }
@@ -91,7 +94,7 @@ export class SubscriptionsController {
    ------------------------------------------------------------*/
 
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
-    const map: Map<string, SubscriptionTask[]> = new Map();
+    const map = new Map<string, SubscriptionTask[]>();
 
     for (const accounts of accountsMap.values()) {
       for (const account of accounts) {

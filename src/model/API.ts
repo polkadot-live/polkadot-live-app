@@ -149,9 +149,8 @@ export class API {
       api.consts.nominationPools.palletId,
     ]);
 
-    const takeResult = (result: Codec[], index: number) => {
-      return new BigNumber(rmCommas(result[index].toString()));
-    };
+    const takeResult = (item: Codec[], index: number) =>
+      new BigNumber(rmCommas(item[index].toString()));
 
     const bondDuration = takeResult(result, 0);
     const sessionsPerEra = takeResult(result, 1);

@@ -7,11 +7,11 @@ import type { BrowserWindow } from 'electron';
 import { store } from '@/main';
 
 // A window helper to manage which windows are open and their current state.
-type StoredWindow = {
+interface StoredWindow {
   window: BrowserWindow;
   id: string;
   focused: boolean;
-};
+}
 
 export class WindowsController {
   // The currently active (showing) windows.
@@ -35,11 +35,8 @@ export class WindowsController {
   };
 
   // Gets a browser window from the `active` set via its id.
-  static get = (id: string) => {
-    return (
-      this.active.find((a: StoredWindow) => a.id === id)?.window ?? undefined
-    );
-  };
+  static get = (id: string) =>
+    this.active.find((a: StoredWindow) => a.id === id)?.window ?? undefined;
 
   // A window is in focus.
   static focus = (id: string) => {
@@ -56,9 +53,8 @@ export class WindowsController {
   };
 
   // At least one window is in focus.
-  static focused = () => {
-    return this.active.find((a: StoredWindow) => a.focused) ? true : false;
-  };
+  static focused = () =>
+    this.active.find((a: StoredWindow) => a.focused) ? true : false;
 
   // Hide window of a id and remove focus.
   static hideAndBlur = (id: string) => {
@@ -83,7 +79,9 @@ export class WindowsController {
   // Close window of a id and remove from active.
   static close = (id: string) => {
     for (const { window, id: currId } of this.active) {
-      if (currId !== id) continue;
+      if (currId !== id) {
+        continue;
+      }
 
       if (id === 'menu') {
         window.hide();
@@ -104,7 +102,9 @@ export class WindowsController {
 
     // Close all non-menubar windows.
     this.all().forEach((storedWindow) => {
-      if (storedWindow.id !== 'menu') storedWindow.window.hide();
+      if (storedWindow.id !== 'menu') {
+        storedWindow.window.hide();
+      }
     });
   };
 

@@ -86,7 +86,9 @@ app.whenReady().then(async () => {
     name: 'Polkadot Live',
   });
   autoLaunch.isEnabled().then((isEnabled: boolean) => {
-    if (!isEnabled) autoLaunch.enable();
+    if (!isEnabled) {
+      autoLaunch.enable();
+    }
   });
 
   // App initialization process.
@@ -129,9 +131,8 @@ app.whenReady().then(async () => {
   if (isTest) {
     ipcMain.handle(
       'wdio-electron',
-      (_: IpcMainInvokeEvent, cmd: string, params?: AnyData) => {
-        return WdioUtils.handleWdioApi(cmd, params);
-      }
+      (_: IpcMainInvokeEvent, cmd: string, params?: AnyData) =>
+        WdioUtils.handleWdioApi(cmd, params)
     );
   }
 
@@ -165,7 +166,9 @@ app.whenReady().then(async () => {
             data.address
           );
 
-          if (!account) return false;
+          if (!account) {
+            return false;
+          }
 
           // Subscribe to the task.
           await SubscriptionsController.subscribeAccountTask(

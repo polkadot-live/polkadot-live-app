@@ -10,6 +10,6 @@ export interface EventsContextInterface {
   sortChainEvents: (c: ChainID) => SortedChainEvents;
 }
 
-export type EventsState = { [key: string]: EventCallback[] };
+export type EventsState = Record<string, EventCallback[]>;
 
 export type SortedChainEvents = { category: string; events: EventCallback[] }[];

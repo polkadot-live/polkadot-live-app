@@ -15,7 +15,10 @@ import { ApiSubscription } from '@/types/blockstream';
 const debug = MainDebug.extend('Subscriptions');
 
 // Basic types for services.
-type Service = { chain: ChainID; instance: BlockStream };
+interface Service {
+  chain: ChainID;
+  instance: BlockStream;
+}
 
 /**
  * A static class to manage BlockStream subscriptions.
@@ -39,7 +42,9 @@ export class BlockStreamsController {
       // Get accounts for `chain` and instantiate service.
       const accounts = AccountsController.accounts.get(chain);
 
-      if (!accounts) return;
+      if (!accounts) {
+        return;
+      }
 
       debug('💳 API instance accounts pre discover: %o', accounts.length);
 

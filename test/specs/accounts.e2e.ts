@@ -31,8 +31,9 @@ describe('Account Tests', function () {
       });
       const account = result1 as FlattenedAccountData | false;
 
-      if (!account)
+      if (!account) {
         throw new Error('AccountsController#add failed to add account.');
+      }
 
       expect(account.address).toBe(mockAccount1.address);
       expect(account.name).toBe(mockAccount1.name);
@@ -61,8 +62,9 @@ describe('Account Tests', function () {
 
       const account = result1 as FlattenedAccountData | false;
 
-      if (!account)
+      if (!account) {
         throw new Error('AccountsController#get failed to get account');
+      }
 
       expect(account.address).toBe(mockAccount1.address);
       expect(account.name).toBe(mockAccount1.name);
@@ -97,8 +99,9 @@ describe('Account Tests', function () {
 
       const account = result as FlattenedAccountData | false;
 
-      if (!account)
+      if (!account) {
         throw new Error('AccountsController#set failed to update account');
+      }
 
       expect(account.name).toBe(updatedParams.name);
       expect(account.address).toBe(mockAccount1.address);
@@ -168,7 +171,7 @@ describe('Account Tests', function () {
       const result = await browser.electron.api(
         'AccountsController#setAccountConfig',
         {
-          newConfig: newConfig,
+          newConfig,
           newAccount: { ...mockAccount1 },
         }
       );

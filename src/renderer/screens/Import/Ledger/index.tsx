@@ -124,21 +124,17 @@ export const ImportLedger = ({
     };
   }, []);
 
-  return (
-    <>
-      {!addressesRef.current.length ? (
-        <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
-      ) : (
-        <Manage
-          addresses={addressesRef.current}
-          isImporting={isImportingRef.current}
-          toggleImport={toggleImport}
-          statusCodes={statusCodesRef.current}
-          cancelImport={cancelImport}
-          section={section}
-          setSection={setSection}
-        />
-      )}
-    </>
+  return !addressesRef.current.length ? (
+    <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
+  ) : (
+    <Manage
+      addresses={addressesRef.current}
+      isImporting={isImportingRef.current}
+      toggleImport={toggleImport}
+      statusCodes={statusCodesRef.current}
+      cancelImport={cancelImport}
+      section={section}
+      setSection={setSection}
+    />
   );
 };

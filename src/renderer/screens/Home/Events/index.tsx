@@ -15,30 +15,26 @@ export const Events = () => {
   return (
     <Wrapper>
       {Object.keys(events)?.length ? (
-        <>
-          {Object.keys(events)?.map((chain: string, i) => {
-            // Sort chain events by category and order by timestamp DESC.
-            const orderByCategory = sortChainEvents(chain as ChainID);
+        Object.keys(events)?.map((chain: string, i) => {
+          // Sort chain events by category and order by timestamp DESC.
+          const orderByCategory = sortChainEvents(chain as ChainID);
 
-            return (
-              <React.Fragment key={`${chain}_events`}>
-                {orderByCategory?.map(
-                  ({ category, events: categoryEvents }: AnyJson) => {
-                    return (
-                      <Category
-                        key={`${chain}_${category}_events`}
-                        chain={chain as ChainID}
-                        category={category}
-                        events={categoryEvents}
-                        i={i}
-                      />
-                    );
-                  }
-                )}
-              </React.Fragment>
-            );
-          })}
-        </>
+          return (
+            <React.Fragment key={`${chain}_events`}>
+              {orderByCategory?.map(
+                ({ category, events: categoryEvents }: AnyJson) => (
+                  <Category
+                    key={`${chain}_${category}_events`}
+                    chain={chain as ChainID}
+                    category={category}
+                    events={categoryEvents}
+                    i={i}
+                  />
+                )
+              )}
+            </React.Fragment>
+          );
+        })
       ) : (
         <NoEvents />
       )}

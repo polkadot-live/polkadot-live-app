@@ -1,11 +1,10 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
 import type { AccountStateContextInterface } from './types';
 
 export const defaultAccountState: AccountStateContextInterface = {
-  //eslint-disable-next-line
   setAccountStateKey: (chain, address, key, value) => {},
-  //eslint-disable-next-line
   getAccountStateKey: (chain, address, key) => {},
 };

@@ -113,9 +113,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Stringifies the data of an event which determines if it already exists in event state.
-  const stringifyExistentialData = ({ uid, who }: EventCallback) => {
-    return JSON.stringify({ uid, who });
-  };
+  const stringifyExistentialData = ({ uid, who }: EventCallback) =>
+    JSON.stringify({ uid, who });
 
   // Checks whether the stringified data of an event has been updated from a currently stored one.
   const existingEventUpdated = (
