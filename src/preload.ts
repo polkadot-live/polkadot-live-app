@@ -41,6 +41,7 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   chainDisconnected: (callback) =>
     ipcRenderer.on('renderer:chain:disconnected', callback),
+
   // NOTE: Not being called in any renderers (main doesn't receive app:chain:remove)
   removeChain: (chain) => ipcRenderer.send('app:chain:remove', chain),
 
