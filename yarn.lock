@@ -1142,10 +1142,19 @@
     framer-motion "^10.16.16"
     react-error-boundary "^4.0.12"
 
-"@polkadot-cloud/utils@^0.1.0", "@polkadot-cloud/utils@^0.1.1":
+"@polkadot-cloud/utils@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@polkadot-cloud/utils/-/utils-0.1.1.tgz#dd1b055657c09d89f95d845e2534d2a394692b40"
   integrity sha512-4vqX7c+N3ZUCgbXgVs5zgU3pKh/m9njXrDAQgaWGWm7LX4M/sBdp6KOrz2qLmb3WiElM+C+IuZ7OMBhpZSbQAw==
+  dependencies:
+    "@polkadot/keyring" "^12.6.2"
+    "@polkadot/util" "^12.6.2"
+    bignumber.js "^9.1.1"
+
+"@polkadot-cloud/utils@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@polkadot-cloud/utils/-/utils-0.2.0.tgz#92ab24a085c8ec965e793a70968181c9e198fcc9"
+  integrity sha512-CueuExItV2sUCHJalIvtPxn7kGXZCWb0qCmuBTjLMVDLWLaLqQs5pA+R1Z+UAMnyNRmAQ9AlivH60CUNm2IRsw==
   dependencies:
     "@polkadot/keyring" "^12.6.2"
     "@polkadot/util" "^12.6.2"
