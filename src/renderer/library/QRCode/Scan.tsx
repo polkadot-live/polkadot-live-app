@@ -7,6 +7,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
 import { createImgSize } from './util.js';
+import { useOverlay } from '@/renderer/contexts/Overlay';
 
 // eslint-disable-next-line
 const DEFAULT_DELAY = 150;
@@ -70,6 +71,8 @@ const Html5QrCodePlugin = ({
   qrCodeSuccessCallback,
   qrCodeErrorCallback,
 }: Html5QrScannerProps) => {
+  const { setOnCloseOverlay } = useOverlay();
+
   // Store the HTML QR Code instance.
   const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
 
@@ -115,23 +118,15 @@ const Html5QrCodePlugin = ({
 
   useEffect(() => {
     if (ref.current) {
-      // Instantiate Html5Qrcode once DOM element exists.
-      setHtml5QrCode(new Html5Qrcode(ref.current.id));
-    }
+      // Instantiate Html5Qrcode once DOM element exists
+      const newHtml5QrCode = new Html5Qrcode(ref.current.id);
+      setHtml5QrCode(newHtml5QrCode);
 
-    // Cleanup function when component will unmount.
-    return () => {
-      if (html5QrCode) {
-        html5QrCode
-          .stop()
-          .then(() => {
-            // QR code scanning is stopped
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
-    };
+      // Stop HTML5 Qr Code when prompt closes.
+      setOnCloseOverlay(() => {
+        newHtml5QrCode?.stop();
+      });
+    }
   }, []);
 
   // Start QR scanner when API object is instantiated.
