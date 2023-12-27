@@ -1,14 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, {
-  memo,
-  useCallback,
-  useMemo,
-  useEffect,
-  useState,
-  useRef,
-} from 'react';
+import type { ReactElement } from 'react';
+import { memo, useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
@@ -21,25 +15,30 @@ const DEFAULT_ERROR = (error: Error): void => {
   throw new Error(error.message);
 };
 
-const Scan = ({
+// TODO: tidy up or use these unused vars.
+const QrScanInner = ({
   className = '',
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   delay = DEFAULT_DELAY,
   onError = DEFAULT_ERROR,
   onScan,
   size,
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   style = {},
-}: ScanProps): React.ReactElement<ScanProps> => {
+}: ScanProps): ReactElement<ScanProps> => {
   const containerStyle = useMemo(() => createImgSize(size), [size]);
 
   const onErrorCallback = useCallback(
-    (error: string) => onError(new Error(error)),
+    (error: string): void => onError(new Error(error)),
     [onError]
   );
 
   const onScanCallback = useCallback(
-    (data: string | null) => data && onScan(data),
+    (data: string | null): void => {
+      if (data) {
+        onScan(data);
+      }
+    },
     [onScan]
   );
 
@@ -54,7 +53,7 @@ const Scan = ({
   );
 };
 
-export const QrScan = memo(Scan);
+export const QrScan = memo(QrScanInner);
 
 /*----------------------------------------------------------------------
  Html5Qrcode Component (TODO: Put in separate module)
