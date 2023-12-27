@@ -65,7 +65,7 @@ export const OverlayProvider = ({
       ...state,
       status: 0,
       Overlay: null,
-      onClosePrompt: null,
+      onCloseOverlay: null,
     });
   };
 
