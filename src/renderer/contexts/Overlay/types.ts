@@ -4,6 +4,7 @@
 import type React from 'react';
 
 export interface OverlayContextInterface {
+  setOnCloseOverlay: (onClosePrompt: (() => void) | null) => void;
   openOverlayWith: (o: React.ReactNode | null, s?: string, t?: boolean) => void;
   closeOverlay: () => void;
   setStatus: (s: number) => void;

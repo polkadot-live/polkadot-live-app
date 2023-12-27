@@ -5,7 +5,7 @@
 import type { OverlayContextInterface } from './types';
 
 export const defaultOverlayContext: OverlayContextInterface = {
-  // eslint-disable-next-line
+  setOnCloseOverlay: (value) => {},
   openOverlayWith: (o, s, t) => {},
   closeOverlay: () => {},
   setStatus: (s) => {},
