@@ -117,21 +117,21 @@ const Html5QrCodePlugin = ({
     if (ref.current) {
       // Instantiate Html5Qrcode once DOM element exists.
       setHtml5QrCode(new Html5Qrcode(ref.current.id));
-
-      // Cleanup function when component will unmount.
-      return () => {
-        if (html5QrCode) {
-          html5QrCode
-            .stop()
-            .then(() => {
-              // QR code scanning is stopped
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        }
-      };
     }
+
+    // Cleanup function when component will unmount.
+    return () => {
+      if (html5QrCode) {
+        html5QrCode
+          .stop()
+          .then(() => {
+            // QR code scanning is stopped
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    };
   }, []);
 
   // Start QR scanner when API object is instantiated.
