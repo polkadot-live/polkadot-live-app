@@ -1,7 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { memo, useCallback, useMemo, useEffect, useState } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useMemo,
+  useEffect,
+  useState,
+  useRef,
+} from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
@@ -53,49 +60,25 @@ export const QrScan = memo(Scan);
  Html5Qrcode Component (TODO: Put in separate module)
  ----------------------------------------------------------------------*/
 
-const qrcodeRegionId = 'html5qr-code-full-region';
-
 interface Html5QrScannerProps {
   fps: number;
-  qrCodeSuccessCallback: (data: string | null) => void | '' | null;
+  qrCodeSuccessCallback: (data: string | null) => void;
   qrCodeErrorCallback: (error: string) => void;
 }
 
-const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
+const Html5QrCodePlugin = ({
+  fps,
+  qrCodeSuccessCallback,
+  qrCodeErrorCallback,
+}: Html5QrScannerProps) => {
+  // Store the HTML QR Code instance.
   const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
 
-  useEffect(() => {
-    // Success callback is required.
-    if (!props.qrCodeSuccessCallback) {
-      throw 'qrCodeSuccessCallback is required callback.';
-    }
+  // Reference of the HTML element used to scan the QR code.
+  const ref = useRef<HTMLDivElement>(null);
 
-    // Instantiate Html5Qrcode once when component loads.
-    setHtml5QrCode(new Html5Qrcode(qrcodeRegionId));
-
-    // Cleanup function when component will unmount.
-    return () => {
-      if (html5QrCode) {
-        html5QrCode
-          .stop()
-          .then(() => {
-            // QR code scanning is stopped
-          })
-          .catch((err) => {
-            // stop failed
-            console.error(err);
-          });
-      }
-    };
-  }, []);
-
-  // Start QR scanner when API object is instantiated.
-  useEffect(() => {
-    handleHtmlQrCode();
-  }, [html5QrCode]);
-
-  const handleHtmlQrCode = () => {
-    if (html5QrCode === null) {
+  const handleHtmlQrCode = (): void => {
+    if (!ref.current) {
       return;
     }
 
@@ -105,25 +88,25 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
           const cameraId = devices[0].id;
 
           html5QrCode
-            .start(
+            ?.start(
               cameraId,
               {
-                fps: props.fps,
+                fps,
               },
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              (decodedText, decodedResult) => {
+              (decodedText) => {
                 // do something when code is read
-                props.qrCodeSuccessCallback(decodedText);
+                qrCodeSuccessCallback(decodedText);
               },
               (errorMessage) => {
                 // parse error
-                props.qrCodeErrorCallback(errorMessage);
+                qrCodeErrorCallback(errorMessage);
               }
             )
             .catch((err) => {
-              // start failed
               console.error(err);
             });
+        } else {
+          // TODO: display error if no camera devices are available.
         }
       })
       .catch((err) => {
@@ -131,5 +114,31 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
       });
   };
 
-  return <div id={qrcodeRegionId} />;
+  useEffect(() => {
+    if (ref.current) {
+      // Instantiate Html5Qrcode once DOM element exists.
+      setHtml5QrCode(new Html5Qrcode(ref.current.id));
+
+      // Cleanup function when component will unmount.
+      return () => {
+        if (html5QrCode) {
+          html5QrCode
+            .stop()
+            .then(() => {
+              // QR code scanning is stopped
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        }
+      };
+    }
+  }, []);
+
+  // Start QR scanner when API object is instantiated.
+  useEffect(() => {
+    handleHtmlQrCode();
+  }, [html5QrCode]);
+
+  return <div ref={ref} id="html5qr-code-full-region" />;
 };
