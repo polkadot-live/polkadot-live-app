@@ -9,7 +9,7 @@
     "Dane Bulat<danebulat@gmail.com>"
   ],
   "scripts": {
-    "clear": "rm -rf node_modules out tsconfig.tsbuildinfo yarn.lock",
+    "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
     "debug": "DEBUG=main:* electron-forge start",
     "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "dev": "electron-forge start",
@@ -109,5 +109,6 @@
   "resolutions": {
     "react": "18.2.0",
     "react-dom": "18.2.0"
-  }
+  },
+  "packageManager": "yarn@4.0.2"
 }
