@@ -2850,9 +2850,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/cli@npm:8.27.0":
-  version: 8.27.0
-  resolution: "@wdio/cli@npm:8.27.0"
+"@wdio/cli@npm:8.27.1":
+  version: 8.27.1
+  resolution: "@wdio/cli@npm:8.27.1"
   dependencies:
     "@types/node": "npm:^20.1.1"
     "@wdio/config": "npm:8.27.0"
@@ -2879,7 +2879,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     wdio: bin/wdio.js
-  checksum: 20e4f8ba6c285c523cf16468dc0f021fe3e90adf6fdcd9918a9606e186a097bf1da60bf5c5633ddc5f2f3c2610fd2b41d3f521fcd59904f2c84ddad9bfe701c0
+  checksum: 3ae298a35ab140c5856d1f0c56ef16c1dcb623172ea39103a856733578c22153543bf44328c8e29a08f1e64cfd832c7f5679cbc658c076fe6769aa9ffe244127
   languageName: node
   linkType: hard
 
@@ -9664,7 +9664,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
     "@typescript-eslint/parser": "npm:^6.16.0"
     "@vitejs/plugin-react-swc": "npm:^3.3.2"
-    "@wdio/cli": "npm:8.27.0"
+    "@wdio/cli": "npm:8.27.1"
     "@wdio/dot-reporter": "npm:^8.27.0"
     "@wdio/local-runner": "npm:^8.27.0"
     "@wdio/mocha-framework": "npm:^8.27.0"
