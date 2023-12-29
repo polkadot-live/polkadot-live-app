@@ -23,3 +23,4 @@ vite.renderer.config.ts
 public/lottie/player.js
 CHANGELOG.md
 CODEOWNERS
+.yarn
