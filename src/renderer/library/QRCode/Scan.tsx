@@ -1,7 +1,8 @@
 // Copyright 2023 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { memo, useCallback, useMemo, useEffect, useState } from 'react';
+import type { ReactElement } from 'react';
+import { memo, useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ScanWrapper } from './Wrappers.js';
 import type { ScanProps } from './types.js';
@@ -14,25 +15,30 @@ const DEFAULT_ERROR = (error: Error): void => {
   throw new Error(error.message);
 };
 
-const Scan = ({
+// TODO: tidy up or use these unused vars.
+const QrScanInner = ({
   className = '',
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   delay = DEFAULT_DELAY,
   onError = DEFAULT_ERROR,
   onScan,
   size,
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   style = {},
-}: ScanProps): React.ReactElement<ScanProps> => {
+}: ScanProps): ReactElement<ScanProps> => {
   const containerStyle = useMemo(() => createImgSize(size), [size]);
 
   const onErrorCallback = useCallback(
-    (error: string) => onError(new Error(error)),
+    (error: string): void => onError(new Error(error)),
     [onError]
   );
 
   const onScanCallback = useCallback(
-    (data: string | null) => data && onScan(data),
+    (data: string | null): void => {
+      if (data) {
+        onScan(data);
+      }
+    },
     [onScan]
   );
 
@@ -47,31 +53,71 @@ const Scan = ({
   );
 };
 
-export const QrScan = memo(Scan);
+export const QrScan = memo(QrScanInner);
 
 /*----------------------------------------------------------------------
  Html5Qrcode Component (TODO: Put in separate module)
  ----------------------------------------------------------------------*/
 
-const qrcodeRegionId = 'html5qr-code-full-region';
-
 interface Html5QrScannerProps {
   fps: number;
-  qrCodeSuccessCallback: (data: string | null) => void | '' | null;
+  qrCodeSuccessCallback: (data: string | null) => void;
   qrCodeErrorCallback: (error: string) => void;
 }
 
-const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
+const Html5QrCodePlugin = ({
+  fps,
+  qrCodeSuccessCallback,
+  qrCodeErrorCallback,
+}: Html5QrScannerProps) => {
+  // Store the HTML QR Code instance.
   const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
 
-  useEffect(() => {
-    // Success callback is required.
-    if (!props.qrCodeSuccessCallback) {
-      throw 'qrCodeSuccessCallback is required callback.';
+  // Reference of the HTML element used to scan the QR code.
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleHtmlQrCode = (): void => {
+    if (!ref.current) {
+      return;
     }
 
-    // Instantiate Html5Qrcode once when component loads.
-    setHtml5QrCode(new Html5Qrcode(qrcodeRegionId));
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        if (devices && devices.length) {
+          const cameraId = devices[0].id;
+
+          html5QrCode
+            ?.start(
+              cameraId,
+              {
+                fps,
+              },
+              (decodedText) => {
+                // do something when code is read
+                qrCodeSuccessCallback(decodedText);
+              },
+              (errorMessage) => {
+                // parse error
+                qrCodeErrorCallback(errorMessage);
+              }
+            )
+            .catch((err) => {
+              console.error(err);
+            });
+        } else {
+          // TODO: display error if no camera devices are available.
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    if (ref.current) {
+      // Instantiate Html5Qrcode once DOM element exists.
+      setHtml5QrCode(new Html5Qrcode(ref.current.id));
+    }
 
     // Cleanup function when component will unmount.
     return () => {
@@ -82,7 +128,6 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
             // QR code scanning is stopped
           })
           .catch((err) => {
-            // stop failed
             console.error(err);
           });
       }
@@ -94,42 +139,5 @@ const Html5QrCodePlugin = (props: Html5QrScannerProps) => {
     handleHtmlQrCode();
   }, [html5QrCode]);
 
-  const handleHtmlQrCode = () => {
-    if (html5QrCode === null) {
-      return;
-    }
-
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices && devices.length) {
-          const cameraId = devices[0].id;
-
-          html5QrCode
-            .start(
-              cameraId,
-              {
-                fps: props.fps,
-              },
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              (decodedText, decodedResult) => {
-                // do something when code is read
-                props.qrCodeSuccessCallback(decodedText);
-              },
-              (errorMessage) => {
-                // parse error
-                props.qrCodeErrorCallback(errorMessage);
-              }
-            )
-            .catch((err) => {
-              // start failed
-              console.error(err);
-            });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
-  return <div id={qrcodeRegionId} />;
+  return <div ref={ref} id="html5qr-code-full-region" />;
 };
