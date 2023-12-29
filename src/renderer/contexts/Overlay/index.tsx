@@ -22,6 +22,7 @@ export const OverlayProvider = ({
     status: 0,
     Overlay: null,
     transparent: false,
+    onCloseOverlay: null,
   });
 
   const setOverlay = (Overlay: React.ReactNode) => {
@@ -56,16 +57,29 @@ export const OverlayProvider = ({
   };
 
   const closeOverlay = () => {
+    if (state.onCloseOverlay) {
+      state.onCloeOverlay();
+    }
+
     setState({
       ...state,
       status: 0,
       Overlay: null,
+      onCloseOverlay: null,
+    });
+  };
+
+  const setOnCloseOverlay = (onCloseOverlay: (() => void) | null) => {
+    setState({
+      ...state,
+      onCloseOverlay,
     });
   };
 
   return (
     <OverlayContext.Provider
       value={{
+        setOnCloseOverlay,
         openOverlayWith,
         closeOverlay,
         setStatus,
