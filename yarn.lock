@@ -1370,7 +1370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot-api/light-client-extension-helpers@npm:next":
+"@polkadot-api/light-client-extension-helpers@npm:0.0.1-4bc9bd71f8f37f800fec7a42775f403271903870.1.0":
   version: 0.0.1-4bc9bd71f8f37f800fec7a42775f403271903870.1.0
   resolution: "@polkadot-api/light-client-extension-helpers@npm:0.0.1-4bc9bd71f8f37f800fec7a42775f403271903870.1.0"
   dependencies:
@@ -2057,15 +2057,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect@npm:^0.8.3":
-  version: 0.8.3
-  resolution: "@substrate/connect@npm:0.8.3"
+"@substrate/connect@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "@substrate/connect@npm:0.8.4"
   dependencies:
-    "@polkadot-api/light-client-extension-helpers": "npm:next"
+    "@polkadot-api/light-client-extension-helpers": "npm:0.0.1-4bc9bd71f8f37f800fec7a42775f403271903870.1.0"
     "@substrate/connect-extension-protocol": "npm:^2.0.0"
     "@substrate/connect-known-chains": "npm:^1.0.3"
-    smoldot: "npm:2.0.13"
-  checksum: a8cabc834610d9b8fd8fcaff9fac9316b5b7811a5f8f9e613b14adf79dfbd7486e787e66229659506cc49dfe77ca737f44e181dec6e551c8618eb2da2b172e62
+    smoldot: "npm:2.0.16"
+  checksum: 7dfb41494c87637423d510dbb1c94c00ee458ebb56a38d765e0d093fc25eb05c0b1ffe959f5cc7ee8957f720eff395b90c06937fe6d311558738eb994645e73d
   languageName: node
   linkType: hard
 
@@ -9675,7 +9675,7 @@ __metadata:
     "@polkadot/types": "npm:^10.11.2"
     "@polkadot/types-codec": "npm:^10.9.1"
     "@polkadot/util": "npm:^12.4.2"
-    "@substrate/connect": "npm:^0.8.3"
+    "@substrate/connect": "npm:^0.8.4"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"
     "@types/electron-localshortcut": "npm:^3.1.0"
@@ -10988,12 +10988,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smoldot@npm:2.0.13":
-  version: 2.0.13
-  resolution: "smoldot@npm:2.0.13"
+"smoldot@npm:2.0.16":
+  version: 2.0.16
+  resolution: "smoldot@npm:2.0.16"
   dependencies:
     ws: "npm:^8.8.1"
-  checksum: a9987e19254e564350c442d3ee31c3bafa1b3bae31afeab9a42aebc6e47d039f015a03ae036e4059a60d86dc9b1aee6769841ad55695654092723e3b52d42750
+  checksum: 6e7ddfa033136e06daa19b5f51983342b39add2a9cc83e24b680dceeb2cd47a6e7a04907a7894bb350fb5aa8ef7a28b9b9be9233f3a2b739cfecea660c88b646
   languageName: node
   linkType: hard
 
