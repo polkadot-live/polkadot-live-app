@@ -5065,7 +5065,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:*, electron@npm:^28.1.0":
+"electron@npm:*":
   version: 28.1.0
   resolution: "electron@npm:28.1.0"
   dependencies:
@@ -5075,6 +5075,19 @@ __metadata:
   bin:
     electron: cli.js
   checksum: a620cf3c20e72a5858cdc14a787b141b83b37c2f9cef11c07d50348c35cc5ac3181959906017d9e80650e4103dbf5d27351dc0e5857a97fa3dd95a2e85b4fd13
+  languageName: node
+  linkType: hard
+
+"electron@npm:^28.1.1":
+  version: 28.1.1
+  resolution: "electron@npm:28.1.1"
+  dependencies:
+    "@electron/get": "npm:^2.0.0"
+    "@types/node": "npm:^18.11.18"
+    extract-zip: "npm:^2.0.1"
+  bin:
+    electron: cli.js
+  checksum: 387546a7b193183219ed90b9ddd9b6ecfc30a2f64bd786c624955172d928ff97af7164098efc1b330848cf2371664a15214746618e4ef04be47c0553128baee5
   languageName: node
   linkType: hard
 
@@ -9695,7 +9708,7 @@ __metadata:
     bignumber.js: "npm:^9.1.2"
     date-fns: "npm:^3.0.6"
     debug: "npm:^4.3.4"
-    electron: "npm:^28.1.0"
+    electron: "npm:^28.1.1"
     electron-localshortcut: "npm:^3.2.1"
     electron-squirrel-startup: "npm:^1.0.0"
     electron-store: "npm:^8.1.0"
