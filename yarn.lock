@@ -6282,9 +6282,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.17.4":
-  version: 10.17.4
-  resolution: "framer-motion@npm:10.17.4"
+"framer-motion@npm:^10.17.8":
+  version: 10.17.8
+  resolution: "framer-motion@npm:10.17.8"
   dependencies:
     "@emotion/is-prop-valid": "npm:^0.8.2"
     tslib: "npm:^2.4.0"
@@ -6299,7 +6299,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 7582ff7de42390c517602ea65f533d153ea3ef770944dcf09174d46d863e90e0d2d69c824b20d1ddc19e3a4e9a7f3f89c0d23a7082644e815adfa4fd293b7d38
+  checksum: b67de4136a8c1f0bcc47b2c22eefc80d5190f595ffb08aee0ab43f00cb8489b1179569c05734e9c9836a197713fa1adcdc0f24105739cfd35b87ede7ef55d661
   languageName: node
   linkType: hard
 
@@ -9721,7 +9721,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
-    framer-motion: "npm:^10.17.4"
+    framer-motion: "npm:^10.17.8"
     html5-qrcode: "npm:^2.3.8"
     prettier: "npm:^3.1.1"
     prettier-plugin-organize-imports: "npm:^3.2.3"
