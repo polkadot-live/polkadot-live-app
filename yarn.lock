@@ -1423,13 +1423,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot-cloud/assets@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@polkadot-cloud/assets@npm:0.2.1"
-  checksum: a6d89dbacfa903fead98f937995113b596bde91c1532fc75bbf87d3986283114c27bbb63e74280f5078ae24d7748a72321c2c9f7622de4fb6ecc5863cf0527d7
-  languageName: node
-  linkType: hard
-
 "@polkadot-cloud/assets@npm:^0.3.0":
   version: 0.3.0
   resolution: "@polkadot-cloud/assets@npm:0.3.0"
@@ -1437,16 +1430,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot-cloud/core@npm:^1.1.1":
+"@polkadot-cloud/core@npm:^1.2.0":
   version: 1.2.0
   resolution: "@polkadot-cloud/core@npm:1.2.0"
   checksum: cb10590e9edd606e5a00591e07d507b01c5ac549cd5bf5c3ed3de16441e23c40570d9136b5437d6a80ed1e87abcc0cd79f7bd4fdd4b6e0bc7d0d9ff89162c694
   languageName: node
   linkType: hard
 
-"@polkadot-cloud/react@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@polkadot-cloud/react@npm:0.3.0"
+"@polkadot-cloud/react@npm:0.3.4":
+  version: 0.3.4
+  resolution: "@polkadot-cloud/react@npm:0.3.4"
   dependencies:
     "@chainsafe/metamask-polkadot-adapter": "npm:^0.6.0"
     "@chainsafe/metamask-polkadot-types": "npm:^0.6.0"
@@ -1455,32 +1448,18 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.1"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
-    "@polkadot-cloud/assets": "npm:^0.2.1"
-    "@polkadot-cloud/core": "npm:^1.1.1"
-    "@polkadot-cloud/utils": "npm:^0.1.1"
+    "@polkadot-cloud/assets": "npm:^0.3.0"
+    "@polkadot-cloud/core": "npm:^1.2.0"
+    "@polkadot-cloud/utils": "npm:^0.2.0"
     "@polkadot/keyring": "npm:^12.6.2"
     "@polkadot/util": "npm:^12.6.2"
     "@polkadot/util-crypto": "npm:^12.6.2"
-    framer-motion: "npm:^10.16.16"
+    framer-motion: "npm:^10.17.9"
     react-error-boundary: "npm:^4.0.12"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 39c13a5fd9298fdb4ce98e9d113d0e24fbf7f4bd9d4bed682f3e708e27e7ff0e6e3471acfc2ecf203d385da9f02ec6ca29b2c1b4e8e6177038bd14a0d53a4d6f
-  languageName: node
-  linkType: hard
-
-"@polkadot-cloud/utils@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@polkadot-cloud/utils@npm:0.1.1"
-  dependencies:
-    "@polkadot/keyring": "npm:^12.6.2"
-    "@polkadot/util": "npm:^12.6.2"
-    bignumber.js: "npm:^9.1.1"
-  peerDependencies:
-    "@polkadot/keyring": ^12.6.2
-    "@polkadot/util": ^12.6.2
-  checksum: 7afdaff56505c638a3c5e40c56156aa46f5077fda1dc26b25c134366402666b058be6ad174217ebaa0309cb6359d5f77ba366697dc76346a5e7c75e0c1919326
+  checksum: b93f67a6e80188e0c6ee8ee358f0110d557b00fd09cf70680e3e7167d248fec05f57c661eab0f50647b87eed62c5165b036b2c809f4f18003e4ab4f55e3a9789
   languageName: node
   linkType: hard
 
@@ -6261,27 +6240,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.16.16":
-  version: 10.16.16
-  resolution: "framer-motion@npm:10.16.16"
-  dependencies:
-    "@emotion/is-prop-valid": "npm:^0.8.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 4cd620971e6ac044461783ee94d8fe39dafd11d658f1b2fb06f025c0c502d022bb3bf24dd95b9486325fce27e437ce575b8f033c7770539b4fb3af62a5742e71
-  languageName: node
-  linkType: hard
-
 "framer-motion@npm:^10.17.8":
   version: 10.17.8
   resolution: "framer-motion@npm:10.17.8"
@@ -6300,6 +6258,27 @@ __metadata:
     react-dom:
       optional: true
   checksum: b67de4136a8c1f0bcc47b2c22eefc80d5190f595ffb08aee0ab43f00cb8489b1179569c05734e9c9836a197713fa1adcdc0f24105739cfd35b87ede7ef55d661
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:^10.17.9":
+  version: 10.17.9
+  resolution: "framer-motion@npm:10.17.9"
+  dependencies:
+    "@emotion/is-prop-valid": "npm:^0.8.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  dependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: c27932b62c2d1971ba1117d54946b3bdafdd2b7fff5e932753ad130c7de8d5c746cd5b2eadb260f0a2718af52f0faed6dc55161b22202b26712a79d13e223a3f
   languageName: node
   linkType: hard
 
@@ -9680,7 +9659,7 @@ __metadata:
     "@ledgerhq/hw-transport-node-hid": "npm:^6.28.1"
     "@ledgerhq/logs": "npm:^6.10.1"
     "@polkadot-cloud/assets": "npm:^0.3.0"
-    "@polkadot-cloud/react": "npm:0.3.0"
+    "@polkadot-cloud/react": "npm:0.3.4"
     "@polkadot-cloud/utils": "npm:^0.2.0"
     "@polkadot/api": "npm:^10.11.2"
     "@polkadot/keyring": "npm:^12.4.2"
