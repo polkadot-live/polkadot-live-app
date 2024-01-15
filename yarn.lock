@@ -1430,16 +1430,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot-cloud/core@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@polkadot-cloud/core@npm:1.2.0"
-  checksum: cb10590e9edd606e5a00591e07d507b01c5ac549cd5bf5c3ed3de16441e23c40570d9136b5437d6a80ed1e87abcc0cd79f7bd4fdd4b6e0bc7d0d9ff89162c694
+"@polkadot-cloud/core@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@polkadot-cloud/core@npm:1.2.1"
+  checksum: 1467a6485c1188ad5dc67387ab67eb4881851271cf401ccae4340785deccfcedbe681f795d5709517569e3883395f9c835d2c307d005b465c96ccaf6a3b52ffb
   languageName: node
   linkType: hard
 
-"@polkadot-cloud/react@npm:0.3.4":
-  version: 0.3.4
-  resolution: "@polkadot-cloud/react@npm:0.3.4"
+"@polkadot-cloud/react@npm:0.3.5":
+  version: 0.3.5
+  resolution: "@polkadot-cloud/react@npm:0.3.5"
   dependencies:
     "@chainsafe/metamask-polkadot-adapter": "npm:^0.6.0"
     "@chainsafe/metamask-polkadot-types": "npm:^0.6.0"
@@ -1449,7 +1449,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
     "@polkadot-cloud/assets": "npm:^0.3.0"
-    "@polkadot-cloud/core": "npm:^1.2.0"
+    "@polkadot-cloud/core": "npm:^1.2.1"
     "@polkadot-cloud/utils": "npm:^0.2.0"
     "@polkadot/keyring": "npm:^12.6.2"
     "@polkadot/util": "npm:^12.6.2"
@@ -1459,7 +1459,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: b93f67a6e80188e0c6ee8ee358f0110d557b00fd09cf70680e3e7167d248fec05f57c661eab0f50647b87eed62c5165b036b2c809f4f18003e4ab4f55e3a9789
+  checksum: a0007879d9223f87f3e6d24e3d15ceaab00177457b55de748a28c56e43cb40797c607cabf132a9ffdf88800052d459038390a45d70ba392664d1c3062bdd2a46
   languageName: node
   linkType: hard
 
@@ -9684,7 +9684,7 @@ __metadata:
     "@ledgerhq/hw-transport-node-hid": "npm:^6.28.1"
     "@ledgerhq/logs": "npm:^6.10.1"
     "@polkadot-cloud/assets": "npm:^0.3.0"
-    "@polkadot-cloud/react": "npm:0.3.4"
+    "@polkadot-cloud/react": "npm:0.3.5"
     "@polkadot-cloud/utils": "npm:^0.2.1"
     "@polkadot/api": "npm:^10.11.2"
     "@polkadot/keyring": "npm:^12.4.2"
