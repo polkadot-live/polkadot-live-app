@@ -2935,21 +2935,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/globals@npm:8.27.2, @wdio/globals@npm:^8.27.0":
-  version: 8.27.2
-  resolution: "@wdio/globals@npm:8.27.2"
-  dependencies:
-    expect-webdriverio: "npm:^4.8.0"
-    webdriverio: "npm:8.27.2"
-  dependenciesMeta:
-    expect-webdriverio:
-      optional: true
-    webdriverio:
-      optional: true
-  checksum: fdc11a28f597dabbf2ebd400e2f0ac4370df5a1690673129e24f9938aec8adc8be74add96b377faf7da39cbb8b36519ec9619bfbb93dc6794465787eaffd791e
-  languageName: node
-  linkType: hard
-
 "@wdio/globals@npm:8.28.0":
   version: 8.28.0
   resolution: "@wdio/globals@npm:8.28.0"
@@ -2965,19 +2950,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/local-runner@npm:^8.27.2":
+"@wdio/globals@npm:^8.27.0":
   version: 8.27.2
-  resolution: "@wdio/local-runner@npm:8.27.2"
+  resolution: "@wdio/globals@npm:8.27.2"
+  dependencies:
+    expect-webdriverio: "npm:^4.8.0"
+    webdriverio: "npm:8.27.2"
+  dependenciesMeta:
+    expect-webdriverio:
+      optional: true
+    webdriverio:
+      optional: true
+  checksum: fdc11a28f597dabbf2ebd400e2f0ac4370df5a1690673129e24f9938aec8adc8be74add96b377faf7da39cbb8b36519ec9619bfbb93dc6794465787eaffd791e
+  languageName: node
+  linkType: hard
+
+"@wdio/local-runner@npm:^8.28.0":
+  version: 8.28.0
+  resolution: "@wdio/local-runner@npm:8.28.0"
   dependencies:
     "@types/node": "npm:^20.1.0"
-    "@wdio/logger": "npm:8.24.12"
+    "@wdio/logger": "npm:8.28.0"
     "@wdio/repl": "npm:8.24.12"
-    "@wdio/runner": "npm:8.27.2"
-    "@wdio/types": "npm:8.27.2"
+    "@wdio/runner": "npm:8.28.0"
+    "@wdio/types": "npm:8.28.0"
     async-exit-hook: "npm:^2.0.1"
     split2: "npm:^4.1.0"
     stream-buffers: "npm:^3.0.2"
-  checksum: bc65f4a9bdef87452d69ce31f4a6fab1bcde9938f74e2e2d382b90cfe3f2c587f49b8de4fbc865612c82ccfff9ae478db287ad66bdfe18eeec2b09208521a481
+  checksum: 80efc301bc6979489d2e77461250f29492f2865b95174e507fec4af56afbee1f186948cde1d86d16f6b32dfe8bd6d84653edfac1d4d0fe437ffa3cf0cdcc4c56
   languageName: node
   linkType: hard
 
@@ -3048,22 +3048,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/runner@npm:8.27.2":
-  version: 8.27.2
-  resolution: "@wdio/runner@npm:8.27.2"
+"@wdio/runner@npm:8.28.0":
+  version: 8.28.0
+  resolution: "@wdio/runner@npm:8.28.0"
   dependencies:
     "@types/node": "npm:^20.1.0"
-    "@wdio/config": "npm:8.27.2"
-    "@wdio/globals": "npm:8.27.2"
-    "@wdio/logger": "npm:8.24.12"
-    "@wdio/types": "npm:8.27.2"
-    "@wdio/utils": "npm:8.27.2"
+    "@wdio/config": "npm:8.28.0"
+    "@wdio/globals": "npm:8.28.0"
+    "@wdio/logger": "npm:8.28.0"
+    "@wdio/types": "npm:8.28.0"
+    "@wdio/utils": "npm:8.28.0"
     deepmerge-ts: "npm:^5.0.0"
     expect-webdriverio: "npm:^4.8.0"
     gaze: "npm:^1.1.2"
-    webdriver: "npm:8.27.2"
-    webdriverio: "npm:8.27.2"
-  checksum: ba380888148cf421be8607867dae587c8d1e152c97e839452f5e9638b64883077fa84e0f4273ba1cdfa7860cd7d98cd40d9b575ff52bc0f5339a42a0714f1300
+    webdriver: "npm:8.28.0"
+    webdriverio: "npm:8.28.0"
+  checksum: 3dd6991099080b63cef438d3206e2e9007861419e28d088d0a97af3bf564382cebc68294ae85ab5d6619e262a69286d96eb1eda793fb424854b70f132fc2aa4b
   languageName: node
   linkType: hard
 
@@ -9790,7 +9790,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.3.2"
     "@wdio/cli": "npm:8.28.0"
     "@wdio/dot-reporter": "npm:^8.28.0"
-    "@wdio/local-runner": "npm:^8.27.2"
+    "@wdio/local-runner": "npm:^8.28.0"
     "@wdio/mocha-framework": "npm:^8.28.0"
     "@wdio/spec-reporter": "npm:^8.28.0"
     "@zondax/ledger-substrate": "npm:^0.41.1"
