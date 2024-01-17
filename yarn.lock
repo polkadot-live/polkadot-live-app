@@ -5181,16 +5181,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^28.1.3":
-  version: 28.1.3
-  resolution: "electron@npm:28.1.3"
+"electron@npm:^28.1.4":
+  version: 28.1.4
+  resolution: "electron@npm:28.1.4"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^18.11.18"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 11c00c3489b2761edc19083fcd1611768d2215fe540affc0207d1310e9ecbba9f66920a695f22daaf078b7580a7338077e0563bbe1776e9f8f29db1d8b1f737c
+  checksum: 06cea12cb9d26534f483a338ff6f259650a020dd2604df8d9d9b76b6e2b0a0e366571f9491a1d03eff66ec9ff92247e74422cb6f1c3603a76da90c5e99d5e2e4
   languageName: node
   linkType: hard
 
@@ -9811,7 +9811,7 @@ __metadata:
     bignumber.js: "npm:^9.1.2"
     date-fns: "npm:^3.2.0"
     debug: "npm:^4.3.4"
-    electron: "npm:^28.1.3"
+    electron: "npm:^28.1.4"
     electron-localshortcut: "npm:^3.2.1"
     electron-squirrel-startup: "npm:^1.0.0"
     electron-store: "npm:^8.1.0"
