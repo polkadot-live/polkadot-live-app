@@ -2924,14 +2924,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/dot-reporter@npm:^8.28.0":
-  version: 8.28.0
-  resolution: "@wdio/dot-reporter@npm:8.28.0"
+"@wdio/dot-reporter@npm:^8.28.6":
+  version: 8.28.6
+  resolution: "@wdio/dot-reporter@npm:8.28.6"
   dependencies:
-    "@wdio/reporter": "npm:8.28.0"
-    "@wdio/types": "npm:8.28.0"
+    "@wdio/reporter": "npm:8.28.6"
+    "@wdio/types": "npm:8.28.6"
     chalk: "npm:^5.0.1"
-  checksum: 0a9d3ac6e84cad4e5373b0dd0673e0c3e0fd3a9fdf0463dc9ecbbddc8a09fdde21c5aabfc0bb0da75661daba7d437b1f3084f9501ea87050e2ca4926a6c82cb4
+  checksum: 033efdf893f7f11231c0533e84f923bfcb7bedc4d14063535a8962b64eadb5eab9943cfe48ea12a7bc60369285daec56e3e0ed5a06b3c030bd02b9cc5c4279b5
   languageName: node
   linkType: hard
 
@@ -3035,19 +3035,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/reporter@npm:8.28.0":
-  version: 8.28.0
-  resolution: "@wdio/reporter@npm:8.28.0"
-  dependencies:
-    "@types/node": "npm:^20.1.0"
-    "@wdio/logger": "npm:8.28.0"
-    "@wdio/types": "npm:8.28.0"
-    diff: "npm:^5.0.0"
-    object-inspect: "npm:^1.12.0"
-  checksum: fa905e34808a82e91b4ab16dd12066b0b982705e4b6eabbe2d827081abf41bb1e324acedbbf04631a525c2810873711cf45959d2260b79c50829549ea8ae535d
-  languageName: node
-  linkType: hard
-
 "@wdio/reporter@npm:8.28.6":
   version: 8.28.6
   resolution: "@wdio/reporter@npm:8.28.6"
@@ -3099,15 +3086,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20.1.0"
   checksum: 501708de69576616a273f17f3cb4b8307212e348e694e232c61ca185f60642f80793ea7bab248e21fd8653d78ee10669151cf766ddb9d24d288d25d97189f336
-  languageName: node
-  linkType: hard
-
-"@wdio/types@npm:8.28.0":
-  version: 8.28.0
-  resolution: "@wdio/types@npm:8.28.0"
-  dependencies:
-    "@types/node": "npm:^20.1.0"
-  checksum: 8152e5fb5eb63d3f4460b158708199ced11a9a69e91ff0bc9a42962078d61cac498a3467853464f6cbc3e448587ee120f55c381cddc52c812d45f6b9c264176c
   languageName: node
   linkType: hard
 
@@ -9811,7 +9789,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.19.0"
     "@vitejs/plugin-react-swc": "npm:^3.3.2"
     "@wdio/cli": "npm:8.28.6"
-    "@wdio/dot-reporter": "npm:^8.28.0"
+    "@wdio/dot-reporter": "npm:^8.28.6"
     "@wdio/local-runner": "npm:^8.28.7"
     "@wdio/mocha-framework": "npm:^8.28.6"
     "@wdio/spec-reporter": "npm:^8.28.6"
