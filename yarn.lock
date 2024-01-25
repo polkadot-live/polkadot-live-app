@@ -3029,17 +3029,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/mocha-framework@npm:^8.29.0":
-  version: 8.29.0
-  resolution: "@wdio/mocha-framework@npm:8.29.0"
+"@wdio/mocha-framework@npm:^8.29.1":
+  version: 8.29.1
+  resolution: "@wdio/mocha-framework@npm:8.29.1"
   dependencies:
     "@types/mocha": "npm:^10.0.0"
     "@types/node": "npm:^20.1.0"
     "@wdio/logger": "npm:8.28.0"
-    "@wdio/types": "npm:8.29.0"
-    "@wdio/utils": "npm:8.29.0"
+    "@wdio/types": "npm:8.29.1"
+    "@wdio/utils": "npm:8.29.1"
     mocha: "npm:^10.0.0"
-  checksum: 117b0f02383d5804ac09b2fe92a7375f46e2f613e83725a71dfd448c0d88b2fe1a98e9c4d07f0a9c8e53dc65d95ca70664abb6d8dee54d9e38c80ac597541bb6
+  checksum: a43a8cb2a0df2e68d2efe3d3e23e52d7dd70eebfb7a4acce0bc57674be5a0af8d3ce10317197c3ea7f22f67a5dbee8ccf2f8309331a22e2965834e5d64f7dde5
   languageName: node
   linkType: hard
 
@@ -3122,6 +3122,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/types@npm:8.29.1":
+  version: 8.29.1
+  resolution: "@wdio/types@npm:8.29.1"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+  checksum: c32b41105f4acf3c5bd3a9041caff0ec6c7eb784b340b35d5b361021f1339ae585a933fb5717ef14bc4ebafbed2af46a19b590c9fb35474ae54f82d58d769c5e
+  languageName: node
+  linkType: hard
+
 "@wdio/utils@npm:8.27.2":
   version: 8.27.2
   resolution: "@wdio/utils@npm:8.27.2"
@@ -3161,6 +3170,27 @@ __metadata:
     split2: "npm:^4.2.0"
     wait-port: "npm:^1.0.4"
   checksum: 62f22a38ece53983ac2436860f1c3f9d7e7ce5dc3bd409188cd93bc1c384faed8bef67200407da9316f107fc7e7583212f90081d6f3c8e7b750d774d12962471
+  languageName: node
+  linkType: hard
+
+"@wdio/utils@npm:8.29.1":
+  version: 8.29.1
+  resolution: "@wdio/utils@npm:8.29.1"
+  dependencies:
+    "@puppeteer/browsers": "npm:^1.6.0"
+    "@wdio/logger": "npm:8.28.0"
+    "@wdio/types": "npm:8.29.1"
+    decamelize: "npm:^6.0.0"
+    deepmerge-ts: "npm:^5.1.0"
+    edgedriver: "npm:^5.3.5"
+    geckodriver: "npm:^4.2.0"
+    get-port: "npm:^7.0.0"
+    import-meta-resolve: "npm:^4.0.0"
+    locate-app: "npm:^2.1.0"
+    safaridriver: "npm:^0.1.0"
+    split2: "npm:^4.2.0"
+    wait-port: "npm:^1.0.4"
+  checksum: 1302fdff2a883403fd56d4f12a71198c3e6749fc88df38d56ae09cfc55106a7827b75e5d9a8252787b1e84cdcbbbcf8d6387cca7a7facb80f97d4642a5a1c106
   languageName: node
   linkType: hard
 
@@ -9832,7 +9862,7 @@ __metadata:
     "@wdio/cli": "npm:8.29.0"
     "@wdio/dot-reporter": "npm:^8.29.0"
     "@wdio/local-runner": "npm:^8.29.0"
-    "@wdio/mocha-framework": "npm:^8.29.0"
+    "@wdio/mocha-framework": "npm:^8.29.1"
     "@wdio/spec-reporter": "npm:^8.29.0"
     "@zondax/ledger-substrate": "npm:^0.41.1"
     auto-launch: "npm:^5.0.6"
