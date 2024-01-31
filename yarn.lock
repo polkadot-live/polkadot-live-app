@@ -3091,16 +3091,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/spec-reporter@npm:^8.29.1":
-  version: 8.29.1
-  resolution: "@wdio/spec-reporter@npm:8.29.1"
+"@wdio/spec-reporter@npm:^8.29.3":
+  version: 8.29.3
+  resolution: "@wdio/spec-reporter@npm:8.29.3"
   dependencies:
     "@wdio/reporter": "npm:8.29.1"
     "@wdio/types": "npm:8.29.1"
     chalk: "npm:^5.1.2"
     easy-table: "npm:^1.2.0"
     pretty-ms: "npm:^7.0.0"
-  checksum: 7235e380b2fc9b11d832478734c8944327c83730ced459b3c7e8034c1101935d53b5f4aa3a7d17b551d914b7d398a2b2945f4a78efb9d8b6194ec7cfbe6b5c27
+  checksum: 5a909256961627a52a0a798120b322f02cf6a4e5c0558b5318e5625fcf74882b1f1627ad2fc2f73fd0c5e55df38de89657ffaf8c0f73da82138bcfecdd2aea2f
   languageName: node
   linkType: hard
 
@@ -9833,7 +9833,7 @@ __metadata:
     "@wdio/dot-reporter": "npm:^8.29.1"
     "@wdio/local-runner": "npm:^8.29.2"
     "@wdio/mocha-framework": "npm:^8.29.1"
-    "@wdio/spec-reporter": "npm:^8.29.1"
+    "@wdio/spec-reporter": "npm:^8.29.3"
     "@zondax/ledger-substrate": "npm:^0.41.1"
     auto-launch: "npm:^5.0.6"
     bignumber.js: "npm:^9.1.2"
