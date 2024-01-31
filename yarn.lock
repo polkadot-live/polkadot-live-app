@@ -3029,17 +3029,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/mocha-framework@npm:^8.29.1":
-  version: 8.29.1
-  resolution: "@wdio/mocha-framework@npm:8.29.1"
+"@wdio/mocha-framework@npm:^8.29.3":
+  version: 8.29.3
+  resolution: "@wdio/mocha-framework@npm:8.29.3"
   dependencies:
     "@types/mocha": "npm:^10.0.0"
     "@types/node": "npm:^20.1.0"
     "@wdio/logger": "npm:8.28.0"
     "@wdio/types": "npm:8.29.1"
-    "@wdio/utils": "npm:8.29.1"
+    "@wdio/utils": "npm:8.29.3"
     mocha: "npm:^10.0.0"
-  checksum: a43a8cb2a0df2e68d2efe3d3e23e52d7dd70eebfb7a4acce0bc57674be5a0af8d3ce10317197c3ea7f22f67a5dbee8ccf2f8309331a22e2965834e5d64f7dde5
+  checksum: 822c9467c0250f09cba8e6b769cb0370969a13299a4c2e32161564a7fa803d56dca430dfdb9b6b9dfd32d912930c62c82c982911058ed737ae1c693d0e10833f
   languageName: node
   linkType: hard
 
@@ -3140,27 +3140,6 @@ __metadata:
     split2: "npm:^4.2.0"
     wait-port: "npm:^1.0.4"
   checksum: 846a2f25992bc493d29918d145008439e9be93559e0919a590a6fd6e15f80f4172385889ffd3fcaba357a9c20db07f6f401cfe00db6044bed2a753541b9ff787
-  languageName: node
-  linkType: hard
-
-"@wdio/utils@npm:8.29.1":
-  version: 8.29.1
-  resolution: "@wdio/utils@npm:8.29.1"
-  dependencies:
-    "@puppeteer/browsers": "npm:^1.6.0"
-    "@wdio/logger": "npm:8.28.0"
-    "@wdio/types": "npm:8.29.1"
-    decamelize: "npm:^6.0.0"
-    deepmerge-ts: "npm:^5.1.0"
-    edgedriver: "npm:^5.3.5"
-    geckodriver: "npm:^4.2.0"
-    get-port: "npm:^7.0.0"
-    import-meta-resolve: "npm:^4.0.0"
-    locate-app: "npm:^2.1.0"
-    safaridriver: "npm:^0.1.0"
-    split2: "npm:^4.2.0"
-    wait-port: "npm:^1.0.4"
-  checksum: 1302fdff2a883403fd56d4f12a71198c3e6749fc88df38d56ae09cfc55106a7827b75e5d9a8252787b1e84cdcbbbcf8d6387cca7a7facb80f97d4642a5a1c106
   languageName: node
   linkType: hard
 
@@ -9871,7 +9850,7 @@ __metadata:
     "@wdio/cli": "npm:8.29.3"
     "@wdio/dot-reporter": "npm:^8.29.1"
     "@wdio/local-runner": "npm:^8.29.3"
-    "@wdio/mocha-framework": "npm:^8.29.1"
+    "@wdio/mocha-framework": "npm:^8.29.3"
     "@wdio/spec-reporter": "npm:^8.29.3"
     "@zondax/ledger-substrate": "npm:^0.41.1"
     auto-launch: "npm:^5.0.6"
