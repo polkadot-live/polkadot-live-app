@@ -1168,32 +1168,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-node-hid-noevents@npm:^6.29.2":
-  version: 6.29.2
-  resolution: "@ledgerhq/hw-transport-node-hid-noevents@npm:6.29.2"
+"@ledgerhq/hw-transport-node-hid-noevents@npm:^6.29.3":
+  version: 6.29.3
+  resolution: "@ledgerhq/hw-transport-node-hid-noevents@npm:6.29.3"
   dependencies:
     "@ledgerhq/devices": "npm:^8.2.0"
     "@ledgerhq/errors": "npm:^6.16.1"
-    "@ledgerhq/hw-transport": "npm:^6.30.2"
+    "@ledgerhq/hw-transport": "npm:^6.30.3"
     "@ledgerhq/logs": "npm:^6.12.0"
     node-hid: "npm:^2.1.2"
-  checksum: 5a5c0dbca69aa32953973bb7eb38ebdd0873f89b3a4f872d2c3d8fbf1c19f878b29b27311ef7f9be8dcf25d86f5b30ed258b2da9457a2cdc0e6405a306f8c032
+  checksum: ee5bad5384dd39f41641cd55dae83a6e7e10c8c3a35da6ffcd37e5c10e625bf49f5aa0a8bbea1f1cc1dcf2f910bb27014563871825dea18ae943008d521bd1aa
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-node-hid@npm:^6.28.2":
-  version: 6.28.2
-  resolution: "@ledgerhq/hw-transport-node-hid@npm:6.28.2"
+"@ledgerhq/hw-transport-node-hid@npm:^6.28.3":
+  version: 6.28.3
+  resolution: "@ledgerhq/hw-transport-node-hid@npm:6.28.3"
   dependencies:
     "@ledgerhq/devices": "npm:^8.2.0"
     "@ledgerhq/errors": "npm:^6.16.1"
-    "@ledgerhq/hw-transport": "npm:^6.30.2"
-    "@ledgerhq/hw-transport-node-hid-noevents": "npm:^6.29.2"
+    "@ledgerhq/hw-transport": "npm:^6.30.3"
+    "@ledgerhq/hw-transport-node-hid-noevents": "npm:^6.29.3"
     "@ledgerhq/logs": "npm:^6.12.0"
     lodash: "npm:^4.17.21"
     node-hid: "npm:^2.1.2"
     usb: "npm:2.9.0"
-  checksum: 9d2c32691f9f8b42a579ca3714e3e72edcc2f45f1728d857fb7fcf32246f3fc00779303e8e9cc0473569d484069cbc5108650dc687fc814f249aed0da60e37af
+  checksum: 27d42af719da75c83b5603162045dd3580c043e0528f35f81a8349408a532c4ff0d16cc63f08e872dfc77adb728aba1748309961f6f27f627d67707f9c4df316
   languageName: node
   linkType: hard
 
@@ -1209,15 +1209,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:^6.30.2":
-  version: 6.30.2
-  resolution: "@ledgerhq/hw-transport@npm:6.30.2"
+"@ledgerhq/hw-transport@npm:^6.30.3":
+  version: 6.30.3
+  resolution: "@ledgerhq/hw-transport@npm:6.30.3"
   dependencies:
     "@ledgerhq/devices": "npm:^8.2.0"
     "@ledgerhq/errors": "npm:^6.16.1"
     "@ledgerhq/logs": "npm:^6.12.0"
     events: "npm:^3.3.0"
-  checksum: 2c3811e8c2a0d1844cb1ed608f0ded074ee15cd8e69dbdaa380d503c70abd4179b67137ea6dd48c78707818f0bc031f63d27d0d074eb0b885431dab884ecfb64
+  checksum: e50b9f99d6127b641d293d33b5141f55e59a8a14afb231e7d5c696e234a210ca94a6573a442548384ac4afa315b60b9c3ff7cff29f3df5e00f9cb59385801d70
   languageName: node
   linkType: hard
 
@@ -9808,7 +9808,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.0"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.0"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
-    "@ledgerhq/hw-transport-node-hid": "npm:^6.28.2"
+    "@ledgerhq/hw-transport-node-hid": "npm:^6.28.3"
     "@ledgerhq/logs": "npm:^6.10.1"
     "@polkadot-cloud/assets": "npm:^0.3.4"
     "@polkadot-cloud/react": "npm:0.3.8"
