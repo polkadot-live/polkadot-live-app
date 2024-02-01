@@ -2989,19 +2989,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/local-runner@npm:^8.29.3":
-  version: 8.29.3
-  resolution: "@wdio/local-runner@npm:8.29.3"
+"@wdio/local-runner@npm:^8.29.5":
+  version: 8.29.5
+  resolution: "@wdio/local-runner@npm:8.29.5"
   dependencies:
     "@types/node": "npm:^20.1.0"
     "@wdio/logger": "npm:8.28.0"
     "@wdio/repl": "npm:8.24.12"
-    "@wdio/runner": "npm:8.29.3"
+    "@wdio/runner": "npm:8.29.5"
     "@wdio/types": "npm:8.29.1"
     async-exit-hook: "npm:^2.0.1"
     split2: "npm:^4.1.0"
     stream-buffers: "npm:^3.0.2"
-  checksum: d961b7f1d0f652686595acf6ffa441ebcab3ceca85f1f57881f801fff2ac07f55a0ae1d3d54e93be60d7b1cd24a77ddfb964fc229368607c7310f90c6236969d
+  checksum: 4f056a9545df965c569782a8fcf03937130cf7bb669ce367556ccaea374089b6adbbf3a4040e8f2582a273d8b3646930a1bcab1e7080f2229656d3d592ff7f10
   languageName: node
   linkType: hard
 
@@ -3072,9 +3072,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/runner@npm:8.29.3":
-  version: 8.29.3
-  resolution: "@wdio/runner@npm:8.29.3"
+"@wdio/runner@npm:8.29.5":
+  version: 8.29.5
+  resolution: "@wdio/runner@npm:8.29.5"
   dependencies:
     "@types/node": "npm:^20.1.0"
     "@wdio/config": "npm:8.29.3"
@@ -3087,7 +3087,7 @@ __metadata:
     gaze: "npm:^1.1.2"
     webdriver: "npm:8.29.3"
     webdriverio: "npm:8.29.3"
-  checksum: 685f1430788c62754cf8f7bae4ef701591a6ec0137e777c626268b2d27bd9cec54878aa4c0cbb56d15967351e164a54bc40ddc75f8ad876b2b6551b3bcae3d67
+  checksum: 1192d0c8c86102ce44d316c77212b19fdee1aea07055c56013e38a85afa7c8af7e5ad45665df34b364c9dcc60e3a4f905dce8a9a2a2a2c94da7b81608459ef33
   languageName: node
   linkType: hard
 
@@ -9849,7 +9849,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@wdio/cli": "npm:8.29.3"
     "@wdio/dot-reporter": "npm:^8.29.1"
-    "@wdio/local-runner": "npm:^8.29.3"
+    "@wdio/local-runner": "npm:^8.29.5"
     "@wdio/mocha-framework": "npm:^8.29.3"
     "@wdio/spec-reporter": "npm:^8.29.3"
     "@zondax/ledger-substrate": "npm:^0.41.1"
