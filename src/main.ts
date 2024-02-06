@@ -93,7 +93,7 @@ app.whenReady().then(async () => {
 
   // App initialization process.
   await Orchestrator.next({
-    task: 'initialize',
+    task: 'app:initialize',
   });
 
   // Ask for camera permission (Mac OS)

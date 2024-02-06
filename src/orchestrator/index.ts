@@ -24,7 +24,7 @@ export class Orchestrator {
   static async next({ task, data = {} }: OrchestratorArg) {
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
-      case 'initialize':
+      case 'app:initialize':
         await initialize();
         break;
       // Handle new account import.
