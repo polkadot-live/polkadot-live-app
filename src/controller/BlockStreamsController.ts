@@ -8,7 +8,7 @@ import { MainDebug } from '@/utils/DebugUtils';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from './APIsController';
 import { AccountsController } from './AccountsController';
-import { BlockStream } from '../blockstream/BlockStream';
+import { BlockStream } from '../blockstream';
 import type { ConcreteAccount, RawAccount } from '@/types/blockstream';
 import { ApiSubscription } from '@/types/blockstream';
 
