@@ -3070,17 +3070,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/mocha-framework@npm:^8.29.3":
-  version: 8.29.3
-  resolution: "@wdio/mocha-framework@npm:8.29.3"
+"@wdio/mocha-framework@npm:^8.30.0":
+  version: 8.30.0
+  resolution: "@wdio/mocha-framework@npm:8.30.0"
   dependencies:
     "@types/mocha": "npm:^10.0.0"
     "@types/node": "npm:^20.1.0"
     "@wdio/logger": "npm:8.28.0"
-    "@wdio/types": "npm:8.29.1"
-    "@wdio/utils": "npm:8.29.3"
+    "@wdio/types": "npm:8.30.0"
+    "@wdio/utils": "npm:8.30.0"
     mocha: "npm:^10.0.0"
-  checksum: 822c9467c0250f09cba8e6b769cb0370969a13299a4c2e32161564a7fa803d56dca430dfdb9b6b9dfd32d912930c62c82c982911058ed737ae1c693d0e10833f
+  checksum: da8aecbb0db300ea37184b2c4d6a8550ce7510e26dcef30df09e3770d2852a7db38ea182abbea18ce65bcbdf92261af60f5ff5ead6b4e0a692ad413e4d47d4db
   languageName: node
   linkType: hard
 
@@ -9970,7 +9970,7 @@ __metadata:
     "@wdio/cli": "npm:8.29.7"
     "@wdio/dot-reporter": "npm:^8.29.1"
     "@wdio/local-runner": "npm:^8.30.0"
-    "@wdio/mocha-framework": "npm:^8.29.3"
+    "@wdio/mocha-framework": "npm:^8.30.0"
     "@wdio/spec-reporter": "npm:^8.30.0"
     "@zondax/ledger-substrate": "npm:^0.41.1"
     auto-launch: "npm:^5.0.6"

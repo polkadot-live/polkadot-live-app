@@ -46,7 +46,7 @@
     "@wdio/cli": "8.29.7",
     "@wdio/dot-reporter": "^8.29.1",
     "@wdio/local-runner": "^8.30.0",
-    "@wdio/mocha-framework": "^8.29.3",
+    "@wdio/mocha-framework": "^8.30.0",
     "@wdio/spec-reporter": "^8.30.0",
     "debug": "^4.3.4",
     "electron": "^28.2.1",
