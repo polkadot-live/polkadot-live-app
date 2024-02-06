@@ -4,7 +4,7 @@ import { EventsController } from '@/controller/EventsController';
 import { WindowsController } from '@/controller/WindowsController';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
-import type { QueryableStorageMultiArg } from '@polkadot/api/types';
+import type { ApiPromise } from '@polkadot/api';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
@@ -13,7 +13,7 @@ import type {
 import { compareHashes } from '@/utils/CryptoUtils';
 
 export class QueryMultiWrapper {
-  // Cache subscriptions associated their chain.
+  // Cache subscriptions are associated by their chain.
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
 
   private async next(task: SubscriptionTask) {
@@ -85,7 +85,7 @@ export class QueryMultiWrapper {
     console.log('>> QueryMultiWrapper: Call to queryMulti.');
 
     const instance = await ApiUtils.getApiInstance(chainId);
-    const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
+    const finalArg = queryMultiArg as ApiPromise;
 
     const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
       /*--------------------------------
