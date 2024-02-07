@@ -26,7 +26,7 @@ export const Category = ({
       </HeadingWrapper>
       {events?.map((event, j) => (
         <Item
-          key={`${chain}_cat_${i}_event_${j}`}
+          key={`${chain}_cat_event_${event.timestamp}`}
           chain={chain}
           categoryKey={i}
           eventKey={j}
