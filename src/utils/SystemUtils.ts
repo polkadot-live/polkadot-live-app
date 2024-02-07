@@ -14,32 +14,6 @@ import type { ChainID } from '@/types/chains';
 export const initializeState = (id: string) => {
   reportImportedAccounts(id);
   reportActiveInstances(id);
-  reportAccountsState(id);
-};
-
-// Report connected account state.
-export const reportAccountsState = (id: string) => {
-  for (const chainAccounts of AccountsController.accounts.values()) {
-    chainAccounts.forEach(({ chain, address, state, type }) => {
-      if (type === AccountType.User) {
-        // TODO: Throw error if state not found
-        if (!state) {
-          return;
-        }
-
-        Object.entries(state.getAllState()).forEach(([key, value]) => {
-          debug('🏦 Reporting account state %o', key, value);
-          WindowsController.get(id)?.webContents?.send(
-            'renderer:account:state',
-            chain,
-            address,
-            key,
-            value
-          );
-        });
-      }
-    });
-  }
 };
 
 // Report imported accounts to renderer.
@@ -98,6 +72,33 @@ export const removeUnusedApi = (chain: ChainID) => {
         'renderer:chain:removed',
         chain
       );
+    });
+  }
+};
+
+/**
+ * @deprecated This function should no longer be used.
+ */
+export const reportAccountsState = (id: string) => {
+  for (const chainAccounts of AccountsController.accounts.values()) {
+    chainAccounts.forEach(({ chain, address, state, type }) => {
+      if (type === AccountType.User) {
+        // TODO: Throw error if state not found
+        if (!state) {
+          return;
+        }
+
+        Object.entries(state.getAllState()).forEach(([key, value]) => {
+          debug('🏦 Reporting account state %o', key, value);
+          WindowsController.get(id)?.webContents?.send(
+            'renderer:account:state',
+            chain,
+            address,
+            key,
+            value
+          );
+        });
+      }
     });
   }
 };

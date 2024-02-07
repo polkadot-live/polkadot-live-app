@@ -3,7 +3,7 @@
 
 import type { AnyJson } from '@/types/misc';
 import { MainInterfaceWrapper } from '@app/Wrappers';
-import { useAccountState } from '@app/contexts/AccountState';
+//import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';
 import { Overlay } from '@app/library/Overlay';
 import { Tooltip } from '@app/library/Tooltip';
@@ -22,7 +22,7 @@ import { useManage } from '@app/screens/Home/Manage/provider';
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses } = useAddresses();
-  const { setAccountStateKey } = useAccountState();
+  //const { setAccountStateKey } = useAccountState();
 
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
@@ -36,17 +36,17 @@ export const RouterInner = () => {
         setRenderedSubscriptions({ type: '', tasks: [] });
       }
     );
-    window.myAPI.reportAccountState(
-      (
-        _: Event,
-        chain: ChainID,
-        address: string,
-        key: string,
-        value: AnyJson
-      ) => {
-        setAccountStateKey(chain, address, key, value);
-      }
-    );
+    //window.myAPI.reportAccountState(
+    //  (
+    //    _: Event,
+    //    chain: ChainID,
+    //    address: string,
+    //    key: string,
+    //    value: AnyJson
+    //  ) => {
+    //    setAccountStateKey(chain, address, key, value);
+    //  }
+    //);
     window.myAPI.reportChainSubscriptionState(
       (_: Event, serialized: AnyJson) => {
         const parsed = new Map<ChainID, SubscriptionTask[]>(

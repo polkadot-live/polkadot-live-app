@@ -9,10 +9,10 @@ import type {
   FlattenedAccountData,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
+import { QueryMultiWrapper } from './QueryMultiWrapper';
 import type { MethodSubscription } from '@/types/blockstream';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import { QueryMultiWrapper } from './QueryMultiWrapper';
 
 /**
  * Account collection types.

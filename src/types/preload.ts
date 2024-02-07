@@ -31,7 +31,7 @@ export interface PreloadAPI {
   newAddressImported: ApiNewAddressImported;
   removeImportedAccount: ApiRemoveImportedAccount;
   reportImportedAccounts: ApiReportImportedAccounts;
-  reportAccountState: ApiReportAccountState;
+  //reportAccountState: ApiReportAccountState;
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
@@ -85,15 +85,15 @@ type ApiReportImportedAccounts = (
   callback: (_: IpcRendererEvent, accounts: ImportedAccounts) => void
 ) => Electron.IpcRenderer;
 
-type ApiReportAccountState = (
-  callback: (
-    _: IpcRendererEvent,
-    chain: ChainID,
-    address: string,
-    key: string,
-    value: string
-  ) => void
-) => Electron.IpcRenderer;
+//type ApiReportAccountState = (
+//  callback: (
+//    _: IpcRendererEvent,
+//    chain: ChainID,
+//    address: string,
+//    key: string,
+//    value: string
+//  ) => void
+//) => Electron.IpcRenderer;
 
 type ApiReportNewEvent = (
   callback: (_: IpcRendererEvent, eventData: EventCallback) => void
