@@ -6,6 +6,9 @@ import type { Account } from '@/model/Account';
 import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { PolkadotState } from '@/chains/Polkadot/State';
 
+/**
+ * @deprecated This class should no longer be used.
+ */
 export class ChainsController {
   static new(chain: ChainID, address: string) {
     switch (chain) {

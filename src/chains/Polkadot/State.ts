@@ -11,6 +11,9 @@ import type { AnyFunction, AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('PolkadotState');
 
+/**
+ * @deprecated This class should no longer be used.
+ */
 export class PolkadotState {
   _chain: ChainID = 'Polkadot';
 

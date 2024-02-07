@@ -2,6 +2,9 @@ import { AccountsController } from '@/controller/AccountsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { Discover } from '@/controller/Discover';
 
+/**
+ * @deprecated This function should no longer be used.
+ */
 export const initializeConfigsAndChainStates = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     for (const account of accounts) {

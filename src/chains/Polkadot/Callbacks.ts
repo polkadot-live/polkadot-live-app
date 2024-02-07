@@ -20,6 +20,7 @@ import type { AnyJson } from '@/types/misc';
 /**
  * A static class to provide callback functions for Polkadot subscriptions and discovery.
  * @class
+ * @deprecated This class should no longer be used.
  */
 export class PolkadotCallbacks {
   static chain: ChainID = 'Polkadot';

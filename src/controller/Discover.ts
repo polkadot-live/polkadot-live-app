@@ -11,6 +11,9 @@ import type { PolkadotAccountState } from '@/types/chains/polkadot';
 
 const debug = MainDebug.extend('Discover');
 
+/**
+ * @deprecated This class should no longer be used.
+ */
 export class Discover {
   // Discover the initial subscription config for an account.
   static start = async (
