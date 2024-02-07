@@ -5,6 +5,7 @@ import { store } from '@/main';
 import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
 import type { Account, ImportedAccounts } from '@/model/Account';
+import type { AnyJson } from '@polkadot-cloud/react/types';
 
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
@@ -20,8 +21,10 @@ export class SubscriptionsController {
     this.chainSubscriptions = new QueryMultiWrapper();
 
     // Get and deserialize chain tasks from store.
-    const tasks: SubscriptionTask[] = store.get(key)
-      ? JSON.parse(store.get(key) as string)
+    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
+      key
+    )
+      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
       : [];
 
     // Subscribe to tasks.
@@ -159,8 +162,10 @@ export class SubscriptionsController {
     const key = 'chain_subscriptions';
 
     // Deserialize all tasks from store.
-    const tasks: SubscriptionTask[] = store.get(key)
-      ? JSON.parse(store.get(key) as string)
+    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
+      key
+    )
+      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
       : [];
 
     this.updateTaskInStore(tasks, task, key);
@@ -171,8 +176,10 @@ export class SubscriptionsController {
     const key = `${account.address}_subscriptions`;
 
     // Deserialize the account's tasks from store.
-    const tasks: SubscriptionTask[] = store.get(key)
-      ? JSON.parse(store.get(key) as string)
+    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
+      key
+    )
+      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
       : [];
 
     this.updateTaskInStore(tasks, task, key);
@@ -184,7 +191,9 @@ export class SubscriptionsController {
    ------------------------------------------------------------*/
 
   static clearAccountTasksInStore(account: Account) {
-    store.delete(`${account.address}_subscriptions`);
+    (store as Record<string, AnyJson>).delete(
+      `${account.address}_subscriptions`
+    );
   }
 
   /*------------------------------------------------------------
@@ -210,7 +219,7 @@ export class SubscriptionsController {
     }
 
     // Persist new array to store.
-    store.set(key, JSON.stringify(tasks));
+    (store as Record<string, AnyJson>).set(key, JSON.stringify(tasks));
   }
 
   private static taskExistsInArray(

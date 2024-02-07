@@ -17,6 +17,7 @@ import { AccountType } from '@/types/accounts';
 import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
 import type { ReportDelegator } from '@/types/reporter';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import type { AnyJson } from '@polkadot-cloud/react/types';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -37,7 +38,9 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static initialize() {
-    const stored = store.get('imported_accounts') as string;
+    const stored = (store as Record<string, AnyJson>).get(
+      'imported_accounts'
+    ) as string;
 
     // Instantiate empty map if no accounts found in store.
     if (!stored) {
@@ -96,8 +99,10 @@ export class AccountsController {
         // Subscribe to persisted subscriptions for account.
         const key = `${account.address}_subscriptions`;
 
-        const tasks: SubscriptionTask[] = store.get(key)
-          ? JSON.parse(store.get(key) as string)
+        const tasks: SubscriptionTask[] = (
+          store as Record<string, AnyJson>
+        ).get(key)
+          ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
           : [];
 
         for (const task of tasks) {
@@ -178,7 +183,10 @@ export class AccountsController {
         .get(chain)
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
-    store.set('imported_accounts', this.serializeAccounts());
+    (store as Record<string, AnyJson>).set(
+      'imported_accounts',
+      this.serializeAccounts()
+    );
   };
 
   /**
@@ -356,7 +364,10 @@ export class AccountsController {
    */
   static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
-    store.set('imported_accounts', this.serializeAccounts());
+    (store as Record<string, AnyJson>).set(
+      'imported_accounts',
+      this.serializeAccounts()
+    );
     debug('🆕 Accounts updated: %o', accounts);
   };
 
