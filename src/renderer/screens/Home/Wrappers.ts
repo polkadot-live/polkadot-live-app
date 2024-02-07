@@ -11,17 +11,23 @@ export const CarouselWrapper = styled(motion.div)`
   display: flex;
   height: 100%;
   max-height: 100%;
+  margin-bottom: 3rem;
 
   .scrollable {
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     position: relative;
 
     -ms-overflow-style: none;
-    scrollbar-width: none;
 
     &::-webkit-scrollbar {
-      display: none;
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: rgb(45, 41, 45);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(25, 22, 25);
     }
   }
   > div {

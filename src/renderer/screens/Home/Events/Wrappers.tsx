@@ -9,7 +9,7 @@ export const Wrapper = styled.div`
   display: flex;
   flex-flow: column wrap;
   align-items: center;
-  padding: 0 1rem 5rem 1rem;
+  padding: 0 1rem;
 `;
 
 export const NoEventsWrapper = styled.div`
@@ -52,14 +52,18 @@ export const EventGroup = styled.div`
 `;
 
 export const EventItem = styled(motion.div)`
-  --event-item-height: 9rem;
   --event-item-left-width: 4rem;
 
   position: relative;
 
+  > button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+
   > div {
     background: var(--background-default);
-    height: var(--event-item-height);
     width: 100%;
     border-radius: 1.75rem;
     padding: 0 1.25rem;
@@ -72,8 +76,8 @@ export const EventItem = styled(motion.div)`
     > section {
       display: flex;
 
-      &:last-child {
-        margin: 0.7rem 0 0.1rem 0;
+      &.actions {
+        margin: 0.7rem 0 0rem 0;
         padding-left: 3.75rem;
         button {
           margin-right: 0.9rem;

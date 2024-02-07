@@ -12,8 +12,8 @@ import {
 } from '@/utils/SystemUtils';
 import { Discover } from '@/controller/Discover';
 import { WindowsController } from '@/controller/WindowsController';
-import type { AnyJson } from '@polkadot-cloud/react/types';
 import { AccountsController } from '@/controller/AccountsController';
+import type { AnyJson } from '@polkadot-cloud/react/types';
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -48,7 +48,9 @@ export const createTray = () => {
 
 // TODO: replace AnyJson with concrete type.
 export const createMainWindow = (isTest: boolean) => {
-  const initialMenuBounds: AnyJson = store.get('menu_bounds');
+  const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
+    'menu_bounds'
+  );
 
   const mainWindow = new BrowserWindow({
     alwaysOnTop: true,

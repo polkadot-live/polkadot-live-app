@@ -139,7 +139,10 @@ export class WindowsController {
     }
 
     if (mainWindow.isFocused()) {
-      store.set('menu_bounds', mainWindow.getBounds());
+      (store as Record<string, AnyJson>).set(
+        'menu_bounds',
+        mainWindow.getBounds()
+      );
     }
   };
 
@@ -152,7 +155,9 @@ export class WindowsController {
       );
     }
 
-    const storeMenuPos: AnyJson = store.get('menu_bounds');
+    const storeMenuPos: AnyJson = (store as Record<string, AnyJson>).get(
+      'menu_bounds'
+    );
     if (storeMenuPos?.x && storeMenuPos?.y) {
       mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
     }

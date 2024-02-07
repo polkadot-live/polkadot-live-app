@@ -1,8 +1,10 @@
 import BigNumber from 'bignumber.js';
 import * as ApiUtils from '@/utils/ApiUtils';
+import { EventsController } from '@/controller/EventsController';
+import { WindowsController } from '@/controller/WindowsController';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
-import type { QueryableStorageMultiArg } from '@polkadot/api/types';
+import type { ApiPromise } from '@polkadot/api';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
@@ -11,7 +13,7 @@ import type {
 import { compareHashes } from '@/utils/CryptoUtils';
 
 export class QueryMultiWrapper {
-  // Cache subscriptions associated their chain.
+  // Cache subscriptions are associated by their chain.
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
 
   private async next(task: SubscriptionTask) {
@@ -83,7 +85,7 @@ export class QueryMultiWrapper {
     console.log('>> QueryMultiWrapper: Call to queryMulti.');
 
     const instance = await ApiUtils.getApiInstance(chainId);
-    const finalArg = queryMultiArg as QueryableStorageMultiArg<'promise'>[];
+    const finalArg = queryMultiArg as ApiPromise;
 
     const unsub = await instance.api.queryMulti(finalArg, (data: AnyData) => {
       /*--------------------------------
@@ -99,16 +101,35 @@ export class QueryMultiWrapper {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
             const newVal = new BigNumber(data[index]);
-            const curVal = this.getChainTaskCurrentVal(action, chainId);
+            const curVal = new BigNumber(
+              this.getChainTaskCurrentVal(action, chainId)
+            );
 
-            if (compareHashes(newVal, curVal)) {
+            // If the difference of newVal - curVal is lte
+            // to this buffer, skip event processing.
+            // Prevents "double" timestamps being rendered.
+            const timeBuffer = 20;
+
+            if (
+              !data[index] ||
+              compareHashes(newVal, curVal) ||
+              newVal.minus(curVal).lte(timeBuffer)
+            ) {
               break;
             }
 
+            // Cache new value.
             this.setChainTaskVal(entry, newVal, chainId);
 
+            // Debugging.
             const now = new Date(data[index] * 1000).toDateString();
             console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
+
+            // Construct and send event to renderer.
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              EventsController.getEvent(entry, String(newVal))
+            );
 
             break;
           }
@@ -120,18 +141,38 @@ export class QueryMultiWrapper {
               break;
             }
 
+            // Cache new value.
             this.setChainTaskVal(entry, newVal, chainId);
+
+            // Debugging.
             console.log(`Current Sot: ${newVal} (index: ${index})`);
+
+            // Construct and send event to renderer.
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              EventsController.getEvent(entry, String(newVal))
+            );
 
             break;
           }
           case 'subscribe:query.system.account': {
             const free = new BigNumber(data[index].data.free);
             const reserved = new BigNumber(data[index].data.reserved);
-            const nonce = data[index].nonce;
+            const nonce = new BigNumber(data[index].nonce);
 
+            // Debugging.
             console.log(
               `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
+            );
+
+            // Construct and send event to renderer.
+            WindowsController.get('menu')?.webContents?.send(
+              'renderer:event:new',
+              EventsController.getEvent(entry, {
+                nonce,
+                free,
+                reserved,
+              })
             );
 
             break;

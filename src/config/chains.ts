@@ -46,6 +46,18 @@ export const ChainList = new Map<ChainID, Chain>([
           name: 'Nomination Pools',
           icon: faUserGroup,
         },
+        timestamp: {
+          name: 'Timestamps',
+          icon: faUserGroup,
+        },
+        currentSlot: {
+          name: 'Current Slots',
+          icon: faUserGroup,
+        },
+        account: {
+          name: 'Transfers',
+          icon: faUserGroup,
+        },
       },
     },
   ],
