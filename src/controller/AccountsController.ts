@@ -86,16 +86,6 @@ export class AccountsController {
   static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        // ----------------------
-        // Old subscription model
-        // ----------------------
-
-        account.initState();
-
-        // ----------------------
-        // New subscription model
-        // ----------------------
-
         // Subscribe to persisted subscriptions for account.
         const key = `${account.address}_subscriptions`;
 
@@ -215,7 +205,6 @@ export class AccountsController {
         address,
         name
       );
-      account.initState();
       this.setAccounts(this.pushAccount(chain, account));
       return account;
     }
@@ -345,6 +334,7 @@ export class AccountsController {
    * @name setAccountConfig
    * @summary Utility to update account config.
    * @param {AccountConfig} - the account config derived from discovery.
+   * @deprecated This method should no longer be used.
    */
   static setAccountConfig = (
     { config, chainState }: AccountConfig,

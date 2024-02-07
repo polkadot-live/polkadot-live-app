@@ -43,14 +43,20 @@ export class Account {
 
   private _queryMulti: QueryMultiWrapper | null = null;
 
-  // TODO: Test default method subscription 'all'.
   // Type matches `ConcreteAccount` and `RawAccount`
+  /**
+   * @deprecated The property should not be used
+   */
   private _config: MethodSubscription = { type: 'all' };
 
-  // TODO: Rename either `_chainState` or `state` properties to
-  // convey more meaning.
+  /**
+   * @deprecated The property should not be used
+   */
   private _chainState: AccountChainState | null = null;
 
+  /**
+   * @deprecated The property should not be used
+   */
   state: AccountChainInstanceState | null = null;
 
   constructor(
@@ -74,6 +80,9 @@ export class Account {
 
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
 
+  /**
+   * @deprecated This method should no longer be used.
+   */
   initState = () => {
     if (this.type === AccountType.User) {
       this.state = ChainsController.new(this.chain, this.address);
@@ -135,18 +144,30 @@ export class Account {
     this._name = value;
   }
 
+  /**
+   * @deprecated The method should not be used
+   */
   get config() {
     return this._config;
   }
 
+  /**
+   * @deprecated The method should not be used
+   */
   set config(value: MethodSubscription) {
     this._config = value;
   }
 
+  /**
+   * @deprecated The method should not be used
+   */
   get chainState() {
     return this._chainState;
   }
 
+  /**
+   * @deprecated The method should not be used
+   */
   set chainState(value: AccountChainState | null) {
     this._chainState = value;
   }
