@@ -189,7 +189,7 @@ export class QueryMultiWrapper {
   // insert
   // --------------------------------------------------
 
-  // Insert a polkadot api function into queryMulti
+  // Insert a polkadot api function into queryMulti.
   private insert(task: SubscriptionTask, apiCall: AnyFunction) {
     // Return if api call already exists.
     if (this.actionExists(task.chainId, task.action)) {
@@ -221,7 +221,7 @@ export class QueryMultiWrapper {
 
     console.log('>> QueryMultiWrapper: Update with new API entry.');
 
-    // Otherwise update query multi map.
+    // Otherwise update query multi subscriptions map.
     const entry = this.subscriptions.get(task.chainId);
 
     if (entry) {
@@ -229,10 +229,17 @@ export class QueryMultiWrapper {
       this.subscriptions.set(task.chainId, {
         unsub: entry.unsub,
         callEntries: [
+          // Copy existing call entries.
           ...entry.callEntries.map((e: ApiCallEntry) => ({
             ...e,
-            actionArgs: e.task.actionArgs ? [...e.task.actionArgs] : undefined,
+            task: {
+              ...e.task,
+              actionArgs: e.task.actionArgs
+                ? [...e.task.actionArgs]
+                : undefined,
+            },
           })),
+          // Append new call entry.
           newEntry,
         ],
       });

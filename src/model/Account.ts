@@ -7,6 +7,7 @@ import type {
   AccountChainState,
   AccountChainInstanceState,
   FlattenedAccountData,
+  AccountNominationPoolData,
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import { QueryMultiWrapper } from './QueryMultiWrapper';
@@ -42,6 +43,8 @@ export class Account {
   private _name!: string;
 
   private _queryMulti: QueryMultiWrapper | null = null;
+
+  private _nominationPoolData: AccountNominationPoolData | null = null;
 
   // Type matches `ConcreteAccount` and `RawAccount`
   /**
@@ -142,6 +145,14 @@ export class Account {
 
   set name(value: string) {
     this._name = value;
+  }
+
+  get nominationPoolData() {
+    return this._nominationPoolData;
+  }
+
+  set nominationPoolData(data: AccountNominationPoolData | null) {
+    this._nominationPoolData = data;
   }
 
   /**

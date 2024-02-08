@@ -17,6 +17,14 @@ export type AccountSource = 'vault' | 'ledger' | 'system';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 
+/*
+ * Account's associated nomination pool data.
+ */
+export interface AccountNominationPoolData {
+  poolId: number;
+  poolRewardAddress: string;
+}
+
 // TODO: Pipe more states as more chains are added
 export type AccountChainState = PolkadotAccountState;
 
@@ -29,6 +37,7 @@ export interface StoredAccount {
   _config: MethodSubscription;
   _chainState: AccountChainState;
   _chain: ChainID;
+  _nominationPoolData: AccountNominationPoolData | null;
 }
 
 export interface AccountConfig {

@@ -6,6 +6,7 @@ import {
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
+import { fetchAccountNominationPoolData } from '@/utils/AccountUtils';
 import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
@@ -51,6 +52,9 @@ const initialize = async () => {
   const chainIds = AccountsController.getAccountChainIds();
 
   await APIsController.initialize(chainIds);
+
+  // Use API instance to initialize account nomination pool data.
+  await fetchAccountNominationPoolData();
 
   // Initialize persisted account subscriptions.
   await AccountsController.subscribeAccounts();

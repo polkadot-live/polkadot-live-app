@@ -67,6 +67,7 @@ export class AccountsController {
           );
           account.config = a._config;
           account.chainState = a._chainState;
+
           imported.push(account);
         }
       }

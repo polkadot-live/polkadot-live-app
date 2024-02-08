@@ -113,6 +113,17 @@ export class SubscriptionsController {
                 actionArgs: [account.address],
               };
             }
+            case 'subscribe:nominationPools:query.system.account': {
+              // Provide an account's nomination pool reward address if it exists.
+              if (account.nominationPoolData !== null) {
+                return {
+                  ...t,
+                  actionArgs: [account.nominationPoolData.poolRewardAddress],
+                };
+              } else {
+                return t;
+              }
+            }
             default: {
               return t;
             }

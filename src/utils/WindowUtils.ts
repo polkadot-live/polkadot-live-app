@@ -88,11 +88,6 @@ export const createMainWindow = (isTest: boolean) => {
 
     // Report account subscriptions.
     reportAccountSubscriptions('menu');
-
-    // Bootstrap account events for all chains.
-    //await Discover.bootstrapEvents(
-    //  Array.from(AccountsController.accounts.keys())
-    //);
   });
 
   mainWindow.on('move', () => {
