@@ -71,6 +71,7 @@ export interface FlattenedAccountData {
   type: AccountType;
   config: MethodSubscription;
   chainState: AccountChainState;
+  nominationPoolData: AccountNominationPoolData;
 }
 
 export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;

@@ -6,7 +6,10 @@ import {
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
-import { fetchAccountNominationPoolData } from '@/utils/AccountUtils';
+import {
+  fetchAccountNominationPoolData,
+  fetchNominationPoolDataForAccount,
+} from '@/utils/AccountUtils';
 import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
@@ -80,6 +83,9 @@ const importNewAddress = async ({
   if (!account) {
     return;
   }
+
+  // Initialize nomination pool data for account if necessary.
+  fetchNominationPoolDataForAccount(account, chain);
 
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
