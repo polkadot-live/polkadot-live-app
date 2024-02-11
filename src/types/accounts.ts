@@ -37,7 +37,7 @@ export interface StoredAccount {
   _config: MethodSubscription;
   _chainState: AccountChainState;
   _chain: ChainID;
-  _nominationPoolData: AccountNominationPoolData | null;
+  _nominationPoolData: Map<ChainID, AccountNominationPoolData>;
 }
 
 export interface AccountConfig {
@@ -74,7 +74,7 @@ export interface FlattenedAccountData {
   type: AccountType;
   config: MethodSubscription;
   chainState: AccountChainState;
-  nominationPoolData: AccountNominationPoolData;
+  nominationPoolData: string;
   source: AccountSource;
 }
 

@@ -106,6 +106,8 @@ export class SubscriptionsController {
         // Tasks need to be populated with their correct arguments
         // before being sent to the renderer.
         const allTasksWithArgs = allAccountTasks.map((t) => {
+          // TODO: May need to match (action, chainId) for multi chain later.
+          // Or encode the chain id directly in the action string.
           switch (t.action) {
             case 'subscribe:query.system.account': {
               return {
@@ -115,10 +117,9 @@ export class SubscriptionsController {
               };
             }
             case 'subscribe:nominationPools:query.system.account': {
-              // Provide an account's nomination pool reward address if it exists.
-              const actionArgs = account.nominationPoolData
-                ? [account.nominationPoolData.poolRewardAddress]
-                : undefined;
+              // Provide an account's nomination pool reward address if it exists for the target chain.
+              const data = account.nominationPoolData.get(t.chainId);
+              const actionArgs = data ? [data.poolRewardAddress] : undefined;
 
               return {
                 ...t,

@@ -17,6 +17,8 @@ import {
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
 import { useManage } from './provider';
+import type { AccountNominationPoolData } from '@/types/accounts';
+import type { ChainID } from '@/types/chains';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
@@ -81,7 +83,15 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const getDisabled = (task: SubscriptionTask) => {
     switch (task.action) {
       case 'subscribe:nominationPools:query.system.account': {
-        return task.account?.nominationPoolData ? false : true;
+        const map: Map<ChainID, AccountNominationPoolData> = JSON.parse(
+          task.account!.nominationPoolData
+        );
+
+        return JSON.stringify(map) === '{}'
+          ? true
+          : !map.get(task.chainId)
+            ? true
+            : false;
       }
       default: {
         return false;

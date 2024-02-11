@@ -44,7 +44,7 @@ export class Account {
 
   private _queryMulti: QueryMultiWrapper | null = null;
 
-  private _nominationPoolData: AccountNominationPoolData | null = null;
+  private _nominationPoolData = new Map<ChainID, AccountNominationPoolData>();
 
   // Type matches `ConcreteAccount` and `RawAccount`
   /**
@@ -99,7 +99,7 @@ export class Account {
       type: this.type,
       config: this.config,
       chainState: this.chainState,
-      nominationPoolData: this.nominationPoolData,
+      nominationPoolData: JSON.stringify(this.nominationPoolData),
       source: this._source,
     }) as FlattenedAccountData;
 
@@ -153,7 +153,7 @@ export class Account {
     return this._nominationPoolData;
   }
 
-  set nominationPoolData(data: AccountNominationPoolData | null) {
+  set nominationPoolData(data: Map<ChainID, AccountNominationPoolData>) {
     this._nominationPoolData = data;
   }
 

@@ -52,12 +52,17 @@ export const fetchAccountNominationPoolData = async () => {
 
         // Add nomination pool data to account.
         if (poolRewardAddress) {
-          account.nominationPoolData = {
+          const map = account.nominationPoolData;
+
+          map.set(chainId, {
             poolId,
             poolRewardAddress,
             poolPendingRewards,
-          };
+          });
 
+          account.nominationPoolData = map;
+
+          // Store updated account data in accounts controller.
           AccountsController.set(chainId, account);
         }
       }
@@ -98,12 +103,17 @@ export const fetchNominationPoolDataForAccount = async (
 
     // Add nomination pool data to account.
     if (poolRewardAddress) {
-      account.nominationPoolData = {
+      const map = account.nominationPoolData;
+
+      map.set(chainId, {
         poolId,
         poolRewardAddress,
         poolPendingRewards,
-      };
+      });
 
+      account.nominationPoolData = map;
+
+      // Store updated account data in accounts controller.
       AccountsController.set(chainId, account);
     }
   }

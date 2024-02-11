@@ -14,8 +14,6 @@ import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { planckToUnit } from '@polkadot-cloud/utils';
 import { chainUnits } from '@/config/chains';
-import { AccountType } from '@/types/accounts';
-import { Account } from './Account';
 import { EventsController } from '@/controller/EventsController';
 
 export class QueryMultiWrapper {
@@ -121,6 +119,8 @@ export class QueryMultiWrapper {
           const { action } = entry.task;
 
           switch (action) {
+            /// Get the timestamp of the target chain and render it as
+            /// a notification on the frontend.
             case 'subscribe:query.timestamp.now': {
               const newVal = new BigNumber(data[index]);
               const curVal = new BigNumber(
@@ -155,6 +155,9 @@ export class QueryMultiWrapper {
 
               break;
             }
+
+            /// Get the current slot of the target chain and render it as
+            /// a notification on the frontend.
             case 'subscribe:query.babe.currentSlot': {
               const newVal = new BigNumber(data[index]);
               const curVal = this.getChainTaskCurrentVal(action, chainId);
@@ -199,28 +202,42 @@ export class QueryMultiWrapper {
 
               break;
             }
+
             /// When a nomination pool free balance changes, check that the subscribed account's
             /// pending rewards has changed. If pending rewards have changed, send a notification
             /// to inform the user.
             case 'subscribe:nominationPools:query.system.account': {
-              const account = entry.task.account;
+              const flattenedAccount = entry.task.account;
               const apiInstance = APIsController.get(chainId);
 
-              if (!account || !apiInstance) {
+              if (!flattenedAccount || !apiInstance) {
+                console.log('> Error getting flattened account data or API');
                 break;
               }
 
-              // Return if account has not joined a nomination pool.
-              if (!account.nominationPoolData) {
-                console.log("Account doesn't belond to a nomination pool.");
-                break;
-              }
+              // Get account instance from controller.
+              const account = AccountsController.get(
+                chainId,
+                flattenedAccount.address
+              );
 
               // Fetch API instance.
               const { api } = apiInstance;
 
+              // Return if nomination pool data for account not found.
+              if (!account?.nominationPoolData.has(entry.task.chainId)) {
+                break;
+              }
+
               // Get pool ID and reward address.
-              const { poolId, poolRewardAddress } = account.nominationPoolData;
+              const npData = account.nominationPoolData.get(chainId);
+
+              if (!npData) {
+                console.log('> Error getting nomination pool data on chain');
+                break;
+              }
+
+              const { poolId, poolRewardAddress, poolPendingRewards } = npData;
 
               // Get pending rewards for the account.
               const pendingRewardsResult =
@@ -228,44 +245,31 @@ export class QueryMultiWrapper {
                   account.address
                 );
 
-              const poolPendingRewards = planckToUnit(
+              const fetchedPendingRewards = planckToUnit(
                 new BigNumber(pendingRewardsResult.toString()),
                 chainUnits(chainId)
               );
 
               // Return if pending rewards has not changed for the account.
-              const curPendingRewards =
-                account.nominationPoolData.poolPendingRewards;
-
-              if (poolPendingRewards.eq(curPendingRewards)) {
+              if (fetchedPendingRewards.eq(poolPendingRewards)) {
                 break;
               }
 
               // Add nomination pool data to account.
-              if (poolRewardAddress) {
-                account.nominationPoolData = {
-                  poolId,
-                  poolRewardAddress,
-                  poolPendingRewards,
-                };
+              account.nominationPoolData.set(chainId, {
+                poolId,
+                poolRewardAddress,
+                poolPendingRewards: fetchedPendingRewards,
+              });
 
-                // Update account data in accounts controller.
-                const updated = new Account(
-                  chainId,
-                  AccountType.User,
-                  account.source,
-                  account.address,
-                  account.name
-                );
+              // Update account data in controller.
+              AccountsController.set(chainId, account);
 
-                AccountsController.set(chainId, updated);
-
-                // Construct and send event to renderer to display new reward balance.
-                WindowsController.get('menu')?.webContents?.send(
-                  'renderer:event:new',
-                  EventsController.getEvent(entry, {})
-                );
-              }
+              // Construct and send event to renderer to display new reward balance.
+              WindowsController.get('menu')?.webContents?.send(
+                'renderer:event:new',
+                EventsController.getEvent(entry, {})
+              );
 
               break;
             }
