@@ -35,6 +35,5 @@ export type SubscriptionTaskType = 'chain' | 'account' | '';
 // address.
 export interface WrappedSubscriptionTasks {
   type: SubscriptionTaskType;
-  address?: string;
   tasks: SubscriptionTask[];
 }

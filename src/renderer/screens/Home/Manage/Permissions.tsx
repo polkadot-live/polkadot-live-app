@@ -51,7 +51,6 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     // Copy the wrapped subscription and set the new task.
     const newWrapped: WrappedSubscriptionTasks = {
       ...cached,
-      address: cached.address ? cached.address : undefined,
       tasks: [
         {
           ...newTask,
@@ -66,8 +65,8 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
     if (result) {
       // Update subscriptions context state.
-      cached.address
-        ? updateTask(cached.type, newTask, cached.address)
+      cached.tasks[0].account?.address
+        ? updateTask(cached.type, newTask, cached.tasks[0].account.address)
         : updateTask(cached.type, newTask);
 
       // Update rendererd subscription tasks state.
@@ -79,8 +78,16 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
    Determine whether the toggle should be disabled based on the 
    task and account data.
   */
-  const getDisabled = (task: SubscriptionTask) =>
-    task.account && task.account.nominationPoolData === null ? false : true;
+  const getDisabled = (task: SubscriptionTask) => {
+    switch (task.action) {
+      case 'subscribe:nominationPools:query.system.account': {
+        return task.account?.nominationPoolData ? false : true;
+      }
+      default: {
+        return false;
+      }
+    }
+  };
 
   const getKey = (
     type: string,
@@ -94,14 +101,14 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
   // Renders a list of subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => {
-    const { type, tasks, address } = renderedSubscriptions;
+    const { type, tasks } = renderedSubscriptions;
 
     return (
       <>
         {tasks.map((task: SubscriptionTask, i: number) => (
           <AccountWrapper
             whileHover={{ scale: 1.01 }}
-            key={`${i}_${getKey(type, task.action, task.chainId, address)}`}
+            key={`${i}_${getKey(type, task.action, task.chainId, task.account?.address)}`}
           >
             <div className="inner">
               <div>
@@ -116,13 +123,21 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                 <Switch
                   type="secondary"
                   isOn={task.status === 'enable'}
+                  disabled={getDisabled(task)}
                   handleToggle={() => {
                     // Send an account or chain subscription task.
-                    type === 'account'
-                      ? handleToggle({ type, address, tasks: [task] })
-                      : handleToggle({ type, tasks: [task] });
+                    handleToggle({
+                      type,
+                      tasks: [
+                        {
+                          ...task,
+                          actionArgs: task.actionArgs
+                            ? [...task.actionArgs]
+                            : undefined,
+                        },
+                      ],
+                    });
                   }}
-                  disabled={getDisabled(task)}
                 />
               </div>
             </div>

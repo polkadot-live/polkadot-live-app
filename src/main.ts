@@ -163,7 +163,7 @@ app.whenReady().then(async () => {
           // Fetch account task belongs to.
           const account = AccountsController.get(
             data.tasks[0].chainId,
-            data.address
+            data.tasks[0].account?.address
           );
 
           if (!account) {
@@ -183,6 +183,10 @@ app.whenReady().then(async () => {
           );
 
           return true;
+        }
+        default: {
+          console.log('Something went wrong...');
+          return false;
         }
       }
 
