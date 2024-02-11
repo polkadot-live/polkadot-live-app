@@ -31,7 +31,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   /* 
    Handle a toggle, which sends a subscription task to the back-end
    and updates the front-end subscriptions state. 
-   */
+  */
 
   const handleToggle = async (cached: WrappedSubscriptionTasks) => {
     // Invert the task status.
@@ -75,6 +75,13 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   };
 
+  /*
+   Determine whether the toggle should be disabled based on the 
+   task and account data.
+  */
+  const getDisabled = (task: SubscriptionTask) =>
+    task.account && task.account.nominationPoolData === null ? false : true;
+
   const getKey = (
     type: string,
     action: string,
@@ -115,6 +122,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                       ? handleToggle({ type, address, tasks: [task] })
                       : handleToggle({ type, tasks: [task] });
                   }}
+                  disabled={getDisabled(task)}
                 />
               </div>
             </div>

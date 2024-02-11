@@ -100,6 +100,7 @@ export class Account {
       config: this.config,
       chainState: this.chainState,
       nominationPoolData: this.nominationPoolData,
+      source: this._source,
     }) as FlattenedAccountData;
 
   toJSON = () => ({

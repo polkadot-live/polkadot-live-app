@@ -111,6 +111,7 @@ export class SubscriptionsController {
               return {
                 ...t,
                 actionArgs: [account.address],
+                account: account.flatten(),
               };
             }
             case 'subscribe:nominationPools:query.system.account': {
@@ -119,6 +120,7 @@ export class SubscriptionsController {
                 return {
                   ...t,
                   actionArgs: [account.nominationPoolData.poolRewardAddress],
+                  account: account.flatten(),
                 };
               } else {
                 return t;

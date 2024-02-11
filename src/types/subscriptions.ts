@@ -1,6 +1,7 @@
 import type { ChainID } from './chains';
 import type { AnyFunction } from '@polkadot-cloud/react/types';
 import type { AnyData } from './misc';
+import type { FlattenedAccountData } from './accounts';
 
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
@@ -10,6 +11,7 @@ export interface SubscriptionTask {
   chainId: ChainID;
   status: SubscriptionNextStatus;
   label: string;
+  account?: FlattenedAccountData;
 }
 
 // Stores an actual Polkadot JS API function, it's current

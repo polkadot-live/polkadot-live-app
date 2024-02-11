@@ -73,6 +73,32 @@ export class EventsController {
           actions: [],
         };
       }
+
+      /*-------------------------------------------------- 
+       subscribe:nominationPools:query.system.account
+       --------------------------------------------------*/
+
+      case 'subscribe:nominationPools:query.system.account': {
+        const address = entry.task.account!.address;
+        const pendingRewards =
+          entry.task.account!.nominationPoolData.poolPendingRewards;
+
+        return {
+          uid: `accountEvents_account_${ellipsisFn(address)}_${pendingRewards}`,
+          category: 'account',
+          who: {
+            chain: entry.task.chainId,
+            address,
+          },
+          title: `${ellipsisFn(address)}`,
+          subtitle: `Nomination pool reward balance to claim: ${pendingRewards}`,
+          data: {
+            balances: pendingRewards,
+          },
+          timestamp: getUnixTime(new Date()),
+          actions: [],
+        };
+      }
     }
   }
 }

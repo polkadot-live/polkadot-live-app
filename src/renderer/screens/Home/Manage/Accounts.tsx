@@ -60,6 +60,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
 
   return (
     <AccountsWrapper>
+      {/* Manage Chains */}
       <HeadingWrapper>
         <h5 style={{ marginBottom: '0.5rem' }}>
           <PolkadotIcon className="icon" />
@@ -97,6 +98,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
         ))}
       </div>
 
+      {/* Manage Accounts */}
       {addresses.length ? (
         <>
           <HeadingWrapper>

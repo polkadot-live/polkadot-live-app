@@ -6,6 +6,9 @@ import { getPoolAccounts } from '@/chains/Polkadot/utils';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
+import { planckToUnit } from '@polkadot-cloud/utils';
+import { chainUnits } from '@/config/chains';
+import BigNumber from 'bignumber.js';
 
 /*
  * Fetch nomination pool data for all accounts managed by the accounts controller.
@@ -38,9 +41,23 @@ export const fetchAccountNominationPoolData = async () => {
         const { poolId } = result;
         const poolRewardAddress = getPoolAccounts(poolId)?.reward;
 
+        // Get pending rewards for the account.
+        const pendingRewardsResult =
+          await api.call.nominationPoolsApi.pendingRewards(account.address);
+
+        const poolPendingRewards = planckToUnit(
+          new BigNumber(pendingRewardsResult.toString()),
+          chainUnits(chainId)
+        );
+
         // Add nomination pool data to account.
         if (poolRewardAddress) {
-          account.nominationPoolData = { poolId, poolRewardAddress };
+          account.nominationPoolData = {
+            poolId,
+            poolRewardAddress,
+            poolPendingRewards,
+          };
+
           AccountsController.set(chainId, account);
         }
       }
@@ -70,9 +87,23 @@ export const fetchNominationPoolDataForAccount = async (
     const { poolId } = result;
     const poolRewardAddress = getPoolAccounts(poolId)?.reward;
 
+    // Get pending rewards for the account.
+    const pendingRewardsResult =
+      await api.call.nominationPoolsApi.pendingRewards(account.address);
+
+    const poolPendingRewards = planckToUnit(
+      new BigNumber(pendingRewardsResult.toString()),
+      chainUnits(chainId)
+    );
+
     // Add nomination pool data to account.
     if (poolRewardAddress) {
-      account.nominationPoolData = { poolId, poolRewardAddress };
+      account.nominationPoolData = {
+        poolId,
+        poolRewardAddress,
+        poolPendingRewards,
+      };
+
       AccountsController.set(chainId, account);
     }
   }

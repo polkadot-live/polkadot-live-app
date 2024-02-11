@@ -23,12 +23,12 @@ export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 export interface AccountNominationPoolData {
   poolId: number;
   poolRewardAddress: string;
+  poolPendingRewards: BigNumber;
 }
 
-// TODO: Pipe more states as more chains are added
-export type AccountChainState = PolkadotAccountState;
-
-// Account data saved in Electron store.
+/*
+ * Account data saved in Electron store.
+ */
 export interface StoredAccount {
   _type: AccountType;
   _source: AccountSource;
@@ -44,6 +44,9 @@ export interface AccountConfig {
   config: MethodSubscription;
   chainState: AccountChainState;
 }
+
+// TODO: Pipe more states as more chains are added
+export type AccountChainState = PolkadotAccountState;
 
 // Type for `Account.state` property
 // Currently only supports Polkadot chain instance's state
@@ -72,6 +75,7 @@ export interface FlattenedAccountData {
   config: MethodSubscription;
   chainState: AccountChainState;
   nominationPoolData: AccountNominationPoolData;
+  source: AccountSource;
 }
 
 export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;
