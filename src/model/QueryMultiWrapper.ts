@@ -10,7 +10,6 @@ import type {
   ApiCallEntry,
 } from '@/types/subscriptions';
 import { compareHashes } from '@/utils/CryptoUtils';
-import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { planckToUnit } from '@polkadot-cloud/utils';
 import { chainUnits } from '@/config/chains';
@@ -203,10 +202,9 @@ export class QueryMultiWrapper {
             /// to inform the user.
             case 'subscribe:nominationPools:query.system.account': {
               const flattenedAccount = entry.task.account;
-              const apiInstance = APIsController.get(chainId);
 
-              if (!flattenedAccount || !apiInstance) {
-                console.log('> Error getting flattened account data or API');
+              if (!flattenedAccount) {
+                console.log('> Error getting flattened account data');
                 break;
               }
 
@@ -217,7 +215,7 @@ export class QueryMultiWrapper {
               );
 
               // Fetch API instance.
-              const { api } = apiInstance;
+              const { api } = await ApiUtils.getApiInstance(chainId);
 
               // Return if nomination pool data for account not found.
               if (!account?.nominationPoolData.has(entry.task.chainId)) {

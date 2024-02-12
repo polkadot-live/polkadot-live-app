@@ -1,5 +1,4 @@
 import { AccountsController } from '@/controller/AccountsController';
-import { APIsController } from '@/controller/APIsController';
 import { getPoolAccounts } from '@/chains/Polkadot/utils';
 import { planckToUnit } from '@polkadot-cloud/utils';
 import { chainUnits } from '@/config/chains';
@@ -8,6 +7,7 @@ import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
+import { getApiInstance } from './ApiUtils';
 
 /*
  * Fetch nomination pool data for all accounts managed by the accounts controller.
@@ -19,14 +19,7 @@ export const fetchAccountNominationPoolData = async () => {
       continue;
     }
 
-    // TODO: Throw error from controller if API instance not initialized.
-    const apiInstance = APIsController.get(chainId);
-
-    if (!apiInstance) {
-      continue;
-    }
-
-    const { api } = apiInstance;
+    const { api } = await getApiInstance(chainId);
 
     // Iterate accounts associated with chain and initialise nomination pool data.
     for (const account of accounts) {
@@ -42,20 +35,10 @@ export const fetchNominationPoolDataForAccount = async (
   account: Account,
   chainId: ChainID
 ) => {
-  // TODO: Throw error if chain is not supported for nomination pool data.
-  if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    return;
+  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
+    const { api } = await getApiInstance(chainId);
+    await setNominationPoolDataForAccount(api, account, chainId);
   }
-
-  const apiInstance = APIsController.get(chainId);
-
-  if (!apiInstance) {
-    return;
-  }
-
-  const { api } = apiInstance;
-
-  await setNominationPoolDataForAccount(api, account, chainId);
 };
 
 /*
