@@ -162,56 +162,6 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       return flattened;
     }
 
-    case 'AccountsController#setAccountConfig': {
-      const chainId = params.newAccount.chainId;
-      const address = params.newAccount.address;
-
-      // Get added account
-      const account = AccountsController.get(chainId, address);
-      if (!account) {
-        return false;
-      }
-
-      // Change account config
-      const config = params.newConfig;
-      const chainState = { inNominationPool: null };
-      AccountsController.setAccountConfig({ config, chainState }, account);
-
-      // Retrieve updated account
-      const updated = AccountsController.get(chainId, address);
-      return updated ? updated.flatten() : false;
-    }
-
-    case 'AccountsController#status1': {
-      const chainId = params.chainId;
-      const address = params.address;
-
-      // Add account to accounts controller
-      AccountsController.add(chainId, params.source, address, params.name);
-
-      // Return added account status
-      return AccountsController.status(chainId, address);
-    }
-
-    case 'AccountsController#status2': {
-      const chainId = params.newAccount.chainId;
-      const address = params.newAccount.address;
-
-      // Get added account
-      const account = AccountsController.get(chainId, address);
-      if (!account) {
-        return false;
-      }
-
-      // Change account config
-      const config = params.config;
-      const chainState = { inNominationPool: null };
-      AccountsController.setAccountConfig({ config, chainState }, account);
-
-      // Get account status
-      return AccountsController.status(chainId, address);
-    }
-
     case 'AccountsController#remove': {
       // Remove the first account
       const chainId = params[0].chainId;

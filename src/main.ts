@@ -189,9 +189,6 @@ app.whenReady().then(async () => {
           return false;
         }
       }
-
-      // Something went wrong if code reaches here.
-      return false;
     }
   );
 
