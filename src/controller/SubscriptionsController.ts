@@ -33,28 +33,19 @@ export class SubscriptionsController {
     }
   }
 
-  /*------------------------------------------------------------
-   Subscribe to a chain task received from the renderer.
-   ------------------------------------------------------------*/
-
+  /// Subscribe to a chain task received from the renderer.
   static async subscribeChainTask(task: SubscriptionTask) {
     await this.chainSubscriptions?.subscribeTask(task);
   }
 
-  /*------------------------------------------------------------
-   Subscribe to an account task received from the renderer.
-   ------------------------------------------------------------*/
-
+  /// Subscribe to an account task received from the renderer.
   static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
     await account.subscribeToTask(task);
   }
 
-  /*------------------------------------------------------------
-   Return a map of all correctly configured tasks possible for
-   a chain. Active subscriptions need to be included in the
-   array.
-   ------------------------------------------------------------*/
-
+  /// Return a map of all correctly configured tasks possible for
+  /// a chain. Active subscriptions need to be included in the
+  /// array.
   static getChainSubscriptions() {
     const activeTasks = this.chainSubscriptions?.getSubscriptionTasks();
 
@@ -90,12 +81,9 @@ export class SubscriptionsController {
     return map;
   }
 
-  /*------------------------------------------------------------
-   Return a map of all correctly configured tasks possible for
-   an account. Active subscriptions need to be included in the
-   array.
-   ------------------------------------------------------------*/
-
+  /// Return a map of all correctly configured tasks possible for
+  /// an account. Active subscriptions need to be included in the
+  /// array.
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
     const map = new Map<string, SubscriptionTask[]>();
 
@@ -157,22 +145,22 @@ export class SubscriptionsController {
   }
 
   /*------------------------------------------------------------
-   Key naming convention of subscription tasks in store:
-  
-   'chain_subscriptions'
-     Key that stores global chain subscription tasks.
-  
-   '<account_address>_subscriptions'
-     Key that stores an account's subscription tasks.
-  
-   Ex: const serialized = store.get('chain_subscriptions');
-  
-   When subscription tasks are retrieved and deserialised,
-   they can be passed to the appropriate `QueryMultiWrapper`
-   instance, where the API call will be re-built.
-   ------------------------------------------------------------*/
+   * Key naming convention of subscription tasks in store:
+   *
+   * 'chain_subscriptions'
+   *   Key that stores global chain subscription tasks.
+   *
+   * '<account_address>_subscriptions'
+   *   Key that stores an account's subscription tasks.
+   *
+   * Ex: const serialized = store.get('chain_subscriptions');
+   *
+   * When subscription tasks are retrieved and deserialised,
+   * they can be passed to the appropriate `QueryMultiWrapper`
+   * instance, where the API call will be re-built.
+   *------------------------------------------------------------*/
 
-  // Called when a chain subscription task is received from renderer.
+  /// Called when a chain subscription task is received from renderer.
   static updateChainTaskInStore(task: SubscriptionTask) {
     const key = 'chain_subscriptions';
 
@@ -186,7 +174,7 @@ export class SubscriptionsController {
     this.updateTaskInStore(tasks, task, key);
   }
 
-  // Called when an account subscription task is received from renderer.
+  /// Called when an account subscription task is received from renderer.
   static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
     const key = `${account.address}_subscriptions`;
 
@@ -200,11 +188,8 @@ export class SubscriptionsController {
     this.updateTaskInStore(tasks, task, key);
   }
 
-  /*------------------------------------------------------------
-   Clears an account's persisted subscriptions in the store.
-   Invoked when an account is removed.
-   ------------------------------------------------------------*/
-
+  /// Clears an account's persisted subscriptions in the store.
+  /// Invoked when an account is removed.
   static clearAccountTasksInStore(account: Account) {
     (store as Record<string, AnyJson>).delete(
       `${account.address}_subscriptions`
@@ -212,8 +197,8 @@ export class SubscriptionsController {
   }
 
   /*------------------------------------------------------------
-   Utilities
-   ------------------------------------------------------------*/
+   * Utilities
+   *------------------------------------------------------------*/
 
   private static updateTaskInStore(
     tasks: SubscriptionTask[],
