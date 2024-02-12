@@ -34,11 +34,12 @@ export interface StoredAccount {
   _source: AccountSource;
   _address: string;
   _name: string;
-  _config: MethodSubscription;
   _chain: ChainID;
 }
 
-// Type storing only essential data for an account.
+/*
+ * Type storing only essential data for an account.
+ */
 export interface FlattenedAccountData {
   address: string;
   name: string;
@@ -49,14 +50,6 @@ export interface FlattenedAccountData {
 }
 
 export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;
-
-/**
- * @deprecated The type should not be used
- */
-export interface AccountConfig {
-  config: MethodSubscription;
-  //chainState: AccountChainState;
-}
 
 /**
  * @deprecated The type should not be used

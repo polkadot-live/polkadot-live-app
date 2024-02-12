@@ -1,16 +1,20 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { MainDebug } from '@/utils/DebugUtils';
+import { LiveReporter } from '@/model/LiveReporter';
+import { APIsController } from '../controller/APIsController';
+import { AccountsController } from '../controller/AccountsController';
+import { BlockStream } from '../blockstream';
+import { ApiSubscription } from '@/types/blockstream';
 import type { ApiPromise } from '@polkadot/api';
 import type { Address } from '@polkadot/types/interfaces/runtime';
 import type { ChainID } from '@/types/chains';
-import { MainDebug } from '@/utils/DebugUtils';
-import { LiveReporter } from '@/model/LiveReporter';
-import { APIsController } from './APIsController';
-import { AccountsController } from './AccountsController';
-import { BlockStream } from '../blockstream';
-import type { ConcreteAccount, RawAccount } from '@/types/blockstream';
-import { ApiSubscription } from '@/types/blockstream';
+import type {
+  ConcreteAccount,
+  MethodSubscription,
+  RawAccount,
+} from '@/types/blockstream';
 
 const debug = MainDebug.extend('Subscriptions');
 
@@ -51,15 +55,15 @@ export class BlockStreamsController {
       const rawAccounts: RawAccount[] = [];
       for (const account of accounts) {
         debug(
-          '🗓️ Bootstrap events for an account with chainState: %o',
-          account.chainState
+          '🗓️ Bootstrap events for an account with chainState: %o'
+          //account.chainState
         );
 
         // Convert `Account` into `RawAccount`.
         rawAccounts.push({
           address: account.address,
           nickname: account.name,
-          config: account.config,
+          config: { type: 'all' } as MethodSubscription,
         });
       }
 
@@ -103,7 +107,7 @@ export class BlockStreamsController {
       instance.accounts.push({
         address: concreteAddress,
         nickname: account.name,
-        config: account.config,
+        config: { type: 'all' } as MethodSubscription,
       });
     } else {
       // get api instance and start service.
@@ -115,7 +119,7 @@ export class BlockStreamsController {
         const rawAccount = {
           address,
           nickname: account.name,
-          config: account.config,
+          config: { type: 'all' } as MethodSubscription,
         };
 
         this.startService(apiInstance.chain, apiInstance.api, [rawAccount]);

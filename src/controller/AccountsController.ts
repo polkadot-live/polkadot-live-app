@@ -7,7 +7,6 @@ import { Account } from '@/model/Account';
 import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type {
-  AccountConfig,
   AccountSource,
   AccountStatus,
   FlattenedAccounts,
@@ -65,7 +64,6 @@ export class AccountsController {
             a._address,
             a._name
           );
-          account.config = a._config;
 
           imported.push(account);
         }
@@ -265,14 +263,11 @@ export class AccountsController {
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {string} address - the account address.
    * @returns {AccountStatus}
+   * @deprecated This method should not be used.
    */
   static status = (chain: ChainID, address: string): AccountStatus => {
     const account = this.get(chain, address);
-    return account
-      ? account.config === null
-        ? 'pending'
-        : 'active'
-      : 'does_not_exist';
+    return account ? 'active' : 'does_not_exist';
   };
 
   /**
@@ -329,23 +324,6 @@ export class AccountsController {
       delegator: d.address,
       callback: d.delegate.callback,
     }));
-
-  /**
-   * @name setAccountConfig
-   * @summary Utility to update account config.
-   * @param {AccountConfig} - the account config derived from discovery.
-   * @deprecated This method should no longer be used.
-   */
-  static setAccountConfig = (
-    { config /*, chainState*/ }: AccountConfig,
-    account: Account
-  ) => {
-    account.config = config;
-    //account.chainState = chainState;
-    AccountsController.set(account.chain, account);
-
-    debug('🆕 Accounted account config: %o', account);
-  };
 
   /**
    * @name setAccounts

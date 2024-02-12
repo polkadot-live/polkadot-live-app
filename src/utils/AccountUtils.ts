@@ -1,7 +1,5 @@
 import { AccountsController } from '@/controller/AccountsController';
-import { WindowsController } from '@/controller/WindowsController';
 import { APIsController } from '@/controller/APIsController';
-import { Discover } from '@/controller/Discover';
 import { getPoolAccounts } from '@/chains/Polkadot/utils';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { ChainID } from '@/types/chains';
@@ -116,31 +114,5 @@ export const fetchNominationPoolDataForAccount = async (
       // Store updated account data in accounts controller.
       AccountsController.set(chainId, account);
     }
-  }
-};
-
-/**
- * @deprecated This function should no longer be used.
- */
-export const initializeConfigsAndChainStates = async () => {
-  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    for (const account of accounts) {
-      const { /* chainState, */ config } = await Discover.start(
-        chainId,
-        account
-      );
-
-      account.config = config;
-      //account.chainState = chainState;
-      AccountsController.set(chainId, account);
-    }
-  }
-
-  // Report accounts to windows with updated configs.
-  for (const { id } of WindowsController.active) {
-    WindowsController.get(id)?.webContents?.send(
-      'renderer:broadcast:accounts',
-      AccountsController.getAllFlattenedAccountData()
-    );
   }
 };

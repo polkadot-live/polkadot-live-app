@@ -10,7 +10,6 @@ import type {
 } from '@/types/accounts';
 import { AccountType } from '@/types/accounts';
 import { QueryMultiWrapper } from './QueryMultiWrapper';
-import type { MethodSubscription } from '@/types/blockstream';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -43,12 +42,6 @@ export class Account {
   private _queryMulti: QueryMultiWrapper | null = null;
 
   private _nominationPoolData = new Map<ChainID, AccountNominationPoolData>();
-
-  // Type matches `ConcreteAccount` and `RawAccount`
-  /**
-   * @deprecated The property should not be used
-   */
-  private _config: MethodSubscription = { type: 'all' };
 
   /**
    * @deprecated The property should not be used
@@ -90,7 +83,6 @@ export class Account {
       address: this.address,
       name: this.name,
       type: this.type,
-      config: this.config,
       nominationPoolData: JSON.stringify(this.nominationPoolData),
       source: this._source,
     }) as FlattenedAccountData;
@@ -100,7 +92,6 @@ export class Account {
     _source: this._source,
     _address: this._address,
     _name: this._name,
-    _config: this._config,
     _chain: this._chain,
   });
 
@@ -146,19 +137,5 @@ export class Account {
 
   set nominationPoolData(data: Map<ChainID, AccountNominationPoolData>) {
     this._nominationPoolData = data;
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  get config() {
-    return this._config;
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  set config(value: MethodSubscription) {
-    this._config = value;
   }
 }
