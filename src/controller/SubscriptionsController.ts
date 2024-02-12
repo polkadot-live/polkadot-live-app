@@ -141,6 +141,9 @@ export class SubscriptionsController {
                   active.action === t.action &&
                   active.chainId === t.chainId
                 ) {
+                  // Add chain to account's chains set.
+                  account.chains.add(t.chainId);
+
                   return active;
                 }
               }

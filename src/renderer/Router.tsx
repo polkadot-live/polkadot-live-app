@@ -32,7 +32,6 @@ export const RouterInner = () => {
     window.myAPI.reportImportedAccounts(
       (_: Event, accounts: FlattenedAccounts) => {
         setAddresses(accounts);
-
         setRenderedSubscriptions({ type: '', tasks: [] });
       }
     );
