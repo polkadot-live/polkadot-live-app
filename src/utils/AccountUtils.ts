@@ -68,15 +68,13 @@ const setNominationPoolDataForAccount = async (
       chainUnits(chainId)
     );
 
-    // Add nomination pool data to account.
     if (poolRewardAddress) {
-      const map = account.nominationPoolData;
-
-      map.set(chainId, {
+      // Add nomination pool data to account.
+      account.nominationPoolData = {
         poolId,
         poolRewardAddress,
         poolPendingRewards,
-      });
+      };
 
       // Store updated account data in controller.
       AccountsController.set(chainId, account);

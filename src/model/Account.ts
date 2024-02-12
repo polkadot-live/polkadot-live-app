@@ -1,15 +1,15 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type {
-  AccountSource,
-  FlattenedAccountData,
-  AccountNominationPoolData,
-  AccountType,
-} from '@/types/accounts';
 import { QueryMultiWrapper } from './QueryMultiWrapper';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import type {
+  AccountSource,
+  FlattenedAccountData,
+  AccountType,
+  AccountNominationPoolData,
+} from '@/types/accounts';
 
 /**
  * Account collection types.
@@ -24,7 +24,7 @@ export type ImportedAccounts = Map<ChainID, Account[]>;
  * @property {string} address - the account address.
  * @property {string} name - the account name.
  * @property {QueryMultiWrapper} queryMulti - subscription manager object.
- * @property {Set<ChainID>} chains - chains with active subscriptions.
+ * @property {hainID} chain - chain account belongs to.
  * @property {Map<ChainID, AccountNominationPoolData>} nominationPoolData - account nomination pool data.
  */
 export class Account {
@@ -36,13 +36,11 @@ export class Account {
 
   private _queryMulti: QueryMultiWrapper | null = null;
 
-  // TODO: Change to Map<ChainID, string> when implementing multi-chain support.
   private _address!: string;
 
-  // TODO: Update when enabling and disabling subscriptions.
-  private _chains = new Set<ChainID>();
+  private _chain: ChainID;
 
-  private _nominationPoolData = new Map<ChainID, AccountNominationPoolData>();
+  private _nominationPoolData: AccountNominationPoolData | null = null;
 
   constructor(
     chain: ChainID,
@@ -56,7 +54,7 @@ export class Account {
     this.address = address;
     this.name = name;
     this._queryMulti = new QueryMultiWrapper();
-    this._chains.add(chain);
+    this._chain = chain;
   }
 
   subscribeToTask = async (task: SubscriptionTask) => {
@@ -70,9 +68,9 @@ export class Account {
       address: this.address,
       name: this.name,
       type: this.type,
-      nominationPoolData: JSON.stringify(this.nominationPoolData),
-      chains: JSON.stringify(this.chains),
-      source: this._source,
+      nominationPoolData: this.nominationPoolData,
+      chain: this.chain,
+      source: this.source,
     }) as FlattenedAccountData;
 
   toJSON = () => ({
@@ -80,10 +78,11 @@ export class Account {
     _source: this._source,
     _address: this._address,
     _name: this._name,
+    _chain: this._chain,
   });
 
-  get chains() {
-    return this._chains;
+  get chain() {
+    return this._chain;
   }
 
   get type() {
@@ -122,7 +121,7 @@ export class Account {
     return this._nominationPoolData;
   }
 
-  set nominationPoolData(data: Map<ChainID, AccountNominationPoolData>) {
+  set nominationPoolData(data: AccountNominationPoolData | null) {
     this._nominationPoolData = data;
   }
 }

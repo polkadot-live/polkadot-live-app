@@ -118,8 +118,9 @@ export class SubscriptionsController {
             }
             case 'subscribe:nominationPools:query.system.account': {
               // Provide an account's nomination pool reward address if it exists for the target chain.
-              const data = account.nominationPoolData.get(t.chainId);
-              const actionArgs = data ? [data.poolRewardAddress] : undefined;
+              const actionArgs = account.nominationPoolData
+                ? [account.nominationPoolData.poolRewardAddress]
+                : undefined;
 
               return {
                 ...t,
@@ -141,9 +142,6 @@ export class SubscriptionsController {
                   active.action === t.action &&
                   active.chainId === t.chainId
                 ) {
-                  // Add chain to account's chains set.
-                  account.chains.add(t.chainId);
-
                   return active;
                 }
               }

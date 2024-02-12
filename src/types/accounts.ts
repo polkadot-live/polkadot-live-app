@@ -6,6 +6,7 @@ import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { AnyFunction } from './misc';
 import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
+import type { ChainID } from './chains';
 
 export enum AccountType {
   User,
@@ -43,8 +44,8 @@ export interface FlattenedAccountData {
   name: string;
   type: AccountType;
   config: MethodSubscription;
-  chains: string;
-  nominationPoolData: string;
+  chain: ChainID;
+  nominationPoolData: AccountNominationPoolData | null;
   source: AccountSource;
 }
 
