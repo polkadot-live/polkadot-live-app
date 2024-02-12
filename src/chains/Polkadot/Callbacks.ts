@@ -38,14 +38,14 @@ export class PolkadotCallbacks {
       return;
     }
 
-    for (const { type, address, chainState } of chainAccounts) {
+    for (const { type /*, address , chainState */ } of chainAccounts) {
       // Delegates are not needed to bootstrap cached chain state.
       if (type === AccountType.Delegate) {
         continue;
       }
-      if (chainState?.inNominationPool) {
-        PolkadotCallbacks.unclaimedPoolRewards(address);
-      }
+      //if (chainState?.inNominationPool) {
+      //  PolkadotCallbacks.unclaimedPoolRewards(address);
+      //}
     }
   }
 
@@ -113,15 +113,15 @@ export class PolkadotCallbacks {
             rewardAddress,
             'Reward Account'
           );
-          delegate.config = {
-            type: 'only',
-            only: [
-              {
-                pallet: 'balances',
-                method: 'transfer',
-              },
-            ],
-          };
+          //delegate.config = {
+          //  type: 'only',
+          //  only: [
+          //    {
+          //      pallet: 'balances',
+          //      method: 'transfer',
+          //    },
+          //  ],
+          //};
 
           const newAccounts = AccountsController.pushAccount(
             this.chain,

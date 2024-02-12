@@ -1,14 +1,12 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainsController } from '@/controller/ChainsController';
 import type {
   AccountSource,
-  AccountChainInstanceState,
   FlattenedAccountData,
   AccountNominationPoolData,
+  AccountType,
 } from '@/types/accounts';
-import { AccountType } from '@/types/accounts';
 import { QueryMultiWrapper } from './QueryMultiWrapper';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -43,11 +41,6 @@ export class Account {
 
   private _nominationPoolData = new Map<ChainID, AccountNominationPoolData>();
 
-  /**
-   * @deprecated The property should not be used
-   */
-  state: AccountChainInstanceState | null = null;
-
   constructor(
     chain: ChainID,
     type: AccountType,
@@ -68,15 +61,6 @@ export class Account {
   };
 
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
-
-  /**
-   * @deprecated This method should no longer be used.
-   */
-  initState = () => {
-    if (this.type === AccountType.User) {
-      this.state = ChainsController.new(this.chain, this.address);
-    }
-  };
 
   flatten = () =>
     ({

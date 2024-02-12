@@ -7,7 +7,7 @@ import type { ChainID } from '@/types/chains';
 import { APIsController } from '@/controller/APIsController';
 import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/utils/DebugUtils';
-import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyData, AnyFunction, AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('PolkadotState');
 
@@ -115,7 +115,7 @@ export class PolkadotState {
         [api.query.system.account, this.address],
         [api.query.balances.locks, this.address],
       ],
-      async ([{ data: accountData, nonce }, locks]) => {
+      async ([{ data: accountData, nonce }, locks]: AnyData[]) => {
         const free = new BigNumber(accountData.free.toString());
 
         this.account = {
