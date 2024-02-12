@@ -4,8 +4,8 @@
 import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import type { Account } from '@/model/Account';
-import { APIsController } from './APIsController';
-import { ChainsController } from './ChainsController';
+import { APIsController } from '../controller/APIsController';
+import { ChainsController } from '../controller/ChainsController';
 import type { All, MethodSubscription } from '@/types/blockstream';
 import type { PolkadotAccountState } from '@/types/chains/polkadot';
 

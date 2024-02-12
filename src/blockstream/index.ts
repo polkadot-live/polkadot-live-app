@@ -13,7 +13,7 @@ import {
   subscriptionFilter,
 } from '../model/Match';
 import { AccountsController } from '../controller/AccountsController';
-import { Discover } from '../controller/Discover';
+import { Discover } from './Discover';
 import type {
   EventInner,
   ExtrinsicInner,
@@ -93,7 +93,7 @@ export class BlockStream {
     let lastBlock: number | undefined = undefined;
 
     // Start subscription.
-    const unsub = await subFn(async (header) => {
+    const unsub = await subFn(async (header: AnyData) => {
       debug.extend(this.chain)(
         `🧱 Checking block ${header.number} ${header.hash}`
       );

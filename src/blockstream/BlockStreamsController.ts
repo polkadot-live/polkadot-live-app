@@ -5,7 +5,7 @@ import { MainDebug } from '@/utils/DebugUtils';
 import { LiveReporter } from '@/model/LiveReporter';
 import { APIsController } from '../controller/APIsController';
 import { AccountsController } from '../controller/AccountsController';
-import { BlockStream } from '../blockstream';
+import { BlockStream } from '.';
 import { ApiSubscription } from '@/types/blockstream';
 import type { ApiPromise } from '@polkadot/api';
 import type { Address } from '@polkadot/types/interfaces/runtime';
