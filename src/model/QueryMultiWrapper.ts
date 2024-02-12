@@ -218,19 +218,12 @@ export class QueryMultiWrapper {
               const { api } = await ApiUtils.getApiInstance(chainId);
 
               // Return if nomination pool data for account not found.
-              if (!account?.nominationPoolData.has(entry.task.chainId)) {
+              if (!account?.nominationPoolData) {
                 break;
               }
 
               // Get pool ID and reward address.
-              const npData = account.nominationPoolData.get(chainId);
-
-              if (!npData) {
-                console.log('> Error getting nomination pool data on chain');
-                break;
-              }
-
-              const { poolId, poolRewardAddress, poolPendingRewards } = npData;
+              const { poolPendingRewards } = account.nominationPoolData;
 
               // Get pending rewards for the account.
               const pendingRewardsResult =
@@ -249,11 +242,10 @@ export class QueryMultiWrapper {
               }
 
               // Add nomination pool data to account.
-              account.nominationPoolData.set(chainId, {
-                poolId,
-                poolRewardAddress,
+              account.nominationPoolData = {
+                ...account.nominationPoolData,
                 poolPendingRewards: fetchedPendingRewards,
-              });
+              };
 
               // Update account data in controller.
               AccountsController.set(chainId, account);
