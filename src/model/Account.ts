@@ -4,7 +4,6 @@
 import { ChainsController } from '@/controller/ChainsController';
 import type {
   AccountSource,
-  AccountChainState,
   AccountChainInstanceState,
   FlattenedAccountData,
   AccountNominationPoolData,
@@ -27,7 +26,6 @@ export type ImportedAccounts = Map<ChainID, Account[]>;
  * @property {string} address - the account address.
  * @property {string} name - the account name.
  * @property {MethodSubscription} config - the account's subscription config.
- * @property {AccountChainState | null} chainState - the cached chain state of the account.
  * @property {AccountChainInstanceState | null} state - instantiated class object that subscribes to base account
  * state.
  */
@@ -51,11 +49,6 @@ export class Account {
    * @deprecated The property should not be used
    */
   private _config: MethodSubscription = { type: 'all' };
-
-  /**
-   * @deprecated The property should not be used
-   */
-  private _chainState: AccountChainState | null = null;
 
   /**
    * @deprecated The property should not be used
@@ -98,7 +91,6 @@ export class Account {
       name: this.name,
       type: this.type,
       config: this.config,
-      chainState: this.chainState,
       nominationPoolData: JSON.stringify(this.nominationPoolData),
       source: this._source,
     }) as FlattenedAccountData;
@@ -109,7 +101,6 @@ export class Account {
     _address: this._address,
     _name: this._name,
     _config: this._config,
-    _chainState: this._chainState,
     _chain: this._chain,
   });
 
@@ -169,19 +160,5 @@ export class Account {
    */
   set config(value: MethodSubscription) {
     this._config = value;
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  get chainState() {
-    return this._chainState;
-  }
-
-  /**
-   * @deprecated The method should not be used
-   */
-  set chainState(value: AccountChainState | null) {
-    this._chainState = value;
   }
 }

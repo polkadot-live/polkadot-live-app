@@ -41,11 +41,6 @@ export class QueryMultiWrapper {
       }
 
       case 'subscribe:nominationPools:query.system.account': {
-        console.log('TODO: Handle nomination pool rewards');
-
-        // At this point, an account's nomination pool data is fetched.
-        // We know an account's `poolId` and `poolRewardAddress`.
-
         console.log('subscribe nomination pool account balance');
         await QueryMultiWrapper.subscribe_nomination_pool_reward_account(
           task,

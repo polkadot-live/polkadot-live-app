@@ -35,22 +35,40 @@ export interface StoredAccount {
   _address: string;
   _name: string;
   _config: MethodSubscription;
-  _chainState: AccountChainState;
   _chain: ChainID;
-  _nominationPoolData: Map<ChainID, AccountNominationPoolData>;
 }
 
+// Type storing only essential data for an account.
+export interface FlattenedAccountData {
+  address: string;
+  name: string;
+  type: AccountType;
+  config: MethodSubscription;
+  nominationPoolData: string;
+  source: AccountSource;
+}
+
+export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;
+
+/**
+ * @deprecated The type should not be used
+ */
 export interface AccountConfig {
   config: MethodSubscription;
-  chainState: AccountChainState;
+  //chainState: AccountChainState;
 }
 
-// TODO: Pipe more states as more chains are added
+/**
+ * @deprecated The type should not be used
+ */
 export type AccountChainState = PolkadotAccountState;
 
 // Type for `Account.state` property
 // Currently only supports Polkadot chain instance's state
-// TODO: Allow account to store more states
+
+/**
+ * @deprecated The type should not be used
+ */
 export interface AccountChainInstanceState {
   _account: AnyJson; // TODO: fix type
   _address: string;
@@ -66,16 +84,3 @@ export interface AccountChainInstanceState {
   // The following method is not being invoked from this type yet:
   // reportAccountState(key: keyof PolkadotState)
 }
-
-// Type storing only essential data for an account.
-export interface FlattenedAccountData {
-  address: string;
-  name: string;
-  type: AccountType;
-  config: MethodSubscription;
-  chainState: AccountChainState;
-  nominationPoolData: string;
-  source: AccountSource;
-}
-
-export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;

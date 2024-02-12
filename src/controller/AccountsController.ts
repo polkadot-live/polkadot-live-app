@@ -66,7 +66,6 @@ export class AccountsController {
             a._name
           );
           account.config = a._config;
-          account.chainState = a._chainState;
 
           imported.push(account);
         }
@@ -338,11 +337,11 @@ export class AccountsController {
    * @deprecated This method should no longer be used.
    */
   static setAccountConfig = (
-    { config, chainState }: AccountConfig,
+    { config /*, chainState*/ }: AccountConfig,
     account: Account
   ) => {
     account.config = config;
-    account.chainState = chainState;
+    //account.chainState = chainState;
     AccountsController.set(account.chain, account);
 
     debug('🆕 Accounted account config: %o', account);

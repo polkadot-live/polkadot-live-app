@@ -125,10 +125,13 @@ export const fetchNominationPoolDataForAccount = async (
 export const initializeConfigsAndChainStates = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     for (const account of accounts) {
-      const { chainState, config } = await Discover.start(chainId, account);
+      const { /* chainState, */ config } = await Discover.start(
+        chainId,
+        account
+      );
 
       account.config = config;
-      account.chainState = chainState;
+      //account.chainState = chainState;
       AccountsController.set(chainId, account);
     }
   }
