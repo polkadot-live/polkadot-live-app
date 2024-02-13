@@ -144,16 +144,11 @@ export class AccountsController {
     return map;
   };
 
-  // Get an array of imported chain IDs
-  static getAccountChainIds = () => {
-    const chainIds: ChainID[] = [];
-
-    for (const chainId of this.accounts.keys()) {
-      chainIds.push(chainId);
-    }
-
-    return chainIds;
-  };
+  /**
+   * @name getAccountChainIds
+   * @summary Utility to get an array of imported chain IDs
+   */
+  static getAccountChainIds = (): ChainID[] => Array.from(this.accounts.keys());
 
   /**
    * @name set
