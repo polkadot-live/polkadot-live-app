@@ -3,7 +3,6 @@ import * as ApiUtils from '@/utils/ApiUtils';
 import { WindowsController } from '@/controller/WindowsController';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
-import type { ApiPromise } from '@polkadot/api';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
@@ -97,7 +96,7 @@ export class QueryMultiWrapper {
     console.log('>> QueryMultiWrapper: Call to queryMulti.');
 
     const instance = await ApiUtils.getApiInstance(chainId);
-    const finalArg = queryMultiArg as ApiPromise;
+    const finalArg = queryMultiArg;
 
     const unsub = await instance.api.queryMulti(
       finalArg,

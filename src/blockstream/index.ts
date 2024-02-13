@@ -11,7 +11,7 @@ import {
   matchEventToAccount,
   matchExtrinsicToAccount,
   subscriptionFilter,
-} from '../model/Match';
+} from './Match';
 import { AccountsController } from '../controller/AccountsController';
 import { Discover } from './Discover';
 import type {

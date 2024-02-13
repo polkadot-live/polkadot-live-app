@@ -110,16 +110,7 @@ export class ExtrinsicsController {
       genesisHash: api.genesisHash.toHex(),
       method: method.toHex(),
       nonce: nonce.toHex(),
-      signedExtensions: [
-        'CheckNonZeroSender',
-        'CheckSpecVersion',
-        'CheckTxVersion',
-        'CheckGenesis',
-        'CheckMortality',
-        'CheckNonce',
-        'CheckWeight',
-        'ChargeTransactionPayment',
-      ],
+      signedExtensions: api.registry.signedExtensions,
       tip: api.registry.createType('Compact<Balance>', 0).toHex(),
       version: this.tx.version,
     };

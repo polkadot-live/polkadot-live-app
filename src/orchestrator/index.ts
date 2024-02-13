@@ -92,8 +92,12 @@ const importNewAddress = async ({
 
   // Add chain instance if it does not already exist.
   if (!APIsController.chainExists(chain)) {
-    // TODO: Error checking instead of `!`
-    await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
+    // TODO: handle case where chain list data does not exist.
+    const chainData = ChainList.get(chain);
+
+    if (chainData) {
+      await APIsController.new(chainData.endpoints.rpc);
+    }
   }
 
   // Report account subscriptions to renderer.

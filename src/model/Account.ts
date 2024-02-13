@@ -32,7 +32,7 @@ export class Account {
 
   private _source: AccountSource;
 
-  private _name!: string;
+  private _name: string;
 
   private _queryMulti: QueryMultiWrapper | null = null;
 
@@ -52,7 +52,7 @@ export class Account {
     this.type = type;
     this._source = source;
     this.address = address;
-    this.name = name;
+    this._name = name;
     this._queryMulti = new QueryMultiWrapper();
     this._chain = chain;
   }

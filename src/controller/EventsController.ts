@@ -29,7 +29,7 @@ export class EventsController {
       }
 
       /*-------------------------------------------------- 
-       subscribe:query.babde.currentSlot
+       subscribe:query.babe.currentSlot
        --------------------------------------------------*/
 
       case 'subscribe:query.babe.currentSlot': {
