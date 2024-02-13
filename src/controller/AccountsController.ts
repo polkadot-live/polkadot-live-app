@@ -254,6 +254,7 @@ export class AccountsController {
    * @param {Account} account - the account to push.
    * @returns {AccountStatus}
    */
+  // TODO: Make private when deprecated PolkadotCallbacks class removed.
   static pushAccount = (chain: ChainID, account: Account): ImportedAccounts => {
     const updated: ImportedAccounts = this.accounts;
 
@@ -268,6 +269,7 @@ export class AccountsController {
    * @param {string} address - the account address.
    * @returns {ImportedAccounts}
    */
+  // TODO: Make private and remove WDIO test case.
   static spliceAccount = (address: string): ImportedAccounts => {
     const filtered: ImportedAccounts = new Map();
 
@@ -307,6 +309,7 @@ export class AccountsController {
    * @summary Utility to update accounts, both in class and in store.
    * @param {ImportedAccounts} accounts - the accounts object to persist to the class.
    */
+  // TODO: Make private when deprecated PolkadotCallbacks class removed.
   static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
     (store as Record<string, AnyJson>).set(
@@ -334,8 +337,11 @@ export class AccountsController {
     return false;
   };
 
-  // Serialize imported accounts for Electron store
-  // NOTE: Account implements toJSON method for serializing account data correctly.
+  /**
+   * @name serializeAccounts
+   * @summary Serialize imported accounts for Electron store.
+   * Note: Account implements toJSON method for serializing account data correctly.
+   */
   private static serializeAccounts = () => {
     const serialized = JSON.stringify(Array.from(this.accounts.entries()));
     return serialized;
