@@ -1,7 +1,6 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { PolkadotCallbacks } from '@/chains/Polkadot/Callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
 import { NotificationsController } from '@/controller/NotificationsController';
 import type { Report, Reporter } from '@/types/reporter';
@@ -33,7 +32,9 @@ export class LiveReporter implements Reporter {
         const { delegator, callback } = d;
 
         if (callback === 'unclaimed_rewards') {
-          PolkadotCallbacks.unclaimedPoolRewards(delegator);
+          // Temporary log.
+          //PolkadotCallbacks.unclaimedPoolRewards(delegator);
+          console.log(delegator);
         }
       }
       // console log the report.

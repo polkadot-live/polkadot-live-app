@@ -1,16 +1,18 @@
 import { AccountsController } from '@/controller/AccountsController';
-import { getPoolAccounts } from '@/chains/Polkadot/utils';
+import { APIsController } from '@/controller/APIsController';
 import { planckToUnit } from '@polkadot-cloud/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
+import { getApiInstance } from './ApiUtils';
+import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
-import { getApiInstance } from './ApiUtils';
 
-/*
- * Fetch nomination pool data for all accounts managed by the accounts controller.
+/**
+ * @name fetchAccountNominationPoolData
+ * @summary Fetch nomination pool data for all accounts managed by the accounts controller.
  */
 export const fetchAccountNominationPoolData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
@@ -28,8 +30,9 @@ export const fetchAccountNominationPoolData = async () => {
   }
 };
 
-/*
- * Fetch nomination pool data for a single account.
+/**
+ * @name fetchNominationPoolDataForAccount
+ * @summary Fetch nomination pool data for a single account.
  */
 export const fetchNominationPoolDataForAccount = async (
   account: Account,
@@ -41,8 +44,9 @@ export const fetchNominationPoolDataForAccount = async (
   }
 };
 
-/*
- * Utility that uses an API instance to get and update an account's nomination
+/**
+ * @name setNominationPoolDataForAccount
+ * @summary Utility that uses an API instance to get and update an account's nomination
  * pool data.
  */
 const setNominationPoolDataForAccount = async (
@@ -80,4 +84,45 @@ const setNominationPoolDataForAccount = async (
       AccountsController.set(chainId, account);
     }
   }
+};
+
+/**
+ * @name getPoolAccounts
+ * @summary Generates pool stash and reward address for a pool id.
+ * @param {number} poolId - id of the pool.
+ */
+const getPoolAccounts = (poolId: number) => {
+  const apiInstance = APIsController.get('Polkadot');
+
+  if (!apiInstance) {
+    return;
+  }
+
+  const api = apiInstance.api;
+  const consts = apiInstance.consts;
+
+  const createAccount = (pId: BigNumber, index: number): string => {
+    const EmptyH256 = new Uint8Array(32);
+    const ModPrefix = stringToU8a('modl');
+    const U32Opts = { bitLength: 32, isLe: true };
+
+    return api.registry
+      .createType(
+        'AccountId32',
+        u8aConcat(
+          ModPrefix,
+          consts.poolsPalletId,
+          new Uint8Array([index]),
+          bnToU8a(new BN(pId.toString()), U32Opts),
+          EmptyH256
+        )
+      )
+      .toString();
+  };
+
+  const poolIdBigNumber = new BigNumber(poolId);
+  return {
+    stash: createAccount(poolIdBigNumber, 0),
+    reward: createAccount(poolIdBigNumber, 1),
+  };
 };
