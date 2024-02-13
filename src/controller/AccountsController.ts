@@ -76,22 +76,16 @@ export class AccountsController {
     this.accounts = importedAccounts;
   }
 
-  /*------------------------------------------------------------
-   Fetched persisted tasks from the store and re-subscribe to
-   them.
-   ------------------------------------------------------------*/
-
+  /**
+   * @name subscribeAccounts
+   * @summary Fetched persisted tasks from the store and re-subscribe to them.
+   */
   static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        // Subscribe to persisted subscriptions for account.
         const key = `${account.address}_subscriptions`;
-
-        const tasks: SubscriptionTask[] = (
-          store as Record<string, AnyJson>
-        ).get(key)
-          ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-          : [];
+        const persisted = (store as Record<string, AnyJson>).get(key);
+        const tasks = persisted ? JSON.parse(persisted as string) : [];
 
         for (const task of tasks) {
           await account.subscribeToTask(task);

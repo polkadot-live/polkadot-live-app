@@ -8,11 +8,6 @@ import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from './chains';
 
-export enum AccountType {
-  User,
-  Delegate,
-}
-
 export type AccountSource = 'vault' | 'ledger' | 'system';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
@@ -50,6 +45,14 @@ export interface FlattenedAccountData {
 }
 
 export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;
+
+/**
+ * @deprecated The type should not be used
+ */
+export enum AccountType {
+  User,
+  Delegate,
+}
 
 /**
  * @deprecated The type should not be used
