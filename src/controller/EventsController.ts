@@ -81,7 +81,7 @@ export class EventsController {
       case 'subscribe:nominationPools:query.system.account': {
         const address = entry.task.account!.address;
         const pendingRewards =
-          entry.task.account!.nominationPoolData.poolPendingRewards;
+          entry.task.account!.nominationPoolData?.poolPendingRewards;
 
         return {
           uid: `accountEvents_account_${ellipsisFn(address)}_${pendingRewards}`,
