@@ -7,7 +7,6 @@ import type { SubscriptionTask } from '@/types/subscriptions';
 import type {
   AccountSource,
   FlattenedAccountData,
-  AccountType,
   AccountNominationPoolData,
 } from '@/types/accounts';
 
@@ -28,8 +27,6 @@ export type ImportedAccounts = Map<ChainID, Account[]>;
  * @property {Map<ChainID, AccountNominationPoolData>} nominationPoolData - account nomination pool data.
  */
 export class Account {
-  private _type!: AccountType;
-
   private _source: AccountSource;
 
   private _name: string;
@@ -44,12 +41,10 @@ export class Account {
 
   constructor(
     chain: ChainID,
-    type: AccountType,
     source: AccountSource,
     address: string,
     name: string
   ) {
-    this.type = type;
     this._source = source;
     this.address = address;
     this._name = name;
@@ -66,15 +61,13 @@ export class Account {
   flatten = () =>
     ({
       address: this.address,
-      name: this.name,
-      type: this.type,
-      nominationPoolData: this.nominationPoolData,
       chain: this.chain,
+      name: this.name,
+      nominationPoolData: this.nominationPoolData,
       source: this.source,
     }) as FlattenedAccountData;
 
   toJSON = () => ({
-    _type: this._type,
     _source: this._source,
     _address: this._address,
     _name: this._name,
@@ -83,14 +76,6 @@ export class Account {
 
   get chain() {
     return this._chain;
-  }
-
-  get type() {
-    return this._type;
-  }
-
-  set type(value: AccountType) {
-    this._type = value;
   }
 
   get source() {

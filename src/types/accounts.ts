@@ -1,7 +1,6 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { MethodSubscription } from './blockstream';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 import type { AnyFunction } from './misc';
 import type { PolkadotAccountState } from './chains/polkadot';
@@ -11,6 +10,11 @@ import type { ChainID } from './chains';
 export type AccountSource = 'vault' | 'ledger' | 'system';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
+
+/*
+ * Essential account data mapped to chain ID.
+ */
+export type FlattenedAccounts = Map<ChainID, FlattenedAccountData[]>;
 
 /*
  * Account's associated nomination pool data.
@@ -25,33 +29,20 @@ export interface AccountNominationPoolData {
  * Account data saved in Electron store.
  */
 export interface StoredAccount {
-  _type: AccountType;
   _source: AccountSource;
   _address: string;
   _name: string;
 }
 
 /*
- * Type storing only essential data for an account.
+ * Type storing essential data for an account.
  */
 export interface FlattenedAccountData {
   address: string;
-  name: string;
-  type: AccountType;
-  config: MethodSubscription;
   chain: ChainID;
+  name: string;
   nominationPoolData: AccountNominationPoolData | null;
   source: AccountSource;
-}
-
-export type FlattenedAccounts = Map<ChainID, FlattenedAccountData[]>;
-
-/**
- * @deprecated The type should not be used
- */
-export enum AccountType {
-  User,
-  Delegate,
 }
 
 /**

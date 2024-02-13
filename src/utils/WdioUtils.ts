@@ -1,7 +1,5 @@
 import { WindowsController } from '@/controller/WindowsController';
 import { AccountsController } from '@/controller/AccountsController';
-import { Account } from '@/model/Account';
-import { AccountType } from '@/types/accounts';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -114,28 +112,6 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
 
       // Return updated account's flattened data
       return updated ? updated.flatten() : false;
-    }
-
-    case 'AccountsController#pushAccount': {
-      const chainId = params.chainId;
-
-      // Manually pass second account to pushAccount
-      const acc2 = new Account(
-        chainId,
-        AccountType.User,
-        params.source,
-        params.address,
-        params.name
-      );
-
-      const result = AccountsController.pushAccount(chainId, acc2);
-      const flattened: FlattenedAccountData[] = [];
-
-      for (const accounts of result.values()) {
-        accounts.forEach((a) => flattened.push(a.flatten()));
-      }
-
-      return flattened;
     }
 
     case 'AccountsController#spliceAccount1': {

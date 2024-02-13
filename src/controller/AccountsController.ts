@@ -11,9 +11,6 @@ import type {
   FlattenedAccounts,
   StoredAccount,
 } from '@/types/accounts';
-import { AccountType } from '@/types/accounts';
-import type { IMatch, SubscriptionDelegate } from '@/types/blockstream';
-import type { ReportDelegator } from '@/types/reporter';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 
@@ -28,8 +25,6 @@ const debug = MainDebug.extend('Accounts');
  */
 export class AccountsController {
   static accounts: ImportedAccounts = new Map();
-
-  static delegators: SubscriptionDelegate[] = [];
 
   /**
    * @name initialize
@@ -54,18 +49,9 @@ export class AccountsController {
       const imported: Account[] = [];
 
       for (const a of accounts) {
-        if (a._type !== AccountType.Delegate) {
-          // Instantiate account.
-          const account = new Account(
-            chain,
-            AccountType.User,
-            a._source,
-            a._address,
-            a._name
-          );
-
-          imported.push(account);
-        }
+        // Instantiate account.
+        const account = new Account(chain, a._source, a._address, a._name);
+        imported.push(account);
       }
 
       importedAccounts.set(chain, imported);
@@ -187,13 +173,7 @@ export class AccountsController {
     if (this.accountExists(chain, address)) {
       return false;
     } else {
-      const account = new Account(
-        chain,
-        AccountType.User,
-        source,
-        address,
-        name
-      );
+      const account = new Account(chain, source, address, name);
       this.setAccounts(this.pushAccount(chain, account));
       return account;
     }
@@ -209,41 +189,6 @@ export class AccountsController {
     if (this.accountExists(chain, address)) {
       // Remove account from map.
       this.setAccounts(this.spliceAccount(address));
-
-      // Get entries from delegators` where address is the delegator.
-      const delegatorsForRemoval = this.delegators.filter(
-        (d) => d.address === address
-      );
-
-      debug('⛔ Delegators for removal: ', delegatorsForRemoval);
-
-      if (delegatorsForRemoval) {
-        // Get delegates that potentially have no more delegators.
-        const delegates = delegatorsForRemoval.map((d) => d.delegate);
-        debug(
-          '📛 Delegate accounts maybe not have any more delegators: %o',
-          delegates
-        );
-
-        // Update delegator record.
-        this.delegators = AccountsController.delegators.filter(
-          (d) => !delegatorsForRemoval.includes(d)
-        );
-
-        // Among removed entries, if the delegate does not exist for any other delegator, remove
-        // it's account.
-        for (const d of delegates) {
-          if (
-            !this.delegators.find(
-              ({ delegate }) => delegate.address === d.address
-            )
-          ) {
-            debug('🟡 Splicing delegate account  %o', d.address);
-            // Remove delegate account from record.
-            this.setAccounts(this.spliceAccount(d.address));
-          }
-        }
-      }
     }
   };
 
@@ -254,12 +199,12 @@ export class AccountsController {
    * @param {Account} account - the account to push.
    * @returns {AccountStatus}
    */
-  // TODO: Make private when deprecated PolkadotCallbacks class removed.
-  static pushAccount = (chain: ChainID, account: Account): ImportedAccounts => {
+  private static pushAccount = (
+    chain: ChainID,
+    account: Account
+  ): ImportedAccounts => {
     const updated: ImportedAccounts = this.accounts;
-
     updated.get(chain)?.push(account) || updated.set(chain, [account]);
-
     return updated;
   };
 
@@ -284,33 +229,11 @@ export class AccountsController {
   };
 
   /**
-   * @name getDelegatorsOfAddress
-   * @summary Searches `Accounts.delegators` for entries where the provided address is the
-   * delegate.
-   * @param {string} address - the account address.
-   * @param {IMatch} match - the pallet and method to match against.
-   * @returns {ReportDelegator[]}
-   */
-  static getDelegatorsOfAddress = (
-    address: string,
-    match: IMatch
-  ): ReportDelegator[] =>
-    (
-      this.delegators.filter(
-        (d) => d.delegate.address === address && d.delegate.match === match
-      ) || []
-    ).map((d) => ({
-      delegator: d.address,
-      callback: d.delegate.callback,
-    }));
-
-  /**
    * @name setAccounts
    * @summary Utility to update accounts, both in class and in store.
    * @param {ImportedAccounts} accounts - the accounts object to persist to the class.
    */
-  // TODO: Make private when deprecated PolkadotCallbacks class removed.
-  static setAccounts = (accounts: ImportedAccounts) => {
+  private static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
     (store as Record<string, AnyJson>).set(
       'imported_accounts',

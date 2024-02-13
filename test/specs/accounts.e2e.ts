@@ -107,20 +107,6 @@ describe('Account Tests', function () {
     });
   });
 
-  describe('AccountsController#pushAccount', function () {
-    it('should add an account to the accounts map', async function () {
-      await browser.electron.api('wdio:accounts:add', [{ ...mockAccount1 }]);
-
-      const result = await browser.electron.api(
-        'AccountsController#pushAccount',
-        { ...mockAccount2 }
-      );
-
-      const flattenedAccounts = result as FlattenedAccountData[];
-      expect(flattenedAccounts).toHaveLength(2);
-    });
-  });
-
   // Pending tests
   describe('AccountsController#spliceAccount', function () {
     it('should remove an account from the accounts map successfully', async function () {
