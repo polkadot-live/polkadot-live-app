@@ -43,7 +43,7 @@
     "@types/react-dom": "^18.2.19",
     "@types/styled-components": "^5.1.34",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/parser": "^7.0.1",
     "@wdio/cli": "8.31.1",
     "@wdio/dot-reporter": "^8.31.1",
     "@wdio/globals": "^8.31.1",
