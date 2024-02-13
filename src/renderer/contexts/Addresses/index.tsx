@@ -25,7 +25,7 @@ export const AddressesProvider = ({
   children: React.ReactNode;
 }) => {
   // Store the currently imported addresses
-  const [addresses, setAddressesState] = useState<FlattenedAccounts>({});
+  const [addresses, setAddressesState] = useState<FlattenedAccounts>(new Map());
   const addressesRef = useRef(addresses);
 
   // Setter to update addresses state and ref.
@@ -34,10 +34,14 @@ export const AddressesProvider = ({
   };
 
   // Check if an address exists in imported addresses.
-  const addressExists = (address: string) =>
-    Object.values({ ...addressesRef.current }).find((items) =>
-      items.find((a) => a.address === address)
-    ) !== undefined;
+  const addressExists = (address: string) => {
+    for (const accounts of addressesRef.current.values()) {
+      if (accounts.find((a) => a.address === address)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   // Saves a Ledger address as an imported address.
   const importAddress = (
@@ -58,12 +62,13 @@ export const AddressesProvider = ({
   const getAddresses = () => {
     let listAddresses: FlattenedAccountData[] = [];
 
-    Object.values(addresses).forEach((items) => {
-      const newItems = items
-        .map((account) => getAddress(account.address))
+    for (const accounts of addressesRef.current.values()) {
+      const newItems = accounts
+        .map((a) => getAddress(a.address))
         .filter((a) => a !== null) as FlattenedAccountData[];
+
       listAddresses = listAddresses.concat(newItems);
-    });
+    }
 
     return listAddresses;
   };
@@ -78,9 +83,9 @@ export const AddressesProvider = ({
     }
 
     const result: FlattenedAccountData[] = [];
-    Object.values(addressesRef.current).forEach((accounts) => {
+    for (const accounts of addressesRef.current.values()) {
       result.push(...accounts);
-    });
+    }
 
     return result.find((account) => account.address === address) ?? null;
   };

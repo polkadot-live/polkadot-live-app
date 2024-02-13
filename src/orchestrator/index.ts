@@ -6,13 +6,15 @@ import {
   reportAllWindows,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
+import {
+  fetchAccountNominationPoolData,
+  fetchNominationPoolDataForAccount,
+} from '@/utils/AccountUtils';
 import { ChainList } from '@/config/chains';
-import { Discover } from '@/controller/Discover';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
-import * as AccountUtils from '@/utils/AccountUtils';
 import type {
   ImportNewAddressArg,
   OrchestratorArg,
@@ -54,25 +56,14 @@ const initialize = async () => {
 
   await APIsController.initialize(chainIds);
 
-  // Bootstrap events for connected accounts (checks pending rewards).
-  await Discover.bootstrapEvents(chainIds);
+  // Use API instance to initialize account nomination pool data.
+  await fetchAccountNominationPoolData();
 
   // Initialize persisted account subscriptions.
   await AccountsController.subscribeAccounts();
 
   // Initialize persisted chain subscriptions.
   await SubscriptionsController.initChainSubscriptions();
-
-  /*-------------------------------------
-   BlockStream Specific Initialization
-   ------------------------------------*/
-
-  // Initialize account chainState and config (requires api controller)
-  await AccountUtils.initializeConfigsAndChainStates();
-
-  // NOTE: Blockstream currently disabled.
-  // Initialize discovery of subscriptions for saved accounts.
-  // BlockStreamsController.initialize();
 };
 
 /**
@@ -93,34 +84,24 @@ const importNewAddress = async ({
     return;
   }
 
+  // Initialize nomination pool data for account if necessary.
+  fetchNominationPoolDataForAccount(account, chain);
+
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
 
   // Add chain instance if it does not already exist.
-  // TODO: Error checking instead of `!`
   if (!APIsController.chainExists(chain)) {
-    await APIsController.new(ChainList.get(chain)!.endpoints.rpc);
+    // TODO: handle case where chain list data does not exist.
+    const chainData = ChainList.get(chain);
+
+    if (chainData) {
+      await APIsController.new(chainData.endpoints.rpc);
+    }
   }
 
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
-
-  /* START: OLD SUBSCRIPTION MODEL ------------------------------- */
-  // Check any pending rewards.
-  await Discover.bootstrapEventsForAccount(chain, account);
-
-  // Instantiate PolkadotState and call subscribe().
-  account.initState();
-
-  // Trigger Discovery and generate config.
-  const config = await Discover.start(chain, account);
-
-  // Update account's config and chain state.
-  AccountsController.setAccountConfig(config, account);
-
-  // Add Account to a `BlockStream` service.
-  //BlockStreamsController.addAccountToService(chain, address);
-  /* END: OLD SUBSCRIPTION MODEL --------------------------------- */
 
   // Show notification.
   NotificationsController.accountImported(name);
@@ -159,9 +140,6 @@ const removeImportedAccount = async ({
   // TODO: Fix when chain removal is implemented on back-end.
   // Remove chain's API instance if no more accounts require it.
   //removeUnusedApi(chain);
-
-  // Remove config from `Subscriptions`.
-  //BlockStreamsController.removeAccountFromService(chain, address);
 
   // Report to all active windows that an address has been removed.
   reportAllWindows(reportImportedAccounts);

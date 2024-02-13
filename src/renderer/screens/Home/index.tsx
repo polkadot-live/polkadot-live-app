@@ -69,6 +69,7 @@ export const Home = () => {
     <>
       <Header showMenu={true} />
       <TabsWrapper>
+        {/* Events Button */}
         <button
           type="button"
           className={section === 0 ? 'active' : undefined}
@@ -78,6 +79,7 @@ export const Home = () => {
         >
           <span>Events</span>
         </button>
+        {/* Manage Button */}
         <button
           type="button"
           className={section === 1 ? 'active' : undefined}
@@ -88,6 +90,7 @@ export const Home = () => {
           <span>Manage</span>
         </button>
       </TabsWrapper>
+
       <BodyInterfaceWrapper $maxHeight>
         <CarouselWrapper
           animate={section === 0 ? 'home' : 'next'}
@@ -105,12 +108,14 @@ export const Home = () => {
             },
           }}
         >
+          {/* Render Events Content */}
           <div className="scrollable">
             <IconWrapper>
               <IconSVG width={175} opacity={0.08} />
             </IconWrapper>
             <Events />
           </div>
+          {/* Render Manage Content */}
           <div>
             <div className="container">
               <Manage addresses={getAddresses()} />

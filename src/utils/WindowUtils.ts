@@ -10,9 +10,7 @@ import {
   reportAccountSubscriptions,
   reportChainSubscriptions,
 } from '@/utils/SystemUtils';
-import { Discover } from '@/controller/Discover';
 import { WindowsController } from '@/controller/WindowsController';
-import { AccountsController } from '@/controller/AccountsController';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 
 /*----------------------------------------------------------------------
@@ -90,11 +88,6 @@ export const createMainWindow = (isTest: boolean) => {
 
     // Report account subscriptions.
     reportAccountSubscriptions('menu');
-
-    // Bootstrap account events for all chains.
-    await Discover.bootstrapEvents(
-      Array.from(AccountsController.accounts.keys())
-    );
   });
 
   mainWindow.on('move', () => {

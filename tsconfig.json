@@ -19,6 +19,7 @@
       "@/*": ["./src/*"],
       "@app/*": ["./src/renderer/*"],
     },
+    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
   },
   "include": ["src", "test", "wdio.conf.ts"],
   "exclude": ["node_modules", ".vite/**/*", "out/**/*"]

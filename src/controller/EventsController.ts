@@ -29,7 +29,7 @@ export class EventsController {
       }
 
       /*-------------------------------------------------- 
-       subscribe:query.babde.currentSlot
+       subscribe:query.babe.currentSlot
        --------------------------------------------------*/
 
       case 'subscribe:query.babe.currentSlot': {
@@ -68,6 +68,32 @@ export class EventsController {
           subtitle: `Free: ${newVal.free}, Reserved: ${newVal.reserved}, Nonce: ${newVal.nonce}`,
           data: {
             balances: newVal,
+          },
+          timestamp: getUnixTime(new Date()),
+          actions: [],
+        };
+      }
+
+      /*-------------------------------------------------- 
+       subscribe:nominationPools:query.system.account
+       --------------------------------------------------*/
+
+      case 'subscribe:nominationPools:query.system.account': {
+        const address = entry.task.account!.address;
+        const pendingRewards =
+          entry.task.account!.nominationPoolData?.poolPendingRewards;
+
+        return {
+          uid: `accountEvents_account_${ellipsisFn(address)}_${pendingRewards}`,
+          category: 'account',
+          who: {
+            chain: entry.task.chainId,
+            address,
+          },
+          title: `${ellipsisFn(address)}`,
+          subtitle: `Nomination pool reward balance to claim: ${pendingRewards}`,
+          data: {
+            balances: pendingRewards,
           },
           timestamp: getUnixTime(new Date()),
           actions: [],

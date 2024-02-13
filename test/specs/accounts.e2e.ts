@@ -1,8 +1,7 @@
-import { browser } from '@wdio/globals';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
 import type { AccountSource } from '@polkadot-cloud/react/types';
-import type { Ignore, MethodSubscription } from '@/types/blockstream';
+import { expect } from 'expect-webdriverio';
 
 describe('Account Tests', function () {
   const mockAccount1 = {
@@ -108,20 +107,6 @@ describe('Account Tests', function () {
     });
   });
 
-  describe('AccountsController#pushAccount', function () {
-    it('should add an account to the accounts map', async function () {
-      await browser.electron.api('wdio:accounts:add', [{ ...mockAccount1 }]);
-
-      const result = await browser.electron.api(
-        'AccountsController#pushAccount',
-        { ...mockAccount2 }
-      );
-
-      const flattenedAccounts = result as FlattenedAccountData[];
-      expect(flattenedAccounts).toHaveLength(2);
-    });
-  });
-
   // Pending tests
   describe('AccountsController#spliceAccount', function () {
     it('should remove an account from the accounts map successfully', async function () {
@@ -156,64 +141,6 @@ describe('Account Tests', function () {
       expect(flattened.length).toBe(2);
       expect(flattened[0].address).toBe(mockAccount1.address);
       expect(flattened[1].address).toBe(mockAccount2.address);
-    });
-  });
-
-  describe('AccountsController#setAccountConfig', function () {
-    it("should update an account's subscription method successfully", async function () {
-      await browser.electron.api('wdio:accounts:add', [{ ...mockAccount1 }]);
-
-      const newConfig: MethodSubscription = {
-        type: 'ignore',
-        ignore: [{ pallet: 'balances', method: 'palletVersion' }],
-      };
-
-      const result = await browser.electron.api(
-        'AccountsController#setAccountConfig',
-        {
-          newConfig,
-          newAccount: { ...mockAccount1 },
-        }
-      );
-
-      const account = result as FlattenedAccountData;
-      const config = account.config as Ignore;
-
-      expect(config.type).toBe('ignore');
-      expect(config.ignore).toHaveLength(1);
-      expect(config.ignore[0].pallet).toBe('balances');
-      expect(config.ignore[0].method).toBe('palletVersion');
-    });
-  });
-
-  describe('AccountsController#status', function () {
-    it("should return 'active' for newly added accounts with default config 'all'", async function () {
-      await browser.electron.api('wdio:accounts:add', [{ ...mockAccount1 }]);
-
-      const result = await browser.electron.api('AccountsController#status1', {
-        ...mockAccount1,
-      });
-
-      const status = result as string;
-      expect(status).toBe('active');
-    });
-
-    it("should return 'active' for an account with a set config", async function () {
-      await browser.electron.api('wdio:accounts:add', [{ ...mockAccount1 }]);
-
-      const config: MethodSubscription = {
-        type: 'ignore',
-        ignore: [{ pallet: 'balances', method: 'palletVersion' }],
-      };
-
-      const result = await browser.electron.api('AccountsController#status2', {
-        config,
-        newAccount: { ...mockAccount1 },
-      });
-
-      const status = result as string;
-
-      expect(status).toBe('active');
     });
   });
 

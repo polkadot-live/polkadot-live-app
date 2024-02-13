@@ -1,5 +1,5 @@
-import { browser } from '@wdio/globals';
 import assert from 'node:assert';
+import { expect } from 'expect-webdriverio';
 import type { Rectangle } from 'electron';
 
 describe('when the app starts', function () {
@@ -33,9 +33,9 @@ describe('when the manage tab is clicked', function () {
   it('should make the manage tab active', async function () {
     const spans = await browser.$$('span');
 
-    const index = spans.findIndex(async (element) => {
-      const text = await element.getText();
-      text === 'Manage' ? true : false;
+    const index = await spans.findIndex(async (currentValue) => {
+      const text = await currentValue.getText();
+      return text === 'Manage' ? true : false;
     });
 
     const manageTab = spans[index];

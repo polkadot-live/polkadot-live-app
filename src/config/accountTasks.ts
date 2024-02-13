@@ -7,4 +7,10 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
     label: 'Transfers',
   },
+  {
+    action: 'subscribe:nominationPools:query.system.account',
+    chainId: 'Polkadot',
+    status: 'disable',
+    label: 'Nomination Pool Rewards',
+  },
 ];

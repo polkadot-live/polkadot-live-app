@@ -4,11 +4,11 @@
 import { planckToUnit } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
 import { NotificationsController } from './NotificationsController';
-import type { ChainID } from '@/types/chains';
 import { chainUnits } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
-import { APIsController } from './APIsController';
 import { WindowsController } from './WindowsController';
+import { getApiInstance } from '@/utils/ApiUtils';
+import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('Extrinsic');
@@ -39,10 +39,7 @@ export class ExtrinsicsController {
     args: AnyJson[]
   ) => {
     try {
-      const { api } = APIsController.get(chain) || {};
-      if (!api) {
-        return;
-      }
+      const { api } = await getApiInstance(chain);
 
       debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
 
@@ -88,11 +85,7 @@ export class ExtrinsicsController {
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = APIsController.get(chain) || {};
-
-    if (!api || !this.tx) {
-      return;
-    }
+    const { api } = await getApiInstance(chain);
 
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(
@@ -117,16 +110,7 @@ export class ExtrinsicsController {
       genesisHash: api.genesisHash.toHex(),
       method: method.toHex(),
       nonce: nonce.toHex(),
-      signedExtensions: [
-        'CheckNonZeroSender',
-        'CheckSpecVersion',
-        'CheckTxVersion',
-        'CheckGenesis',
-        'CheckMortality',
-        'CheckNonce',
-        'CheckWeight',
-        'ChargeTransactionPayment',
-      ],
+      signedExtensions: api.registry.signedExtensions,
       tip: api.registry.createType('Compact<Balance>', 0).toHex(),
       version: this.tx.version,
     };

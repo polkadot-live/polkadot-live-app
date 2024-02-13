@@ -60,6 +60,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
 
   return (
     <AccountsWrapper>
+      {/* Manage Chains */}
       <HeadingWrapper>
         <h5 style={{ marginBottom: '0.5rem' }}>
           <PolkadotIcon className="icon" />
@@ -97,6 +98,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
         ))}
       </div>
 
+      {/* Manage Accounts */}
       {addresses.length ? (
         <>
           <HeadingWrapper>
@@ -106,9 +108,8 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
             </h5>
           </HeadingWrapper>
           <div style={{ padding: '0 0.75rem' }}>
-            {addresses
-              .filter(({ type }: FlattenedAccountData) => type === 0)
-              .map(({ address, name }: FlattenedAccountData, i: number) => (
+            {addresses.map(
+              ({ address, name }: FlattenedAccountData, i: number) => (
                 <AccountWrapper
                   whileHover={{ scale: 1.01 }}
                   key={`manage_account_${i}`}
@@ -135,7 +136,8 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
                     </div>
                   </div>
                 </AccountWrapper>
-              ))}
+              )
+            )}
           </div>
         </>
       ) : (

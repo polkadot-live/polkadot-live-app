@@ -74,8 +74,8 @@ contextBridge.exposeInMainWorld('myAPI', {
     ipcRenderer.on('renderer:broadcast:accounts', callback),
 
   // Syncs account state with all open windows.
-  reportAccountState: (callback) =>
-    ipcRenderer.on('renderer:account:state', callback),
+  //reportAccountState: (callback) =>
+  //  ipcRenderer.on('renderer:account:state', callback),
 
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
