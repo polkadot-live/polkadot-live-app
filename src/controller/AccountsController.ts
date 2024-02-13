@@ -8,7 +8,6 @@ import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type {
   AccountSource,
-  AccountStatus,
   FlattenedAccounts,
   StoredAccount,
 } from '@/types/accounts';
@@ -249,20 +248,6 @@ export class AccountsController {
   };
 
   /**
-   * @name status
-   * @summary Get an account status. Account must exist and have a config saved for it to be
-   * active.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {string} address - the account address.
-   * @returns {AccountStatus}
-   * @deprecated This method should not be used.
-   */
-  static status = (chain: ChainID, address: string): AccountStatus => {
-    const account = this.get(chain, address);
-    return account ? 'active' : 'does_not_exist';
-  };
-
-  /**
    * @name pushAccount
    * @summary Pushes an account to the list of imported accounts for a chain.
    * @param {ChainID} chain - the chain the account belongs to.
@@ -339,16 +324,9 @@ export class AccountsController {
    * @param {AccountStatus|undefined} status - the account status to match against.
    * @returns {boolean}
    */
-  private static accountExists = (
-    chain: ChainID,
-    address: string,
-    status?: AccountStatus
-  ): boolean => {
-    const matchStatus = (item: Account) =>
-      status !== undefined ? this.status(chain, item.address) === status : true;
-
+  private static accountExists = (chain: ChainID, address: string): boolean => {
     for (const accounts of this.accounts.values()) {
-      if (accounts.find((a) => a.address === address && matchStatus(a))) {
+      if (accounts.find((a) => a.address === address)) {
         return true;
       }
     }
