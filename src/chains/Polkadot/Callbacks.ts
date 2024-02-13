@@ -101,10 +101,11 @@ export class PolkadotCallbacks {
         // add reward account to the corresponding chain's accounts list, with `balances:transfer`
         // config, if it has not been already.
         if (
-          !AccountsController.getAllFlattenedAccountData()[this.chain].find(
-            ({ address: chainAddress }: FlattenedAccountData) =>
-              chainAddress === rewardAddress
-          )
+          !AccountsController.getAllFlattenedAccountData()
+            .get(this.chain)
+            ?.find(({ address: chainAddress }: FlattenedAccountData) => {
+              chainAddress === rewardAddress;
+            })
         ) {
           const delegate = new Account(
             this.chain,

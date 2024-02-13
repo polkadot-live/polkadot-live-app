@@ -94,11 +94,10 @@ export class AccountsController {
     }
   }
 
-  /*------------------------------------------------------------
-   Unsubscribe from all active tasks. 
-   Called when an imported account is removed.
-   ------------------------------------------------------------*/
-
+  /**
+   * @name removeAllSubscriptions
+   * @summary Unsubscribe from all active tasks. Called when an imported account is removed.
+   */
   static async removeAllSubscriptions(account: Account) {
     // Get all active tasks and set their status to `disable`.
     const tasks = account.getSubscriptionTasks()?.map(
@@ -133,12 +132,16 @@ export class AccountsController {
    * @returns {ImportedAccounts}
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
-    const flattened: FlattenedAccounts = {};
+    const map: FlattenedAccounts = new Map();
 
     for (const [chain, accounts] of this.accounts) {
-      flattened[chain] = accounts.map((a) => a.flatten());
+      map.set(
+        chain,
+        accounts.map((a) => a.flatten())
+      );
     }
-    return flattened;
+
+    return map;
   };
 
   // Get an array of imported chain IDs

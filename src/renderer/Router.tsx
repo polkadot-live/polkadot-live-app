@@ -29,12 +29,12 @@ export const RouterInner = () => {
 
   useEffect(() => {
     // handle initial responses to populate state from store.
-    window.myAPI.reportImportedAccounts(
-      (_: Event, accounts: FlattenedAccounts) => {
-        setAddresses(accounts);
-        setRenderedSubscriptions({ type: '', tasks: [] });
-      }
-    );
+    window.myAPI.reportImportedAccounts((_: Event, accounts: string) => {
+      const parsed: FlattenedAccounts = new Map(JSON.parse(accounts));
+      setAddresses(parsed);
+      setRenderedSubscriptions({ type: '', tasks: [] });
+    });
+
     //window.myAPI.reportAccountState(
     //  (
     //    _: Event,
@@ -46,6 +46,7 @@ export const RouterInner = () => {
     //    setAccountStateKey(chain, address, key, value);
     //  }
     //);
+
     window.myAPI.reportChainSubscriptionState(
       (_: Event, serialized: AnyJson) => {
         const parsed = new Map<ChainID, SubscriptionTask[]>(
@@ -55,6 +56,7 @@ export const RouterInner = () => {
         setChainSubscriptions(parsed);
       }
     );
+
     window.myAPI.reportAccountSubscriptionsState(
       (_: Event, serialized: AnyJson) => {
         const parsed = new Map<string, SubscriptionTask[]>(

@@ -44,7 +44,7 @@ export interface FlattenedAccountData {
   source: AccountSource;
 }
 
-export type FlattenedAccounts = Record<string, FlattenedAccountData[]>;
+export type FlattenedAccounts = Map<ChainID, FlattenedAccountData[]>;
 
 /**
  * @deprecated The type should not be used

@@ -16,9 +16,13 @@ export const initializeState = (id: string) => {
 
 // Report imported accounts to renderer.
 export const reportImportedAccounts = (id: string) => {
+  const serialized = JSON.stringify(
+    Array.from(AccountsController.getAllFlattenedAccountData().entries())
+  );
+
   WindowsController.get(id)?.webContents?.send(
     'renderer:broadcast:accounts',
-    AccountsController.getAllFlattenedAccountData()
+    serialized
   );
 };
 
