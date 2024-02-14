@@ -20,6 +20,7 @@ import type {
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
 import { addApiInstance } from '@/utils/ApiUtils';
+import { ChainList } from '@/config/chains';
 
 // Orchestrate class to perform high-level app tasks.
 export class Orchestrator {
@@ -52,9 +53,11 @@ const initialize = async () => {
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  const chainIds = AccountsController.getAccountChainIds();
+  const chainIds = Array.from(ChainList.keys());
 
   await APIsController.initialize(chainIds);
+
+  console.log('Finished initializing APIs');
 
   // Use API instance to initialize account nomination pool data.
   await fetchAccountNominationPoolData();
@@ -90,6 +93,8 @@ const importNewAddress = async ({
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
 
+  // TODO: Connect API instance for chain if it isn't already.
+  // Might be ok just removing this line.
   // Add chain instance to APIs controller if it doesn't already exist.
   await addApiInstance(chain);
 

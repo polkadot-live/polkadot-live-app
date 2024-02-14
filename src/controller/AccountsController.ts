@@ -133,6 +133,7 @@ export class AccountsController {
    * @name getAccountChainIds
    * @summary Utility to get an array of imported chain IDs
    */
+  // TODO: Mark as deprecated if not used after implementing multi-chain logic.
   static getAccountChainIds = (): ChainID[] => Array.from(this.accounts.keys());
 
   /**

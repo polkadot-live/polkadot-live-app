@@ -1,14 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { MainDebug } from '@/utils/DebugUtils';
 import { rmCommas } from '@polkadot-cloud/utils';
 import { WindowsController } from '@/controller/WindowsController';
-import { WsProvider } from '@polkadot/api';
+import { ChainList } from '@/config/chains';
 import type { AnyJson } from '@/types/misc';
 import type { APIConstants } from '@/types/chains/polkadot';
-import type { ApiPromise } from '@polkadot/api';
 import type { Codec } from '@polkadot/types-codec/types';
 import type { ChainID, ChainStatus } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
@@ -37,11 +37,41 @@ export class API {
 
   private _consts: APIConstants | null = null;
 
-  constructor(endpoint: string) {
+  constructor(endpoint: string, chainId: ChainID) {
+    this.chain = chainId;
     this.endpoint = endpoint;
-    this.provider = new WsProvider(endpoint);
-    this.initEvents();
+    this.status = 'disconnected';
   }
+
+  /**
+   * @name connect
+   * @summary Create the `ApiPromise` and get consts with metadata.
+   */
+  connect = async () => {
+    // Do nothing if instance is already connected.
+    if (this.status !== 'disconnected') {
+      console.log(`API instance for ${this.chain} is already connected!`);
+      return;
+    }
+
+    this.status = 'connecting';
+
+    // Add listeners to provider.
+    const provider = new WsProvider(this.endpoint);
+    this.provider = provider;
+    this.initEvents();
+
+    const api = await ApiPromise.create({ provider: this.provider });
+    const chainId = (await api.rpc.system.chain()).toString();
+
+    // Disconnect and return if chain ID isn't recognized.
+    if (!ChainList.get(chainId as ChainID)) {
+      await this.disconnect();
+    }
+
+    this.setApi(api, chainId as ChainID);
+    await this.getConsts();
+  };
 
   get endpoint() {
     return this._endpoint;

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { API } from '@/model/API';
-import { ApiPromise } from '@polkadot/api';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
@@ -22,12 +21,15 @@ export class APIsController {
 
   /**
    * @name initialize
-   * @summary Instantiates and stores API Instances from persisted imported accounts.
+   * @summary Instantiates a disconnected API instance for each supported chain.
    */
   static initialize = async (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
       console.log(`New API: ${chainId}`);
-      await this.new((ChainList.get(chainId) as AnyData).endpoints?.rpc);
+      await this.new(
+        (ChainList.get(chainId) as AnyData).endpoints?.rpc,
+        chainId
+      );
     }
   };
 
@@ -41,43 +43,20 @@ export class APIsController {
 
   /**
    * @name new
-   * @summary Instantiates a new API instance and adds it to the `instances` property.
+   * @summary Instantiates a new disconnected API instance and adds it to the `instances` property.
    * @param {string} endpoint - the api endpoint.
    */
-  static new = async (endpoint: string) => {
+  static new = async (endpoint: string, chainId: ChainID) => {
     debug('🤖 Instantiating new api: %o', endpoint);
 
     // Create API instance.
-    const instance = new API(endpoint);
-    const api = await ApiPromise.create({ provider: instance.provider });
-    const chain = (await api.rpc.system.chain()).toString();
-
-    // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
-    if (
-      !ChainList.get(chain as ChainID) ||
-      this.instances.find(({ chain: instanceChain }) => instanceChain === chain)
-    ) {
-      await instance.disconnect();
-      return;
-    }
-
-    // We now know `chain` is a supported ChainID.
-    const chainId = chain as ChainID;
+    const instance = new API(endpoint, chainId);
 
     // Set remaining instance properties and add to instances.
     this.instances.push(instance);
 
-    // Set the api and bootstrap chain.
-    instance.setApi(api, chainId);
-
-    // Get api constants.
-    await instance.getConsts();
-
-    // Report to all windows that chain has been added.
-    WindowsController.reportAll(chainId, 'renderer:chain:added');
-
     debug(
-      '🔧 New api instances: %o',
+      '🔧 New api disconnected instances: %o',
       this.instances.map((i) => i.chain)
     );
   };
@@ -96,6 +75,24 @@ export class APIsController {
       WindowsController.reportAll(chain, 'renderer:chain:removed');
       return;
     }
+  };
+
+  /**
+   * @name fetchConnectedInstance
+   * @summary Returns the connected API instance for a specific chain ID.
+   */
+  static fetchConnectedInstance = async (chainId: ChainID) => {
+    const instance = this.get(chainId);
+
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    await instance.connect();
+
+    this.set(instance);
+
+    return instance;
   };
 
   /**
