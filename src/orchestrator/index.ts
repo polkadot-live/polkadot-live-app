@@ -10,7 +10,6 @@ import {
   fetchAccountNominationPoolData,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { NotificationsController } from '@/controller/NotificationsController';
@@ -20,6 +19,7 @@ import type {
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
+import { addApiInstance } from '@/utils/ApiUtils';
 
 // Orchestrate class to perform high-level app tasks.
 export class Orchestrator {
@@ -90,18 +90,13 @@ const importNewAddress = async ({
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
 
-  // Add chain instance if it does not already exist.
-  if (!APIsController.chainExists(chain)) {
-    // TODO: handle case where chain list data does not exist.
-    const chainData = ChainList.get(chain);
-
-    if (chainData) {
-      await APIsController.new(chainData.endpoints.rpc);
-    }
-  }
+  // Add chain instance to APIs controller if it doesn't already exist.
+  await addApiInstance(chain);
 
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
+
+  // TODO: Report chain connections.
 
   // Show notification.
   NotificationsController.accountImported(name);

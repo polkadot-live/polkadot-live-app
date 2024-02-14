@@ -1,16 +1,17 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ApiPromise } from '@polkadot/api';
-import { WsProvider } from '@polkadot/api';
-import type { Codec } from '@polkadot/types-codec/types';
-import { rmCommas } from '@polkadot-cloud/utils';
 import BigNumber from 'bignumber.js';
-import type { ChainID, ChainStatus } from '@/types/chains';
-import type { APIConstants } from '@/types/chains/polkadot';
-import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/utils/DebugUtils';
+import { rmCommas } from '@polkadot-cloud/utils';
+import { WindowsController } from '@/controller/WindowsController';
+import { WsProvider } from '@polkadot/api';
 import type { AnyJson } from '@/types/misc';
+import type { APIConstants } from '@/types/chains/polkadot';
+import type { ApiPromise } from '@polkadot/api';
+import type { Codec } from '@polkadot/types-codec/types';
+import type { ChainID, ChainStatus } from '@/types/chains';
+import type { FlattenedAPIData } from '@/types/apis';
 
 const debug = MainDebug.extend('API');
 
@@ -185,4 +186,16 @@ export class API {
     await this.api?.disconnect();
     await this.provider.disconnect();
   };
+
+  /**
+   * @name flatten
+   * @summary Return `FlattenedAPIData` for this instance which can be sent to
+   * the frontend.
+   */
+  flatten = () =>
+    ({
+      endpoint: this.endpoint,
+      chainId: this.chain,
+      status: this.status,
+    }) as FlattenedAPIData;
 }

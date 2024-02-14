@@ -1,13 +1,14 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { API } from '@/model/API';
 import { ApiPromise } from '@polkadot/api';
 import { ChainList } from '@/config/chains';
-import { API } from '@/model/API';
-import { WindowsController } from './WindowsController';
-import type { ChainID } from '@/types/chains';
 import { MainDebug } from '@/utils/DebugUtils';
+import { WindowsController } from './WindowsController';
 import type { AnyData } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { FlattenedAPIData } from '@/types/apis';
 
 const debug = MainDebug.extend('APIs');
 
@@ -48,9 +49,7 @@ export class APIsController {
 
     // Create API instance.
     const instance = new API(endpoint);
-
     const api = await ApiPromise.create({ provider: instance.provider });
-
     const chain = (await api.rpc.system.chain()).toString();
 
     // Connection is cancelled if chain is not a supported chain, or if chain is already in service.
@@ -127,4 +126,11 @@ export class APIsController {
       WindowsController.reportAll(chain, 'renderer:chain:sync');
     }
   };
+
+  /**
+   * @name getAllFlattenedAPIData
+   * @summary Return an array of all flattened API data for all APIs managed by this class.
+   */
+  static getAllFlattenedAPIData = (): FlattenedAPIData[] =>
+    this.instances.map((api) => api.flatten());
 }

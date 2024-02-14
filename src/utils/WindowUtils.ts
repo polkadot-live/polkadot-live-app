@@ -80,7 +80,7 @@ export const createMainWindow = (isTest: boolean) => {
   mainWindow.hide();
 
   mainWindow.on('show', async () => {
-    // Populate items from store.
+    // Report imported accounts and chain instances.
     initializeState('menu');
 
     // Report chain subscriptions.
@@ -189,7 +189,7 @@ export const handleWindowOnIPC = (
     WindowsController.add(window, name);
     WindowsController.show(name);
 
-    // Populate items from store and report.
+    // Report imported accounts and chain instances.
     window.on('ready-to-show', () => {
       initializeState(name);
     });
