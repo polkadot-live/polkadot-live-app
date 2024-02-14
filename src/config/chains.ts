@@ -4,6 +4,7 @@
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
 import PolkadotIcon from './svg/polkadotIcon.svg?react';
+import WestendIcon from './svg/westendIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
 import type { ChainID } from '@/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
@@ -41,6 +42,39 @@ export const ChainList = new Map<ChainID, Chain>([
       },
       units: 10,
       unit: 'DOT',
+      categories: {
+        nominationPools: {
+          name: 'Nomination Pools',
+          icon: faUserGroup,
+        },
+        timestamp: {
+          name: 'Timestamps',
+          icon: faUserGroup,
+        },
+        currentSlot: {
+          name: 'Current Slots',
+          icon: faUserGroup,
+        },
+        account: {
+          name: 'Transfers',
+          icon: faUserGroup,
+        },
+      },
+    },
+  ],
+  [
+    'Westend',
+    {
+      icon: WestendIcon,
+      ledger: {
+        icon: WestendIcon,
+      },
+      endpoints: {
+        rpc: 'wss://westend-rpc.polkadot.io',
+        lightClient: Sc.WellKnownChain.westend2,
+      },
+      units: 12,
+      unit: 'WND',
       categories: {
         nominationPools: {
           name: 'Nomination Pools',
