@@ -30,7 +30,7 @@ export const addApiInstance = async (chainId: ChainID) => {
     const chainData = ChainList.get(chainId);
 
     if (chainData) {
-      await APIsController.new(chainData.endpoints.rpc, chainId);
+      await APIsController.new(chainId);
     }
   }
 };

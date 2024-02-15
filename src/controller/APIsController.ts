@@ -5,7 +5,6 @@ import { API } from '@/model/API';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
-import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
 
@@ -25,11 +24,7 @@ export class APIsController {
    */
   static initialize = async (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
-      console.log(`New API: ${chainId}`);
-      await this.new(
-        (ChainList.get(chainId) as AnyData).endpoints?.rpc,
-        chainId
-      );
+      await this.new(chainId);
     }
   };
 
@@ -37,7 +32,9 @@ export class APIsController {
    * @name chainExists
    * @summary Checks whether an API instace for the provided chain exists.
    * @param {ChainID} chain - the chain ID.
+   * @deprecated
    */
+  // TODO: Remove if not needed when multi-chain support is implemented.
   static chainExists = (chain: ChainID) =>
     !!APIsController.instances.find((a) => a.chain === chain);
 
@@ -46,7 +43,15 @@ export class APIsController {
    * @summary Instantiates a new disconnected API instance and adds it to the `instances` property.
    * @param {string} endpoint - the api endpoint.
    */
-  static new = async (endpoint: string, chainId: ChainID) => {
+  static new = async (chainId: ChainID) => {
+    const endpoint = ChainList.get(chainId)?.endpoints.rpc;
+
+    if (!endpoint) {
+      throw new Error(
+        `APIsController::new: Endpoint not found for chain ID ${chainId}`
+      );
+    }
+
     debug('🤖 Instantiating new api: %o', endpoint);
 
     // Create API instance.

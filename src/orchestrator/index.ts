@@ -19,7 +19,6 @@ import type {
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import { addApiInstance } from '@/utils/ApiUtils';
 import { ChainList } from '@/config/chains';
 
 // Orchestrate class to perform high-level app tasks.
@@ -92,11 +91,6 @@ const importNewAddress = async ({
 
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
-
-  // TODO: Connect API instance for chain if it isn't already.
-  // Might be ok just removing this line.
-  // Add chain instance to APIs controller if it doesn't already exist.
-  await addApiInstance(chain);
 
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
