@@ -1,7 +1,6 @@
 /* Copyright 2024 @paritytech/polkadot-live authors & contributors
 SPDX-License-Identifier: GPL-3.0-only */
 
-/* light theme colors */
 .theme-light {
   --background-default: #efeeee;
   --background-primary: #f8f7f7;
@@ -32,7 +31,6 @@ SPDX-License-Identifier: GPL-3.0-only */
   --accent-color-pending: var(--accent-color-pending-light);
 }
 
-/* dark theme colors */
 .theme-dark {
   --background-default: rgb(36 32 36);
   --background-primary: rgb(45 41 45);
