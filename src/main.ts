@@ -17,6 +17,7 @@ import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
 import { Orchestrator } from './orchestrator';
+import { isApiInstanceRequiredFor } from './utils/ApiUtils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -157,7 +158,7 @@ app.whenReady().then(async () => {
           // Update chain tasks in store.
           SubscriptionsController.updateChainTaskInStore(data.tasks[0]);
 
-          return true;
+          break;
         }
         case 'account': {
           // Fetch account task belongs to.
@@ -182,13 +183,24 @@ app.whenReady().then(async () => {
             account
           );
 
-          return true;
+          break;
         }
         default: {
           console.log('Something went wrong...');
           return false;
         }
       }
+
+      // Disconnect from API instance if there are no tasks that require it.
+      const chainId = data.tasks[0].chainId;
+
+      // Check if there are any chain or account tasks that require an API instance.
+      if (!isApiInstanceRequiredFor(chainId)) {
+        console.log(`Disconnect API instance for chain ${chainId}`);
+        await APIsController.close(chainId);
+      }
+
+      return true;
     }
   );
 

@@ -75,9 +75,10 @@ export class APIsController {
     const instance = this.instances.find((s) => s.chain === chain);
 
     if (instance) {
+      console.log(`Disconnect chain API instance ${chain}`);
       await instance.disconnect();
-      this.instances = this.instances.filter((i) => i !== instance);
-      WindowsController.reportAll(chain, 'renderer:chain:removed');
+      //this.instances = this.instances.filter((i) => i !== instance);
+      //WindowsController.reportAll(chain, 'renderer:chain:removed');
       return;
     }
   };

@@ -214,7 +214,9 @@ export class API {
    */
   disconnect = async () => {
     await this.api?.disconnect();
-    await this.provider.disconnect();
+    this.provider.disconnect();
+
+    this.status = 'disconnected';
   };
 
   /**

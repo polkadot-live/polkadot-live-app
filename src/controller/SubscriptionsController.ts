@@ -14,6 +14,10 @@ export class SubscriptionsController {
     SubscriptionsController.chainSubscriptions = wrapper;
   }
 
+  /**
+   * @name initChainSubscriptions
+   * @summary Fetch persisted chain subscription tasks from store and re-subscribe to them.
+   */
   static async initChainSubscriptions() {
     const key = 'chain_subscriptions';
 
@@ -33,19 +37,27 @@ export class SubscriptionsController {
     }
   }
 
-  /// Subscribe to a chain task received from the renderer.
+  /**
+   * @name subscribeChainTask
+   * @summary Subscribe to a chain task received from the renderer.
+   */
   static async subscribeChainTask(task: SubscriptionTask) {
     await this.chainSubscriptions?.subscribeTask(task);
   }
 
-  /// Subscribe to an account task received from the renderer.
+  /**
+   * @name subscribeAccountTask
+   * @summary Subscribe to an account task received from the renderer.
+   */
   static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
     await account.subscribeToTask(task);
   }
 
-  /// Return a map of all correctly configured tasks possible for
-  /// a chain. Active subscriptions need to be included in the
-  /// array.
+  /**
+   * @name getChainSubscriptions
+   * @summary Return a map of all correctly configured tasks possible for
+   * a chain. Active subscriptions need to be included in the array.
+   */
   static getChainSubscriptions() {
     const activeTasks = this.chainSubscriptions?.getSubscriptionTasks();
 
@@ -81,9 +93,11 @@ export class SubscriptionsController {
     return map;
   }
 
-  /// Return a map of all correctly configured tasks possible for
-  /// an account. Active subscriptions need to be included in the
-  /// array.
+  /**
+   * @name getAccountSubscriptions
+   * @summary Return a map of all correctly configured tasks possible for an account.
+   * Active subscriptions need to be included in the array.
+   */
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
     const map = new Map<string, SubscriptionTask[]>();
 
@@ -142,6 +156,15 @@ export class SubscriptionsController {
     }
 
     return map;
+  }
+
+  /**
+   * @name requiresApiInstanceForChain
+   * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
+   * @returns {boolean} Represents if API instance is required for the provided chainID.
+   */
+  static requiresApiInstanceForChain(chainId: ChainID) {
+    return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
   }
 
   /*------------------------------------------------------------
