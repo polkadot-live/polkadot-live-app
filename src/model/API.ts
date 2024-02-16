@@ -58,10 +58,13 @@ export class API {
 
     // Add listeners to provider.
     const provider = new WsProvider(this.endpoint);
-    this.provider = provider;
-    this.initEvents();
+    this._provider = provider;
 
-    const api = await ApiPromise.create({ provider: this.provider });
+    // Add listeners before API is ready.
+    const api = new ApiPromise({ provider: this._provider });
+    this.initEvents();
+    await api.isReady;
+
     const chainId = (await api.rpc.system.chain()).toString();
 
     // Disconnect and return if chain ID isn't recognized.
@@ -213,10 +216,12 @@ export class API {
    * @summary Disconnect from a chain.
    */
   disconnect = async () => {
-    await this.api?.disconnect();
-    this.provider.disconnect();
+    //await this.api?.disconnect();
+    //this.provider.disconnect();
+    //this.status = 'disconnected';
 
-    this.status = 'disconnected';
+    // TODO: Get disconnect working.
+    console.log('Get disconnect working.');
   };
 
   /**
