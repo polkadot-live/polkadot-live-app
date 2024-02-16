@@ -4,6 +4,7 @@
 import {
   reportAccountSubscriptions,
   reportAllWindows,
+  reportApiInstances,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
 import {
@@ -95,8 +96,6 @@ const importNewAddress = async ({
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
 
-  // TODO: Report chain connections.
-
   // Show notification.
   NotificationsController.accountImported(name);
 
@@ -130,6 +129,9 @@ const removeImportedAccount = async ({
 
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
+
+  // Report chain connections to UI.
+  reportAllWindows(reportApiInstances);
 
   // TODO: Fix when chain removal is implemented on back-end.
   // Remove chain's API instance if no more accounts require it.

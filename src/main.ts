@@ -6,7 +6,11 @@ import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
-import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
+import {
+  reportAllWindows,
+  reportApiInstances,
+  reportImportedAccounts,
+} from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent } from '@/types/reporter';
@@ -200,6 +204,9 @@ app.whenReady().then(async () => {
         console.log(`Disconnect API instance for chain ${chainId}`);
         await APIsController.close(chainId);
       }
+
+      // Report chain connections to UI.
+      reportAllWindows(reportApiInstances);
 
       return true;
     }

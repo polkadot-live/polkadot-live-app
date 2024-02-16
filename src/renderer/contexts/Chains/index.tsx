@@ -3,8 +3,9 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import * as defaults from './defaults';
-import type { ChainInstance, ChainsContextInterface } from './types';
-import type { ChainStatus } from '@/types/chains';
+import type { ChainsContextInterface } from './types';
+import type { ChainID } from '@/types/chains';
+import type { FlattenedAPIData } from '@/types/apis';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext
@@ -14,30 +15,29 @@ export const useChains = () => useContext(ChainsContext);
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   // Store the currently active chains
-  const [chains, setChains] = useState<ChainInstance[]>([]);
+  const [chains, setChains] = useState<Map<ChainID, FlattenedAPIData>>(
+    new Map()
+  );
 
   // Adds a chain instance.
-  const addChain = (name: string, status: ChainStatus) => {
-    setChains([
-      ...chains,
-      {
-        name,
-        status,
-      },
-    ]);
+  const addChain = (apiData: FlattenedAPIData) => {
+    chains.set(apiData.chainId, apiData);
+    // TODO: Check if this line is necessary:
+    setChains(chains);
   };
 
   // Removes a chain instance.
-  const removeChain = (name: string) => {
-    setChains(chains.filter((c) => c.name !== name));
+  const removeChain = (chain: ChainID) => {
+    //setChains(chains.filter((c) => c.chainId !== chain));
+    console.log(chain);
   };
 
   // Gets a chain
-  const getChain = (name: string) => chains.find((c) => c.name === name);
+  const getChain = (chain: ChainID) => chains.get(chain);
 
   // Updates an existing chain.
-  const setChain = (chain: ChainInstance) => {
-    setChains(chains.map((c) => (c.name === chain.name ? chain : c)));
+  const setChain = (data: FlattenedAPIData) => {
+    setChains(chains.set(data.chainId, data));
   };
 
   return (

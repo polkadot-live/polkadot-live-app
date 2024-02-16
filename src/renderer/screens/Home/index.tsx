@@ -14,6 +14,7 @@ import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
+import type { FlattenedAPIData } from '@/types/apis';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
@@ -26,32 +27,28 @@ export const Home = () => {
   // Listen for changes in chains.
   // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
-    window.myAPI.syncChain((_: Event, name: ChainID) => {
-      addChain(name, 'connected');
+    window.myAPI.syncChain((_: Event, apiData: FlattenedAPIData) => {
+      addChain(apiData);
     });
 
-    window.myAPI.chainAdded((_: Event, name: ChainID) => {
-      addChain(name, 'connecting');
+    window.myAPI.chainAdded((_: Event, apiData: FlattenedAPIData) => {
+      addChain(apiData);
     });
 
     window.myAPI.chainRemoved((_: Event, name: ChainID) => {
       removeChain(name);
     });
 
-    window.myAPI.chainConnected((_: Event, name: ChainID) => {
-      console.log('chain connected: ', name);
-      setChain({
-        name,
-        status: 'connected',
-      });
+    // NOTE: Not being called from main process.
+    window.myAPI.chainConnected((_: Event, apiData: FlattenedAPIData) => {
+      console.log('chain connected: ', apiData);
+      setChain(apiData);
     });
 
-    window.myAPI.chainDisconnected((_: Event, name: ChainID) => {
-      console.log('chain disconnected: ', name);
-      setChain({
-        name,
-        status: 'disconnected',
-      });
+    // NOTE: Not being called from main process.
+    window.myAPI.chainDisconnected((_: Event, apiData: FlattenedAPIData) => {
+      console.log('chain disconnected: ', apiData);
+      setChain(apiData);
     });
 
     // Listen for event callbacks.

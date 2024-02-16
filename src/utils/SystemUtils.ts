@@ -11,7 +11,7 @@ import type { ChainID } from '@/types/chains';
 // Initalize store items.
 export const initializeState = (id: string) => {
   reportImportedAccounts(id);
-  reportActiveInstances(id);
+  reportApiInstances(id);
 };
 
 // Report imported accounts to renderer.
@@ -56,9 +56,12 @@ export const reportAllWindows = (callback: AnyFunction) => {
 };
 
 // Report active chains to a window.
-export const reportActiveInstances = (id: string) => {
-  for (const { chain } of APIsController.instances) {
-    WindowsController.get(id)?.webContents?.send('renderer:chain:sync', chain);
+export const reportApiInstances = (id: string) => {
+  for (const apiData of APIsController.getAllFlattenedAPIData()) {
+    WindowsController.get(id)?.webContents?.send(
+      'renderer:chain:sync',
+      apiData
+    );
   }
 };
 

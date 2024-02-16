@@ -7,6 +7,8 @@ import { ButtonText } from '@polkadot-cloud/react';
 import { Identicon } from '@app/library/Identicon';
 import type { FlattenedAccountData } from '@/types/accounts';
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
+import WestendIcon from '@app/svg/westendIcon.svg?react';
+import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
@@ -57,6 +59,17 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
     setSection(1);
   };
 
+  const getIcon = (chainId: ChainID) => {
+    switch (chainId) {
+      case 'Polkadot':
+        return <PolkadotIcon className="chain-icon" />;
+      case 'Westend':
+        return <WestendIcon className="chain-icon" />;
+      case 'Kusama':
+        return <KusamaIcon className="chain-icon" />;
+    }
+  };
+
   return (
     <AccountsWrapper>
       {/* Manage Chains */}
@@ -78,9 +91,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
             ></button>
             <div className="inner">
               <div>
-                <span>
-                  <PolkadotIcon className="chain-icon" />
-                </span>
+                <span>{getIcon(chain)}</span>
                 <div className="content">
                   <h3>{chain}</h3>
                 </div>
