@@ -1,16 +1,30 @@
 import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const accountTasks: SubscriptionTask[] = [
+  // Polkadot
   {
     action: 'subscribe:query.system.account',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Transfers',
+    label: 'Transfers (Polkadot)',
   },
   {
     action: 'subscribe:nominationPools:query.system.account',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Nomination Pool Rewards',
+    label: 'Nomination Pool Rewards (Polkadot)',
+  },
+  // Westend
+  {
+    action: 'subscribe:query.system.account',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Transfers (Westend)',
+  },
+  {
+    action: 'subscribe:nominationPools:query.system.account',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Nomination Pool Rewards (Westend)',
   },
 ];

@@ -95,7 +95,7 @@ export class SubscriptionsController {
 
   /**
    * @name getAccountSubscriptions
-   * @summary Return a map of all correctly configured tasks possible for an account.
+   * @summary Return a map of all correctly configured tasks possible for received account.
    * Active subscriptions need to be included in the array.
    */
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
@@ -105,11 +105,14 @@ export class SubscriptionsController {
       for (const account of accounts) {
         const activeTasks = account.getSubscriptionTasks();
 
-        // Tasks need to be populated with their correct arguments
-        // before being sent to the renderer.
-        const allTasksWithArgs = allAccountTasks.map((t) => {
-          // TODO: May need to match (action, chainId) for multi chain later.
-          // Or encode the chain id directly in the action string.
+        // Get all possible tasks for account's chain ID.
+        const allTasksForAccount = allAccountTasks.filter(
+          (t) => t.chainId === account.chain
+        );
+
+        // Populate tasks with their correct arguments before being sent to the renderer.
+        const allTasksWithArgs = allTasksForAccount.map((t) => {
+          // TODO: Might need to match chain ID at a later date.
           switch (t.action) {
             case 'subscribe:query.system.account': {
               return {
