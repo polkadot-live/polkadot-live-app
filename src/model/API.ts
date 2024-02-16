@@ -174,7 +174,7 @@ export class API {
     const result = await Promise.all([
       api.consts.staking.bondingDuration,
       api.consts.staking.sessionsPerEra,
-      api.consts.staking.maxNominatorRewardedPerValidator,
+      //api.consts.staking.maxNominatorRewardedPerValidator,
       api.consts.babe.expectedBlockTime,
       api.consts.babe.epochDuration,
       api.consts.balances.existentialDeposit,
@@ -188,18 +188,18 @@ export class API {
 
     const bondDuration = takeResult(result, 0);
     const sessionsPerEra = takeResult(result, 1);
-    const maxNominatorRewardedPerValidator = takeResult(result, 2);
-    const expectedBlockTime = takeResult(result, 3);
-    const epochDuration = takeResult(result, 4);
-    const existentialDeposit = takeResult(result, 5);
-    const historyDepth = takeResult(result, 6);
-    const fastUnstakeDeposit = takeResult(result, 7);
-    const poolsPalletId = result[8].toU8a();
+    //const maxNominatorRewardedPerValidator = takeResult(result, 2);
+    const expectedBlockTime = takeResult(result, 2);
+    const epochDuration = takeResult(result, 3);
+    const existentialDeposit = takeResult(result, 4);
+    const historyDepth = takeResult(result, 5);
+    const fastUnstakeDeposit = takeResult(result, 6);
+    const poolsPalletId = result[7].toU8a();
 
     const consts = {
       bondDuration,
       sessionsPerEra,
-      maxNominatorRewardedPerValidator,
+      //maxNominatorRewardedPerValidator,
       historyDepth,
       epochDuration,
       expectedBlockTime,

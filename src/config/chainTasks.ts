@@ -5,12 +5,24 @@ export const chainTasks: SubscriptionTask[] = [
     action: 'subscribe:query.timestamp.now',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Timestamps',
+    label: 'Timestamps (Polkadot)',
   },
   {
     action: 'subscribe:query.babe.currentSlot',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Current Slot',
+    label: 'Current Slot (Polkadot)',
+  },
+  {
+    action: 'subscribe:query.timestamp.now',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Timestamps (Westend)',
+  },
+  {
+    action: 'subscribe:query.babe.currentSlot',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Current Slot (Westend)',
   },
 ];

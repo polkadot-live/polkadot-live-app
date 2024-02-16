@@ -17,6 +17,8 @@ export const getApiInstance = async (chainId: ChainID) => {
     );
   }
 
+  console.log(`Fetched API instance for chain: ${chainId}`);
+
   return instance;
 };
 

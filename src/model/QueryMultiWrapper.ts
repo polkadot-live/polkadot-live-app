@@ -182,6 +182,9 @@ export class QueryMultiWrapper {
 
               break;
             }
+
+            /// Get the balance of the task target account on the target chain.
+            /// Returns the balance's nonce, free and reserved values.
             case 'subscribe:query.system.account': {
               const free = new BigNumber(data[index].data.free);
               const reserved = new BigNumber(data[index].data.reserved);
@@ -367,7 +370,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: setActionCallbackVal
+  // Util: setChainTaskVal
   // --------------------------------------------------
 
   private setChainTaskVal(
@@ -390,7 +393,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: getActionCallbackVal
+  // Util: getChainTaskCurrentVal
   // --------------------------------------------------
 
   private getChainTaskCurrentVal(action: string, chainId: ChainID) {
@@ -406,7 +409,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: setUnsub
+  // Util: replaceUnsub
   // --------------------------------------------------
 
   private replaceUnsub(chainId: ChainID, newUnsub: AnyFunction) {
@@ -489,7 +492,8 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -497,6 +501,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }
@@ -507,7 +512,8 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -515,6 +521,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }
@@ -533,6 +540,11 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
+      }
+      default: {
+        console.log('TODO: handle other chains.');
+        break;
       }
     }
   }
@@ -558,6 +570,11 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
+      }
+      default: {
+        console.log('TODO: handle other chains.');
+        break;
       }
     }
   }
