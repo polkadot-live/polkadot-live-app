@@ -1,6 +1,7 @@
 import type { SubscriptionTask } from '@/types/subscriptions';
 
 export const chainTasks: SubscriptionTask[] = [
+  // Polkadot
   {
     action: 'subscribe:query.timestamp.now',
     chainId: 'Polkadot',
@@ -13,6 +14,7 @@ export const chainTasks: SubscriptionTask[] = [
     status: 'disable',
     label: 'Current Slot (Polkadot)',
   },
+  // Westend
   {
     action: 'subscribe:query.timestamp.now',
     chainId: 'Westend',
@@ -24,5 +26,18 @@ export const chainTasks: SubscriptionTask[] = [
     chainId: 'Westend',
     status: 'disable',
     label: 'Current Slot (Westend)',
+  },
+  // Kusama
+  {
+    action: 'subscribe:query.timestamp.now',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Timestamps (Kusama)',
+  },
+  {
+    action: 'subscribe:query.babe.currentSlot',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Current Slot (Kusama)',
   },
 ];

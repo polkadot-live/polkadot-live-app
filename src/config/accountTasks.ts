@@ -27,4 +27,17 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
     label: 'Nomination Pool Rewards (Westend)',
   },
+  // Kusama
+  {
+    action: 'subscribe:query.system.account',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Transfers (Kusama)',
+  },
+  {
+    action: 'subscribe:nominationPools:query.system.account',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Nomination Pool Rewards (Kusama)',
+  },
 ];

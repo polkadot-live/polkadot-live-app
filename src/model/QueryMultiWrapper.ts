@@ -493,7 +493,8 @@ export class QueryMultiWrapper {
   ) {
     switch (task.chainId) {
       case 'Polkadot':
-      case 'Westend': {
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -513,7 +514,8 @@ export class QueryMultiWrapper {
   ) {
     switch (task.chainId) {
       case 'Polkadot':
-      case 'Westend': {
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -532,7 +534,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -540,10 +544,6 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
-        break;
-      }
-      default: {
-        console.log('TODO: handle other chains.');
         break;
       }
     }
@@ -555,7 +555,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           // Exit early if the account in question has not joined a nomination pool.
           if (!task.account?.nominationPoolData) {
@@ -570,10 +572,6 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
-        break;
-      }
-      default: {
-        console.log('TODO: handle other chains.');
         break;
       }
     }

@@ -18,9 +18,8 @@ import type {
 import { useManage } from './provider';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
-  const chains = ['Polkadot', 'Westend'];
-
-  const { getChainSubscriptions, getAccountSubscriptions } = useSubscriptions();
+  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
+    useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
 
   // Utility: Copy tasks.
@@ -68,7 +67,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
         </h5>
       </HeadingWrapper>
       <div style={{ padding: '0 0.75rem' }}>
-        {chains.map((chain, i) => (
+        {Array.from(chainSubscriptions.keys()).map((chain, i) => (
           <AccountWrapper
             whileHover={{ scale: 1.01 }}
             key={`manage_chain_${i}`}
