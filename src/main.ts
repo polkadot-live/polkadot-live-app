@@ -193,9 +193,10 @@ app.whenReady().then(async () => {
 
       // Disconnect from API instance if there are no tasks that require it.
       const chainId = data.tasks[0].chainId;
+      const status = data.tasks[0].status;
 
       // Check if there are any chain or account tasks that require an API instance.
-      if (!isApiInstanceRequiredFor(chainId)) {
+      if (status === 'disable' && !isApiInstanceRequiredFor(chainId)) {
         console.log(`Disconnect API instance for chain ${chainId}`);
         await APIsController.close(chainId);
       }
