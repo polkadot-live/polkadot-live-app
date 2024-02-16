@@ -1,5 +1,15 @@
 import type { SubscriptionTask } from '@/types/subscriptions';
 
+/**
+ * @name chainTasks
+ * @summary A list of all possible chain tasks that can be subscribed to. The `SubscriptionTask`
+ * type acts as the bridge between the main and renderer processes for synching and handling
+ * subscriptions.
+ *
+ * By default, all subscription tasks are marked with status `disable`. A task is marked
+ * as `enable` when it is toggled on the frontend, or fetched from the store as an
+ * active task on app initialization.
+ */
 export const chainTasks: SubscriptionTask[] = [
   // Polkadot
   {
