@@ -174,7 +174,6 @@ export class API {
     const result = await Promise.all([
       api.consts.staking.bondingDuration,
       api.consts.staking.sessionsPerEra,
-      //api.consts.staking.maxNominatorRewardedPerValidator,
       api.consts.babe.expectedBlockTime,
       api.consts.babe.epochDuration,
       api.consts.balances.existentialDeposit,
@@ -188,7 +187,6 @@ export class API {
 
     const bondDuration = takeResult(result, 0);
     const sessionsPerEra = takeResult(result, 1);
-    //const maxNominatorRewardedPerValidator = takeResult(result, 2);
     const expectedBlockTime = takeResult(result, 2);
     const epochDuration = takeResult(result, 3);
     const existentialDeposit = takeResult(result, 4);
@@ -199,7 +197,6 @@ export class API {
     const consts = {
       bondDuration,
       sessionsPerEra,
-      //maxNominatorRewardedPerValidator,
       historyDepth,
       epochDuration,
       expectedBlockTime,
