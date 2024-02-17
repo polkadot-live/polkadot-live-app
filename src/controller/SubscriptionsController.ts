@@ -99,66 +99,49 @@ export class SubscriptionsController {
    * Active subscriptions need to be included in the array.
    */
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
-    const map = new Map<string, SubscriptionTask[]>();
+    const result = new Map<string, SubscriptionTask[]>();
 
     for (const accounts of accountsMap.values()) {
-      for (const account of accounts) {
-        const activeTasks = account.getSubscriptionTasks();
+      for (const a of accounts) {
+        const tasks = allAccountTasks
+          // Get all possible tasks for account's chain ID.
+          .filter((t) => t.chainId === a.chain)
+          // Populate tasks with correct arguments.
+          .map((t) => {
+            const task = { ...t, account: a.flatten() };
 
-        // Get all possible tasks for account's chain ID.
-        const allTasksForAccount = allAccountTasks.filter(
-          (t) => t.chainId === account.chain
-        );
-
-        // Populate tasks with their correct arguments before being sent to the renderer.
-        const allTasksWithArgs = allTasksForAccount.map((t) => {
-          // TODO: Might need to match chain ID at a later date.
-          switch (t.action) {
-            case 'subscribe:query.system.account': {
-              return {
-                ...t,
-                actionArgs: [account.address],
-                account: account.flatten(),
-              };
-            }
-            case 'subscribe:nominationPools:query.system.account': {
-              // Provide an account's nomination pool reward address if it exists for the target chain.
-              const actionArgs = account.nominationPoolData
-                ? [account.nominationPoolData.poolRewardAddress]
-                : undefined;
-
-              return {
-                ...t,
-                actionArgs,
-                account: account.flatten(),
-              };
-            }
-            default: {
-              return t;
-            }
-          }
-        });
-
-        // Merge inactive and active tasks.
-        const allTasks = activeTasks
-          ? allTasksWithArgs.map((t) => {
-              for (const active of activeTasks) {
-                if (
-                  active.action === t.action &&
-                  active.chainId === t.chainId
-                ) {
-                  return active;
-                }
+            switch (t.action) {
+              case 'subscribe:query.system.account': {
+                return { ...task, actionArgs: [a.address] };
               }
-              return t;
-            })
-          : allTasksWithArgs;
+              case 'subscribe:nominationPools:query.system.account': {
+                // Provide an account's nomination pool reward address if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolRewardAddress]
+                  : undefined;
 
-        map.set(account.address, allTasks);
+                return { ...task, actionArgs };
+              }
+              default: {
+                return t;
+              }
+            }
+          })
+          // Merge active tasks in the array.
+          .map((t) => {
+            for (const active of a.getSubscriptionTasks() || []) {
+              if (active.action === t.action && active.chainId === t.chainId) {
+                return active;
+              }
+            }
+            return t;
+          });
+
+        result.set(a.address, tasks);
       }
     }
 
-    return map;
+    return result;
   }
 
   /**
