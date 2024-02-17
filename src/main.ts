@@ -21,7 +21,7 @@ import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
 import { Orchestrator } from './orchestrator';
-import { isApiInstanceRequiredFor } from './utils/ApiUtils';
+import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -196,14 +196,7 @@ app.whenReady().then(async () => {
       }
 
       // Disconnect from API instance if there are no tasks that require it.
-      const chainId = data.tasks[0].chainId;
-      const status = data.tasks[0].status;
-
-      // Check if there are any chain or account tasks that require an API instance.
-      if (status === 'disable' && !isApiInstanceRequiredFor(chainId)) {
-        console.log(`Disconnect API instance for chain ${chainId}`);
-        await APIsController.close(chainId);
-      }
+      await checkAndHandleApiDisconnect(data.tasks[0]);
 
       // Report chain connections to UI.
       reportAllWindows(reportApiInstances);

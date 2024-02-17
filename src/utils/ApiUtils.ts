@@ -3,10 +3,11 @@ import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { ChainList } from '@/config/chains';
 import type { ChainID } from '@/types/chains';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 /**
  * @name getApiInstance
- * @summary Connects an API instance to an endpoint and returns.
+ * @summary Connects an API instance to an endpoint and returns it.
  */
 export const getApiInstance = async (chainId: ChainID) => {
   const instance = await APIsController.fetchConnectedInstance(chainId);
@@ -23,11 +24,26 @@ export const getApiInstance = async (chainId: ChainID) => {
 };
 
 /**
+ * @name checkAndHandleApiDisconnect
+ * @summary Disconnects from an API instance if its no longer required.
+ */
+export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
+  const { chainId, status } = task;
+
+  // Check if there are any chain or account tasks that require an API instance.
+  if (status === 'disable' && !isApiInstanceRequiredFor(chainId)) {
+    console.log(`Disconnect API instance for chain ${chainId}`);
+
+    await APIsController.close(chainId);
+  }
+};
+
+/**
  * @name isApiInstanceRequiredFor
  * @summary Returns `true` if an API instance is still needed for any chain or account subscriptions.
  * @returns {boolean}
  */
-export const isApiInstanceRequiredFor = (chainId: ChainID) => {
+const isApiInstanceRequiredFor = (chainId: ChainID) => {
   // Return `true` if any chain subscriptions require an API instance of the chain ID.
   if (SubscriptionsController.requiresApiInstanceForChain(chainId)) {
     return true;
