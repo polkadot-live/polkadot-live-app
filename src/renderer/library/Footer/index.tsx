@@ -10,17 +10,23 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/Chains';
 import { useState } from 'react';
-import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
+import { getIcon } from '@/renderer/Utils';
+
 export const Footer = () => {
   const { chains } = useChains();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  const totalActiveConnections = () =>
+    Array.from(chains.values()).filter(
+      (apiData) => apiData.status === 'connected'
+    ).length;
+
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
       <section className="status">
-        {chains.length ? (
+        {totalActiveConnections() ? (
           <FontAwesomeIcon icon={faCircle} transform="shrink-6" />
         ) : (
           <FontAwesomeIcon icon={faCircleRegular} transform="shrink-6" />
@@ -28,9 +34,9 @@ export const Footer = () => {
 
         <div>
           <h5>
-            {chains.length
-              ? `Connected to ${chains.length} network${
-                  chains.length === 1 ? '' : 's'
+            {chains.size
+              ? `Connected to ${totalActiveConnections()} network${
+                  chains.size === 1 ? '' : 's'
                 }`
               : 'Disconnected'}{' '}
           </h5>
@@ -42,14 +48,17 @@ export const Footer = () => {
           />
         </button>
       </section>
-      {expanded && (
-        <section>
-          <NetworkItem>
-            <PolkadotIcon className="icon" />
-            <h4>Polkadot</h4>
+      {expanded &&
+        [...chains.entries()].map(([key, apiData]) => (
+          <NetworkItem key={key}>
+            {getIcon(apiData.chainId, 'icon')}
+            <h4>{apiData.chainId}</h4>
+            <div
+              className={apiData.status === 'connected' ? 'success' : 'danger'}
+            ></div>
+            <label>{apiData.endpoint}</label>
           </NetworkItem>
-        </section>
-      )}
+        ))}
     </FooterWrapper>
   );
 };

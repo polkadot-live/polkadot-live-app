@@ -1,16 +1,17 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ApiPromise } from '@polkadot/api';
-import { WsProvider } from '@polkadot/api';
-import type { Codec } from '@polkadot/types-codec/types';
-import { rmCommas } from '@polkadot-cloud/utils';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
-import type { ChainID, ChainStatus } from '@/types/chains';
-import type { APIConstants } from '@/types/chains/polkadot';
-import { WindowsController } from '@/controller/WindowsController';
 import { MainDebug } from '@/utils/DebugUtils';
+import { rmCommas } from '@polkadot-cloud/utils';
+import { WindowsController } from '@/controller/WindowsController';
+import { ChainList } from '@/config/chains';
 import type { AnyJson } from '@/types/misc';
+import type { APIConstants } from '@/types/chains/polkadot';
+import type { Codec } from '@polkadot/types-codec/types';
+import type { ChainID, ChainStatus } from '@/types/chains';
+import type { FlattenedAPIData } from '@/types/apis';
 
 const debug = MainDebug.extend('API');
 
@@ -36,11 +37,44 @@ export class API {
 
   private _consts: APIConstants | null = null;
 
-  constructor(endpoint: string) {
+  constructor(endpoint: string, chainId: ChainID) {
+    this.chain = chainId;
     this.endpoint = endpoint;
-    this.provider = new WsProvider(endpoint);
-    this.initEvents();
+    this.status = 'disconnected';
   }
+
+  /**
+   * @name connect
+   * @summary Create the `ApiPromise` and get consts with metadata.
+   */
+  connect = async () => {
+    // Do nothing if instance is already connected.
+    if (this.status !== 'disconnected') {
+      console.log(`API instance for ${this.chain} is already connected!`);
+      return;
+    }
+
+    this.status = 'connecting';
+
+    // Add listeners to provider.
+    const provider = new WsProvider(this.endpoint);
+    this._provider = provider;
+
+    // Add listeners before API is ready.
+    const api = new ApiPromise({ provider: this._provider });
+    this.initEvents();
+    await api.isReady;
+
+    const chainId = (await api.rpc.system.chain()).toString();
+
+    // Disconnect and return if chain ID isn't recognized.
+    if (!ChainList.get(chainId as ChainID)) {
+      await this.disconnect();
+    }
+
+    this.setApi(api, chainId as ChainID);
+    await this.getConsts();
+  };
 
   get endpoint() {
     return this._endpoint;
@@ -140,7 +174,6 @@ export class API {
     const result = await Promise.all([
       api.consts.staking.bondingDuration,
       api.consts.staking.sessionsPerEra,
-      api.consts.staking.maxNominatorRewardedPerValidator,
       api.consts.babe.expectedBlockTime,
       api.consts.babe.epochDuration,
       api.consts.balances.existentialDeposit,
@@ -154,18 +187,16 @@ export class API {
 
     const bondDuration = takeResult(result, 0);
     const sessionsPerEra = takeResult(result, 1);
-    const maxNominatorRewardedPerValidator = takeResult(result, 2);
-    const expectedBlockTime = takeResult(result, 3);
-    const epochDuration = takeResult(result, 4);
-    const existentialDeposit = takeResult(result, 5);
-    const historyDepth = takeResult(result, 6);
-    const fastUnstakeDeposit = takeResult(result, 7);
-    const poolsPalletId = result[8].toU8a();
+    const expectedBlockTime = takeResult(result, 2);
+    const epochDuration = takeResult(result, 3);
+    const existentialDeposit = takeResult(result, 4);
+    const historyDepth = takeResult(result, 5);
+    const fastUnstakeDeposit = takeResult(result, 6);
+    const poolsPalletId = result[7].toU8a();
 
     const consts = {
       bondDuration,
       sessionsPerEra,
-      maxNominatorRewardedPerValidator,
       historyDepth,
       epochDuration,
       expectedBlockTime,
@@ -182,7 +213,23 @@ export class API {
    * @summary Disconnect from a chain.
    */
   disconnect = async () => {
-    await this.api?.disconnect();
-    await this.provider.disconnect();
+    //await this.api?.disconnect();
+    //this.provider.disconnect();
+    //this.status = 'disconnected';
+
+    // TODO: Get disconnect working.
+    console.log('Get disconnect working.');
   };
+
+  /**
+   * @name flatten
+   * @summary Return `FlattenedAPIData` for this instance which can be sent to
+   * the frontend.
+   */
+  flatten = () =>
+    ({
+      endpoint: this.endpoint,
+      chainId: this.chain,
+      status: this.status,
+    }) as FlattenedAPIData;
 }

@@ -109,4 +109,8 @@ export class Account {
   set nominationPoolData(data: AccountNominationPoolData | null) {
     this._nominationPoolData = data;
   }
+
+  get queryMulti() {
+    return this._queryMulti;
+  }
 }

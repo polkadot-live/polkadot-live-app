@@ -16,11 +16,11 @@ import type {
   SubscriptionTask,
 } from '@/types/subscriptions';
 import { useManage } from './provider';
+import { getIcon } from '@/renderer/Utils';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
-  const chains = ['Polkadot', 'Westend'];
-
-  const { getChainSubscriptions, getAccountSubscriptions } = useSubscriptions();
+  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
+    useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
 
   // Utility: Copy tasks.
@@ -68,7 +68,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
         </h5>
       </HeadingWrapper>
       <div style={{ padding: '0 0.75rem' }}>
-        {chains.map((chain, i) => (
+        {Array.from(chainSubscriptions.keys()).map((chain, i) => (
           <AccountWrapper
             whileHover={{ scale: 1.01 }}
             key={`manage_chain_${i}`}
@@ -79,9 +79,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
             ></button>
             <div className="inner">
               <div>
-                <span>
-                  <PolkadotIcon className="chain-icon" />
-                </span>
+                <span>{getIcon(chain, 'chain-icon')}</span>
                 <div className="content">
                   <h3>{chain}</h3>
                 </div>

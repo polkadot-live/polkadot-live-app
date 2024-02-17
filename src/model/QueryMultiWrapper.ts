@@ -58,6 +58,15 @@ export class QueryMultiWrapper {
     await this.next(task);
   }
 
+  /**
+   * @name requiresApiInstanceForChain
+   * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
+   * @returns {boolean} Represents if API instance is required for the provided chainID.
+   */
+  requiresApiInstanceForChain(chainId: ChainID) {
+    return this.subscriptions.has(chainId);
+  }
+
   /*-------------------------------------------------- 
    Accessors
    --------------------------------------------------*/
@@ -173,6 +182,9 @@ export class QueryMultiWrapper {
 
               break;
             }
+
+            /// Get the balance of the task target account on the target chain.
+            /// Returns the balance's nonce, free and reserved values.
             case 'subscribe:query.system.account': {
               const free = new BigNumber(data[index].data.free);
               const reserved = new BigNumber(data[index].data.reserved);
@@ -358,7 +370,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: setActionCallbackVal
+  // Util: setChainTaskVal
   // --------------------------------------------------
 
   private setChainTaskVal(
@@ -381,7 +393,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: getActionCallbackVal
+  // Util: getChainTaskCurrentVal
   // --------------------------------------------------
 
   private getChainTaskCurrentVal(action: string, chainId: ChainID) {
@@ -397,7 +409,7 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: setUnsub
+  // Util: replaceUnsub
   // --------------------------------------------------
 
   private replaceUnsub(chainId: ChainID, newUnsub: AnyFunction) {
@@ -480,7 +492,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -488,6 +502,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }
@@ -498,7 +513,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -506,6 +523,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }
@@ -516,7 +534,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           console.log('>> QueryMultiWrapper: Rebuild queryMulti');
           const instance = await ApiUtils.getApiInstance(task.chainId);
@@ -524,6 +544,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }
@@ -534,7 +555,9 @@ export class QueryMultiWrapper {
     wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
         try {
           // Exit early if the account in question has not joined a nomination pool.
           if (!task.account?.nominationPoolData) {
@@ -549,6 +572,7 @@ export class QueryMultiWrapper {
         } catch (err) {
           console.error(err);
         }
+        break;
       }
     }
   }

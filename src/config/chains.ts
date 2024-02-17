@@ -4,6 +4,8 @@
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as Sc from '@substrate/connect';
 import PolkadotIcon from './svg/polkadotIcon.svg?react';
+import WestendIcon from './svg/westendIcon.svg?react';
+import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
 import type { ChainID } from '@/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
@@ -36,11 +38,77 @@ export const ChainList = new Map<ChainID, Chain>([
         icon: PolkadotAppIcon,
       },
       endpoints: {
-        rpc: 'wss://apps-rpc.polkadot.io',
+        rpc: 'wss://rpc.polkadot.io',
         lightClient: Sc.WellKnownChain.polkadot,
       },
       units: 10,
       unit: 'DOT',
+      categories: {
+        nominationPools: {
+          name: 'Nomination Pools',
+          icon: faUserGroup,
+        },
+        timestamp: {
+          name: 'Timestamps',
+          icon: faUserGroup,
+        },
+        currentSlot: {
+          name: 'Current Slots',
+          icon: faUserGroup,
+        },
+        account: {
+          name: 'Transfers',
+          icon: faUserGroup,
+        },
+      },
+    },
+  ],
+  [
+    'Westend',
+    {
+      icon: WestendIcon,
+      ledger: {
+        icon: WestendIcon,
+      },
+      endpoints: {
+        rpc: 'wss://westend-rpc.polkadot.io',
+        lightClient: Sc.WellKnownChain.westend2,
+      },
+      units: 12,
+      unit: 'WND',
+      categories: {
+        nominationPools: {
+          name: 'Nomination Pools',
+          icon: faUserGroup,
+        },
+        timestamp: {
+          name: 'Timestamps',
+          icon: faUserGroup,
+        },
+        currentSlot: {
+          name: 'Current Slots',
+          icon: faUserGroup,
+        },
+        account: {
+          name: 'Transfers',
+          icon: faUserGroup,
+        },
+      },
+    },
+  ],
+  [
+    'Kusama',
+    {
+      icon: KusamaIcon,
+      ledger: {
+        icon: KusamaIcon,
+      },
+      endpoints: {
+        rpc: 'wss://kusama-rpc.polkadot.io',
+        lightClient: Sc.WellKnownChain.ksmcc3,
+      },
+      units: 12,
+      unit: 'KSM',
       categories: {
         nominationPools: {
           name: 'Nomination Pools',

@@ -8,6 +8,7 @@ import { store } from '@/main';
 import {
   initializeState,
   reportAccountSubscriptions,
+  reportApiInstances,
   reportChainSubscriptions,
 } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
@@ -80,7 +81,7 @@ export const createMainWindow = (isTest: boolean) => {
   mainWindow.hide();
 
   mainWindow.on('show', async () => {
-    // Populate items from store.
+    // Report imported accounts and chain instances.
     initializeState('menu');
 
     // Report chain subscriptions.
@@ -88,6 +89,9 @@ export const createMainWindow = (isTest: boolean) => {
 
     // Report account subscriptions.
     reportAccountSubscriptions('menu');
+
+    // Report chain connections to UI.
+    reportApiInstances('menu');
   });
 
   mainWindow.on('move', () => {
@@ -189,7 +193,7 @@ export const handleWindowOnIPC = (
     WindowsController.add(window, name);
     WindowsController.show(name);
 
-    // Populate items from store and report.
+    // Report imported accounts and chain instances.
     window.on('ready-to-show', () => {
       initializeState(name);
     });

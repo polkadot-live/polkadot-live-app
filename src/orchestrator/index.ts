@@ -4,13 +4,13 @@
 import {
   reportAccountSubscriptions,
   reportAllWindows,
+  reportApiInstances,
   reportImportedAccounts,
 } from '@/utils/SystemUtils';
 import {
   fetchAccountNominationPoolData,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { ChainList } from '@/config/chains';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { NotificationsController } from '@/controller/NotificationsController';
@@ -20,6 +20,7 @@ import type {
   OrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
+import { ChainList } from '@/config/chains';
 
 // Orchestrate class to perform high-level app tasks.
 export class Orchestrator {
@@ -52,9 +53,11 @@ const initialize = async () => {
   AccountsController.initialize();
 
   // Initialize required chain `APIs` from persisted state.
-  const chainIds = AccountsController.getAccountChainIds();
+  const chainIds = Array.from(ChainList.keys());
 
   await APIsController.initialize(chainIds);
+
+  console.log('Finished initializing APIs');
 
   // Use API instance to initialize account nomination pool data.
   await fetchAccountNominationPoolData();
@@ -89,16 +92,6 @@ const importNewAddress = async ({
 
   // Report new account to UI immediately (no chain state yet).
   reportAllWindows(reportImportedAccounts);
-
-  // Add chain instance if it does not already exist.
-  if (!APIsController.chainExists(chain)) {
-    // TODO: handle case where chain list data does not exist.
-    const chainData = ChainList.get(chain);
-
-    if (chainData) {
-      await APIsController.new(chainData.endpoints.rpc);
-    }
-  }
 
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
@@ -137,7 +130,9 @@ const removeImportedAccount = async ({
   // Report account subscriptions to renderer.
   reportAccountSubscriptions('menu');
 
-  // TODO: Fix when chain removal is implemented on back-end.
+  // Report chain connections to UI.
+  reportAllWindows(reportApiInstances);
+
   // Remove chain's API instance if no more accounts require it.
   //removeUnusedApi(chain);
 

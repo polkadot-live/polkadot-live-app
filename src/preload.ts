@@ -37,9 +37,11 @@ contextBridge.exposeInMainWorld('myAPI', {
   chainRemoved: (callback) =>
     ipcRenderer.on('renderer:chain:removed', callback),
 
+  // NOTE: Not being used
   chainConnected: (callback) =>
     ipcRenderer.on('renderer:chain:connected', callback),
 
+  // NOTE: Not being used
   chainDisconnected: (callback) =>
     ipcRenderer.on('renderer:chain:disconnected', callback),
 

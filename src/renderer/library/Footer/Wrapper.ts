@@ -63,10 +63,31 @@ export const NetworkItem = styled.div`
   padding: 1rem;
   align-items: center;
 
+  > h4 {
+    min-width: 75px;
+  }
   > .icon {
     width: 1.75rem;
     height: 1.75rem;
     fill: var(--text-color-primary);
     margin-right: 0.75rem;
+  }
+  > .success {
+    margin: 0 10px;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 100%;
+    background-color: green;
+  }
+  > .danger {
+    margin: 0 10px;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 100%;
+    background-color: red;
+  }
+  label {
+    font-size: 0.9rem;
+    color: #848484;
   }
 `;
