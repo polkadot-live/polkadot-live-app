@@ -7,6 +7,22 @@ import { accountTasks as allAccountTasks } from '@/config/accountTasks';
 import type { Account, ImportedAccounts } from '@/model/Account';
 import type { AnyJson } from '@polkadot-cloud/react/types';
 
+/**
+ * Key naming convention of subscription tasks in store:
+ *
+ * 'chain_subscriptions'
+ *   Key that stores global chain subscription tasks.
+ *
+ * '<account_address>_subscriptions'
+ *   Key that stores an account's subscription tasks.
+ *
+ * Ex: const serialized = store.get('chain_subscriptions');
+ *
+ * When subscription tasks are retrieved and deserialised,
+ * they can be passed to the appropriate `QueryMultiWrapper`
+ * instance, where the API call will be re-built.
+ */
+
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
@@ -95,7 +111,7 @@ export class SubscriptionsController {
 
   /**
    * @name getAccountSubscriptions
-   * @summary Return a map of all correctly configured tasks possible for received account.
+   * @summary Return a map of all correctly configured tasks possible for the received accounts.
    * Active subscriptions need to be included in the array.
    */
   static getAccountSubscriptions(accountsMap: ImportedAccounts) {
@@ -153,23 +169,10 @@ export class SubscriptionsController {
     return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
   }
 
-  /*------------------------------------------------------------
-   * Key naming convention of subscription tasks in store:
-   *
-   * 'chain_subscriptions'
-   *   Key that stores global chain subscription tasks.
-   *
-   * '<account_address>_subscriptions'
-   *   Key that stores an account's subscription tasks.
-   *
-   * Ex: const serialized = store.get('chain_subscriptions');
-   *
-   * When subscription tasks are retrieved and deserialised,
-   * they can be passed to the appropriate `QueryMultiWrapper`
-   * instance, where the API call will be re-built.
-   *------------------------------------------------------------*/
-
-  /// Called when a chain subscription task is received from renderer.
+  /**
+   * @name updateChainTaskInStore
+   * @summary Called when a chain subscription task is received from renderer.
+   */
   static updateChainTaskInStore(task: SubscriptionTask) {
     const key = 'chain_subscriptions';
 
@@ -183,7 +186,10 @@ export class SubscriptionsController {
     this.updateTaskInStore(tasks, task, key);
   }
 
-  /// Called when an account subscription task is received from renderer.
+  /**
+   * @name updateAccountTaskInStore
+   * @summary Called when an account subscription task is received from renderer.
+   */
   static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
     const key = `${account.address}_subscriptions`;
 
@@ -197,8 +203,10 @@ export class SubscriptionsController {
     this.updateTaskInStore(tasks, task, key);
   }
 
-  /// Clears an account's persisted subscriptions in the store.
-  /// Invoked when an account is removed.
+  /**
+   * @name clearAccountTasksInStore
+   * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
+   */
   static clearAccountTasksInStore(account: Account) {
     (store as Record<string, AnyJson>).delete(
       `${account.address}_subscriptions`
