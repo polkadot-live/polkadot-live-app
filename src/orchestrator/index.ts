@@ -133,7 +133,6 @@ const removeImportedAccount = async ({
   // Report chain connections to UI.
   reportAllWindows(reportApiInstances);
 
-  // TODO: Fix when chain removal is implemented on back-end.
   // Remove chain's API instance if no more accounts require it.
   //removeUnusedApi(chain);
 

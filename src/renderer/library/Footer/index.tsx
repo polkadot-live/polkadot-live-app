@@ -10,11 +10,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/Chains';
 import { useState } from 'react';
-import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
-import WestendIcon from '../../svg/westendIcon.svg?react';
-import KusamaIcon from '../../svg/kusamaIcon.svg?react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import type { ChainID } from '@/types/chains';
+import { getIcon } from '@/renderer/Utils';
+
 export const Footer = () => {
   const { chains } = useChains();
 
@@ -24,17 +22,6 @@ export const Footer = () => {
     Array.from(chains.values()).filter(
       (apiData) => apiData.status === 'connected'
     ).length;
-
-  const getIcon = (chainId: ChainID) => {
-    switch (chainId) {
-      case 'Polkadot':
-        return <PolkadotIcon className="icon" />;
-      case 'Westend':
-        return <WestendIcon className="icon" />;
-      case 'Kusama':
-        return <KusamaIcon className="icon" />;
-    }
-  };
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
@@ -64,7 +51,7 @@ export const Footer = () => {
       {expanded &&
         [...chains.entries()].map(([key, apiData]) => (
           <NetworkItem key={key}>
-            {getIcon(apiData.chainId)}
+            {getIcon(apiData.chainId, 'icon')}
             <h4>{apiData.chainId}</h4>
             <div
               className={apiData.status === 'connected' ? 'success' : 'danger'}
