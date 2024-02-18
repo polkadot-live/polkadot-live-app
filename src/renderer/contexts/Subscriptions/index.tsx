@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import type { ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
 import type { SubscriptionsContextInterface } from './types';

@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import { ellipsisFn } from '@polkadot-cloud/utils';

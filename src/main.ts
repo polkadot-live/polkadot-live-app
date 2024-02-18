@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import 'websocket-polyfill';
 import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
