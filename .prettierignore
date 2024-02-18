@@ -9,3 +9,4 @@ dist
 out
 CODEOWNERS
 .yarn
+.licenserc.json
