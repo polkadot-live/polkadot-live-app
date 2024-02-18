@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { HardwareStatusBar } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
@@ -11,7 +10,8 @@ import { DragClose } from '../../../library/DragClose';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
-import { ButtonText } from '@/renderer/library/Buttons/ButtonText';
+import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
+import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 
 export const Manage = ({
   addresses,

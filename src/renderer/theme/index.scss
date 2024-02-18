@@ -105,8 +105,14 @@ button {
 
 input {
   font-family: Inter, sans-serif;
+  font-size: 1.1rem;
+  padding: 0.7rem 0;
   background: none;
   border: none;
+
+  &::placeholder {
+    color: #aaa;
+  }
 }
 
 button:focus,
@@ -114,4 +120,11 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
+}
+
+/* Base SVG style. */
+
+path.primary,
+ellipse.primary {
+  fill: var(--text-color-primary);
 }

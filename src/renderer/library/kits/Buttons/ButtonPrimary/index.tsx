@@ -3,61 +3,55 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
-import '@polkadot-cloud/core/css/buttons/ButtonSubmit/index.css';
-import type { ComponentBaseWithClassName } from 'types';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
+import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
-import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
 
-export type ButtonSubmitProps = ComponentBaseWithClassName &
+export type ButtonPrimaryProps = ComponentBaseWithClassName &
   ButtonIconProps &
   ButtonCommonProps & {
     // use secondary network color.
     colorSecondary?: boolean;
-    // button text.
-    text: string;
     // large button, small otherwise.
     lg?: boolean;
-    // pulsing effect.
-    pulse?: boolean;
+    // button text.
+    text: string;
   };
 
 /**
- * @name ButtonSubmit
- * @description Submit button style used within modals to submit transactions.
+ * @name ButtonPrimary
+ * @description Primary button style used within the main interface of dashboards.
  */
-export const ButtonSubmit = ({
+export const ButtonPrimary = ({
   colorSecondary,
   disabled,
   grow,
   iconLeft,
   iconRight,
   iconTransform,
+  lg,
   marginLeft,
   marginRight,
   marginX,
   className,
   style,
   text,
-  lg,
-  pulse,
   onClick,
   onMouseOver,
   onMouseMove,
   onMouseOut,
-}: ButtonSubmitProps) => (
+}: ButtonPrimaryProps) => (
   <motion.button
     whileHover={{ scale: !disabled ? 1.02 : 1 }}
     whileTap={{ scale: !disabled ? 0.98 : 1 }}
-    className={`btn-submit${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
+    className={`btn-primary${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
       colorSecondary,
       'secondary-color'
     )}${appendOrEmpty(grow, 'grow')}${appendOrEmpty(marginRight, 'm-right')}${appendOrEmpty(
       marginLeft,
       'm-left'
-    )}${appendOrEmpty(marginX, 'm-x')}${appendOrEmpty(pulse, 'pulse')}${
-      className ? ` ${className}` : ''
-    }`}
+    )}${appendOrEmpty(marginX, 'm-x')}${className ? ` ${className}` : ''}`}
     style={style}
     type="button"
     disabled={disabled}

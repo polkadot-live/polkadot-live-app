@@ -3,7 +3,7 @@
 
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { NoAccountsWrapper } from './Wrappers';
-import { ButtonMono } from '@/renderer/library/Buttons/ButtonMono';
+import { ButtonMono } from '@/renderer/library/kits/Buttons/ButtonMono';
 
 export const NoAccounts = () => (
   <NoAccountsWrapper>

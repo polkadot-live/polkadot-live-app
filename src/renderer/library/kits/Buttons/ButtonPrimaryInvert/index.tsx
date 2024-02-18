@@ -1,15 +1,13 @@
-// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// Copyright 2024 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { motion } from 'framer-motion';
-import '@polkadot-cloud/core/css/buttons/ButtonPrimary/index.css';
-import type { ComponentBaseWithClassName } from 'types';
-import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
+import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
 
-export type ButtonPrimaryProps = ComponentBaseWithClassName &
+export type ButtonPrimaryInvertProps = ComponentBaseWithClassName &
   ButtonIconProps &
   ButtonCommonProps & {
     // use secondary network color.
@@ -21,10 +19,10 @@ export type ButtonPrimaryProps = ComponentBaseWithClassName &
   };
 
 /**
- * @name ButtonPrimary
- * @description Primary button style used within the main interface of dashboards.
+ * @name ButtonPrimaryInvert
+ * @description Invert primary button style.
  */
-export const ButtonPrimary = ({
+export const ButtonPrimaryInvert = ({
   colorSecondary,
   disabled,
   grow,
@@ -42,17 +40,17 @@ export const ButtonPrimary = ({
   onMouseOver,
   onMouseMove,
   onMouseOut,
-}: ButtonPrimaryProps) => (
-  <motion.button
-    whileHover={{ scale: !disabled ? 1.02 : 1 }}
-    whileTap={{ scale: !disabled ? 0.98 : 1 }}
-    className={`btn-primary${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
+}: ButtonPrimaryInvertProps) => (
+  <button
+    className={`btn-primary-invert${appendOrEmpty(
       colorSecondary,
       'secondary-color'
-    )}${appendOrEmpty(grow, 'grow')}${appendOrEmpty(marginRight, 'm-right')}${appendOrEmpty(
-      marginLeft,
-      'm-left'
-    )}${appendOrEmpty(marginX, 'm-x')}${className ? ` ${className}` : ''}`}
+    )}${appendOrEmpty(grow, 'grow')}${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
+      marginRight,
+      'm-right'
+    )}${appendOrEmpty(marginLeft, 'm-left')}${appendOrEmpty(marginX, 'm-x')}${
+      className ? ` ${className}` : ''
+    }`}
     style={style}
     type="button"
     disabled={disabled}
@@ -73,5 +71,5 @@ export const ButtonPrimary = ({
         transform={iconTransform ? iconTransform : undefined}
       />
     ) : null}
-  </motion.button>
+  </button>
 );
