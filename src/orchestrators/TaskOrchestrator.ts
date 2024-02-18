@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { AnyFunction } from '@polkadot-cloud/react/types';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
