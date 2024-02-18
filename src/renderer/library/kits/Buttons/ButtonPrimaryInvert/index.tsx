@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import '@polkadot-cloud/core/css/buttons/ButtonPrimaryInvert/index.css';
-import type { ComponentBaseWithClassName } from 'types';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonPrimaryInvertProps = ComponentBaseWithClassName &
   ButtonIconProps &
