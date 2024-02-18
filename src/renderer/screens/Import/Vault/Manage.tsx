@@ -13,7 +13,7 @@ import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvaul
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';
-import { ButtonText } from '@/renderer/library/Buttons/ButtonText';
+import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
 
 export const Manage = ({
   setSection,

@@ -8,7 +8,7 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
-import { ButtonSecondary } from '@/renderer/library/Buttons/ButtonSecondary';
+import { ButtonSecondary } from '@/renderer/library/kits/Buttons/ButtonSecondary';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
   const { formatAccountSs58, addressExists } = useAddresses();

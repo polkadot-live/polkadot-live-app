@@ -19,7 +19,7 @@ import { SubmittedTxWrapper } from './Wrappers';
 import type { ChainID } from '@/types/chains';
 import type { TxStatus } from '@/types/tx';
 import type { AnyJson } from '@/types/misc';
-import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
+import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
 
 export const Action = () => {
   const { search } = useLocation();

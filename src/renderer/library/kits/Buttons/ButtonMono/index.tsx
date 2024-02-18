@@ -3,11 +3,11 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
-import '@polkadot-cloud/core/css/buttons/ButtonMonoInvert/index.css';
-import type { ComponentBaseWithClassName } from 'types';
+import '@polkadot-cloud/core/css/buttons/ButtonMono/index.css';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
-import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
+import { onMouseHandlers } from '../Utils';
 
 export type ButtonMonoProps = ComponentBaseWithClassName &
   ButtonIconProps &
@@ -19,10 +19,10 @@ export type ButtonMonoProps = ComponentBaseWithClassName &
   };
 
 /**
- * @name ButtonMonoInvert
- * @description Inverted monotone button style used within the main interface of dashboards.
+ * @name ButtonMono
+ * @description Monotone button style used within the main interface of dashboards.
  */
-export const ButtonMonoInvert = ({
+export const ButtonMono = ({
   disabled,
   grow,
   iconLeft,
@@ -43,7 +43,7 @@ export const ButtonMonoInvert = ({
   <motion.button
     whileHover={{ scale: !disabled ? 1.02 : 1 }}
     whileTap={{ scale: !disabled ? 0.98 : 1 }}
-    className={`btn-mono-invert${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
+    className={`btn-mono${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
       grow,
       'grow'
     )}${appendOrEmpty(marginRight, 'm-right')}${appendOrEmpty(
