@@ -3,10 +3,10 @@
 
 import InfoSVG from '../svg/help.svg?react';
 import '@polkadot-cloud/core/css/buttons/ButtonHelp/index.css';
-import type { ComponentBaseWithClassName } from 'types';
 import type { ButtonCommonProps } from '../types';
 import { appendOrEmpty } from '@polkadot-cloud/utils';
 import { onMouseHandlers } from '../Utils';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonHelpProps = ComponentBaseWithClassName &
   ButtonCommonProps & {

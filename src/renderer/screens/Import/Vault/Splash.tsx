@@ -10,8 +10,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { Reader } from './Reader';
-import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
-import { ButtonPrimary } from '@/renderer/library/Buttons/ButtonPrimary';
+import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
+import { ButtonPrimary } from '@/renderer/library/kits/Buttons/ButtonPrimary';
 
 export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
   const { openOverlayWith } = useOverlay();

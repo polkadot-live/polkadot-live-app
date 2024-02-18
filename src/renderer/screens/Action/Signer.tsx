@@ -7,7 +7,7 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { SignOverlay } from './SignOverlay';
 import { EstimatedFee } from './Wrappers';
 import type { SubmitProps } from './types';
-import { ButtonSubmit } from '@/renderer/library/Buttons/ButtonSubmit';
+import { ButtonSubmit } from '@/renderer/library/kits/Buttons/ButtonSubmit';
 
 export const Signer = ({
   valid,
