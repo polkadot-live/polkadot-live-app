@@ -50,6 +50,56 @@ export class QueryMultiWrapper {
   }
 
   /**
+   * @name handleCallback
+   * @summary Main logic to handle entries (subscription tasks).
+   */
+  private async handleCallback(
+    index: number,
+    entry: ApiCallEntry,
+    dataArr: AnyData,
+    chainId: ChainID
+  ) {
+    const { action } = entry.task;
+
+    switch (chainId) {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
+        switch (action) {
+          // Get the timestamp of the target chain and render it as
+          // a notification on the frontend.
+          case 'subscribe:query.timestamp.now': {
+            this.callback_query_timestamp_now(dataArr[index], entry);
+            break;
+          }
+
+          // Get the current slot of the target chain and render it as
+          // a notification on the frontend.
+          case 'subscribe:query.babe.currentSlot': {
+            this.callback_query_babe_currentSlot(dataArr[index], entry);
+            break;
+          }
+
+          // Get the balance of the task target account on the target chain.
+          // Returns the balance's nonce, free and reserved values.
+          case 'subscribe:query.system.account': {
+            this.callback_query_system_account(dataArr[index], entry);
+            break;
+          }
+
+          // When a nomination pool free balance changes, check that the subscribed account's
+          // pending rewards has changed. If pending rewards have changed, send a notification
+          // to inform the user.
+          case 'subscribe:nominationPools:query.system.account': {
+            await this.callback_nomination_pool_reward_account(entry);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * @name build
    * @summary Dynamically build the query multi argument, and make the actual API call.
    * @param {ChainID} chainId - The target chain to subscribe to.
@@ -69,169 +119,16 @@ export class QueryMultiWrapper {
     const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
 
+    // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
       finalArg,
+      // The queryMulti callback.
       async (data: AnyData) => {
-        /*--------------------------------
-         The Chain's queryMulti Callback
-         -------------------------------*/
-
         // Work out task to handle
         const { callEntries } = this.subscriptions.get(chainId)!;
 
         for (const [index, entry] of callEntries.entries()) {
-          const { action } = entry.task;
-
-          switch (action) {
-            /// Get the timestamp of the target chain and render it as
-            /// a notification on the frontend.
-            case 'subscribe:query.timestamp.now': {
-              const newVal = new BigNumber(data[index]);
-              const curVal = new BigNumber(
-                this.getChainTaskCurrentVal(action, chainId)
-              );
-
-              // If the difference of newVal - curVal is lte
-              // to this buffer, skip event processing.
-              // Prevents "double" timestamps being rendered.
-              const timeBuffer = 20;
-
-              if (
-                !data[index] ||
-                compareHashes(newVal, curVal) ||
-                newVal.minus(curVal).lte(timeBuffer)
-              ) {
-                break;
-              }
-
-              // Cache new value.
-              this.setChainTaskVal(entry, newVal, chainId);
-
-              // Debugging.
-              const now = new Date(data[index] * 1000).toDateString();
-              console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, String(newVal))
-              );
-
-              break;
-            }
-
-            /// Get the current slot of the target chain and render it as
-            /// a notification on the frontend.
-            case 'subscribe:query.babe.currentSlot': {
-              const newVal = new BigNumber(data[index]);
-              const curVal = this.getChainTaskCurrentVal(action, chainId);
-
-              if (!data[index] || compareHashes(newVal, curVal)) {
-                break;
-              }
-
-              // Cache new value.
-              this.setChainTaskVal(entry, newVal, chainId);
-
-              // Debugging.
-              console.log(`Current Sot: ${newVal} (index: ${index})`);
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, String(newVal))
-              );
-
-              break;
-            }
-
-            /// Get the balance of the task target account on the target chain.
-            /// Returns the balance's nonce, free and reserved values.
-            case 'subscribe:query.system.account': {
-              const free = new BigNumber(data[index].data.free);
-              const reserved = new BigNumber(data[index].data.reserved);
-              const nonce = new BigNumber(data[index].nonce);
-
-              // Debugging.
-              console.log(
-                `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
-              );
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, {
-                  nonce,
-                  free,
-                  reserved,
-                })
-              );
-
-              break;
-            }
-
-            /// When a nomination pool free balance changes, check that the subscribed account's
-            /// pending rewards has changed. If pending rewards have changed, send a notification
-            /// to inform the user.
-            case 'subscribe:nominationPools:query.system.account': {
-              const flattenedAccount = entry.task.account;
-
-              if (!flattenedAccount) {
-                console.log('> Error getting flattened account data');
-                break;
-              }
-
-              // Get account instance from controller.
-              const account = AccountsController.get(
-                chainId,
-                flattenedAccount.address
-              );
-
-              // Fetch API instance.
-              const { api } = await ApiUtils.getApiInstance(chainId);
-
-              // Return if nomination pool data for account not found.
-              if (!account?.nominationPoolData) {
-                break;
-              }
-
-              // Get pool ID and reward address.
-              const { poolPendingRewards } = account.nominationPoolData;
-
-              // Get pending rewards for the account.
-              const pendingRewardsResult =
-                await api.call.nominationPoolsApi.pendingRewards(
-                  account.address
-                );
-
-              const fetchedPendingRewards = planckToUnit(
-                new BigNumber(pendingRewardsResult.toString()),
-                chainUnits(chainId)
-              );
-
-              // Return if pending rewards has not changed for the account.
-              if (fetchedPendingRewards.eq(poolPendingRewards)) {
-                break;
-              }
-
-              // Add nomination pool data to account.
-              account.nominationPoolData = {
-                ...account.nominationPoolData,
-                poolPendingRewards: fetchedPendingRewards,
-              };
-
-              // Update account data in controller.
-              AccountsController.set(chainId, account);
-
-              // Construct and send event to renderer to display new reward balance.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, {})
-              );
-
-              break;
-            }
-          }
+          await this.handleCallback(index, entry, data, chainId);
         }
       }
     );
@@ -426,5 +323,145 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
+  }
+
+  // --------------------------------------------------
+  // Callbacks (TODO: Move to static class)
+  // --------------------------------------------------
+
+  /**
+   * @name callback_query_timestamp_now
+   * @summary Callback for 'subscribe:query.timestamp.now'.
+   */
+  private callback_query_timestamp_now(data: AnyData, entry: ApiCallEntry) {
+    const { action, chainId } = entry.task;
+    const timeBuffer = 20;
+
+    const newVal = new BigNumber(data);
+    const curVal = new BigNumber(this.getChainTaskCurrentVal(action, chainId));
+
+    // Return if value hasn't changed since last callback or time buffer hasn't passed.
+    if (compareHashes(newVal, curVal) || newVal.minus(curVal).lte(timeBuffer)) {
+      return;
+    }
+
+    // Cache new value.
+    this.setChainTaskVal(entry, newVal, chainId);
+
+    // Debugging.
+    const now = new Date(data * 1000).toDateString();
+    console.log(`Now: ${now} | ${data}`);
+
+    // Construct and send event to renderer.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:new',
+      EventsController.getEvent(entry, String(newVal))
+    );
+  }
+
+  /**
+   * @name callback_query_babe_currentSlot
+   * @summary Callback for 'subscribe:query.babe.currentSlot'.
+   */
+  private callback_query_babe_currentSlot(data: AnyData, entry: ApiCallEntry) {
+    const { action, chainId } = entry.task;
+    const newVal = new BigNumber(data);
+    const curVal = this.getChainTaskCurrentVal(action, chainId);
+
+    // Return if value hasn't changed since last callback.
+    if (compareHashes(newVal, curVal)) {
+      return;
+    }
+
+    // Cache new value.
+    this.setChainTaskVal(entry, newVal, chainId);
+
+    // Debugging.
+    console.log(`Current Sot: ${newVal}`);
+
+    // Construct and send event to renderer.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:new',
+      EventsController.getEvent(entry, String(newVal))
+    );
+  }
+
+  /**
+   * @name callback_query_system_account
+   * @summary Callback for 'subscribe:query.system.account'.
+   */
+  private callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
+    const free = new BigNumber(data.data.free);
+    const reserved = new BigNumber(data.data.reserved);
+    const nonce = new BigNumber(data.nonce);
+
+    // Debugging.
+    console.log(
+      `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
+    );
+
+    // Construct and send event to renderer.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:new',
+      EventsController.getEvent(entry, {
+        nonce,
+        free,
+        reserved,
+      })
+    );
+  }
+
+  /**
+   * @name callback_nomination_pool_reward_account
+   * @summary Callback for 'subscribe:nominationPools:query.system.account'.
+   */
+  private async callback_nomination_pool_reward_account(entry: ApiCallEntry) {
+    const { account: flattenedAccount, chainId } = entry.task;
+
+    if (!flattenedAccount) {
+      console.log('> Error getting flattened account data');
+      return;
+    }
+
+    // Get associated account and API instances.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+    const { api } = await ApiUtils.getApiInstance(chainId);
+
+    // Return if nomination pool data for account not found.
+    if (!account?.nominationPoolData) {
+      return;
+    }
+
+    // Get current pending rewards.
+    const { poolPendingRewards } = account.nominationPoolData;
+
+    // Fetch pending rewards for the account.
+    const pendingRewardsResult =
+      await api.call.nominationPoolsApi.pendingRewards(account.address);
+
+    const fetchedPendingRewards = planckToUnit(
+      new BigNumber(pendingRewardsResult.toString()),
+      chainUnits(chainId)
+    );
+
+    // Return if pending rewards has not changed for the account.
+    if (fetchedPendingRewards.eq(poolPendingRewards)) {
+      return;
+    }
+
+    // Add nomination pool data to account.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolPendingRewards: fetchedPendingRewards,
+    };
+
+    // Update account data in controller.
+    AccountsController.set(chainId, account);
+
+    // Construct and send event to renderer to display new reward balance.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:new',
+      EventsController.getEvent(entry, {})
+    );
   }
 }
