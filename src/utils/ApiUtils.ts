@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { APIsController } from '@/controller/APIsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { AccountsController } from '@/controller/AccountsController';

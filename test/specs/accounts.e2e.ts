@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
 import type { AccountSource } from '@polkadot-cloud/react/types';

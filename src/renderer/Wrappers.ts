@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import styled from 'styled-components';
 
 // The outer-most component wrapping the app.

@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import { resolve } from 'path'

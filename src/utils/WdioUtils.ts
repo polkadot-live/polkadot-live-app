@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { WindowsController } from '@/controller/WindowsController';
 import { AccountsController } from '@/controller/AccountsController';
 import type { FlattenedAccountData } from '@/types/accounts';

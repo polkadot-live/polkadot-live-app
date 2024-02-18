@@ -1,3 +1,6 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { defineConfig } from 'vite';
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
