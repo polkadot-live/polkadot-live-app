@@ -23,7 +23,7 @@ import * as WdioUtils from '@/utils/WdioUtils';
 import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
-import { Orchestrator } from './orchestrator';
+import { AppOrchestrator } from './orchestrators/AppOrchestrator';
 import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -100,7 +100,7 @@ app.whenReady().then(async () => {
   });
 
   // App initialization process.
-  await Orchestrator.next({
+  await AppOrchestrator.next({
     task: 'app:initialize',
   });
 
@@ -237,7 +237,7 @@ app.whenReady().then(async () => {
   ipcMain.on(
     'app:account:import',
     async (_, chain: ChainID, source, address, name) => {
-      await Orchestrator.next({
+      await AppOrchestrator.next({
         task: 'app:account:import',
         data: { chain, source, address, name },
       });
@@ -246,7 +246,7 @@ app.whenReady().then(async () => {
 
   // Attempt an account removal.
   ipcMain.on('app:account:remove', async (_, chain, address) => {
-    await Orchestrator.next({
+    await AppOrchestrator.next({
       task: 'app:account:remove',
       data: { chain, address },
     });

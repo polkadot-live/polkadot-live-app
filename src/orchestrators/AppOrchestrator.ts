@@ -17,14 +17,14 @@ import { NotificationsController } from '@/controller/NotificationsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   ImportNewAddressArg,
-  OrchestratorArg,
+  AppOrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
 import { ChainList } from '@/config/chains';
 
 // Orchestrate class to perform high-level app tasks.
-export class Orchestrator {
-  static async next({ task, data = {} }: OrchestratorArg) {
+export class AppOrchestrator {
+  static async next({ task, data = {} }: AppOrchestratorArg) {
     switch (task) {
       // Initialize app: should only be called once when the app is starting up.
       case 'app:initialize':
