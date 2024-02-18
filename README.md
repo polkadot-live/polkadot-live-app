@@ -1,7 +1,7 @@
 <!-- markdown-link-check-disable -->
 ![workflow](https://github.com/rossbulat/polkadot-live/actions/workflows/ci.yml/badge.svg)
-<!-- markdown-link-check-enable -->
 [![License](https://img.shields.io/badge/License-GPL3.0-blue.svg)](https://opensource.org/license/gpl-3-0/)
+<!-- markdown-link-check-enable -->
 
 # Polkadot Live
 
