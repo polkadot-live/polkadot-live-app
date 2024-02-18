@@ -21,46 +21,6 @@ export class QueryMultiWrapper {
   // Cache subscriptions are associated by their chain.
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
 
-  private async next(task: SubscriptionTask) {
-    switch (task.action) {
-      case 'subscribe:query.timestamp.now': {
-        console.log('subscribe timestamp now');
-        await QueryMultiWrapper.subscribe_query_timestamp_now(task, this);
-        break;
-      }
-
-      case 'subscribe:query.babe.currentSlot': {
-        console.log('subscribe babe currentSlot');
-        await QueryMultiWrapper.subscribe_query_babe_currentSlot(task, this);
-        break;
-      }
-
-      case 'subscribe:query.system.account': {
-        console.log('subscribe account balance');
-        await QueryMultiWrapper.subscribe_query_system_account(task, this);
-        break;
-      }
-
-      case 'subscribe:nominationPools:query.system.account': {
-        console.log('subscribe nomination pool account balance');
-        await QueryMultiWrapper.subscribe_nomination_pool_reward_account(
-          task,
-          this
-        );
-        break;
-      }
-
-      default: {
-        throw new Error('Subscription action not found');
-      }
-    }
-  }
-
-  // Wrapper around calling subject's next method.
-  async subscribeTask(task: SubscriptionTask) {
-    await this.next(task);
-  }
-
   /**
    * @name requiresApiInstanceForChain
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
@@ -95,7 +55,7 @@ export class QueryMultiWrapper {
   // --------------------------------------------------
 
   // Dynamically re-call queryMulti based on the query multi map.
-  private async build(chainId: ChainID) {
+  async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
       console.log('>> QueryMultiWrapper: queryMulti map is empty.');
       return;
@@ -286,7 +246,7 @@ export class QueryMultiWrapper {
   // --------------------------------------------------
 
   // Insert a polkadot api function into queryMulti.
-  private insert(task: SubscriptionTask, apiCall: AnyFunction) {
+  insert(task: SubscriptionTask, apiCall: AnyFunction) {
     // Return if api call already exists.
     if (this.actionExists(task.chainId, task.action)) {
       console.log('>> QueryMultiWrapper: Action already exists.');
@@ -347,7 +307,7 @@ export class QueryMultiWrapper {
   // --------------------------------------------------
 
   // Unsubscribe from query multi if chain has no more entries.
-  private remove(chainId: ChainID, action: string) {
+  remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
       console.log(">> API call doesn't exist.");
     } else {
@@ -462,121 +422,5 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
-  }
-
-  // --------------------------------------------------
-  // Util: handleTask
-  // --------------------------------------------------
-
-  private async handleTask(task: SubscriptionTask, apiCall: AnyFunction) {
-    switch (task.status) {
-      // Add this action to the chain's subscriptions.
-      case 'enable': {
-        this.insert(task, apiCall);
-        await this.build(task.chainId);
-        break;
-      }
-      // Remove this action from the chain's subscriptions.
-      case 'disable': {
-        this.remove(task.chainId, task.action);
-        await this.build(task.chainId);
-        break;
-      }
-    }
-  }
-
-  /*-------------------------------------------------- 
-   Handlers
-   --------------------------------------------------*/
-
-  // api.query.timestamp.now
-  private static async subscribe_query_timestamp_now(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.timestamp.now);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.babe.currentSlot
-  private static async subscribe_query_babe_currentSlot(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.babe.currentSlot);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.system.account
-  private static async subscribe_query_system_account(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.system.account);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.system.account (nomination pool reward address)
-  private static async subscribe_nomination_pool_reward_account(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          // Exit early if the account in question has not joined a nomination pool.
-          if (!task.account?.nominationPoolData) {
-            console.log('>> Account has not joined a nomination tool.');
-            return;
-          }
-
-          // Otherwise rebuild query.
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.system.account);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
   }
 }
