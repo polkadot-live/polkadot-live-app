@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faLink } from '@fortawesome/free-solid-svg-icons';
-import { ButtonMono } from '@polkadot-cloud/react';
 import { NoAccountsWrapper } from './Wrappers';
+import { ButtonMono } from '@/renderer/library/Buttons/ButtonMono';
 
 export const NoAccounts = () => (
   <NoAccountsWrapper>

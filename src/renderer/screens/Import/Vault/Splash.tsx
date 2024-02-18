@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { ButtonMonoInvert, ButtonPrimary } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useOverlay } from '@app/contexts/Overlay';
@@ -11,6 +10,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { Reader } from './Reader';
+import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
+import { ButtonPrimary } from '@/renderer/library/Buttons/ButtonPrimary';
 
 export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
   const { openOverlayWith } = useOverlay();

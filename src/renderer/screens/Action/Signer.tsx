@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { ButtonSubmit } from '@polkadot-cloud/react';
 import { chainCurrency } from '@/config/chains';
 import { useOverlay } from '@app/contexts/Overlay';
 import { SignOverlay } from './SignOverlay';
 import { EstimatedFee } from './Wrappers';
 import type { SubmitProps } from './types';
+import { ButtonSubmit } from '@/renderer/library/Buttons/ButtonSubmit';
 
 export const Signer = ({
   valid,
