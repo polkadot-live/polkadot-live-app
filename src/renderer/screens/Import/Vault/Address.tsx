@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { HardwareAddress } from '@polkadot-cloud/react';
 import {
   ellipsisFn,
   localStorageOrDefault,
@@ -15,6 +14,7 @@ import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
 import type { AddressProps } from '../Addresses/types';
 import type { AnyJson } from '@/types/misc';
+import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 
 export const Address = ({ address, index }: AddressProps) => {
   const { openOverlayWith } = useOverlay();
