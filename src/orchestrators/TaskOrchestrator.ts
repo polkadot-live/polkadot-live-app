@@ -13,7 +13,6 @@ import type { SubscriptionTask } from '@/types/subscriptions';
  *  > subscribe_<function>(task, wrapper)
  *  |
  *  > handleTask(task, apiCall, wrapper)
- *
  */
 
 // Orchestrator class to receive and handle subscription tasks.

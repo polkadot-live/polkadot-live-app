@@ -18,7 +18,9 @@ import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/EventsController';
 
 export class QueryMultiWrapper {
-  // Cache subscriptions are associated by their chain.
+  /**
+   * API call entries (subscription tasks) are keyed by their chain ID.
+   */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
 
   /**
@@ -30,10 +32,11 @@ export class QueryMultiWrapper {
     return this.subscriptions.has(chainId);
   }
 
-  /*-------------------------------------------------- 
-   Accessors
-   --------------------------------------------------*/
-
+  /**
+   * @name getSubscriptionTasks
+   * @summary Returns the subscription tasks managed by this wrapper.
+   * @returns {SubscriptionTask[]}
+   */
   getSubscriptionTasks() {
     const result: SubscriptionTask[] = [];
 
@@ -46,15 +49,11 @@ export class QueryMultiWrapper {
     return result;
   }
 
-  /*-------------------------------------------------- 
-   Helpers
-   --------------------------------------------------*/
-
-  // --------------------------------------------------
-  // build
-  // --------------------------------------------------
-
-  // Dynamically re-call queryMulti based on the query multi map.
+  /**
+   * @name build
+   * @summary Dynamically build the query multi argument, and make the actual API call.
+   * @param {ChainID} chainId - The target chain to subscribe to.
+   */
   async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
       console.log('>> QueryMultiWrapper: queryMulti map is empty.');
@@ -241,19 +240,20 @@ export class QueryMultiWrapper {
     this.replaceUnsub(chainId, unsub);
   }
 
-  // --------------------------------------------------
-  // insert
-  // --------------------------------------------------
-
-  // Insert a polkadot api function into queryMulti.
+  /**
+   * @name insert
+   * @summary Add an `ApiCallEntry` to be managed by this wrapper.
+   * @param {SubscriptionTask} task - Subscription task associated with entry.
+   * @param {AnyFunction} apiCall - API function call pointer associated with entry.
+   */
   insert(task: SubscriptionTask, apiCall: AnyFunction) {
-    // Return if api call already exists.
+    // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
       console.log('>> QueryMultiWrapper: Action already exists.');
       return;
     }
 
-    // Construct new ApiCallEntry.
+    // Construct new `ApiCallEntry`.
     const newEntry: ApiCallEntry = {
       apiCall,
       curVal: null,
@@ -302,11 +302,12 @@ export class QueryMultiWrapper {
     }
   }
 
-  // --------------------------------------------------
-  // remove
-  // --------------------------------------------------
-
-  // Unsubscribe from query multi if chain has no more entries.
+  /**
+   * @name remove
+   * @summary Unsubscribe from query multi and remove a subscription task.
+   * @param chainId - Target chain to remove subscription task from.
+   * @param action - The subscription task to remove's action string.
+   */
   remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
       console.log(">> API call doesn't exist.");
@@ -333,9 +334,13 @@ export class QueryMultiWrapper {
   }
 
   // --------------------------------------------------
-  // Util: setChainTaskVal
+  // Utils
   // --------------------------------------------------
 
+  /**
+   * @name setChainTaskVal
+   * @summary Cache a new value for a specific API call entry (subscription task).
+   */
   private setChainTaskVal(
     entry: ApiCallEntry,
     newVal: AnyData,
@@ -355,10 +360,10 @@ export class QueryMultiWrapper {
     }
   }
 
-  // --------------------------------------------------
-  // Util: getChainTaskCurrentVal
-  // --------------------------------------------------
-
+  /**
+   * @name getChainTaskCurrentVal
+   * @summary Get the cached value for a specific API call entry (subscription task).
+   */
   private getChainTaskCurrentVal(action: string, chainId: ChainID) {
     const entry = this.subscriptions.get(chainId);
     if (entry) {
@@ -371,10 +376,10 @@ export class QueryMultiWrapper {
     return null;
   }
 
-  // --------------------------------------------------
-  // Util: replaceUnsub
-  // --------------------------------------------------
-
+  /**
+   * @name replaceUnsub
+   * @summary Replace the `unsub` function for a target chain's query multi call.
+   */
   private replaceUnsub(chainId: ChainID, newUnsub: AnyFunction) {
     const entry = this.subscriptions.get(chainId)!;
 
@@ -389,10 +394,10 @@ export class QueryMultiWrapper {
     });
   }
 
-  // --------------------------------------------------
-  // Util: buildQueryMultiArg
-  // --------------------------------------------------
-
+  /**
+   * @name buildQueryMultiArg
+   * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
+   */
   private buildQueryMultiArg(chainId: ChainID) {
     const argument: AnyData = [];
 
@@ -413,11 +418,10 @@ export class QueryMultiWrapper {
     return argument;
   }
 
-  // --------------------------------------------------
-  // Util: actionExists
-  // --------------------------------------------------
-
-  // Check if a chain is already subscribed to an action.
+  /**
+   * @name actionExists
+   * @summary Check if a chain is already subscribed to an action.
+   */
   private actionExists(chainId: ChainID, action: string) {
     const entry = this.subscriptions.get(chainId);
 

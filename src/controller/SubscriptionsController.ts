@@ -23,8 +23,8 @@ import type { SubscriptionTask } from '@/types/subscriptions';
  * Ex: const serialized = store.get('chain_subscriptions');
  *
  * When subscription tasks are retrieved and deserialised,
- * they can be passed to the appropriate `QueryMultiWrapper`
- * instance, where the API call will be re-built.
+ * they can be passed to the `TaskOrchestrator`, where the API
+ * call will be re-built.
  */
 
 export class SubscriptionsController {
