@@ -3,7 +3,6 @@
 
 import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonMono, ButtonMonoInvert } from '@polkadot-cloud/react';
 import { isValidHttpUrl, remToUnit } from '@polkadot-cloud/utils';
 import { useTooltip } from '@app/contexts/Tooltip';
 import { Identicon } from '@app/library/Identicon';
@@ -12,6 +11,8 @@ import type { EventItemProps } from './types';
 import { useEvents } from '@/renderer/contexts/Events';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@/renderer/library/Buttons/ButtonMono';
 
 const FADE_TRANSITION = 200;
 

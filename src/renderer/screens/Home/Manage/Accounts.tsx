@@ -3,7 +3,6 @@
 
 import { NoAccounts } from '../NoAccounts';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ButtonText } from '@polkadot-cloud/react';
 import { Identicon } from '@app/library/Identicon';
 import type { FlattenedAccountData } from '@/types/accounts';
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
@@ -17,6 +16,7 @@ import type {
 } from '@/types/subscriptions';
 import { useManage } from './provider';
 import { getIcon } from '@/renderer/Utils';
+import { ButtonText } from '@/renderer/library/Buttons/ButtonText';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =

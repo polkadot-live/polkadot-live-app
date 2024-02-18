@@ -6,9 +6,6 @@ import { faExternalLinkAlt, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ActionItem,
-  ButtonHelp,
-  ButtonMonoInvert,
-  ButtonText,
   ModalConnectItem,
   ModalHardwareItem,
 } from '@polkadot-cloud/react';
@@ -18,6 +15,9 @@ import { ContentWrapper } from '@app/screens/Wrappers';
 import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
 import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
+import { ButtonHelp } from '@/renderer/library/Buttons/ButtonHelp';
+import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
+import { ButtonText } from '@/renderer/library/Buttons/ButtonText';
 
 export const Home = ({
   setSection,

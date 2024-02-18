@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
-import { ButtonMonoInvert } from '@polkadot-cloud/react';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { Header } from '@app/library/Header';
 import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';
+import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (
   <>

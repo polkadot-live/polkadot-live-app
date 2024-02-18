@@ -1,11 +1,12 @@
 // Copyright 2023 @paritytech/polkadot-live authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono, ButtonMonoInvert } from '@polkadot-cloud/react';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
+import { ButtonMonoInvert } from '@/renderer/library/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@/renderer/library/Buttons/ButtonMono';
 
 export const Remove = ({ address }: { address: string }) => {
   const { removeAddress } = useAddresses();
