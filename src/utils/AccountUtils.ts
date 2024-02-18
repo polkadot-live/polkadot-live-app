@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { AccountsController } from '@/controller/AccountsController';
 import { APIsController } from '@/controller/APIsController';
 import { planckToUnit } from '@polkadot-cloud/utils';

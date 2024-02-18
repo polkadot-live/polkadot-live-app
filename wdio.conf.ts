@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 /// <reference types="wdio-electron-service" />
 
 import type { Options } from '@wdio/types';

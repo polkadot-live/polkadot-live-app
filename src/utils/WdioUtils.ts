@@ -1,3 +1,6 @@
+// Copyright 2023 @paritytech/polkadot-live authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { WindowsController } from '@/controller/WindowsController';
 import { AccountsController } from '@/controller/AccountsController';
 import type { FlattenedAccountData } from '@/types/accounts';
