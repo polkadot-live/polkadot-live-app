@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ComponentBaseWithClassName } from '@app/types';
-import '@polkadot-cloud/core/css/base/inputs/Switch/index.css';
 import { useState, useEffect } from 'react';
 import { Wrapper } from './Wrapper';
 
