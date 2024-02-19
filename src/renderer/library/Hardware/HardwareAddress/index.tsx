@@ -1,5 +1,5 @@
-/* @license Copyright 2024 @polkadot-cloud/library authors & contributors
-SPDX-License-Identifier: GPL-3.0-only */
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
 
 import {
   faCheck,
@@ -12,7 +12,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { ellipsisFn, unescape } from '@polkadot-cloud/utils';
 import { Wrapper } from './Wrapper';
-import { ButtonText } from '../../kits/Buttons/ButtonText';
+import { ButtonText } from '../../../kits/Buttons/ButtonText';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({

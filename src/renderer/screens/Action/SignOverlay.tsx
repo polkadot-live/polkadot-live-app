@@ -13,8 +13,8 @@ import { QRViewerWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
-import { ButtonPrimary } from '@/renderer/library/kits/Buttons/ButtonPrimary';
-import { ButtonSecondary } from '@/renderer/library/kits/Buttons/ButtonSecondary';
+import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
+import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 
 export const SignOverlay = ({ from }: { from: string }) => {
   const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();

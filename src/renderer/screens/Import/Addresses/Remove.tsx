@@ -5,8 +5,8 @@ import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
-import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@/renderer/library/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 export const Remove = ({ address }: { address: string }) => {
   const { removeAddress } = useAddresses();

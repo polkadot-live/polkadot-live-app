@@ -12,7 +12,7 @@ import './theme/theme.scss';
 import './theme/index.scss';
 
 // Library styles.
-import './library/kits/Buttons/index.scss';
+import './kits/Buttons/index.scss';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

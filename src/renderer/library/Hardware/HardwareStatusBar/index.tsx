@@ -1,10 +1,10 @@
-/* @license Copyright 2024 @polkadot-cloud/library authors & contributors
-SPDX-License-Identifier: GPL-3.0-only */
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
 
 import { Wrapper } from './Wrapper';
-import { ButtonHelp } from '../../kits/Buttons/ButtonHelp';
-import { ButtonMonoInvert } from '../../kits/Buttons/ButtonMonoInvert';
-import { ButtonPrimaryInvert } from '../../kits/Buttons/ButtonPrimaryInvert';
+import { ButtonHelp } from '../../../kits/Buttons/ButtonHelp';
+import { ButtonMonoInvert } from '../../../kits/Buttons/ButtonMonoInvert';
+import { ButtonPrimaryInvert } from '../../../kits/Buttons/ButtonPrimaryInvert';
 import type { HardwareStatusBarProps } from './types';
 
 export const HardwareStatusBar = ({

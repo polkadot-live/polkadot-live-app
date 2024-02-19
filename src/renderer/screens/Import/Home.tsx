@@ -15,9 +15,9 @@ import { ContentWrapper } from '@app/screens/Wrappers';
 import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
 import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
 import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
-import { ButtonHelp } from '@/renderer/library/kits/Buttons/ButtonHelp';
-import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
-import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
+import { ButtonHelp } from '@/renderer/kits/Buttons/ButtonHelp';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 
 export const Home = ({
   setSection,
