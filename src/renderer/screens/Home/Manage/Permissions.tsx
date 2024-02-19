@@ -3,7 +3,6 @@
 
 import { faAngleLeft, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Switch } from '@polkadot-cloud/react';
 import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
@@ -18,6 +17,7 @@ import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
 import { useManage } from './provider';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { Switch } from '@app/library/Switch';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
