@@ -11,8 +11,8 @@ import type { EventItemProps } from './types';
 import { useEvents } from '@/renderer/contexts/Events';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@/renderer/library/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 const FADE_TRANSITION = 200;
 

@@ -8,7 +8,7 @@ import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?reac
 import { SplashWrapper } from '../Wrappers';
 import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';
-import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (
   <>

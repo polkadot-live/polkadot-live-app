@@ -6,8 +6,8 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import type { ConfirmProps } from './types';
-import { ButtonMonoInvert } from '@/renderer/library/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@/renderer/library/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {
   const { importAddress } = useAddresses();
