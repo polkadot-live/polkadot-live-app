@@ -2959,14 +2959,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/dot-reporter@npm:^8.31.1":
-  version: 8.31.1
-  resolution: "@wdio/dot-reporter@npm:8.31.1"
+"@wdio/dot-reporter@npm:^8.32.2":
+  version: 8.32.2
+  resolution: "@wdio/dot-reporter@npm:8.32.2"
   dependencies:
-    "@wdio/reporter": "npm:8.31.1"
-    "@wdio/types": "npm:8.31.1"
+    "@wdio/reporter": "npm:8.32.2"
+    "@wdio/types": "npm:8.32.2"
     chalk: "npm:^5.0.1"
-  checksum: 574c6a920255a082b64f3cf117d2391375522028d38b957cf6c8c65140dbee97c79932f6e00b7341263b9fce701fe345f0c141566958bb15c337181babac7b37
+  checksum: c8260fc39d3a2bb81e09dc0492e46492a03770d87aaf2e74084b591a1810587a24f02471220ea4c6dd0b196b5ea042f2687fd1bde30f390eaab0c9fe60807fd3
   languageName: node
   linkType: hard
 
@@ -3087,6 +3087,19 @@ __metadata:
     diff: "npm:^5.0.0"
     object-inspect: "npm:^1.12.0"
   checksum: f362315854393aa053cd7c279e7717b51a1e7c5aceaac4d946cbed691ab2efe243de35676251cbed15bec6c668bc394155cb67ea7889a5954477e96ef4b51661
+  languageName: node
+  linkType: hard
+
+"@wdio/reporter@npm:8.32.2":
+  version: 8.32.2
+  resolution: "@wdio/reporter@npm:8.32.2"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+    "@wdio/logger": "npm:8.28.0"
+    "@wdio/types": "npm:8.32.2"
+    diff: "npm:^5.0.0"
+    object-inspect: "npm:^1.12.0"
+  checksum: 5816b035b9b0a3fba77411921604c56c0cc6d9e780199fca5ca611c293f316bfeffab9a9bb4f4e6b6ea317df81a80e729084026433d0f736d1ec4f2bd5db98dd
   languageName: node
   linkType: hard
 
@@ -9903,7 +9916,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.0.1"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@wdio/cli": "npm:8.32.2"
-    "@wdio/dot-reporter": "npm:^8.31.1"
+    "@wdio/dot-reporter": "npm:^8.32.2"
     "@wdio/globals": "npm:^8.32.2"
     "@wdio/local-runner": "npm:^8.32.2"
     "@wdio/mocha-framework": "npm:^8.31.1"
