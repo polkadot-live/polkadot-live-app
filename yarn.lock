@@ -2959,14 +2959,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/dot-reporter@npm:^8.31.1":
-  version: 8.31.1
-  resolution: "@wdio/dot-reporter@npm:8.31.1"
+"@wdio/dot-reporter@npm:^8.32.2":
+  version: 8.32.2
+  resolution: "@wdio/dot-reporter@npm:8.32.2"
   dependencies:
-    "@wdio/reporter": "npm:8.31.1"
-    "@wdio/types": "npm:8.31.1"
+    "@wdio/reporter": "npm:8.32.2"
+    "@wdio/types": "npm:8.32.2"
     chalk: "npm:^5.0.1"
-  checksum: 574c6a920255a082b64f3cf117d2391375522028d38b957cf6c8c65140dbee97c79932f6e00b7341263b9fce701fe345f0c141566958bb15c337181babac7b37
+  checksum: c8260fc39d3a2bb81e09dc0492e46492a03770d87aaf2e74084b591a1810587a24f02471220ea4c6dd0b196b5ea042f2687fd1bde30f390eaab0c9fe60807fd3
   languageName: node
   linkType: hard
 
@@ -9916,7 +9916,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.0.1"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@wdio/cli": "npm:8.32.2"
-    "@wdio/dot-reporter": "npm:^8.31.1"
+    "@wdio/dot-reporter": "npm:^8.32.2"
     "@wdio/globals": "npm:^8.32.2"
     "@wdio/local-runner": "npm:^8.32.2"
     "@wdio/mocha-framework": "npm:^8.31.1"
