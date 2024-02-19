@@ -1,14 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
-import { store } from '@/main';
-import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
+import { chainTasks as allChainTasks } from '@/config/chainTasks';
+import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import { store } from '@/main';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { Account, ImportedAccounts } from '@/model/Account';
 import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { ChainID } from '@/types/chains';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -22,8 +23,8 @@ import type { AnyJson } from '@polkadot-cloud/react/types';
  * Ex: const serialized = store.get('chain_subscriptions');
  *
  * When subscription tasks are retrieved and deserialised,
- * they can be passed to the appropriate `QueryMultiWrapper`
- * instance, where the API call will be re-built.
+ * they can be passed to the `TaskOrchestrator`, where the API
+ * call will be re-built.
  */
 
 export class SubscriptionsController {
@@ -52,7 +53,7 @@ export class SubscriptionsController {
 
     // Subscribe to tasks.
     for (const task of tasks) {
-      await this.chainSubscriptions.subscribeTask(task);
+      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
     }
   }
 
@@ -61,7 +62,13 @@ export class SubscriptionsController {
    * @summary Subscribe to a chain task received from the renderer.
    */
   static async subscribeChainTask(task: SubscriptionTask) {
-    await this.chainSubscriptions?.subscribeTask(task);
+    if (this.chainSubscriptions) {
+      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    } else {
+      throw new Error(
+        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
+      );
+    }
   }
 
   /**

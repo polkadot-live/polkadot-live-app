@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { QueryMultiWrapper } from './QueryMultiWrapper';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type {
@@ -53,7 +54,11 @@ export class Account {
   }
 
   subscribeToTask = async (task: SubscriptionTask) => {
-    await this._queryMulti?.subscribeTask(task);
+    if (this.queryMulti) {
+      await TaskOrchestrator.subscribeTask(task, this.queryMulti);
+    } else {
+      throw new Error('Error: Account::subscribeToTask QueryMultiWrapper null');
+    }
   };
 
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();

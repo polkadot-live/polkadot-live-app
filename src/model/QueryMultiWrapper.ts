@@ -1,9 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
 import * as ApiUtils from '@/utils/ApiUtils';
-import { WindowsController } from '@/controller/WindowsController';
+import { Callbacks } from '@/callbacks';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -11,55 +10,12 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
-import { compareHashes } from '@/utils/CryptoUtils';
-import { AccountsController } from '@/controller/AccountsController';
-import { planckToUnit } from '@polkadot-cloud/utils';
-import { chainUnits } from '@/config/chains';
-import { EventsController } from '@/controller/EventsController';
 
 export class QueryMultiWrapper {
-  // Cache subscriptions are associated by their chain.
+  /**
+   * API call entries (subscription tasks) are keyed by their chain ID.
+   */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
-
-  private async next(task: SubscriptionTask) {
-    switch (task.action) {
-      case 'subscribe:query.timestamp.now': {
-        console.log('subscribe timestamp now');
-        await QueryMultiWrapper.subscribe_query_timestamp_now(task, this);
-        break;
-      }
-
-      case 'subscribe:query.babe.currentSlot': {
-        console.log('subscribe babe currentSlot');
-        await QueryMultiWrapper.subscribe_query_babe_currentSlot(task, this);
-        break;
-      }
-
-      case 'subscribe:query.system.account': {
-        console.log('subscribe account balance');
-        await QueryMultiWrapper.subscribe_query_system_account(task, this);
-        break;
-      }
-
-      case 'subscribe:nominationPools:query.system.account': {
-        console.log('subscribe nomination pool account balance');
-        await QueryMultiWrapper.subscribe_nomination_pool_reward_account(
-          task,
-          this
-        );
-        break;
-      }
-
-      default: {
-        throw new Error('Subscription action not found');
-      }
-    }
-  }
-
-  // Wrapper around calling subject's next method.
-  async subscribeTask(task: SubscriptionTask) {
-    await this.next(task);
-  }
 
   /**
    * @name requiresApiInstanceForChain
@@ -70,10 +26,11 @@ export class QueryMultiWrapper {
     return this.subscriptions.has(chainId);
   }
 
-  /*-------------------------------------------------- 
-   Accessors
-   --------------------------------------------------*/
-
+  /**
+   * @name getSubscriptionTasks
+   * @summary Returns the subscription tasks managed by this wrapper.
+   * @returns {SubscriptionTask[]}
+   */
   getSubscriptionTasks() {
     const result: SubscriptionTask[] = [];
 
@@ -86,16 +43,89 @@ export class QueryMultiWrapper {
     return result;
   }
 
-  /*-------------------------------------------------- 
-   Helpers
-   --------------------------------------------------*/
+  /**
+   * @name setChainTaskVal
+   * @summary Cache a new value for a specific API call entry (subscription task).
+   */
+  setChainTaskVal(entry: ApiCallEntry, newVal: AnyData, chainId: ChainID) {
+    const retrieved = this.subscriptions.get(chainId);
 
-  // --------------------------------------------------
-  // build
-  // --------------------------------------------------
+    if (retrieved) {
+      const newEntries = retrieved.callEntries.map((e) =>
+        e.task.action === entry.task.action ? { ...e, curVal: newVal } : e
+      );
 
-  // Dynamically re-call queryMulti based on the query multi map.
-  private async build(chainId: ChainID) {
+      this.subscriptions.set(chainId, {
+        unsub: retrieved.unsub,
+        callEntries: newEntries,
+      });
+    }
+  }
+
+  /**
+   * @name getChainTaskCurrentVal
+   * @summary Get the cached value for a specific API call entry (subscription task).
+   */
+  getChainTaskCurrentVal(action: string, chainId: ChainID) {
+    const entry = this.subscriptions.get(chainId);
+    if (entry) {
+      for (const { task: t, curVal } of entry.callEntries) {
+        if (t.action === action) {
+          return curVal;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @name handleCallback
+   * @summary Main logic to handle entries (subscription tasks).
+   */
+  private async handleCallback(
+    index: number,
+    entry: ApiCallEntry,
+    dataArr: AnyData,
+    chainId: ChainID
+  ) {
+    const { action } = entry.task;
+
+    switch (chainId) {
+      case 'Polkadot':
+      case 'Westend':
+      case 'Kusama': {
+        switch (action) {
+          case 'subscribe:query.timestamp.now': {
+            Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
+            break;
+          }
+          case 'subscribe:query.babe.currentSlot': {
+            Callbacks.callback_query_babe_currentSlot(
+              dataArr[index],
+              entry,
+              this
+            );
+            break;
+          }
+          case 'subscribe:query.system.account': {
+            Callbacks.callback_query_system_account(dataArr[index], entry);
+            break;
+          }
+          case 'subscribe:nominationPools:query.system.account': {
+            await Callbacks.callback_nomination_pool_reward_account(entry);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * @name build
+   * @summary Dynamically build the query multi argument, and make the actual API call.
+   * @param {ChainID} chainId - The target chain to subscribe to.
+   */
+  async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
       console.log('>> QueryMultiWrapper: queryMulti map is empty.');
       return;
@@ -110,169 +140,16 @@ export class QueryMultiWrapper {
     const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
 
+    // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
       finalArg,
+      // The queryMulti callback.
       async (data: AnyData) => {
-        /*--------------------------------
-         The Chain's queryMulti Callback
-         -------------------------------*/
-
         // Work out task to handle
         const { callEntries } = this.subscriptions.get(chainId)!;
 
         for (const [index, entry] of callEntries.entries()) {
-          const { action } = entry.task;
-
-          switch (action) {
-            /// Get the timestamp of the target chain and render it as
-            /// a notification on the frontend.
-            case 'subscribe:query.timestamp.now': {
-              const newVal = new BigNumber(data[index]);
-              const curVal = new BigNumber(
-                this.getChainTaskCurrentVal(action, chainId)
-              );
-
-              // If the difference of newVal - curVal is lte
-              // to this buffer, skip event processing.
-              // Prevents "double" timestamps being rendered.
-              const timeBuffer = 20;
-
-              if (
-                !data[index] ||
-                compareHashes(newVal, curVal) ||
-                newVal.minus(curVal).lte(timeBuffer)
-              ) {
-                break;
-              }
-
-              // Cache new value.
-              this.setChainTaskVal(entry, newVal, chainId);
-
-              // Debugging.
-              const now = new Date(data[index] * 1000).toDateString();
-              console.log(`Now: ${now} | ${data[index]} (index: ${index})`);
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, String(newVal))
-              );
-
-              break;
-            }
-
-            /// Get the current slot of the target chain and render it as
-            /// a notification on the frontend.
-            case 'subscribe:query.babe.currentSlot': {
-              const newVal = new BigNumber(data[index]);
-              const curVal = this.getChainTaskCurrentVal(action, chainId);
-
-              if (!data[index] || compareHashes(newVal, curVal)) {
-                break;
-              }
-
-              // Cache new value.
-              this.setChainTaskVal(entry, newVal, chainId);
-
-              // Debugging.
-              console.log(`Current Sot: ${newVal} (index: ${index})`);
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, String(newVal))
-              );
-
-              break;
-            }
-
-            /// Get the balance of the task target account on the target chain.
-            /// Returns the balance's nonce, free and reserved values.
-            case 'subscribe:query.system.account': {
-              const free = new BigNumber(data[index].data.free);
-              const reserved = new BigNumber(data[index].data.reserved);
-              const nonce = new BigNumber(data[index].nonce);
-
-              // Debugging.
-              console.log(
-                `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
-              );
-
-              // Construct and send event to renderer.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, {
-                  nonce,
-                  free,
-                  reserved,
-                })
-              );
-
-              break;
-            }
-
-            /// When a nomination pool free balance changes, check that the subscribed account's
-            /// pending rewards has changed. If pending rewards have changed, send a notification
-            /// to inform the user.
-            case 'subscribe:nominationPools:query.system.account': {
-              const flattenedAccount = entry.task.account;
-
-              if (!flattenedAccount) {
-                console.log('> Error getting flattened account data');
-                break;
-              }
-
-              // Get account instance from controller.
-              const account = AccountsController.get(
-                chainId,
-                flattenedAccount.address
-              );
-
-              // Fetch API instance.
-              const { api } = await ApiUtils.getApiInstance(chainId);
-
-              // Return if nomination pool data for account not found.
-              if (!account?.nominationPoolData) {
-                break;
-              }
-
-              // Get pool ID and reward address.
-              const { poolPendingRewards } = account.nominationPoolData;
-
-              // Get pending rewards for the account.
-              const pendingRewardsResult =
-                await api.call.nominationPoolsApi.pendingRewards(
-                  account.address
-                );
-
-              const fetchedPendingRewards = planckToUnit(
-                new BigNumber(pendingRewardsResult.toString()),
-                chainUnits(chainId)
-              );
-
-              // Return if pending rewards has not changed for the account.
-              if (fetchedPendingRewards.eq(poolPendingRewards)) {
-                break;
-              }
-
-              // Add nomination pool data to account.
-              account.nominationPoolData = {
-                ...account.nominationPoolData,
-                poolPendingRewards: fetchedPendingRewards,
-              };
-
-              // Update account data in controller.
-              AccountsController.set(chainId, account);
-
-              // Construct and send event to renderer to display new reward balance.
-              WindowsController.get('menu')?.webContents?.send(
-                'renderer:event:new',
-                EventsController.getEvent(entry, {})
-              );
-
-              break;
-            }
-          }
+          await this.handleCallback(index, entry, data, chainId);
         }
       }
     );
@@ -281,19 +158,20 @@ export class QueryMultiWrapper {
     this.replaceUnsub(chainId, unsub);
   }
 
-  // --------------------------------------------------
-  // insert
-  // --------------------------------------------------
-
-  // Insert a polkadot api function into queryMulti.
-  private insert(task: SubscriptionTask, apiCall: AnyFunction) {
-    // Return if api call already exists.
+  /**
+   * @name insert
+   * @summary Add an `ApiCallEntry` to be managed by this wrapper.
+   * @param {SubscriptionTask} task - Subscription task associated with entry.
+   * @param {AnyFunction} apiCall - API function call pointer associated with entry.
+   */
+  insert(task: SubscriptionTask, apiCall: AnyFunction) {
+    // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
       console.log('>> QueryMultiWrapper: Action already exists.');
       return;
     }
 
-    // Construct new ApiCallEntry.
+    // Construct new `ApiCallEntry`.
     const newEntry: ApiCallEntry = {
       apiCall,
       curVal: null,
@@ -342,12 +220,13 @@ export class QueryMultiWrapper {
     }
   }
 
-  // --------------------------------------------------
-  // remove
-  // --------------------------------------------------
-
-  // Unsubscribe from query multi if chain has no more entries.
-  private remove(chainId: ChainID, action: string) {
+  /**
+   * @name remove
+   * @summary Unsubscribe from query multi and remove a subscription task.
+   * @param chainId - Target chain to remove subscription task from.
+   * @param action - The subscription task to remove's action string.
+   */
+  remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
       console.log(">> API call doesn't exist.");
     } else {
@@ -372,49 +251,14 @@ export class QueryMultiWrapper {
     }
   }
 
-  // --------------------------------------------------
-  // Util: setChainTaskVal
-  // --------------------------------------------------
+  /**
+   * Utils
+   */
 
-  private setChainTaskVal(
-    entry: ApiCallEntry,
-    newVal: AnyData,
-    chainId: ChainID
-  ) {
-    const retrieved = this.subscriptions.get(chainId);
-
-    if (retrieved) {
-      const newEntries = retrieved.callEntries.map((e) =>
-        e.task.action === entry.task.action ? { ...e, curVal: newVal } : e
-      );
-
-      this.subscriptions.set(chainId, {
-        unsub: retrieved.unsub,
-        callEntries: newEntries,
-      });
-    }
-  }
-
-  // --------------------------------------------------
-  // Util: getChainTaskCurrentVal
-  // --------------------------------------------------
-
-  private getChainTaskCurrentVal(action: string, chainId: ChainID) {
-    const entry = this.subscriptions.get(chainId);
-    if (entry) {
-      for (const { task: t, curVal } of entry.callEntries) {
-        if (t.action === action) {
-          return curVal;
-        }
-      }
-    }
-    return null;
-  }
-
-  // --------------------------------------------------
-  // Util: replaceUnsub
-  // --------------------------------------------------
-
+  /**
+   * @name replaceUnsub
+   * @summary Replace the `unsub` function for a target chain's query multi call.
+   */
   private replaceUnsub(chainId: ChainID, newUnsub: AnyFunction) {
     const entry = this.subscriptions.get(chainId)!;
 
@@ -429,10 +273,10 @@ export class QueryMultiWrapper {
     });
   }
 
-  // --------------------------------------------------
-  // Util: buildQueryMultiArg
-  // --------------------------------------------------
-
+  /**
+   * @name buildQueryMultiArg
+   * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
+   */
   private buildQueryMultiArg(chainId: ChainID) {
     const argument: AnyData = [];
 
@@ -453,130 +297,13 @@ export class QueryMultiWrapper {
     return argument;
   }
 
-  // --------------------------------------------------
-  // Util: actionExists
-  // --------------------------------------------------
-
-  // Check if a chain is already subscribed to an action.
+  /**
+   * @name actionExists
+   * @summary Check if a chain is already subscribed to an action.
+   */
   private actionExists(chainId: ChainID, action: string) {
     const entry = this.subscriptions.get(chainId);
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
-  }
-
-  // --------------------------------------------------
-  // Util: handleTask
-  // --------------------------------------------------
-
-  private async handleTask(task: SubscriptionTask, apiCall: AnyFunction) {
-    switch (task.status) {
-      // Add this action to the chain's subscriptions.
-      case 'enable': {
-        this.insert(task, apiCall);
-        await this.build(task.chainId);
-        break;
-      }
-      // Remove this action from the chain's subscriptions.
-      case 'disable': {
-        this.remove(task.chainId, task.action);
-        await this.build(task.chainId);
-        break;
-      }
-    }
-  }
-
-  /*-------------------------------------------------- 
-   Handlers
-   --------------------------------------------------*/
-
-  // api.query.timestamp.now
-  private static async subscribe_query_timestamp_now(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.timestamp.now);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.babe.currentSlot
-  private static async subscribe_query_babe_currentSlot(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.babe.currentSlot);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.system.account
-  private static async subscribe_query_system_account(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.system.account);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
-  }
-
-  // api.query.system.account (nomination pool reward address)
-  private static async subscribe_nomination_pool_reward_account(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    switch (task.chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        try {
-          // Exit early if the account in question has not joined a nomination pool.
-          if (!task.account?.nominationPoolData) {
-            console.log('>> Account has not joined a nomination tool.');
-            return;
-          }
-
-          // Otherwise rebuild query.
-          console.log('>> QueryMultiWrapper: Rebuild queryMulti');
-          const instance = await ApiUtils.getApiInstance(task.chainId);
-          await wrapper.handleTask(task, instance.api.query.system.account);
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      }
-    }
   }
 }

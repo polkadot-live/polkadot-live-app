@@ -5,7 +5,7 @@ import type { ChainID, ChainStatus } from './chains';
 import type { AnyData } from './misc';
 import type { AccountSource } from './accounts';
 
-export interface OrchestratorArg {
+export interface AppOrchestratorArg {
   task: string;
   data?: AnyData;
 }
