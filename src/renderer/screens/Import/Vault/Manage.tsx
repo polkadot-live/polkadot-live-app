@@ -12,7 +12,7 @@ import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvaul
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';
-import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 
 export const Manage = ({

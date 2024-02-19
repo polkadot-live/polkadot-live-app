@@ -17,7 +17,7 @@ import {
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
 import { useManage } from './provider';
-import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();

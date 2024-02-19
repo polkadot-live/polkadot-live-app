@@ -10,7 +10,7 @@ import { DragClose } from '../../../library/DragClose';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
-import { ButtonText } from '@/renderer/library/kits/Buttons/ButtonText';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 
 export const Manage = ({
