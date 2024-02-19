@@ -1,4 +1,4 @@
-// @license Copyright 2024 @polkadot-cloud/library authors & contributors
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
