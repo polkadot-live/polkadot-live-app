@@ -9861,6 +9861,7 @@ __metadata:
     "@polkadot/types": "npm:^10.11.2"
     "@polkadot/types-codec": "npm:^10.11.2"
     "@polkadot/util": "npm:^12.6.2"
+    "@polkadot/util-crypto": "npm:^12.6.2"
     "@substrate/connect": "npm:^0.8.5"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"

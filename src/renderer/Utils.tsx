@@ -4,8 +4,50 @@
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
+import { checkAddress } from '@polkadot/util-crypto';
 import type { ChainID } from '@/types/chains';
 
+const networks = [
+  { prefix: 0, chainId: 'Polkadot' as ChainID },
+  { prefix: 42, chainId: 'Westend' as ChainID },
+  { prefix: 2, chainId: 'Kusama' as ChainID },
+];
+
+// Return an address' chain ID.
+export const getChainId = (address: string): ChainID => {
+  for (const { prefix, chainId } of networks) {
+    const result = checkAddress(address, prefix);
+
+    if (result !== null) {
+      const [isValid] = result;
+
+      if (isValid) {
+        return chainId;
+      }
+    }
+  }
+
+  throw new Error('Imported address not recognized.');
+};
+
+// Verify that an address is encoded to one of the supported networks.
+export const checkValidAddress = (address: string): boolean => {
+  for (const { prefix } of networks) {
+    const result = checkAddress(address, prefix);
+
+    if (result !== null) {
+      const [isValid] = result;
+
+      if (isValid) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+// Return the correct network icon based on chain ID.
 export const getIcon = (chainId: ChainID, iconClass: string) => {
   switch (chainId) {
     case 'Polkadot':

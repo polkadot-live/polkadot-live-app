@@ -7,6 +7,7 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { getChainId } from '@/renderer/Utils';
 
 export const Remove = ({ address }: { address: string }) => {
   const { removeAddress } = useAddresses();
@@ -27,7 +28,7 @@ export const Remove = ({ address }: { address: string }) => {
         <ButtonMono
           text="Remove Account"
           onClick={() => {
-            removeAddress('Polkadot', address);
+            removeAddress(getChainId(address), address);
             setStatus(0);
           }}
         />

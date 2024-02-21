@@ -43,7 +43,7 @@ export const AddressesProvider = ({
     return false;
   };
 
-  // Saves a Ledger address as an imported address.
+  // Saves received address as an imported address.
   const importAddress = (
     chain: ChainID,
     source: AccountSource,
@@ -53,7 +53,7 @@ export const AddressesProvider = ({
     window.myAPI.newAddressImported(chain, source, address, name);
   };
 
-  // Removes a Ledger address as an imported address.
+  // Removes an imported address.
   const removeAddress = (chain: ChainID, address: string) => {
     window.myAPI.removeImportedAccount(chain, address);
   };
@@ -90,7 +90,10 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
-  // formats an address into the currently active network's ss58 format.
+  /**
+   * @summary Formats an address into the currently active network's ss58 format.
+   * @deprecated Keyring no longer used in favour of @polkadot/util-crypto functions.
+   */
   const formatAccountSs58 = (address: string, format: number) => {
     try {
       const keyring = new Keyring();
