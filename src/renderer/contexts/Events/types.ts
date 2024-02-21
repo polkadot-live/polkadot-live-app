@@ -1,7 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson, DismissEvent, EventCallback } from '@/types';
+import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { ChainID } from '@/types/chains';
 
 export interface EventsContextInterface {

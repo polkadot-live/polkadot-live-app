@@ -55,7 +55,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       (e) => stringifyExistentialData(e) === stringifyExistentialData(event)
     );
 
-    let networkEvents = eventsRef.current[chain];
+    let networkEvents: EventCallback[] = eventsRef.current[chain];
 
     // If exists but the data has changed, remove the current notification. Otherwise, return and do
     // nothing.
