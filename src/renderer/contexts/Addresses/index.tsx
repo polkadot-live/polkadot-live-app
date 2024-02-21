@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import Keyring from '@polkadot/keyring';
 import { setStateWithRef } from '@polkadot-cloud/utils';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
@@ -90,24 +89,6 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
-  /**
-   * @summary Formats an address into the currently active network's ss58 format.
-   * @deprecated Keyring no longer used in favour of @polkadot/util-crypto functions.
-   */
-  const formatAccountSs58 = (address: string, format: number) => {
-    try {
-      const keyring = new Keyring();
-      keyring.setSS58Format(format);
-      const formatted = keyring.addFromAddress(address).address;
-      if (formatted !== address) {
-        return formatted;
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  };
-
   return (
     <AddressesContext.Provider
       value={{
@@ -118,7 +99,6 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
-        formatAccountSs58,
       }}
     >
       {children}

@@ -12,5 +12,4 @@ export const defaultAddressesContext: AddressesContextInterface = {
   importAddress: (n, a) => {},
   removeAddress: (n, a) => {},
   getAddress: (a) => null,
-  formatAccountSs58: (a, f) => null,
 };

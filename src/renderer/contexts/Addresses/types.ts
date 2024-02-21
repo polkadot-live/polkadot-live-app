@@ -16,5 +16,4 @@ export interface AddressesContextInterface {
   importAddress: (n: ChainID, s: AccountSource, a: string, b: string) => void;
   removeAddress: (n: ChainID, a: string) => void;
   getAddress: (a: string) => FlattenedAccountData | null;
-  formatAccountSs58: (a: string, f: number) => string | null;
 }

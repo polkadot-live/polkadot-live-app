@@ -85,7 +85,6 @@
     "@polkadot-cloud/react": "^0.5.3",
     "@polkadot-cloud/utils": "^0.3.0",
     "@polkadot/api": "^10.11.2",
-    "@polkadot/keyring": "^12.6.2",
     "@polkadot/rpc-provider": "^10.11.2",
     "@polkadot/types": "^10.11.2",
     "@polkadot/types-codec": "^10.11.2",
