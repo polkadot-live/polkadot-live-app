@@ -7,7 +7,7 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { getChainId } from '@/renderer/Utils';
+import { getAddressChainId } from '@/renderer/Utils';
 import type { ConfirmProps } from './types';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {
@@ -32,7 +32,7 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
         <ButtonMono
           text="Import Account"
           onClick={() => {
-            importAddress(getChainId(address), source, address, name);
+            importAddress(getAddressChainId(address), source, address, name);
             setStatus(0);
           }}
         />

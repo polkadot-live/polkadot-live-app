@@ -14,7 +14,7 @@ const networks = [
 ];
 
 // Return an address' chain ID.
-export const getChainId = (address: string): ChainID => {
+export const getAddressChainId = (address: string): ChainID => {
   for (const { prefix, chainId } of networks) {
     const result = checkAddress(address, prefix);
 
