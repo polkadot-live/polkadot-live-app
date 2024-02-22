@@ -5,17 +5,12 @@ import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 import { checkAddress } from '@polkadot/util-crypto';
+import { ChainList } from '@/config/chains';
 import type { ChainID } from '@/types/chains';
-
-const networks = [
-  { prefix: 0, chainId: 'Polkadot' as ChainID },
-  { prefix: 42, chainId: 'Westend' as ChainID },
-  { prefix: 2, chainId: 'Kusama' as ChainID },
-];
 
 // Return an address' chain ID.
 export const getAddressChainId = (address: string): ChainID => {
-  for (const { prefix, chainId } of networks) {
+  for (const [chainId, { prefix }] of ChainList.entries()) {
     const result = checkAddress(address, prefix);
 
     if (result !== null) {
@@ -32,7 +27,7 @@ export const getAddressChainId = (address: string): ChainID => {
 
 // Verify that an address is encoded to one of the supported networks.
 export const checkValidAddress = (address: string): boolean => {
-  for (const { prefix } of networks) {
+  for (const { prefix } of ChainList.values()) {
     const result = checkAddress(address, prefix);
 
     if (result !== null) {

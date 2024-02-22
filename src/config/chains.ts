@@ -26,6 +26,7 @@ interface Chain {
   };
   units: number;
   unit: string;
+  prefix: number;
   categories: AnyData;
 }
 
@@ -43,6 +44,7 @@ export const ChainList = new Map<ChainID, Chain>([
       },
       units: 10,
       unit: 'DOT',
+      prefix: 0,
       categories: {
         nominationPools: {
           name: 'Nomination Pools',
@@ -76,6 +78,7 @@ export const ChainList = new Map<ChainID, Chain>([
       },
       units: 12,
       unit: 'WND',
+      prefix: 42,
       categories: {
         nominationPools: {
           name: 'Nomination Pools',
@@ -109,6 +112,7 @@ export const ChainList = new Map<ChainID, Chain>([
       },
       units: 12,
       unit: 'KSM',
+      prefix: 2,
       categories: {
         nominationPools: {
           name: 'Nomination Pools',
