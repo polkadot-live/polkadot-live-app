@@ -102,7 +102,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
           <HeadingWrapper>
             <h5 style={{ marginBottom: '0.5rem' }}>
               <PolkadotIcon className="icon" />
-              Polkadot Accounts
+              Accounts
             </h5>
           </HeadingWrapper>
           <div style={{ padding: '0 0.75rem' }}>

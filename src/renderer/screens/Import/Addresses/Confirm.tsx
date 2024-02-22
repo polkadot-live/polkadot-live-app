@@ -5,9 +5,10 @@ import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
-import type { ConfirmProps } from './types';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { getAddressChainId } from '@/renderer/Utils';
+import type { ConfirmProps } from './types';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {
   const { importAddress } = useAddresses();
@@ -31,7 +32,7 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
         <ButtonMono
           text="Import Account"
           onClick={() => {
-            importAddress('Polkadot', source, address, name);
+            importAddress(getAddressChainId(address), source, address, name);
             setStatus(0);
           }}
         />

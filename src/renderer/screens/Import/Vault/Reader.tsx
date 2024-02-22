@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { isValidAddress } from '@polkadot-cloud/utils';
 import type { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
@@ -9,9 +8,10 @@ import { useEffect, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
+import { checkValidAddress } from '@/renderer/Utils';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
-  const { formatAccountSs58, addressExists } = useAddresses();
+  const { addressExists } = useAddresses();
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Store data from QR Code scanner.
@@ -42,10 +42,7 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
   // Check if QR data has valid address.
-  const valid =
-    isValidAddress(qrData || '') &&
-    !addressExists(qrData || '') &&
-    !formatAccountSs58(qrData || '', 0);
+  const valid = checkValidAddress(qrData || '') && !addressExists(qrData || '');
 
   // Reset QR data on open.
   useEffect(() => {
@@ -54,17 +51,16 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
 
   // Update QR feedback on QR data change.
   useEffect(() => {
-    setFeedback(
+    const newFeedback =
       qrData === undefined
         ? 'Waiting for QR Code'
-        : isValidAddress(qrData)
-          ? formatAccountSs58(qrData, 0)
-            ? 'Different Network Address'
-            : addressExists(qrData)
-              ? 'Account Already Added'
-              : 'Address Received:'
-          : 'Invalid Address'
-    );
+        : checkValidAddress(qrData)
+          ? addressExists(qrData)
+            ? 'Account Already Added'
+            : 'Address Received:'
+          : 'Invalid Address';
+
+    setFeedback(newFeedback);
 
     if (valid) {
       handleVaultImport();
