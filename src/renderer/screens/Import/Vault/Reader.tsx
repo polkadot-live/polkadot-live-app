@@ -2,81 +2,92 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@/types/misc';
-import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
+import type { VaultAccount } from '@polkadot-cloud/react/types';
 import { checkValidAddress } from '@/renderer/Utils';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
-  const { addressExists } = useAddresses();
   const { setStatus: setOverlayStatus } = useOverlay();
 
-  // Store data from QR Code scanner.
-  const [qrData, setQrData] = useState<string | undefined>(undefined);
+  // Check whether initial render.
+  const initialRender = useRef<boolean>(true);
+  const isInitialRender = initialRender.current;
+  initialRender.current = false;
 
   // Store QR data feedback.
   const [feedback, setFeedback] = useState<string>('');
 
-  // Gets the address from received QR data, or an empty string.
-  const handleQrData = (signature: string) => {
-    setQrData(signature.split(':')?.[1] || '');
-  };
+  // Successful import
+  const [imported, setImported] = useState<boolean>(false);
 
-  // Handle new vault address to local storage.
-  const handleVaultImport = () => {
-    const newAddresses = addresses
-      .filter((a: AnyJson) => a.address !== qrData)
-      .concat({
-        index: getNextAddressIndex(),
-        address: qrData,
-      });
-    localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
-    setAddresses(newAddresses);
-  };
-
-  // Gets the next non-imported address index.
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
-
-  // Check if QR data has valid address.
-  const valid = checkValidAddress(qrData || '') && !addressExists(qrData || '');
-
-  // Reset QR data on open.
-  useEffect(() => {
-    setQrData(undefined);
-  }, []);
+  const vaultAddressExists = (address: string) =>
+    addresses.find((a: VaultAccount) => a.address === address);
 
   // Update QR feedback on QR data change.
-  useEffect(() => {
+  const handleQrData = (signature: string) => {
+    if (imported) {
+      return;
+    }
+
+    const maybeAddress = signature.split(':')?.[1];
+
     const newFeedback =
-      qrData === undefined
+      maybeAddress === undefined
         ? 'Waiting for QR Code'
-        : checkValidAddress(qrData)
-          ? addressExists(qrData)
+        : checkValidAddress(maybeAddress)
+          ? vaultAddressExists(maybeAddress)
             ? 'Account Already Added'
             : 'Address Received:'
           : 'Invalid Address';
 
     setFeedback(newFeedback);
 
+    // Check if QR data has valid address.
+    const valid =
+      checkValidAddress(maybeAddress || '') &&
+      !vaultAddressExists(maybeAddress || '');
+
     if (valid) {
-      handleVaultImport();
+      handleVaultImport(maybeAddress);
+    }
+  };
+
+  // Handle new vault address to local storage.
+  const handleVaultImport = (address: string) => {
+    const newAddresses = addresses
+      .filter((a: AnyJson) => a.address !== address)
+      .concat({
+        index: getNextAddressIndex(),
+        address,
+      });
+    localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
+    setAddresses(newAddresses);
+    setImported(true);
+  };
+
+  // Gets the next non-imported address index.
+  const getNextAddressIndex = () =>
+    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
+
+  // Close the overlay when import is successful, ignoring initial render state.
+  useEffect(() => {
+    if (!isInitialRender && imported) {
       setOverlayStatus(0);
     }
-  }, [qrData]);
+  }, [imported]);
+
+  const onScan = useCallback(({ signature }: { signature: `0x${string}` }) => {
+    handleQrData(signature);
+  }, []);
 
   return (
     <QRVieweraWrapper>
       <div className="viewer">
-        <QrScanSignature
-          size={279}
-          onScan={({ signature }) => {
-            handleQrData(signature);
-          }}
-        />
+        <QrScanSignature size={279} onScan={onScan} />
       </div>
       <div className="foot">
         <h4>{feedback}</h4>

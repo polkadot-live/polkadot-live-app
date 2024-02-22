@@ -34,20 +34,11 @@ const QrScanInner = ({
     [onError]
   );
 
-  const onScanCallback = useCallback(
-    (data: string | null): void => {
-      if (data) {
-        onScan(data);
-      }
-    },
-    [onScan]
-  );
-
   return (
     <ScanWrapper className={className} style={containerStyle}>
       <Html5QrCodePlugin
         fps={10}
-        qrCodeSuccessCallback={onScanCallback}
+        qrCodeSuccessCallback={onScan}
         qrCodeErrorCallback={onErrorCallback}
       />
     </ScanWrapper>

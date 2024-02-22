@@ -44,7 +44,7 @@ export interface ScanProps {
   className?: string | undefined;
   delay?: number;
   onError?: undefined | ((error: Error) => void);
-  onScan: (data: string) => void;
+  onScan: (data: string | null) => void;
   size?: string | number | undefined;
   style?: React.CSSProperties | undefined;
 }
