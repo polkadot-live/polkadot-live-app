@@ -403,17 +403,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-rpm@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/maker-rpm@npm:7.2.0"
+"@electron-forge/maker-rpm@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/maker-rpm@npm:7.3.0"
   dependencies:
-    "@electron-forge/maker-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
+    "@electron-forge/maker-base": "npm:7.3.0"
+    "@electron-forge/shared-types": "npm:7.3.0"
     electron-installer-redhat: "npm:^3.2.0"
   dependenciesMeta:
     electron-installer-redhat:
       optional: true
-  checksum: 7a88fa763dbfeb4e6d1f6882cd288949dc101a8da8e9253dba437a328e39120b4b4267bad3062eb70211475550b901e9e2af7c2071e1cdea49d59de4176e6f2b
+  checksum: 5efd7cc15ed229ad99f933b2e5fe2828ce63787d7a1116f5256bad6b24d6fb8685d6e8d0bf69af9b672c4c63141158af194bef0bed22817c5b34a2d64d9ed795
   languageName: node
   linkType: hard
 
@@ -9876,7 +9876,7 @@ __metadata:
   dependencies:
     "@electron-forge/cli": "npm:^7.2.0"
     "@electron-forge/maker-deb": "npm:^7.2.0"
-    "@electron-forge/maker-rpm": "npm:^7.2.0"
+    "@electron-forge/maker-rpm": "npm:^7.3.0"
     "@electron-forge/maker-squirrel": "npm:^7.2.0"
     "@electron-forge/maker-zip": "npm:^7.3.0"
     "@electron-forge/plugin-auto-unpack-natives": "npm:^7.2.0"
