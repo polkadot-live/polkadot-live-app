@@ -50,22 +50,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       who: { chain },
     } = event;
 
-    // Check if this notification already exists.
-    const existing = eventsRef.current[chain]?.find(
-      (e) => stringifyExistentialData(e) === stringifyExistentialData(event)
-    );
-
     let networkEvents: EventCallback[] = eventsRef.current[chain];
-
-    // If exists but the data has changed, remove the current notification. Otherwise, return and do
-    // nothing.
-    if (existing) {
-      if (existingEventUpdated(existing, event)) {
-        networkEvents = networkEvents?.filter((e) => e.uid !== existing.uid);
-      } else {
-        return;
-      }
-    }
 
     // Add the event.
     if (networkEvents) {
@@ -111,16 +96,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }));
     return sortedEvents;
   };
-
-  // Stringifies the data of an event which determines if it already exists in event state.
-  const stringifyExistentialData = ({ uid, who }: EventCallback) =>
-    JSON.stringify({ uid, who });
-
-  // Checks whether the stringified data of an event has been updated from a currently stored one.
-  const existingEventUpdated = (
-    current: EventCallback,
-    incoming: EventCallback
-  ) => JSON.stringify(current.data) === JSON.stringify(incoming.data);
 
   return (
     <EventsContext.Provider

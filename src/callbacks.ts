@@ -7,11 +7,12 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from './config/chains';
 import { compareHashes } from './utils/CryptoUtils';
 import { EventsController } from './controller/EventsController';
-import { planckToUnit } from '@polkadot-cloud/utils';
+import { ellipsisFn, planckToUnit } from '@polkadot-cloud/utils';
 import { WindowsController } from './controller/WindowsController';
 import type { ApiCallEntry } from './types/subscriptions';
 import type { AnyData } from './types/misc';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
+import { NotificationsController } from './controller/NotificationsController';
 
 export class Callbacks {
   /**
@@ -113,6 +114,10 @@ export class Callbacks {
         reserved,
       })
     );
+
+    // TMP: Show native OS notification.
+    const addressName = ellipsisFn(entry.task.account!.address);
+    NotificationsController.balanceChanged(addressName, free);
   }
 
   /**
