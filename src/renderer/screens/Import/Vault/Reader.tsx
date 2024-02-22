@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@/types/misc';
-import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
@@ -12,7 +11,6 @@ import type { VaultAccount } from '@polkadot-cloud/react/types';
 import { checkValidAddress } from '@/renderer/Utils';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
-  const { addressExists } = useAddresses();
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Check whether initial render.
@@ -36,12 +34,12 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
     }
 
     const maybeAddress = signature.split(':')?.[1];
-    
+
     const newFeedback =
       maybeAddress === undefined
         ? 'Waiting for QR Code'
         : checkValidAddress(maybeAddress)
-          ? addressExists(maybeAddress)
+          ? vaultAddressExists(maybeAddress)
             ? 'Account Already Added'
             : 'Address Received:'
           : 'Invalid Address';
@@ -49,7 +47,9 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
     setFeedback(newFeedback);
 
     // Check if QR data has valid address.
-    const valid = checkValidAddress(maybeAddress || '') && !addressExists(maybeAddress || '');
+    const valid =
+      checkValidAddress(maybeAddress || '') &&
+      !vaultAddressExists(maybeAddress || '');
 
     if (valid) {
       handleVaultImport(maybeAddress);
