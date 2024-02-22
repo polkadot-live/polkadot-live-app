@@ -90,7 +90,7 @@
     "@polkadot/types-codec": "^10.11.2",
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
-    "@substrate/connect": "^0.8.5",
+    "@substrate/connect": "^0.8.6",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "@zondax/ledger-substrate": "^0.41.1",
     "auto-launch": "^5.0.6",
