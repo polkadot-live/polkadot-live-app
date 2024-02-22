@@ -389,17 +389,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-deb@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/maker-deb@npm:7.2.0"
+"@electron-forge/maker-deb@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/maker-deb@npm:7.3.0"
   dependencies:
-    "@electron-forge/maker-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
+    "@electron-forge/maker-base": "npm:7.3.0"
+    "@electron-forge/shared-types": "npm:7.3.0"
     electron-installer-debian: "npm:^3.2.0"
   dependenciesMeta:
     electron-installer-debian:
       optional: true
-  checksum: b7a84ac4807356da5f397180f3cc01c721dba2af040e626a2d4ee21cde632ca3fa0c028d08beba918ae13d6e5f40287d003ab50bfb728d214b021c20bd5053a6
+  checksum: f74b65de403d0287f50c16d95f19f9935ca9a8c79c6289a99a438e986241b42a78379421531604c5aa61f08881e97270088f4d3731f8399e7cc9bbe3c4b76119
   languageName: node
   linkType: hard
 
@@ -9884,7 +9884,7 @@ __metadata:
   resolution: "polkadot-live-vite@workspace:."
   dependencies:
     "@electron-forge/cli": "npm:^7.2.0"
-    "@electron-forge/maker-deb": "npm:^7.2.0"
+    "@electron-forge/maker-deb": "npm:^7.3.0"
     "@electron-forge/maker-rpm": "npm:^7.3.0"
     "@electron-forge/maker-squirrel": "npm:^7.3.0"
     "@electron-forge/maker-zip": "npm:^7.3.0"
