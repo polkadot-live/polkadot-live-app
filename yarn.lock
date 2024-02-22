@@ -417,18 +417,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-squirrel@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/maker-squirrel@npm:7.2.0"
+"@electron-forge/maker-squirrel@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/maker-squirrel@npm:7.3.0"
   dependencies:
-    "@electron-forge/maker-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
+    "@electron-forge/maker-base": "npm:7.3.0"
+    "@electron-forge/shared-types": "npm:7.3.0"
     electron-winstaller: "npm:^5.0.0"
     fs-extra: "npm:^10.0.0"
   dependenciesMeta:
     electron-winstaller:
       optional: true
-  checksum: 355f538f60d07640bb2ab2a51e478a2f69bd423b1f267e502ecc27a9a5bf310cefa48fad15a3a5668ea26a8bcd423e15d695e7f9413b2cf27003964e251bc9a7
+  checksum: 13908921938921032dccdb2f39b2337ca70f838e97bfe6cdead1733cb164611a52de90dafae8fa892e813c7e899a5f3343442d61c1a8a8d5d15235fa5ab063d1
   languageName: node
   linkType: hard
 
@@ -9886,7 +9886,7 @@ __metadata:
     "@electron-forge/cli": "npm:^7.2.0"
     "@electron-forge/maker-deb": "npm:^7.2.0"
     "@electron-forge/maker-rpm": "npm:^7.3.0"
-    "@electron-forge/maker-squirrel": "npm:^7.2.0"
+    "@electron-forge/maker-squirrel": "npm:^7.3.0"
     "@electron-forge/maker-zip": "npm:^7.3.0"
     "@electron-forge/plugin-auto-unpack-natives": "npm:^7.3.0"
     "@electron-forge/plugin-vite": "npm:^7.2.0"
