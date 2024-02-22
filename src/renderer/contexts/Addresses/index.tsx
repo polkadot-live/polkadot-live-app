@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import Keyring from '@polkadot/keyring';
 import { setStateWithRef } from '@polkadot-cloud/utils';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
@@ -43,7 +42,7 @@ export const AddressesProvider = ({
     return false;
   };
 
-  // Saves a Ledger address as an imported address.
+  // Saves received address as an imported address.
   const importAddress = (
     chain: ChainID,
     source: AccountSource,
@@ -53,7 +52,7 @@ export const AddressesProvider = ({
     window.myAPI.newAddressImported(chain, source, address, name);
   };
 
-  // Removes a Ledger address as an imported address.
+  // Removes an imported address.
   const removeAddress = (chain: ChainID, address: string) => {
     window.myAPI.removeImportedAccount(chain, address);
   };
@@ -90,21 +89,6 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
-  // formats an address into the currently active network's ss58 format.
-  const formatAccountSs58 = (address: string, format: number) => {
-    try {
-      const keyring = new Keyring();
-      keyring.setSS58Format(format);
-      const formatted = keyring.addFromAddress(address).address;
-      if (formatted !== address) {
-        return formatted;
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  };
-
   return (
     <AddressesContext.Provider
       value={{
@@ -115,7 +99,6 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
-        formatAccountSs58,
       }}
     >
       {children}

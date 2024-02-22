@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { isValidAddress } from '@polkadot-cloud/utils';
 import type { AnyJson } from '@/types/misc';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
@@ -10,9 +9,10 @@ import { QRVieweraWrapper } from '../Wrappers';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import type { VaultAccount } from '@polkadot-cloud/react/types';
+import { checkValidAddress } from '@/renderer/Utils';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
-  const { formatAccountSs58 } = useAddresses();
+  const { addressExists } = useAddresses();
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Check whether initial render.
@@ -36,24 +36,20 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
     }
 
     const maybeAddress = signature.split(':')?.[1];
-
-    setFeedback(
+    
+    const newFeedback =
       maybeAddress === undefined
         ? 'Waiting for QR Code'
-        : isValidAddress(maybeAddress)
-          ? formatAccountSs58(maybeAddress, 0)
-            ? 'Different Network Address'
-            : vaultAddressExists(maybeAddress)
-              ? 'Account Already Added'
-              : `Address Received: ${maybeAddress}`
-          : 'Invalid Address'
-    );
+        : checkValidAddress(maybeAddress)
+          ? addressExists(maybeAddress)
+            ? 'Account Already Added'
+            : 'Address Received:'
+          : 'Invalid Address';
+
+    setFeedback(newFeedback);
 
     // Check if QR data has valid address.
-    const valid =
-      isValidAddress(maybeAddress || '') &&
-      !vaultAddressExists(maybeAddress || '') &&
-      !formatAccountSs58(maybeAddress || '', 0);
+    const valid = checkValidAddress(maybeAddress || '') && !addressExists(maybeAddress || '');
 
     if (valid) {
       handleVaultImport(maybeAddress);
