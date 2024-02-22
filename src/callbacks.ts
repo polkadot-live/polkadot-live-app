@@ -6,13 +6,13 @@ import * as ApiUtils from '@/utils/ApiUtils';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from './config/chains';
 import { compareHashes } from './utils/CryptoUtils';
-import { EventsController } from './controller/EventsController';
 import { ellipsisFn, planckToUnit } from '@polkadot-cloud/utils';
+import { EventsController } from './controller/EventsController';
+import { NotificationsController } from './controller/NotificationsController';
 import { WindowsController } from './controller/WindowsController';
 import type { ApiCallEntry } from './types/subscriptions';
 import type { AnyData } from './types/misc';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
-import { NotificationsController } from './controller/NotificationsController';
 
 export class Callbacks {
   /**
