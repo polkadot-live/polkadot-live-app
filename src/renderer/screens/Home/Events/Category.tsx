@@ -19,11 +19,12 @@ export const Category = ({
 
   // Return a unique key for event item.
   const getKey = (event: EventCallback): string => {
-    const { address, chain: chainId } = event.who;
+    const {
+      uid,
+      who: { chain: chainId },
+    } = event;
 
-    return address
-      ? `${chainId}_${event.timestamp}_${address}`
-      : `${chainId}_${event.timestamp}`;
+    return `${chainId}_${uid}`;
   };
 
   return (

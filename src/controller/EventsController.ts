@@ -6,6 +6,7 @@ import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import { ellipsisFn } from '@polkadot-cloud/utils';
 import { getUnixTime } from 'date-fns';
+import { getUid } from '@/utils/CryptoUtils';
 
 export class EventsController {
   static getEvent(entry: ApiCallEntry, newVal: AnyData) {
@@ -16,8 +17,8 @@ export class EventsController {
 
       case 'subscribe:query.timestamp.now': {
         return {
-          uid: `chainEvents_timestamp_${newVal}`,
-          category: 'timestamp',
+          uid: getUid(),
+          category: 'debugging',
           who: {
             chain: entry.task.chainId,
             address: 'none',
@@ -38,8 +39,8 @@ export class EventsController {
 
       case 'subscribe:query.babe.currentSlot': {
         return {
-          uid: `chainEvents_currentSlot_${newVal}`,
-          category: 'currentSlot',
+          uid: getUid(),
+          category: 'debugging',
           who: {
             chain: entry.task.chainId,
             address: 'none',
@@ -62,8 +63,8 @@ export class EventsController {
         const address = entry.task.actionArgs!.at(0)!;
 
         return {
-          uid: `accountEvents_account_${ellipsisFn(address)}_${newVal.nonce}`,
-          category: 'account',
+          uid: getUid(),
+          category: 'balances',
           who: {
             chain: entry.task.chainId,
             address,
@@ -89,8 +90,8 @@ export class EventsController {
           entry.task.account!.nominationPoolData?.poolPendingRewards;
 
         return {
-          uid: `accountEvents_account_${ellipsisFn(address)}_${pendingRewards}`,
-          category: 'account',
+          uid: getUid(),
+          category: 'nominationPools',
           who: { chainId, address },
           title: `${ellipsisFn(address)}: Unclaimed Nomination Pool Rewards`,
           subtitle: `${pendingRewards?.toString()} ${chainCurrency(chainId)}`,
