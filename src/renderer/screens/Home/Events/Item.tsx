@@ -109,7 +109,7 @@ export const Item = ({
                   if (isUrl) {
                     return (
                       <ButtonMonoInvert
-                        key={`${chain}_cat_${categoryKey}_event_${eventKey}_action_${i}`}
+                        key={`${chain}_${categoryKey}_${eventKey}_${i}`}
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
@@ -121,7 +121,7 @@ export const Item = ({
                   } else {
                     return (
                       <ButtonMono
-                        key={`event_action_${i}`}
+                        key={`${chain}_${categoryKey}_${eventKey}_${i}`}
                         text={text || ''}
                         onClick={() => {
                           window.myAPI.openWindow('action', {

@@ -22,8 +22,8 @@ export const Category = ({
     const { address, chain: chainId } = event.who;
 
     return address
-      ? `${chainId}_cat_event_${event.timestamp}_${address}`
-      : `${chainId}_cat_event_${event.timestamp}`;
+      ? `${chainId}_${event.timestamp}_${address}`
+      : `${chainId}_${event.timestamp}`;
   };
 
   return (
