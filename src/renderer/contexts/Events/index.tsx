@@ -20,7 +20,7 @@ export const useEvents = () => useContext(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Store the currently imported events
-  const [events, setEventsState] = useState<EventsState>({});
+  const [events, setEventsState] = useState<EventsState>(new Map());
   const eventsRef = useRef(events);
 
   // Set events state
@@ -28,50 +28,43 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     setStateWithRef(newEvents, setEventsState, eventsRef);
   };
 
-  // Removes an event item on a specified chain, address and event uid.
+  // Removes an event item on a specified chain; compares address and event uid.
   const dismissEvent = ({ who: { chain, address }, uid }: DismissEvent) => {
-    const newEvents = { ...eventsRef.current };
-    const chainEvents = newEvents[chain]?.filter(
-      (e) => !(e.uid === uid && e.who.address === address)
-    );
+    const cloned: EventsState = new Map(eventsRef.current);
 
-    if (chainEvents) {
-      newEvents[chain] = chainEvents;
-    } else {
-      delete newEvents[chain];
-    }
-    setEvents(newEvents);
+    const filtered = cloned
+      .get(chain)
+      ?.filter((e) => !(e.uid === uid && e.who.address === address));
+
+    filtered && filtered.length > 0
+      ? cloned.set(chain, filtered)
+      : cloned.has(chain) && cloned.delete(chain);
+
+    setEvents(cloned);
   };
 
-  // Adds an event to the events state if it is new or updates an existing event. Removes existing
-  // events if they become stale.
+  // Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
-    const {
-      who: { chain },
-    } = event;
+    const cloned = new Map(eventsRef.current);
+    let curEvents = cloned.get(event.who.chain);
 
-    let networkEvents: EventCallback[] = eventsRef.current[chain];
+    // Add the event and set new state.
+    curEvents !== undefined ? curEvents.push(event) : (curEvents = [event]);
+    cloned.set(event.who.chain, curEvents);
 
-    // Add the event.
-    if (networkEvents) {
-      networkEvents.push(event);
-    } else {
-      networkEvents = [event];
-    }
-
-    // Persist updated chain events to state.
-    setEvents(Object.assign({}, eventsRef.current, { [chain]: networkEvents }));
+    setEvents(cloned);
   };
 
   // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
-    if (!eventsRef.current[chain]) {
+    if (!eventsRef.current.has(chain)) {
       return [];
     }
+
     let sortedEvents: SortedChainEvents = [];
 
     // Accumulate chain events by category.
-    for (const event of eventsRef.current[chain]) {
+    for (const event of eventsRef.current.get(chain) || []) {
       const { category } = event;
       const existing = sortedEvents.find((c) => c.category === category);
 
@@ -100,7 +93,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <EventsContext.Provider
       value={{
-        events: eventsRef.current,
+        // NOTE: Could pass both state and ref props
+        events,
         addEvent,
         dismissEvent,
         sortChainEvents,
