@@ -7,7 +7,6 @@ import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { Wrapper } from './Wrappers';
 import type { ChainID } from '@/types/chains';
-import type { AnyJson } from '@/types/misc';
 
 export const Events = () => {
   const { events, sortChainEvents } = useEvents();
@@ -16,16 +15,14 @@ export const Events = () => {
     <Wrapper>
       {events.size === 0 && <NoEvents />}
 
-      {Array.from(events.entries()).map((entry, i) => {
-        const [chainId] = entry;
-
+      {Array.from(events.keys()).map((chainId, i) => {
         // Sort chain events by category and order by timestamp DESC.
-        const orderByCategory = sortChainEvents(chainId as ChainID);
+        const sortedEvents = sortChainEvents(chainId as ChainID);
 
         return (
           <React.Fragment key={`${chainId}_events`}>
-            {orderByCategory?.map(
-              ({ category, events: categoryEvents }: AnyJson) => (
+            {Array.from(sortedEvents.entries()).map(
+              ([category, categoryEvents]) => (
                 <Category
                   key={`${chainId}_${category}_events`}
                   chain={chainId as ChainID}

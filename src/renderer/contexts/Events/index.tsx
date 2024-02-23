@@ -58,36 +58,34 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!eventsRef.current.has(chain)) {
-      return [];
+      return new Map();
     }
 
-    let sortedEvents: SortedChainEvents = [];
+    // Get all events for the chain ID.
+    const allEvents = eventsRef.current.get(chain)!;
 
-    // Accumulate chain events by category.
-    for (const event of eventsRef.current.get(chain) || []) {
+    // Store events by category.
+    const sortedMap = new Map<string, EventCallback[]>();
+
+    for (const event of allEvents) {
       const { category } = event;
-      const existing = sortedEvents.find((c) => c.category === category);
+      const current = sortedMap.get(category)!;
 
-      if (!existing) {
-        sortedEvents.push({ category, events: [event] });
-      } else {
-        sortedEvents = sortedEvents?.map((c) =>
-          c.category === category
-            ? {
-                ...c,
-                events: c.events.concat(event),
-              }
-            : c
-        );
-      }
+      sortedMap.has(event.category)
+        ? sortedMap.set(category, [...current, event])
+        : sortedMap.set(category, [event]);
     }
 
     // Sort events by timestamp.
-    sortedEvents = sortedEvents?.map((c) => ({
-      ...c,
-      events: c.events.sort((a, b) => b.timestamp - a.timestamp),
-    }));
-    return sortedEvents;
+    for (const category of Array.from(sortedMap.keys())) {
+      const sorted = sortedMap
+        .get(category)!
+        .sort((x, y) => y.timestamp - x.timestamp);
+
+      sortedMap.set(category, sorted);
+    }
+
+    return sortedMap;
   };
 
   return (

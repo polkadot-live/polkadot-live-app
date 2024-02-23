@@ -11,7 +11,6 @@ export interface EventsContextInterface {
   sortChainEvents: (c: ChainID) => SortedChainEvents;
 }
 
-//export type EventsState = Record<string, EventCallback[]>;
 export type EventsState = Map<ChainID, EventCallback[]>;
 
-export type SortedChainEvents = { category: string; events: EventCallback[] }[];
+export type SortedChainEvents = Map<string, EventCallback[]>;
