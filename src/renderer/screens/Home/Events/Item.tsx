@@ -16,17 +16,10 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 const FADE_TRANSITION = 200;
 
-export const Item = ({
-  who,
-  chain,
-  uid,
-  title,
-  subtitle,
-  faIcon,
-  actions,
-  data,
-}: EventItemProps) => {
-  const { address } = who;
+export const Item = ({ faIcon, event }: EventItemProps) => {
+  const { uid, title, subtitle, actions, data } = event;
+  const { address, chain } = event.who;
+
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -48,7 +41,7 @@ export const Item = ({
   // removing the event before_ the event transition is finished.
   useEffect(() => {
     if (display === 'out') {
-      dismissEvent({ uid, who });
+      dismissEvent({ uid, who: { address, chain } });
     }
   }, [display]);
 
