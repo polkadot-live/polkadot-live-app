@@ -47,10 +47,13 @@ export class Callbacks {
     const now = new Date(data * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
-    // Construct and send event to renderer.
+    // Create and persist event to store, and send to renderer.
+    const event = EventsController.getEvent(entry, String(newVal));
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, String(newVal))
+      event
     );
   }
 
@@ -81,10 +84,13 @@ export class Callbacks {
     // Debugging.
     console.log(`Current Sot: ${newVal}`);
 
-    // Construct and send event to renderer.
+    // Create and persist event to store, and send to renderer.
+    const event = EventsController.getEvent(entry, String(newVal));
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, String(newVal))
+      event
     );
   }
 
@@ -105,14 +111,20 @@ export class Callbacks {
       `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
     );
 
-    // Construct and send event to renderer.
+    // Create event.
+    const event = EventsController.getEvent(entry, {
+      nonce,
+      free,
+      reserved,
+    });
+
+    // Persist event to store.
+    EventsController.persistEvent(event);
+
+    // Send event to renderer.
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, {
-        nonce,
-        free,
-        reserved,
-      })
+      event
     );
 
     // TMP: Show native OS notification.
@@ -172,9 +184,12 @@ export class Callbacks {
     AccountsController.set(chainId, account);
 
     // Construct and send event to renderer to display new reward balance.
+    const event = EventsController.getEvent(entry, {});
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, {})
+      event
     );
   }
 }

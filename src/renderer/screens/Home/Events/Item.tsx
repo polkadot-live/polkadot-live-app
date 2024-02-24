@@ -27,9 +27,12 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
   // Allow the fade-out transition to happen before the event is dismissed from the UI.
-  const handleDismissEvent = () => {
+  const handleDismissEvent = async () => {
     setDisplay('fade');
     setTimeout(() => setDisplay('out'), FADE_TRANSITION);
+
+    const result = await window.myAPI.removeEventFromStore(event);
+    console.log(`Remove result: ${result}`);
   };
 
   // Manually define event item height. Add extra height if actions are present.
@@ -70,7 +73,10 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             ease: 'easeInOut',
           }}
         >
-          <button type="button" onClick={() => handleDismissEvent()}>
+          <button
+            type="button"
+            onClick={async () => await handleDismissEvent()}
+          >
             <FontAwesomeIcon icon={faTimes} />
           </button>
           <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>

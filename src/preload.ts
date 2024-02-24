@@ -6,7 +6,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { DismissEvent } from '@/types/reporter';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { WrappedSubscriptionTasks } from './types/subscriptions';
 
 // Expose Electron API to wdio tests
@@ -86,6 +86,11 @@ contextBridge.exposeInMainWorld('myAPI', {
   reportDismissEvent: (callback) =>
     ipcRenderer.on('renderer:event:dismiss', callback),
 
+  // Remove event from store.
+  removeEventFromStore: (data: EventCallback) =>
+    ipcRenderer.invoke('app:event:remove', data),
+
+  // --------------------------
   // Subscription communication
   // --------------------------
 
@@ -101,6 +106,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   invokeSubscriptionTask: (data: WrappedSubscriptionTasks) =>
     ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
+  // ------------
   // Transactions
   // ------------
 

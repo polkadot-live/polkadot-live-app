@@ -16,7 +16,7 @@ import {
 } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent } from '@/types/reporter';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { AnyData } from './types/misc';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -25,6 +25,7 @@ import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
 import { AppOrchestrator } from './orchestrators/AppOrchestrator';
 import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
+import { EventsController } from './controller/EventsController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -152,6 +153,11 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:quit', () => {
     app.quit();
   });
+
+  // Remove event from store.
+  ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>
+    EventsController.removeEvent(event)
+  );
 
   // Subscription handlers.
   ipcMain.handle(
