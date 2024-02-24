@@ -19,8 +19,6 @@ const FADE_TRANSITION = 200;
 export const Item = ({
   who,
   chain,
-  categoryKey,
-  eventKey,
   uid,
   title,
   subtitle,
@@ -109,7 +107,7 @@ export const Item = ({
                   if (isUrl) {
                     return (
                       <ButtonMonoInvert
-                        key={`${chain}_${categoryKey}_${eventKey}_${i}`}
+                        key={`action_${uid}_${i}`}
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
@@ -121,7 +119,7 @@ export const Item = ({
                   } else {
                     return (
                       <ButtonMono
-                        key={`${chain}_${categoryKey}_${eventKey}_${i}`}
+                        key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={() => {
                           window.myAPI.openWindow('action', {

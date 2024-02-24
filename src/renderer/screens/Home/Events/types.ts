@@ -15,8 +15,6 @@ export interface EventCategoryProps {
 
 export interface EventItemProps {
   chain: ChainID;
-  categoryKey: number;
-  eventKey: number;
   uid: string;
   actions: EventAction[];
   title: string;

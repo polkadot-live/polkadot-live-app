@@ -35,15 +35,8 @@ export const Category = ({
           {name}
         </h5>
       </HeadingWrapper>
-      {events?.map((event, j) => (
-        <Item
-          key={getKey(event)}
-          chain={chain}
-          categoryKey={i}
-          eventKey={j}
-          faIcon={icon}
-          {...event}
-        />
+      {events?.map((event) => (
+        <Item key={getKey(event)} chain={chain} faIcon={icon} {...event} />
       ))}
     </EventGroup>
   );
