@@ -61,6 +61,10 @@ export class Account {
     }
   };
 
+  unsubQueryMulti = () => {
+    this.queryMulti?.unsubOnly();
+  };
+
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
 
   flatten = () =>

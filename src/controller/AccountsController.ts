@@ -80,6 +80,36 @@ export class AccountsController {
   }
 
   /**
+   * @name unsubscribeAccounts
+   * @summary Calls `unsub` for each account's queryMulti entries, but keeps the
+   * subscription data. This method is called when the app goes into offline mode.
+   */
+  static unsubscribeAccounts() {
+    for (const accounts of this.accounts.values()) {
+      for (const account of accounts) {
+        account.unsubQueryMulti();
+      }
+    }
+  }
+
+  /**
+   * @name resubscribeAccounts
+   * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
+   * subscription tasks. This method is called when the app goes into online mode.
+   */
+  static async resubscribeAccounts() {
+    for (const accounts of this.accounts.values()) {
+      for (const account of accounts) {
+        const tasks = account.getSubscriptionTasks() || [];
+
+        for (const task of tasks) {
+          await account.subscribeToTask(task);
+        }
+      }
+    }
+  }
+
+  /**
    * @name removeAllSubscriptions
    * @summary Unsubscribe from all active tasks. Called when an imported account is removed.
    */

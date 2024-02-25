@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as ApiUtils from '@/utils/ApiUtils';
+import { OnlineStatusController } from '@/controller/OnlineStatusController';
 import type { AnyFunction } from '@polkadot-cloud/react/types';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -96,17 +97,20 @@ export class TaskOrchestrator {
     apiCall: AnyFunction,
     wrapper: QueryMultiWrapper
   ) {
+    // Build tasks if app is online, otherwise just cache them.
+    const isOnline = OnlineStatusController.getStatus();
+
     switch (task.status) {
       // Add this action to the chain's subscriptions.
       case 'enable': {
         wrapper.insert(task, apiCall);
-        await wrapper.build(task.chainId);
+        isOnline && (await wrapper.build(task.chainId));
         break;
       }
       // Remove this action from the chain's subscriptions.
       case 'disable': {
         wrapper.remove(task.chainId, task.action);
-        await wrapper.build(task.chainId);
+        isOnline && (await wrapper.build(task.chainId));
         break;
       }
     }
