@@ -9,12 +9,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/Chains';
+import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@/renderer/Utils';
 
 export const Footer = () => {
   const { chains } = useChains();
+  const { online: isOnline } = useOnlineStatus();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -34,11 +36,13 @@ export const Footer = () => {
 
         <div>
           <h5>
-            {chains.size
-              ? `Connected to ${totalActiveConnections()} network${
-                  chains.size === 1 ? '' : 's'
-                }`
-              : 'Disconnected'}{' '}
+            {isOnline
+              ? chains.size
+                ? `Connected to ${totalActiveConnections()} network${
+                    chains.size === 1 ? '' : 's'
+                  }`
+                : 'Disconnected'
+              : 'Offline'}{' '}
           </h5>
         </div>
         <button type="button" onClick={() => setExpanded(!expanded)}>
