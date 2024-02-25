@@ -5,8 +5,8 @@
 import type { EventsContextInterface } from './types';
 
 export const defaultEventsContext: EventsContextInterface = {
-  events: {},
+  events: new Map(),
   addEvent: (e) => {},
   dismissEvent: (e) => {},
-  sortChainEvents: (c) => [],
+  sortChainEvents: (c) => new Map(),
 };
