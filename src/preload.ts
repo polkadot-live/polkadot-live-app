@@ -16,9 +16,9 @@ if (isTest) {
 }
 
 contextBridge.exposeInMainWorld('myAPI', {
-  // ----------------
-  // Window lifecycle
-  // ----------------
+  /**
+   * Window lifecycle
+   */
 
   quitApp: (): void => {
     ipcRenderer.invoke('app:quit');
@@ -28,9 +28,9 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
-  // ----------------
-  // Chain management
-  // ----------------
+  /**
+   * Chain management
+   */
 
   syncChain: (callback) => ipcRenderer.on('renderer:chain:sync', callback),
 
@@ -96,9 +96,9 @@ contextBridge.exposeInMainWorld('myAPI', {
   removeEventFromStore: (data: EventCallback) =>
     ipcRenderer.invoke('app:event:remove', data),
 
-  // --------------------------
-  // Subscription communication
-  // --------------------------
+  /**
+   * Subscription communication
+   */
 
   // Report chain subscriptions to renderer.
   reportChainSubscriptionState: (callback) =>
@@ -112,16 +112,16 @@ contextBridge.exposeInMainWorld('myAPI', {
   invokeSubscriptionTask: (data: WrappedSubscriptionTasks) =>
     ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
-  // -------------
-  // Online status
-  // -------------
+  /**
+   * Online status
+   */
 
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
 
-  // ------------
-  // Transactions
-  // ------------
+  /**
+   * Transactions
+   */
 
   // Requests to main process to initiate a transaction.
   requestInitTx: (chain, from, nonce, pallet, method, args) =>
@@ -145,9 +145,9 @@ contextBridge.exposeInMainWorld('myAPI', {
   reportSignedVaultTx: (signature) =>
     ipcRenderer.send('app:tx:vault:submit', signature),
 
-  // -------------
-  // Miscellaneous
-  // -------------
+  /**
+   * Miscellaneous
+   */
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
