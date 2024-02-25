@@ -13,6 +13,7 @@ import {
   reportAccountSubscriptions,
   reportApiInstances,
   reportChainSubscriptions,
+  reportOnlineStatus,
 } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
 import type { AnyJson } from '@polkadot-cloud/react/types';
@@ -85,6 +86,9 @@ export const createMainWindow = (isTest: boolean) => {
   mainWindow.hide();
 
   mainWindow.on('show', async () => {
+    // Report online status to renderer.
+    reportOnlineStatus('menu');
+
     // Report imported accounts and chain instances.
     initializeState('menu');
 

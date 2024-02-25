@@ -111,6 +111,9 @@ export class AppOrchestrator {
     // Re-subscribe to managed accounts cached subscription tasks.
     await AccountsController.resubscribeAccounts();
 
+    // Re-subscribe to managed chain subscription tasks.
+    await SubscriptionsController.resubscribeAccounts();
+
     // Report online status to renderer.
     reportAllWindows(reportOnlineStatus);
   }
