@@ -16,6 +16,7 @@ if (isTest) {
 }
 
 contextBridge.exposeInMainWorld('myAPI', {
+  // ----------------
   // Window lifecycle
   // ----------------
 
@@ -27,6 +28,7 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
+  // ----------------
   // Chain management
   // ----------------
 
@@ -106,6 +108,14 @@ contextBridge.exposeInMainWorld('myAPI', {
   invokeSubscriptionTask: (data: WrappedSubscriptionTasks) =>
     ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
+  // -------------
+  // Online status
+  // -------------
+
+  // Handle switching between online and offline.
+  handleConnectionStatus: (status) =>
+    ipcRenderer.send('app:connection:status', status),
+
   // ------------
   // Transactions
   // ------------
@@ -132,6 +142,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   reportSignedVaultTx: (signature) =>
     ipcRenderer.send('app:tx:vault:submit', signature),
 
+  // -------------
   // Miscellaneous
   // -------------
 

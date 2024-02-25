@@ -214,7 +214,18 @@ app.whenReady().then(async () => {
     }
   );
 
-  // Window management handlers.
+  /**
+   * Handle switching between online and offline.
+   */
+
+  ipcMain.on('app:connection:status', (_, status) => {
+    // TODO: Handle switching between online and offline.
+    console.log(`Connection status: ${status}`);
+  });
+
+  /**
+   * Window management handlers.
+   */
 
   // Hides a window by its key.
   ipcMain.on('app:window:hide', (_, id) => {

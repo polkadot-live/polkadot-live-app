@@ -20,12 +20,18 @@ export const OnlineStatusProvider = ({
 
   // Called when app becomes online.
   const handleOnline = () => {
-    console.log('online');
+    const onlineStatus = true;
+
+    setOnline(onlineStatus);
+    window.myAPI.handleConnectionStatus(onlineStatus);
   };
 
   // Called when app becomes offline.
   const handleOffline = () => {
-    console.log('offline');
+    const onlineStatus = false;
+
+    setOnline(onlineStatus);
+    window.myAPI.handleConnectionStatus(onlineStatus);
   };
 
   useEffect(() => {

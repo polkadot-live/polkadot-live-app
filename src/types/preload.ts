@@ -48,6 +48,7 @@ export interface PreloadAPI {
   reportAccountSubscriptionsState: ApiReportAccountSubscriptions;
   invokeSubscriptionTask: ApiInvokeSubscriptionTask;
 
+  handleConnectionStatus: ApiHandleConnectionStatus;
   openBrowserURL: ApiOpenBrowserWindow;
 }
 
@@ -117,6 +118,8 @@ type ApiRequestInitTx = (
 ) => void;
 
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
+
+type ApiHandleConnectionStatus = (status: boolean) => void;
 
 type ApiOpenBrowserWindow = (url: string) => void;
 
