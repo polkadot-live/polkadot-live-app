@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import dns from 'dns';
 
 export class OnlineStatusController {
@@ -17,14 +18,25 @@ export class OnlineStatusController {
 
     this.onlineStatus = await this.isConnected();
 
-    await this.startPollLoop();
+    this.startPollLoop();
   }
 
-  private static startPollLoop = async () => {
+  private static startPollLoop = () => {
     const interval = 5000;
 
     this.intervalId = setInterval(async () => {
-      console.log(`Connection status: ${await this.isConnected()}`);
+      const status = await this.isConnected();
+
+      // Update app state if online status has changed.
+      if (status !== this.onlineStatus) {
+        this.onlineStatus = status;
+
+        console.log(`Online status changed to: ${status}`);
+
+        await AppOrchestrator.next({
+          task: `app:initialize:${status ? 'online' : 'offline'}`,
+        });
+      }
     }, interval);
   };
 
