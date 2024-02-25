@@ -8,6 +8,10 @@ export class OnlineStatusController {
   private static onlineStatus = false;
   private static intervalId: NodeJS.Timeout | null = null;
 
+  /**
+   * @name getStatus
+   * @summary Returns the cached online status.
+   */
   static getStatus(): boolean {
     return this.onlineStatus;
   }
@@ -17,25 +21,15 @@ export class OnlineStatusController {
    * @summary Set connection status and start connection polling loop.
    */
   static async initialize() {
-    // Determine whether app is online or offline.
-    console.log(`Internet available: ${await this.isConnected()}`);
-
     this.onlineStatus = await this.isConnected();
-
     this.startPollLoop();
   }
 
   /**
-   * @name startPoll
-   * @summary Checks connection status after a set interval and calls appropriate
+   * @name handleStatusChange
+   * @summary Checks for a change in connection status and calls the appropriate
    * app task depending on whether the app has gone offline or online.
    */
-  private static startPollLoop = () => {
-    const interval = 5000;
-
-    this.intervalId = setInterval(this.handleStatusChange, interval);
-  };
-
   static handleStatusChange = async () => {
     const status = await this.isConnected();
 
@@ -48,6 +42,16 @@ export class OnlineStatusController {
         task: `app:initialize:${status ? 'online' : 'offline'}`,
       });
     }
+  };
+
+  /**
+   * @name startPoll
+   * @summary Calls a connection handling function after a set interval for
+   * handling offline and online status changes.
+   */
+  private static startPollLoop = () => {
+    const interval = 5000;
+    this.intervalId = setInterval(this.handleStatusChange, interval);
   };
 
   /**
