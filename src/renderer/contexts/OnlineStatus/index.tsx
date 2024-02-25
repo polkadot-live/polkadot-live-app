@@ -18,20 +18,14 @@ export const OnlineStatusProvider = ({
 }) => {
   const [online, setOnline] = useState<boolean>(false);
 
-  // Called when app becomes online.
+  // Notify main process there may be a change in connection status.
   const handleOnline = () => {
-    const onlineStatus = true;
-
-    setOnline(onlineStatus);
-    window.myAPI.handleConnectionStatus(onlineStatus);
+    window.myAPI.handleConnectionStatus();
   };
 
-  // Called when app becomes offline.
+  // Notify main process there may be a change in connection status.
   const handleOffline = () => {
-    const onlineStatus = false;
-
-    setOnline(onlineStatus);
-    window.myAPI.handleConnectionStatus(onlineStatus);
+    window.myAPI.handleConnectionStatus();
   };
 
   useEffect(() => {

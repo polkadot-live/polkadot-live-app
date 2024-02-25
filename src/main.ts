@@ -26,6 +26,7 @@ import { AccountsController } from './controller/AccountsController';
 import { AppOrchestrator } from './orchestrators/AppOrchestrator';
 import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
 import { EventsController } from './controller/EventsController';
+import { OnlineStatusController } from './controller/OnlineStatusController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -218,9 +219,8 @@ app.whenReady().then(async () => {
    * Handle switching between online and offline.
    */
 
-  ipcMain.on('app:connection:status', (_, status) => {
-    // TODO: Handle switching between online and offline.
-    console.log(`Connection status: ${status}`);
+  ipcMain.on('app:connection:status', () => {
+    OnlineStatusController.handleStatusChange();
   });
 
   /**

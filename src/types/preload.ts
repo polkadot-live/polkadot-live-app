@@ -49,6 +49,8 @@ export interface PreloadAPI {
   invokeSubscriptionTask: ApiInvokeSubscriptionTask;
 
   handleConnectionStatus: ApiHandleConnectionStatus;
+  reportOnlineStatus: ApiReportOnlineStatus;
+
   openBrowserURL: ApiOpenBrowserWindow;
 }
 
@@ -120,6 +122,10 @@ type ApiRequestInitTx = (
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
 
 type ApiHandleConnectionStatus = (status: boolean) => void;
+
+type ApiReportOnlineStatus = (
+  callback: (_: IpcRendererEvent, status: boolean) => void
+) => Electron.IpcRenderer;
 
 type ApiOpenBrowserWindow = (url: string) => void;
 

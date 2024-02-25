@@ -36,6 +36,10 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   chainAdded: (callback) => ipcRenderer.on('renderer:chain:added', callback),
 
+  // Report online status.
+  reportOnlineStatus: (callback) =>
+    ipcRenderer.on('renderer:broadcast:onlineStatus', callback),
+
   chainRemoved: (callback) =>
     ipcRenderer.on('renderer:chain:removed', callback),
 
@@ -113,8 +117,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   // -------------
 
   // Handle switching between online and offline.
-  handleConnectionStatus: (status) =>
-    ipcRenderer.send('app:connection:status', status),
+  handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
 
   // ------------
   // Transactions

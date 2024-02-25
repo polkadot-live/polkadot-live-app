@@ -6,6 +6,7 @@ import {
   reportAllWindows,
   reportApiInstances,
   reportImportedAccounts,
+  reportOnlineStatus,
 } from '@/utils/SystemUtils';
 import {
   fetchAccountNominationPoolData,
@@ -95,7 +96,8 @@ export class AppOrchestrator {
       await APIsController.close(chainId);
     }
 
-    // TODO: OnlineStatusController.reportStatus()
+    // Report online status to renderer.
+    reportAllWindows(reportOnlineStatus);
   }
 
   /**
@@ -109,7 +111,8 @@ export class AppOrchestrator {
     // Re-subscribe to managed accounts cached subscription tasks.
     await AccountsController.resubscribeAccounts();
 
-    // TODO: OnlineStatusController.reportStatus()
+    // Report online status to renderer.
+    reportAllWindows(reportOnlineStatus);
   }
 
   /**

@@ -33,20 +33,21 @@ export class OnlineStatusController {
   private static startPollLoop = () => {
     const interval = 5000;
 
-    this.intervalId = setInterval(async () => {
-      const status = await this.isConnected();
+    this.intervalId = setInterval(this.handleStatusChange, interval);
+  };
 
-      // Update app state if online status has changed.
-      if (status !== this.onlineStatus) {
-        this.onlineStatus = status;
+  static handleStatusChange = async () => {
+    const status = await this.isConnected();
 
-        console.log(`Online status changed to: ${status}`);
+    if (status !== this.onlineStatus) {
+      this.onlineStatus = status;
 
-        await AppOrchestrator.next({
-          task: `app:initialize:${status ? 'online' : 'offline'}`,
-        });
-      }
-    }, interval);
+      console.log(`Online status changed to ${status}`);
+
+      await AppOrchestrator.next({
+        task: `app:initialize:${status ? 'online' : 'offline'}`,
+      });
+    }
   };
 
   /**
