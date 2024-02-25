@@ -12,6 +12,10 @@ export class OnlineStatusController {
     return this.onlineStatus;
   }
 
+  /**
+   * @name initialize
+   * @summary Set connection status and start connection polling loop.
+   */
   static async initialize() {
     // Determine whether app is online or offline.
     console.log(`Internet available: ${await this.isConnected()}`);
@@ -21,6 +25,11 @@ export class OnlineStatusController {
     this.startPollLoop();
   }
 
+  /**
+   * @name startPoll
+   * @summary Checks connection status after a set interval and calls appropriate
+   * app task depending on whether the app has gone offline or online.
+   */
   private static startPollLoop = () => {
     const interval = 5000;
 
@@ -40,6 +49,10 @@ export class OnlineStatusController {
     }, interval);
   };
 
+  /**
+   * @name stopPoll
+   * @summary Stop the connection polling interval.
+   */
   private static stopPollLoop = async () =>
     this.intervalId && clearInterval(this.intervalId);
 

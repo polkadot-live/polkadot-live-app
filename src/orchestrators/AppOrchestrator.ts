@@ -94,6 +94,8 @@ export class AppOrchestrator {
     for (const chainId of Array.from(ChainList.keys())) {
       await APIsController.close(chainId);
     }
+
+    // TODO: OnlineStatusController.reportStatus()
   }
 
   /**
@@ -106,6 +108,8 @@ export class AppOrchestrator {
 
     // Re-subscribe to managed accounts cached subscription tasks.
     await AccountsController.resubscribeAccounts();
+
+    // TODO: OnlineStatusController.reportStatus()
   }
 
   /**
