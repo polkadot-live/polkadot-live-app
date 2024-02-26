@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as ApiUtils from '@/utils/ApiUtils';
-import type { AnyFunction } from '@polkadot-cloud/react/types';
+import type { AnyFunction } from '@/types/misc';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
 

@@ -12,7 +12,7 @@ import type {
   StoredAccount,
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('Accounts');
 

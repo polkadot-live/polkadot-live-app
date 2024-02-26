@@ -8,7 +8,7 @@ import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import { getApiInstance } from './ApiUtils';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';

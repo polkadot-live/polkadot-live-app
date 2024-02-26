@@ -7,7 +7,7 @@ import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import { store } from '@/main';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { Account, ImportedAccounts } from '@/model/Account';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 

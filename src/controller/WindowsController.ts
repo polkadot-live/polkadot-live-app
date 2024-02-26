@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@/types/chains';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { AnyJson } from '@/types/misc';
 import type { BrowserWindow } from 'electron';
 import { store } from '@/main';
 
