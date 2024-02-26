@@ -5,11 +5,14 @@ import { chainCurrency } from '@/config/chains';
 import { ellipsisFn } from '@polkadot-cloud/utils';
 import { getUid } from '@/utils/CryptoUtils';
 import { getUnixTime } from 'date-fns';
+import { MainDebug } from '@/utils/DebugUtils';
 import { store } from '@/main';
 import { WindowsController } from './WindowsController';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { EventCallback } from '@/types/reporter';
+
+const debug = MainDebug.extend('EventsController');
 
 export class EventsController {
   private static storeKey = 'persisted_events';
@@ -61,7 +64,7 @@ export class EventsController {
 
     // Persist new array to store.
     EventsController.persistEventsToStore(events);
-    console.log(`Event persisted, new array: ${events}`);
+    debug('🔷 Event persisted (%o total in store)', events.length);
   }
 
   /**
@@ -77,7 +80,7 @@ export class EventsController {
 
     // Persist new array to store.
     EventsController.persistEventsToStore(updated);
-    console.log(`Event removed, new array: ${updated}`);
+    debug('🔷 Event removed (%o total in store)', updated.length);
 
     return true;
   }

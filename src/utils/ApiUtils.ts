@@ -5,8 +5,11 @@ import { APIsController } from '@/controller/APIsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { AccountsController } from '@/controller/AccountsController';
 import { ChainList } from '@/config/chains';
+import { MainDebug } from './DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
+
+const debug = MainDebug.extend('ApiUtils');
 
 /**
  * @name getApiInstance
@@ -21,8 +24,7 @@ export const getApiInstance = async (chainId: ChainID) => {
     );
   }
 
-  console.log(`Fetched API instance for chain: ${chainId}`);
-
+  debug('🔷 Fetched API instance for chain: %o', chainId);
   return instance;
 };
 
@@ -35,7 +37,7 @@ export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
 
   // Check if there are any chain or account tasks that require an API instance.
   if (status === 'disable' && !isApiInstanceRequiredFor(chainId)) {
-    console.log(`Disconnect API instance for chain ${chainId}`);
+    debug('🔷 Disconnect API instance for chain: %o', chainId);
 
     await APIsController.close(chainId);
   }

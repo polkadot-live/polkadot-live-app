@@ -50,7 +50,7 @@ export class API {
   connect = async () => {
     // Do nothing if instance is already connected.
     if (this.status !== 'disconnected') {
-      console.log(`API instance for ${this.chain} is already connected!`);
+      debug('🟠 API instance for %o is already connected!', this.chain);
       return;
     }
 
@@ -218,7 +218,7 @@ export class API {
     //this.status = 'disconnected';
 
     // TODO: Get disconnect working.
-    console.log('Get disconnect working.');
+    debug('🔴 Get disconnect working.');
   };
 
   /**

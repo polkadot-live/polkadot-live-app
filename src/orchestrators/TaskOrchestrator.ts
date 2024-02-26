@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as ApiUtils from '@/utils/ApiUtils';
+import { MainDebug } from '@/utils/DebugUtils';
 import { OnlineStatusController } from '@/controller/OnlineStatusController';
 import type { AnyFunction } from '@polkadot-cloud/react/types';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
+
+const debug = MainDebug.extend('TaskOrchestrator');
 
 /**
  * Task subscription flow in the TaskOrchestrator static class:
@@ -48,13 +51,13 @@ export class TaskOrchestrator {
         // Identify task
         switch (task.action) {
           case 'subscribe:query.timestamp.now': {
-            console.log('subscribe timestamp now');
+            debug('🟢 subscribe:query.timestamp.now');
             await TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
             break;
           }
 
           case 'subscribe:query.babe.currentSlot': {
-            console.log('subscribe babe currentSlot');
+            debug('🟢 subscribe:query.babe.currentSlot');
             await TaskOrchestrator.subscribe_query_babe_currentSlot(
               task,
               wrapper
@@ -63,7 +66,7 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:query.system.account': {
-            console.log('subscribe account balance');
+            debug('🟢 subscribe:query.system.account (account)');
             await TaskOrchestrator.subscribe_query_system_account(
               task,
               wrapper
@@ -72,7 +75,9 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:nominationPools:query.system.account': {
-            console.log('subscribe nomination pool account balance');
+            debug(
+              '🟢 subscribe:nominationPools:query.system.account (rewards)'
+            );
             await TaskOrchestrator.subscribe_nomination_pool_reward_account(
               task,
               wrapper
@@ -129,7 +134,6 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      console.log('>> QueryMultiWrapper: Rebuild queryMulti');
       const instance = await ApiUtils.getApiInstance(task.chainId);
       await TaskOrchestrator.handleTask(
         task,
@@ -150,7 +154,6 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      console.log('>> QueryMultiWrapper: Rebuild queryMulti');
       const instance = await ApiUtils.getApiInstance(task.chainId);
       await TaskOrchestrator.handleTask(
         task,
@@ -171,7 +174,6 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      console.log('>> QueryMultiWrapper: Rebuild queryMulti');
       const instance = await ApiUtils.getApiInstance(task.chainId);
       await TaskOrchestrator.handleTask(
         task,
@@ -194,12 +196,11 @@ export class TaskOrchestrator {
     try {
       // Exit early if the account in question has not joined a nomination pool.
       if (!task.account?.nominationPoolData) {
-        console.log('>> Account has not joined a nomination pool.');
+        debug('🟠 Account has not joined a nomination pool.');
         return;
       }
 
       // Otherwise rebuild query.
-      console.log('>> QueryMultiWrapper: Rebuild queryMulti');
       const instance = await ApiUtils.getApiInstance(task.chainId);
       await TaskOrchestrator.handleTask(
         task,

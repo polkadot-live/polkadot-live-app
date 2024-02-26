@@ -3,6 +3,7 @@
 
 import * as ApiUtils from '@/utils/ApiUtils';
 import { Callbacks } from '@/callbacks';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -10,6 +11,8 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
+
+const debug = MainDebug.extend('QueryMultiWrapper');
 
 export class QueryMultiWrapper {
   /**
@@ -127,7 +130,7 @@ export class QueryMultiWrapper {
    */
   async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
-      console.log('>> QueryMultiWrapper: queryMulti map is empty.');
+      debug('🟠 queryMulti map is empty.');
       return;
     }
 
@@ -135,7 +138,7 @@ export class QueryMultiWrapper {
     const queryMultiArg: AnyData = this.buildQueryMultiArg(chainId);
 
     // Make the new call to queryMulti.
-    console.log('>> QueryMultiWrapper: Call to queryMulti.');
+    debug('🔷 Call to api.queryMulti.');
 
     const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
@@ -167,7 +170,7 @@ export class QueryMultiWrapper {
   insert(task: SubscriptionTask, apiCall: AnyFunction) {
     // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
-      console.log('>> QueryMultiWrapper: Action already exists.');
+      debug('🟠 Action already exists.');
       return;
     }
 
@@ -183,7 +186,7 @@ export class QueryMultiWrapper {
 
     // Insert new key if chain isn't cached yet.
     if (!this.subscriptions.has(task.chainId)) {
-      console.log('>> QueryMultiWrapper: Add chain and API entry.');
+      debug('🔷 Add chain and API entry.');
 
       this.subscriptions.set(task.chainId, {
         unsub: null,
@@ -193,7 +196,7 @@ export class QueryMultiWrapper {
       return;
     }
 
-    console.log('>> QueryMultiWrapper: Update with new API entry.');
+    debug('🔷 Update with new API entry.');
 
     // Otherwise update query multi subscriptions map.
     const entry = this.subscriptions.get(task.chainId);
@@ -228,7 +231,7 @@ export class QueryMultiWrapper {
    */
   remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
-      console.log(">> API call doesn't exist.");
+      debug("🟠 API call doesn't exist.");
     } else {
       // Remove action from query multi map.
       const entry = this.subscriptions.get(chainId)!;
