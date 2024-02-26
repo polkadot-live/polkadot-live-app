@@ -101,10 +101,35 @@ export class Callbacks {
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
    */
-  static callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
-    const free = new BigNumber(data.data.free);
-    const reserved = new BigNumber(data.data.reserved);
-    const nonce = new BigNumber(data.nonce);
+  static callback_query_system_account(
+    data: AnyData,
+    entry: ApiCallEntry,
+    wrapper: QueryMultiWrapper
+  ) {
+    const { action, chainId } = entry.task;
+
+    // Check if event data is same as cached value.
+    if (!data) {
+      return;
+    }
+
+    const newVal = {
+      free: new BigNumber(data.data.free),
+      reserved: new BigNumber(data.data.reserved),
+      nonce: new BigNumber(data.nonce),
+    };
+
+    const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
+
+    // Don't send event if balance is the same as the cached value.
+    if (curVal && compareHashes(curVal, newVal)) {
+      return;
+    }
+
+    // Cache new value.
+    wrapper.setChainTaskVal(entry, newVal, chainId);
+
+    const { free, reserved, nonce } = newVal;
 
     // Debugging.
     console.log(

@@ -4,7 +4,6 @@
 import * as ApiUtils from '@/utils/ApiUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { OnlineStatusController } from '@/controller/OnlineStatusController';
-import type { AnyFunction } from '@polkadot-cloud/react/types';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -99,7 +98,6 @@ export class TaskOrchestrator {
    */
   private static async handleTask(
     task: SubscriptionTask,
-    apiCall: AnyFunction,
     wrapper: QueryMultiWrapper
   ) {
     // Build tasks if app is online, otherwise just cache them.
@@ -108,7 +106,7 @@ export class TaskOrchestrator {
     switch (task.status) {
       // Add this action to the chain's subscriptions.
       case 'enable': {
-        wrapper.insert(task, apiCall);
+        wrapper.insert(task);
         isOnline && (await wrapper.build(task.chainId));
         break;
       }
@@ -118,6 +116,28 @@ export class TaskOrchestrator {
         isOnline && (await wrapper.build(task.chainId));
         break;
       }
+    }
+  }
+
+  /*-------------------------------------------------- 
+   API function call factory
+   --------------------------------------------------*/
+
+  static async getApiCall(task: SubscriptionTask) {
+    const { action, chainId } = task;
+    const instance = await ApiUtils.getApiInstance(chainId);
+
+    switch (action) {
+      case 'subscribe:query.timestamp.now':
+        return instance.api.query.timestamp.now;
+      case 'subscribe:query.babe.currentSlot':
+        return instance.api.query.babe.currentSlot;
+      case 'subscribe:query.system.account':
+        return instance.api.query.system.account;
+      case 'subscribe:nominationPools:query.system.account':
+        return instance.api.query.system.account;
+      default:
+        throw new Error('Subscription action not found');
     }
   }
 
@@ -134,12 +154,7 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      const instance = await ApiUtils.getApiInstance(task.chainId);
-      await TaskOrchestrator.handleTask(
-        task,
-        instance.api.query.timestamp.now,
-        wrapper
-      );
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -154,12 +169,7 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      const instance = await ApiUtils.getApiInstance(task.chainId);
-      await TaskOrchestrator.handleTask(
-        task,
-        instance.api.query.babe.currentSlot,
-        wrapper
-      );
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -174,12 +184,7 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     try {
-      const instance = await ApiUtils.getApiInstance(task.chainId);
-      await TaskOrchestrator.handleTask(
-        task,
-        instance.api.query.system.account,
-        wrapper
-      );
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -201,12 +206,7 @@ export class TaskOrchestrator {
       }
 
       // Otherwise rebuild query.
-      const instance = await ApiUtils.getApiInstance(task.chainId);
-      await TaskOrchestrator.handleTask(
-        task,
-        instance.api.query.system.account,
-        wrapper
-      );
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }

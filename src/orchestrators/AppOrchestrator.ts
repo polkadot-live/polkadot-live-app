@@ -66,10 +66,8 @@ export class AppOrchestrator {
     // Initialize required chain `APIs` from persisted state.
     await APIsController.initialize(Array.from(ChainList.keys()));
 
-    console.log('Finished initializing APIs');
-
     // Use API instance to initialize account nomination pool data.
-    if (OnlineStatusController.getStatus()) {
+    if (OnlineStatusController.getStatus() === true) {
       await fetchAccountNominationPoolData();
     }
 
@@ -116,6 +114,12 @@ export class AppOrchestrator {
 
     // Report online status to renderer.
     reportAllWindows(reportOnlineStatus);
+
+    // Report fetched nomination pool account data.
+    reportAllWindows(reportImportedAccounts);
+
+    // Report account subscriptions.
+    reportAllWindows(reportAccountSubscriptions);
   }
 
   /**

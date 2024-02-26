@@ -11,6 +11,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -111,7 +112,11 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:query.system.account': {
-            Callbacks.callback_query_system_account(dataArr[index], entry);
+            Callbacks.callback_query_system_account(
+              dataArr[index],
+              entry,
+              this
+            );
             break;
           }
           case 'subscribe:nominationPools:query.system.account': {
@@ -135,13 +140,13 @@ export class QueryMultiWrapper {
     }
 
     // Construct the argument for new queryMulti call.
-    const queryMultiArg: AnyData = this.buildQueryMultiArg(chainId);
-
-    // Make the new call to queryMulti.
-    debug('🔷 Call to api.queryMulti.');
+    const queryMultiArg: AnyData = await this.buildQueryMultiArg(chainId);
 
     const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
+
+    // Make the new call to queryMulti.
+    debug('🔷 Call to api.queryMulti.');
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
@@ -165,9 +170,8 @@ export class QueryMultiWrapper {
    * @name insert
    * @summary Add an `ApiCallEntry` to be managed by this wrapper.
    * @param {SubscriptionTask} task - Subscription task associated with entry.
-   * @param {AnyFunction} apiCall - API function call pointer associated with entry.
    */
-  insert(task: SubscriptionTask, apiCall: AnyFunction) {
+  insert(task: SubscriptionTask) {
     // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
       debug('🟠 Action already exists.');
@@ -176,7 +180,6 @@ export class QueryMultiWrapper {
 
     // Construct new `ApiCallEntry`.
     const newEntry: ApiCallEntry = {
-      apiCall,
       curVal: null,
       task: {
         ...task,
@@ -292,14 +295,15 @@ export class QueryMultiWrapper {
    * @name buildQueryMultiArg
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
-  private buildQueryMultiArg(chainId: ChainID) {
+  private async buildQueryMultiArg(chainId: ChainID) {
     const argument: AnyData = [];
 
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
-      for (const { apiCall, task } of entry.callEntries) {
-        let callArray = [apiCall];
+      for (const { task } of entry.callEntries) {
+        const apiCall = await TaskOrchestrator.getApiCall(task);
+        let callArray: AnyData[] = [apiCall];
 
         if (task.actionArgs) {
           callArray = callArray.concat(task.actionArgs);

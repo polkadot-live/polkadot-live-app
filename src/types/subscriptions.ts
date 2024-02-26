@@ -20,7 +20,6 @@ export interface SubscriptionTask {
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.
 export interface ApiCallEntry {
-  apiCall: AnyFunction;
   curVal: AnyData | null;
   task: SubscriptionTask;
 }
