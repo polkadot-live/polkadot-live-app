@@ -4,7 +4,7 @@
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { Header } from '@app/library/Header';
-import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
+import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';

@@ -12,9 +12,9 @@ import {
 import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
+import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
-import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledger.svg?react';
+import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonHelp } from '@/renderer/kits/Buttons/ButtonHelp';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
