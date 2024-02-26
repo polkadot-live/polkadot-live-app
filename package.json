@@ -71,7 +71,7 @@
     "typescript": "5.3.3",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-svgr": "^4.2.0",
-    "wdio-electron-service": "^5.4.0"
+    "wdio-electron-service": "^6.3.2"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.0",
