@@ -8,7 +8,7 @@ import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
 import { useOverlay } from '@app/contexts/Overlay';
 import { DragClose } from '@app/library/DragClose';
 import { ErrorBoundary } from 'react-error-boundary';
-import PolkadotVaultSVG from '@polkadot-cloud/assets/extensions/svg/polkadotvault.svg?react';
+import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';

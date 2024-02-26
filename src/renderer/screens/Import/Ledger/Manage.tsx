@@ -5,7 +5,7 @@ import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
-import LedgerLogoSVG from '@polkadot-cloud/assets/extensions/svg/ledgersquare.svg?react';
+import LedgerLogoSVG from '@w3ux/extension-assets/LedgerSquare.svg?react';
 import { DragClose } from '../../../library/DragClose';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';

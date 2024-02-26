@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { chainCurrency } from '@/config/chains';
-import { ellipsisFn } from '@polkadot-cloud/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import { getUid } from '@/utils/CryptoUtils';
 import { getUnixTime } from 'date-fns';
 import { MainDebug } from '@/utils/DebugUtils';

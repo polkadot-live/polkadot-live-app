@@ -4,7 +4,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
-import { appendOr, appendOrEmpty } from '@polkadot-cloud/utils';
+import { appendOr, appendOrEmpty } from '@w3ux/utils';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonSecondaryProps = ComponentBaseWithClassName &

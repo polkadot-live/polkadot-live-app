@@ -3,7 +3,7 @@
 
 import InfoSVG from '../svg/help.svg?react';
 import type { ButtonCommonProps } from '../types';
-import { appendOrEmpty } from '@polkadot-cloud/utils';
+import { appendOrEmpty } from '@w3ux/utils';
 import { onMouseHandlers } from '../Utils';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 

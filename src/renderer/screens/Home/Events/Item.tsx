@@ -3,7 +3,7 @@
 
 import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isValidHttpUrl, remToUnit } from '@polkadot-cloud/utils';
+import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
 import { useTooltip } from '@app/contexts/Tooltip';
 import { Identicon } from '@app/library/Identicon';
 import { EventItem } from './Wrappers';

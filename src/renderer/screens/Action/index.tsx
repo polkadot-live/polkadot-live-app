@@ -4,7 +4,7 @@
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionItem } from '@polkadot-cloud/react';
-import { ellipsisFn } from '@polkadot-cloud/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import { chainIcon } from '@/config/chains';
 import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';

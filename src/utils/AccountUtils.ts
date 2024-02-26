@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@/controller/AccountsController';
-import { planckToUnit } from '@polkadot-cloud/utils';
+import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import { getApiInstance } from './ApiUtils';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
-import type { AnyJson } from '@polkadot-cloud/react/types';
+import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';

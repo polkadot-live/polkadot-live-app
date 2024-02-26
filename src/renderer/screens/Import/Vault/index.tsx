@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { localStorageOrDefault, setStateWithRef } from '@polkadot-cloud/utils';
+import { localStorageOrDefault, setStateWithRef } from '@w3ux/utils';
 import { useRef, useState } from 'react';
 import { Manage } from './Manage';
 import { Splash } from './Splash';

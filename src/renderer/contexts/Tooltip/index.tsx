@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { setStateWithRef } from '@polkadot-cloud/utils';
+import { setStateWithRef } from '@w3ux/utils';
 import React, { createContext, useContext, useRef, useState } from 'react';
 import { defaultTooltipContext } from './defaults';
 import type { TooltipContextInterface } from './types';

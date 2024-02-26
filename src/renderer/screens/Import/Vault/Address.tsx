@@ -1,11 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  ellipsisFn,
-  localStorageOrDefault,
-  unescape,
-} from '@polkadot-cloud/utils';
+import { ellipsisFn, localStorageOrDefault, unescape } from '@w3ux/utils';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
