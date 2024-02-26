@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from './config/chains';
 import { compareHashes } from './utils/CryptoUtils';
 import { EventsController } from './controller/EventsController';
-import { planckToUnit } from '@polkadot-cloud/utils';
+import { planckToUnit } from '@w3ux/utils';
 import { WindowsController } from './controller/WindowsController';
 import type { ApiCallEntry } from './types/subscriptions';
 import type { AnyData } from './types/misc';

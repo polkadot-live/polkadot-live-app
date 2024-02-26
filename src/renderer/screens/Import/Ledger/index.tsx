@@ -5,7 +5,7 @@ import {
   ellipsisFn,
   localStorageOrDefault,
   setStateWithRef,
-} from '@polkadot-cloud/utils';
+} from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
 import { Manage } from './Manage';
 import { Splash } from './Splash';

@@ -4,7 +4,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { MainDebug } from '@/utils/DebugUtils';
-import { rmCommas } from '@polkadot-cloud/utils';
+import { rmCommas } from '@w3ux/utils';
 import { WindowsController } from '@/controller/WindowsController';
 import { ChainList } from '@/config/chains';
 import type { AnyJson } from '@/types/misc';

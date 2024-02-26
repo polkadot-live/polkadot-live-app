@@ -3,7 +3,7 @@
 
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setStateWithRef } from '@polkadot-cloud/utils';
+import { setStateWithRef } from '@w3ux/utils';
 import { useOutsideAlerter } from '@app/library/Hooks/useOutsideAlerter';
 import { useRef, useState } from 'react';
 import { MenuWrapper, Separator } from './Wrapper';

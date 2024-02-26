@@ -4,7 +4,7 @@
 import { chainCurrency } from '@/config/chains';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
-import { ellipsisFn } from '@polkadot-cloud/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import { getUnixTime } from 'date-fns';
 
 export class EventsController {

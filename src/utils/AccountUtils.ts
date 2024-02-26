@@ -3,7 +3,7 @@
 
 import { AccountsController } from '@/controller/AccountsController';
 import { APIsController } from '@/controller/APIsController';
-import { planckToUnit } from '@polkadot-cloud/utils';
+import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import { getApiInstance } from './ApiUtils';
