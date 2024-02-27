@@ -14,19 +14,17 @@ export const pushEventAndFilterDuplicates = (
   event: EventCallback,
   events: EventCallback[]
 ): EventCallback[] => {
-  const parsed = JSON.parse(JSON.stringify(event));
-
   // Check if the new event replaces another persisted event.
-  switch (parsed.category) {
+  switch (event.category) {
     case 'balances': {
       // Perform a filter if event is in balances category.
       events = events.filter((e) => {
         if (e.category === 'balances' && e.data) {
           if (
-            parsed.who.address === e.who.address &&
-            parsed.data.balances.free === e.data.balances.free &&
-            parsed.data.balances.reserved === e.data.balances.reserved &&
-            parsed.data.balances.nonce === e.data.balances.nonce
+            event.who.address === e.who.address &&
+            event.data.balances.free === e.data.balances.free &&
+            event.data.balances.reserved === e.data.balances.reserved &&
+            event.data.balances.nonce === e.data.balances.nonce
           ) {
             // Duplicate event found, filter out the older one.
             return false;
@@ -43,7 +41,7 @@ export const pushEventAndFilterDuplicates = (
   }
 
   // Add event to array.
-  events.push(parsed);
+  events.push(event);
 
   return events;
 };
