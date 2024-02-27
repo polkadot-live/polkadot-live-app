@@ -1,4 +1,4 @@
-// Copyright 2024 @paritytech/polkadot-staking-dashboard authors & contributors
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ComponentBase } from '@/renderer/types';
