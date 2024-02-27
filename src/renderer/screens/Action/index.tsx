@@ -3,7 +3,6 @@
 
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ActionItem } from '@polkadot-cloud/react';
 import { ellipsisFn } from '@w3ux/utils';
 import { chainIcon } from '@/config/chains';
 import { useAccountState } from '@app/contexts/AccountState';
@@ -21,6 +20,7 @@ import type { TxStatus } from '@/types/tx';
 import type { AnyJson } from '@/types/misc';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { Tx } from '@/renderer/library/Tx';
+import { ActionItem } from '@/renderer/library/ActionItem';
 
 export const Action = () => {
   const { search } = useLocation();
