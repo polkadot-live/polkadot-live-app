@@ -12,6 +12,7 @@ import type { APIConstants } from '@/types/chains/polkadot';
 import type { Codec } from '@polkadot/types-codec/types';
 import type { ChainID, ChainStatus } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
+import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 
 const debug = MainDebug.extend('API');
 
@@ -25,22 +26,24 @@ const debug = MainDebug.extend('API');
  * @property {APIConstants | null} consts - the constants of the chain.
  */
 export class API {
-  private _endpoint!: string;
+  private _endpoint: string;
 
-  private _provider!: WsProvider;
+  private _provider: ProviderInterface | null;
 
-  private _api!: ApiPromise;
+  private _api: ApiPromise | null;
 
-  private _chain!: ChainID;
+  private _chain: ChainID;
 
   private _status: ChainStatus = 'disconnected';
 
   private _consts: APIConstants | null = null;
 
   constructor(endpoint: string, chainId: ChainID) {
-    this.chain = chainId;
-    this.endpoint = endpoint;
-    this.status = 'disconnected';
+    this._chain = chainId;
+    this._endpoint = endpoint;
+    this._status = 'disconnected';
+    this._provider = null;
+    this._api = null;
   }
 
   /**
@@ -50,7 +53,7 @@ export class API {
   connect = async () => {
     // Do nothing if instance is already connected.
     if (this.status !== 'disconnected') {
-      console.log(`API instance for ${this.chain} is already connected!`);
+      debug('🟠 API instance for %o is already connected!', this.chain);
       return;
     }
 
@@ -85,7 +88,11 @@ export class API {
   }
 
   get api(): ApiPromise {
-    return this._api;
+    if (!this._api) {
+      throw new Error('_api property is null');
+    } else {
+      return this._api;
+    }
   }
 
   set api(value: ApiPromise) {
@@ -112,7 +119,7 @@ export class API {
     return this._provider;
   }
 
-  set provider(value: WsProvider) {
+  set provider(value: ProviderInterface | null) {
     this._provider = value;
   }
 
@@ -144,19 +151,19 @@ export class API {
    * @summary Initialise the event listeners for the provider.
    */
   initEvents = () => {
-    this.provider.on('connected', () => {
+    this.provider?.on('connected', () => {
       debug('⭕ %o', this.endpoint, ' CONNECTED');
       this.status = 'connected';
       WindowsController.reportAll(this.chain, 'renderer:chain:connnected');
     });
 
-    this.provider.on('disconnected', () => {
+    this.provider?.on('disconnected', () => {
       debug('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
       WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
     });
 
-    this.provider.on('error', () => {
+    this.provider?.on('error', () => {
       debug('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
       WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
@@ -213,12 +220,20 @@ export class API {
    * @summary Disconnect from a chain.
    */
   disconnect = async () => {
-    //await this.api?.disconnect();
-    //this.provider.disconnect();
-    //this.status = 'disconnected';
+    this._api &&
+      this._api.isConnected &&
+      (await this._api.disconnect().catch(console.error));
+
+    this._provider &&
+      this._provider.isConnected &&
+      this._provider.disconnect().catch(console.error);
+
+    this.provider = null;
+    this._api = null;
+    this.status = 'disconnected';
 
     // TODO: Get disconnect working.
-    console.log('Get disconnect working.');
+    debug('🔴 Get disconnect working.');
   };
 
   /**

@@ -6,6 +6,7 @@ import { HeadingWrapper } from '../Wrappers';
 import { Item } from './Item';
 import { EventGroup } from './Wrappers';
 import type { EventCategoryProps } from './types';
+import type { EventCallback } from '@/types/reporter';
 
 export const Category = ({
   chain,
@@ -16,6 +17,16 @@ export const Category = ({
   const ChainIcon = chainIcon(chain);
   const { name, icon } = chainCategory(chain, category);
 
+  // Return a unique key for event item.
+  const getKey = (event: EventCallback): string => {
+    const {
+      uid,
+      who: { chain: chainId },
+    } = event;
+
+    return `${chainId}_${uid}`;
+  };
+
   return (
     <EventGroup style={i === 0 ? { marginTop: '1.7rem' } : undefined}>
       <HeadingWrapper>
@@ -24,15 +35,8 @@ export const Category = ({
           {name}
         </h5>
       </HeadingWrapper>
-      {events?.map((event, j) => (
-        <Item
-          key={`${chain}_cat_event_${event.timestamp}`}
-          chain={chain}
-          categoryKey={i}
-          eventKey={j}
-          faIcon={icon}
-          {...event}
-        />
+      {events?.map((event) => (
+        <Item key={getKey(event)} faIcon={icon} event={event} />
       ))}
     </EventGroup>
   );

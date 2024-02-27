@@ -6,6 +6,7 @@ import {
   reportAllWindows,
   reportApiInstances,
   reportImportedAccounts,
+  reportOnlineStatus,
 } from '@/utils/SystemUtils';
 import {
   fetchAccountNominationPoolData,
@@ -21,6 +22,7 @@ import type {
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
 import { ChainList } from '@/config/chains';
+import { OnlineStatusController } from '@/controller/OnlineStatusController';
 
 // Orchestrate class to perform high-level app tasks.
 export class AppOrchestrator {
@@ -29,6 +31,14 @@ export class AppOrchestrator {
       // Initialize app: should only be called once when the app is starting up.
       case 'app:initialize':
         await this.initialize();
+        break;
+      // Initialize in online mode.
+      case 'app:initialize:online':
+        await this.initializeOnline();
+        break;
+      // Initialize in offline mode.
+      case 'app:initialize:offline':
+        await this.initializeOffline();
         break;
       // Handle new account import.
       case 'app:account:import':
@@ -48,24 +58,68 @@ export class AppOrchestrator {
    * @summary Initializes app state.
    */
   private static async initialize() {
+    await OnlineStatusController.initialize();
+
     // Initialize accounts from persisted state.
     AccountsController.initialize();
 
     // Initialize required chain `APIs` from persisted state.
-    const chainIds = Array.from(ChainList.keys());
-
-    await APIsController.initialize(chainIds);
-
-    console.log('Finished initializing APIs');
+    await APIsController.initialize(Array.from(ChainList.keys()));
 
     // Use API instance to initialize account nomination pool data.
-    await fetchAccountNominationPoolData();
+    if (OnlineStatusController.getStatus() === true) {
+      await fetchAccountNominationPoolData();
+    }
 
     // Initialize persisted account subscriptions.
     await AccountsController.subscribeAccounts();
 
     // Initialize persisted chain subscriptions.
     await SubscriptionsController.initChainSubscriptions();
+  }
+
+  /**
+   * @name initializeOffline
+   * @summary Sets the app's state correctly for offline mode.
+   */
+  private static async initializeOffline() {
+    // Unsubscribe queryMulti API calls for managed accounts.
+    AccountsController.unsubscribeAccounts();
+
+    // Unsubscribe queryMulti API calls for managed chains.
+    SubscriptionsController.unsubscribeChains();
+
+    // Disconnect from any active API instances.
+    for (const chainId of Array.from(ChainList.keys())) {
+      await APIsController.close(chainId);
+    }
+
+    // Report online status to renderer.
+    reportAllWindows(reportOnlineStatus);
+  }
+
+  /**
+   * @name initializeOnline
+   * @summary Sets the app's state correctly for online mode.
+   */
+  private static async initializeOnline() {
+    // Fetch up-to-date nomination pool data for managed accounts.
+    await fetchAccountNominationPoolData();
+
+    // Re-subscribe to managed accounts cached subscription tasks.
+    await AccountsController.resubscribeAccounts();
+
+    // Re-subscribe to managed chain subscription tasks.
+    await SubscriptionsController.resubscribeAccounts();
+
+    // Report online status to renderer.
+    reportAllWindows(reportOnlineStatus);
+
+    // Report fetched nomination pool account data.
+    reportAllWindows(reportImportedAccounts);
+
+    // Report account subscriptions.
+    reportAllWindows(reportAccountSubscriptions);
   }
 
   /**

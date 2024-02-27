@@ -5,6 +5,7 @@ import { AccountStateProvider } from '@app/contexts/AccountState';
 import { AddressesProvider } from '@app/contexts/Addresses';
 import { ChainsProvider } from '@app/contexts/Chains';
 import { EventsProvider } from '@app/contexts/Events';
+import { OnlineStatusProvider } from './contexts/OnlineStatus';
 import { OverlayProvider } from '@app/contexts/Overlay';
 import { SubscriptionsProvider } from './contexts/Subscriptions';
 import { ManageProvider } from './screens/Home/Manage/provider';
@@ -15,6 +16,7 @@ import { Theme } from './Theme';
 
 export const Providers = withProviders(
   OverlayProvider,
+  OnlineStatusProvider,
   AddressesProvider,
   AccountStateProvider,
   ChainsProvider,

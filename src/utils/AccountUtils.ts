@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@/controller/AccountsController';
-import { APIsController } from '@/controller/APIsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
@@ -25,6 +24,7 @@ export const fetchAccountNominationPoolData = async () => {
     }
 
     const { api } = await getApiInstance(chainId);
+    console.log(`API instance fetched for ${chainId}`);
 
     // Iterate accounts associated with chain and initialise nomination pool data.
     for (const account of accounts) {
@@ -61,31 +61,34 @@ const setNominationPoolDataForAccount = async (
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
 
-  if (result !== null) {
-    // Get pool ID and reward address.
-    const { poolId } = result;
-    const poolRewardAddress = getPoolAccounts(poolId)?.reward;
+  if (result === null) {
+    return;
+  }
 
-    // Get pending rewards for the account.
-    const pendingRewardsResult =
-      await api.call.nominationPoolsApi.pendingRewards(account.address);
+  // Get pool ID and reward address.
+  const { poolId } = result;
+  const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
-    const poolPendingRewards = planckToUnit(
-      new BigNumber(pendingRewardsResult.toString()),
-      chainUnits(chainId)
-    );
+  // Get pending rewards for the account.
+  const pendingRewardsResult = await api.call.nominationPoolsApi.pendingRewards(
+    account.address
+  );
 
-    if (poolRewardAddress) {
-      // Add nomination pool data to account.
-      account.nominationPoolData = {
-        poolId,
-        poolRewardAddress,
-        poolPendingRewards,
-      };
+  const poolPendingRewards = planckToUnit(
+    new BigNumber(pendingRewardsResult.toString()),
+    chainUnits(chainId)
+  );
 
-      // Store updated account data in controller.
-      AccountsController.set(chainId, account);
-    }
+  if (poolRewardAddress) {
+    // Add nomination pool data to account.
+    account.nominationPoolData = {
+      poolId,
+      poolRewardAddress,
+      poolPendingRewards,
+    };
+
+    // Store updated account data in controller.
+    AccountsController.set(chainId, account);
   }
 };
 
@@ -94,27 +97,19 @@ const setNominationPoolDataForAccount = async (
  * @summary Generates pool stash and reward address for a pool id.
  * @param {number} poolId - id of the pool.
  */
-const getPoolAccounts = (poolId: number) => {
-  const apiInstance = APIsController.get('Polkadot');
-
-  if (!apiInstance) {
-    return;
-  }
-
-  const api = apiInstance.api;
-  const consts = apiInstance.consts;
-
+const getPoolAccounts = (poolId: number, api: ApiPromise) => {
   const createAccount = (pId: BigNumber, index: number): string => {
     const EmptyH256 = new Uint8Array(32);
     const ModPrefix = stringToU8a('modl');
     const U32Opts = { bitLength: 32, isLe: true };
+    const poolsPalletId = api.consts.nominationPools.palletId;
 
     return api.registry
       .createType(
         'AccountId32',
         u8aConcat(
           ModPrefix,
-          consts.poolsPalletId,
+          poolsPalletId.toU8a(),
           new Uint8Array([index]),
           bnToU8a(new BN(pId.toString()), U32Opts),
           EmptyH256
@@ -124,6 +119,7 @@ const getPoolAccounts = (poolId: number) => {
   };
 
   const poolIdBigNumber = new BigNumber(poolId);
+
   return {
     stash: createAccount(poolIdBigNumber, 0),
     reward: createAccount(poolIdBigNumber, 1),

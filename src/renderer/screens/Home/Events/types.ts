@@ -3,8 +3,7 @@
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { ChainID } from '@/types/chains';
-import type { EventAction, EventCallback } from '@/types/reporter';
-import type { AnyJson } from '@/types/misc';
+import type { EventCallback } from '@/types/reporter';
 
 export interface EventCategoryProps {
   chain: ChainID;
@@ -14,18 +13,6 @@ export interface EventCategoryProps {
 }
 
 export interface EventItemProps {
-  chain: ChainID;
-  categoryKey: number;
-  eventKey: number;
-  uid: string;
-  actions: EventAction[];
-  title: string;
-  subtitle: string;
-  data: AnyJson;
   faIcon: IconProp;
-  timestamp: number;
-  who: {
-    chain: ChainID;
-    address: string;
-  };
+  event: EventCallback;
 }

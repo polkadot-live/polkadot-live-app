@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type BigNumber from 'bignumber.js';
 import { Notification } from 'electron';
 
 /**
@@ -16,6 +17,16 @@ export class NotificationsController {
    */
   private static show(title: string, body: string) {
     new Notification({ title, body }).show();
+  }
+
+  /**
+   * @name balanceChanged
+   * @summary Shows notication when an account's balance has changed.
+   */
+  static balanceChanged(accountName: string, free: BigNumber) {
+    const title = `${accountName}`;
+    const body = `Free balance: ${free}`;
+    this.show(title, body);
   }
 
   /**

@@ -13,9 +13,11 @@ import {
   reportAccountSubscriptions,
   reportApiInstances,
   reportChainSubscriptions,
+  reportOnlineStatus,
 } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
-import type { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@polkadot-cloud/react/types';
+import { EventsController } from '@/controller/EventsController';
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -84,6 +86,9 @@ export const createMainWindow = (isTest: boolean) => {
   mainWindow.hide();
 
   mainWindow.on('show', async () => {
+    // Report online status to renderer.
+    reportOnlineStatus('menu');
+
     // Report imported accounts and chain instances.
     initializeState('menu');
 
@@ -95,6 +100,9 @@ export const createMainWindow = (isTest: boolean) => {
 
     // Report chain connections to UI.
     reportApiInstances('menu');
+
+    // Report persisted events.
+    EventsController.initialize();
   });
 
   mainWindow.on('move', () => {

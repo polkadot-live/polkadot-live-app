@@ -52,7 +52,7 @@ export class APIsController {
       );
     }
 
-    debug('🤖 Instantiating new api: %o', endpoint);
+    debug('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
     const instance = new API(endpoint, chainId);
@@ -75,7 +75,7 @@ export class APIsController {
     const instance = this.instances.find((s) => s.chain === chain);
 
     if (instance) {
-      console.log(`Disconnect chain API instance ${chain}`);
+      debug('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
       //this.instances = this.instances.filter((i) => i !== instance);
       //WindowsController.reportAll(chain, 'renderer:chain:removed');

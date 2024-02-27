@@ -15,12 +15,13 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext
 );
+import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 
 export const useEvents = () => useContext(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Store the currently imported events
-  const [events, setEventsState] = useState<EventsState>({});
+  const [events, setEventsState] = useState<EventsState>(new Map());
   const eventsRef = useRef(events);
 
   // Set events state
@@ -28,104 +29,75 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     setStateWithRef(newEvents, setEventsState, eventsRef);
   };
 
-  // Removes an event item on a specified chain, address and event uid.
+  // Removes an event item on a specified chain; compares address and event uid.
   const dismissEvent = ({ who: { chain, address }, uid }: DismissEvent) => {
-    const newEvents = { ...eventsRef.current };
-    const chainEvents = newEvents[chain]?.filter(
-      (e) => !(e.uid === uid && e.who.address === address)
-    );
+    const cloned: EventsState = new Map(eventsRef.current);
 
-    if (chainEvents) {
-      newEvents[chain] = chainEvents;
-    } else {
-      delete newEvents[chain];
-    }
-    setEvents(newEvents);
+    const filtered = cloned
+      .get(chain)
+      ?.filter((e) => !(e.uid === uid && e.who.address === address));
+
+    filtered && filtered.length > 0
+      ? cloned.set(chain, filtered)
+      : cloned.has(chain) && cloned.delete(chain);
+
+    setEvents(cloned);
   };
 
-  // Adds an event to the events state if it is new or updates an existing event. Removes existing
-  // events if they become stale.
+  // Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
-    const {
-      who: { chain },
-    } = event;
+    const cloned = new Map(eventsRef.current);
+    let curEvents = cloned.get(event.who.chain);
 
-    // Check if this notification already exists.
-    const existing = eventsRef.current[chain]?.find(
-      (e) => stringifyExistentialData(e) === stringifyExistentialData(event)
-    );
+    // Filter any duplicate events from current events array.
+    curEvents !== undefined
+      ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
+      : (curEvents = [event]);
 
-    let networkEvents: EventCallback[] = eventsRef.current[chain];
+    // Add the event and set new state.
+    cloned.set(event.who.chain, curEvents);
 
-    // If exists but the data has changed, remove the current notification. Otherwise, return and do
-    // nothing.
-    if (existing) {
-      if (existingEventUpdated(existing, event)) {
-        networkEvents = networkEvents?.filter((e) => e.uid !== existing.uid);
-      } else {
-        return;
-      }
-    }
-
-    // Add the event.
-    if (networkEvents) {
-      networkEvents.push(event);
-    } else {
-      networkEvents = [event];
-    }
-
-    // Persist updated chain events to state.
-    setEvents(Object.assign({}, eventsRef.current, { [chain]: networkEvents }));
+    setEvents(cloned);
   };
 
   // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
-    if (!eventsRef.current[chain]) {
-      return [];
+    if (!eventsRef.current.has(chain)) {
+      return new Map();
     }
-    let sortedEvents: SortedChainEvents = [];
 
-    // Accumulate chain events by category.
-    for (const event of eventsRef.current[chain]) {
+    // Get all events for the chain ID.
+    const allEvents = eventsRef.current.get(chain)!;
+
+    // Store events by category.
+    const sortedMap = new Map<string, EventCallback[]>();
+
+    for (const event of allEvents) {
       const { category } = event;
-      const existing = sortedEvents.find((c) => c.category === category);
+      const current = sortedMap.get(category)!;
 
-      if (!existing) {
-        sortedEvents.push({ category, events: [event] });
-      } else {
-        sortedEvents = sortedEvents?.map((c) =>
-          c.category === category
-            ? {
-                ...c,
-                events: c.events.concat(event),
-              }
-            : c
-        );
-      }
+      sortedMap.has(event.category)
+        ? sortedMap.set(category, [...current, event])
+        : sortedMap.set(category, [event]);
     }
 
     // Sort events by timestamp.
-    sortedEvents = sortedEvents?.map((c) => ({
-      ...c,
-      events: c.events.sort((a, b) => b.timestamp - a.timestamp),
-    }));
-    return sortedEvents;
+    for (const category of Array.from(sortedMap.keys())) {
+      const sorted = sortedMap
+        .get(category)!
+        .sort((x, y) => y.timestamp - x.timestamp);
+
+      sortedMap.set(category, sorted);
+    }
+
+    return sortedMap;
   };
-
-  // Stringifies the data of an event which determines if it already exists in event state.
-  const stringifyExistentialData = ({ uid, who }: EventCallback) =>
-    JSON.stringify({ uid, who });
-
-  // Checks whether the stringified data of an event has been updated from a currently stored one.
-  const existingEventUpdated = (
-    current: EventCallback,
-    incoming: EventCallback
-  ) => JSON.stringify(current.data) === JSON.stringify(incoming.data);
 
   return (
     <EventsContext.Provider
       value={{
-        events: eventsRef.current,
+        // NOTE: Could pass both state and ref props
+        events,
         addEvent,
         dismissEvent,
         sortChainEvents,

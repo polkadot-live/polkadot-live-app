@@ -3,6 +3,7 @@
 
 import * as ApiUtils from '@/utils/ApiUtils';
 import { Callbacks } from '@/callbacks';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -10,6 +11,9 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
+
+const debug = MainDebug.extend('QueryMultiWrapper');
 
 export class QueryMultiWrapper {
   /**
@@ -108,7 +112,11 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:query.system.account': {
-            Callbacks.callback_query_system_account(dataArr[index], entry);
+            Callbacks.callback_query_system_account(
+              dataArr[index],
+              entry,
+              this
+            );
             break;
           }
           case 'subscribe:nominationPools:query.system.account': {
@@ -127,18 +135,18 @@ export class QueryMultiWrapper {
    */
   async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
-      console.log('>> QueryMultiWrapper: queryMulti map is empty.');
+      debug('🟠 queryMulti map is empty.');
       return;
     }
 
     // Construct the argument for new queryMulti call.
-    const queryMultiArg: AnyData = this.buildQueryMultiArg(chainId);
-
-    // Make the new call to queryMulti.
-    console.log('>> QueryMultiWrapper: Call to queryMulti.');
+    const queryMultiArg: AnyData = await this.buildQueryMultiArg(chainId);
 
     const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
+
+    // Make the new call to queryMulti.
+    debug('🔷 Call to api.queryMulti.');
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
@@ -162,18 +170,16 @@ export class QueryMultiWrapper {
    * @name insert
    * @summary Add an `ApiCallEntry` to be managed by this wrapper.
    * @param {SubscriptionTask} task - Subscription task associated with entry.
-   * @param {AnyFunction} apiCall - API function call pointer associated with entry.
    */
-  insert(task: SubscriptionTask, apiCall: AnyFunction) {
+  insert(task: SubscriptionTask) {
     // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
-      console.log('>> QueryMultiWrapper: Action already exists.');
+      debug('🟠 Action already exists.');
       return;
     }
 
     // Construct new `ApiCallEntry`.
     const newEntry: ApiCallEntry = {
-      apiCall,
       curVal: null,
       task: {
         ...task,
@@ -183,7 +189,7 @@ export class QueryMultiWrapper {
 
     // Insert new key if chain isn't cached yet.
     if (!this.subscriptions.has(task.chainId)) {
-      console.log('>> QueryMultiWrapper: Add chain and API entry.');
+      debug('🔷 Add chain and API entry.');
 
       this.subscriptions.set(task.chainId, {
         unsub: null,
@@ -193,7 +199,7 @@ export class QueryMultiWrapper {
       return;
     }
 
-    console.log('>> QueryMultiWrapper: Update with new API entry.');
+    debug('🔷 Update with new API entry.');
 
     // Otherwise update query multi subscriptions map.
     const entry = this.subscriptions.get(task.chainId);
@@ -228,7 +234,7 @@ export class QueryMultiWrapper {
    */
   remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
-      console.log(">> API call doesn't exist.");
+      debug("🟠 API call doesn't exist.");
     } else {
       // Remove action from query multi map.
       const entry = this.subscriptions.get(chainId)!;
@@ -248,6 +254,18 @@ export class QueryMultiWrapper {
       if (updated.callEntries.length === 0) {
         this.subscriptions.delete(chainId);
       }
+    }
+  }
+
+  /**
+   * @name unsubOnly
+   * @summary Unsubscribe from the wrapped queryMulti but keep the cached call entries.
+   * This method is called when the app goes into offline mode.
+   */
+  unsubOnly() {
+    for (const { unsub } of this.subscriptions.values()) {
+      // TODO: Might be clearer if the entry's `unsub` field is also set to `null`.
+      unsub();
     }
   }
 
@@ -277,14 +295,15 @@ export class QueryMultiWrapper {
    * @name buildQueryMultiArg
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
-  private buildQueryMultiArg(chainId: ChainID) {
+  private async buildQueryMultiArg(chainId: ChainID) {
     const argument: AnyData = [];
 
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
-      for (const { apiCall, task } of entry.callEntries) {
-        let callArray = [apiCall];
+      for (const { task } of entry.callEntries) {
+        const apiCall = await TaskOrchestrator.getApiCall(task);
+        let callArray: AnyData[] = [apiCall];
 
         if (task.actionArgs) {
           callArray = callArray.concat(task.actionArgs);

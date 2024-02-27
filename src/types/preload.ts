@@ -35,6 +35,8 @@ export interface PreloadAPI {
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
+  removeEventFromStore: ApiRemoveEventFromStore;
+
   requestInitTx: ApiRequestInitTx;
   requestResetTx: ApiEmptyRequest;
   requestDismissEvent: ApiRequestDismissEvent;
@@ -45,6 +47,9 @@ export interface PreloadAPI {
   reportChainSubscriptionState: ApiReportChainSubscriptions;
   reportAccountSubscriptionsState: ApiReportAccountSubscriptions;
   invokeSubscriptionTask: ApiInvokeSubscriptionTask;
+
+  handleConnectionStatus: ApiHandleConnectionStatus;
+  reportOnlineStatus: ApiReportOnlineStatus;
 
   openBrowserURL: ApiOpenBrowserWindow;
 }
@@ -103,6 +108,8 @@ type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
 
+type ApiRemoveEventFromStore = (data: EventCallback) => void;
+
 type ApiRequestInitTx = (
   chain: ChainID,
   from: string,
@@ -113,6 +120,12 @@ type ApiRequestInitTx = (
 ) => void;
 
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
+
+type ApiHandleConnectionStatus = (status: boolean) => void;
+
+type ApiReportOnlineStatus = (
+  callback: (_: IpcRendererEvent, status: boolean) => void
+) => Electron.IpcRenderer;
 
 type ApiOpenBrowserWindow = (url: string) => void;
 

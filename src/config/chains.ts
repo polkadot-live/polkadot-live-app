@@ -46,20 +46,16 @@ export const ChainList = new Map<ChainID, Chain>([
       unit: 'DOT',
       prefix: 0,
       categories: {
+        balances: {
+          name: 'Balances',
+          icon: faUserGroup,
+        },
+        debugging: {
+          name: 'Debugging',
+          icon: faUserGroup,
+        },
         nominationPools: {
           name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        timestamp: {
-          name: 'Timestamps',
-          icon: faUserGroup,
-        },
-        currentSlot: {
-          name: 'Current Slots',
-          icon: faUserGroup,
-        },
-        account: {
-          name: 'Transfers',
           icon: faUserGroup,
         },
       },
@@ -80,20 +76,16 @@ export const ChainList = new Map<ChainID, Chain>([
       unit: 'WND',
       prefix: 42,
       categories: {
+        balances: {
+          name: 'Balances',
+          icon: faUserGroup,
+        },
+        debugging: {
+          name: 'Debugging',
+          icon: faUserGroup,
+        },
         nominationPools: {
           name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        timestamp: {
-          name: 'Timestamps',
-          icon: faUserGroup,
-        },
-        currentSlot: {
-          name: 'Current Slots',
-          icon: faUserGroup,
-        },
-        account: {
-          name: 'Transfers',
           icon: faUserGroup,
         },
       },
@@ -114,20 +106,16 @@ export const ChainList = new Map<ChainID, Chain>([
       unit: 'KSM',
       prefix: 2,
       categories: {
+        balances: {
+          name: 'Balances',
+          icon: faUserGroup,
+        },
+        debugging: {
+          name: 'Debugging',
+          icon: faUserGroup,
+        },
         nominationPools: {
           name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        timestamp: {
-          name: 'Timestamps',
-          icon: faUserGroup,
-        },
-        currentSlot: {
-          name: 'Current Slots',
-          icon: faUserGroup,
-        },
-        account: {
-          name: 'Transfers',
           icon: faUserGroup,
         },
       },

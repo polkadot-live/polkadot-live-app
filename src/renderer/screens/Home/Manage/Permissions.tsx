@@ -15,6 +15,7 @@ import {
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
+import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { Switch } from '@app/library/Switch';
@@ -22,6 +23,7 @@ import { Switch } from '@app/library/Switch';
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+  const { online: isOnline } = useOnlineStatus();
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -75,6 +77,10 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
+    if (!isOnline) {
+      return true;
+    }
+
     switch (task.action) {
       case 'subscribe:nominationPools:query.system.account': {
         return task.account?.nominationPoolData ? false : true;

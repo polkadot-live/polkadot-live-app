@@ -7,11 +7,22 @@ import { APIsController } from '../controller/APIsController';
 import { AccountsController } from '../controller/AccountsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type { ChainID } from '@/types/chains';
+import { OnlineStatusController } from '@/controller/OnlineStatusController';
 
 // Initalize store items.
 export const initializeState = (id: string) => {
   reportImportedAccounts(id);
   reportApiInstances(id);
+};
+
+// Report online status to renderer.
+export const reportOnlineStatus = (id: string) => {
+  const status = OnlineStatusController.getStatus();
+
+  WindowsController.get(id)?.webContents?.send(
+    'renderer:broadcast:onlineStatus',
+    status
+  );
 };
 
 // Report imported accounts to renderer.

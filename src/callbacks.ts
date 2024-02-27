@@ -7,10 +7,12 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from './config/chains';
 import { compareHashes } from './utils/CryptoUtils';
 import { EventsController } from './controller/EventsController';
-import { planckToUnit } from '@w3ux/utils';
+import { NotificationsController } from './controller/NotificationsController';
+import { planckToUnit, ellipsisFn } from '@w3ux/utils';
 import { WindowsController } from './controller/WindowsController';
 import type { ApiCallEntry } from './types/subscriptions';
 import type { AnyData } from './types/misc';
+import type { EventCallback } from './types/reporter';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
 
 export class Callbacks {
@@ -46,10 +48,13 @@ export class Callbacks {
     const now = new Date(data * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
-    // Construct and send event to renderer.
+    // Create and persist event to store, and send to renderer.
+    const event = EventsController.getEvent(entry, String(newVal));
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, String(newVal))
+      event
     );
   }
 
@@ -80,10 +85,13 @@ export class Callbacks {
     // Debugging.
     console.log(`Current Sot: ${newVal}`);
 
-    // Construct and send event to renderer.
+    // Create and persist event to store, and send to renderer.
+    const event = EventsController.getEvent(entry, String(newVal));
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, String(newVal))
+      event
     );
   }
 
@@ -94,25 +102,73 @@ export class Callbacks {
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
    */
-  static callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
-    const free = new BigNumber(data.data.free);
-    const reserved = new BigNumber(data.data.reserved);
-    const nonce = new BigNumber(data.nonce);
+  static callback_query_system_account(
+    data: AnyData,
+    entry: ApiCallEntry,
+    wrapper: QueryMultiWrapper
+  ) {
+    const { action, chainId } = entry.task;
+
+    if (!data) {
+      return;
+    }
+
+    // Check if event data is same as cached value.
+    const newVal = {
+      address: entry.task.account!.address,
+      free: new BigNumber(data.data.free),
+      reserved: new BigNumber(data.data.reserved),
+      nonce: new BigNumber(data.nonce),
+    };
+
+    const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
+
+    if (curVal !== null) {
+      // Check if newVal === curVal
+      if (
+        newVal.address === curVal.address &&
+        newVal.free.eq(curVal.free) &&
+        newVal.reserved.eq(curVal.reserved) &&
+        newVal.nonce.eq(curVal.nonce)
+      ) {
+        console.log('Balances are the same, skip.');
+        return;
+      }
+    }
+
+    // Cache new value.
+    wrapper.setChainTaskVal(entry, newVal, chainId);
+
+    // Extract values.
+    const { free, reserved, nonce } = newVal;
 
     // Debugging.
     console.log(
       `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
     );
 
-    // Construct and send event to renderer.
+    // Create event.
+    const event = EventsController.getEvent(entry, {
+      nonce,
+      free,
+      reserved,
+    });
+
+    // Parse data into same format as persisted events.
+    const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+    // Persist parsed event to store.
+    EventsController.persistEvent(parsed);
+
+    // Send parsed event to renderer.
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, {
-        nonce,
-        free,
-        reserved,
-      })
+      parsed
     );
+
+    // TMP: Show native OS notification.
+    const addressName = ellipsisFn(entry.task.account!.address);
+    NotificationsController.balanceChanged(addressName, free);
   }
 
   /**
@@ -167,9 +223,12 @@ export class Callbacks {
     AccountsController.set(chainId, account);
 
     // Construct and send event to renderer to display new reward balance.
+    const event = EventsController.getEvent(entry, {});
+    EventsController.persistEvent(event);
+
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      EventsController.getEvent(entry, {})
+      event
     );
   }
 }

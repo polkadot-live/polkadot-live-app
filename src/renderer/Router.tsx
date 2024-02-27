@@ -18,6 +18,7 @@ import type { FlattenedAccounts } from '@/types/accounts';
 import { useSubscriptions } from './contexts/Subscriptions';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import { useManage } from '@app/screens/Home/Manage/provider';
+import { useOnlineStatus } from './contexts/OnlineStatus';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -26,6 +27,7 @@ export const RouterInner = () => {
 
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
+  const { setOnline } = useOnlineStatus();
 
   useEffect(() => {
     // handle initial responses to populate state from store.
@@ -46,6 +48,11 @@ export const RouterInner = () => {
     //    setAccountStateKey(chain, address, key, value);
     //  }
     //);
+
+    window.myAPI.reportOnlineStatus((_: Event, status: boolean) => {
+      console.log(`Online status STATE received: ${status}`);
+      setOnline(status);
+    });
 
     window.myAPI.reportChainSubscriptionState(
       (_: Event, serialized: AnyJson) => {

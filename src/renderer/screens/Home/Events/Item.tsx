@@ -16,19 +16,10 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 const FADE_TRANSITION = 200;
 
-export const Item = ({
-  who,
-  chain,
-  categoryKey,
-  eventKey,
-  uid,
-  title,
-  subtitle,
-  faIcon,
-  actions,
-  data,
-}: EventItemProps) => {
-  const { address } = who;
+export const Item = ({ faIcon, event }: EventItemProps) => {
+  const { uid, title, subtitle, actions, data } = event;
+  const { address, chain } = event.who;
+
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -36,9 +27,12 @@ export const Item = ({
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
   // Allow the fade-out transition to happen before the event is dismissed from the UI.
-  const handleDismissEvent = () => {
+  const handleDismissEvent = async () => {
     setDisplay('fade');
     setTimeout(() => setDisplay('out'), FADE_TRANSITION);
+
+    const result = await window.myAPI.removeEventFromStore(event);
+    console.log(`Remove result: ${result}`);
   };
 
   // Manually define event item height. Add extra height if actions are present.
@@ -50,7 +44,7 @@ export const Item = ({
   // removing the event before_ the event transition is finished.
   useEffect(() => {
     if (display === 'out') {
-      dismissEvent({ uid, who });
+      dismissEvent({ uid, who: { address, chain } });
     }
   }, [display]);
 
@@ -79,7 +73,10 @@ export const Item = ({
             ease: 'easeInOut',
           }}
         >
-          <button type="button" onClick={() => handleDismissEvent()}>
+          <button
+            type="button"
+            onClick={async () => await handleDismissEvent()}
+          >
             <FontAwesomeIcon icon={faTimes} />
           </button>
           <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>
@@ -109,7 +106,7 @@ export const Item = ({
                   if (isUrl) {
                     return (
                       <ButtonMonoInvert
-                        key={`${chain}_cat_${categoryKey}_event_${eventKey}_action_${i}`}
+                        key={`action_${uid}_${i}`}
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
@@ -121,7 +118,7 @@ export const Item = ({
                   } else {
                     return (
                       <ButtonMono
-                        key={`event_action_${i}`}
+                        key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={() => {
                           window.myAPI.openWindow('action', {
