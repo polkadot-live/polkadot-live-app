@@ -1,8 +1,8 @@
 // Copyright 2024 @paritytech/polkadot-staking-dashboard authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ComponentBase } from '@/renderer/types';
 import type { ReactNode } from 'react';
-import type { ComponentBase } from 'types';
 
 export type ActionItemProps = ComponentBase & {
   // the title.
