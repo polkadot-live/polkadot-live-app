@@ -222,11 +222,11 @@ export class API {
   disconnect = async () => {
     this._api &&
       this._api.isConnected &&
-      (await this._api.disconnect().catch());
+      (await this._api.disconnect().catch(console.error));
 
     this._provider &&
       this._provider.isConnected &&
-      this._provider.disconnect().catch();
+      this._provider.disconnect().catch(console.error);
 
     this.provider = null;
     this._api = null;

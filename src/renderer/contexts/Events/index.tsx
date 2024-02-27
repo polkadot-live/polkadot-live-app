@@ -15,6 +15,7 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext
 );
+import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 
 export const useEvents = () => useContext(EventsContext);
 
@@ -48,8 +49,12 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     const cloned = new Map(eventsRef.current);
     let curEvents = cloned.get(event.who.chain);
 
+    // Filter any duplicate events from current events array.
+    curEvents !== undefined
+      ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
+      : (curEvents = [event]);
+
     // Add the event and set new state.
-    curEvents !== undefined ? curEvents.push(event) : (curEvents = [event]);
     cloned.set(event.who.chain, curEvents);
 
     setEvents(cloned);

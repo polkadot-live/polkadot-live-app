@@ -52,7 +52,7 @@ export class APIsController {
       );
     }
 
-    debug('🤖 Instantiating new api: %o', endpoint);
+    debug('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
     const instance = new API(endpoint, chainId);

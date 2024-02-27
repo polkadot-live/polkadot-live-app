@@ -12,6 +12,7 @@ import { planckToUnit, ellipsisFn } from '@w3ux/utils';
 import { WindowsController } from './controller/WindowsController';
 import type { ApiCallEntry } from './types/subscriptions';
 import type { AnyData } from './types/misc';
+import type { EventCallback } from './types/reporter';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
 
 export class Callbacks {
@@ -108,12 +109,13 @@ export class Callbacks {
   ) {
     const { action, chainId } = entry.task;
 
-    // Check if event data is same as cached value.
     if (!data) {
       return;
     }
 
+    // Check if event data is same as cached value.
     const newVal = {
+      address: entry.task.account!.address,
       free: new BigNumber(data.data.free),
       reserved: new BigNumber(data.data.reserved),
       nonce: new BigNumber(data.nonce),
@@ -121,14 +123,23 @@ export class Callbacks {
 
     const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
 
-    // Don't send event if balance is the same as the cached value.
-    if (curVal && compareHashes(curVal, newVal)) {
-      return;
+    if (curVal !== null) {
+      // Check if newVal === curVal
+      if (
+        newVal.address === curVal.address &&
+        newVal.free.eq(curVal.free) &&
+        newVal.reserved.eq(curVal.reserved) &&
+        newVal.nonce.eq(curVal.nonce)
+      ) {
+        console.log('Balances are the same, skip.');
+        return;
+      }
     }
 
     // Cache new value.
     wrapper.setChainTaskVal(entry, newVal, chainId);
 
+    // Extract values.
     const { free, reserved, nonce } = newVal;
 
     // Debugging.
@@ -143,13 +154,16 @@ export class Callbacks {
       reserved,
     });
 
-    // Persist event to store.
-    EventsController.persistEvent(event);
+    // Parse data into same format as persisted events.
+    const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
-    // Send event to renderer.
+    // Persist parsed event to store.
+    EventsController.persistEvent(parsed);
+
+    // Send parsed event to renderer.
     WindowsController.get('menu')?.webContents?.send(
       'renderer:event:new',
-      event
+      parsed
     );
 
     // TMP: Show native OS notification.

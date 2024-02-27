@@ -11,6 +11,7 @@ import { WindowsController } from './WindowsController';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { EventCallback } from '@/types/reporter';
+import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -57,10 +58,10 @@ export class EventsController {
    * @summary Persist an event to the store.
    */
   static persistEvent(event: EventCallback) {
-    const events = EventsController.getEventsFromStore();
-
-    // Add event to array.
-    events.push(event);
+    const events = pushEventAndFilterDuplicates(
+      event,
+      EventsController.getEventsFromStore()
+    );
 
     // Persist new array to store.
     EventsController.persistEventsToStore(events);
