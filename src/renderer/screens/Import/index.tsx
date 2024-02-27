@@ -1,12 +1,13 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ModalMotionTwoSection, ModalSection } from '@polkadot-cloud/react';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
 import type { AccountSource } from '@/types/accounts';
+import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
+import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 
 export const Import: React.FC = () => {
   const [source, setSource] = useState<AccountSource | undefined>('ledger');
