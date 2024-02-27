@@ -4,11 +4,7 @@
 import { faChrome, faUsb } from '@fortawesome/free-brands-svg-icons';
 import { faExternalLinkAlt, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  ActionItem,
-  ModalConnectItem,
-  ModalHardwareItem,
-} from '@polkadot-cloud/react';
+import { ModalConnectItem, ModalHardwareItem } from '@polkadot-cloud/react';
 import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
@@ -18,6 +14,7 @@ import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonHelp } from '@/renderer/kits/Buttons/ButtonHelp';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { ActionItem } from '@/renderer/library/ActionItem';
 
 export const Home = ({
   setSection,
