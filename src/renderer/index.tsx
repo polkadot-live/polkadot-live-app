@@ -5,7 +5,7 @@ import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
 
 // Network themes.
-import '@polkadot-cloud/core/accent/polkadot-relay.css';
+import '@app/theme/accents/polkadot-relay.css';
 
 // App styles.
 import './theme/theme.scss';

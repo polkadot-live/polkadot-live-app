@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
 import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import type { VaultAccount } from '@polkadot-cloud/react/types';
+import type { VaultAccount } from '@w3ux/react-connect-kit/types';
 import { checkValidAddress } from '@/renderer/Utils';
 
 export const Reader = ({ addresses, setAddresses }: AnyJson) => {
