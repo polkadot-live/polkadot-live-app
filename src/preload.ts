@@ -15,13 +15,13 @@ if (isTest) {
   require('wdio-electron-service/preload');
 }
 
-contextBridge.exposeInMainWorld('myAPI', {
+export const API: PreloadAPI = {
   /**
    * Window lifecycle
    */
 
-  quitApp: (): void => {
-    ipcRenderer.invoke('app:quit');
+  quitApp: async (): Promise<void> => {
+    await ipcRenderer.invoke('app:quit');
   },
 
   hideWindow: (id) => ipcRenderer.send('app:window:hide', id),
@@ -55,7 +55,7 @@ contextBridge.exposeInMainWorld('myAPI', {
   removeChain: (chain) => ipcRenderer.send('app:chain:remove', chain),
 
   // Opens a window.
-  openWindow: (id, args) => ipcRenderer.invoke(`${id}:open`, args),
+  openWindow: async (id, args) => await ipcRenderer.invoke(`${id}:open`, args),
 
   // Performs a Ledger loop.
   doLedgerLoop: (accountIndex, tasks) =>
@@ -93,8 +93,8 @@ contextBridge.exposeInMainWorld('myAPI', {
     ipcRenderer.on('renderer:event:dismiss', callback),
 
   // Remove event from store.
-  removeEventFromStore: (data: EventCallback) =>
-    ipcRenderer.invoke('app:event:remove', data),
+  removeEventFromStore: async (data: EventCallback) =>
+    await ipcRenderer.invoke('app:event:remove', data),
 
   /**
    * Subscription communication
@@ -109,8 +109,8 @@ contextBridge.exposeInMainWorld('myAPI', {
     ipcRenderer.on('renderer:broadcast:subscriptions:accounts', callback),
 
   // Handle subscription task.
-  invokeSubscriptionTask: (data: WrappedSubscriptionTasks) =>
-    ipcRenderer.invoke('app:subscriptions:task:handle', data),
+  invokeSubscriptionTask: async (data: WrappedSubscriptionTasks) =>
+    await ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
   /**
    * Online status
@@ -151,4 +151,6 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
-} as PreloadAPI);
+};
+
+contextBridge.exposeInMainWorld('myAPI', API);

@@ -120,8 +120,8 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                       <ButtonMono
                         key={`action_${uid}_${i}`}
                         text={text || ''}
-                        onClick={() => {
-                          window.myAPI.openWindow('action', {
+                        onClick={async () => {
+                          await window.myAPI.openWindow('action', {
                             uid,
                             action: `${uid}_${uri}`,
                             chain,

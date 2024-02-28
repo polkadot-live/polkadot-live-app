@@ -11,6 +11,7 @@ import { Manage } from './Manage';
 import { Splash } from './Splash';
 import type { AnyFunction, AnyJson } from '@/types/misc';
 import type { LedgerResponse, LedgerTask } from '@/types/ledger';
+import type { IpcRendererEvent } from 'electron';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
@@ -108,7 +109,7 @@ export const ImportLedger = ({
 
   // Initialise listeners for Ledger IO.
   useEffect(() => {
-    window.myAPI.reportLedgerStatus((_: Event, result: AnyJson) => {
+    window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
       handleLedgerStatusResponse(result);
     });
 

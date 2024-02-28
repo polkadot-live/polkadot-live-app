@@ -29,7 +29,7 @@ export const Header = ({ showMenu }: HeaderProps) => {
           <>
             <button
               type="button"
-              onClick={() => window.myAPI.openWindow('import')}
+              onClick={async () => await window.myAPI.openWindow('import')}
             >
               <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
             </button>

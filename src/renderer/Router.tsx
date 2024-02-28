@@ -1,10 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@/types/misc';
 import { MainInterfaceWrapper } from '@app/Wrappers';
 //import { useAccountState } from '@app/contexts/AccountState';
-import { useAddresses } from '@app/contexts/Addresses';
 import { Overlay } from '@app/library/Overlay';
 import { Tooltip } from '@app/library/Tooltip';
 import { useEffect } from 'react';
@@ -12,13 +10,16 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
 import { Home } from '@app/screens/Home';
 import { Import } from '@app/screens/Import';
+import { useAddresses } from '@app/contexts/Addresses';
+import { useOnlineStatus } from './contexts/OnlineStatus';
+import { useManage } from '@app/screens/Home/Manage/provider';
+import { useSubscriptions } from './contexts/Subscriptions';
 import { useTheme } from 'styled-components';
+import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccounts } from '@/types/accounts';
-import { useSubscriptions } from './contexts/Subscriptions';
+import type { IpcRendererEvent } from 'electron';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import { useManage } from '@app/screens/Home/Manage/provider';
-import { useOnlineStatus } from './contexts/OnlineStatus';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -31,11 +32,13 @@ export const RouterInner = () => {
 
   useEffect(() => {
     // handle initial responses to populate state from store.
-    window.myAPI.reportImportedAccounts((_: Event, accounts: string) => {
-      const parsed: FlattenedAccounts = new Map(JSON.parse(accounts));
-      setAddresses(parsed);
-      setRenderedSubscriptions({ type: '', tasks: [] });
-    });
+    window.myAPI.reportImportedAccounts(
+      (_: IpcRendererEvent, accounts: string) => {
+        const parsed: FlattenedAccounts = new Map(JSON.parse(accounts));
+        setAddresses(parsed);
+        setRenderedSubscriptions({ type: '', tasks: [] });
+      }
+    );
 
     //window.myAPI.reportAccountState(
     //  (
@@ -49,13 +52,13 @@ export const RouterInner = () => {
     //  }
     //);
 
-    window.myAPI.reportOnlineStatus((_: Event, status: boolean) => {
+    window.myAPI.reportOnlineStatus((_: IpcRendererEvent, status: boolean) => {
       console.log(`Online status STATE received: ${status}`);
       setOnline(status);
     });
 
     window.myAPI.reportChainSubscriptionState(
-      (_: Event, serialized: AnyJson) => {
+      (_: IpcRendererEvent, serialized: string) => {
         const parsed = new Map<ChainID, SubscriptionTask[]>(
           JSON.parse(serialized)
         );
@@ -65,7 +68,7 @@ export const RouterInner = () => {
     );
 
     window.myAPI.reportAccountSubscriptionsState(
-      (_: Event, serialized: AnyJson) => {
+      (_: IpcRendererEvent, serialized: string) => {
         const parsed = new Map<string, SubscriptionTask[]>(
           JSON.parse(serialized)
         );

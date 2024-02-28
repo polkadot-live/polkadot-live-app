@@ -42,8 +42,8 @@ export const Menu = () => {
         <MenuWrapper ref={alerterRf}>
           <button
             type="button"
-            onClick={() => {
-              window.myAPI.openWindow('import');
+            onClick={async () => {
+              await window.myAPI.openWindow('import');
               toggleMenu(false);
             }}
           >
@@ -60,7 +60,7 @@ export const Menu = () => {
           <Separator />
           <button
             type="button"
-            onClick={() => window.myAPI.quitApp()}
+            onClick={async () => await window.myAPI.quitApp()}
             className="separator"
           >
             Exit

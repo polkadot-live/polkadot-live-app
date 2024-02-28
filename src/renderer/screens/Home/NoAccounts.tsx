@@ -12,8 +12,8 @@ export const NoAccounts = () => (
       lg
       text="Import Accounts"
       iconLeft={faLink}
-      onClick={() => {
-        window.myAPI.openWindow('import');
+      onClick={async () => {
+        await window.myAPI.openWindow('import');
       }}
     />
   </NoAccountsWrapper>

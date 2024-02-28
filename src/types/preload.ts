@@ -6,20 +6,20 @@ import type { ChainID } from './chains';
 import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
 import type { AccountSource } from './accounts';
-import type { ImportedAccounts } from '@/model/Account';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
 import type { WrappedSubscriptionTasks } from './subscriptions';
+import type { FlattenedAPIData } from './apis';
 
 export interface PreloadAPI {
-  quitApp: ApiEmptyRequest;
+  quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
   syncChain: ApiSyncChain;
-  chainAdded: ApiChainEvent;
-  chainRemoved: ApiChainEvent;
-  chainConnected: ApiChainEvent;
-  chainDisconnected: ApiChainEvent;
+  chainAdded: ApiSyncChain;
+  chainRemoved: ApiChainRemoved;
+  chainConnected: ApiSyncChain;
+  chainDisconnected: ApiSyncChain;
   removeChain: ApiRemoveChain;
 
   openWindow: ApiOpenWindow;
@@ -57,15 +57,16 @@ export interface PreloadAPI {
 // Types of MyAPI methods.
 
 type ApiEmptyRequest = () => void;
+type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
 
 type ApiSyncChain = (
-  callback: (_: IpcRendererEvent, name: string) => void
+  callback: (_: IpcRendererEvent, name: FlattenedAPIData) => void
 ) => Electron.IpcRenderer;
 
-type ApiChainEvent = (
-  callback: (_: IpcRendererEvent, name: string) => void
+type ApiChainRemoved = (
+  callback: (_: IpcRendererEvent, name: ChainID) => void
 ) => Electron.IpcRenderer;
 
 type ApiRemoveChain = (chain: ChainID) => void;
@@ -87,7 +88,7 @@ export type ApiNewAddressImported = (
 type ApiRemoveImportedAccount = (chain: ChainID, account: string) => void;
 
 type ApiReportImportedAccounts = (
-  callback: (_: IpcRendererEvent, accounts: ImportedAccounts) => void
+  callback: (_: IpcRendererEvent, accounts: string) => void
 ) => Electron.IpcRenderer;
 
 //type ApiReportAccountState = (
@@ -108,7 +109,7 @@ type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
 
-type ApiRemoveEventFromStore = (data: EventCallback) => void;
+type ApiRemoveEventFromStore = (data: EventCallback) => Promise<boolean>;
 
 type ApiRequestInitTx = (
   chain: ChainID,
@@ -121,7 +122,7 @@ type ApiRequestInitTx = (
 
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
 
-type ApiHandleConnectionStatus = (status: boolean) => void;
+type ApiHandleConnectionStatus = () => void;
 
 type ApiReportOnlineStatus = (
   callback: (_: IpcRendererEvent, status: boolean) => void
@@ -147,11 +148,13 @@ interface APIReportTxData {
 type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 
 type ApiReportChainSubscriptions = (
-  callback: (_: IpcRendererEvent, serialized: AnyJson) => void
+  callback: (_: IpcRendererEvent, serialized: string) => void
 ) => void;
 
 type ApiReportAccountSubscriptions = (
-  callback: (_: IpcRendererEvent, serialized: AnyJson) => void
+  callback: (_: IpcRendererEvent, serialized: string) => void
 ) => void;
 
-type ApiInvokeSubscriptionTask = (data: WrappedSubscriptionTasks) => void;
+type ApiInvokeSubscriptionTask = (
+  data: WrappedSubscriptionTasks
+) => Promise<boolean>;
