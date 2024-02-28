@@ -16,8 +16,8 @@ import {
   reportOnlineStatus,
 } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
-import type { AnyJson } from '@polkadot-cloud/react/types';
 import { EventsController } from '@/controller/EventsController';
+import type { AnyJson } from '@/types/misc';
 
 /*----------------------------------------------------------------------
  Set up the tray:

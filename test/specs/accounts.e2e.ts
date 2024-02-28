@@ -3,7 +3,7 @@
 
 import type { FlattenedAccountData } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
-import type { AccountSource } from '@polkadot-cloud/react/types';
+import type { AccountSource } from '@w3ux/react-connect-kit/types';
 import { expect } from 'expect-webdriverio';
 
 describe('Account Tests', function () {
