@@ -2875,6 +2875,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@w3ux/utils@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@w3ux/utils@npm:0.0.2"
+  dependencies:
+    "@polkadot/keyring": "npm:^12.6.2"
+    "@polkadot/util": "npm:^12.6.2"
+    bignumber.js: "npm:^9.1.1"
+  checksum: 33ce48775fd806313363d029c11c34dbe269d2f93aa64e2bc0229ce26383277d6bc0d8e2452b4df2e31d87a41020289a8cf4bd6f3efc4b089387247455b3426d
+  languageName: node
+  linkType: hard
+
 "@wdio/cli@npm:8.32.3":
   version: 8.32.3
   resolution: "@wdio/cli@npm:8.32.3"
@@ -3725,7 +3736,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^9.1.2":
+"bignumber.js@npm:^9.1.1, bignumber.js@npm:^9.1.2":
   version: 9.1.2
   resolution: "bignumber.js@npm:9.1.2"
   checksum: e17786545433f3110b868725c449fa9625366a6e675cd70eb39b60938d6adbd0158cb4b3ad4f306ce817165d37e63f4aa3098ba4110db1d9a3b9f66abfbaf10d
