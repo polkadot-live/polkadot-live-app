@@ -436,13 +436,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/plugin-auto-unpack-natives@npm:7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/plugin-auto-unpack-natives@npm:7.2.0"
+"@electron-forge/plugin-auto-unpack-natives@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/plugin-auto-unpack-natives@npm:7.3.0"
   dependencies:
-    "@electron-forge/plugin-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
-  checksum: d2fbf07af187cf73556e3bef004462c050e5e553b6755854d9d6abb31e94c5b478a0f2cfb4e5bd5536673ad139b64332a5ffa15f64c323502302e566b87c2be2
+    "@electron-forge/plugin-base": "npm:7.3.0"
+    "@electron-forge/shared-types": "npm:7.3.0"
+  checksum: 34baca7c865767d676a4669326055b8ebd81aea01a570ad4d6e7ce7e662c5107e66690baa47f3e86868b1a3f9690970f74309d3ae8fd422248e8dfc7b1081e83
   languageName: node
   linkType: hard
 
@@ -452,6 +452,15 @@ __metadata:
   dependencies:
     "@electron-forge/shared-types": "npm:7.2.0"
   checksum: ac25b5ced3ef080c0f7e08180cda5dc15e741a216405a5547de54d9514940ff5087d8439947533c37e838c6f69cfcfc3ce8ede9d06e68ab20f9c4d9d63b0b5ea
+  languageName: node
+  linkType: hard
+
+"@electron-forge/plugin-base@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/plugin-base@npm:7.3.0"
+  dependencies:
+    "@electron-forge/shared-types": "npm:7.3.0"
+  checksum: 0c3a3eba40cf84d2d4ff8b1cedb4fb51887d3916783aeb85a7b21c5fa4f421d05af959b462538d9ce011e8d4542b89776f34496c6120b24c9ea3d2987323cb42
   languageName: node
   linkType: hard
 
@@ -9784,7 +9793,7 @@ __metadata:
     "@electron-forge/maker-rpm": "npm:7.3.0"
     "@electron-forge/maker-squirrel": "npm:7.3.0"
     "@electron-forge/maker-zip": "npm:7.2.0"
-    "@electron-forge/plugin-auto-unpack-natives": "npm:7.2.0"
+    "@electron-forge/plugin-auto-unpack-natives": "npm:7.3.0"
     "@electron-forge/plugin-vite": "npm:7.2.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.0"
     "@fortawesome/free-brands-svg-icons": "npm:^6.5.0"
