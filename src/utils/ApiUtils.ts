@@ -4,7 +4,6 @@
 import { APIsController } from '@/controller/APIsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { AccountsController } from '@/controller/AccountsController';
-import { ChainList } from '@/config/chains';
 import { MainDebug } from './DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -62,21 +61,4 @@ const isApiInstanceRequiredFor = (chainId: ChainID) => {
   }
 
   return false;
-};
-
-/**
- * @name addApiInstance
- * @summary Add a new `API` instance to `APIsController`.
- * @deprecated This function should no longer be used.
- */
-// TODO: Remove this function if it's no longer needed after
-// multi-chain support is added.
-export const addApiInstance = async (chainId: ChainID) => {
-  if (!APIsController.chainExists(chainId)) {
-    const chainData = ChainList.get(chainId);
-
-    if (chainData) {
-      await APIsController.new(chainId);
-    }
-  }
 };

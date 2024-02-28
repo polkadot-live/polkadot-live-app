@@ -29,16 +29,6 @@ export class APIsController {
   };
 
   /**
-   * @name chainExists
-   * @summary Checks whether an API instace for the provided chain exists.
-   * @param {ChainID} chain - the chain ID.
-   * @deprecated
-   */
-  // TODO: Remove if not needed when multi-chain support is implemented.
-  static chainExists = (chain: ChainID) =>
-    !!APIsController.instances.find((a) => a.chain === chain);
-
-  /**
    * @name new
    * @summary Instantiates a new disconnected API instance and adds it to the `instances` property.
    * @param {string} endpoint - the api endpoint.
