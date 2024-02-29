@@ -40,8 +40,8 @@
     "sourceType": "module",
     "ecmaVersion": "latest",
     "ecmaFeatures": {
-      "jsx": true,
-      "arrowFunctions": true
+      "jsx": true
+      //"arrowFunctions": true
     }
   },
   "rules": {
