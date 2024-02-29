@@ -423,16 +423,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-zip@npm:7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/maker-zip@npm:7.2.0"
+"@electron-forge/maker-zip@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@electron-forge/maker-zip@npm:7.3.0"
   dependencies:
-    "@electron-forge/maker-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
+    "@electron-forge/maker-base": "npm:7.3.0"
+    "@electron-forge/shared-types": "npm:7.3.0"
     cross-zip: "npm:^4.0.0"
     fs-extra: "npm:^10.0.0"
     got: "npm:^11.8.5"
-  checksum: ea80590a39d84df4b99a1d8160c9e3f626ba061f32e4d5d1e6732b5dccc45f98175499f1b1bb9e04204f35c8ffa054c1725290532e39e9733d5875cf7506e3e2
+  checksum: 2798a70ccf807520e30bb14f4c562e6c8a4728e810148ccdb885bb1828dc893b97ed708e4aadaf5ef46d0d43cb55a8d3221257caaa2a98887f71e30528e45c72
   languageName: node
   linkType: hard
 
@@ -9792,7 +9792,7 @@ __metadata:
     "@electron-forge/maker-deb": "npm:7.3.0"
     "@electron-forge/maker-rpm": "npm:7.3.0"
     "@electron-forge/maker-squirrel": "npm:7.3.0"
-    "@electron-forge/maker-zip": "npm:7.2.0"
+    "@electron-forge/maker-zip": "npm:7.3.0"
     "@electron-forge/plugin-auto-unpack-natives": "npm:7.3.0"
     "@electron-forge/plugin-vite": "npm:7.2.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.0"
