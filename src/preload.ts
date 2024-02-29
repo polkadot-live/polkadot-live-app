@@ -119,6 +119,9 @@ export const API: PreloadAPI = {
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
 
+  // Get online status from main.
+  getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
+
   /**
    * Transactions
    */

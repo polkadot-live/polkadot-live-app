@@ -50,6 +50,7 @@ export interface PreloadAPI {
 
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
+  getOnlineStatus: ApiGetOnlineStatus;
 
   openBrowserURL: ApiOpenBrowserWindow;
 }
@@ -150,6 +151,8 @@ type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 type ApiReportChainSubscriptions = (
   callback: (_: IpcRendererEvent, serialized: string) => void
 ) => void;
+
+type ApiGetOnlineStatus = () => Promise<boolean>;
 
 type ApiReportAccountSubscriptions = (
   callback: (_: IpcRendererEvent, serialized: string) => void

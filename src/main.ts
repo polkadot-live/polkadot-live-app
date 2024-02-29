@@ -223,6 +223,9 @@ app.whenReady().then(async () => {
     OnlineStatusController.handleStatusChange();
   });
 
+  // Send connection status to frontend.
+  ipcMain.on('app:online:status', () => OnlineStatusController.getStatus());
+
   /**
    * Window management handlers.
    */
