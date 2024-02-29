@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainDebug } from '@/utils/DebugUtils';
-import type { Api } from '../model/Api';
 import type { QueryMultiWrapper } from '../model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { APIsController } from '../static/APIsController';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 
@@ -28,10 +28,9 @@ export class TaskOrchestrator {
    */
   static async subscribeTask(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
-    await this.next(task, wrapper, instance);
+    await this.next(task, wrapper);
   }
 
   /**
@@ -40,8 +39,7 @@ export class TaskOrchestrator {
    */
   private static async next(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     switch (task.chainId) {
       // Identify chain ID
@@ -52,11 +50,7 @@ export class TaskOrchestrator {
         switch (task.action) {
           case 'subscribe:query.timestamp.now': {
             debug('🟢 subscribe:query.timestamp.now');
-            await TaskOrchestrator.subscribe_query_timestamp_now(
-              task,
-              wrapper,
-              instance
-            );
+            await TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
             break;
           }
 
@@ -64,8 +58,7 @@ export class TaskOrchestrator {
             debug('🟢 subscribe:query.babe.currentSlot');
             await TaskOrchestrator.subscribe_query_babe_currentSlot(
               task,
-              wrapper,
-              instance
+              wrapper
             );
             break;
           }
@@ -74,8 +67,7 @@ export class TaskOrchestrator {
             debug('🟢 subscribe:query.system.account (account)');
             await TaskOrchestrator.subscribe_query_system_account(
               task,
-              wrapper,
-              instance
+              wrapper
             );
             break;
           }
@@ -86,8 +78,7 @@ export class TaskOrchestrator {
             );
             await TaskOrchestrator.subscribe_nomination_pool_reward_account(
               task,
-              wrapper,
-              instance
+              wrapper
             );
             break;
           }
@@ -106,8 +97,7 @@ export class TaskOrchestrator {
    */
   private static async handleTask(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     // Build tasks if app is online, otherwise just cache them.
     const isOnline = await window.myAPI.getOnlineStatus();
@@ -116,13 +106,13 @@ export class TaskOrchestrator {
       // Add this action to the chain's subscriptions.
       case 'enable': {
         wrapper.insert(task);
-        isOnline && (await wrapper.build(task.chainId, instance));
+        isOnline && (await wrapper.build(task.chainId));
         break;
       }
       // Remove this action from the chain's subscriptions.
       case 'disable': {
         wrapper.remove(task.chainId, task.action);
-        isOnline && (await wrapper.build(task.chainId, instance));
+        isOnline && (await wrapper.build(task.chainId));
         break;
       }
     }
@@ -136,12 +126,9 @@ export class TaskOrchestrator {
   // Tweak the logic to accept either a `null` or `Api` instance. If `null` is
   // provided, we can assume we are in offline mode.
 
-  static async getApiCall(task: SubscriptionTask, instance: Api | null) {
-    const { action } = task;
-
-    if (!instance) {
-      return;
-    }
+  static async getApiCall(task: SubscriptionTask) {
+    const { action, chainId } = task;
+    const instance = await APIsController.getApiInstance(chainId);
 
     switch (action) {
       case 'subscribe:query.timestamp.now':
@@ -167,11 +154,10 @@ export class TaskOrchestrator {
    */
   private static async subscribe_query_timestamp_now(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     try {
-      await TaskOrchestrator.handleTask(task, wrapper, instance);
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -183,11 +169,10 @@ export class TaskOrchestrator {
    */
   private static async subscribe_query_babe_currentSlot(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     try {
-      await TaskOrchestrator.handleTask(task, wrapper, instance);
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -199,11 +184,10 @@ export class TaskOrchestrator {
    */
   private static async subscribe_query_system_account(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     try {
-      await TaskOrchestrator.handleTask(task, wrapper, instance);
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }
@@ -215,8 +199,7 @@ export class TaskOrchestrator {
    */
   private static async subscribe_nomination_pool_reward_account(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper,
-    instance: Api | null
+    wrapper: QueryMultiWrapper
   ) {
     try {
       // Exit early if the account in question has not joined a nomination pool.
@@ -226,7 +209,7 @@ export class TaskOrchestrator {
       }
 
       // Otherwise rebuild query.
-      await TaskOrchestrator.handleTask(task, wrapper, instance);
+      await TaskOrchestrator.handleTask(task, wrapper);
     } catch (err) {
       console.error(err);
     }

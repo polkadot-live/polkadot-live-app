@@ -4,7 +4,6 @@
 import { Callbacks } from '../callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
 import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
-import type { Api } from './Api';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -12,6 +11,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
+import { APIsController } from '../static/APIsController';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -133,21 +133,16 @@ export class QueryMultiWrapper {
    * @summary Dynamically build the query multi argument, and make the actual API call.
    * @param {ChainID} chainId - The target chain to subscribe to.
    */
-  async build(chainId: ChainID, instance: Api | null) {
+  async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
       debug('🟠 queryMulti map is empty.');
       return;
     }
 
-    if (!instance) {
-      throw new Error('API instance null');
-    }
-
     // Construct the argument for new queryMulti call.
-    const queryMultiArg: AnyData = await this.buildQueryMultiArg(
-      chainId,
-      instance
-    );
+    const queryMultiArg: AnyData = await this.buildQueryMultiArg(chainId);
+
+    const instance = await APIsController.getApiInstance(chainId);
     const finalArg = queryMultiArg;
 
     // Make the new call to queryMulti.
@@ -300,14 +295,14 @@ export class QueryMultiWrapper {
    * @name buildQueryMultiArg
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
-  private async buildQueryMultiArg(chainId: ChainID, instance: Api) {
+  private async buildQueryMultiArg(chainId: ChainID) {
     const argument: AnyData = [];
 
     const entry = this.subscriptions.get(chainId);
 
     if (entry) {
       for (const { task } of entry.callEntries) {
-        const apiCall = await TaskOrchestrator.getApiCall(task, instance);
+        const apiCall = await TaskOrchestrator.getApiCall(task);
         let callArray: AnyData[] = [apiCall];
 
         if (task.actionArgs) {
