@@ -2376,15 +2376,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.11.18":
-  version: 18.19.19
-  resolution: "@types/node@npm:18.19.19"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: 125bfcd654c7d205d4d6cb39b8d07541c032aa20f6aa12a564c3ec0988d8d30dda156c8dfc357cfad56963f4138bd338e491f5d13d4259931ac12d76259620fe
-  languageName: node
-  linkType: hard
-
 "@types/normalize-package-data@npm:^2.4.1":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -5027,7 +5018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:*":
+"electron@npm:*, electron@npm:^29.1.0":
   version: 29.1.0
   resolution: "electron@npm:29.1.0"
   dependencies:
@@ -5037,19 +5028,6 @@ __metadata:
   bin:
     electron: cli.js
   checksum: 6b9946f10866544e088176ba14ffd37b79058a1b79ea0fd582df60f9d35808727c9200a0dc78210364491073ad648e11eabd3ac745d8c81c0ef71547ee0df96b
-  languageName: node
-  linkType: hard
-
-"electron@npm:^28.2.3":
-  version: 28.2.4
-  resolution: "electron@npm:28.2.4"
-  dependencies:
-    "@electron/get": "npm:^2.0.0"
-    "@types/node": "npm:^18.11.18"
-    extract-zip: "npm:^2.0.1"
-  bin:
-    electron: cli.js
-  checksum: b58c4b53d1947b49f98e25e4f9e0493592ba613105020ee6cea7e328b9b9d9521a671e0b3f1b8fcffa9254cfefdad96e56767c354317f2092e4a4b3b48afd726
   languageName: node
   linkType: hard
 
@@ -9622,7 +9600,7 @@ __metadata:
     bignumber.js: "npm:^9.1.2"
     date-fns: "npm:^3.3.1"
     debug: "npm:^4.3.4"
-    electron: "npm:^28.2.3"
+    electron: "npm:^29.1.0"
     electron-localshortcut: "npm:^3.2.1"
     electron-squirrel-startup: "npm:^1.0.0"
     electron-store: "npm:^8.1.0"
