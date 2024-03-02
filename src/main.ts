@@ -223,8 +223,21 @@ app.whenReady().then(async () => {
     OnlineStatusController.handleStatusChange();
   });
 
+  /**
+   * New handlers
+   */
+
   // Send connection status to frontend.
   ipcMain.on('app:online:status', () => OnlineStatusController.getStatus());
+
+  // Send stringified persisted accounts to frontend.
+  ipcMain.on('app:accounts:get', () => {
+    const stored = (store as Record<string, AnyData>).get(
+      'imported_accounts'
+    ) as string;
+
+    return stored ? stored : '';
+  });
 
   /**
    * Window management handlers.

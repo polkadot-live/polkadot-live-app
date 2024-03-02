@@ -29,18 +29,11 @@ export class AccountsController {
    * @name initialize
    * @summary Injects accounts into class from store.
    */
-  static initialize() {
-    // TODO: Send IPC message to get persisted accounts from store.
-    //const stored = window.myAPI.getPersistedAccounts();
-
-    //const stored = (store as Record<string, AnyJson>).get(
-    //  'imported_accounts'
-    //) as string;
-
-    const stored = null;
+  static async initialize() {
+    const stored = await window.myAPI.getPersistedAccounts();
 
     // Instantiate empty map if no accounts found in store.
-    if (!stored) {
+    if (stored === '') {
       this.accounts = new Map();
       return;
     }

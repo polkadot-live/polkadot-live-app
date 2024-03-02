@@ -12,6 +12,9 @@ import type { WrappedSubscriptionTasks } from './subscriptions';
 import type { FlattenedAPIData } from './apis';
 
 export interface PreloadAPI {
+  getOnlineStatus: ApiGetOnlineStatus;
+  getPersistedAccounts: ApiGetPersistedAccounts;
+
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
@@ -50,7 +53,6 @@ export interface PreloadAPI {
 
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
-  getOnlineStatus: ApiGetOnlineStatus;
 
   openBrowserURL: ApiOpenBrowserWindow;
 }
@@ -152,8 +154,6 @@ type ApiReportChainSubscriptions = (
   callback: (_: IpcRendererEvent, serialized: string) => void
 ) => void;
 
-type ApiGetOnlineStatus = () => Promise<boolean>;
-
 type ApiReportAccountSubscriptions = (
   callback: (_: IpcRendererEvent, serialized: string) => void
 ) => void;
@@ -161,3 +161,11 @@ type ApiReportAccountSubscriptions = (
 type ApiInvokeSubscriptionTask = (
   data: WrappedSubscriptionTasks
 ) => Promise<boolean>;
+
+/**
+ * New types
+ */
+
+type ApiGetOnlineStatus = () => Promise<boolean>;
+
+type ApiGetPersistedAccounts = () => Promise<string>;

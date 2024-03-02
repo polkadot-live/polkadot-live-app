@@ -17,6 +17,17 @@ if (isTest) {
 
 export const API: PreloadAPI = {
   /**
+   * New handlers
+   */
+
+  // Get online status from main.
+  getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
+
+  // Get persisted accounts from state.
+  getPersistedAccounts: async () =>
+    await ipcRenderer.invoke('app:accounts:get'),
+
+  /**
    * Window lifecycle
    */
 
@@ -118,9 +129,6 @@ export const API: PreloadAPI = {
 
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
-
-  // Get online status from main.
-  getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
 
   /**
    * Transactions
