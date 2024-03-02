@@ -26,7 +26,7 @@ import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData } from './types/misc';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
-import type { FlattenedAccountData } from './types/accounts';
+import type { FlattenedAccountData, FlattenedAccounts } from './types/accounts';
 import type { WrappedSubscriptionTasks } from './types/subscriptions';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -249,6 +249,11 @@ app.whenReady().then(async () => {
       return stored ? stored : '';
     }
   );
+
+  // Set persisted accounts in store.
+  ipcMain.on('app:accounts:set', (_, accounts: FlattenedAccounts) => {
+    (store as Record<string, AnyData>).set('imported_accounts', accounts);
+  });
 
   /**
    * Window management handlers.

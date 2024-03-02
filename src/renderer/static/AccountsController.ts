@@ -173,11 +173,8 @@ export class AccountsController {
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
 
-    // TODO: Send IPC message to update persisted accounts in store.
-    //(store as Record<string, AnyJson>).set(
-    //  'imported_accounts',
-    //  this.serializeAccounts()
-    //);
+    // Send IPC message to update persisted accounts in store.
+    window.myAPI.setPersistedAccounts(this.serializeAccounts());
   };
 
   /**
@@ -262,12 +259,9 @@ export class AccountsController {
   private static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
 
-    // TODO: Send IPC message to update persisted imported accounts.
+    // Send IPC message to update persisted imported accounts.
+    window.myAPI.setPersistedAccounts(this.serializeAccounts());
 
-    //(store as Record<string, AnyJson>).set(
-    //  'imported_accounts',
-    //  this.serializeAccounts()
-    //);
     debug('🆕 Accounts updated: %o', accounts);
   };
 

@@ -32,6 +32,10 @@ export const API: PreloadAPI = {
   getPersistedAccountTasks: async (account: FlattenedAccountData) =>
     await ipcRenderer.invoke('app:accounts:tasks:get', account),
 
+  // Overwrite persisted accounts in store.
+  setPersistedAccounts: (accounts: string) =>
+    ipcRenderer.send('app:accounts:set', accounts),
+
   /**
    * Window lifecycle
    */

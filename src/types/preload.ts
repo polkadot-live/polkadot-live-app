@@ -15,6 +15,7 @@ export interface PreloadAPI {
   getOnlineStatus: ApiGetOnlineStatus;
   getPersistedAccounts: ApiGetPersistedAccounts;
   getPersistedAccountTasks: ApiGetPersistedAccountTasks;
+  setPersistedAccounts: ApiSetPersistedAccounts;
 
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
@@ -174,3 +175,5 @@ type ApiGetPersistedAccounts = () => Promise<string>;
 type ApiGetPersistedAccountTasks = (
   account: FlattenedAccountData
 ) => Promise<string>;
+
+type ApiSetPersistedAccounts = (accounts: string) => void;
