@@ -5,7 +5,7 @@ import type { IpcRendererEvent } from 'electron';
 import type { ChainID } from './chains';
 import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
-import type { AccountSource } from './accounts';
+import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
 import type { WrappedSubscriptionTasks } from './subscriptions';
@@ -14,6 +14,7 @@ import type { FlattenedAPIData } from './apis';
 export interface PreloadAPI {
   getOnlineStatus: ApiGetOnlineStatus;
   getPersistedAccounts: ApiGetPersistedAccounts;
+  getPersistedAccountTasks: ApiGetPersistedAccountTasks;
 
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
@@ -169,3 +170,7 @@ type ApiInvokeSubscriptionTask = (
 type ApiGetOnlineStatus = () => Promise<boolean>;
 
 type ApiGetPersistedAccounts = () => Promise<string>;
+
+type ApiGetPersistedAccountTasks = (
+  account: FlattenedAccountData
+) => Promise<string>;

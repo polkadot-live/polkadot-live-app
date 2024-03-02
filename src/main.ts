@@ -15,18 +15,19 @@ import {
   reportImportedAccounts,
 } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
-import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
-import type { AnyData } from './types/misc';
-import * as WindowUtils from '@/utils/WindowUtils';
-import * as WdioUtils from '@/utils/WdioUtils';
-import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import { SubscriptionsController } from './controller/SubscriptionsController';
 import { AccountsController } from './controller/AccountsController';
 import { AppOrchestrator } from './orchestrators/AppOrchestrator';
 import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
 import { EventsController } from './controller/EventsController';
 import { OnlineStatusController } from './controller/OnlineStatusController';
+import * as WindowUtils from '@/utils/WindowUtils';
+import * as WdioUtils from '@/utils/WdioUtils';
+import type { AnyData } from './types/misc';
+import type { ChainID } from '@/types/chains';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type { FlattenedAccountData } from './types/accounts';
+import type { WrappedSubscriptionTasks } from './types/subscriptions';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -228,16 +229,26 @@ app.whenReady().then(async () => {
    */
 
   // Send connection status to frontend.
-  ipcMain.on('app:online:status', () => OnlineStatusController.getStatus());
+  ipcMain.handle('app:online:status', () => OnlineStatusController.getStatus());
 
   // Send stringified persisted accounts to frontend.
-  ipcMain.on('app:accounts:get', () => {
+  ipcMain.handle('app:accounts:get', () => {
     const stored = (store as Record<string, AnyData>).get(
       'imported_accounts'
     ) as string;
 
     return stored ? stored : '';
   });
+
+  // Send stringified persisted account tasks to frontend.
+  ipcMain.handle(
+    'app:accounts:tasks:get',
+    (_, account: FlattenedAccountData) => {
+      const key = `${account.address}_subscriptions`;
+      const stored = (store as Record<string, AnyData>).get(key) as string;
+      return stored ? stored : '';
+    }
+  );
 
   /**
    * Window management handlers.

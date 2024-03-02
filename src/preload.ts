@@ -8,6 +8,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { WrappedSubscriptionTasks } from './types/subscriptions';
+import type { FlattenedAccountData } from './types/accounts';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -26,6 +27,10 @@ export const API: PreloadAPI = {
   // Get persisted accounts from state.
   getPersistedAccounts: async () =>
     await ipcRenderer.invoke('app:accounts:get'),
+
+  // Get persisted subscription tasks for account.
+  getPersistedAccountTasks: async (account: FlattenedAccountData) =>
+    await ipcRenderer.invoke('app:accounts:tasks:get', account),
 
   /**
    * Window lifecycle

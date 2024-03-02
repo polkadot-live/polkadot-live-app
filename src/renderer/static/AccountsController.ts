@@ -65,15 +65,12 @@ export class AccountsController {
   static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        //const key = `${account.address}_subscriptions`;
+        const stored = await window.myAPI.getPersistedAccountTasks(
+          account.flatten()
+        );
 
-        // TODO: Send IPC message to get subscription tasks for the account.
-        //const tasks = await window.myAPI.getPersistedTasks();
-
-        //const persisted = (store as Record<string, AnyJson>).get(key);
-        //const tasks = persisted ? JSON.parse(persisted as string) : [];
-
-        const tasks: SubscriptionTask[] = [];
+        const tasks: SubscriptionTask[] =
+          stored !== '' ? JSON.parse(stored) : [];
 
         for (const task of tasks) {
           await account.subscribeToTask(task);
