@@ -17,6 +17,7 @@ export interface PreloadAPI {
   getPersistedAccountTasks: ApiGetPersistedAccountTasks;
   setPersistedAccounts: ApiSetPersistedAccounts;
   persistEvent: ApiPersistEvent;
+  getChainSubscriptions: ApiGetChainSubscriptions;
 
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
@@ -180,3 +181,5 @@ type ApiGetPersistedAccountTasks = (
 type ApiSetPersistedAccounts = (accounts: string) => void;
 
 type ApiPersistEvent = (event: EventCallback) => void;
+
+type ApiGetChainSubscriptions = () => Promise<string>;

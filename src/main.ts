@@ -229,10 +229,12 @@ app.whenReady().then(async () => {
    */
 
   // Send connection status to frontend.
-  ipcMain.handle('app:online:status', () => OnlineStatusController.getStatus());
+  ipcMain.handle('app:online:status', async () =>
+    OnlineStatusController.getStatus()
+  );
 
   // Send stringified persisted accounts to frontend.
-  ipcMain.handle('app:accounts:get', () => {
+  ipcMain.handle('app:accounts:get', async () => {
     const stored = (store as Record<string, AnyData>).get(
       'imported_accounts'
     ) as string;
@@ -243,7 +245,7 @@ app.whenReady().then(async () => {
   // Send stringified persisted account tasks to frontend.
   ipcMain.handle(
     'app:accounts:tasks:get',
-    (_, account: FlattenedAccountData) => {
+    async (_, account: FlattenedAccountData) => {
       const key = `${account.address}_subscriptions`;
       const stored = (store as Record<string, AnyData>).get(key) as string;
       return stored ? stored : '';
@@ -263,6 +265,13 @@ app.whenReady().then(async () => {
       'renderer:event:new',
       eventWithUid
     );
+  });
+
+  // Get persisted chain subscription tasks.
+  ipcMain.handle('app:subscriptions:chain:get', async () => {
+    const key = 'chain_subscriptions';
+    const tasks = (store as Record<string, AnyData>).get(key) as string;
+    return tasks ? tasks : '';
   });
 
   /**

@@ -7,8 +7,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
-import type { WrappedSubscriptionTasks } from './types/subscriptions';
 import type { FlattenedAccountData } from './types/accounts';
+import type { WrappedSubscriptionTasks } from './types/subscriptions';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -38,6 +38,9 @@ export const API: PreloadAPI = {
 
   persistEvent: (event: EventCallback) =>
     ipcRenderer.send('app:event:persist', event),
+
+  getChainSubscriptions: async () =>
+    await ipcRenderer.invoke('app:subscriptions:chain:get'),
 
   /**
    * Window lifecycle
