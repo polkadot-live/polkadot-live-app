@@ -255,6 +255,16 @@ app.whenReady().then(async () => {
     (store as Record<string, AnyData>).set('imported_accounts', accounts);
   });
 
+  // Persist an event and report it back to frontend.
+  ipcMain.on('app:event:persist', (_, e: EventCallback) => {
+    const eventWithUid = EventsController.persistEvent(e);
+
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:new',
+      eventWithUid
+    );
+  });
+
   /**
    * Window management handlers.
    */

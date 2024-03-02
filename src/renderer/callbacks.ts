@@ -1,10 +1,16 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AccountsController } from './static/AccountsController';
+import { APIsController } from './static/APIsController';
 import BigNumber from 'bignumber.js';
+import { chainUnits } from '@/config/chains';
 import { compareHashes } from '@/utils/CryptoUtils';
+import { EventsController } from './static/EventsController';
+import { planckToUnit } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
+import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
 
 export class Callbacks {
@@ -40,18 +46,9 @@ export class Callbacks {
     const now = new Date(data * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
-    /**
-     * TODO: Send IPC message to main process to handle notification and events.
-     *
-     * // Create and persist event to store, and send to renderer.
-     * const event = EventsController.getEvent(entry, String(newVal));
-     * EventsController.persistEvent(event);
-
-     * WindowsController.get('menu')?.webContents?.send(
-     *   'renderer:event:new',
-     *   event
-     * );
-     */
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, String(newVal));
+    window.myAPI.persistEvent(event);
   }
 
   /**
@@ -81,18 +78,9 @@ export class Callbacks {
     // Debugging.
     console.log(`Current Sot: ${newVal}`);
 
-    /**
-     * TODO: Send IPC message to main process to handle notification and events.
-     *
-     * // Create and persist event to store, and send to renderer.
-     * const event = EventsController.getEvent(entry, String(newVal));
-     * EventsController.persistEvent(event);
-     *
-     * WindowsController.get('menu')?.webContents?.send(
-     *   'renderer:event:new',
-     *   event
-     * );
-     */
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, String(newVal));
+    window.myAPI.persistEvent(event);
   }
 
   /**
@@ -147,28 +135,18 @@ export class Callbacks {
       `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
     );
 
+    // Create event.
+    const event = EventsController.getEvent(entry, {
+      nonce,
+      free,
+      reserved,
+    });
+
+    // Parse data into same format as persisted events.
+    const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+    window.myAPI.persistEvent(parsed);
+
     /**
-     * TODO: Send IPC message to main process to handle notification and events.
-     *
-     * // Create event.
-     * const event = EventsController.getEvent(entry, {
-     *   nonce,
-     *   free,
-     *   reserved,
-     * });
-     *
-     * // Parse data into same format as persisted events.
-     * const parsed: EventCallback = JSON.parse(JSON.stringify(event));
-     *
-     * // Persist parsed event to store.
-     * EventsController.persistEvent(parsed);
-     *
-     * // Send parsed event to renderer.
-     * WindowsController.get('menu')?.webContents?.send(
-     *   'renderer:event:new',
-     *   parsed
-     * );
-     *
      * // TMP: Show native OS notification.
      * const addressName = ellipsisFn(entry.task.account!.address);
      * NotificationsController.balanceChanged(addressName, free);
@@ -184,59 +162,50 @@ export class Callbacks {
    * send a notification to inform the user.
    */
   static async callback_nomination_pool_reward_account(entry: ApiCallEntry) {
-    const { account: flattenedAccount } = entry.task;
+    const { account: flattenedAccount, chainId } = entry.task;
 
     if (!flattenedAccount) {
       console.log('> Error getting flattened account data');
       return;
     }
 
-    /**
-     * TODO: Send IPC message to main process to handle notification and events.
-     *
-     * // Get associated account and API instances.
-     * const account = AccountsController.get(chainId, flattenedAccount.address);
-     * const api = instance.api;
-     *
-     * // Return if nomination pool data for account not found.
-     * if (!account?.nominationPoolData) {
-     *   return;
-     * }
-     *
-     * // Get current pending rewards.
-     * const { poolPendingRewards } = account.nominationPoolData;
-     *
-     * // Fetch pending rewards for the account.
-     * const pendingRewardsResult =
-     *   await api.call.nominationPoolsApi.pendingRewards(account.address);
-     *
-     * const fetchedPendingRewards = planckToUnit(
-     *   new BigNumber(pendingRewardsResult.toString()),
-     *   chainUnits(chainId)
-     * );
-     *
-     * // Return if pending rewards has not changed for the account.
-     * if (fetchedPendingRewards.eq(poolPendingRewards)) {
-     *   return;
-     * }
-     *
-     * // Add nomination pool data to account.
-     * account.nominationPoolData = {
-     *   ...account.nominationPoolData,
-     *   poolPendingRewards: fetchedPendingRewards,
-     * };
-     *
-     * // Update account data in controller.
-     * AccountsController.set(chainId, account);
-     *
-     * // Construct and send event to renderer to display new reward balance.
-     * const event = EventsController.getEvent(entry, {});
-     * EventsController.persistEvent(event);
-     *
-     * WindowsController.get('menu')?.webContents?.send(
-     *   'renderer:event:new',
-     *   event
-     * );
-     */
+    // Get associated account and API instances.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+    const { api } = await APIsController.getApiInstance(chainId);
+
+    // Return if nomination pool data for account not found.
+    if (!account?.nominationPoolData) {
+      return;
+    }
+
+    // Get current pending rewards.
+    const { poolPendingRewards } = account.nominationPoolData;
+
+    // Fetch pending rewards for the account.
+    const pendingRewardsResult =
+      await api.call.nominationPoolsApi.pendingRewards(account.address);
+
+    const fetchedPendingRewards = planckToUnit(
+      new BigNumber(pendingRewardsResult.toString()),
+      chainUnits(chainId)
+    );
+
+    // Return if pending rewards has not changed for the account.
+    if (fetchedPendingRewards.eq(poolPendingRewards)) {
+      return;
+    }
+
+    // Add nomination pool data to account.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolPendingRewards: fetchedPendingRewards,
+    };
+
+    // Update account data in controller.
+    AccountsController.set(chainId, account);
+
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, {});
+    window.myAPI.persistEvent(event);
   }
 }

@@ -36,6 +36,9 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.send('app:accounts:set', accounts),
 
+  persistEvent: (event: EventCallback) =>
+    ipcRenderer.send('app:event:persist', event),
+
   /**
    * Window lifecycle
    */
