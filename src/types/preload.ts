@@ -12,13 +12,16 @@ import type { FlattenedAPIData } from './apis';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
+  initializeApp: ApiInitializeApp;
+  initializeAppOnline: ApiInitializeAppOnline;
+  initializeAppOffline: ApiInitializeAppOffline;
+
   getOnlineStatus: ApiGetOnlineStatus;
   getPersistedAccounts: ApiGetPersistedAccounts;
   getPersistedAccountTasks: ApiGetPersistedAccountTasks;
   setPersistedAccounts: ApiSetPersistedAccounts;
   persistEvent: ApiPersistEvent;
   getChainSubscriptions: ApiGetChainSubscriptions;
-  initializeApp: ApiInitializeApp;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
 
@@ -155,6 +158,14 @@ type ApRreportSignedVaultTx = (signature: AnyJson) => void;
  * New types
  */
 
+type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
+
+type ApiInitializeAppOnline = (callback: (_: IpcRendererEvent) => void) => void;
+
+type ApiInitializeAppOffline = (
+  callback: (_: IpcRendererEvent) => void
+) => void;
+
 type ApiGetOnlineStatus = () => Promise<boolean>;
 
 type ApiGetPersistedAccounts = () => Promise<string>;
@@ -168,8 +179,6 @@ type ApiSetPersistedAccounts = (accounts: string) => void;
 type ApiPersistEvent = (event: EventCallback) => void;
 
 type ApiGetChainSubscriptions = () => Promise<string>;
-
-type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 
 type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
 

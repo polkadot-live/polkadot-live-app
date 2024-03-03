@@ -11,7 +11,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
-import { APIsController } from '../static/APIsController';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -142,7 +142,7 @@ export class QueryMultiWrapper {
     // Construct the argument for new queryMulti call.
     const queryMultiArg: AnyData = await this.buildQueryMultiArg(chainId);
 
-    const instance = await APIsController.getApiInstance(chainId);
+    const instance = await ApiUtils.getApiInstance(chainId);
     const finalArg = queryMultiArg;
 
     // Make the new call to queryMulti.

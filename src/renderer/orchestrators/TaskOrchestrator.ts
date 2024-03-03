@@ -4,7 +4,7 @@
 import { MainDebug } from '@/utils/DebugUtils';
 import type { QueryMultiWrapper } from '../model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import { APIsController } from '../static/APIsController';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 
@@ -128,7 +128,7 @@ export class TaskOrchestrator {
 
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
-    const instance = await APIsController.getApiInstance(chainId);
+    const instance = await ApiUtils.getApiInstance(chainId);
 
     switch (action) {
       case 'subscribe:query.timestamp.now':

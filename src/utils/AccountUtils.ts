@@ -6,7 +6,6 @@
  */
 
 import { AccountsController } from '@/renderer/static/AccountsController';
-import { APIsController } from '@/renderer/static/APIsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
@@ -15,6 +14,7 @@ import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/renderer/model/Account';
 import type { ApiPromise } from '@polkadot/api';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 /**
  * @name fetchAccountNominationPoolData
@@ -27,7 +27,7 @@ export const fetchAccountNominationPoolData = async () => {
       continue;
     }
 
-    const { api } = await APIsController.getApiInstance(chainId);
+    const { api } = await ApiUtils.getApiInstance(chainId);
     console.log(`API instance fetched for ${chainId}`);
 
     // Iterate accounts associated with chain and initialise nomination pool data.
@@ -46,7 +46,7 @@ export const fetchNominationPoolDataForAccount = async (
   chainId: ChainID
 ) => {
   if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await APIsController.getApiInstance(chainId);
+    const { api } = await ApiUtils.getApiInstance(chainId);
     await setNominationPoolDataForAccount(api, account, chainId);
   }
 };

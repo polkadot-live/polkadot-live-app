@@ -68,11 +68,51 @@ export const RouterInner = () => {
         );
 
         refAppInitialized.current = true;
-
         console.log('App initialized...');
       }
-
       console.log('App already initialized...');
+    });
+
+    // Handle switching to online mode.
+    window.myAPI.initializeAppOffline(async () => {
+      // Unsubscribe queryMulti API calls for managed accounts.
+      AccountsController.unsubscribeAccounts();
+
+      // Unsubscribe queryMulti API calls for managed chains.
+      SubscriptionsController.unsubscribeChains();
+
+      // Disconnect from any active API instances.
+      for (const chainId of Array.from(ChainList.keys())) {
+        await APIsController.close(chainId);
+      }
+
+      // Report online status to renderer.
+      setOnline(await window.myAPI.getOnlineStatus());
+    });
+
+    // Handle switching to online mode.
+    window.myAPI.initializeAppOnline(async () => {
+      // Fetch up-to-date nomination pool data for managed accounts.
+      await AccountUtils.fetchAccountNominationPoolData();
+
+      // Re-subscribe to managed accounts cached subscription tasks.
+      await AccountsController.resubscribeAccounts();
+
+      // Re-subscribe to managed chain subscription tasks.
+      await SubscriptionsController.resubscribeAccounts();
+
+      // Report online status to renderer.
+      setOnline(await window.myAPI.getOnlineStatus());
+
+      // Set chain subscriptions data for rendering.
+      setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
+
+      // Set account subscriptions data for rendering.
+      setAccountSubscriptions(
+        SubscriptionsController.getAccountSubscriptions(
+          AccountsController.accounts
+        )
+      );
     });
 
     // Handle initial responses to populate state from store.

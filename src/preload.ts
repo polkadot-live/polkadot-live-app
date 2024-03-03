@@ -21,6 +21,15 @@ export const API: PreloadAPI = {
    * New handlers
    */
 
+  initializeApp: (callback) =>
+    ipcRenderer.on('renderer:app:initialize', callback),
+
+  initializeAppOnline: (callback) =>
+    ipcRenderer.on('renderer:app:initialize:online', callback),
+
+  initializeAppOffline: (callback) =>
+    ipcRenderer.on('renderer:app:initialize:offline', callback),
+
   // Get online status from main.
   getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
 
@@ -41,9 +50,6 @@ export const API: PreloadAPI = {
 
   getChainSubscriptions: async () =>
     await ipcRenderer.invoke('app:subscriptions:chain:get'),
-
-  initializeApp: (callback) =>
-    ipcRenderer.on('renderer:app:initialize', callback),
 
   updatePersistedChainTask: async (task: SubscriptionTask) =>
     await ipcRenderer.invoke('app:subscriptions:chain:update', task),

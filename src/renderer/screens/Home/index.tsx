@@ -29,16 +29,6 @@ export const Home = () => {
   // Listen for changes in chains.
   // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
-    //window.myAPI.syncChain((_: IpcRendererEvent, apiData: FlattenedAPIData) => {
-    //  addChain(apiData);
-    //});
-
-    //window.myAPI.chainAdded(
-    //  (_: IpcRendererEvent, apiData: FlattenedAPIData) => {
-    //    addChain(apiData);
-    //  }
-    //);
-
     window.myAPI.chainRemoved((_: IpcRendererEvent, name: ChainID) => {
       removeChain(name);
     });

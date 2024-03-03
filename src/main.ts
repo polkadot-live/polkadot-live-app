@@ -9,7 +9,6 @@ import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
-import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
 import { AppOrchestrator } from './orchestrators/AppOrchestrator';
 import { EventsController } from './controller/EventsController';
@@ -273,11 +272,6 @@ app.whenReady().then(async () => {
       task: 'app:account:remove',
       data: { chain, address },
     });
-  });
-
-  // Broadcast to all active windows that an address has been updated.
-  ipcMain.on('app:request:accounts', () => {
-    reportAllWindows(reportImportedAccounts);
   });
 
   // Initiate a transaction.

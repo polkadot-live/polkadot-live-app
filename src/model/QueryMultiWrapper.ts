@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as ApiUtils from '@/utils/ApiUtils';
-import { Callbacks } from '@/callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
@@ -100,27 +99,27 @@ export class QueryMultiWrapper {
       case 'Kusama': {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
-            Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
+            //Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            Callbacks.callback_query_babe_currentSlot(
-              dataArr[index],
-              entry,
-              this
-            );
+            //Callbacks.callback_query_babe_currentSlot(
+            //  dataArr[index],
+            //  entry,
+            //  this
+            //);
             break;
           }
           case 'subscribe:query.system.account': {
-            Callbacks.callback_query_system_account(
-              dataArr[index],
-              entry,
-              this
-            );
+            //Callbacks.callback_query_system_account(
+            //  dataArr[index],
+            //  entry,
+            //  this
+            //);
             break;
           }
           case 'subscribe:nominationPools:query.system.account': {
-            await Callbacks.callback_nomination_pool_reward_account(entry);
+            //await Callbacks.callback_nomination_pool_reward_account(entry);
             break;
           }
         }

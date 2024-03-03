@@ -8,7 +8,7 @@ import {
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import { initializeState, reportOnlineStatus } from '@/utils/SystemUtils';
+import { reportOnlineStatus } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
 import { EventsController } from '@/controller/EventsController';
 import type { AnyJson } from '@/types/misc';
@@ -191,7 +191,7 @@ export const handleWindowOnIPC = (
 
     // Report imported accounts and chain instances.
     window.on('ready-to-show', () => {
-      initializeState(name);
+      //initializeState(name);
     });
 
     window.on('focus', () => {
