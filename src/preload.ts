@@ -8,7 +8,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData } from './types/accounts';
-import type { WrappedSubscriptionTasks } from './types/subscriptions';
+import type { SubscriptionTask } from './types/subscriptions';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -42,6 +42,18 @@ export const API: PreloadAPI = {
   getChainSubscriptions: async () =>
     await ipcRenderer.invoke('app:subscriptions:chain:get'),
 
+  initializeApp: (callback) =>
+    ipcRenderer.on('renderer:app:initialize', callback),
+
+  updatePersistedChainTask: async (task: SubscriptionTask) =>
+    await ipcRenderer.invoke('app:subscriptions:chain:update', task),
+
+  updatePersistedAccountTask: async (
+    task: SubscriptionTask,
+    account: FlattenedAccountData
+  ) =>
+    await ipcRenderer.invoke('app:subscriptions:account:update', task, account),
+
   /**
    * Window lifecycle
    */
@@ -57,10 +69,6 @@ export const API: PreloadAPI = {
   /**
    * Chain management
    */
-
-  syncChain: (callback) => ipcRenderer.on('renderer:chain:sync', callback),
-
-  chainAdded: (callback) => ipcRenderer.on('renderer:chain:added', callback),
 
   // Report online status.
   reportOnlineStatus: (callback) =>
@@ -121,22 +129,6 @@ export const API: PreloadAPI = {
   // Remove event from store.
   removeEventFromStore: async (data: EventCallback) =>
     await ipcRenderer.invoke('app:event:remove', data),
-
-  /**
-   * Subscription communication
-   */
-
-  // Report chain subscriptions to renderer.
-  reportChainSubscriptionState: (callback) =>
-    ipcRenderer.on('renderer:broadcast:subscriptions:chains', callback),
-
-  // Report account subscriptions to renderer.
-  reportAccountSubscriptionsState: (callback) =>
-    ipcRenderer.on('renderer:broadcast:subscriptions:accounts', callback),
-
-  // Handle subscription task.
-  invokeSubscriptionTask: async (data: WrappedSubscriptionTasks) =>
-    await ipcRenderer.invoke('app:subscriptions:task:handle', data),
 
   /**
    * Online status

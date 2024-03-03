@@ -8,8 +8,8 @@ import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
-import type { WrappedSubscriptionTasks } from './subscriptions';
 import type { FlattenedAPIData } from './apis';
+import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
   getOnlineStatus: ApiGetOnlineStatus;
@@ -18,12 +18,13 @@ export interface PreloadAPI {
   setPersistedAccounts: ApiSetPersistedAccounts;
   persistEvent: ApiPersistEvent;
   getChainSubscriptions: ApiGetChainSubscriptions;
+  initializeApp: ApiInitializeApp;
+  updatePersistedChainTask: ApiUpdatePersistedChainTask;
+  updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
 
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
-  syncChain: ApiSyncChain;
-  chainAdded: ApiSyncChain;
   chainRemoved: ApiChainRemoved;
   chainConnected: ApiSyncChain;
   chainDisconnected: ApiSyncChain;
@@ -50,10 +51,6 @@ export interface PreloadAPI {
   reportSignedVaultTx: ApRreportSignedVaultTx;
   reportTx: APIReportTx;
   reportTxStatus: ApiReportTxStatus;
-
-  reportChainSubscriptionState: ApiReportChainSubscriptions;
-  reportAccountSubscriptionsState: ApiReportAccountSubscriptions;
-  invokeSubscriptionTask: ApiInvokeSubscriptionTask;
 
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
@@ -154,18 +151,6 @@ interface APIReportTxData {
 
 type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 
-type ApiReportChainSubscriptions = (
-  callback: (_: IpcRendererEvent, serialized: string) => void
-) => void;
-
-type ApiReportAccountSubscriptions = (
-  callback: (_: IpcRendererEvent, serialized: string) => void
-) => void;
-
-type ApiInvokeSubscriptionTask = (
-  data: WrappedSubscriptionTasks
-) => Promise<boolean>;
-
 /**
  * New types
  */
@@ -183,3 +168,12 @@ type ApiSetPersistedAccounts = (accounts: string) => void;
 type ApiPersistEvent = (event: EventCallback) => void;
 
 type ApiGetChainSubscriptions = () => Promise<string>;
+
+type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
+
+type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
+
+type ApiUpdatePersistedAccountTask = (
+  task: SubscriptionTask,
+  account: FlattenedAccountData
+) => Promise<void>;

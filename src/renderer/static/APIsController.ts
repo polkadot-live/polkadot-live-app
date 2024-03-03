@@ -70,23 +70,6 @@ export class APIsController {
   };
 
   /**
-   * @name getApiInstance
-   * @summary Connects an API instance to an endpoint and returns it.
-   */
-  static getApiInstance = async (chainId: ChainID) => {
-    const instance = await this.fetchConnectedInstance(chainId);
-
-    if (!instance) {
-      throw new Error(
-        `ensureApiConnected: ${chainId} API instance couldn't be fetched.`
-      );
-    }
-
-    debug('🔷 Fetched API instance for chain: %o', chainId);
-    return instance;
-  };
-
-  /**
    * @name fetchConnectedInstance
    * @summary Returns the connected API instance for a specific chain ID.
    */

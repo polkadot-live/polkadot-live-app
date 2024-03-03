@@ -10,6 +10,7 @@ import type { Account, ImportedAccounts } from '@/model/Account';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import type { FlattenedAccountData } from '@/types/accounts';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -226,7 +227,10 @@ export class SubscriptionsController {
    * @summary Called when an account subscription task is received from renderer.
    * @todo In MAIN SubscriptionsController
    */
-  static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
+  static updateAccountTaskInStore(
+    task: SubscriptionTask,
+    account: FlattenedAccountData
+  ) {
     const key = `${account.address}_subscriptions`;
 
     // Deserialize the account's tasks from store.

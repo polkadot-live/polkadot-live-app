@@ -20,7 +20,7 @@ import type { DismissEvent } from '@/types/reporter';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
-  const { addChain, removeChain, setChain } = useChains();
+  const { removeChain, setChain } = useChains();
   const { addEvent, dismissEvent } = useEvents();
 
   // Store the currently active menu tab.
@@ -29,15 +29,15 @@ export const Home = () => {
   // Listen for changes in chains.
   // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
-    window.myAPI.syncChain((_: IpcRendererEvent, apiData: FlattenedAPIData) => {
-      addChain(apiData);
-    });
+    //window.myAPI.syncChain((_: IpcRendererEvent, apiData: FlattenedAPIData) => {
+    //  addChain(apiData);
+    //});
 
-    window.myAPI.chainAdded(
-      (_: IpcRendererEvent, apiData: FlattenedAPIData) => {
-        addChain(apiData);
-      }
-    );
+    //window.myAPI.chainAdded(
+    //  (_: IpcRendererEvent, apiData: FlattenedAPIData) => {
+    //    addChain(apiData);
+    //  }
+    //);
 
     window.myAPI.chainRemoved((_: IpcRendererEvent, name: ChainID) => {
       removeChain(name);

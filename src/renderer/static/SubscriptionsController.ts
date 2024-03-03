@@ -1,9 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { accountTasks as allAccountTasks } from '@/config/accountTasks';
+import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { QueryMultiWrapper } from '../model/QueryMultiWrapper';
 import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
-import type { Account } from '../model/Account';
+import type { Account, ImportedAccounts } from '../model/Account';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -43,7 +45,7 @@ export class SubscriptionsController {
 
     // Deserialize fetched chain tasks.
     const tasks: SubscriptionTask[] =
-      serialized === '' ? JSON.parse(serialized) : [];
+      serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
     for (const task of tasks) {
@@ -104,5 +106,96 @@ export class SubscriptionsController {
    */
   static requiresApiInstanceForChain(chainId: ChainID) {
     return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
+  }
+
+  /**
+   * @name getChainSubscriptions
+   * @summary Return a map of all correctly configured tasks possible for
+   * a chain. Active subscriptions need to be included in the array.
+   */
+  static getChainSubscriptions() {
+    const activeTasks = this.chainSubscriptions?.getSubscriptionTasks();
+
+    // TODO: Populate inactive tasks with their correct arguments.
+    // No chain API calls so far require arguments.
+
+    // Merge active tasks into default tasks array.
+    const allTasks = activeTasks
+      ? allChainTasks.map((t) => {
+          for (const active of activeTasks) {
+            if (active.action === t.action && active.chainId === t.chainId) {
+              return active;
+            }
+          }
+          return t;
+        })
+      : allChainTasks;
+
+    // Construct map from tasks array.
+    const map = new Map<ChainID, SubscriptionTask[]>();
+
+    for (const task of allTasks) {
+      let updated = [task];
+
+      const current = map.get(task.chainId);
+      if (current) {
+        updated = [...current, task];
+      }
+
+      map.set(task.chainId, updated);
+    }
+
+    return map;
+  }
+
+  /**
+   * @name getAccountSubscriptions
+   * @summary Return a map of all correctly configured tasks possible for the received accounts.
+   * Active subscriptions need to be included in the array.
+   */
+  static getAccountSubscriptions(accountsMap: ImportedAccounts) {
+    const result = new Map<string, SubscriptionTask[]>();
+
+    for (const accounts of accountsMap.values()) {
+      for (const a of accounts) {
+        const tasks = allAccountTasks
+          // Get all possible tasks for account's chain ID.
+          .filter((t) => t.chainId === a.chain)
+          // Populate tasks with correct arguments.
+          .map((t) => {
+            const task = { ...t, account: a.flatten() };
+
+            switch (t.action) {
+              case 'subscribe:query.system.account': {
+                return { ...task, actionArgs: [a.address] };
+              }
+              case 'subscribe:nominationPools:query.system.account': {
+                // Provide an account's nomination pool reward address if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolRewardAddress]
+                  : undefined;
+
+                return { ...task, actionArgs };
+              }
+              default: {
+                return t;
+              }
+            }
+          })
+          // Merge active tasks in the array.
+          .map((t) => {
+            for (const active of a.getSubscriptionTasks() || []) {
+              if (active.action === t.action && active.chainId === t.chainId) {
+                return active;
+              }
+            }
+            return t;
+          });
+
+        result.set(a.address, tasks);
+      }
+    }
+
+    return result;
   }
 }

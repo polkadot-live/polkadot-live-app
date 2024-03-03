@@ -5,7 +5,7 @@ import { MainInterfaceWrapper } from '@app/Wrappers';
 //import { useAccountState } from '@app/contexts/AccountState';
 import { Overlay } from '@app/library/Overlay';
 import { Tooltip } from '@app/library/Tooltip';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
 import { Home } from '@app/screens/Home';
@@ -16,10 +16,14 @@ import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from './contexts/Subscriptions';
 import { useTheme } from 'styled-components';
 import type { AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
-import type { SubscriptionTask } from '@/types/subscriptions';
+
+import * as AccountUtils from '@/utils/AccountUtils';
+import { AccountsController } from './static/AccountsController';
+import { APIsController } from './static/APIsController';
+import { ChainList } from '@/config/chains';
+import { SubscriptionsController } from './static/SubscriptionsController';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -30,8 +34,48 @@ export const RouterInner = () => {
   const { setRenderedSubscriptions } = useManage();
   const { setOnline } = useOnlineStatus();
 
+  const refAppInitialized = useRef(false);
+
   useEffect(() => {
-    // handle initial responses to populate state from store.
+    // Handle app initialization.
+    window.myAPI.initializeApp(async () => {
+      if (!refAppInitialized.current) {
+        // Initialize accounts from persisted state.
+        await AccountsController.initialize();
+
+        // Initialize chain APIs.
+        await APIsController.initialize(Array.from(ChainList.keys()));
+
+        // Use API instance to initialize account nomination pool data.
+        if (await window.myAPI.getOnlineStatus()) {
+          await AccountUtils.fetchAccountNominationPoolData();
+        }
+
+        // Initialize persisted account subscriptions.
+        await AccountsController.subscribeAccounts();
+
+        // Initialize persisted chain subscriptions.
+        await SubscriptionsController.initChainSubscriptions();
+
+        // Set chain subscriptions data for rendering.
+        setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
+
+        // Set account subscriptions data for rendering.
+        setAccountSubscriptions(
+          SubscriptionsController.getAccountSubscriptions(
+            AccountsController.accounts
+          )
+        );
+
+        refAppInitialized.current = true;
+
+        console.log('App initialized...');
+      }
+
+      console.log('App already initialized...');
+    });
+
+    // Handle initial responses to populate state from store.
     window.myAPI.reportImportedAccounts(
       (_: IpcRendererEvent, accounts: string) => {
         const parsed: FlattenedAccounts = new Map(JSON.parse(accounts));
@@ -56,26 +100,6 @@ export const RouterInner = () => {
       console.log(`Online status STATE received: ${status}`);
       setOnline(status);
     });
-
-    window.myAPI.reportChainSubscriptionState(
-      (_: IpcRendererEvent, serialized: string) => {
-        const parsed = new Map<ChainID, SubscriptionTask[]>(
-          JSON.parse(serialized)
-        );
-
-        setChainSubscriptions(parsed);
-      }
-    );
-
-    window.myAPI.reportAccountSubscriptionsState(
-      (_: IpcRendererEvent, serialized: string) => {
-        const parsed = new Map<string, SubscriptionTask[]>(
-          JSON.parse(serialized)
-        );
-
-        setAccountSubscriptions(parsed);
-      }
-    );
   }, []);
 
   return (

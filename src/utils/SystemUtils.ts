@@ -9,7 +9,10 @@ import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type { ChainID } from '@/types/chains';
 import { OnlineStatusController } from '@/controller/OnlineStatusController';
 
-// Initalize store items.
+/**
+ * @summary Initalize store items.
+ * @deprecated
+ */
 export const initializeState = (id: string) => {
   reportImportedAccounts(id);
   reportApiInstances(id);
@@ -25,7 +28,10 @@ export const reportOnlineStatus = (id: string) => {
   );
 };
 
-// Report imported accounts to renderer.
+/**
+ * @summary Report imported accounts to renderer.
+ * @deprecated
+ */
 export const reportImportedAccounts = (id: string) => {
   const serialized = JSON.stringify(
     Array.from(AccountsController.getAllFlattenedAccountData().entries())
@@ -66,7 +72,10 @@ export const reportAllWindows = (callback: AnyFunction) => {
   }
 };
 
-// Report active chains to a window.
+/**
+ * @summary Report active chains to a window.
+ * @deprecated
+ */
 export const reportApiInstances = (id: string) => {
   for (const apiData of APIsController.getAllFlattenedAPIData()) {
     WindowsController.get(id)?.webContents?.send(

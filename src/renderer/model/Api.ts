@@ -237,8 +237,7 @@ export class Api {
     this._api = null;
     this.status = 'disconnected';
 
-    // TODO: Get disconnect working.
-    debug('🔴 Get disconnect working.');
+    console.log(`Disconnected: ${this._chain}`);
   };
 
   /**

@@ -9,16 +9,9 @@ import { WindowsController } from './controller/WindowsController';
 import { APIsController } from './controller/APIsController';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
-import {
-  reportAllWindows,
-  reportApiInstances,
-  reportImportedAccounts,
-} from './utils/SystemUtils';
+import { reportAllWindows, reportImportedAccounts } from './utils/SystemUtils';
 import unhandled from 'electron-unhandled';
-import { SubscriptionsController } from './controller/SubscriptionsController';
-import { AccountsController } from './controller/AccountsController';
 import { AppOrchestrator } from './orchestrators/AppOrchestrator';
-import { checkAndHandleApiDisconnect } from './utils/ApiUtils';
 import { EventsController } from './controller/EventsController';
 import { OnlineStatusController } from './controller/OnlineStatusController';
 import * as WindowUtils from '@/utils/WindowUtils';
@@ -27,7 +20,8 @@ import type { AnyData } from './types/misc';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from './types/accounts';
-import type { WrappedSubscriptionTasks } from './types/subscriptions';
+import type { SubscriptionTask } from './types/subscriptions';
+import { SubscriptionsController } from './controller/SubscriptionsController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -161,61 +155,6 @@ app.whenReady().then(async () => {
     EventsController.removeEvent(event)
   );
 
-  // Subscription handlers.
-  ipcMain.handle(
-    'app:subscriptions:task:handle',
-    async (_, data: WrappedSubscriptionTasks) => {
-      switch (data.type) {
-        case 'chain': {
-          // Subscribe to task.
-          await SubscriptionsController.subscribeChainTask(data.tasks[0]);
-
-          // Update chain tasks in store.
-          SubscriptionsController.updateChainTaskInStore(data.tasks[0]);
-
-          break;
-        }
-        case 'account': {
-          // Fetch account task belongs to.
-          const account = AccountsController.get(
-            data.tasks[0].chainId,
-            data.tasks[0].account?.address
-          );
-
-          if (!account) {
-            return false;
-          }
-
-          // Subscribe to the task.
-          await SubscriptionsController.subscribeAccountTask(
-            data.tasks[0],
-            account
-          );
-
-          // Update account's tasks in store.
-          SubscriptionsController.updateAccountTaskInStore(
-            data.tasks[0],
-            account
-          );
-
-          break;
-        }
-        default: {
-          console.log('Something went wrong...');
-          return false;
-        }
-      }
-
-      // Disconnect from API instance if there are no tasks that require it.
-      await checkAndHandleApiDisconnect(data.tasks[0]);
-
-      // Report chain connections to UI.
-      reportAllWindows(reportApiInstances);
-
-      return true;
-    }
-  );
-
   /**
    * Handle switching between online and offline.
    */
@@ -273,6 +212,22 @@ app.whenReady().then(async () => {
     const tasks = (store as Record<string, AnyData>).get(key) as string;
     return tasks ? tasks : '';
   });
+
+  // Update a persisted chain subscription task.
+  ipcMain.handle(
+    'app:subscriptions:chain:update',
+    async (_, task: SubscriptionTask) => {
+      SubscriptionsController.updateChainTaskInStore(task);
+    }
+  );
+
+  // Update a persisted account subscription task.
+  ipcMain.handle(
+    'app:subscriptions:account:update',
+    async (_, task: SubscriptionTask, account: FlattenedAccountData) => {
+      SubscriptionsController.updateAccountTaskInStore(task, account);
+    }
+  );
 
   /**
    * Window management handlers.

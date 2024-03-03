@@ -2,16 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from './static/AccountsController';
-import { APIsController } from './static/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
-import { compareHashes } from '@/utils/CryptoUtils';
 import { EventsController } from './static/EventsController';
 import { planckToUnit } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 export class Callbacks {
   /**
@@ -35,7 +34,10 @@ export class Callbacks {
     );
 
     // Return if value hasn't changed since last callback or time buffer hasn't passed.
-    if (compareHashes(newVal, curVal) || newVal.minus(curVal).lte(timeBuffer)) {
+    if (
+      JSON.stringify(newVal) === JSON.stringify(curVal) ||
+      newVal.minus(curVal).lte(timeBuffer)
+    ) {
       return;
     }
 
@@ -68,7 +70,7 @@ export class Callbacks {
     const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
 
     // Return if value hasn't changed since last callback.
-    if (compareHashes(newVal, curVal)) {
+    if (JSON.stringify(newVal) === JSON.stringify(curVal)) {
       return;
     }
 
@@ -171,7 +173,7 @@ export class Callbacks {
 
     // Get associated account and API instances.
     const account = AccountsController.get(chainId, flattenedAccount.address);
-    const { api } = await APIsController.getApiInstance(chainId);
+    const { api } = await ApiUtils.getApiInstance(chainId);
 
     // Return if nomination pool data for account not found.
     if (!account?.nominationPoolData) {

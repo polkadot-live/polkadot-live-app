@@ -19,11 +19,17 @@ import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { Switch } from '@app/library/Switch';
+import { SubscriptionsController } from '@/renderer/static/SubscriptionsController';
+import { AccountsController } from '@/renderer/static/AccountsController';
+import * as ApiUtils from '@/utils/ApiUtils';
+import { useChains } from '@/renderer/contexts/Chains';
+import { APIsController } from '@/renderer/static/APIsController';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
+  const { addChain } = useChains();
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -61,7 +67,57 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     };
 
     // Send task and its associated data to backend.
-    const result = await window.myAPI.invokeSubscriptionTask(newWrapped);
+    let result = true;
+
+    switch (newWrapped.type) {
+      case 'chain': {
+        // Subscribe to task.
+        await SubscriptionsController.subscribeChainTask(newWrapped.tasks[0]);
+
+        // Update chain tasks in store.
+        await window.myAPI.updatePersistedChainTask(newWrapped.tasks[0]);
+
+        break;
+      }
+      case 'account': {
+        // Fetch account task belongs to.
+        const account = AccountsController.get(
+          newWrapped.tasks[0].chainId,
+          newWrapped.tasks[0].account?.address
+        );
+
+        if (!account) {
+          result = false;
+          break;
+        }
+
+        // Subscribe to the task.
+        await SubscriptionsController.subscribeAccountTask(
+          newWrapped.tasks[0],
+          account
+        );
+
+        await window.myAPI.updatePersistedAccountTask(
+          newWrapped.tasks[0],
+          account.flatten()
+        );
+
+        break;
+      }
+      default: {
+        console.log('Something went wrong...');
+        result = false;
+        return;
+      }
+    }
+
+    // Disconnect from API instance if there are no tasks that require it.
+    await ApiUtils.checkAndHandleApiDisconnect(newWrapped.tasks[0]);
+
+    // Update chain state.
+    for (const apiData of APIsController.getAllFlattenedAPIData()) {
+      addChain(apiData);
+    }
 
     if (result) {
       // Update subscriptions context state.

@@ -8,13 +8,7 @@ import {
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import {
-  initializeState,
-  reportAccountSubscriptions,
-  reportApiInstances,
-  reportChainSubscriptions,
-  reportOnlineStatus,
-} from '@/utils/SystemUtils';
+import { initializeState, reportOnlineStatus } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/WindowsController';
 import { EventsController } from '@/controller/EventsController';
 import type { AnyJson } from '@/types/misc';
@@ -86,20 +80,11 @@ export const createMainWindow = (isTest: boolean) => {
   mainWindow.hide();
 
   mainWindow.on('show', async () => {
+    // Initialize app if necessary.
+    WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
+
     // Report online status to renderer.
     reportOnlineStatus('menu');
-
-    // Report imported accounts and chain instances.
-    initializeState('menu');
-
-    // Report chain subscriptions.
-    reportChainSubscriptions('menu');
-
-    // Report account subscriptions.
-    reportAccountSubscriptions('menu');
-
-    // Report chain connections to UI.
-    reportApiInstances('menu');
 
     // Report persisted events.
     EventsController.initialize();

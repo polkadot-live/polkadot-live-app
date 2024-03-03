@@ -10,7 +10,7 @@ import {
 } from '@/utils/SystemUtils';
 import {
   fetchAccountNominationPoolData,
-  fetchNominationPoolDataForAccount,
+  //fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import { APIsController } from '@/controller/APIsController';
 import { AccountsController } from '@/controller/AccountsController';
@@ -59,23 +59,6 @@ export class AppOrchestrator {
    */
   private static async initialize() {
     await OnlineStatusController.initialize();
-
-    // Initialize accounts from persisted state.
-    AccountsController.initialize();
-
-    // Initialize required chain `APIs` from persisted state.
-    await APIsController.initialize(Array.from(ChainList.keys()));
-
-    // Use API instance to initialize account nomination pool data.
-    if (OnlineStatusController.getStatus() === true) {
-      await fetchAccountNominationPoolData();
-    }
-
-    // Initialize persisted account subscriptions.
-    await AccountsController.subscribeAccounts();
-
-    // Initialize persisted chain subscriptions.
-    await SubscriptionsController.initChainSubscriptions();
   }
 
   /**
@@ -141,19 +124,19 @@ export class AppOrchestrator {
     }
 
     // Initialize nomination pool data for account if necessary.
-    fetchNominationPoolDataForAccount(account, chain);
+    //fetchNominationPoolDataForAccount(account, chain);
 
     // Report new account to UI immediately (no chain state yet).
-    reportAllWindows(reportImportedAccounts);
+    //reportAllWindows(reportImportedAccounts);
 
     // Report account subscriptions to renderer.
-    reportAccountSubscriptions('menu');
+    //reportAccountSubscriptions('menu');
 
     // Show notification.
     NotificationsController.accountImported(name);
 
     // Report account again with chain state.
-    reportAllWindows(reportImportedAccounts);
+    //reportAllWindows(reportImportedAccounts);
   }
 
   /**
