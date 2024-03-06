@@ -11,6 +11,8 @@ import type {
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@/types/accounts';
+import { AccountsController } from '@/renderer/static/AccountsController';
+import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -49,11 +51,84 @@ export const AddressesProvider = ({
     address: string,
     name: string
   ) => {
+    /**
+     *
+     * TODO:
+     *
+     * - Send new address data to main window via message ports.
+     * - Have main window update controllers etc.
+     * - Send response back to import window to update its UI.
+     *
+     * This needs to be done because the `menu` window houses the API
+     * instances, and we don't want to create more than one API instance
+     * for a single chain.
+     */
+
+    // The following logic has been copied from the main process in
+    // preparation for the ports refactor.
+
+    // Add address to `AccountsController`.
+    const account = AccountsController.add(chain, source, address, name);
+
+    // If account was unsuccessfully added, exit early.
+    if (!account) {
+      return;
+    }
+
+    // Initialize nomination pool data for account if necessary.
+    fetchNominationPoolDataForAccount(account, chain);
+
+    // Update accounts state.
+    setAddresses(AccountsController.getAllFlattenedAccountData());
+
+    // Have main process send OS notification.
     window.myAPI.newAddressImported(chain, source, address, name);
   };
 
   // Removes an imported address.
-  const removeAddress = (chain: ChainID, address: string) => {
+  const removeAddress = async (chain: ChainID, address: string) => {
+    /**
+     *
+     * TODO:
+     *
+     * - Send address data to main window via message ports.
+     * - Have main window update controllers etc.
+     * - Send response back to import window to update its UI.
+     *
+     * This needs to be done because the `menu` window houses the API
+     * instances, and we don't want to create more than one API instance
+     * for a single chain.
+     */
+
+    // The following logic has been copied from the main process in
+    // preparation for the ports refactor.
+
+    // Retrieve the account.
+    const account = AccountsController.get(chain, address);
+
+    if (!account) {
+      return;
+    }
+
+    // Unsubscribe from all active tasks.
+    await AccountsController.removeAllSubscriptions(account);
+
+    // Remove account from controller and store.
+    AccountsController.remove(chain, address);
+
+    // Set account subscriptions data for rendering.
+    //setAccountSubscriptions(
+    //  SubscriptionsController.getAccountSubscriptions(
+    //    AccountsController.accounts
+    //  )
+    //);
+
+    // Set address state.
+    //setAddresses(AccountsController.getAllFlattenedAccountData());
+
+    // Report chain connections to UI.
+    // TODO
+
     window.myAPI.removeImportedAccount(chain, address);
   };
 

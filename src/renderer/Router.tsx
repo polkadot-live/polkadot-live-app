@@ -37,6 +37,46 @@ export const RouterInner = () => {
   const refAppInitialized = useRef(false);
 
   useEffect(() => {
+    // TODO:
+    // - Cache ports in frontend static class
+    // - Call port.postMessage() to send a message to the other end.
+    // - Call port.start() to receive queued messages.
+
+    // Handle port communication.
+    window.onmessage = (e: MessageEvent) => {
+      console.log(`ports: ${e.ports}`);
+
+      switch (e.data.target) {
+        case 'main': {
+          console.log('We are on the main renderer.');
+
+          // Send some data to `import` port.
+          const port = e.ports[0];
+
+          port.postMessage('ping');
+          break;
+        }
+        case 'import': {
+          console.log('We are on the import renderer.');
+
+          // Receive data from `main` port.
+          const port = e.ports[0];
+
+          port.onmessage = (ev: MessageEvent) => {
+            console.log('Data received from main renderer:');
+            console.log(ev.data);
+          };
+
+          port.start();
+          break;
+        }
+        default: {
+          console.log('Something went wrong.');
+          break;
+        }
+      }
+    };
+
     // Handle app initialization.
     window.myAPI.initializeApp(async () => {
       if (!refAppInitialized.current) {

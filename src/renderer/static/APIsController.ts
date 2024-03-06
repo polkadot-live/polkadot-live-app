@@ -41,6 +41,7 @@ export class APIsController {
       );
     }
 
+    console.log(`Creating new API interface: ${endpoint}`);
     debug('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.

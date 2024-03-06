@@ -8,7 +8,6 @@
 //  reportImportedAccounts,
 //} from '@/utils/SystemUtils';
 //import { AccountsController } from '@/controller/AccountsController';
-//import { NotificationsController } from '@/controller/NotificationsController';
 //import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   ImportNewAddressArg,
@@ -17,6 +16,8 @@ import type {
 } from '@/types/orchestrator';
 import { OnlineStatusController } from '@/controller/OnlineStatusController';
 import { WindowsController } from '@/controller/WindowsController';
+import { NotificationsController } from '@/controller/NotificationsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 
 // Orchestrate class to perform high-level app tasks.
 export class AppOrchestrator {
@@ -79,40 +80,9 @@ export class AppOrchestrator {
    * @name importNewAddress
    * @summary Imports a new account.
    */
-  private static async importNewAddress({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    chain,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    source,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    address,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    name,
-  }: ImportNewAddressArg) {
-    console.log('todo: re-implement on frontend.');
-
-    // Add address to `AccountsController` and give immediate feedback to app.
-    //const account = AccountsController.add(chain, source, address, name);
-    //
-    // If account was unsuccessfully added, exit early.
-    //if (!account) {
-    //  return;
-    //}
-    //
-    // Initialize nomination pool data for account if necessary.
-    //fetchNominationPoolDataForAccount(account, chain);
-    //
-    // Report new account to UI immediately (no chain state yet).
-    //reportAllWindows(reportImportedAccounts);
-    //
-    // Report account subscriptions to renderer.
-    //reportAccountSubscriptions('menu');
-    //
+  private static async importNewAddress({ name }: ImportNewAddressArg) {
     // Show notification.
-    //NotificationsController.accountImported(name);
-    //
-    // Report account again with chain state.
-    //reportAllWindows(reportImportedAccounts);
+    NotificationsController.accountImported(name);
   }
 
   /**
@@ -127,30 +97,11 @@ export class AppOrchestrator {
   }: RemoveImportedAccountArg) {
     console.log('todo: re-implement on frontend.');
 
-    // Retrieve the account.
-    //const account = AccountsController.get(chain, address);
-    //
-    //if (!account) {
-    //  return;
-    //}
-    //
-    // Unsubscribe from all active tasks.
-    //await AccountsController.removeAllSubscriptions(account);
-    //
     // Clear account's persisted tasks in store.
-    //SubscriptionsController.clearAccountTasksInStore(account);
-
-    // Remove address from store.
-    //AccountsController.remove(chain, address);
-
-    // Report account subscriptions to renderer.
-    //reportAccountSubscriptions('menu');
+    SubscriptionsController.clearAccountTasksInStore(address);
 
     // Report chain connections to UI.
     //reportAllWindows(reportApiInstances);
-
-    // Remove chain's API instance if no more accounts require it.
-    //removeUnusedApi(chain);
 
     // Report to all active windows that an address has been removed.
     //reportAllWindows(reportImportedAccounts);

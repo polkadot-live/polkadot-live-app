@@ -248,10 +248,8 @@ export class SubscriptionsController {
    * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
    * @todo In MAIN SubscriptionsController
    */
-  static clearAccountTasksInStore(account: Account) {
-    (store as Record<string, AnyJson>).delete(
-      `${account.address}_subscriptions`
-    );
+  static clearAccountTasksInStore(address: string) {
+    (store as Record<string, AnyJson>).delete(`${address}_subscriptions`);
   }
 
   /*------------------------------------------------------------

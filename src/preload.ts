@@ -9,12 +9,25 @@ import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
+import type { AnyJson } from './types/misc';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
 if (isTest) {
   require('wdio-electron-service/preload');
 }
+
+/**
+ * Message port
+ *
+ * Cannot send ports via the context bridge. Instead, post it to the renderer
+ * process using `window.postMessage`. Discussed here:
+ * https://github.com/electron/electron/issues/27024
+ */
+
+ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
+  window.postMessage({ target: msg.target }, '*', [e.ports[0]]);
+});
 
 export const API: PreloadAPI = {
   /**
