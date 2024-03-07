@@ -97,6 +97,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
           account
         );
 
+        // Update account tasks in store.
         await window.myAPI.updatePersistedAccountTask(
           newWrapped.tasks[0],
           account.flatten()
@@ -182,9 +183,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                   type="secondary"
                   isOn={task.status === 'enable'}
                   disabled={getDisabled(task)}
-                  handleToggle={() => {
+                  handleToggle={async () => {
                     // Send an account or chain subscription task.
-                    handleToggle({
+                    await handleToggle({
                       type,
                       tasks: [
                         {

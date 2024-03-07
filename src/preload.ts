@@ -27,7 +27,6 @@ if (isTest) {
 
 ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
   window.postMessage({ target: msg.target }, '*', [e.ports[0]]);
-  console.log('message posted..');
 });
 
 export const API: PreloadAPI = {

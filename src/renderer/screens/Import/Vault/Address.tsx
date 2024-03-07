@@ -74,7 +74,10 @@ export const Address = ({
       Identicon={<Identicon value={address} size={40} />}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
-        openOverlayWith(<Remove address={address} />, 'small')
+        openOverlayWith(
+          <Remove setAddresses={setAddresses} address={address} />,
+          'small'
+        )
       }
       openConfirmHandler={() =>
         openOverlayWith(

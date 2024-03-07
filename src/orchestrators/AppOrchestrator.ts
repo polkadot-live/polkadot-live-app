@@ -1,14 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-//import {
-//  reportAccountSubscriptions,
-//  reportAllWindows,
-//  reportApiInstances,
-//  reportImportedAccounts,
-//} from '@/utils/SystemUtils';
-//import { AccountsController } from '@/controller/AccountsController';
-//import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   ImportNewAddressArg,
   AppOrchestratorArg,

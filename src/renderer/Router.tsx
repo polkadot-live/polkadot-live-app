@@ -26,15 +26,17 @@ import { APIsController } from './static/APIsController';
 import { ChainList } from '@/config/chains';
 import { SubscriptionsController } from './static/SubscriptionsController';
 import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
+import { useChains } from './contexts/Chains';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
-  const { setAddresses, importAddress } = useAddresses();
+  const { setAddresses, importAddress, removeAddress } = useAddresses();
   //const { setAccountStateKey } = useAccountState();
 
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
   const { setOnline } = useOnlineStatus();
+  const { addChain } = useChains();
 
   const refAppInitialized = useRef(false);
 
@@ -49,9 +51,6 @@ export const RouterInner = () => {
 
             // Receive data from `import` port.
             RendererConfig.portMain.onmessage = async (ev: MessageEvent) => {
-              console.log('Data received from the import renderer:');
-              console.log(ev.data);
-
               switch (ev.data.task) {
                 // Import an address received from the `import` window.
                 case 'address:import': {
@@ -89,6 +88,46 @@ export const RouterInner = () => {
 
                   break;
                 }
+                case 'address:remove': {
+                  console.log('> Executing address:remove');
+                  const { address, chainId } = ev.data.data;
+
+                  // Retrieve the account.
+                  const account = AccountsController.get(chainId, address);
+
+                  if (!account) {
+                    console.log(
+                      'Account could not be added, probably already added'
+                    );
+                    return;
+                  }
+
+                  // Unsubscribe from all active tasks.
+                  await AccountsController.removeAllSubscriptions(account);
+
+                  // Remove account from controller and store.
+                  AccountsController.remove(chainId, address);
+
+                  // Remove address from context.
+                  removeAddress(chainId, address);
+
+                  // Update account subscriptions data.
+                  setAccountSubscriptions(
+                    SubscriptionsController.getAccountSubscriptions(
+                      AccountsController.accounts
+                    )
+                  );
+
+                  // Report chain connections to UI.
+                  for (const apiData of APIsController.getAllFlattenedAPIData()) {
+                    addChain(apiData);
+                  }
+
+                  // Transition away from rendering toggles.
+                  setRenderedSubscriptions({ type: '', tasks: [] });
+
+                  break;
+                }
                 default: {
                   throw new Error(`Port task not recognized (${ev.data.task})`);
                 }
@@ -102,14 +141,11 @@ export const RouterInner = () => {
           }
           case 'import': {
             // Cache import port on renderer config.
-            console.log('The received port:');
-            console.log(e.ports[0]);
-
             RendererConfig.portImport = e.ports[0];
 
             // Receive data from `main` port.
             RendererConfig.portImport.onmessage = (ev: MessageEvent) => {
-              console.log('Data received from main renderer:');
+              console.log('> TODO: Data received from main renderer:');
               console.log(ev.data);
             };
 
@@ -119,7 +155,7 @@ export const RouterInner = () => {
             break;
           }
           default: {
-            console.log('Something went wrong.');
+            console.error('Something went wrong.');
             break;
           }
         }

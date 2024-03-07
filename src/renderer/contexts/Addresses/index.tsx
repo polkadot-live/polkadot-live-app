@@ -12,10 +12,6 @@ import type {
 } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
 import { AccountsController } from '@/renderer/static/AccountsController';
-import { APIsController } from '@/renderer/static/APIsController';
-import { useChains } from '../Chains';
-import { useSubscriptions } from '../Subscriptions';
-import { SubscriptionsController } from '@/renderer/static/SubscriptionsController';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -31,9 +27,6 @@ export const AddressesProvider = ({
   // Store the currently imported addresses
   const [addresses, setAddressesState] = useState<FlattenedAccounts>(new Map());
   const addressesRef = useRef(addresses);
-
-  const { addChain } = useChains();
-  const { setAccountSubscriptions } = useSubscriptions();
 
   // Setter to update addresses state and ref.
   const setAddresses = (value: FlattenedAccounts) => {
@@ -67,35 +60,11 @@ export const AddressesProvider = ({
 
   // Removes an imported address.
   // IMPORTANT: Should only be called in main window.
-  const removeAddress = async (chain: ChainID, address: string) => {
-    // Retrieve the account.
-    const account = AccountsController.get(chain, address);
-
-    if (!account) {
-      return;
-    }
-
-    // Unsubscribe from all active tasks.
-    await AccountsController.removeAllSubscriptions(account);
-
-    // Remove account from controller and store.
-    AccountsController.remove(chain, address);
-
+  const removeAddress = (chain: ChainID, address: string) => {
     // Set address state.
     setAddresses(AccountsController.getAllFlattenedAccountData());
 
-    // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
-
+    // Remove persisted account from store.
     window.myAPI.removeImportedAccount(address);
   };
 
