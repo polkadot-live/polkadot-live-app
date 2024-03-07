@@ -63,6 +63,7 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
       .concat({
         index: getNextAddressIndex(),
         address,
+        isImported: false,
       });
     localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
     setAddresses(newAddresses);

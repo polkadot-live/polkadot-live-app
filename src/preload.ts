@@ -27,6 +27,7 @@ if (isTest) {
 
 ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
   window.postMessage({ target: msg.target }, '*', [e.ports[0]]);
+  console.log('message posted..');
 });
 
 export const API: PreloadAPI = {
@@ -127,8 +128,8 @@ export const API: PreloadAPI = {
   },
 
   // Attempts to remove an imported account.
-  removeImportedAccount: (chain, account) =>
-    ipcRenderer.send('app:account:remove', chain, account),
+  removeImportedAccount: (account) =>
+    ipcRenderer.send('app:account:remove', account),
 
   // Syncs imported accounts with all open windows.
   reportImportedAccounts: (callback) =>

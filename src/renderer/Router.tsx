@@ -15,6 +15,7 @@ import { useOnlineStatus } from './contexts/OnlineStatus';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from './contexts/Subscriptions';
 import { useTheme } from 'styled-components';
+import { Config as RendererConfig } from '@/renderer/static/Config';
 import type { AnyJson } from '@/types/misc';
 import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
@@ -24,10 +25,11 @@ import { AccountsController } from './static/AccountsController';
 import { APIsController } from './static/APIsController';
 import { ChainList } from '@/config/chains';
 import { SubscriptionsController } from './static/SubscriptionsController';
+import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
-  const { setAddresses } = useAddresses();
+  const { setAddresses, importAddress } = useAddresses();
   //const { setAccountStateKey } = useAccountState();
 
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
@@ -37,45 +39,94 @@ export const RouterInner = () => {
   const refAppInitialized = useRef(false);
 
   useEffect(() => {
-    // TODO:
-    // - Cache ports in frontend static class
-    // - Call port.postMessage() to send a message to the other end.
-    // - Call port.start() to receive queued messages.
+    const handlePorts = () => {
+      // Handle port communication.
+      window.onmessage = (e: MessageEvent) => {
+        switch (e.data.target) {
+          case 'main': {
+            // Cache main port on renderer config.
+            RendererConfig.portMain = e.ports[0];
 
-    // Handle port communication.
-    window.onmessage = (e: MessageEvent) => {
-      console.log(`ports: ${e.ports}`);
+            // Receive data from `import` port.
+            RendererConfig.portMain.onmessage = async (ev: MessageEvent) => {
+              console.log('Data received from the import renderer:');
+              console.log(ev.data);
 
-      switch (e.data.target) {
-        case 'main': {
-          console.log('We are on the main renderer.');
+              switch (ev.data.task) {
+                // Import an address received from the `import` window.
+                case 'address:import': {
+                  console.log('> Executing address:import');
+                  const { chainId, source, address, name } = ev.data.data;
 
-          // Send some data to `import` port.
-          const port = e.ports[0];
+                  // Add address to accounts controller.
+                  const account = AccountsController.add(
+                    chainId,
+                    source,
+                    address,
+                    name
+                  );
 
-          port.postMessage('ping');
-          break;
+                  // If account was unsuccessfully added, exit early.
+                  if (!account) {
+                    console.log(
+                      'Account could not be added, probably already added'
+                    );
+                    return;
+                  }
+
+                  // Initialize nomination pool data for account if necessary.
+                  await fetchNominationPoolDataForAccount(account, chainId);
+
+                  // Add account to address context state.
+                  importAddress(chainId, source, address, name);
+
+                  // Update account subscriptions data.
+                  setAccountSubscriptions(
+                    SubscriptionsController.getAccountSubscriptions(
+                      AccountsController.accounts
+                    )
+                  );
+
+                  break;
+                }
+                default: {
+                  throw new Error(`Port task not recognized (${ev.data.task})`);
+                }
+              }
+            };
+
+            // Start receiving messages from import port.
+            RendererConfig.portMain.start();
+
+            break;
+          }
+          case 'import': {
+            // Cache import port on renderer config.
+            console.log('The received port:');
+            console.log(e.ports[0]);
+
+            RendererConfig.portImport = e.ports[0];
+
+            // Receive data from `main` port.
+            RendererConfig.portImport.onmessage = (ev: MessageEvent) => {
+              console.log('Data received from main renderer:');
+              console.log(ev.data);
+            };
+
+            // Start receiving messages from main port.
+            RendererConfig.portImport.start();
+
+            break;
+          }
+          default: {
+            console.log('Something went wrong.');
+            break;
+          }
         }
-        case 'import': {
-          console.log('We are on the import renderer.');
-
-          // Receive data from `main` port.
-          const port = e.ports[0];
-
-          port.onmessage = (ev: MessageEvent) => {
-            console.log('Data received from main renderer:');
-            console.log(ev.data);
-          };
-
-          port.start();
-          break;
-        }
-        default: {
-          console.log('Something went wrong.');
-          break;
-        }
-      }
+      };
     };
+
+    handlePorts();
 
     // Handle app initialization.
     window.myAPI.initializeApp(async () => {
@@ -96,6 +147,9 @@ export const RouterInner = () => {
 
         // Initialize persisted chain subscriptions.
         await SubscriptionsController.initChainSubscriptions();
+
+        // Set accounts to render.
+        setAddresses(AccountsController.accounts);
 
         // Set chain subscriptions data for rendering.
         setChainSubscriptions(SubscriptionsController.getChainSubscriptions());

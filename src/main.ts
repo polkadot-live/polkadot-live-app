@@ -267,10 +267,10 @@ app.whenReady().then(async () => {
   );
 
   // Attempt an account removal.
-  ipcMain.on('app:account:remove', async (_, chain, address) => {
+  ipcMain.on('app:account:remove', async (_, address) => {
     await AppOrchestrator.next({
       task: 'app:account:remove',
-      data: { chain, address },
+      data: { address },
     });
   });
 

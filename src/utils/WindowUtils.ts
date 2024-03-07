@@ -200,6 +200,9 @@ export const handleWindowOnIPC = (
 
         const portImport = Config.getPortsForMainAndImport().portImport;
 
+        console.log('PORT IMPORT:');
+        console.log(portImport);
+
         window.webContents.postMessage('port', { target: 'import' }, [
           portImport,
         ]);

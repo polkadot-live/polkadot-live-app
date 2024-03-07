@@ -18,10 +18,10 @@ import type { HardwareAddressProps } from './types';
 export const HardwareAddress = ({
   address,
   index,
+  isImported,
   initial,
   disableEditIfImported = false,
   Identicon,
-  existsHandler,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
@@ -59,7 +59,6 @@ export const HardwareAddress = ({
     setEditName(val);
   };
 
-  const isImported = existsHandler(address);
   return (
     <Wrapper>
       <div className="content">

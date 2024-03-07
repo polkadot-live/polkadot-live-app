@@ -36,9 +36,17 @@ export const Manage = ({
               </h4>
             </div>
             <div className="items">
-              {addresses.map(({ address, index }: AnyJson, i: number) => (
-                <Address key={i} address={address} index={index} />
-              ))}
+              {addresses.map(
+                ({ address, index, isImported }: AnyJson, i: number) => (
+                  <Address
+                    key={i}
+                    setAddresses={setAddresses}
+                    address={address}
+                    index={index}
+                    isImported={isImported || false}
+                  />
+                )
+              )}
             </div>
             <div className="more">
               <ButtonText

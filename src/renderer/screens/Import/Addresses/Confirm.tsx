@@ -1,18 +1,55 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { getAddressChainId } from '@/renderer/Utils';
+import { Config as RendererConfig } from '@/renderer/static/Config';
 import type { ConfirmProps } from './types';
+import type { LocalAddress } from '@/types/accounts';
 
-export const Confirm = ({ address, name, source }: ConfirmProps) => {
-  const { importAddress } = useAddresses();
+export const Confirm = ({
+  setAddresses,
+  address,
+  name,
+  source,
+}: ConfirmProps) => {
   const { setStatus } = useOverlay();
+
+  const handleImportAddress = () => {
+    // Update import window's managed address state and local storage.
+    setAddresses((prevState: LocalAddress[]) => {
+      const newAddresses = prevState.map((a: LocalAddress) =>
+        a.address === address
+          ? {
+              address: a.address,
+              index: a.index,
+              isImported: true,
+            }
+          : a
+      );
+
+      localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
+
+      return newAddresses;
+    });
+
+    // Send address data to main window.
+    RendererConfig.portImport.postMessage({
+      task: 'address:import',
+      data: {
+        chainId: getAddressChainId(address),
+        source,
+        address,
+        name,
+      },
+    });
+
+    setStatus(0);
+  };
 
   return (
     <ConfirmWrapper>
@@ -31,10 +68,7 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
         <ButtonMono
           text="Import Account"
-          onClick={() => {
-            importAddress(getAddressChainId(address), source, address, name);
-            setStatus(0);
-          }}
+          onClick={() => handleImportAddress()}
         />
       </div>
     </ConfirmWrapper>

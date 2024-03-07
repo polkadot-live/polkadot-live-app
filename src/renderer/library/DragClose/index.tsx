@@ -9,10 +9,7 @@ export const DragClose = ({ windowName }: { windowName: string }) => (
   <Wrapper>
     <div></div>
     <div>
-      <button
-        type="button"
-        onClick={() => window.myAPI.closeWindow(windowName)}
-      >
+      <button type="button" onClick={() => window.myAPI.hideWindow(windowName)}>
         <FontAwesomeIcon icon={faTimes} transform="grow-2" />
       </button>
     </div>

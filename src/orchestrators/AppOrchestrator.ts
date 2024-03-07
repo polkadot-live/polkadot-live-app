@@ -90,20 +90,9 @@ export class AppOrchestrator {
    * @summary Removes an imported account.
    */
   private static async removeImportedAccount({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    chain,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     address,
   }: RemoveImportedAccountArg) {
-    console.log('todo: re-implement on frontend.');
-
     // Clear account's persisted tasks in store.
     SubscriptionsController.clearAccountTasksInStore(address);
-
-    // Report chain connections to UI.
-    //reportAllWindows(reportApiInstances);
-
-    // Report to all active windows that an address has been removed.
-    //reportAllWindows(reportImportedAccounts);
   }
 }

@@ -45,6 +45,15 @@ export interface FlattenedAccountData {
 }
 
 /**
+ * Address type for import window.
+ */
+export interface LocalAddress {
+  address: string;
+  isImported: boolean;
+  index: number;
+}
+
+/**
  * @deprecated The type should not be used
  */
 export type AccountChainState = PolkadotAccountState;

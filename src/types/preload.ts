@@ -92,7 +92,7 @@ export type ApiNewAddressImported = (
   name: string
 ) => void;
 
-type ApiRemoveImportedAccount = (chain: ChainID, account: string) => void;
+type ApiRemoveImportedAccount = (account: string) => void;
 
 type ApiReportImportedAccounts = (
   callback: (_: IpcRendererEvent, accounts: string) => void
