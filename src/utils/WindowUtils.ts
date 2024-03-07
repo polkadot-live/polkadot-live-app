@@ -9,8 +9,8 @@ import {
 import path from 'path';
 import { store } from '@/main';
 import { reportOnlineStatus } from '@/utils/SystemUtils';
-import { WindowsController } from '@/controller/WindowsController';
-import { EventsController } from '@/controller/EventsController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { EventsController } from '@/controller/main/EventsController';
 import type { AnyJson } from '@/types/misc';
 import { Config } from '@/config/Config';
 

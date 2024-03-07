@@ -19,11 +19,11 @@ import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { Switch } from '@app/library/Switch';
-import { SubscriptionsController } from '@/renderer/static/SubscriptionsController';
-import { AccountsController } from '@/renderer/static/AccountsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import * as ApiUtils from '@/utils/ApiUtils';
 import { useChains } from '@/renderer/contexts/Chains';
-import { APIsController } from '@/renderer/static/APIsController';
+import { APIsController } from '@/controller/renderer/APIsController';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();

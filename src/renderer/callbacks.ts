@@ -1,15 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from './static/AccountsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
-import { EventsController } from './static/EventsController';
+import { EventsController } from '@/controller/renderer/EventsController';
 import { planckToUnit } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { QueryMultiWrapper } from '../model/QueryMultiWrapper';
+import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import * as ApiUtils from '@/utils/ApiUtils';
 
 export class Callbacks {

@@ -5,9 +5,9 @@
  * @todo Move to `utils/renderer`
  */
 
-import { APIsController } from '@/renderer/static/APIsController';
-import { SubscriptionsController } from '@/renderer/static/SubscriptionsController';
-import { AccountsController } from '@/renderer/static/AccountsController';
+import { APIsController } from '@/controller/renderer/APIsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import { MainDebug } from './DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';

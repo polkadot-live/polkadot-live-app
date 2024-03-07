@@ -5,7 +5,7 @@
  * @todo Move to `renderer/AccountUtils.ts`
  */
 
-import { AccountsController } from '@/renderer/static/AccountsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';

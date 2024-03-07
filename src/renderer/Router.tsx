@@ -21,10 +21,10 @@ import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
 
 import * as AccountUtils from '@/utils/AccountUtils';
-import { AccountsController } from './static/AccountsController';
-import { APIsController } from './static/APIsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
+import { APIsController } from '@/controller/renderer/APIsController';
 import { ChainList } from '@/config/chains';
-import { SubscriptionsController } from './static/SubscriptionsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
 import { useChains } from './contexts/Chains';
 

@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Api } from '../../model/Api';
+import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';

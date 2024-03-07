@@ -3,9 +3,9 @@
 
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
 import { chainTasks as allChainTasks } from '@/config/chainTasks';
-import { QueryMultiWrapper } from '../../model/QueryMultiWrapper';
-import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
-import type { Account, ImportedAccounts } from '../../model/Account';
+import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import { TaskOrchestrator } from '@/renderer/orchestrators/TaskOrchestrator';
+import type { Account, ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 

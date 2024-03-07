@@ -6,10 +6,10 @@ import type {
   AppOrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
-import { WindowsController } from '@/controller/WindowsController';
-import { NotificationsController } from '@/controller/NotificationsController';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 
 // Orchestrate class to perform high-level app tasks.
 export class AppOrchestrator {

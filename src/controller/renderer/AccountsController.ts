@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainDebug } from '@/utils/DebugUtils';
-import { Account } from '../../model/Account';
-import type { ImportedAccounts } from '../../model/Account';
+import { Account } from '@/model/Account';
+import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type {
   AccountSource,

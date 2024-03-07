@@ -5,21 +5,21 @@ import 'websocket-polyfill';
 import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
-import { WindowsController } from './controller/WindowsController';
-import { ExtrinsicsController } from './controller/ExtrinsicsController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { AppOrchestrator } from './orchestrators/AppOrchestrator';
-import { EventsController } from './controller/EventsController';
-import { OnlineStatusController } from './controller/OnlineStatusController';
+import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
+import { EventsController } from '@/controller/main/EventsController';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
-import type { AnyData } from './types/misc';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
-import type { FlattenedAccountData, FlattenedAccounts } from './types/accounts';
-import type { SubscriptionTask } from './types/subscriptions';
-import { SubscriptionsController } from './controller/SubscriptionsController';
+import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
+import type { SubscriptionTask } from '@/types/subscriptions';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {

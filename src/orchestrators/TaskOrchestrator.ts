@@ -3,7 +3,7 @@
 
 import * as ApiUtils from '@/utils/ApiUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
 

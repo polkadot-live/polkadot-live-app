@@ -11,7 +11,7 @@ import type {
   FlattenedAccounts,
 } from '@/types/accounts';
 import type { ChainID } from '@/types/chains';
-import { AccountsController } from '@/renderer/static/AccountsController';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext

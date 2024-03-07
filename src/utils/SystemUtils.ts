@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction } from '@/types/misc';
-import { WindowsController } from '../controller/WindowsController';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 
 // Report online status to renderer.
 export const reportOnlineStatus = (id: string) => {
