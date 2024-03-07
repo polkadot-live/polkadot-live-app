@@ -3,10 +3,9 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import { rmCommas } from '@w3ux/utils';
-import { WindowsController } from '@/controller/WindowsController';
-import { ChainList } from '@/config/chains';
 import type { AnyJson } from '@/types/misc';
 import type { APIConstants } from '@/types/chains/polkadot';
 import type { Codec } from '@polkadot/types-codec/types';
@@ -14,7 +13,7 @@ import type { ChainID, ChainStatus } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 
-const debug = MainDebug.extend('API');
+const debug = MainDebug.extend('Api');
 
 /**
  * Creates an API instance of a chain.
@@ -25,7 +24,7 @@ const debug = MainDebug.extend('API');
  * @property {string | null} chain - the chain name.
  * @property {APIConstants | null} consts - the constants of the chain.
  */
-export class API {
+export class Api {
   private _endpoint: string;
 
   private _provider: ProviderInterface | null;
@@ -154,19 +153,16 @@ export class API {
     this.provider?.on('connected', () => {
       debug('⭕ %o', this.endpoint, ' CONNECTED');
       this.status = 'connected';
-      WindowsController.reportAll(this.chain, 'renderer:chain:connnected');
     });
 
     this.provider?.on('disconnected', () => {
       debug('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
-      WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
     });
 
     this.provider?.on('error', () => {
       debug('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
-      WindowsController.reportAll(this.chain, 'renderer:chain:disconnnected');
     });
   };
 
@@ -232,8 +228,7 @@ export class API {
     this._api = null;
     this.status = 'disconnected';
 
-    // TODO: Get disconnect working.
-    debug('🔴 Get disconnect working.');
+    console.log(`Disconnected: ${this._chain}`);
   };
 
   /**

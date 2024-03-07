@@ -9,7 +9,7 @@ import { planckToUnit } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
+import type { QueryMultiWrapper } from '../model/QueryMultiWrapper';
 import * as ApiUtils from '@/utils/ApiUtils';
 
 export class Callbacks {

@@ -1,8 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ApiUtils from '@/utils/ApiUtils';
+import { Callbacks } from '../renderer/callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
+import { TaskOrchestrator } from '../renderer/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -10,7 +11,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -99,27 +100,27 @@ export class QueryMultiWrapper {
       case 'Kusama': {
         switch (action) {
           case 'subscribe:query.timestamp.now': {
-            //Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
+            Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
             break;
           }
           case 'subscribe:query.babe.currentSlot': {
-            //Callbacks.callback_query_babe_currentSlot(
-            //  dataArr[index],
-            //  entry,
-            //  this
-            //);
+            Callbacks.callback_query_babe_currentSlot(
+              dataArr[index],
+              entry,
+              this
+            );
             break;
           }
           case 'subscribe:query.system.account': {
-            //Callbacks.callback_query_system_account(
-            //  dataArr[index],
-            //  entry,
-            //  this
-            //);
+            Callbacks.callback_query_system_account(
+              dataArr[index],
+              entry,
+              this
+            );
             break;
           }
           case 'subscribe:nominationPools:query.system.account': {
-            //await Callbacks.callback_nomination_pool_reward_account(entry);
+            await Callbacks.callback_nomination_pool_reward_account(entry);
             break;
           }
         }

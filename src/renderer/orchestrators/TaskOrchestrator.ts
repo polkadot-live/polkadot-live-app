@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainDebug } from '@/utils/DebugUtils';
-import type { QueryMultiWrapper } from '../model/QueryMultiWrapper';
+import type { QueryMultiWrapper } from '../../model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import * as ApiUtils from '@/utils/ApiUtils';
 

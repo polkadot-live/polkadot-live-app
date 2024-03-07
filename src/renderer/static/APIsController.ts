@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Api } from '../model/Api';
+import { Api } from '../../model/Api';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';
@@ -41,7 +41,6 @@ export class APIsController {
       );
     }
 
-    console.log(`Creating new API interface: ${endpoint}`);
     debug('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
@@ -106,16 +105,6 @@ export class APIsController {
     (this.instances =
       this.instances?.map((a) => (a.chain === instance.chain ? instance : a)) ||
       []);
-
-  /**
-   * @name reportAllConnections
-   * @summary Report all active instances to all windows.
-   */
-  //static reportAllConnections = () => {
-  //  for (const { chain } of this.instances) {
-  //    WindowsController.reportAll(chain, 'renderer:chain:sync');
-  //  }
-  //};
 
   /**
    * @name getAllFlattenedAPIData

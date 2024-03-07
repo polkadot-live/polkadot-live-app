@@ -6,7 +6,6 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from './controller/WindowsController';
-import { APIsController } from './controller/APIsController';
 import { ExtrinsicsController } from './controller/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -243,9 +242,9 @@ app.whenReady().then(async () => {
   });
 
   // Handles the closing of a chain.
-  ipcMain.on('app:chain:remove', (_, chain) => {
-    APIsController.close(chain);
-  });
+  //ipcMain.on('app:chain:remove', (_, chain) => {
+  //  APIsController.close(chain);
+  //});
 
   // Execute communication with a Ledger device.
   ipcMain.on('app:ledger:do-loop', (_, accountIndex, tasks) => {

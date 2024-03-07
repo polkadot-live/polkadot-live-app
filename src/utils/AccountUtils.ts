@@ -12,7 +12,7 @@ import BigNumber from 'bignumber.js';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { Account } from '@/renderer/model/Account';
+import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
 import * as ApiUtils from '@/utils/ApiUtils';
 
