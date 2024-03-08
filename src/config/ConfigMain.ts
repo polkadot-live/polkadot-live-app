@@ -8,25 +8,25 @@ interface PortPair {
   portImport: Electron.MessagePortMain;
 }
 
-export class Config {
+export class ConfigMain {
   static port1: Electron.MessagePortMain;
   static port2: Electron.MessagePortMain;
 
   static initialize = () => {
     const { port1, port2 } = new MessageChannelMain();
 
-    Config.port1 = port1;
-    Config.port2 = port2;
+    ConfigMain.port1 = port1;
+    ConfigMain.port2 = port2;
   };
 
   static getPortsForMainAndImport = (): PortPair => {
-    if (!Config.port1 || !Config.port2) {
-      Config.initialize();
+    if (!ConfigMain.port1 || !ConfigMain.port2) {
+      ConfigMain.initialize();
     }
 
     return {
-      portMain: Config.port1,
-      portImport: Config.port2,
+      portMain: ConfigMain.port1,
+      portImport: ConfigMain.port2,
     };
   };
 }

@@ -1,31 +1,31 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-export class Config {
+export class ConfigRenderer {
   private static _portMain: MessagePort;
   private static _portImport: MessagePort;
 
   static get portMain(): MessagePort {
-    if (!Config._portMain) {
+    if (!ConfigRenderer._portMain) {
       throw new Error('_portMain still undefined.');
     }
 
-    return Config._portMain;
+    return ConfigRenderer._portMain;
   }
 
   static set portMain(port: MessagePort) {
-    Config._portMain = port;
+    ConfigRenderer._portMain = port;
   }
 
   static get portImport(): MessagePort {
-    if (!Config._portImport) {
+    if (!ConfigRenderer._portImport) {
       throw new Error('_portImport still undefined.');
     }
 
-    return Config._portImport;
+    return ConfigRenderer._portImport;
   }
 
   static set portImport(port: MessagePort) {
-    Config._portImport = port;
+    ConfigRenderer._portImport = port;
   }
 }

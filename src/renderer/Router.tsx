@@ -14,7 +14,7 @@ import { useOnlineStatus } from './contexts/OnlineStatus';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from './contexts/Subscriptions';
 import { useTheme } from 'styled-components';
-import { Config as RendererConfig } from '@/renderer/static/Config';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import type { AnyJson } from '@/types/misc';
 import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
@@ -45,10 +45,10 @@ export const RouterInner = () => {
         switch (e.data.target) {
           case 'main': {
             // Cache main port on renderer config.
-            RendererConfig.portMain = e.ports[0];
+            ConfigRenderer.portMain = e.ports[0];
 
             // Receive data from `import` port.
-            RendererConfig.portMain.onmessage = async (ev: MessageEvent) => {
+            ConfigRenderer.portMain.onmessage = async (ev: MessageEvent) => {
               switch (ev.data.task) {
                 // Import an address received from the `import` window.
                 case 'address:import': {
@@ -133,22 +133,22 @@ export const RouterInner = () => {
             };
 
             // Start receiving messages from import port.
-            RendererConfig.portMain.start();
+            ConfigRenderer.portMain.start();
 
             break;
           }
           case 'import': {
             // Cache import port on renderer config.
-            RendererConfig.portImport = e.ports[0];
+            ConfigRenderer.portImport = e.ports[0];
 
             // Receive data from `main` port.
-            RendererConfig.portImport.onmessage = (ev: MessageEvent) => {
+            ConfigRenderer.portImport.onmessage = (ev: MessageEvent) => {
               console.log('> TODO: Data received from main renderer:');
               console.log(ev.data);
             };
 
             // Start receiving messages from main port.
-            RendererConfig.portImport.start();
+            ConfigRenderer.portImport.start();
 
             break;
           }

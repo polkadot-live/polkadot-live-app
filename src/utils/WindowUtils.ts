@@ -11,8 +11,8 @@ import { store } from '@/main';
 import { reportOnlineStatus } from '@/utils/SystemUtils';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { EventsController } from '@/controller/main/EventsController';
+import { ConfigMain } from '@/config/ConfigMain';
 import type { AnyJson } from '@/types/misc';
-import { Config } from '@/config/Config';
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -82,7 +82,7 @@ export const createMainWindow = (isTest: boolean) => {
 
   // Send port to main window for communication with import window.
   mainWindow.once('ready-to-show', () => {
-    const portMain = Config.getPortsForMainAndImport().portMain;
+    const portMain = ConfigMain.getPortsForMainAndImport().portMain;
 
     mainWindow.webContents.postMessage('port', { target: 'main' }, [portMain]);
   });
@@ -198,7 +198,7 @@ export const handleWindowOnIPC = (
       window.once('ready-to-show', () => {
         console.log('import window: send port');
 
-        const portImport = Config.getPortsForMainAndImport().portImport;
+        const portImport = ConfigMain.getPortsForMainAndImport().portImport;
 
         console.log('PORT IMPORT:');
         console.log(portImport);

@@ -7,7 +7,7 @@ import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { getAddressChainId } from '@/renderer/Utils';
-import { Config as RendererConfig } from '@/renderer/static/Config';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import type { ConfirmProps } from './types';
 import type { LocalAddress } from '@/types/accounts';
 
@@ -38,7 +38,7 @@ export const Confirm = ({
     });
 
     // Send address data to main window.
-    RendererConfig.portImport.postMessage({
+    ConfigRenderer.portImport.postMessage({
       task: 'address:import',
       data: {
         chainId: getAddressChainId(address),

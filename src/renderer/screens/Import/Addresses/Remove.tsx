@@ -6,7 +6,7 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { Config as RendererConfig } from '@/renderer/static/Config';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { LocalAddress } from '@/types/accounts';
 import { getAddressChainId } from '@/renderer/Utils';
@@ -39,7 +39,7 @@ export const Remove = ({
     });
 
     // Send address data to main window.
-    RendererConfig.portImport.postMessage({
+    ConfigRenderer.portImport.postMessage({
       task: 'address:remove',
       data: {
         address,
