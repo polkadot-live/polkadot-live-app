@@ -3,7 +3,7 @@
 
 import { Callbacks } from '@/renderer/callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
-import { TaskOrchestrator } from '@/renderer/orchestrators/TaskOrchestrator';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {

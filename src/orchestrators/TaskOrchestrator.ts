@@ -1,11 +1,10 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ApiUtils from '@/utils/ApiUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 
@@ -101,7 +100,7 @@ export class TaskOrchestrator {
     wrapper: QueryMultiWrapper
   ) {
     // Build tasks if app is online, otherwise just cache them.
-    const isOnline = OnlineStatusController.getStatus();
+    const isOnline = await window.myAPI.getOnlineStatus();
 
     switch (task.status) {
       // Add this action to the chain's subscriptions.
@@ -122,6 +121,10 @@ export class TaskOrchestrator {
   /*-------------------------------------------------- 
    API function call factory
    --------------------------------------------------*/
+
+  // TODO: Get API instance from API context, wherever this execution flow starts.
+  // Tweak the logic to accept either a `null` or `Api` instance. If `null` is
+  // provided, we can assume we are in offline mode.
 
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
