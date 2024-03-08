@@ -9,6 +9,8 @@ import * as ApiUtils from '@/utils/ApiUtils';
 const debug = MainDebug.extend('TaskOrchestrator');
 
 /**
+ * This class is used in the main window renderer.
+ *
  * Task subscription flow in the TaskOrchestrator static class:
  *
  *  > subscribeTask(task, wrapper)

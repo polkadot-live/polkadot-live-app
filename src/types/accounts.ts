@@ -75,7 +75,4 @@ export interface AccountChainInstanceState {
 
   subscribe: () => void;
   getAllState: () => { account: AnyJson; locks: AnyJson };
-
-  // The following method is not being invoked from this type yet:
-  // reportAccountState(key: keyof PolkadotState)
 }

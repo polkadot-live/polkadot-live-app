@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainInterfaceWrapper } from '@app/Wrappers';
-//import { useAccountState } from '@app/contexts/AccountState';
 import { Overlay } from '@app/library/Overlay';
 import { Tooltip } from '@app/library/Tooltip';
 import { useEffect, useRef } from 'react';
@@ -31,7 +30,6 @@ import { useChains } from './contexts/Chains';
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setAddresses, importAddress, removeAddress } = useAddresses();
-  //const { setAccountStateKey } = useAccountState();
 
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
@@ -253,18 +251,6 @@ export const RouterInner = () => {
         setRenderedSubscriptions({ type: '', tasks: [] });
       }
     );
-
-    //window.myAPI.reportAccountState(
-    //  (
-    //    _: Event,
-    //    chain: ChainID,
-    //    address: string,
-    //    key: string,
-    //    value: AnyJson
-    //  ) => {
-    //    setAccountStateKey(chain, address, key, value);
-    //  }
-    //);
 
     window.myAPI.reportOnlineStatus((_: IpcRendererEvent, status: boolean) => {
       console.log(`Online status STATE received: ${status}`);
