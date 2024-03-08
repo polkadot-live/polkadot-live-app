@@ -46,25 +46,13 @@ export const useInitIpcHandlers = () => {
         // Set accounts to render.
         setAddresses(AccountsController.accounts);
 
-        // Set chain subscriptions data for rendering.
-        setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
-
-        // Set account subscriptions data for rendering.
-        setAccountSubscriptions(
-          SubscriptionsController.getAccountSubscriptions(
-            AccountsController.accounts
-          )
-        );
-
-        // Report chain connections to UI.
-        for (const apiData of APIsController.getAllFlattenedAPIData()) {
-          addChain(apiData);
-        }
+        // Set application state.
+        setSubscriptionsAndChainConnections();
 
         refAppInitialized.current = true;
+
         console.log('App initialized...');
       }
-      console.log('App already initialized...');
     });
 
     /**
@@ -102,6 +90,12 @@ export const useInitIpcHandlers = () => {
       // Report online status to renderer.
       setOnline(await window.myAPI.getOnlineStatus());
 
+      // Set application state.
+      setSubscriptionsAndChainConnections();
+    });
+
+    // Utility
+    const setSubscriptionsAndChainConnections = () => {
       // Set chain subscriptions data for rendering.
       setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
 
@@ -116,6 +110,6 @@ export const useInitIpcHandlers = () => {
       for (const apiData of APIsController.getAllFlattenedAPIData()) {
         addChain(apiData);
       }
-    });
+    };
   }, []);
 };

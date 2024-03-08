@@ -9,7 +9,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
 import { Home } from '@app/screens/Home';
 import { Import } from '@app/screens/Import';
-import { useOnlineStatus } from './contexts/OnlineStatus';
+import { useOnlineStatus } from '@app/contexts/OnlineStatus';
 import { useTheme } from 'styled-components';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
@@ -23,7 +23,7 @@ export const RouterInner = () => {
   // Set up message ports communication between windows.
   useMessagePorts();
 
-  // Set up app initialization handlers.
+  // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
   useEffect(() => {

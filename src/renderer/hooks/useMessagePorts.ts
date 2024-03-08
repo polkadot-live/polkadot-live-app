@@ -50,7 +50,7 @@ export const useMessagePorts = () => {
     };
 
     /**
-     * @name handleImportAddress
+     * @name handleRemoveAddress
      * @summary Removes an account a message is received from import window.
      * Handled in the main window.
      */
