@@ -241,11 +241,6 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
-  // Handles the closing of a chain.
-  //ipcMain.on('app:chain:remove', (_, chain) => {
-  //  APIsController.close(chain);
-  //});
-
   // Execute communication with a Ledger device.
   ipcMain.on('app:ledger:do-loop', (_, accountIndex, tasks) => {
     console.debug(accountIndex, tasks);

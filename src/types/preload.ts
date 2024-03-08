@@ -8,7 +8,6 @@ import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback } from './reporter';
 import type { TxStatus } from './tx';
-import type { FlattenedAPIData } from './apis';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
@@ -28,11 +27,6 @@ export interface PreloadAPI {
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
-  chainRemoved: ApiChainRemoved;
-  chainConnected: ApiSyncChain;
-  chainDisconnected: ApiSyncChain;
-  removeChain: ApiRemoveChain;
-
   openWindow: ApiOpenWindow;
 
   doLedgerLoop: ApiDoLedgerLoop;
@@ -65,16 +59,6 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-
-type ApiSyncChain = (
-  callback: (_: IpcRendererEvent, name: FlattenedAPIData) => void
-) => Electron.IpcRenderer;
-
-type ApiChainRemoved = (
-  callback: (_: IpcRendererEvent, name: ChainID) => void
-) => Electron.IpcRenderer;
-
-type ApiRemoveChain = (chain: ChainID) => void;
 type ApiOpenWindow = (id: string, args?: AnyJson) => Promise<void>;
 
 type ApiDoLedgerLoop = (accountIndex: number, tasks: LedgerTask[]) => void;

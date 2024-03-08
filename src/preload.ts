@@ -18,7 +18,7 @@ if (isTest) {
 }
 
 /**
- * Message port
+ * Message ports
  *
  * Cannot send ports via the context bridge. Instead, post it to the renderer
  * process using `window.postMessage`. Discussed here:
@@ -92,20 +92,6 @@ export const API: PreloadAPI = {
   // Report online status.
   reportOnlineStatus: (callback) =>
     ipcRenderer.on('renderer:broadcast:onlineStatus', callback),
-
-  chainRemoved: (callback) =>
-    ipcRenderer.on('renderer:chain:removed', callback),
-
-  // NOTE: Not being used
-  chainConnected: (callback) =>
-    ipcRenderer.on('renderer:chain:connected', callback),
-
-  // NOTE: Not being used
-  chainDisconnected: (callback) =>
-    ipcRenderer.on('renderer:chain:disconnected', callback),
-
-  // NOTE: Not being called in any renderers (main doesn't receive app:chain:remove)
-  removeChain: (chain) => ipcRenderer.send('app:chain:remove', chain),
 
   // Opens a window.
   openWindow: async (id, args) => await ipcRenderer.invoke(`${id}:open`, args),
