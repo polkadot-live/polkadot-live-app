@@ -195,6 +195,11 @@ export const RouterInner = () => {
           )
         );
 
+        // Report chain connections to UI.
+        for (const apiData of APIsController.getAllFlattenedAPIData()) {
+          addChain(apiData);
+        }
+
         refAppInitialized.current = true;
         console.log('App initialized...');
       }
@@ -241,6 +246,11 @@ export const RouterInner = () => {
           AccountsController.accounts
         )
       );
+
+      // Report chain connections to UI.
+      for (const apiData of APIsController.getAllFlattenedAPIData()) {
+        addChain(apiData);
+      }
     });
 
     // Handle initial responses to populate state from store.
