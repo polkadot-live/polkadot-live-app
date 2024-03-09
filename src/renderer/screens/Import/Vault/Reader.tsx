@@ -1,21 +1,19 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@/types/misc';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
-//import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import type { VaultAccount } from '@w3ux/react-connect-kit/types';
 import { checkValidAddress } from '@/renderer/Utils';
-//import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import { createImgSize } from '@/renderer/library/QRCode/util';
 import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import type { Html5Qrcode } from 'html5-qrcode';
+import type { LocalAddress } from '@/types/accounts';
+import type { ReaderVaultProps } from '../types';
 
-export const Reader = ({ addresses, setAddresses }: AnyJson) => {
+export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Check whether initial render.
@@ -35,7 +33,7 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
 
   const vaultAddressExists = (address: string) =>
-    addresses.find((a: VaultAccount) => a.address === address);
+    addresses.find((a: LocalAddress) => a.address === address);
 
   const stopHtml5QrCode = () => {
     if (html5QrCodeRef.current !== null) {
@@ -77,7 +75,7 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = (address: string) => {
     const newAddresses = addresses
-      .filter((a: AnyJson) => a.address !== address)
+      .filter((a: LocalAddress) => a.address !== address)
       .concat({
         index: getNextAddressIndex(),
         address,
@@ -115,6 +113,12 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
     }
   };
 
+  // Close QR scanner and overlay when cancel button is clicked.
+  const onCancel = () => {
+    stopHtml5QrCode();
+    setOverlayStatus(0);
+  };
+
   const containerStyle = useMemo(() => createImgSize(279), []);
 
   return (
@@ -132,13 +136,7 @@ export const Reader = ({ addresses, setAddresses }: AnyJson) => {
       <div className="foot">
         <h4>{feedback}</h4>
         <div>
-          <ButtonSecondary
-            text={'Cancel'}
-            onClick={() => {
-              stopHtml5QrCode();
-              setOverlayStatus(0);
-            }}
-          />
+          <ButtonSecondary text={'Cancel'} onClick={() => onCancel()} />
         </div>
       </div>
     </QRVieweraWrapper>

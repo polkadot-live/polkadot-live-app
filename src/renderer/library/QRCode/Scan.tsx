@@ -1,16 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-//import type { ReactElement } from 'react';
 import { useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-
-interface Html5QrScannerProps {
-  fps: number;
-  qrCodeSuccessCallback: (data: string | null) => void;
-  qrCodeErrorCallback: (error: string) => void;
-  html5QrCode: Html5Qrcode | null;
-}
+import type { Html5QrScannerProps } from '@/renderer/screens/Import/types';
 
 export const Html5QrCodePlugin = ({
   fps,

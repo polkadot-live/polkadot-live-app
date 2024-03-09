@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faQrcode } from '@fortawesome/free-solid-svg-icons';
-import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
 import { useOverlay } from '@app/contexts/Overlay';
@@ -14,13 +13,15 @@ import { Address } from './Address';
 import { Reader } from './Reader';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
+import type { LocalAddress } from '@/types/accounts';
+import type { ManageVaultProps } from '../types';
 
 export const Manage = ({
   setSection,
   section,
   addresses,
   setAddresses,
-}: AnyJson) => {
+}: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
 
   return (
@@ -37,7 +38,7 @@ export const Manage = ({
             </div>
             <div className="items">
               {addresses.map(
-                ({ address, index, isImported }: AnyJson, i: number) => (
+                ({ address, index, isImported }: LocalAddress, i: number) => (
                   <Address
                     key={i}
                     setAddresses={setAddresses}

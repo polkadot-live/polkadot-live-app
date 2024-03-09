@@ -10,9 +10,7 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import { useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
-//import type { AnyJson } from '@/types/misc';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
-//import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 

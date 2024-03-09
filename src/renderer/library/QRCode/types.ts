@@ -40,6 +40,9 @@ export interface DisplayPayloadProps {
   timerDelay?: number;
 }
 
+/**
+ * @deprecated This type should not be used.
+ */
 export interface ScanSignatureProps {
   className?: string;
   onError?: (error: Error) => void;
