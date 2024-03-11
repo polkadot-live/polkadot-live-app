@@ -59,7 +59,7 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-type ApiOpenWindow = (id: string, args?: AnyJson) => Promise<void>;
+type ApiOpenWindow = (id: string, args?: AnyJson) => void;
 
 type ApiDoLedgerLoop = (accountIndex: number, tasks: LedgerTask[]) => void;
 

@@ -31,7 +31,7 @@ export const useMessagePorts = () => {
       const account = AccountsController.add(chainId, source, address, name);
 
       if (!account) {
-        console.log('Account could not be added, probably already added');
+        // Account could not be added, probably already added.
         return;
       }
 

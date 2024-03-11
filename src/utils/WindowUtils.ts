@@ -9,10 +9,13 @@ import {
 import path from 'path';
 import { store } from '@/main';
 import { reportOnlineStatus } from '@/utils/SystemUtils';
-import { WindowsController } from '@/controller/main/WindowsController';
 import { EventsController } from '@/controller/main/EventsController';
+import { WindowsController } from '@/controller/main/WindowsController';
 import { ConfigMain } from '@/config/ConfigMain';
+import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
+
+const debug = MainDebug.extend('WindowUtils');
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -148,7 +151,7 @@ export const handleWindowOnIPC = (
   options?: AnyJson
 ) => {
   // Create a call for the window to open.
-  ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
+  ipcMain.on(`${name}:open`, (_, args?: AnyJson) => {
     // Ensure main window is hidden.
     //WindowsController.hideAndBlur('menu');
 
@@ -196,12 +199,9 @@ export const handleWindowOnIPC = (
     // Send port to renderer if this is the import window.
     if (name === 'import') {
       window.once('ready-to-show', () => {
-        console.log('import window: send port');
+        debug('🔷 Send port to import window');
 
         const portImport = ConfigMain.getPortsForMainAndImport().portImport;
-
-        console.log('PORT IMPORT:');
-        console.log(portImport);
 
         window.webContents.postMessage('port', { target: 'import' }, [
           portImport,
@@ -223,7 +223,6 @@ export const handleWindowOnIPC = (
 
     window.on('closed', () => {
       WindowsController.remove(name);
-      console.log(`${name} closed`);
     });
 
     // Have windows controller handle window.

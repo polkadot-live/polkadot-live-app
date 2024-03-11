@@ -3,7 +3,6 @@
 
 import { ellipsisFn, localStorageOrDefault, unescape } from '@w3ux/utils';
 import type { AnyJson } from '@/types/misc';
-import { useAddresses } from '@app/contexts/Addresses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
@@ -12,9 +11,13 @@ import { Remove } from '../Addresses/Remove';
 import type { AddressProps } from '../Addresses/types';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 
-export const Address = ({ address, index }: AddressProps) => {
+export const Address = ({
+  address,
+  setAddresses,
+  index,
+  isImported,
+}: AddressProps) => {
   const { openOverlayWith } = useOverlay();
-  const { addressExists } = useAddresses();
 
   // store the current name of the address
   const initialName = () => {
@@ -70,14 +73,22 @@ export const Address = ({ address, index }: AddressProps) => {
       index={index}
       initial={initialName()}
       Identicon={<Identicon value={address} size={40} />}
-      existsHandler={addressExists}
       renameHandler={renameHandler}
+      isImported={isImported}
       openRemoveHandler={() =>
-        openOverlayWith(<Remove address={address} />, 'small')
+        openOverlayWith(
+          <Remove address={address} setAddresses={setAddresses} />,
+          'small'
+        )
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={name} source="ledger" />,
+          <Confirm
+            address={address}
+            setAddresses={setAddresses}
+            name={name}
+            source="ledger"
+          />,
           'small'
         )
       }

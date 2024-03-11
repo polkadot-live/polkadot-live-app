@@ -94,7 +94,7 @@ export const API: PreloadAPI = {
     ipcRenderer.on('renderer:broadcast:onlineStatus', callback),
 
   // Opens a window.
-  openWindow: async (id, args) => await ipcRenderer.invoke(`${id}:open`, args),
+  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
 
   // Performs a Ledger loop.
   doLedgerLoop: (accountIndex, tasks) =>

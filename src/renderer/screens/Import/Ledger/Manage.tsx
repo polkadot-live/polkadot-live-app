@@ -15,6 +15,7 @@ import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 
 export const Manage = ({
   addresses,
+  setAddresses,
   isImporting,
   statusCodes,
   toggleImport,
@@ -35,7 +36,13 @@ export const Manage = ({
           </div>
           <div className="items">
             {addresses.map(({ address, index }: AnyJson, i: number) => (
-              <Address key={i} address={address} index={index} />
+              <Address
+                key={i}
+                address={address}
+                setAddresses={setAddresses}
+                index={index}
+                isImported={false} //TODO
+              />
             ))}
           </div>
           <div className="more">

@@ -12,6 +12,8 @@ export class EventsController {
   /**
    * @name getEvent
    * @summary Instantiate and return a new event based on the recieved entry and custom data.
+   *
+   * NOTE: `uid` is set to an empty string on the renderer side and initialized in the main process.
    */
   static getEvent(entry: ApiCallEntry, newVal: AnyData): EventCallback {
     switch (entry.task.action) {

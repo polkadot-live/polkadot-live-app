@@ -130,6 +130,7 @@ export const ImportLedger = ({
   ) : (
     <Manage
       addresses={addressesRef.current}
+      setAddresses={setAddresses}
       isImporting={isImportingRef.current}
       toggleImport={toggleImport}
       statusCodes={statusCodesRef.current}
