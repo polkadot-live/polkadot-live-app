@@ -5,7 +5,7 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/renderer/EventsController';
-import { planckToUnit } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
@@ -148,11 +148,10 @@ export class Callbacks {
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
     window.myAPI.persistEvent(parsed);
 
-    /**
-     * // TMP: Show native OS notification.
-     * const addressName = ellipsisFn(entry.task.account!.address);
-     * NotificationsController.balanceChanged(addressName, free);
-     */
+    // TMP: Show native OS notification.
+    const title = ellipsisFn(entry.task.account!.address);
+    const body = `Free balance: ${free}`;
+    window.myAPI.showNotification({ title, body });
   }
 
   /**

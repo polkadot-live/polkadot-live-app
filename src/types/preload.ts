@@ -23,6 +23,7 @@ export interface PreloadAPI {
   getChainSubscriptions: ApiGetChainSubscriptions;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
+  showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
@@ -154,3 +155,5 @@ type ApiUpdatePersistedAccountTask = (
   task: SubscriptionTask,
   account: FlattenedAccountData
 ) => Promise<void>;
+
+type ApiShowNotification = (content: { title: string; body: string }) => void;

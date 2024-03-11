@@ -73,6 +73,9 @@ export const API: PreloadAPI = {
   ) =>
     await ipcRenderer.invoke('app:subscriptions:account:update', task, account),
 
+  showNotification: (content: { title: string; body: string }) =>
+    ipcRenderer.send('app:notification:show', content),
+
   /**
    * Window lifecycle
    */

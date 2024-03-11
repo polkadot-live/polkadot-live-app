@@ -20,6 +20,14 @@ export class NotificationsController {
   }
 
   /**
+   * @name showNotification
+   * @summary Show a native notification directly.
+   */
+  static showNotification(title: string, body: string) {
+    new Notification({ title, body }).show();
+  }
+
+  /**
    * @name balanceChanged
    * @summary Shows notication when an account's balance has changed.
    */

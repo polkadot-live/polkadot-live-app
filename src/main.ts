@@ -12,6 +12,8 @@ import unhandled from 'electron-unhandled';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
+import { NotificationsController } from './controller/main/NotificationsController';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -20,7 +22,6 @@ import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 
 const debug = MainDebug;
 
@@ -229,6 +230,11 @@ app.whenReady().then(async () => {
       SubscriptionsController.updateAccountTaskInStore(task, account);
     }
   );
+
+  // Show native notifications.
+  ipcMain.on('app:notification:show', (_, { title, body }) => {
+    NotificationsController.showNotification(title, body);
+  });
 
   /**
    * Window management handlers.
