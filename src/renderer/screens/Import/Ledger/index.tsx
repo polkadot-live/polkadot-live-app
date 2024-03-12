@@ -64,9 +64,11 @@ export const ImportLedger = ({
   const handleLedgerLoop = () => {
     interval = setInterval(() => {
       const tasks: LedgerTask[] = [];
+
       if (isImportingRef.current) {
         tasks.push('get_address');
       }
+
       window.myAPI.doLedgerLoop(getNextAddressIndex(), tasks);
     }, 2000);
   };

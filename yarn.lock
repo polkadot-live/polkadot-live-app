@@ -3042,7 +3042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zondax/ledger-substrate@npm:^0.41.1":
+"@zondax/ledger-substrate@npm:^0.41.3":
   version: 0.41.3
   resolution: "@zondax/ledger-substrate@npm:0.41.3"
   dependencies:
@@ -9778,7 +9778,7 @@ __metadata:
     "@wdio/mocha-framework": "npm:^8.32.3"
     "@wdio/spec-reporter": "npm:^8.32.2"
     "@wdio/types": "npm:^8.32.2"
-    "@zondax/ledger-substrate": "npm:^0.41.1"
+    "@zondax/ledger-substrate": "npm:^0.41.3"
     auto-launch: "npm:^5.0.6"
     bignumber.js: "npm:^9.1.2"
     date-fns: "npm:^3.3.1"

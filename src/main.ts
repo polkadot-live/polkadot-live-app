@@ -22,6 +22,7 @@ import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { executeLedgerLoop } from './ledger';
 
 const debug = MainDebug;
 
@@ -251,11 +252,16 @@ app.whenReady().then(async () => {
   });
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:do-loop', (_, accountIndex, tasks) => {
+  ipcMain.on('app:ledger:do-loop', async (_, accountIndex, tasks) => {
     console.debug(accountIndex, tasks);
-    // executeLedgerLoop(Windows.get('import'), 'Polkadot', tasks, {
-    //   accountIndex,
-    // });
+
+    const importWindow = WindowsController.get('import');
+
+    if (importWindow) {
+      await executeLedgerLoop(importWindow, 'Polkadot', tasks, {
+        accountIndex,
+      });
+    }
   });
 
   // Attempt an account import.

@@ -5,8 +5,11 @@ import type { LedgerTask } from '@/types/ledger';
 import type { AnyFunction, AnyJson } from '@/types/misc';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import { newSubstrateApp } from '@zondax/ledger-substrate';
+import { MainDebug } from '@/utils/DebugUtils';
 import type { BrowserWindow } from 'electron';
 // import { listen } from "@ledgerhq/logs";
+
+const debug = MainDebug.extend('Ledger');
 
 export const TOTAL_ALLOWED_STATUS_CODES = 50;
 export const LEDGER_DEFAULT_ACCOUNT = 0x80000000;
@@ -80,6 +83,8 @@ export const executeLedgerLoop = async (
     let result = null;
 
     if (tasks.includes('get_address')) {
+      debug('🔷 Get address');
+
       result = await handleGetAddress(
         window,
         appName,
@@ -115,6 +120,8 @@ export const handleGetAddress = async (
   const substrateApp = newSubstrateApp(transport, appName);
   const { deviceModel } = transport;
   const { id, productName } = deviceModel || {};
+
+  debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
   window.webContents.send(
     'renderer:ledger:report:status',
