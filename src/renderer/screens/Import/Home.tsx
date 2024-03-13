@@ -4,7 +4,6 @@
 import { faChrome, faUsb } from '@fortawesome/free-brands-svg-icons';
 import { faExternalLinkAlt, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { AnyFunction } from '@/types/misc';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
@@ -16,14 +15,9 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
+import type { HomeProps } from './types';
 
-export const Home = ({
-  setSection,
-  setSource,
-}: {
-  setSection: AnyFunction;
-  setSource: AnyFunction;
-}) => (
+export const Home = ({ setSection, setSource }: HomeProps) => (
   <>
     <DragClose windowName="import" />
     <ContentWrapper>
@@ -61,7 +55,7 @@ export const Home = ({
             <div className="foot">
               <a
                 className="link"
-                href={`https://$signer.parity.io`}
+                href={`https://signer.parity.io/`}
                 target="_blank"
                 rel="noreferrer"
               >

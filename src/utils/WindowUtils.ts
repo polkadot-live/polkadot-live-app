@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BrowserWindow, Tray, nativeImage, ipcMain } from 'electron';
+import { BrowserWindow, Tray, nativeImage, ipcMain, shell } from 'electron';
 import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
@@ -223,6 +223,12 @@ export const handleWindowOnIPC = (
 
     window.on('closed', () => {
       WindowsController.remove(name);
+    });
+
+    // Open links with target="_blank" in default browser.
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
     });
 
     // Have windows controller handle window.

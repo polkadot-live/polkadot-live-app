@@ -6,6 +6,11 @@ import type { Html5Qrcode } from 'html5-qrcode';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 import type { LedgerResponse } from '@/types/ledger';
 
+export interface HomeProps {
+  setSection: AnyFunction;
+  setSource: AnyFunction;
+}
+
 export interface SplashProps {
   setSection: AnyFunction;
   statusCodes?: AnyJson;
