@@ -19,17 +19,15 @@ export const Confirm = ({
 }: ConfirmProps) => {
   const { setStatus } = useOverlay();
 
-  // Send address data to main window to process.
-  const postAddressToMainWindow = () => {
-    ConfigRenderer.portImport.postMessage({
-      task: 'address:import',
-      data: {
-        chainId: getAddressChainId(address),
-        source,
-        address,
-        name,
-      },
-    });
+  // Click handler function.
+  const handleImportAddress = () => {
+    if (source === 'vault') {
+      handleVaultImport();
+    } else if (source === 'ledger') {
+      handleLedgerImport();
+    }
+
+    setStatus(0);
   };
 
   // Handle a ledger address import.
@@ -64,15 +62,17 @@ export const Confirm = ({
     postAddressToMainWindow();
   };
 
-  // Click handler function.
-  const handleImportAddress = () => {
-    if (source === 'vault') {
-      handleVaultImport();
-    } else if (source === 'ledger') {
-      handleLedgerImport();
-    }
-
-    setStatus(0);
+  // Send address data to main window to process.
+  const postAddressToMainWindow = () => {
+    ConfigRenderer.portImport.postMessage({
+      task: 'address:import',
+      data: {
+        chainId: getAddressChainId(address),
+        source,
+        address,
+        name,
+      },
+    });
   };
 
   return (

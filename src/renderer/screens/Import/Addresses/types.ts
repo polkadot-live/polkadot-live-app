@@ -12,8 +12,14 @@ export interface AddressProps {
 }
 
 export interface ConfirmProps {
-  setAddresses: AnyFunction;
   address: string;
+  setAddresses: AnyFunction;
   name: string;
+  source: AccountSource;
+}
+
+export interface RemoveProps {
+  address: string;
+  setAddresses: AnyFunction;
   source: AccountSource;
 }

@@ -46,7 +46,7 @@ export const Manage = ({
                   address={address}
                   setAddresses={setAddresses}
                   index={index}
-                  isImported={isImported} //TODO
+                  isImported={isImported}
                 />
               )
             )}
