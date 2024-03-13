@@ -91,10 +91,11 @@ export const useMessagePorts = () => {
     };
 
     /**
-     * Determines whether the received port is for the `main` or `import` window and
+     * @name handleReceivedPort
+     * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
      */
-    window.onmessage = (e: MessageEvent) => {
+    const handleReceivedPort = (e: MessageEvent) => {
       switch (e.data.target) {
         case 'main': {
           ConfigRenderer.portMain = e.ports[0];
@@ -133,6 +134,18 @@ export const useMessagePorts = () => {
           break;
         }
       }
+    };
+
+    /**
+     * Provide `onmessage` function.
+     */
+    window.onmessage = handleReceivedPort;
+
+    /**
+     * Cleanup message listener.
+     */
+    return () => {
+      window.removeEventListener('message', handleReceivedPort, false);
     };
   }, []);
 };
