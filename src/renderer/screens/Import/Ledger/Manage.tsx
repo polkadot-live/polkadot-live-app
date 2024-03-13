@@ -81,6 +81,11 @@ export const Manage = ({
           tDone: 'Done',
           tCancel: 'Cancel',
         }}
+        style={{
+          backgroundColor: 'var(--background-modal)',
+          borderTop: '1px solid var(--border-primary-color)',
+          paddingTop: '4px',
+        }}
       />
     </BodyInterfaceWrapper>
   </>
