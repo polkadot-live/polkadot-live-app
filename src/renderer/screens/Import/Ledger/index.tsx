@@ -110,12 +110,18 @@ export const ImportLedger = ({
       setStateWithRef(false, setIsImporting, isImportingRef);
       setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
+
+      // Stop polling ledger device.
+      intervalRef.current && clearInterval(intervalRef.current);
     }
   };
 
   // Toggle import
   const toggleImport = (value: boolean) => {
     setStateWithRef(value, setIsImporting, isImportingRef);
+
+    // Start the ledger loop and poll for device.
+    handleLedgerLoop();
   };
 
   // Cancel ongoing import.
@@ -141,7 +147,10 @@ export const ImportLedger = ({
       setStateWithRef(true, setIsImporting, isImportingRef);
     }
 
-    handleLedgerLoop();
+    // Start the loop if no ledger accounts have been imported and splash page is shown.
+    if (addressesRef.current.length === 0) {
+      handleLedgerLoop();
+    }
 
     return () => {
       intervalRef.current && clearInterval(intervalRef.current);
