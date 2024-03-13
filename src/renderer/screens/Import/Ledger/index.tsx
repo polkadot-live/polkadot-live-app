@@ -3,6 +3,7 @@
 
 import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
 import type { AnyFunction } from '@/types/misc';
@@ -29,7 +30,8 @@ export const ImportLedger = ({
 
   // Store addresses retreived from Ledger device. Defaults to addresses saved in local storage.
   const [addresses, setAddresses] = useState<LedgerLocalAddress[]>(() => {
-    const fetched: string | null = localStorage.getItem('ledger_addresses');
+    const key = ConfigRenderer.getStorageKey('ledger');
+    const fetched: string | null = localStorage.getItem(key);
     const parsed: LedgerLocalAddress[] =
       fetched !== null ? JSON.parse(fetched) : [];
     return parsed;
@@ -106,7 +108,8 @@ export const ImportLedger = ({
         )
         .concat(addressFormatted);
 
-      localStorage.setItem('ledger_addresses', JSON.stringify(newAddresses));
+      const storageKey = ConfigRenderer.getStorageKey('ledger');
+      localStorage.setItem(storageKey, JSON.stringify(newAddresses));
       setStateWithRef(false, setIsImporting, isImportingRef);
       setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);

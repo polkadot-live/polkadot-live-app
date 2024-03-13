@@ -33,7 +33,10 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
         a.address === address ? { ...a, isImported: false } : a
       );
 
-      localStorage.setItem('ledger_addresses', JSON.stringify(newAddresses));
+      localStorage.setItem(
+        ConfigRenderer.getStorageKey(source),
+        JSON.stringify(newAddresses)
+      );
 
       return newAddresses;
     });
@@ -49,7 +52,10 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
         a.address === address ? { ...a, isImported: false } : a
       );
 
-      localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
+      localStorage.setItem(
+        ConfigRenderer.getStorageKey(source),
+        JSON.stringify(newAddresses)
+      );
 
       return newAddresses;
     });

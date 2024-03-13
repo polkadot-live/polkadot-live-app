@@ -51,6 +51,7 @@ export interface LocalAddress {
   address: string;
   isImported: boolean;
   index: number;
+  name: string;
 }
 
 /**

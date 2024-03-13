@@ -3,8 +3,10 @@
 
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { checkValidAddress } from '@/renderer/Utils';
 import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import { createImgSize } from '@/renderer/library/QRCode/util';
@@ -80,8 +82,11 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
         index: getNextAddressIndex(),
         address,
         isImported: false,
+        name: ellipsisFn(address),
       });
-    localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
+
+    const storageKey = ConfigRenderer.getStorageKey('vault');
+    localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
     setImported(true);
   };
