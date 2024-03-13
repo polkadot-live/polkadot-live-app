@@ -251,14 +251,18 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
+  /**
+   * Ledger
+   */
+
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:do-loop', async (_, accountIndex, tasks) => {
-    console.debug(accountIndex, tasks);
+  ipcMain.on('app:ledger:do-loop', async (_, accountIndex, appName, tasks) => {
+    console.debug(accountIndex, appName, tasks);
 
     const importWindow = WindowsController.get('import');
 
     if (importWindow) {
-      await executeLedgerLoop(importWindow, 'Polkadot', tasks, {
+      await executeLedgerLoop(importWindow, appName, tasks, {
         accountIndex,
       });
     }

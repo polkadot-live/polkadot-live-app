@@ -100,8 +100,8 @@ export const API: PreloadAPI = {
   openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
 
   // Performs a Ledger loop.
-  doLedgerLoop: (accountIndex, tasks) =>
-    ipcRenderer.send('app:ledger:do-loop', accountIndex, tasks),
+  doLedgerLoop: (accountIndex, appName, tasks) =>
+    ipcRenderer.send('app:ledger:do-loop', accountIndex, appName, tasks),
 
   // Reports a Ledger device result to all open windows.
   reportLedgerStatus: (callback) =>

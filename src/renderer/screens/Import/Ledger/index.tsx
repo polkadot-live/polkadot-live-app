@@ -36,6 +36,9 @@ export const ImportLedger = ({
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
+  // Reference to ledger loop interval id.
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   // Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addressesRef.current.length
@@ -60,16 +63,18 @@ export const ImportLedger = ({
   //
   // The tasks sent to the device depend on the current state of the import process. The interval is
   // cleared once the address has been successfully fetched.
-  let interval: ReturnType<typeof setInterval>;
   const handleLedgerLoop = () => {
-    interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const tasks: LedgerTask[] = [];
 
       if (isImportingRef.current) {
         tasks.push('get_address');
       }
 
-      window.myAPI.doLedgerLoop(getNextAddressIndex(), tasks);
+      // TODO: Make dynamic
+      const appName = 'Polkadot';
+
+      window.myAPI.doLedgerLoop(getNextAddressIndex(), appName, tasks);
     }, 2000);
   };
 
@@ -123,7 +128,7 @@ export const ImportLedger = ({
     handleLedgerLoop();
 
     return () => {
-      clearInterval(interval);
+      intervalRef.current && clearInterval(intervalRef.current);
     };
   }, []);
 

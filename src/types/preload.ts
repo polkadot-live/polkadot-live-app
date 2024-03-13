@@ -62,7 +62,11 @@ type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
 type ApiOpenWindow = (id: string, args?: AnyJson) => void;
 
-type ApiDoLedgerLoop = (accountIndex: number, tasks: LedgerTask[]) => void;
+type ApiDoLedgerLoop = (
+  accountIndex: number,
+  appName: string,
+  tasks: LedgerTask[]
+) => void;
 
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void
