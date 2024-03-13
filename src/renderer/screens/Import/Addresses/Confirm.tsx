@@ -9,7 +9,7 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { getAddressChainId } from '@/renderer/Utils';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
 import type { ConfirmProps } from './types';
-import type { LocalAddress } from '@/types/accounts';
+import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
 export const Confirm = ({
   setAddresses,
@@ -19,25 +19,8 @@ export const Confirm = ({
 }: ConfirmProps) => {
   const { setStatus } = useOverlay();
 
-  const handleImportAddress = () => {
-    // Update import window's managed address state and local storage.
-    setAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address
-          ? {
-              address: a.address,
-              index: a.index,
-              isImported: true,
-            }
-          : a
-      );
-
-      localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
-
-      return newAddresses;
-    });
-
-    // Send address data to main window.
+  // Send address data to main window to process.
+  const postAddressToMainWindow = () => {
     ConfigRenderer.portImport.postMessage({
       task: 'address:import',
       data: {
@@ -47,6 +30,47 @@ export const Confirm = ({
         name,
       },
     });
+  };
+
+  // Handle a ledger address import.
+  const handleLedgerImport = () => {
+    // Update import window's managed address state and local storage.
+    setAddresses((prevState: LedgerLocalAddress[]) => {
+      const newAddresses = prevState.map((a: LocalAddress) =>
+        a.address === address ? { ...a, isImported: true } : a
+      );
+
+      localStorage.setItem('ledger_addresses', JSON.stringify(newAddresses));
+
+      return newAddresses;
+    });
+
+    postAddressToMainWindow();
+  };
+
+  // Handle a vault address import.
+  const handleVaultImport = () => {
+    // Update import window's managed address state and local storage.
+    setAddresses((prevState: LocalAddress[]) => {
+      const newAddresses = prevState.map((a: LocalAddress) =>
+        a.address === address ? { ...a, isImported: true } : a
+      );
+
+      localStorage.setItem('vault_addresses', JSON.stringify(newAddresses));
+
+      return newAddresses;
+    });
+
+    postAddressToMainWindow();
+  };
+
+  // Click handler function.
+  const handleImportAddress = () => {
+    if (source === 'vault') {
+      handleVaultImport();
+    } else if (source === 'ledger') {
+      handleLedgerImport();
+    }
 
     setStatus(0);
   };

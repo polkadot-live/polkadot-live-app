@@ -45,12 +45,25 @@ export interface FlattenedAccountData {
 }
 
 /**
- * Address type for import window.
+ * Vault address type for import window.
  */
 export interface LocalAddress {
   address: string;
   isImported: boolean;
   index: number;
+}
+
+/**
+ * Ledger address type for import window.
+ */
+
+export interface LedgerLocalAddress {
+  address: string;
+  device: { id: string; productName: string };
+  index: number;
+  isImported: boolean;
+  name: string;
+  pubKey: string;
 }
 
 /**

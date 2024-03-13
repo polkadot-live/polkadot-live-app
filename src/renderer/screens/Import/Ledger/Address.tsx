@@ -8,15 +8,15 @@ import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
-import type { AddressProps } from '../Addresses/types';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
+import type { LedgerAddressProps } from '../types';
 
 export const Address = ({
   address,
   setAddresses,
   index,
   isImported,
-}: AddressProps) => {
+}: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
 
   // store the current name of the address
@@ -77,7 +77,11 @@ export const Address = ({
       isImported={isImported}
       openRemoveHandler={() =>
         openOverlayWith(
-          <Remove address={address} setAddresses={setAddresses} />,
+          <Remove
+            address={address}
+            setAddresses={setAddresses}
+            source="ledger"
+          />,
           'small'
         )
       }

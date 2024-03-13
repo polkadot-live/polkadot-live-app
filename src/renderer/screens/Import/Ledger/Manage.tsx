@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
-import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/LedgerSquare.svg?react';
@@ -12,6 +11,8 @@ import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
+import type { ImportLedgerManageProps } from '../types';
+import type { LedgerLocalAddress } from '@/types/accounts';
 
 export const Manage = ({
   addresses,
@@ -22,7 +23,7 @@ export const Manage = ({
   cancelImport,
   setSection,
   section,
-}: AnyJson) => (
+}: ImportLedgerManageProps) => (
   <>
     <DragClose windowName="import" />
     <BodyInterfaceWrapper $maxHeight>
@@ -35,15 +36,20 @@ export const Manage = ({
             </h4>
           </div>
           <div className="items">
-            {addresses.map(({ address, index }: AnyJson, i: number) => (
-              <Address
-                key={i}
-                address={address}
-                setAddresses={setAddresses}
-                index={index}
-                isImported={false} //TODO
-              />
-            ))}
+            {addresses.map(
+              (
+                { address, index, isImported }: LedgerLocalAddress,
+                i: number
+              ) => (
+                <Address
+                  key={i}
+                  address={address}
+                  setAddresses={setAddresses}
+                  index={index}
+                  isImported={isImported} //TODO
+                />
+              )
+            )}
           </div>
           <div className="more">
             <ButtonText
