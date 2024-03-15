@@ -13,6 +13,7 @@ import React, {
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@/types/misc';
+import type { ActionMeta } from '@/types/tx';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -22,6 +23,9 @@ export const useTxMeta = () => useContext(TxMetaContext);
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const freeBalance = new BigNumber(1000000000);
+
+  // Action window metadata.
+  const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
 
   // Store the transaction fees for the transaction.
   const [txFees, setTxFees] = useState(new BigNumber(0));
@@ -111,6 +115,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         resetTxPayloads,
         getTxSignature,
         setTxSignature,
+        actionMeta,
+        setActionMeta,
       }}
     >
       {children}

@@ -14,30 +14,23 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import type { AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 import type { IpcRendererEvent } from 'electron';
 import type { TxStatus } from '@/types/tx';
 
 export const Action = () => {
-  const { search } = useLocation();
   const { getAddress } = useAddresses();
-  const { setTxPayload, setGenesisHash, getTxSignature } = useTxMeta();
+  const { actionMeta, setTxPayload, setGenesisHash, getTxSignature } =
+    useTxMeta();
 
   const ChainIcon = chainIcon('Polkadot');
-  const searchParams = new URLSearchParams(search);
 
-  const chain = decodeURIComponent(searchParams?.get('chain') || '') as ChainID;
-  const uid = decodeURIComponent(searchParams?.get('uid') || '');
-  const action = decodeURIComponent(searchParams?.get('action') || '');
-  const from = decodeURIComponent(searchParams?.get('address') || '');
-  const actionData = {
-    pendingRewards: 100,
-  }; //JSON.parse(
-  //  decodeURIComponent(searchParams?.get('data') || '')
-  //);
+  const chainId = actionMeta?.chainId || 'Polkadot';
+  const uid = actionMeta?.uid || '';
+  const action = actionMeta?.action || '';
+  const from = actionMeta?.address || '';
+  const actionData = actionMeta?.data || {};
 
   // TODO: Fix
   const nonce = 0;
@@ -76,7 +69,7 @@ export const Action = () => {
       window.myAPI.requestDismissEvent({
         uid,
         who: {
-          chain,
+          chain: chainId,
           address: from,
         },
       });
@@ -191,7 +184,7 @@ export const Action = () => {
             SignerComponent={
               <Signer
                 txId={txId}
-                chain={chain}
+                chain={chainId}
                 submitting={submitting}
                 valid={
                   !submitting && estimatedFee !== '...' && nonce !== undefined

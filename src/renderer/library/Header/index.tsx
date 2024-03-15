@@ -1,13 +1,14 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { faTimes, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
+import type { ActionMeta } from '@/types/tx';
 import type { HeaderProps } from './types';
-import type { AnyData } from '@/types/misc';
 
 export const Header = ({ showMenu }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -24,19 +25,22 @@ export const Header = ({ showMenu }: HeaderProps) => {
 
   // Temporary click handler to open action window.
   const handleOpenActions = () => {
-    const data: Record<string, AnyData> = {
-      uid: 'dummyuid',
-      action: 'nominationPools_pendingRewards_bond',
-      chain: 'Polkadot',
-      address: '14uUGXgtB8YJpcqz6WpoG8rBJeK2JY1F7cyZyqGPb6HWmGNf',
+    window.myAPI.openWindow('action');
+
+    // Send action metadata to `action` window.
+    // TODO: Send `FlattenedAccountData` instead of `address`.
+    ConfigRenderer.portMainB.postMessage({
+      task: 'action:init',
       data: {
-        pendingRewards: 1000000000,
-      },
-    };
-
-    window.myAPI.openWindow('action', JSON.stringify(data));
-
-    // TODO: Send metadata to `action` window.
+        uid: 'dummyuid',
+        action: 'nominationPools_pendingRewards_bond',
+        chainId: 'Polkadot',
+        address: '14uUGXgtB8YJpcqz6WpoG8rBJeK2JY1F7cyZyqGPb6HWmGNf',
+        data: {
+          pendingRewards: 1000000000,
+        },
+      } as ActionMeta,
+    });
   };
 
   return (

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@/types/misc';
+import type { ActionMeta } from '@/types/tx';
 import type BigNumber from 'bignumber.js';
 
 export interface TxMetaContextInterface {
@@ -19,4 +20,6 @@ export interface TxMetaContextInterface {
   resetTxPayloads: () => void;
   getTxSignature: () => AnyJson;
   setTxSignature: (s: AnyJson) => void;
+  actionMeta: ActionMeta | null;
+  setActionMeta: (m: ActionMeta | null) => void;
 }

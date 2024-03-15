@@ -155,10 +155,8 @@ export const handleWindowOnIPC = (
   options?: AnyJson
 ) => {
   // Create a call for the window to open.
-  ipcMain.on(`${name}:open`, (_, args?: AnyJson) => {
-    // Ensure main window is hidden.
-    //WindowsController.hideAndBlur('menu');
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ipcMain.on(`${name}:open`, (_, _args?: AnyJson) => {
     // Show window if it already exists.
     if (WindowsController.get(name)) {
       WindowsController.show(name);
@@ -198,16 +196,7 @@ export const handleWindowOnIPC = (
     );
 
     // Load correct URL and HTML file.
-    if (args) {
-      const parsed: Record<string, AnyJson> = JSON.parse(args);
-
-      console.log('parsed:');
-      console.log(parsed);
-
-      loadUrlWithRoute(window, { uri: name, args: parsed });
-    } else {
-      loadUrlWithRoute(window, { uri: name });
-    }
+    loadUrlWithRoute(window, { uri: name });
 
     // Send port to renderer if this is the import window.
     if (name === 'import') {

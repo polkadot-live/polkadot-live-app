@@ -11,12 +11,17 @@ import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
+import { useTxMeta } from '../contexts/TxMeta';
+import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
   const { importAddress, removeAddress } = useAddresses();
   const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
   const { setRenderedSubscriptions } = useManage();
+
+  // Action window specific.
+  const { setActionMeta } = useTxMeta();
 
   useEffect(() => {
     /**
@@ -91,6 +96,15 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleInitAction
+     * @summary Set initial state for the action window.
+     */
+    const handleInitAction = (ev: MessageEvent) => {
+      const data: ActionMeta = ev.data.data;
+      setActionMeta(data);
+    };
+
+    /**
      * @name handleReceivedPort
      * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
@@ -140,6 +154,8 @@ export const useMessagePorts = () => {
             // Message received from `action`.
             console.log(`todo: handle message for ${ev}`);
           };
+
+          ConfigRenderer.portMainB.start();
           break;
         }
         case 'main-action:action': {
@@ -147,7 +163,16 @@ export const useMessagePorts = () => {
 
           ConfigRenderer.portAction.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
-            console.log(ev.data);
+            switch (ev.data.task) {
+              case 'action:init': {
+                console.log('handle action:init');
+                handleInitAction(ev);
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
           };
 
           ConfigRenderer.portAction.start();
