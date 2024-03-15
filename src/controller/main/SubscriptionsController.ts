@@ -26,7 +26,6 @@ export class SubscriptionsController {
   /**
    * @name updateChainTaskInStore
    * @summary Called when a chain subscription task is received from renderer.
-   * @todo In MAIN SubscriptionsController
    */
   static updateChainTaskInStore(task: SubscriptionTask) {
     const key = 'chain_subscriptions';
@@ -44,7 +43,6 @@ export class SubscriptionsController {
   /**
    * @name updateAccountTaskInStore
    * @summary Called when an account subscription task is received from renderer.
-   * @todo In MAIN SubscriptionsController
    */
   static updateAccountTaskInStore(
     task: SubscriptionTask,
@@ -65,7 +63,6 @@ export class SubscriptionsController {
   /**
    * @name clearAccountTasksInStore
    * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
-   * @todo In MAIN SubscriptionsController
    */
   static clearAccountTasksInStore(address: string) {
     (store as Record<string, AnyJson>).delete(`${address}_subscriptions`);
@@ -75,7 +72,6 @@ export class SubscriptionsController {
    * Utilities
    *------------------------------------------------------------*/
 
-  // @todo In MAIN SubscriptionsController
   static updateTaskInStore(
     tasks: SubscriptionTask[],
     task: SubscriptionTask,
