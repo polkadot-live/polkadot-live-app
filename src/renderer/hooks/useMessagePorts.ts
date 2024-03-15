@@ -165,7 +165,6 @@ export const useMessagePorts = () => {
             // Message received from `main`.
             switch (ev.data.task) {
               case 'action:init': {
-                console.log('handle action:init');
                 handleInitAction(ev);
                 break;
               }

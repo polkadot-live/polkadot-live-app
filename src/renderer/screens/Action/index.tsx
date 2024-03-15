@@ -12,15 +12,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
 import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
-import { useAddresses } from '@app/contexts/Addresses';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
 import type { TxStatus } from '@/types/tx';
+import type { FlattenedAccountData } from '@/types/accounts';
 
 export const Action = () => {
-  const { getAddress } = useAddresses();
   const { actionMeta, setTxPayload, setGenesisHash, getTxSignature } =
     useTxMeta();
 
@@ -29,13 +28,12 @@ export const Action = () => {
   const chainId = actionMeta?.chainId || 'Polkadot';
   const uid = actionMeta?.uid || '';
   const action = actionMeta?.action || '';
-  const from = actionMeta?.address || '';
+  const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
+  const from = fromAccount?.address || '';
   const actionData = actionMeta?.data || {};
 
   // TODO: Fix
   const nonce = 0;
-
-  const fromAccount = getAddress(from);
   const fromName = fromAccount?.name || ellipsisFn(from);
 
   // Store the estimated tx fee.

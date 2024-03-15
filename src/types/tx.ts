@@ -3,6 +3,7 @@
 
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
+import type { FlattenedAccountData } from './accounts';
 
 export type TxStatus =
   | 'pending'
@@ -12,9 +13,9 @@ export type TxStatus =
   | 'error';
 
 export interface ActionMeta {
-  uid: string;
+  account: FlattenedAccountData;
   action: string;
   chainId: ChainID;
-  address: string;
   data: AnyData;
+  uid: string;
 }
