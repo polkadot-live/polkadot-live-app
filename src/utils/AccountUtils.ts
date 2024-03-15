@@ -1,16 +1,20 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '@/controller/AccountsController';
+/**
+ * @todo Move to `renderer/AccountUtils.ts`
+ */
+
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
-import { getApiInstance } from './ApiUtils';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 /**
  * @name fetchAccountNominationPoolData
@@ -23,7 +27,7 @@ export const fetchAccountNominationPoolData = async () => {
       continue;
     }
 
-    const { api } = await getApiInstance(chainId);
+    const { api } = await ApiUtils.getApiInstance(chainId);
     console.log(`API instance fetched for ${chainId}`);
 
     // Iterate accounts associated with chain and initialise nomination pool data.
@@ -42,7 +46,7 @@ export const fetchNominationPoolDataForAccount = async (
   chainId: ChainID
 ) => {
   if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await getApiInstance(chainId);
+    const { api } = await ApiUtils.getApiInstance(chainId);
     await setNominationPoolDataForAccount(api, account, chainId);
   }
 };

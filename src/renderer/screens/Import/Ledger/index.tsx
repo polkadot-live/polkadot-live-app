@@ -1,16 +1,19 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  ellipsisFn,
-  localStorageOrDefault,
-  setStateWithRef,
-} from '@w3ux/utils';
+import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import type { AnyFunction, AnyJson } from '@/types/misc';
-import type { LedgerResponse, LedgerTask } from '@/types/ledger';
+import type { AnyFunction } from '@/types/misc';
+import type {
+  GetAddressMessage,
+  LedgerResponse,
+  LedgerTask,
+} from '@/types/ledger';
+import type { LedgerLocalAddress } from '@/types/accounts';
+import type { IpcRendererEvent } from 'electron';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
@@ -26,14 +29,22 @@ export const ImportLedger = ({
   const isImportingRef = useRef(isImporting);
 
   // Store addresses retreived from Ledger device. Defaults to addresses saved in local storage.
-  const [addresses, setAddresses] = useState<AnyJson>(
-    localStorageOrDefault('ledger_addresses', [], true)
-  );
+  const [addresses, setAddresses] = useState<LedgerLocalAddress[]>(() => {
+    const key = ConfigRenderer.getStorageKey('ledger');
+    const fetched: string | null = localStorage.getItem(key);
+    const parsed: LedgerLocalAddress[] =
+      fetched !== null ? JSON.parse(fetched) : [];
+    return parsed;
+  });
+
   const addressesRef = useRef(addresses);
 
   // Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
+
+  // Reference to ledger loop interval id.
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Gets the next non-imported address index.
   const getNextAddressIndex = () =>
@@ -59,45 +70,61 @@ export const ImportLedger = ({
   //
   // The tasks sent to the device depend on the current state of the import process. The interval is
   // cleared once the address has been successfully fetched.
-  let interval: ReturnType<typeof setInterval>;
   const handleLedgerLoop = () => {
-    interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const tasks: LedgerTask[] = [];
+
       if (isImportingRef.current) {
         tasks.push('get_address');
       }
-      window.myAPI.doLedgerLoop(getNextAddressIndex(), tasks);
+
+      // TODO: Make dynamic
+      const appName = 'Polkadot';
+
+      window.myAPI.doLedgerLoop(getNextAddressIndex(), appName, tasks);
     }, 2000);
   };
 
   // Handle new Ledger status report.
-  const handleLedgerStatusResponse = (result: string) => {
-    const { ack, device, statusCode, body, options } = JSON.parse(result);
+  const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
+    const { ack, device, statusCode, body, options } = parsed;
     handleNewStatusCode(ack, statusCode);
 
     if (statusCode === 'ReceivedAddress') {
-      const addressFormatted = body.map(({ pubKey, address }: AnyJson) => ({
-        index: options.accountIndex,
-        ...device,
-        pubKey,
+      const { pubKey, address } = body[0];
+
+      const addressFormatted: LedgerLocalAddress = {
         address,
+        device: { ...device },
+        index: options.accountIndex,
+        isImported: false,
         name: ellipsisFn(address),
-      }));
+        pubKey,
+      };
 
       const newAddresses = addressesRef.current
-        .filter((a: AnyJson) => a.address !== addressFormatted.address)
+        .filter(
+          (a: LedgerLocalAddress) => a.address !== addressFormatted.address
+        )
         .concat(addressFormatted);
 
-      localStorage.setItem('ledger_addresses', JSON.stringify(newAddresses));
+      const storageKey = ConfigRenderer.getStorageKey('ledger');
+      localStorage.setItem(storageKey, JSON.stringify(newAddresses));
       setStateWithRef(false, setIsImporting, isImportingRef);
       setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
+
+      // Stop polling ledger device.
+      intervalRef.current && clearInterval(intervalRef.current);
     }
   };
 
   // Toggle import
   const toggleImport = (value: boolean) => {
     setStateWithRef(value, setIsImporting, isImportingRef);
+
+    // Start the ledger loop and poll for device.
+    handleLedgerLoop();
   };
 
   // Cancel ongoing import.
@@ -108,8 +135,14 @@ export const ImportLedger = ({
 
   // Initialise listeners for Ledger IO.
   useEffect(() => {
-    window.myAPI.reportLedgerStatus((_: Event, result: AnyJson) => {
-      handleLedgerStatusResponse(result);
+    window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
+      const parsed: GetAddressMessage | undefined = JSON.parse(result);
+
+      if (!parsed) {
+        throw new Error('Unable to parse GetAddressMessage');
+      }
+
+      handleLedgerStatusResponse(parsed);
     });
 
     // Initialise fetch interval
@@ -117,10 +150,13 @@ export const ImportLedger = ({
       setStateWithRef(true, setIsImporting, isImportingRef);
     }
 
-    handleLedgerLoop();
+    // Start the loop if no ledger accounts have been imported and splash page is shown.
+    if (addressesRef.current.length === 0) {
+      handleLedgerLoop();
+    }
 
     return () => {
-      clearInterval(interval);
+      intervalRef.current && clearInterval(intervalRef.current);
     };
   }, []);
 
@@ -128,10 +164,11 @@ export const ImportLedger = ({
     <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
   ) : (
     <Manage
-      addresses={addressesRef.current}
-      isImporting={isImportingRef.current}
+      addresses={addresses}
+      setAddresses={setAddresses}
+      isImporting={isImporting}
       toggleImport={toggleImport}
-      statusCodes={statusCodesRef.current}
+      statusCodes={statusCodes}
       cancelImport={cancelImport}
       section={section}
       setSection={setSection}

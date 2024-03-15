@@ -5,12 +5,13 @@ import { setStateWithRef } from '@w3ux/utils';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
 import { useContext, createContext, useState, useRef } from 'react';
-import type { ChainID } from '@/types/chains';
 import type {
   AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@/types/accounts';
+import type { ChainID } from '@/types/chains';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -43,18 +44,28 @@ export const AddressesProvider = ({
   };
 
   // Saves received address as an imported address.
+  // IMPORTANT: Should only be called in main window.
   const importAddress = (
     chain: ChainID,
     source: AccountSource,
     address: string,
     name: string
   ) => {
+    // Update accounts state.
+    setAddresses(AccountsController.getAllFlattenedAccountData());
+
+    // Have main process send OS notification.
     window.myAPI.newAddressImported(chain, source, address, name);
   };
 
   // Removes an imported address.
+  // IMPORTANT: Should only be called in main window.
   const removeAddress = (chain: ChainID, address: string) => {
-    window.myAPI.removeImportedAccount(chain, address);
+    // Set address state.
+    setAddresses(AccountsController.getAllFlattenedAccountData());
+
+    // Remove persisted account from store.
+    window.myAPI.removeImportedAccount(address);
   };
 
   // Get current addresses

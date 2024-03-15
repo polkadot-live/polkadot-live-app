@@ -40,15 +40,9 @@ export interface DisplayPayloadProps {
   timerDelay?: number;
 }
 
-export interface ScanProps {
-  className?: string | undefined;
-  delay?: number;
-  onError?: undefined | ((error: Error) => void);
-  onScan: (data: string | null) => void;
-  size?: string | number | undefined;
-  style?: React.CSSProperties | undefined;
-}
-
+/**
+ * @deprecated This type should not be used.
+ */
 export interface ScanSignatureProps {
   className?: string;
   onError?: (error: Error) => void;

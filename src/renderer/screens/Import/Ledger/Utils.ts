@@ -61,5 +61,6 @@ export const determineStatusFromCodes = (
       return true;
     });
   }
+
   return getDisplayFromLedgerCode(trueCode || '', inStatusBar);
 };

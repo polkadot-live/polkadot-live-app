@@ -1,19 +1,16 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from './controller/AccountsController';
-import * as ApiUtils from '@/utils/ApiUtils';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from './config/chains';
-import { compareHashes } from './utils/CryptoUtils';
-import { EventsController } from './controller/EventsController';
-import { NotificationsController } from './controller/NotificationsController';
-import { planckToUnit, ellipsisFn } from '@w3ux/utils';
-import { WindowsController } from './controller/WindowsController';
-import type { ApiCallEntry } from './types/subscriptions';
-import type { AnyData } from './types/misc';
-import type { EventCallback } from './types/reporter';
-import type { QueryMultiWrapper } from './model/QueryMultiWrapper';
+import { chainUnits } from '@/config/chains';
+import { EventsController } from '@/controller/renderer/EventsController';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import type { ApiCallEntry } from '@/types/subscriptions';
+import type { AnyData } from '@/types/misc';
+import type { EventCallback } from '@/types/reporter';
+import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 export class Callbacks {
   /**
@@ -37,7 +34,10 @@ export class Callbacks {
     );
 
     // Return if value hasn't changed since last callback or time buffer hasn't passed.
-    if (compareHashes(newVal, curVal) || newVal.minus(curVal).lte(timeBuffer)) {
+    if (
+      JSON.stringify(newVal) === JSON.stringify(curVal) ||
+      newVal.minus(curVal).lte(timeBuffer)
+    ) {
       return;
     }
 
@@ -48,14 +48,9 @@ export class Callbacks {
     const now = new Date(data * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
-    // Create and persist event to store, and send to renderer.
+    // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, String(newVal));
-    EventsController.persistEvent(event);
-
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      event
-    );
+    window.myAPI.persistEvent(event);
   }
 
   /**
@@ -75,7 +70,7 @@ export class Callbacks {
     const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
 
     // Return if value hasn't changed since last callback.
-    if (compareHashes(newVal, curVal)) {
+    if (JSON.stringify(newVal) === JSON.stringify(curVal)) {
       return;
     }
 
@@ -85,14 +80,9 @@ export class Callbacks {
     // Debugging.
     console.log(`Current Sot: ${newVal}`);
 
-    // Create and persist event to store, and send to renderer.
+    // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, String(newVal));
-    EventsController.persistEvent(event);
-
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      event
-    );
+    window.myAPI.persistEvent(event);
   }
 
   /**
@@ -156,19 +146,12 @@ export class Callbacks {
 
     // Parse data into same format as persisted events.
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
-
-    // Persist parsed event to store.
-    EventsController.persistEvent(parsed);
-
-    // Send parsed event to renderer.
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      parsed
-    );
+    window.myAPI.persistEvent(parsed);
 
     // TMP: Show native OS notification.
-    const addressName = ellipsisFn(entry.task.account!.address);
-    NotificationsController.balanceChanged(addressName, free);
+    const title = ellipsisFn(entry.task.account!.address);
+    const body = `Free balance: ${free}`;
+    window.myAPI.showNotification({ title, body });
   }
 
   /**
@@ -222,13 +205,8 @@ export class Callbacks {
     // Update account data in controller.
     AccountsController.set(chainId, account);
 
-    // Construct and send event to renderer to display new reward balance.
+    // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, {});
-    EventsController.persistEvent(event);
-
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      event
-    );
+    window.myAPI.persistEvent(event);
   }
 }

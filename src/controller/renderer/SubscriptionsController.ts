@@ -4,10 +4,8 @@
 import { accountTasks as allAccountTasks } from '@/config/accountTasks';
 import { chainTasks as allChainTasks } from '@/config/chainTasks';
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import { store } from '@/main';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { Account, ImportedAccounts } from '@/model/Account';
-import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -39,17 +37,15 @@ export class SubscriptionsController {
    * @summary Fetch persisted chain subscription tasks from store and re-subscribe to them.
    */
   static async initChainSubscriptions() {
-    const key = 'chain_subscriptions';
-
     // Instantiate QueryMultiWrapper.
     this.chainSubscriptions = new QueryMultiWrapper();
 
-    // Get and deserialize chain tasks from store.
-    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
-      key
-    )
-      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-      : [];
+    // Send IPC message to get chain tasks from store.
+    const serialized = await window.myAPI.getChainSubscriptions();
+
+    // Deserialize fetched chain tasks.
+    const tasks: SubscriptionTask[] =
+      serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
     for (const task of tasks) {
@@ -83,7 +79,7 @@ export class SubscriptionsController {
 
   /**
    * @name subscribeChainTask
-   * @summary Subscribe to a chain task received from the renderer.
+   * @summary Subscribe to a chain task.
    */
   static async subscribeChainTask(task: SubscriptionTask) {
     if (this.chainSubscriptions) {
@@ -97,10 +93,19 @@ export class SubscriptionsController {
 
   /**
    * @name subscribeAccountTask
-   * @summary Subscribe to an account task received from the renderer.
+   * @summary Subscribe to an account task.
    */
   static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
     await account.subscribeToTask(task);
+  }
+
+  /**
+   * @name requiresApiInstanceForChain
+   * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
+   * @returns {boolean} Represents if API instance is required for the provided chainID.
+   */
+  static requiresApiInstanceForChain(chainId: ChainID) {
+    return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
   }
 
   /**
@@ -192,102 +197,5 @@ export class SubscriptionsController {
     }
 
     return result;
-  }
-
-  /**
-   * @name requiresApiInstanceForChain
-   * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
-   * @returns {boolean} Represents if API instance is required for the provided chainID.
-   */
-  static requiresApiInstanceForChain(chainId: ChainID) {
-    return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
-  }
-
-  /**
-   * @name updateChainTaskInStore
-   * @summary Called when a chain subscription task is received from renderer.
-   */
-  static updateChainTaskInStore(task: SubscriptionTask) {
-    const key = 'chain_subscriptions';
-
-    // Deserialize all tasks from store.
-    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
-      key
-    )
-      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-      : [];
-
-    this.updateTaskInStore(tasks, task, key);
-  }
-
-  /**
-   * @name updateAccountTaskInStore
-   * @summary Called when an account subscription task is received from renderer.
-   */
-  static updateAccountTaskInStore(task: SubscriptionTask, account: Account) {
-    const key = `${account.address}_subscriptions`;
-
-    // Deserialize the account's tasks from store.
-    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
-      key
-    )
-      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-      : [];
-
-    this.updateTaskInStore(tasks, task, key);
-  }
-
-  /**
-   * @name clearAccountTasksInStore
-   * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
-   */
-  static clearAccountTasksInStore(account: Account) {
-    (store as Record<string, AnyJson>).delete(
-      `${account.address}_subscriptions`
-    );
-  }
-
-  /*------------------------------------------------------------
-   * Utilities
-   *------------------------------------------------------------*/
-
-  private static updateTaskInStore(
-    tasks: SubscriptionTask[],
-    task: SubscriptionTask,
-    key: string
-  ) {
-    // Add or remove task depending on its status.
-    if (task.status === 'enable') {
-      // Remove task from array if it already exists.
-      this.taskExistsInArray(tasks, task) &&
-        (tasks = this.removeTaskFromArray(tasks, task));
-
-      tasks.push(task);
-    } else {
-      tasks = tasks.filter(
-        (t) => !(t.action === task.action && t.chainId === task.chainId)
-      );
-    }
-
-    // Persist new array to store.
-    (store as Record<string, AnyJson>).set(key, JSON.stringify(tasks));
-  }
-
-  private static taskExistsInArray(
-    tasks: SubscriptionTask[],
-    task: SubscriptionTask
-  ) {
-    return tasks.some(
-      (t) => t.action === task.action && t.chainId === t.chainId
-    );
-  }
-
-  private static removeTaskFromArray(
-    tasks: SubscriptionTask[],
-    task: SubscriptionTask
-  ) {
-    return tasks.filter(
-      (t) => !(t.action === task.action && t.chainId === task.chainId)
-    );
   }
 }

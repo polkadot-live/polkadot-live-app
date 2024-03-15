@@ -3,7 +3,6 @@
 
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useAddresses } from '@app/contexts/Addresses';
-import { useChains } from '@app/contexts/Chains';
 import { useEvents } from '@app/contexts/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
@@ -13,12 +12,11 @@ import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
-import type { FlattenedAPIData } from '@/types/apis';
+import type { IpcRendererEvent } from 'electron';
+import type { DismissEvent } from '@/types/reporter';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
-  const { addChain, removeChain, setChain } = useChains();
   const { addEvent, dismissEvent } = useEvents();
 
   // Store the currently active menu tab.
@@ -27,39 +25,17 @@ export const Home = () => {
   // Listen for changes in chains.
   // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
-    window.myAPI.syncChain((_: Event, apiData: FlattenedAPIData) => {
-      addChain(apiData);
-    });
-
-    window.myAPI.chainAdded((_: Event, apiData: FlattenedAPIData) => {
-      addChain(apiData);
-    });
-
-    window.myAPI.chainRemoved((_: Event, name: ChainID) => {
-      removeChain(name);
-    });
-
-    // NOTE: Not being called from main process.
-    window.myAPI.chainConnected((_: Event, apiData: FlattenedAPIData) => {
-      console.log('chain connected: ', apiData);
-      setChain(apiData);
-    });
-
-    // NOTE: Not being called from main process.
-    window.myAPI.chainDisconnected((_: Event, apiData: FlattenedAPIData) => {
-      console.log('chain disconnected: ', apiData);
-      setChain(apiData);
-    });
-
     // Listen for event callbacks.
-    window.myAPI.reportNewEvent((_: Event, eventData: AnyJson) => {
+    window.myAPI.reportNewEvent((_: IpcRendererEvent, eventData: AnyJson) => {
       addEvent(eventData);
     });
 
     // Listen for dismiss callbacks.
-    window.myAPI.reportDismissEvent((_: Event, eventData: AnyJson) => {
-      dismissEvent(eventData);
-    });
+    window.myAPI.reportDismissEvent(
+      (_: IpcRendererEvent, eventData: DismissEvent) => {
+        dismissEvent(eventData);
+      }
+    );
   }, []);
 
   return (

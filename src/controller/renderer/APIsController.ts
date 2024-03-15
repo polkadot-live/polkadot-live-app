@@ -1,10 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { API } from '@/model/API';
+import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
-import { WindowsController } from './WindowsController';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
 
@@ -16,7 +15,7 @@ const debug = MainDebug.extend('APIs');
  * @property {API} instances - a list of the active chain instances.
  */
 export class APIsController {
-  static instances: API[] = [];
+  static instances: Api[] = [];
 
   /**
    * @name initialize
@@ -27,16 +26,6 @@ export class APIsController {
       await this.new(chainId);
     }
   };
-
-  /**
-   * @name chainExists
-   * @summary Checks whether an API instace for the provided chain exists.
-   * @param {ChainID} chain - the chain ID.
-   * @deprecated
-   */
-  // TODO: Remove if not needed when multi-chain support is implemented.
-  static chainExists = (chain: ChainID) =>
-    !!APIsController.instances.find((a) => a.chain === chain);
 
   /**
    * @name new
@@ -55,7 +44,7 @@ export class APIsController {
     debug('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
-    const instance = new API(endpoint, chainId);
+    const instance = new Api(endpoint, chainId);
 
     // Set remaining instance properties and add to instances.
     this.instances.push(instance);
@@ -77,9 +66,6 @@ export class APIsController {
     if (instance) {
       debug('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
-      //this.instances = this.instances.filter((i) => i !== instance);
-      //WindowsController.reportAll(chain, 'renderer:chain:removed');
-      return;
     }
   };
 
@@ -107,7 +93,7 @@ export class APIsController {
    * @param {ChainID} chain - the chain the instance belongs to.
    * @returns {(API|undefined)}
    */
-  static get = (chain: ChainID): API | undefined =>
+  static get = (chain: ChainID): Api | undefined =>
     this.instances?.find((c) => c.chain === chain) || undefined;
 
   /**
@@ -115,20 +101,10 @@ export class APIsController {
    * @summary Updates an API instance in the `instances` property.
    * @param {API} instance - the API instance to set.
    */
-  static set = (instance: API) =>
+  static set = (instance: Api) =>
     (this.instances =
       this.instances?.map((a) => (a.chain === instance.chain ? instance : a)) ||
       []);
-
-  /**
-   * @name reportAllConnections
-   * @summary Report all active instances to all windows.
-   */
-  static reportAllConnections = () => {
-    for (const { chain } of this.instances) {
-      WindowsController.reportAll(chain, 'renderer:chain:sync');
-    }
-  };
 
   /**
    * @name getAllFlattenedAPIData

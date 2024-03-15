@@ -5,7 +5,6 @@ import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
 import { chainIcon } from '@/config/chains';
-import { useAccountState } from '@app/contexts/AccountState';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import type { IpcRendererEvent } from 'electron';
@@ -24,7 +23,6 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 
 export const Action = () => {
   const { search } = useLocation();
-  const { getAccountStateKey } = useAccountState();
   const { getAddress } = useAddresses();
   const { setTxPayload, setGenesisHash, getTxSignature } = useTxMeta();
 
@@ -39,7 +37,8 @@ export const Action = () => {
     decodeURIComponent(searchParams?.get('data') || '')
   );
 
-  const nonce = getAccountStateKey('Polkadot', from, 'account')?.nonce;
+  // TODO: Fix
+  const nonce = 0;
 
   const fromAccount = getAddress(from);
   const fromName = fromAccount?.name || ellipsisFn(from);

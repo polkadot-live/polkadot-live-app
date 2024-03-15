@@ -9,6 +9,8 @@ export type HardwareAddressProps = ComponentBase & {
   address: string;
   // the index of the address.
   index: number;
+  // Whether this address is imported in main window.
+  isImported: boolean;
   // initial value of address.
   initial: string;
   // whether to disable editing if address is imported.
@@ -17,8 +19,6 @@ export type HardwareAddressProps = ComponentBase & {
   Identicon: ReactNode;
   // handle rename
   renameHandler: (address: string, newName: string) => void;
-  // handle whether address already exists.
-  existsHandler: (address: string) => boolean;
   // handle remove UI.
   openRemoveHandler: (address: string) => void;
   // handle confirm import UI.

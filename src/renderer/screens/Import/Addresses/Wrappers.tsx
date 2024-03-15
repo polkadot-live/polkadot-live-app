@@ -47,11 +47,23 @@ export const AddressWrapper = styled.div`
   }
 
   .items {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 0 1rem;
     display: flex;
+    width: 100%;
+    margin: 1rem 0;
+    padding: 0 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
     flex-direction: column;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: rgb(45, 41, 45);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(25, 22, 25);
+    }
   }
 
   .edit {

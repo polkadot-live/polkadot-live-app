@@ -7,7 +7,9 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
-import type { WrappedSubscriptionTasks } from './types/subscriptions';
+import type { FlattenedAccountData } from './types/accounts';
+import type { SubscriptionTask } from './types/subscriptions';
+import type { AnyJson } from './types/misc';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -15,13 +17,71 @@ if (isTest) {
   require('wdio-electron-service/preload');
 }
 
-contextBridge.exposeInMainWorld('myAPI', {
+/**
+ * Message ports
+ *
+ * Cannot send ports via the context bridge. Instead, post it to the renderer
+ * process using `window.postMessage`. Discussed here:
+ * https://github.com/electron/electron/issues/27024
+ */
+
+ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
+  window.postMessage({ target: msg.target }, '*', [e.ports[0]]);
+});
+
+export const API: PreloadAPI = {
+  /**
+   * New handlers
+   */
+
+  initializeApp: (callback) =>
+    ipcRenderer.on('renderer:app:initialize', callback),
+
+  initializeAppOnline: (callback) =>
+    ipcRenderer.on('renderer:app:initialize:online', callback),
+
+  initializeAppOffline: (callback) =>
+    ipcRenderer.on('renderer:app:initialize:offline', callback),
+
+  // Get online status from main.
+  getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
+
+  // Get persisted accounts from state.
+  getPersistedAccounts: async () =>
+    await ipcRenderer.invoke('app:accounts:get'),
+
+  // Get persisted subscription tasks for account.
+  getPersistedAccountTasks: async (account: FlattenedAccountData) =>
+    await ipcRenderer.invoke('app:accounts:tasks:get', account),
+
+  // Overwrite persisted accounts in store.
+  setPersistedAccounts: (accounts: string) =>
+    ipcRenderer.send('app:accounts:set', accounts),
+
+  persistEvent: (event: EventCallback) =>
+    ipcRenderer.send('app:event:persist', event),
+
+  getChainSubscriptions: async () =>
+    await ipcRenderer.invoke('app:subscriptions:chain:get'),
+
+  updatePersistedChainTask: async (task: SubscriptionTask) =>
+    await ipcRenderer.invoke('app:subscriptions:chain:update', task),
+
+  updatePersistedAccountTask: async (
+    task: SubscriptionTask,
+    account: FlattenedAccountData
+  ) =>
+    await ipcRenderer.invoke('app:subscriptions:account:update', task, account),
+
+  showNotification: (content: { title: string; body: string }) =>
+    ipcRenderer.send('app:notification:show', content),
+
   /**
    * Window lifecycle
    */
 
-  quitApp: (): void => {
-    ipcRenderer.invoke('app:quit');
+  quitApp: async (): Promise<void> => {
+    await ipcRenderer.invoke('app:quit');
   },
 
   hideWindow: (id) => ipcRenderer.send('app:window:hide', id),
@@ -32,34 +92,16 @@ contextBridge.exposeInMainWorld('myAPI', {
    * Chain management
    */
 
-  syncChain: (callback) => ipcRenderer.on('renderer:chain:sync', callback),
-
-  chainAdded: (callback) => ipcRenderer.on('renderer:chain:added', callback),
-
   // Report online status.
   reportOnlineStatus: (callback) =>
     ipcRenderer.on('renderer:broadcast:onlineStatus', callback),
 
-  chainRemoved: (callback) =>
-    ipcRenderer.on('renderer:chain:removed', callback),
-
-  // NOTE: Not being used
-  chainConnected: (callback) =>
-    ipcRenderer.on('renderer:chain:connected', callback),
-
-  // NOTE: Not being used
-  chainDisconnected: (callback) =>
-    ipcRenderer.on('renderer:chain:disconnected', callback),
-
-  // NOTE: Not being called in any renderers (main doesn't receive app:chain:remove)
-  removeChain: (chain) => ipcRenderer.send('app:chain:remove', chain),
-
   // Opens a window.
-  openWindow: (id, args) => ipcRenderer.invoke(`${id}:open`, args),
+  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
 
   // Performs a Ledger loop.
-  doLedgerLoop: (accountIndex, tasks) =>
-    ipcRenderer.send('app:ledger:do-loop', accountIndex, tasks),
+  doLedgerLoop: (accountIndex, appName, tasks) =>
+    ipcRenderer.send('app:ledger:do-loop', accountIndex, appName, tasks),
 
   // Reports a Ledger device result to all open windows.
   reportLedgerStatus: (callback) =>
@@ -74,16 +116,8 @@ contextBridge.exposeInMainWorld('myAPI', {
   },
 
   // Attempts to remove an imported account.
-  removeImportedAccount: (chain, account) =>
-    ipcRenderer.send('app:account:remove', chain, account),
-
-  // Syncs imported accounts with all open windows.
-  reportImportedAccounts: (callback) =>
-    ipcRenderer.on('renderer:broadcast:accounts', callback),
-
-  // Syncs account state with all open windows.
-  //reportAccountState: (callback) =>
-  //  ipcRenderer.on('renderer:account:state', callback),
+  removeImportedAccount: (account) =>
+    ipcRenderer.send('app:account:remove', account),
 
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
@@ -93,24 +127,8 @@ contextBridge.exposeInMainWorld('myAPI', {
     ipcRenderer.on('renderer:event:dismiss', callback),
 
   // Remove event from store.
-  removeEventFromStore: (data: EventCallback) =>
-    ipcRenderer.invoke('app:event:remove', data),
-
-  /**
-   * Subscription communication
-   */
-
-  // Report chain subscriptions to renderer.
-  reportChainSubscriptionState: (callback) =>
-    ipcRenderer.on('renderer:broadcast:subscriptions:chains', callback),
-
-  // Report account subscriptions to renderer.
-  reportAccountSubscriptionsState: (callback) =>
-    ipcRenderer.on('renderer:broadcast:subscriptions:accounts', callback),
-
-  // Handle subscription task.
-  invokeSubscriptionTask: (data: WrappedSubscriptionTasks) =>
-    ipcRenderer.invoke('app:subscriptions:task:handle', data),
+  removeEventFromStore: async (data: EventCallback) =>
+    await ipcRenderer.invoke('app:event:remove', data),
 
   /**
    * Online status
@@ -151,4 +169,6 @@ contextBridge.exposeInMainWorld('myAPI', {
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
-} as PreloadAPI);
+};
+
+contextBridge.exposeInMainWorld('myAPI', API);

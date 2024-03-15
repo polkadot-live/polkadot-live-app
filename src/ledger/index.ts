@@ -1,12 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { LedgerTask } from '@/types/ledger';
-import type { AnyFunction, AnyJson } from '@/types/misc';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import { newSubstrateApp } from '@zondax/ledger-substrate';
+import { MainDebug } from '@/utils/DebugUtils';
+import type { AnyFunction, AnyJson } from '@/types/misc';
 import type { BrowserWindow } from 'electron';
+import type { LedgerGetAddressResult, LedgerTask } from '@/types/ledger';
 // import { listen } from "@ledgerhq/logs";
+
+const debug = MainDebug.extend('Ledger');
 
 export const TOTAL_ALLOWED_STATUS_CODES = 50;
 export const LEDGER_DEFAULT_ACCOUNT = 0x80000000;
@@ -80,6 +83,8 @@ export const executeLedgerLoop = async (
     let result = null;
 
     if (tasks.includes('get_address')) {
+      debug('🔷 Get address');
+
       result = await handleGetAddress(
         window,
         appName,
@@ -116,6 +121,8 @@ export const handleGetAddress = async (
   const { deviceModel } = transport;
   const { id, productName } = deviceModel || {};
 
+  debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
+
   window.webContents.send(
     'renderer:ledger:report:status',
     JSON.stringify({
@@ -137,7 +144,7 @@ export const handleGetAddress = async (
     return Promise.race([promise, timeout]);
   };
 
-  const result: AnyJson = await withTimeout(
+  const result: LedgerGetAddressResult = await withTimeout(
     3000,
     substrateApp.getAddress(
       LEDGER_DEFAULT_ACCOUNT + index,
@@ -147,7 +154,7 @@ export const handleGetAddress = async (
     )
   );
 
-  const error = result?.error_message;
+  const error = result.error_message;
   if (error) {
     if (!error.startsWith('No errors')) {
       throw new Error(error);

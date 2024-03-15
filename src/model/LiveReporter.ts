@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainDebug } from '@/utils/DebugUtils';
-import { NotificationsController } from '@/controller/NotificationsController';
+import { NotificationsController } from '@/controller/main/NotificationsController';
 import type { Report, Reporter } from '@/types/reporter';
 
 const debug = MainDebug.extend('LiveReporter');

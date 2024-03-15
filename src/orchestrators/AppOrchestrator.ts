@@ -1,28 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  reportAccountSubscriptions,
-  reportAllWindows,
-  reportApiInstances,
-  reportImportedAccounts,
-  reportOnlineStatus,
-} from '@/utils/SystemUtils';
-import {
-  fetchAccountNominationPoolData,
-  fetchNominationPoolDataForAccount,
-} from '@/utils/AccountUtils';
-import { APIsController } from '@/controller/APIsController';
-import { AccountsController } from '@/controller/AccountsController';
-import { NotificationsController } from '@/controller/NotificationsController';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   ImportNewAddressArg,
   AppOrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import { ChainList } from '@/config/chains';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 
 // Orchestrate class to perform high-level app tasks.
 export class AppOrchestrator {
@@ -59,23 +46,6 @@ export class AppOrchestrator {
    */
   private static async initialize() {
     await OnlineStatusController.initialize();
-
-    // Initialize accounts from persisted state.
-    AccountsController.initialize();
-
-    // Initialize required chain `APIs` from persisted state.
-    await APIsController.initialize(Array.from(ChainList.keys()));
-
-    // Use API instance to initialize account nomination pool data.
-    if (OnlineStatusController.getStatus() === true) {
-      await fetchAccountNominationPoolData();
-    }
-
-    // Initialize persisted account subscriptions.
-    await AccountsController.subscribeAccounts();
-
-    // Initialize persisted chain subscriptions.
-    await SubscriptionsController.initChainSubscriptions();
   }
 
   /**
@@ -83,19 +53,9 @@ export class AppOrchestrator {
    * @summary Sets the app's state correctly for offline mode.
    */
   private static async initializeOffline() {
-    // Unsubscribe queryMulti API calls for managed accounts.
-    AccountsController.unsubscribeAccounts();
-
-    // Unsubscribe queryMulti API calls for managed chains.
-    SubscriptionsController.unsubscribeChains();
-
-    // Disconnect from any active API instances.
-    for (const chainId of Array.from(ChainList.keys())) {
-      await APIsController.close(chainId);
-    }
-
-    // Report online status to renderer.
-    reportAllWindows(reportOnlineStatus);
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:app:initialize:offline'
+    );
   }
 
   /**
@@ -103,57 +63,18 @@ export class AppOrchestrator {
    * @summary Sets the app's state correctly for online mode.
    */
   private static async initializeOnline() {
-    // Fetch up-to-date nomination pool data for managed accounts.
-    await fetchAccountNominationPoolData();
-
-    // Re-subscribe to managed accounts cached subscription tasks.
-    await AccountsController.resubscribeAccounts();
-
-    // Re-subscribe to managed chain subscription tasks.
-    await SubscriptionsController.resubscribeAccounts();
-
-    // Report online status to renderer.
-    reportAllWindows(reportOnlineStatus);
-
-    // Report fetched nomination pool account data.
-    reportAllWindows(reportImportedAccounts);
-
-    // Report account subscriptions.
-    reportAllWindows(reportAccountSubscriptions);
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:app:initialize:online'
+    );
   }
 
   /**
    * @name importNewAddress
    * @summary Imports a new account.
    */
-  private static async importNewAddress({
-    chain,
-    source,
-    address,
-    name,
-  }: ImportNewAddressArg) {
-    // Add address to `AccountsController` and give immediate feedback to app.
-    const account = AccountsController.add(chain, source, address, name);
-
-    // If account was unsuccessfully added, exit early.
-    if (!account) {
-      return;
-    }
-
-    // Initialize nomination pool data for account if necessary.
-    fetchNominationPoolDataForAccount(account, chain);
-
-    // Report new account to UI immediately (no chain state yet).
-    reportAllWindows(reportImportedAccounts);
-
-    // Report account subscriptions to renderer.
-    reportAccountSubscriptions('menu');
-
+  private static async importNewAddress({ name }: ImportNewAddressArg) {
     // Show notification.
     NotificationsController.accountImported(name);
-
-    // Report account again with chain state.
-    reportAllWindows(reportImportedAccounts);
   }
 
   /**
@@ -161,35 +82,9 @@ export class AppOrchestrator {
    * @summary Removes an imported account.
    */
   private static async removeImportedAccount({
-    chain,
     address,
   }: RemoveImportedAccountArg) {
-    // Retrieve the account.
-    const account = AccountsController.get(chain, address);
-
-    if (!account) {
-      return;
-    }
-
-    // Unsubscribe from all active tasks.
-    await AccountsController.removeAllSubscriptions(account);
-
     // Clear account's persisted tasks in store.
-    SubscriptionsController.clearAccountTasksInStore(account);
-
-    // Remove address from store.
-    AccountsController.remove(chain, address);
-
-    // Report account subscriptions to renderer.
-    reportAccountSubscriptions('menu');
-
-    // Report chain connections to UI.
-    reportAllWindows(reportApiInstances);
-
-    // Remove chain's API instance if no more accounts require it.
-    //removeUnusedApi(chain);
-
-    // Report to all active windows that an address has been removed.
-    reportAllWindows(reportImportedAccounts);
+    SubscriptionsController.clearAccountTasksInStore(address);
   }
 }

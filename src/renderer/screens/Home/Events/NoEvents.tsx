@@ -14,9 +14,9 @@ export const NoEvents = () => (
     <h4>
       <a
         href="/import"
-        onClick={(e) => {
+        onClick={async (e) => {
           e.preventDefault();
-          window.myAPI.openWindow('import');
+          await window.myAPI.openWindow('import');
         }}
       >
         Import more accounts{' '}

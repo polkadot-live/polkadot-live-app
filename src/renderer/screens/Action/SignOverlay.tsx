@@ -10,14 +10,12 @@ import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import { useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
-import type { AnyJson } from '@/types/misc';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
-import { QrScanSignature } from '@app/library/QRCode/ScanSignature';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 
 export const SignOverlay = ({ from }: { from: string }) => {
-  const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();
+  const { getTxPayload /*,setTxSignature*/, getGenesisHash } = useTxMeta();
   const payload = getTxPayload();
   const { setStatus: setOverlayStatus } = useOverlay();
 
@@ -48,13 +46,13 @@ export const SignOverlay = ({ from }: { from: string }) => {
       )}
       {stage === 2 && (
         <div className="viewer">
-          <QrScanSignature
+          {/*<QrScanSignature
             size={75}
             onScan={({ signature }: AnyJson) => {
               setOverlayStatus(0);
               setTxSignature(signature);
             }}
-          />
+          />*/}
         </div>
       )}
       <div className="foot">

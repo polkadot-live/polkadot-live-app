@@ -1,23 +1,21 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BrowserWindow, Tray, nativeImage, ipcMain } from 'electron';
+import { BrowserWindow, Tray, nativeImage, ipcMain, shell } from 'electron';
 import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import {
-  initializeState,
-  reportAccountSubscriptions,
-  reportApiInstances,
-  reportChainSubscriptions,
-  reportOnlineStatus,
-} from '@/utils/SystemUtils';
-import { WindowsController } from '@/controller/WindowsController';
-import { EventsController } from '@/controller/EventsController';
+import { reportOnlineStatus } from '@/utils/SystemUtils';
+import { EventsController } from '@/controller/main/EventsController';
+import { WindowsController } from '@/controller/main/WindowsController';
+import { ConfigMain } from '@/config/ConfigMain';
+import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
+
+const debug = MainDebug.extend('WindowUtils');
 
 /*----------------------------------------------------------------------
  Set up the tray:
@@ -85,21 +83,19 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   mainWindow.hide();
 
+  // Send port to main window for communication with import window.
+  mainWindow.once('ready-to-show', () => {
+    const portMain = ConfigMain.getPortsForMainAndImport().portMain;
+
+    mainWindow.webContents.postMessage('port', { target: 'main' }, [portMain]);
+  });
+
   mainWindow.on('show', async () => {
+    // Initialize app if necessary.
+    WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
+
     // Report online status to renderer.
     reportOnlineStatus('menu');
-
-    // Report imported accounts and chain instances.
-    initializeState('menu');
-
-    // Report chain subscriptions.
-    reportChainSubscriptions('menu');
-
-    // Report account subscriptions.
-    reportAccountSubscriptions('menu');
-
-    // Report chain connections to UI.
-    reportApiInstances('menu');
 
     // Report persisted events.
     EventsController.initialize();
@@ -155,9 +151,9 @@ export const handleWindowOnIPC = (
   options?: AnyJson
 ) => {
   // Create a call for the window to open.
-  ipcMain.handle(`${name}:open`, (_, args?: AnyJson) => {
+  ipcMain.on(`${name}:open`, (_, args?: AnyJson) => {
     // Ensure main window is hidden.
-    WindowsController.hideAndBlur('menu');
+    //WindowsController.hideAndBlur('menu');
 
     // Show window if it already exists.
     if (WindowsController.get(name)) {
@@ -200,14 +196,18 @@ export const handleWindowOnIPC = (
     // Load correct URL and HTML file.
     loadUrlWithRoute(window, { uri: name, args });
 
-    // Have windows controller handle window.
-    WindowsController.add(window, name);
-    WindowsController.show(name);
+    // Send port to renderer if this is the import window.
+    if (name === 'import') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to import window');
 
-    // Report imported accounts and chain instances.
-    window.on('ready-to-show', () => {
-      initializeState(name);
-    });
+        const portImport = ConfigMain.getPortsForMainAndImport().portImport;
+
+        window.webContents.postMessage('port', { target: 'import' }, [
+          portImport,
+        ]);
+      });
+    }
 
     window.on('focus', () => {
       WindowsController.focus(name);
@@ -224,6 +224,16 @@ export const handleWindowOnIPC = (
     window.on('closed', () => {
       WindowsController.remove(name);
     });
+
+    // Open links with target="_blank" in default browser.
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
+
+    // Have windows controller handle window.
+    WindowsController.add(window, name);
+    WindowsController.show(name);
   });
 };
 

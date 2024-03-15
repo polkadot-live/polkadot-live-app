@@ -1,9 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ApiUtils from '@/utils/ApiUtils';
-import { Callbacks } from '@/callbacks';
+import { Callbacks } from '@/renderer/callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { AnyData, AnyFunction } from '@/types/misc';
 import type {
@@ -11,7 +11,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@/types/subscriptions';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
+import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 

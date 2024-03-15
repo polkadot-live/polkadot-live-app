@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '@/main';
 import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { ImportedAccounts } from '@/model/Account';
@@ -12,7 +11,6 @@ import type {
   StoredAccount,
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -30,13 +28,11 @@ export class AccountsController {
    * @name initialize
    * @summary Injects accounts into class from store.
    */
-  static initialize() {
-    const stored = (store as Record<string, AnyJson>).get(
-      'imported_accounts'
-    ) as string;
+  static async initialize() {
+    const stored = await window.myAPI.getPersistedAccounts();
 
     // Instantiate empty map if no accounts found in store.
-    if (!stored) {
+    if (stored === '') {
       this.accounts = new Map();
       return;
     }
@@ -68,9 +64,12 @@ export class AccountsController {
   static async subscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const key = `${account.address}_subscriptions`;
-        const persisted = (store as Record<string, AnyJson>).get(key);
-        const tasks = persisted ? JSON.parse(persisted as string) : [];
+        const stored = await window.myAPI.getPersistedAccountTasks(
+          account.flatten()
+        );
+
+        const tasks: SubscriptionTask[] =
+          stored !== '' ? JSON.parse(stored) : [];
 
         for (const task of tasks) {
           await account.subscribeToTask(task);
@@ -160,13 +159,6 @@ export class AccountsController {
   };
 
   /**
-   * @name getAccountChainIds
-   * @summary Utility to get an array of imported chain IDs
-   */
-  // TODO: Mark as deprecated if not used after implementing multi-chain logic.
-  static getAccountChainIds = (): ChainID[] => Array.from(this.accounts.keys());
-
-  /**
    * @name set
    * @summary Updates an Account in the `accounts` property.
    * @param {ChainID} chain - the chain the account belongs to.
@@ -179,10 +171,9 @@ export class AccountsController {
         .get(chain)
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
-    (store as Record<string, AnyJson>).set(
-      'imported_accounts',
-      this.serializeAccounts()
-    );
+
+    // Send IPC message to update persisted accounts in store.
+    window.myAPI.setPersistedAccounts(this.serializeAccounts());
   };
 
   /**
@@ -266,10 +257,10 @@ export class AccountsController {
    */
   private static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
-    (store as Record<string, AnyJson>).set(
-      'imported_accounts',
-      this.serializeAccounts()
-    );
+
+    // Send IPC message to update persisted imported accounts.
+    window.myAPI.setPersistedAccounts(this.serializeAccounts());
+
     debug('🆕 Accounts updated: %o', accounts);
   };
 

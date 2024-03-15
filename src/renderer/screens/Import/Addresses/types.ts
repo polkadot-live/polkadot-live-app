@@ -2,14 +2,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from '@/types/accounts';
+import type { AnyFunction } from '@w3ux/utils/types';
 
 export interface AddressProps {
   address: string;
   index: number;
+  setAddresses: AnyFunction;
+  isImported: boolean;
 }
 
 export interface ConfirmProps {
   address: string;
+  setAddresses: AnyFunction;
   name: string;
+  source: AccountSource;
+}
+
+export interface RemoveProps {
+  address: string;
+  setAddresses: AnyFunction;
   source: AccountSource;
 }

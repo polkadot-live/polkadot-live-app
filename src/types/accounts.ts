@@ -45,6 +45,29 @@ export interface FlattenedAccountData {
 }
 
 /**
+ * Vault address type for import window.
+ */
+export interface LocalAddress {
+  address: string;
+  isImported: boolean;
+  index: number;
+  name: string;
+}
+
+/**
+ * Ledger address type for import window.
+ */
+
+export interface LedgerLocalAddress {
+  address: string;
+  device: { id: string; productName: string };
+  index: number;
+  isImported: boolean;
+  name: string;
+  pubKey: string;
+}
+
+/**
  * @deprecated The type should not be used
  */
 export type AccountChainState = PolkadotAccountState;
@@ -66,7 +89,4 @@ export interface AccountChainInstanceState {
 
   subscribe: () => void;
   getAllState: () => { account: AnyJson; locks: AnyJson };
-
-  // The following method is not being invoked from this type yet:
-  // reportAccountState(key: keyof PolkadotState)
 }

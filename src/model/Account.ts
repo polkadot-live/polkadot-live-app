@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QueryMultiWrapper } from './QueryMultiWrapper';
+import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -34,7 +34,7 @@ export class Account {
 
   private _queryMulti: QueryMultiWrapper | null = null;
 
-  private _address!: string;
+  private _address: string;
 
   private _chain: ChainID;
 
@@ -47,7 +47,7 @@ export class Account {
     name: string
   ) {
     this._source = source;
-    this.address = address;
+    this._address = address;
     this._name = name;
     this._queryMulti = new QueryMultiWrapper();
     this._chain = chain;
