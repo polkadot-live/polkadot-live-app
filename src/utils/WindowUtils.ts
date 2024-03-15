@@ -85,9 +85,18 @@ export const createMainWindow = (isTest: boolean) => {
 
   // Send port to main window for communication with import window.
   mainWindow.once('ready-to-show', () => {
-    const portMain = ConfigMain.getMainImportPorts().port1;
+    const mainPort1 = ConfigMain.getPortPair('main-import').port1;
+    const mainPort2 = ConfigMain.getPortPair('main-action').port1;
 
-    mainWindow.webContents.postMessage('port', { target: 'main' }, [portMain]);
+    // Send main's port for main-import communication.
+    mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
+      mainPort1,
+    ]);
+
+    // Send main's port for main-action communication.
+    mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
+      mainPort2,
+    ]);
   });
 
   mainWindow.on('show', async () => {
@@ -210,11 +219,27 @@ export const handleWindowOnIPC = (
       window.once('ready-to-show', () => {
         debug('🔷 Send port to import window');
 
-        const portImport = ConfigMain.getMainImportPorts().port2;
+        // Send import's port for main-import communication.
+        const portImport = ConfigMain.getPortPair('main-import').port2;
 
-        window.webContents.postMessage('port', { target: 'import' }, [
-          portImport,
-        ]);
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-import:import' },
+          [portImport]
+        );
+      });
+    } else if (name === 'action') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to action window');
+
+        // Send action's port for main-action communication.
+        const portAction = ConfigMain.getPortPair('main-action').port2;
+
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-action:action' },
+          [portAction]
+        );
       });
     }
 

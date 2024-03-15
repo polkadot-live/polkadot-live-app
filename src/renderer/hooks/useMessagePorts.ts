@@ -96,8 +96,10 @@ export const useMessagePorts = () => {
      * sets up message handlers accordingly.
      */
     const handleReceivedPort = (e: MessageEvent) => {
+      console.log(`received port: ${e.data.target}`);
+
       switch (e.data.target) {
-        case 'main': {
+        case 'main-import:main': {
           ConfigRenderer.portMain = e.ports[0];
 
           ConfigRenderer.portMain.onmessage = async (ev: MessageEvent) => {
@@ -119,7 +121,7 @@ export const useMessagePorts = () => {
           ConfigRenderer.portMain.start();
           break;
         }
-        case 'import': {
+        case 'main-import:import': {
           ConfigRenderer.portImport = e.ports[0];
 
           ConfigRenderer.portImport.onmessage = (ev: MessageEvent) => {
@@ -127,6 +129,24 @@ export const useMessagePorts = () => {
           };
 
           ConfigRenderer.portImport.start();
+          break;
+        }
+        case 'main-action:main': {
+          ConfigRenderer.portMainB = e.ports[0];
+
+          ConfigRenderer.portMainB.onmessage = async (ev: MessageEvent) => {
+            console.log(`todo: handle message for ${ev}`);
+          };
+          break;
+        }
+        case 'main-action:action': {
+          ConfigRenderer.portAction = e.ports[0];
+
+          ConfigRenderer.portAction.onmessage = (ev: MessageEvent) => {
+            console.log(ev.data);
+          };
+
+          ConfigRenderer.portAction.start();
           break;
         }
         default: {
