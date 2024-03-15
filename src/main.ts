@@ -23,6 +23,7 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import { executeLedgerLoop } from './ledger';
+import { ConfigMain } from './config/ConfigMain';
 
 const debug = MainDebug;
 
@@ -188,7 +189,7 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:accounts:tasks:get',
     async (_, account: FlattenedAccountData) => {
-      const key = `${account.address}_subscriptions`;
+      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
       const stored = (store as Record<string, AnyData>).get(key) as string;
       return stored ? stored : '';
     }
@@ -211,7 +212,7 @@ app.whenReady().then(async () => {
 
   // Get persisted chain subscription tasks.
   ipcMain.handle('app:subscriptions:chain:get', async () => {
-    const key = 'chain_subscriptions';
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
     const tasks = (store as Record<string, AnyData>).get(key) as string;
     return tasks ? tasks : '';
   });

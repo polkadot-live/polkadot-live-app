@@ -12,6 +12,8 @@ export class ConfigMain {
   static port1: Electron.MessagePortMain;
   static port2: Electron.MessagePortMain;
 
+  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
+
   // Instantiate message port pair for `main` and `import` window communcation
   // and store in static class for easy retrieval.
   static initialize = (): void => {
@@ -32,4 +34,14 @@ export class ConfigMain {
       portImport: ConfigMain.port2,
     };
   };
+
+  // Get local storage key for chain subscription tasks.
+  static getChainSubscriptionsStorageKey(): string {
+    return ConfigMain._chainSubscriptionsStorageKey;
+  }
+
+  // Get local storage key for subscription tasks of a particular address.
+  static getSubscriptionsStorageKeyFor(address: string): string {
+    return `${address}_subscriptions`;
+  }
 }
