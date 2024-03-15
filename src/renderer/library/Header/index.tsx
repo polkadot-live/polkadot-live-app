@@ -7,6 +7,7 @@ import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
+import type { AnyData } from '@/types/misc';
 
 export const Header = ({ showMenu }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -21,16 +22,28 @@ export const Header = ({ showMenu }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
+  // Temporary click handler to open action window.
+  const handleOpenActions = () => {
+    const data: Record<string, AnyData> = {
+      uid: 'dummyuid',
+      action: 'nominationPools_pendingRewards_bond',
+      chain: 'Polkadot',
+      address: '14uUGXgtB8YJpcqz6WpoG8rBJeK2JY1F7cyZyqGPb6HWmGNf',
+      data: {
+        pendingRewards: 1000000000,
+      },
+    };
+
+    window.myAPI.openWindow('action', JSON.stringify(data));
+  };
+
   return (
     <HeaderWrapper>
       <div />
       <div>
         {showMenu || activeWindow === 'menu' ? (
           <>
-            <button
-              type="button"
-              onClick={() => window.myAPI.openWindow('import')}
-            >
+            <button type="button" onClick={() => handleOpenActions()}>
               <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
             </button>
             <Menu />

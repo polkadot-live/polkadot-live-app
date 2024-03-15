@@ -1,25 +1,25 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ActionItem } from '@/renderer/library/ActionItem';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { chainIcon } from '@/config/chains';
+import { ContentWrapper } from '@app/screens/Wrappers';
+import { DragClose } from '@app/library/DragClose';
+import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ellipsisFn } from '@w3ux/utils';
-import { chainIcon } from '@/config/chains';
-import { useAddresses } from '@app/contexts/Addresses';
-import { useTxMeta } from '@app/contexts/TxMeta';
-import type { IpcRendererEvent } from 'electron';
-import { DragClose } from '@app/library/DragClose';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { Signer } from './Signer';
 import { SubmittedTxWrapper } from './Wrappers';
-import type { ChainID } from '@/types/chains';
-import type { TxStatus } from '@/types/tx';
-import type { AnyJson } from '@/types/misc';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { Tx } from '@/renderer/library/Tx';
-import { ActionItem } from '@/renderer/library/ActionItem';
+import { useAddresses } from '@app/contexts/Addresses';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useTxMeta } from '@app/contexts/TxMeta';
+import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { IpcRendererEvent } from 'electron';
+import type { TxStatus } from '@/types/tx';
 
 export const Action = () => {
   const { search } = useLocation();
@@ -33,9 +33,11 @@ export const Action = () => {
   const uid = decodeURIComponent(searchParams?.get('uid') || '');
   const action = decodeURIComponent(searchParams?.get('action') || '');
   const from = decodeURIComponent(searchParams?.get('address') || '');
-  const actionData = JSON.parse(
-    decodeURIComponent(searchParams?.get('data') || '')
-  );
+  const actionData = {
+    pendingRewards: 100,
+  }; //JSON.parse(
+  //  decodeURIComponent(searchParams?.get('data') || '')
+  //);
 
   // TODO: Fix
   const nonce = 0;
@@ -82,7 +84,7 @@ export const Action = () => {
   }, [getTxSignature()]);
 
   useEffect(() => {
-    // Handle tx data from main.
+    // Update tx state received from the main extrinsics controller new() method.
     window.myAPI.reportTx((_: IpcRendererEvent, txData: AnyJson) => {
       setEstimatedFee(txData.estimatedFee);
       setTxId(txData.txId);
@@ -90,13 +92,13 @@ export const Action = () => {
       setGenesisHash(txData.genesisHash);
     });
 
-    // Handle tx status from main
+    // Update tx status received from the main extrinsics controller submit() method.
     window.myAPI.reportTxStatus((_: IpcRendererEvent, status: TxStatus) => {
       setTxStatus(status);
     });
 
     return () => {
-      // Reset the transaction on unmount.
+      // Reset data in the main extrinsics controller.
       window.myAPI.requestResetTx();
     };
   }, []);

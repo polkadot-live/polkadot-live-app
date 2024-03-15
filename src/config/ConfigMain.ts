@@ -4,13 +4,12 @@
 import { MessageChannelMain } from 'electron';
 
 interface PortPair {
-  portMain: Electron.MessagePortMain;
-  portImport: Electron.MessagePortMain;
+  port1: Electron.MessagePortMain;
+  port2: Electron.MessagePortMain;
 }
 
 export class ConfigMain {
-  static port1: Electron.MessagePortMain;
-  static port2: Electron.MessagePortMain;
+  private static _main_import_ports: PortPair;
 
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
 
@@ -19,20 +18,16 @@ export class ConfigMain {
   static initialize = (): void => {
     const { port1, port2 } = new MessageChannelMain();
 
-    ConfigMain.port1 = port1;
-    ConfigMain.port2 = port2;
+    ConfigMain._main_import_ports = { port1, port2 };
   };
 
   // Return message port pair for `main` and `import` window communication.
-  static getPortsForMainAndImport = (): PortPair => {
-    if (!ConfigMain.port1 || !ConfigMain.port2) {
+  static getMainImportPorts = (): PortPair => {
+    if (!ConfigMain._main_import_ports) {
       ConfigMain.initialize();
     }
 
-    return {
-      portMain: ConfigMain.port1,
-      portImport: ConfigMain.port2,
-    };
+    return ConfigMain._main_import_ports;
   };
 
   // Get local storage key for chain subscription tasks.

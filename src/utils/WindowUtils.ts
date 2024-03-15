@@ -85,7 +85,7 @@ export const createMainWindow = (isTest: boolean) => {
 
   // Send port to main window for communication with import window.
   mainWindow.once('ready-to-show', () => {
-    const portMain = ConfigMain.getPortsForMainAndImport().portMain;
+    const portMain = ConfigMain.getMainImportPorts().port1;
 
     mainWindow.webContents.postMessage('port', { target: 'main' }, [portMain]);
   });
@@ -194,14 +194,23 @@ export const handleWindowOnIPC = (
     );
 
     // Load correct URL and HTML file.
-    loadUrlWithRoute(window, { uri: name, args });
+    if (args) {
+      const parsed: Record<string, AnyJson> = JSON.parse(args);
+
+      console.log('parsed:');
+      console.log(parsed);
+
+      loadUrlWithRoute(window, { uri: name, args: parsed });
+    } else {
+      loadUrlWithRoute(window, { uri: name });
+    }
 
     // Send port to renderer if this is the import window.
     if (name === 'import') {
       window.once('ready-to-show', () => {
         debug('🔷 Send port to import window');
 
-        const portImport = ConfigMain.getPortsForMainAndImport().portImport;
+        const portImport = ConfigMain.getMainImportPorts().port2;
 
         window.webContents.postMessage('port', { target: 'import' }, [
           portImport,
