@@ -35,6 +35,8 @@ export const Header = ({ showMenu }: HeaderProps) => {
     };
 
     window.myAPI.openWindow('action', JSON.stringify(data));
+
+    // TODO: Send metadata to `action` window.
   };
 
   return (

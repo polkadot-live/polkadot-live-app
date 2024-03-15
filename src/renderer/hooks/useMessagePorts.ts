@@ -103,6 +103,7 @@ export const useMessagePorts = () => {
           ConfigRenderer.portMain = e.ports[0];
 
           ConfigRenderer.portMain.onmessage = async (ev: MessageEvent) => {
+            // Message received from `import`.
             switch (ev.data.task) {
               case 'address:import': {
                 await handleImportAddress(ev);
@@ -125,6 +126,7 @@ export const useMessagePorts = () => {
           ConfigRenderer.portImport = e.ports[0];
 
           ConfigRenderer.portImport.onmessage = (ev: MessageEvent) => {
+            // Message received from `main`.
             console.log(ev.data);
           };
 
@@ -135,6 +137,7 @@ export const useMessagePorts = () => {
           ConfigRenderer.portMainB = e.ports[0];
 
           ConfigRenderer.portMainB.onmessage = async (ev: MessageEvent) => {
+            // Message received from `action`.
             console.log(`todo: handle message for ${ev}`);
           };
           break;
@@ -143,6 +146,7 @@ export const useMessagePorts = () => {
           ConfigRenderer.portAction = e.ports[0];
 
           ConfigRenderer.portAction.onmessage = (ev: MessageEvent) => {
+            // Message received from `main`.
             console.log(ev.data);
           };
 
