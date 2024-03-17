@@ -89,12 +89,12 @@ export const Action = () => {
     }
   }, [getTxSignature()]);
 
+  // Reset data in the main extrinsics controller on unmount.
   useEffect(
     () => () => {
       try {
-        console.log('post main:tx:init');
+        console.log('post main:tx:reset');
 
-        // Reset data in the main extrinsics controller.
         ConfigRenderer.portAction.postMessage({
           task: 'main:tx:reset',
         });
@@ -105,28 +105,33 @@ export const Action = () => {
     []
   );
 
-  // TODO: Implement functions getTxStatusTitle() and getTxStatusSubtitle().
-  let txStatusTitle = '';
-  let txStatusSubtitle = '';
-  switch (txStatus) {
-    case 'pending':
-      txStatusTitle = 'Transaction Pending...';
-      break;
-    case 'submitted':
-      txStatusTitle = 'Transaction Submitted';
-      txStatusSubtitle = 'Waiting for block confirmation...';
-      break;
-    case 'in_block':
-      txStatusTitle = 'Transaction In Block';
-      txStatusSubtitle = 'Waiting for finalized confirmation...';
-      break;
-    case 'finalized':
-      txStatusTitle = 'Transaction Finalized.';
-      break;
-    default:
-      txStatusTitle = 'An Error Occured';
-      break;
-  }
+  // Utility to get title based on tx status.
+  const getTxStatusTitle = (): string => {
+    switch (txStatus) {
+      case 'pending':
+        return 'Transaction Pending...';
+      case 'submitted':
+        return 'Transaction Submitted';
+      case 'in_block':
+        return 'Transaction In Block';
+      case 'finalized':
+        return 'Transaction Finalized';
+      default:
+        return 'An Error Occured';
+    }
+  };
+
+  // Utility to get subtitle based on tx status.
+  const getTxStatusSubtitle = (): string | null => {
+    switch (txStatus) {
+      case 'submitted':
+        return 'Waiting for block confirmation...';
+      case 'in_block':
+        return 'Waiting for finalized conformation...';
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -139,8 +144,8 @@ export const Action = () => {
               style={{ width: '75px', height: '75px' }}
             />
           </div>
-          <h2>{txStatusTitle}</h2>
-          <h4>{txStatusSubtitle || `This window can be closed.`}</h4>
+          <h2>{getTxStatusTitle()}</h2>
+          <h4>{getTxStatusSubtitle() || `This window can be closed.`}</h4>
           <div className="close">
             <ButtonMonoInvert
               text="Close Window"
