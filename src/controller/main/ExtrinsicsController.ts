@@ -3,13 +3,13 @@
 
 import { planckToUnit } from '@w3ux/utils';
 import BigNumber from 'bignumber.js';
-//import { NotificationsController } from './NotificationsController';
 import { chainUnits } from '@/config/chains';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { MainDebug } from '@/utils/DebugUtils';
 import { getApiInstance } from '@/utils/ApiUtils';
 import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import type { TxStatus } from '@/types/tx';
 
 const debug = MainDebug.extend('Extrinsic');
 
@@ -149,37 +149,30 @@ export class ExtrinsicsController {
 
         const unsub = await this.tx.send(({ status }: AnyJson) => {
           if (status.isInBlock) {
+            // Report Tx Status to Action UI.
+            ExtrinsicsController.postTxStatus('in_block');
+
             // Show native OS notification.
             window.myAPI.showNotification({
               title: 'In Block',
               body: 'Transaction is in block.',
             });
-
-            // Report Tx Status to Action UI.
-            ConfigRenderer.portMainB.postMessage({
-              task: 'action:tx:report:status',
-              data: {
-                status: 'in_block',
-              },
-            });
           } else if (status.isFinalized) {
+            // Report Tx Status to Action UI.
+            ExtrinsicsController.postTxStatus('finalized');
+
             // Show native OS notification.
             window.myAPI.showNotification({
               title: 'Finalized',
               body: 'Transaction was finalised.',
             });
 
-            // Report Tx Status to Action UI.
-            ConfigRenderer.portMainB.postMessage({
-              task: 'action:tx:report:status',
-              data: {
-                status: 'finalized',
-              },
-            });
-
             unsub();
           }
         });
+
+        // Report Tx Status to Action UI.
+        ExtrinsicsController.postTxStatus('submitted');
 
         // Show native OS notification.
         window.myAPI.showNotification({
@@ -187,26 +180,23 @@ export class ExtrinsicsController {
           body: 'Transaction has been submitted and is processing.',
         });
 
-        // Report Tx Status to Action UI.
-        ConfigRenderer.portMainB.postMessage({
-          task: 'action:tx:report:status',
-          data: {
-            status: 'submitted',
-          },
-        });
-
         this.reset();
       } catch (e) {
-        ConfigRenderer.portMainB.postMessage({
-          task: 'action:tx:report:status',
-          data: {
-            status: 'error',
-          },
-        });
+        ExtrinsicsController.postTxStatus('error');
 
         console.log(e);
         // Handle error.
       }
     }
+  };
+
+  // Send tx status message to `action` window.
+  private static postTxStatus = (status: TxStatus) => {
+    ConfigRenderer.portMainB.postMessage({
+      task: 'action:tx:report:status',
+      data: {
+        status,
+      },
+    });
   };
 }
