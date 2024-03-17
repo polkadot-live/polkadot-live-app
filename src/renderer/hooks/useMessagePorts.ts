@@ -227,6 +227,12 @@ export const useMessagePorts = () => {
                 ExtrinsicsController.reset();
                 break;
               }
+              // TODO: Implement stale events (where action has been executed)
+              case 'main:event:update:stale': {
+                console.log('> handle main:event:update:stale');
+                console.log(ev.data.data);
+                break;
+              }
               default: {
                 throw new Error(`Port task not recognized (${ev.data.task})`);
               }

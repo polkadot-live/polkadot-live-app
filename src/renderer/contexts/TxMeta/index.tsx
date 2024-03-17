@@ -27,23 +27,17 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   // Action window metadata.
   const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
 
-  // Store the transaction id.
-  const [txId, setTxId] = useState(0);
-
-  // Store the estimated transaction fee.
+  // Transaction state.
   const [estimatedFee, setEstimatedFee] = useState<string>('...');
-
-  // Store the transaction fees for the transaction.
+  const [notEnoughFunds, setNotEnoughFunds] = useState(false);
+  const [sender, setSender] = useState<string | null>(null);
+  const [txId, setTxId] = useState(0);
+  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
   const [txFees, setTxFees] = useState(new BigNumber(0));
 
-  // Store the transaction status.
-  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
-
-  // Store the sender of the transaction.
-  const [sender, setSender] = useState<string | null>(null);
-
-  // Store whether the sender does not have enough funds.
-  const [notEnoughFunds, setNotEnoughFunds] = useState(false);
+  // Optional signed transaction if extrinsics require manual signing (e.g. Ledger).
+  const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
+  const txSignatureRef = useRef(txSignature);
 
   // Store the payloads of transactions if extrinsics require manual signing (e.g. Ledger, Vault).
   // Payloads are calculated asynchronously and extrinsic associated with them may be cancelled. For
@@ -54,10 +48,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     txId: number;
   } | null>(null);
   const txPayloadRef = useRef(txPayload);
-
-  // Store an optional signed transaction if extrinsics require manual signing (e.g. Ledger).
-  const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
-  const txSignatureRef = useRef(txSignature);
 
   // Store genesis hash of tx.
   const [genesisHash, setGenesisHashState] = useState<string | null>(null);

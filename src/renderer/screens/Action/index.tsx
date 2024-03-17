@@ -30,7 +30,7 @@ export const Action = () => {
   const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
   const from = fromAccount?.address || '';
   const actionData = actionMeta?.data || {};
-  //const uid = actionMeta?.uid || '';
+  const uid = actionMeta?.uid || '';
 
   // TODO: Fix
   const nonce = 0;
@@ -70,17 +70,11 @@ export const Action = () => {
           },
         });
 
-        // TODO: Instead of removing the event entirely, update it to show that
-        // the action has been acted upon.
-        /** 
-        window.myAPI.requestDismissEvent({
-          uid,
-          who: {
-            chain: chainId,
-            address: from,
-          },
+        // Update event show that it is stale and an action has been executed.
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:event:update:stale',
+          data: { uid, who: { chain: chainId, address: from } },
         });
-        */
       } catch (err) {
         console.log(
           'Warning: Action port not received yet: main:tx:vault:submit'
