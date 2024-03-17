@@ -6,7 +6,6 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from '@/controller/main/WindowsController';
-import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
@@ -286,22 +285,6 @@ app.whenReady().then(async () => {
       task: 'app:account:remove',
       data: { address },
     });
-  });
-
-  // Initiate a transaction.
-  ipcMain.on('app:tx:init', (_, chain, from, nonce, pallet, method, args) => {
-    ExtrinsicsController.new(chain, from, nonce, pallet, method, args);
-  });
-
-  // Reset transaction.
-  ipcMain.on('app:tx:reset', () => {
-    ExtrinsicsController.reset();
-  });
-
-  // Submit Vault transaction
-  ipcMain.on('app:tx:vault:submit', (_, signature) => {
-    ExtrinsicsController.setSignature(signature);
-    ExtrinsicsController.submit();
   });
 
   // Request dismiss event

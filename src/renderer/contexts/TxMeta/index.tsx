@@ -13,7 +13,7 @@ import React, {
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@/types/misc';
-import type { ActionMeta } from '@/types/tx';
+import type { ActionMeta, TxStatus } from '@/types/tx';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -27,8 +27,17 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   // Action window metadata.
   const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
 
+  // Store the transaction id.
+  const [txId, setTxId] = useState(0);
+
+  // Store the estimated transaction fee.
+  const [estimatedFee, setEstimatedFee] = useState<string>('...');
+
   // Store the transaction fees for the transaction.
   const [txFees, setTxFees] = useState(new BigNumber(0));
+
+  // Store the transaction status.
+  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
 
   // Store the sender of the transaction.
   const [sender, setSender] = useState<string | null>(null);
@@ -64,11 +73,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getTxPayload = () => txPayloadRef.current?.payload || null;
 
-  const setTxPayload = (txId: number, payload: AnyJson) => {
+  const setTxPayload = (theTxId: number, payload: AnyJson) => {
     setStateWithRef(
       {
         payload,
-        txId,
+        txId: theTxId,
       },
       setTxPayloadState,
       txPayloadRef
@@ -115,8 +124,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         resetTxPayloads,
         getTxSignature,
         setTxSignature,
+
         actionMeta,
         setActionMeta,
+        estimatedFee,
+        setEstimatedFee,
+        txId,
+        setTxId,
+        txStatus,
+        setTxStatus,
       }}
     >
       {children}

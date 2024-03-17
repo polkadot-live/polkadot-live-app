@@ -4,6 +4,7 @@
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainIcon } from '@/config/chains';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
 import { ellipsisFn } from '@w3ux/utils';
@@ -14,86 +15,97 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import type { AnyJson } from '@/types/misc';
-import type { IpcRendererEvent } from 'electron';
-import type { TxStatus } from '@/types/tx';
+import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
 
 export const Action = () => {
-  const { actionMeta, setTxPayload, setGenesisHash, getTxSignature } =
+  // Get state and setters from TxMeta context.
+  const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
     useTxMeta();
 
   const ChainIcon = chainIcon('Polkadot');
 
   const chainId = actionMeta?.chainId || 'Polkadot';
-  const uid = actionMeta?.uid || '';
   const action = actionMeta?.action || '';
   const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
   const from = fromAccount?.address || '';
   const actionData = actionMeta?.data || {};
+  //const uid = actionMeta?.uid || '';
 
   // TODO: Fix
   const nonce = 0;
   const fromName = fromAccount?.name || ellipsisFn(from);
 
-  // Store the estimated tx fee.
-  const [estimatedFee, setEstimatedFee] = useState<string>('...');
-
   // Store whether the tx is submitting.
   const [submitting] = useState<boolean>(false);
 
-  // Store the txId.
-  const [txId, setTxId] = useState(0);
-
-  // Store tx status
-  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
-
-  // Initiate the tx on main and return tx data.
+  // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
-    window.myAPI.requestInitTx(
-      'Polkadot',
-      from,
-      nonce,
-      'nominationPools',
-      'bondExtra',
-      ['Rewards']
-    );
+    try {
+      ConfigRenderer.portAction.postMessage({
+        task: 'main:tx:init',
+        data: {
+          chainId: 'Polkadot' as ChainID,
+          from,
+          nonce,
+          pallet: 'nominationPools',
+          method: 'bondExtra',
+          args: ['Rewards'],
+        },
+      });
+    } catch (err) {
+      console.log('Warning: Action port not received yet: main:tx:init');
+    }
   }, [from, nonce]);
 
   // Auto transaction submission and event dismiss when signature updates.
   useEffect(() => {
     if (getTxSignature()) {
-      window.myAPI.reportSignedVaultTx(getTxSignature());
-      window.myAPI.requestDismissEvent({
-        uid,
-        who: {
-          chain: chainId,
-          address: from,
-        },
-      });
+      try {
+        // Send signature and submit transaction on main window.
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:tx:vault:submit',
+          data: {
+            signature: getTxSignature(),
+          },
+        });
+
+        // TODO: Instead of removing the event entirely, update it to show that
+        // the action has been acted upon.
+        /** 
+        window.myAPI.requestDismissEvent({
+          uid,
+          who: {
+            chain: chainId,
+            address: from,
+          },
+        });
+        */
+      } catch (err) {
+        console.log(
+          'Warning: Action port not received yet: main:tx:vault:submit'
+        );
+      }
     }
   }, [getTxSignature()]);
 
-  useEffect(() => {
-    // Update tx state received from the main extrinsics controller new() method.
-    window.myAPI.reportTx((_: IpcRendererEvent, txData: AnyJson) => {
-      setEstimatedFee(txData.estimatedFee);
-      setTxId(txData.txId);
-      setTxPayload(txData.txId, txData.payload);
-      setGenesisHash(txData.genesisHash);
-    });
+  useEffect(
+    () => () => {
+      try {
+        console.log('post main:tx:init');
 
-    // Update tx status received from the main extrinsics controller submit() method.
-    window.myAPI.reportTxStatus((_: IpcRendererEvent, status: TxStatus) => {
-      setTxStatus(status);
-    });
+        // Reset data in the main extrinsics controller.
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:tx:reset',
+        });
+      } catch (err) {
+        console.log('Warning: Action port not received yet: main:tx:reset');
+      }
+    },
+    []
+  );
 
-    return () => {
-      // Reset data in the main extrinsics controller.
-      window.myAPI.requestResetTx();
-    };
-  }, []);
-
+  // TODO: Implement functions getTxStatusTitle() and getTxStatusSubtitle().
   let txStatusTitle = '';
   let txStatusSubtitle = '';
   switch (txStatus) {

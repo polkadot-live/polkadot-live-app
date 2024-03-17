@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
@@ -21,7 +22,14 @@ export const useMessagePorts = () => {
   const { setRenderedSubscriptions } = useManage();
 
   // Action window specific.
-  const { setActionMeta } = useTxMeta();
+  const {
+    setActionMeta,
+    setEstimatedFee,
+    setTxId,
+    setTxPayload,
+    setGenesisHash,
+    setTxStatus,
+  } = useTxMeta();
 
   useEffect(() => {
     /**
@@ -105,6 +113,57 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleActionTxInit
+     * @summary Initialize extrinsics controller with tx data.
+     */
+    const handleActionTxInit = async (ev: MessageEvent) => {
+      const { chainId, from, nonce, pallet, method, args } = ev.data.data;
+
+      await ExtrinsicsController.new(
+        chainId,
+        from,
+        nonce,
+        pallet,
+        method,
+        args
+      );
+    };
+
+    /**
+     * @name handleTxReportData
+     * @summary Set tx data in actions window sent from extrinsics controller.
+     */
+    const handleTxReportData = (ev: MessageEvent) => {
+      const { estimatedFee, txId, payload, genesisHash } = ev.data.data;
+
+      setEstimatedFee(estimatedFee);
+      setTxId(txId);
+      setTxPayload(txId, payload);
+      setGenesisHash(genesisHash);
+    };
+
+    /**
+     * @name handleTxVaultSubmit
+     * @summary Set signature and submit transaction.
+     */
+    const handleTxVaultSubmit = (ev: MessageEvent) => {
+      const { signature } = ev.data.data;
+
+      ExtrinsicsController.setSignature(signature);
+      ExtrinsicsController.submit();
+    };
+
+    /**
+     * @name handleSetTxStatus
+     * @summary Update the transaction status.
+     */
+    const handleSetTxStatus = (ev: MessageEvent) => {
+      const { status } = ev.data.data;
+
+      setTxStatus(status);
+    };
+
+    /**
      * @name handleReceivedPort
      * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
@@ -152,7 +211,26 @@ export const useMessagePorts = () => {
 
           ConfigRenderer.portMainB.onmessage = async (ev: MessageEvent) => {
             // Message received from `action`.
-            console.log(`todo: handle message for ${ev}`);
+            switch (ev.data.task) {
+              case 'main:tx:init': {
+                console.log('> handle main:tx:init');
+                await handleActionTxInit(ev);
+                break;
+              }
+              case 'main:tx:vault:submit': {
+                console.log('> handle main:tx:vault:submit');
+                handleTxVaultSubmit(ev);
+                break;
+              }
+              case 'main:tx:reset': {
+                console.log('> handle main:tx:reset');
+                ExtrinsicsController.reset();
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
           };
 
           ConfigRenderer.portMainB.start();
@@ -161,11 +239,22 @@ export const useMessagePorts = () => {
         case 'main-action:action': {
           ConfigRenderer.portAction = e.ports[0];
 
-          ConfigRenderer.portAction.onmessage = (ev: MessageEvent) => {
+          ConfigRenderer.portAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `main`.
             switch (ev.data.task) {
               case 'action:init': {
+                console.log('> handle action:init');
                 handleInitAction(ev);
+                break;
+              }
+              case 'action:tx:report:data': {
+                console.log('> handle action:tx:report:data');
+                handleTxReportData(ev);
+                break;
+              }
+              case 'action:tx:report:status': {
+                console.log('> handle action:tx:report:status');
+                handleSetTxStatus(ev);
                 break;
               }
               default: {
