@@ -149,8 +149,11 @@ export class ExtrinsicsController {
 
         const unsub = await this.tx.send(({ status }: AnyJson) => {
           if (status.isInBlock) {
-            // In block, send notification.
-            //NotificationsController.transactionStatus('in-block');
+            // Show native OS notification.
+            window.myAPI.showNotification({
+              title: 'In Block',
+              body: 'Transaction is in block.',
+            });
 
             // Report Tx Status to Action UI.
             ConfigRenderer.portMainB.postMessage({
@@ -160,8 +163,11 @@ export class ExtrinsicsController {
               },
             });
           } else if (status.isFinalized) {
-            // Finalized - send notification and unsub.
-            //NotificationsController.transactionStatus('finalized');
+            // Show native OS notification.
+            window.myAPI.showNotification({
+              title: 'Finalized',
+              body: 'Transaction was finalised.',
+            });
 
             // Report Tx Status to Action UI.
             ConfigRenderer.portMainB.postMessage({
@@ -175,7 +181,11 @@ export class ExtrinsicsController {
           }
         });
 
-        //NotificationsController.transactionSubmitted();
+        // Show native OS notification.
+        window.myAPI.showNotification({
+          title: 'Transaction Submitted',
+          body: 'Transaction has been submitted and is processing.',
+        });
 
         // Report Tx Status to Action UI.
         ConfigRenderer.portMainB.postMessage({
