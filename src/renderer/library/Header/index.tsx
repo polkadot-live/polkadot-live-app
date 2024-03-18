@@ -47,10 +47,11 @@ export const Header = ({ showMenu }: HeaderProps) => {
         pallet: 'nominationPools',
         method: 'bondExtra',
         chainId: 'Westend',
-        args: ['Rewards'],
+        args: [{ FreeBalance: 10000000000000 }],
         account: account.flatten(),
+        // Misc data, currently not used
         data: {
-          pendingRewards: 1000000000,
+          extra: 10000000000000,
         },
       } as ActionMeta,
     });
