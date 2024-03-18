@@ -16,6 +16,16 @@ export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 export type FlattenedAccounts = Map<ChainID, FlattenedAccountData[]>;
 
 /*
+ * Account's balances.
+ */
+export interface AccountBalance {
+  nonce: BigNumber;
+  free: BigNumber;
+  reserved: BigNumber;
+  frozen: BigNumber;
+}
+
+/*
  * Account's associated nomination pool data.
  */
 export interface AccountNominationPoolData {

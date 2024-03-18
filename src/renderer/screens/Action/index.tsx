@@ -15,7 +15,8 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import type { FlattenedAccountData } from '@/types/accounts';
+import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
+import BigNumber from 'bignumber.js';
 
 export const Action = () => {
   // Get state and setters from TxMeta context.
@@ -31,8 +32,11 @@ export const Action = () => {
   const actionData = actionMeta?.data || {};
   const uid = actionMeta?.uid || '';
 
-  // TODO: Fix
-  const nonce = 29;
+  const balance: AccountBalance | null = actionMeta
+    ? JSON.parse(actionMeta.balance)
+    : null;
+
+  const nonce: BigNumber = balance ? balance.nonce : new BigNumber(0);
   const fromName = fromAccount?.name || ellipsisFn(from);
   const pallet = actionMeta?.pallet || '';
   const method = actionMeta?.method || '';
@@ -194,7 +198,6 @@ export const Action = () => {
                   !submitting && estimatedFee !== '...' && nonce !== undefined
                 }
                 estimatedFee={estimatedFee}
-                nonce={nonce}
                 from={from}
               />
             }

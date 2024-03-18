@@ -15,6 +15,8 @@ export type TxStatus =
 export interface ActionMeta {
   // Account data making transaction.
   account: FlattenedAccountData;
+  // Stringified account balance (big number).
+  balance: string;
   // Type of transaction.
   action: string;
   // Pallet of associated transaction.

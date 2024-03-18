@@ -5,7 +5,10 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
-import { fetchNominationPoolDataForAccount } from '@/utils/AccountUtils';
+import {
+  fetchAccountBalances,
+  fetchNominationPoolDataForAccount,
+} from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
@@ -48,8 +51,13 @@ export const useMessagePorts = () => {
         return;
       }
 
-      // Initialize nomination pool data for account if necessary.
-      await fetchNominationPoolDataForAccount(account, chainId);
+      if (await window.myAPI.getOnlineStatus()) {
+        // Fetch account nonce and balance.
+        await fetchAccountBalances();
+
+        // Initialize nomination pool data for account if necessary.
+        await fetchNominationPoolDataForAccount(account, chainId);
+      }
 
       // Add account to address context state.
       importAddress(chainId, source, address, name);

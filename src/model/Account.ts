@@ -6,6 +6,7 @@ import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@/types/chains';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type {
+  AccountBalance,
   AccountSource,
   FlattenedAccountData,
   AccountNominationPoolData,
@@ -39,6 +40,8 @@ export class Account {
   private _chain: ChainID;
 
   private _nominationPoolData: AccountNominationPoolData | null = null;
+
+  private _balance: AccountBalance | null = null;
 
   constructor(
     chain: ChainID,
@@ -109,6 +112,14 @@ export class Account {
 
   set name(value: string) {
     this._name = value;
+  }
+
+  get balance(): AccountBalance | null {
+    return this._balance;
+  }
+
+  set balance(balance: AccountBalance) {
+    this._balance = balance;
   }
 
   get nominationPoolData() {

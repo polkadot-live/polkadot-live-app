@@ -43,6 +43,7 @@ export const Header = ({ showMenu }: HeaderProps) => {
       data: {
         uid: 'dummyuid',
         action: 'nominationPools_pendingRewards_bond',
+        balance: JSON.stringify(account.balance),
         pallet: 'nominationPools',
         method: 'bondExtra',
         chainId: 'Westend',

@@ -10,11 +10,39 @@ import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
+import type { AccountBalance } from '@/types/accounts';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
 import * as ApiUtils from '@/utils/ApiUtils';
+
+/**
+ * @name fetchAccountBalances
+ * @summary Fetch account's nonce and balance data from chain state.
+ */
+export const fetchAccountBalances = async () => {
+  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+    // Only allow fetching balance data on specific chains.
+    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
+      continue;
+    }
+
+    const { api } = await ApiUtils.getApiInstance(chainId);
+
+    // Iterate accounts associated with the chain and initialize balance data.
+    for (const account of accounts) {
+      const result: AnyJson = await api.query.system.account(account.address);
+
+      account.balance = {
+        nonce: new BigNumber(result.nonce),
+        free: new BigNumber(result.data.free),
+        reserved: new BigNumber(result.data.reserved),
+        frozen: new BigNumber(result.data.frozen),
+      } as AccountBalance;
+    }
+  }
+};
 
 /**
  * @name fetchAccountNominationPoolData
