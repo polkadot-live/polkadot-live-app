@@ -17,10 +17,16 @@ export interface ActionMeta {
   account: FlattenedAccountData;
   // Type of transaction.
   action: string;
+  // Pallet of associated transaction.
+  pallet: string;
+  // Method of associated transaction.
+  method: string;
   // Network transaction is being made.
   chainId: ChainID;
   // Any data that the transaction call requires.
   data: AnyData;
   // Unique identifier of the rendered event.
   uid: string;
+  // Args for tx API call.
+  args: AnyData;
 }

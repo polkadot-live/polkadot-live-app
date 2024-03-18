@@ -30,8 +30,8 @@ export const Header = ({ showMenu }: HeaderProps) => {
 
     // Send action metadata to `action` window.
     const account = AccountsController.get(
-      'Polkadot',
-      '14uUGXgtB8YJpcqz6WpoG8rBJeK2JY1F7cyZyqGPb6HWmGNf'
+      'Westend',
+      '5HGXNKKQxfkENeE7GjPy3KaAcqYUmMxjzDai5ptYM5cSBJxm'
     );
 
     if (!account) {
@@ -43,7 +43,10 @@ export const Header = ({ showMenu }: HeaderProps) => {
       data: {
         uid: 'dummyuid',
         action: 'nominationPools_pendingRewards_bond',
-        chainId: 'Polkadot',
+        pallet: 'nominationPools',
+        method: 'bondExtra',
+        chainId: 'Westend',
+        args: ['Rewards'],
         account: account.flatten(),
         data: {
           pendingRewards: 1000000000,

@@ -5,13 +5,10 @@ import { planckToUnit } from '@w3ux/utils';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
-import { MainDebug } from '@/utils/DebugUtils';
 import { getApiInstance } from '@/utils/ApiUtils';
-import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 import type { TxStatus } from '@/types/tx';
-
-const debug = MainDebug.extend('Extrinsic');
 
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
@@ -41,7 +38,7 @@ export class ExtrinsicsController {
     try {
       const { api } = await getApiInstance(chainId);
 
-      debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
+      console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
       // Instantiate tx.
       const tx = api.tx[pallet][method](...args);
@@ -57,7 +54,7 @@ export class ExtrinsicsController {
 
       // Send tx data to action UI.
       const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
-      debug('📝 Estimated fee:: %o', estimatedFee);
+      console.log(`📝 Estimated fee: ${estimatedFee}`);
 
       // Generate payload and store.
       await this.buildPayload(chainId, from, accountNonce);
@@ -73,7 +70,8 @@ export class ExtrinsicsController {
         },
       });
     } catch (e) {
-      debug('📝 Error: %o', e);
+      console.log('Error:');
+      console.log(e);
       // Send error to action window?
     }
   };

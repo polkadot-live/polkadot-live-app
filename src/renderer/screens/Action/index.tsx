@@ -15,7 +15,6 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
 
 export const Action = () => {
@@ -33,8 +32,11 @@ export const Action = () => {
   const uid = actionMeta?.uid || '';
 
   // TODO: Fix
-  const nonce = 0;
+  const nonce = 29;
   const fromName = fromAccount?.name || ellipsisFn(from);
+  const pallet = actionMeta?.pallet || '';
+  const method = actionMeta?.method || '';
+  const args = actionMeta?.args || [];
 
   // Store whether the tx is submitting.
   const [submitting] = useState<boolean>(false);
@@ -44,14 +46,7 @@ export const Action = () => {
     try {
       ConfigRenderer.portAction.postMessage({
         task: 'main:tx:init',
-        data: {
-          chainId: 'Polkadot' as ChainID,
-          from,
-          nonce,
-          pallet: 'nominationPools',
-          method: 'bondExtra',
-          args: ['Rewards'],
-        },
+        data: { chainId, from, nonce, pallet, method, args },
       });
     } catch (err) {
       console.log('Warning: Action port not received yet: main:tx:init');
@@ -121,7 +116,7 @@ export const Action = () => {
       case 'submitted':
         return 'Waiting for block confirmation...';
       case 'in_block':
-        return 'Waiting for finalized conformation...';
+        return 'Waiting for finalized confirmation...';
       default:
         return null;
     }
