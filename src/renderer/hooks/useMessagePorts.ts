@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import {
   fetchAccountBalances,
@@ -204,14 +205,14 @@ export const useMessagePorts = () => {
           break;
         }
         case 'main-import:import': {
-          ConfigRenderer.portImport = e.ports[0];
+          ConfigImport.portImport = e.ports[0];
 
-          ConfigRenderer.portImport.onmessage = (ev: MessageEvent) => {
+          ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
             console.log(ev.data);
           };
 
-          ConfigRenderer.portImport.start();
+          ConfigImport.portImport.start();
           break;
         }
         case 'main-action:main': {

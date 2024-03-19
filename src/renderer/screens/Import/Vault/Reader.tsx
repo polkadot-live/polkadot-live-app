@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 import { checkValidAddress } from '@/renderer/Utils';
 import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import { createImgSize } from '@/renderer/library/QRCode/util';
@@ -85,7 +85,7 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
         name: ellipsisFn(address),
       });
 
-    const storageKey = ConfigRenderer.getStorageKey('vault');
+    const storageKey = ConfigImport.getStorageKey('vault');
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
     setImported(true);

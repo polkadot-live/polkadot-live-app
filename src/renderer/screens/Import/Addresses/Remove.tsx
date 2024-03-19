@@ -6,7 +6,7 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 import { getAddressChainId } from '@/renderer/Utils';
 import type { RemoveProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
@@ -34,7 +34,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       );
 
       localStorage.setItem(
-        ConfigRenderer.getStorageKey(source),
+        ConfigImport.getStorageKey(source),
         JSON.stringify(newAddresses)
       );
 
@@ -53,7 +53,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       );
 
       localStorage.setItem(
-        ConfigRenderer.getStorageKey(source),
+        ConfigImport.getStorageKey(source),
         JSON.stringify(newAddresses)
       );
 
@@ -65,7 +65,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
 
   // Send address data to main window to process removal.
   const postAddressToMainWindow = () => {
-    ConfigRenderer.portImport.postMessage({
+    ConfigImport.portImport.postMessage({
       task: 'address:remove',
       data: {
         address,

@@ -6,7 +6,7 @@ import { Manage } from './Manage';
 import { Splash } from './Splash';
 import type { AnyFunction } from '@/types/misc';
 import type { LocalAddress } from '@/types/accounts';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 
 export const ImportVault = ({
   section,
@@ -17,7 +17,7 @@ export const ImportVault = ({
 }) => {
   // Store addresses retreived from Polkadot Vault. Defaults to addresses saved in local storage.
   const [addresses, setAddressesState] = useState<LocalAddress[]>(() => {
-    const key = ConfigRenderer.getStorageKey('vault');
+    const key = ConfigImport.getStorageKey('vault');
     const fetched: string | null = localStorage.getItem(key);
     const parsed: LocalAddress[] = fetched !== null ? JSON.parse(fetched) : [];
     return parsed;

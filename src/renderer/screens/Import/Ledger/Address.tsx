@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 import type { LedgerAddressProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
 
@@ -25,7 +25,7 @@ export const Address = ({
    */
   const initialName = () => {
     const defaultName = ellipsisFn(address);
-    const stored = localStorage.getItem(ConfigRenderer.getStorageKey('ledger'));
+    const stored = localStorage.getItem(ConfigImport.getStorageKey('ledger'));
 
     // Return shortened address if no storage found.
     if (!stored) {
@@ -56,7 +56,7 @@ export const Address = ({
    * Called in the rename handler parent function.
    */
   const renameLocalAccount = (who: string, newName: string) => {
-    const storageKey = ConfigRenderer.getStorageKey('ledger');
+    const storageKey = ConfigImport.getStorageKey('ledger');
 
     // Get ledger addresses from local storage.
     const stored = localStorage.getItem(storageKey);

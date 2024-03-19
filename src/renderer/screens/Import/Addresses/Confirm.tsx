@@ -7,7 +7,7 @@ import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { getAddressChainId } from '@/renderer/Utils';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigImport } from '@/config/processes/import';
 import type { ConfirmProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
@@ -39,7 +39,7 @@ export const Confirm = ({
       );
 
       localStorage.setItem(
-        ConfigRenderer.getStorageKey(source),
+        ConfigImport.getStorageKey(source),
         JSON.stringify(newAddresses)
       );
 
@@ -58,7 +58,7 @@ export const Confirm = ({
       );
 
       localStorage.setItem(
-        ConfigRenderer.getStorageKey(source),
+        ConfigImport.getStorageKey(source),
         JSON.stringify(newAddresses)
       );
 
@@ -70,7 +70,7 @@ export const Confirm = ({
 
   // Send address data to main window to process.
   const postAddressToMainWindow = () => {
-    ConfigRenderer.portImport.postMessage({
+    ConfigImport.portImport.postMessage({
       task: 'address:import',
       data: {
         chainId: getAddressChainId(address),
