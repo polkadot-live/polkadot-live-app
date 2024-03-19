@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { ellipsisFn, unescape } from '@w3ux/utils';
+import { Identicon } from '@app/library/Identicon';
 import { Wrapper } from './Wrapper';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
 import type { HardwareAddressProps } from './types';
@@ -21,10 +22,10 @@ export const HardwareAddress = ({
   isImported,
   initial,
   disableEditIfImported = false,
-  Identicon,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
+  openDeleteHandler,
   t: { tImport, tRemove },
 }: HardwareAddressProps) => {
   // store whether this address is being edited.
@@ -64,7 +65,7 @@ export const HardwareAddress = ({
       <div className="content">
         <div className="inner">
           <div className="identicon">
-            {Identicon}
+            <Identicon value={address} size={40} />
             <div className="index-icon ">{index + 1}</div>
           </div>
           <div>
@@ -120,15 +121,20 @@ export const HardwareAddress = ({
           <ButtonText
             iconLeft={faTimes}
             text={tRemove}
-            onClick={() => openRemoveHandler(address)}
+            onClick={() => openRemoveHandler()}
           />
         ) : (
           <ButtonText
             iconLeft={faPlus}
             text={tImport}
-            onClick={() => openConfirmHandler(address, index)}
+            onClick={() => openConfirmHandler()}
           />
         )}
+        <ButtonText
+          iconLeft={faTimes}
+          text={'Delete'}
+          onClick={() => openDeleteHandler()}
+        />
       </div>
     </Wrapper>
   );

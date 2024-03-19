@@ -84,7 +84,7 @@ export const useMessagePorts = () => {
       const account = AccountsController.get(chainId, address);
 
       if (!account) {
-        console.log('Account could not be added, probably already added');
+        console.log('Account could not be added, probably not imported yet');
         return;
       }
 
@@ -193,6 +193,10 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'address:remove': {
+                await handleRemoveAddress(ev);
+                break;
+              }
+              case 'address:delete': {
                 await handleRemoveAddress(ev);
                 break;
               }

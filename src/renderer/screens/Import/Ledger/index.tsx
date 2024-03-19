@@ -37,7 +37,7 @@ export const ImportLedger = ({
     return parsed;
   });
 
-  const addressesRef = useRef(addresses);
+  //const addressesRef = useRef(addresses);
 
   // Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
@@ -48,9 +48,7 @@ export const ImportLedger = ({
 
   // Gets the next non-imported address index.
   const getNextAddressIndex = () =>
-    !addressesRef.current.length
-      ? 0
-      : addressesRef.current[addressesRef.current.length - 1].index + 1;
+    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
   // Handle an incoming new status code and persists to state.
   //
@@ -81,7 +79,10 @@ export const ImportLedger = ({
       // TODO: Make dynamic
       const appName = 'Polkadot';
 
-      window.myAPI.doLedgerLoop(getNextAddressIndex(), appName, tasks);
+      const nextIndex = getNextAddressIndex();
+      console.log(`next index: ${nextIndex}`);
+
+      window.myAPI.doLedgerLoop(nextIndex, appName, tasks);
     }, 2000);
   };
 
@@ -102,7 +103,7 @@ export const ImportLedger = ({
         pubKey,
       };
 
-      const newAddresses = addressesRef.current
+      const newAddresses = addresses
         .filter(
           (a: LedgerLocalAddress) => a.address !== addressFormatted.address
         )
@@ -111,7 +112,8 @@ export const ImportLedger = ({
       const storageKey = ConfigImport.getStorageKey('ledger');
       localStorage.setItem(storageKey, JSON.stringify(newAddresses));
       setStateWithRef(false, setIsImporting, isImportingRef);
-      setStateWithRef(newAddresses, setAddresses, addressesRef);
+      setAddresses(newAddresses);
+      //setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
 
       // Stop polling ledger device.
@@ -146,12 +148,12 @@ export const ImportLedger = ({
     });
 
     // Initialise fetch interval
-    if (!addressesRef.current.length) {
+    if (!addresses.length) {
       setStateWithRef(true, setIsImporting, isImportingRef);
     }
 
     // Start the loop if no ledger accounts have been imported and splash page is shown.
-    if (addressesRef.current.length === 0) {
+    if (addresses.length === 0) {
       handleLedgerLoop();
     }
 
@@ -160,7 +162,7 @@ export const ImportLedger = ({
     };
   }, []);
 
-  return !addressesRef.current.length ? (
+  return !addresses.length ? (
     <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
   ) : (
     <Manage

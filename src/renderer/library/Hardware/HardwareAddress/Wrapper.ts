@@ -15,13 +15,14 @@ export const Wrapper = styled.div`
     height: 100%;
     flex-basis: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    column-gap: 1rem;
     padding-left: 1rem;
 
     > button {
       flex-basis: 50%;
       flex-grow: 1;
-      width: 8rem;
+      padding: 1rem;
     }
   }
 
