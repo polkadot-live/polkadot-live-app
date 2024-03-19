@@ -6,7 +6,6 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import Store from 'electron-store';
 import { WindowsController } from '@/controller/main/WindowsController';
-import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
@@ -23,6 +22,7 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import { executeLedgerLoop } from './ledger';
+import { ConfigMain } from './config/ConfigMain';
 
 const debug = MainDebug;
 
@@ -188,7 +188,7 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:accounts:tasks:get',
     async (_, account: FlattenedAccountData) => {
-      const key = `${account.address}_subscriptions`;
+      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
       const stored = (store as Record<string, AnyData>).get(key) as string;
       return stored ? stored : '';
     }
@@ -211,7 +211,7 @@ app.whenReady().then(async () => {
 
   // Get persisted chain subscription tasks.
   ipcMain.handle('app:subscriptions:chain:get', async () => {
-    const key = 'chain_subscriptions';
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
     const tasks = (store as Record<string, AnyData>).get(key) as string;
     return tasks ? tasks : '';
   });
@@ -285,22 +285,6 @@ app.whenReady().then(async () => {
       task: 'app:account:remove',
       data: { address },
     });
-  });
-
-  // Initiate a transaction.
-  ipcMain.on('app:tx:init', (_, chain, from, nonce, pallet, method, args) => {
-    ExtrinsicsController.new(chain, from, nonce, pallet, method, args);
-  });
-
-  // Reset transaction.
-  ipcMain.on('app:tx:reset', () => {
-    ExtrinsicsController.reset();
-  });
-
-  // Submit Vault transaction
-  ipcMain.on('app:tx:vault:submit', (_, signature) => {
-    ExtrinsicsController.setSignature(signature);
-    ExtrinsicsController.submit();
   });
 
   // Request dismiss event

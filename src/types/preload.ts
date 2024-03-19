@@ -7,7 +7,6 @@ import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback } from './reporter';
-import type { TxStatus } from './tx';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
@@ -41,12 +40,7 @@ export interface PreloadAPI {
   reportDismissEvent: ApiReportDismissEvent;
   removeEventFromStore: ApiRemoveEventFromStore;
 
-  requestInitTx: ApiRequestInitTx;
-  requestResetTx: ApiEmptyRequest;
   requestDismissEvent: ApiRequestDismissEvent;
-  reportSignedVaultTx: ApRreportSignedVaultTx;
-  reportTx: APIReportTx;
-  reportTxStatus: ApiReportTxStatus;
 
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
@@ -91,15 +85,6 @@ type ApiReportDismissEvent = (
 
 type ApiRemoveEventFromStore = (data: EventCallback) => Promise<boolean>;
 
-type ApiRequestInitTx = (
-  chain: ChainID,
-  from: string,
-  nonce: number,
-  pallet: string,
-  method: string,
-  args: AnyJson[]
-) => void;
-
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
 
 type ApiHandleConnectionStatus = () => void;
@@ -109,23 +94,6 @@ type ApiReportOnlineStatus = (
 ) => Electron.IpcRenderer;
 
 type ApiOpenBrowserWindow = (url: string) => void;
-
-type APIReportTx = (
-  callback: (_: IpcRendererEvent, txData: APIReportTxData) => void
-) => Electron.IpcRenderer;
-
-type ApiReportTxStatus = (
-  callback: (_: IpcRendererEvent, status: TxStatus) => void
-) => Electron.IpcRenderer;
-
-interface APIReportTxData {
-  estimatedFee: AnyJson;
-  txId: AnyJson;
-  payload: AnyJson;
-  setGenesisHash: AnyJson;
-}
-
-type ApRreportSignedVaultTx = (signature: AnyJson) => void;
 
 /**
  * New types

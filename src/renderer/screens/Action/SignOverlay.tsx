@@ -8,19 +8,52 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
+import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
+import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
+import type { Html5Qrcode } from 'html5-qrcode';
+import { createImgSize } from '@/renderer/library/QRCode/util';
 
 export const SignOverlay = ({ from }: { from: string }) => {
-  const { getTxPayload /*,setTxSignature*/, getGenesisHash } = useTxMeta();
+  const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();
   const payload = getTxPayload();
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Whether user is on sign or submit stage.
   const [stage, setStage] = useState(1);
+
+  // This component needs access to the Html5Qrcode object because
+  // it needs to stop the scanning process when the cancel button
+  // is clicked or when a valid address is imported.
+  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+
+  // The success callback for the QR code scan plugin.
+  const onScan = (data: string | null) => {
+    if (data) {
+      setOverlayStatus(0);
+      const signature = `0x${data}`;
+
+      console.log('Setting signature:');
+      console.log(signature);
+
+      setTxSignature(signature);
+    }
+  };
+
+  // Do not use any console logging functions for handling the error. The plugin
+  // checks for a scan every frame and calls the error handler if no valid QR
+  // code was found.
+  const onError = (error: string) => {
+    if (error) {
+      return;
+    }
+  };
+
+  const containerStyle = useMemo(() => createImgSize(279), []);
 
   return (
     <QRViewerWrapper>
@@ -46,13 +79,14 @@ export const SignOverlay = ({ from }: { from: string }) => {
       )}
       {stage === 2 && (
         <div className="viewer">
-          {/*<QrScanSignature
-            size={75}
-            onScan={({ signature }: AnyJson) => {
-              setOverlayStatus(0);
-              setTxSignature(signature);
-            }}
-          />*/}
+          <ScanWrapper className={''} style={containerStyle}>
+            <Html5QrCodePlugin
+              fps={10}
+              qrCodeSuccessCallback={onScan}
+              qrCodeErrorCallback={onError}
+              html5QrCode={html5QrCodeRef.current}
+            />
+          </ScanWrapper>
         </div>
       )}
       <div className="foot">

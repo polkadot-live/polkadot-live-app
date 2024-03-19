@@ -141,27 +141,9 @@ export const API: PreloadAPI = {
    * Transactions
    */
 
-  // Requests to main process to initiate a transaction.
-  requestInitTx: (chain, from, nonce, pallet, method, args) =>
-    ipcRenderer.send('app:tx:init', chain, from, nonce, pallet, method, args),
-
-  // Resets all tx data.
-  requestResetTx: () => ipcRenderer.send('app:tx:reset'),
-
   // Reports a dismissed event to the main process.
   requestDismissEvent: (eventData: DismissEvent) =>
     ipcRenderer.send('app:event:dismiss', eventData),
-
-  // Report a transaction to a window.
-  reportTx: (callback) => ipcRenderer.on('renderer:tx:report:data', callback),
-
-  // Report a transaction status to a window.
-  reportTxStatus: (callback) =>
-    ipcRenderer.on('renderer:tx:report:status', callback),
-
-  // Requests a transaction signed by Polkadot Vault.
-  reportSignedVaultTx: (signature) =>
-    ipcRenderer.send('app:tx:vault:submit', signature),
 
   /**
    * Miscellaneous

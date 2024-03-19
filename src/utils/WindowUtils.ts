@@ -83,11 +83,15 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   mainWindow.hide();
 
-  // Send port to main window for communication with import window.
+  // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
-    const portMain = ConfigMain.getPortsForMainAndImport().portMain;
+    mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
+      ConfigMain.getPortPair('main-import').port1,
+    ]);
 
-    mainWindow.webContents.postMessage('port', { target: 'main' }, [portMain]);
+    mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
+      ConfigMain.getPortPair('main-action').port1,
+    ]);
   });
 
   mainWindow.on('show', async () => {
@@ -151,10 +155,8 @@ export const handleWindowOnIPC = (
   options?: AnyJson
 ) => {
   // Create a call for the window to open.
-  ipcMain.on(`${name}:open`, (_, args?: AnyJson) => {
-    // Ensure main window is hidden.
-    //WindowsController.hideAndBlur('menu');
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ipcMain.on(`${name}:open`, (_, _args?: AnyJson) => {
     // Show window if it already exists.
     if (WindowsController.get(name)) {
       WindowsController.show(name);
@@ -194,18 +196,30 @@ export const handleWindowOnIPC = (
     );
 
     // Load correct URL and HTML file.
-    loadUrlWithRoute(window, { uri: name, args });
+    loadUrlWithRoute(window, { uri: name });
 
     // Send port to renderer if this is the import window.
     if (name === 'import') {
       window.once('ready-to-show', () => {
         debug('🔷 Send port to import window');
 
-        const portImport = ConfigMain.getPortsForMainAndImport().portImport;
+        // Send import's port for main-import communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-import:import' },
+          [ConfigMain.getPortPair('main-import').port2]
+        );
+      });
+    } else if (name === 'action') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to action window');
 
-        window.webContents.postMessage('port', { target: 'import' }, [
-          portImport,
-        ]);
+        // Send action's port for main-action communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-action:action' },
+          [ConfigMain.getPortPair('main-action').port2]
+        );
       });
     }
 

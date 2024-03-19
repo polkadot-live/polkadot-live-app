@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
+import { ConfigMain } from '@/config/ConfigMain';
 import type { AnyJson } from '@/types/misc';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -26,10 +27,9 @@ export class SubscriptionsController {
   /**
    * @name updateChainTaskInStore
    * @summary Called when a chain subscription task is received from renderer.
-   * @todo In MAIN SubscriptionsController
    */
   static updateChainTaskInStore(task: SubscriptionTask) {
-    const key = 'chain_subscriptions';
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
 
     // Deserialize all tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
@@ -44,13 +44,12 @@ export class SubscriptionsController {
   /**
    * @name updateAccountTaskInStore
    * @summary Called when an account subscription task is received from renderer.
-   * @todo In MAIN SubscriptionsController
    */
   static updateAccountTaskInStore(
     task: SubscriptionTask,
     account: FlattenedAccountData
   ) {
-    const key = `${account.address}_subscriptions`;
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
 
     // Deserialize the account's tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
@@ -65,17 +64,17 @@ export class SubscriptionsController {
   /**
    * @name clearAccountTasksInStore
    * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
-   * @todo In MAIN SubscriptionsController
    */
   static clearAccountTasksInStore(address: string) {
-    (store as Record<string, AnyJson>).delete(`${address}_subscriptions`);
+    (store as Record<string, AnyJson>).delete(
+      ConfigMain.getSubscriptionsStorageKeyFor(address)
+    );
   }
 
   /*------------------------------------------------------------
    * Utilities
    *------------------------------------------------------------*/
 
-  // @todo In MAIN SubscriptionsController
   static updateTaskInStore(
     tasks: SubscriptionTask[],
     task: SubscriptionTask,

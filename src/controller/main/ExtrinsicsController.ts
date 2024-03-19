@@ -3,19 +3,16 @@
 
 import { planckToUnit } from '@w3ux/utils';
 import BigNumber from 'bignumber.js';
-import { NotificationsController } from './NotificationsController';
 import { chainUnits } from '@/config/chains';
-import { MainDebug } from '@/utils/DebugUtils';
-import { WindowsController } from '@/controller/main/WindowsController';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
 import { getApiInstance } from '@/utils/ApiUtils';
-import type { ChainID } from '@/types/chains';
 import type { AnyJson } from '@/types/misc';
-
-const debug = MainDebug.extend('Extrinsic');
+import type { ChainID } from '@/types/chains';
+import type { TxStatus } from '@/types/tx';
 
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
-  static chain: ChainID | null = null;
+  static chainId: ChainID | null = null;
 
   static tx: AnyJson | null = null;
 
@@ -31,7 +28,7 @@ export class ExtrinsicsController {
 
   // instantiates a new tx based on the request received by renderer.
   static new = async (
-    chain: ChainID,
+    chainId: ChainID,
     from: string,
     accountNonce: number,
     pallet: string,
@@ -39,13 +36,13 @@ export class ExtrinsicsController {
     args: AnyJson[]
   ) => {
     try {
-      const { api } = await getApiInstance(chain);
+      const { api } = await getApiInstance(chainId);
 
-      debug('📝 New extrinsic: %o, %o, %o, %o', from, pallet, method, args);
+      console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
       // Instantiate tx.
       const tx = api.tx[pallet][method](...args);
-      this.chain = chain;
+      this.chainId = chainId;
       this.tx = tx;
       this.from = from;
       this.txId = this.txId + 1;
@@ -56,36 +53,37 @@ export class ExtrinsicsController {
       this.estimatedFee = estimatedFeePlank;
 
       // Send tx data to action UI.
-      const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chain));
-      debug('📝 Estimated fee:: %o', estimatedFee);
+      const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
+      console.log(`📝 Estimated fee: ${estimatedFee}`);
 
       // Generate payload and store.
-      await this.buildPayload(chain, from, accountNonce);
+      await this.buildPayload(chainId, from, accountNonce);
 
       // Report Tx to Action UI.
-      WindowsController.get('action')?.webContents?.send(
-        'renderer:tx:report:data',
-        {
+      ConfigRenderer.portMainB.postMessage({
+        task: 'action:tx:report:data',
+        data: {
           estimatedFee: estimatedFee.toString(),
           txId: this.txId,
           payload: this.payload.toU8a(),
           genesisHash: this.payload.genesisHash,
-        }
-      );
+        },
+      });
     } catch (e) {
-      debug('📝 Error: %o', e);
+      console.log('Error:');
+      console.log(e);
       // Send error to action window?
     }
   };
 
   // Build payload.
   static buildPayload = async (
-    chain: ChainID,
+    chainId: ChainID,
     from: string,
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = await getApiInstance(chain);
+    const { api } = await getApiInstance(chainId);
 
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(
@@ -132,7 +130,7 @@ export class ExtrinsicsController {
 
   // Resets the class members.
   static reset() {
-    this.chain = null;
+    this.chainId = null;
     this.tx = null;
     this.txId = 0;
     this.from = null;
@@ -149,43 +147,54 @@ export class ExtrinsicsController {
 
         const unsub = await this.tx.send(({ status }: AnyJson) => {
           if (status.isInBlock) {
-            // In block, send notification.
-            NotificationsController.transactionStatus('in-block');
-
             // Report Tx Status to Action UI.
-            WindowsController.get('action')?.webContents?.send(
-              'renderer:tx:report:status',
-              'in_block'
-            );
+            ExtrinsicsController.postTxStatus('in_block');
+
+            // Show native OS notification.
+            window.myAPI.showNotification({
+              title: 'In Block',
+              body: 'Transaction is in block.',
+            });
           } else if (status.isFinalized) {
-            // Finalized - send notification and unsub.
-            NotificationsController.transactionStatus('finalized');
-
             // Report Tx Status to Action UI.
-            WindowsController.get('action')?.webContents?.send(
-              'renderer:tx:report:status',
-              'finalized'
-            );
+            ExtrinsicsController.postTxStatus('finalized');
+
+            // Show native OS notification.
+            window.myAPI.showNotification({
+              title: 'Finalized',
+              body: 'Transaction was finalised.',
+            });
+
             unsub();
           }
         });
 
-        NotificationsController.transactionSubmitted();
-
         // Report Tx Status to Action UI.
-        WindowsController.get('action')?.webContents?.send(
-          'renderer:tx:report:status',
-          'submitted'
-        );
+        ExtrinsicsController.postTxStatus('submitted');
+
+        // Show native OS notification.
+        window.myAPI.showNotification({
+          title: 'Transaction Submitted',
+          body: 'Transaction has been submitted and is processing.',
+        });
+
         this.reset();
       } catch (e) {
-        WindowsController.get('action')?.webContents?.send(
-          'renderer:tx:report:status',
-          'error'
-        );
+        ExtrinsicsController.postTxStatus('error');
+
         console.log(e);
         // Handle error.
       }
     }
+  };
+
+  // Send tx status message to `action` window.
+  private static postTxStatus = (status: TxStatus) => {
+    ConfigRenderer.portMainB.postMessage({
+      task: 'action:tx:report:status',
+      data: {
+        status,
+      },
+    });
   };
 }

@@ -13,6 +13,7 @@ import React, {
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@/types/misc';
+import type { ActionMeta, TxStatus } from '@/types/tx';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -23,14 +24,20 @@ export const useTxMeta = () => useContext(TxMetaContext);
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const freeBalance = new BigNumber(1000000000);
 
-  // Store the transaction fees for the transaction.
+  // Action window metadata.
+  const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
+
+  // Transaction state.
+  const [estimatedFee, setEstimatedFee] = useState<string>('...');
+  const [notEnoughFunds, setNotEnoughFunds] = useState(false);
+  const [sender, setSender] = useState<string | null>(null);
+  const [txId, setTxId] = useState(0);
+  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
   const [txFees, setTxFees] = useState(new BigNumber(0));
 
-  // Store the sender of the transaction.
-  const [sender, setSender] = useState<string | null>(null);
-
-  // Store whether the sender does not have enough funds.
-  const [notEnoughFunds, setNotEnoughFunds] = useState(false);
+  // Optional signed transaction if extrinsics require manual signing (e.g. Ledger).
+  const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
+  const txSignatureRef = useRef(txSignature);
 
   // Store the payloads of transactions if extrinsics require manual signing (e.g. Ledger, Vault).
   // Payloads are calculated asynchronously and extrinsic associated with them may be cancelled. For
@@ -41,10 +48,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     txId: number;
   } | null>(null);
   const txPayloadRef = useRef(txPayload);
-
-  // Store an optional signed transaction if extrinsics require manual signing (e.g. Ledger).
-  const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
-  const txSignatureRef = useRef(txSignature);
 
   // Store genesis hash of tx.
   const [genesisHash, setGenesisHashState] = useState<string | null>(null);
@@ -60,11 +63,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getTxPayload = () => txPayloadRef.current?.payload || null;
 
-  const setTxPayload = (txId: number, payload: AnyJson) => {
+  const setTxPayload = (theTxId: number, payload: AnyJson) => {
     setStateWithRef(
       {
         payload,
-        txId,
+        txId: theTxId,
       },
       setTxPayloadState,
       txPayloadRef
@@ -111,6 +114,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         resetTxPayloads,
         getTxSignature,
         setTxSignature,
+
+        actionMeta,
+        setActionMeta,
+        estimatedFee,
+        setEstimatedFee,
+        txId,
+        setTxId,
+        txStatus,
+        setTxStatus,
       }}
     >
       {children}

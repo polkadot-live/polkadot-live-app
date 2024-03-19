@@ -4,7 +4,10 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ChainList } from '@/config/chains';
-import { fetchAccountNominationPoolData } from '@/utils/AccountUtils';
+import {
+  fetchAccountBalances,
+  fetchAccountNominationPoolData,
+} from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
@@ -32,8 +35,11 @@ export const useInitIpcHandlers = () => {
         // Initialize chain APIs.
         await APIsController.initialize(Array.from(ChainList.keys()));
 
-        // Use API instance to initialize account nomination pool data.
         if (await window.myAPI.getOnlineStatus()) {
+          // Fetch account nonce and balance.
+          await fetchAccountBalances();
+
+          // Use API instance to initialize account nomination pool data.
           await fetchAccountNominationPoolData();
         }
 
@@ -78,6 +84,9 @@ export const useInitIpcHandlers = () => {
      * Handle switching to online mode.
      */
     window.myAPI.initializeAppOnline(async () => {
+      // Fetch account nonce and balance.
+      await fetchAccountBalances();
+
       // Fetch up-to-date nomination pool data for managed accounts.
       await fetchAccountNominationPoolData();
 

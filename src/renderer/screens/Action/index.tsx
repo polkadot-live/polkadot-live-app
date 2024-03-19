@@ -1,127 +1,130 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ActionItem } from '@/renderer/library/ActionItem';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { chainIcon } from '@/config/chains';
+import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { ContentWrapper } from '@app/screens/Wrappers';
+import { DragClose } from '@app/library/DragClose';
+import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ellipsisFn } from '@w3ux/utils';
-import { chainIcon } from '@/config/chains';
-import { useAddresses } from '@app/contexts/Addresses';
-import { useTxMeta } from '@app/contexts/TxMeta';
-import type { IpcRendererEvent } from 'electron';
-import { DragClose } from '@app/library/DragClose';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { Signer } from './Signer';
 import { SubmittedTxWrapper } from './Wrappers';
-import type { ChainID } from '@/types/chains';
-import type { TxStatus } from '@/types/tx';
-import type { AnyJson } from '@/types/misc';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { Tx } from '@/renderer/library/Tx';
-import { ActionItem } from '@/renderer/library/ActionItem';
+import { useEffect, useState } from 'react';
+import { useTxMeta } from '@app/contexts/TxMeta';
+import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
+import BigNumber from 'bignumber.js';
 
 export const Action = () => {
-  const { search } = useLocation();
-  const { getAddress } = useAddresses();
-  const { setTxPayload, setGenesisHash, getTxSignature } = useTxMeta();
+  // Get state and setters from TxMeta context.
+  const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
+    useTxMeta();
 
   const ChainIcon = chainIcon('Polkadot');
-  const searchParams = new URLSearchParams(search);
 
-  const chain = decodeURIComponent(searchParams?.get('chain') || '') as ChainID;
-  const uid = decodeURIComponent(searchParams?.get('uid') || '');
-  const action = decodeURIComponent(searchParams?.get('action') || '');
-  const from = decodeURIComponent(searchParams?.get('address') || '');
-  const actionData = JSON.parse(
-    decodeURIComponent(searchParams?.get('data') || '')
-  );
+  const chainId = actionMeta?.chainId || 'Polkadot';
+  const action = actionMeta?.action || '';
+  const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
+  const from = fromAccount?.address || '';
+  const actionData = actionMeta?.data || {};
+  const uid = actionMeta?.uid || '';
 
-  // TODO: Fix
-  const nonce = 0;
+  const balance: AccountBalance | null = actionMeta
+    ? JSON.parse(actionMeta.balance)
+    : null;
 
-  const fromAccount = getAddress(from);
+  const nonce: BigNumber = balance ? balance.nonce : new BigNumber(0);
   const fromName = fromAccount?.name || ellipsisFn(from);
-
-  // Store the estimated tx fee.
-  const [estimatedFee, setEstimatedFee] = useState<string>('...');
+  const pallet = actionMeta?.pallet || '';
+  const method = actionMeta?.method || '';
+  const args = actionMeta?.args || [];
 
   // Store whether the tx is submitting.
   const [submitting] = useState<boolean>(false);
 
-  // Store the txId.
-  const [txId, setTxId] = useState(0);
-
-  // Store tx status
-  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
-
-  // Initiate the tx on main and return tx data.
+  // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
-    window.myAPI.requestInitTx(
-      'Polkadot',
-      from,
-      nonce,
-      'nominationPools',
-      'bondExtra',
-      ['Rewards']
-    );
+    try {
+      ConfigRenderer.portAction.postMessage({
+        task: 'main:tx:init',
+        data: { chainId, from, nonce, pallet, method, args },
+      });
+    } catch (err) {
+      console.log('Warning: Action port not received yet: main:tx:init');
+    }
   }, [from, nonce]);
 
   // Auto transaction submission and event dismiss when signature updates.
   useEffect(() => {
     if (getTxSignature()) {
-      window.myAPI.reportSignedVaultTx(getTxSignature());
-      window.myAPI.requestDismissEvent({
-        uid,
-        who: {
-          chain,
-          address: from,
-        },
-      });
+      try {
+        // Send signature and submit transaction on main window.
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:tx:vault:submit',
+          data: {
+            signature: getTxSignature(),
+          },
+        });
+
+        // Update event show that it is stale and an action has been executed.
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:event:update:stale',
+          data: { uid, who: { chain: chainId, address: from } },
+        });
+      } catch (err) {
+        console.log(
+          'Warning: Action port not received yet: main:tx:vault:submit'
+        );
+      }
     }
   }, [getTxSignature()]);
 
-  useEffect(() => {
-    // Handle tx data from main.
-    window.myAPI.reportTx((_: IpcRendererEvent, txData: AnyJson) => {
-      setEstimatedFee(txData.estimatedFee);
-      setTxId(txData.txId);
-      setTxPayload(txData.txId, txData.payload);
-      setGenesisHash(txData.genesisHash);
-    });
+  // Reset data in the main extrinsics controller on unmount.
+  useEffect(
+    () => () => {
+      try {
+        console.log('post main:tx:reset');
 
-    // Handle tx status from main
-    window.myAPI.reportTxStatus((_: IpcRendererEvent, status: TxStatus) => {
-      setTxStatus(status);
-    });
+        ConfigRenderer.portAction.postMessage({
+          task: 'main:tx:reset',
+        });
+      } catch (err) {
+        console.log('Warning: Action port not received yet: main:tx:reset');
+      }
+    },
+    []
+  );
 
-    return () => {
-      // Reset the transaction on unmount.
-      window.myAPI.requestResetTx();
-    };
-  }, []);
+  // Utility to get title based on tx status.
+  const getTxStatusTitle = (): string => {
+    switch (txStatus) {
+      case 'pending':
+        return 'Transaction Pending...';
+      case 'submitted':
+        return 'Transaction Submitted';
+      case 'in_block':
+        return 'Transaction In Block';
+      case 'finalized':
+        return 'Transaction Finalized';
+      default:
+        return 'An Error Occured';
+    }
+  };
 
-  let txStatusTitle = '';
-  let txStatusSubtitle = '';
-  switch (txStatus) {
-    case 'pending':
-      txStatusTitle = 'Transaction Pending...';
-      break;
-    case 'submitted':
-      txStatusTitle = 'Transaction Submitted';
-      txStatusSubtitle = 'Waiting for block confirmation...';
-      break;
-    case 'in_block':
-      txStatusTitle = 'Transaction In Block';
-      txStatusSubtitle = 'Waiting for finalized confirmation...';
-      break;
-    case 'finalized':
-      txStatusTitle = 'Transaction Finalized.';
-      break;
-    default:
-      txStatusTitle = 'An Error Occured';
-      break;
-  }
+  // Utility to get subtitle based on tx status.
+  const getTxStatusSubtitle = (): string | null => {
+    switch (txStatus) {
+      case 'submitted':
+        return 'Waiting for block confirmation...';
+      case 'in_block':
+        return 'Waiting for finalized confirmation...';
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -134,8 +137,8 @@ export const Action = () => {
               style={{ width: '75px', height: '75px' }}
             />
           </div>
-          <h2>{txStatusTitle}</h2>
-          <h4>{txStatusSubtitle || `This window can be closed.`}</h4>
+          <h2>{getTxStatusTitle()}</h2>
+          <h4>{getTxStatusSubtitle() || `This window can be closed.`}</h4>
           <div className="close">
             <ButtonMonoInvert
               text="Close Window"
@@ -189,13 +192,12 @@ export const Action = () => {
             SignerComponent={
               <Signer
                 txId={txId}
-                chain={chain}
+                chain={chainId}
                 submitting={submitting}
                 valid={
                   !submitting && estimatedFee !== '...' && nonce !== undefined
                 }
                 estimatedFee={estimatedFee}
-                nonce={nonce}
                 from={from}
               />
             }

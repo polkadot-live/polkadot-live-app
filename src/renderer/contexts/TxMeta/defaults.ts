@@ -20,4 +20,12 @@ export const defaultTxMeta: TxMetaContextInterface = {
   getTxSignature: () => null,
   resetTxPayloads: () => {},
   setTxSignature: (s) => {},
+  actionMeta: null,
+  setActionMeta: () => {},
+  txId: 0,
+  estimatedFee: '...',
+  setEstimatedFee: (n) => {},
+  setTxId: () => {},
+  txStatus: 'pending',
+  setTxStatus: (s) => {},
 };

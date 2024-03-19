@@ -1,13 +1,13 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { chainCurrency } from '@/config/chains';
-import { useOverlay } from '@app/contexts/Overlay';
-import { SignOverlay } from './SignOverlay';
-import { EstimatedFee } from './Wrappers';
-import type { SubmitProps } from './types';
 import { ButtonSubmit } from '@/renderer/kits/Buttons/ButtonSubmit';
+import { chainCurrency } from '@/config/chains';
+import { EstimatedFee } from './Wrappers';
+import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
+import { SignOverlay } from './SignOverlay';
+import { useOverlay } from '@app/contexts/Overlay';
+import type { SubmitProps } from './types';
 
 export const Signer = ({
   valid,
@@ -15,7 +15,6 @@ export const Signer = ({
   chain,
   from,
 }: SubmitProps & {
-  nonce?: number;
   from: string;
   buttons?: React.ReactNode[];
 }) => {
