@@ -54,7 +54,7 @@ export class Config {
     return `${address}_subscriptions`;
   }
 
-  // Initialize ports to facilitate communication between the main and other renderer.
+  // Initialize ports to facilitate communication between the main and other renderers.
   private static initPorts(id: PortPairID): void {
     switch (id) {
       case 'main-import': {

@@ -6,7 +6,7 @@ import { APIsController } from '@/controller/renderer/APIsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
-import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
+import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchAccountBalances,
   fetchNominationPoolDataForAccount,
