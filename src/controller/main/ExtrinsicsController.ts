@@ -4,7 +4,7 @@
 import { planckToUnit } from '@w3ux/utils';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigMain } from '@/config/processes/main';
 import { getApiInstance } from '@/utils/ApiUtils';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -60,7 +60,7 @@ export class ExtrinsicsController {
       await this.buildPayload(chainId, from, accountNonce);
 
       // Report Tx to Action UI.
-      ConfigRenderer.portMainB.postMessage({
+      ConfigMain.portToAction.postMessage({
         task: 'action:tx:report:data',
         data: {
           estimatedFee: estimatedFee.toString(),
@@ -190,7 +190,7 @@ export class ExtrinsicsController {
 
   // Send tx status message to `action` window.
   private static postTxStatus = (status: TxStatus) => {
-    ConfigRenderer.portMainB.postMessage({
+    ConfigMain.portToAction.postMessage({
       task: 'action:tx:report:status',
       data: {
         status,

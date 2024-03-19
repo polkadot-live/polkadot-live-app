@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigMain } from '@/config/processes/main';
 import { faTimes, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
@@ -38,7 +38,7 @@ export const Header = ({ showMenu }: HeaderProps) => {
       throw new Error('Account not found.');
     }
 
-    ConfigRenderer.portMainB.postMessage({
+    ConfigMain.portToAction.postMessage({
       task: 'action:init',
       data: {
         uid: 'dummyuid',

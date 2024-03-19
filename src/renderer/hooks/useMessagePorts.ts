@@ -3,7 +3,7 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigMain } from '@/config/processes/main';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
@@ -183,9 +183,9 @@ export const useMessagePorts = () => {
 
       switch (e.data.target) {
         case 'main-import:main': {
-          ConfigRenderer.portMain = e.ports[0];
+          ConfigMain.portToImport = e.ports[0];
 
-          ConfigRenderer.portMain.onmessage = async (ev: MessageEvent) => {
+          ConfigMain.portToImport.onmessage = async (ev: MessageEvent) => {
             // Message received from `import`.
             switch (ev.data.task) {
               case 'address:import': {
@@ -202,7 +202,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portMain.start();
+          ConfigMain.portToImport.start();
           break;
         }
         case 'main-import:import': {
@@ -217,9 +217,9 @@ export const useMessagePorts = () => {
           break;
         }
         case 'main-action:main': {
-          ConfigRenderer.portMainB = e.ports[0];
+          ConfigMain.portToAction = e.ports[0];
 
-          ConfigRenderer.portMainB.onmessage = async (ev: MessageEvent) => {
+          ConfigMain.portToAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `action`.
             switch (ev.data.task) {
               case 'main:tx:init': {
@@ -249,7 +249,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portMainB.start();
+          ConfigMain.portToAction.start();
           break;
         }
         case 'main-action:action': {
