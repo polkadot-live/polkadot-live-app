@@ -159,7 +159,7 @@ export const Action = () => {
             <>
               <h3>Bond Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.pendingRewards} DOT`} />
+                <ActionItem text={`Claim ${actionData.extra} DOT`} />
                 <p>
                   Once submitted, your rewards will be bonded back into the
                   pool. You own these additional bonded funds and will be able
@@ -173,7 +173,7 @@ export const Action = () => {
             <>
               <h3>Withdraw Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.pendingRewards} DOT`} />
+                <ActionItem text={`Claim ${actionData.extra} DOT`} />
                 <p>
                   Withdrawing rewards will immediately transfer them to your
                   account as free balance.
