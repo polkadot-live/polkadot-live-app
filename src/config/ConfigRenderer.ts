@@ -9,7 +9,6 @@ export class ConfigRenderer {
   // Cache the main or action window's message port.
   // (main <--> action)
   private static _portMainB: MessagePort;
-  private static _portAction: MessagePort;
 
   // Return the main window's message port.
   static get portMain(): MessagePort {
@@ -37,19 +36,5 @@ export class ConfigRenderer {
   // Set the `main` window's message port for `action` window.
   static set portMainB(port: MessagePort) {
     ConfigRenderer._portMainB = port;
-  }
-
-  // Get the `action` window's message port to `main` window.
-  static get portAction(): MessagePort {
-    if (!ConfigRenderer._portAction) {
-      throw new Error('_portAction still undefined');
-    }
-
-    return ConfigRenderer._portAction;
-  }
-
-  // Set the `action` window's message port for `main` window.
-  static set portAction(port: MessagePort) {
-    ConfigRenderer._portAction = port;
   }
 }

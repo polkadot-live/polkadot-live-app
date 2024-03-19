@@ -5,10 +5,10 @@ import type { AccountSource } from '@/types/accounts';
 
 /**
  * @name Config
- * @summary Configuration class for the `import` window.
+ * @summary Configuration class for the `import` window. Accessed in the import renderer.
  */
 export class Config {
-  // Cache the import window's message port to the `main` renderer.
+  // Cache the import window's message port to to facilitate communication to the `main` renderer.
   private static _portImport: MessagePort;
 
   // Local storage keys.

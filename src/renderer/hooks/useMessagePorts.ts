@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
 import {
@@ -252,9 +253,9 @@ export const useMessagePorts = () => {
           break;
         }
         case 'main-action:action': {
-          ConfigRenderer.portAction = e.ports[0];
+          ConfigAction.portAction = e.ports[0];
 
-          ConfigRenderer.portAction.onmessage = async (ev: MessageEvent) => {
+          ConfigAction.portAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `main`.
             switch (ev.data.task) {
               case 'action:init': {
@@ -278,7 +279,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portAction.start();
+          ConfigAction.portAction.start();
           break;
         }
         default: {

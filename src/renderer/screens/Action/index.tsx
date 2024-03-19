@@ -4,7 +4,7 @@
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainIcon } from '@/config/chains';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigAction } from '@/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
 import { ellipsisFn } from '@w3ux/utils';
@@ -48,7 +48,7 @@ export const Action = () => {
   // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
     try {
-      ConfigRenderer.portAction.postMessage({
+      ConfigAction.portAction.postMessage({
         task: 'main:tx:init',
         data: { chainId, from, nonce, pallet, method, args },
       });
@@ -62,7 +62,7 @@ export const Action = () => {
     if (getTxSignature()) {
       try {
         // Send signature and submit transaction on main window.
-        ConfigRenderer.portAction.postMessage({
+        ConfigAction.portAction.postMessage({
           task: 'main:tx:vault:submit',
           data: {
             signature: getTxSignature(),
@@ -70,7 +70,7 @@ export const Action = () => {
         });
 
         // Update event show that it is stale and an action has been executed.
-        ConfigRenderer.portAction.postMessage({
+        ConfigAction.portAction.postMessage({
           task: 'main:event:update:stale',
           data: { uid, who: { chain: chainId, address: from } },
         });
@@ -88,7 +88,7 @@ export const Action = () => {
       try {
         console.log('post main:tx:reset');
 
-        ConfigRenderer.portAction.postMessage({
+        ConfigAction.portAction.postMessage({
           task: 'main:tx:reset',
         });
       } catch (err) {
