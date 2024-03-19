@@ -3,7 +3,7 @@
 
 import 'websocket-polyfill';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
-import { Config as ConfigBackend } from './config/processes/backend';
+import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import { WindowsController } from '@/controller/main/WindowsController';
@@ -188,7 +188,7 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:accounts:tasks:get',
     async (_, account: FlattenedAccountData) => {
-      const key = ConfigBackend.getSubscriptionsStorageKeyFor(account.address);
+      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
       const stored = (store as Record<string, AnyData>).get(key) as string;
       return stored ? stored : '';
     }
@@ -211,7 +211,7 @@ app.whenReady().then(async () => {
 
   // Get persisted chain subscription tasks.
   ipcMain.handle('app:subscriptions:chain:get', async () => {
-    const key = ConfigBackend.getChainSubscriptionsStorageKey();
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
     const tasks = (store as Record<string, AnyData>).get(key) as string;
     return tasks ? tasks : '';
   });

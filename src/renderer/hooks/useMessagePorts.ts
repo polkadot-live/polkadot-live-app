@@ -3,7 +3,7 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
-import { Config as ConfigMain } from '@/config/processes/main';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
@@ -183,9 +183,9 @@ export const useMessagePorts = () => {
 
       switch (e.data.target) {
         case 'main-import:main': {
-          ConfigMain.portToImport = e.ports[0];
+          ConfigRenderer.portToImport = e.ports[0];
 
-          ConfigMain.portToImport.onmessage = async (ev: MessageEvent) => {
+          ConfigRenderer.portToImport.onmessage = async (ev: MessageEvent) => {
             // Message received from `import`.
             switch (ev.data.task) {
               case 'address:import': {
@@ -202,7 +202,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigMain.portToImport.start();
+          ConfigRenderer.portToImport.start();
           break;
         }
         case 'main-import:import': {
@@ -217,9 +217,9 @@ export const useMessagePorts = () => {
           break;
         }
         case 'main-action:main': {
-          ConfigMain.portToAction = e.ports[0];
+          ConfigRenderer.portToAction = e.ports[0];
 
-          ConfigMain.portToAction.onmessage = async (ev: MessageEvent) => {
+          ConfigRenderer.portToAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `action`.
             switch (ev.data.task) {
               case 'main:tx:init': {
@@ -249,7 +249,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigMain.portToAction.start();
+          ConfigRenderer.portToAction.start();
           break;
         }
         case 'main-action:action': {

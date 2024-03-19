@@ -11,7 +11,7 @@ import { store } from '@/main';
 import { reportOnlineStatus } from '@/utils/SystemUtils';
 import { EventsController } from '@/controller/main/EventsController';
 import { WindowsController } from '@/controller/main/WindowsController';
-import { Config as ConfigBackend } from '@/config/processes/backend';
+import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
 
@@ -86,11 +86,11 @@ export const createMainWindow = (isTest: boolean) => {
   // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
     mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
-      ConfigBackend.getPortPair('main-import').port1,
+      ConfigMain.getPortPair('main-import').port1,
     ]);
 
     mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
-      ConfigBackend.getPortPair('main-action').port1,
+      ConfigMain.getPortPair('main-action').port1,
     ]);
   });
 
@@ -207,7 +207,7 @@ export const handleWindowOnIPC = (
         window.webContents.postMessage(
           'port',
           { target: 'main-import:import' },
-          [ConfigBackend.getPortPair('main-import').port2]
+          [ConfigMain.getPortPair('main-import').port2]
         );
       });
     } else if (name === 'action') {
@@ -218,7 +218,7 @@ export const handleWindowOnIPC = (
         window.webContents.postMessage(
           'port',
           { target: 'main-action:action' },
-          [ConfigBackend.getPortPair('main-action').port2]
+          [ConfigMain.getPortPair('main-action').port2]
         );
       });
     }
