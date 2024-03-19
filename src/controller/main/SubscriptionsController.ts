@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
-import { ConfigMain } from '@/config/ConfigMain';
+import { Config as ConfigBackend } from '@/config/processes/backend';
 import type { AnyJson } from '@/types/misc';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -29,7 +29,7 @@ export class SubscriptionsController {
    * @summary Called when a chain subscription task is received from renderer.
    */
   static updateChainTaskInStore(task: SubscriptionTask) {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
+    const key = ConfigBackend.getChainSubscriptionsStorageKey();
 
     // Deserialize all tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
@@ -49,7 +49,7 @@ export class SubscriptionsController {
     task: SubscriptionTask,
     account: FlattenedAccountData
   ) {
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
+    const key = ConfigBackend.getSubscriptionsStorageKeyFor(account.address);
 
     // Deserialize the account's tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
@@ -67,7 +67,7 @@ export class SubscriptionsController {
    */
   static clearAccountTasksInStore(address: string) {
     (store as Record<string, AnyJson>).delete(
-      ConfigMain.getSubscriptionsStorageKeyFor(address)
+      ConfigBackend.getSubscriptionsStorageKeyFor(address)
     );
   }
 
