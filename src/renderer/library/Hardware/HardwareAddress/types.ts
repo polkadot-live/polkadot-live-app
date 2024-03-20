@@ -22,9 +22,4 @@ export type HardwareAddressProps = ComponentBase & {
   openConfirmHandler: () => void;
   // handle confirm delete UI.
   openDeleteHandler: () => void;
-  // required component translations.
-  t: {
-    tImport: string;
-    tRemove: string;
-  };
 };

@@ -26,7 +26,6 @@ export const HardwareAddress = ({
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
-  t: { tImport, tRemove },
 }: HardwareAddressProps) => {
   // store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
@@ -120,13 +119,13 @@ export const HardwareAddress = ({
         {isImported ? (
           <ButtonText
             iconLeft={faTimes}
-            text={tRemove}
+            text={'Remove'}
             onClick={() => openRemoveHandler()}
           />
         ) : (
           <ButtonText
             iconLeft={faPlus}
-            text={tImport}
+            text={'Import'}
             onClick={() => openConfirmHandler()}
           />
         )}

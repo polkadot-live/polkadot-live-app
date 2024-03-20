@@ -120,10 +120,6 @@ export const Address = ({
         )
       }
       disableEditIfImported
-      t={{
-        tRemove: 'Remove',
-        tImport: 'Import',
-      }}
     />
   );
 };
