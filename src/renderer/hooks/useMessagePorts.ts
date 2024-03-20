@@ -21,7 +21,7 @@ import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
-  const { importAddress, removeAddress, updateAccountName } = useAddresses();
+  const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
   const { setRenderedSubscriptions } = useManage();
@@ -122,8 +122,8 @@ export const useMessagePorts = () => {
       const account = AccountsController.get(chainId, address);
 
       if (!account) {
+        // Account not found in controller.
         console.log('account not imported');
-        // Account not found.
         return;
       }
 
@@ -132,7 +132,7 @@ export const useMessagePorts = () => {
       AccountsController.set(chainId, account);
 
       // Update react state.
-      updateAccountName(address, chainId, newName);
+      setAddresses(AccountsController.getAllFlattenedAccountData());
     };
 
     /**

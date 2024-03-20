@@ -21,7 +21,6 @@ export const HardwareAddress = ({
   index,
   isImported,
   initial,
-  disableEditIfImported = false,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
@@ -70,7 +69,6 @@ export const HardwareAddress = ({
           <div>
             <section className="row">
               <input
-                disabled={isImported && disableEditIfImported}
                 type="text"
                 value={editing ? editName : name}
                 onChange={(e) => handleChange(e)}

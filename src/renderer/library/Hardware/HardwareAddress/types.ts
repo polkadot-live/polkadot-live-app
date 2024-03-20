@@ -12,8 +12,6 @@ export type HardwareAddressProps = ComponentBase & {
   isImported: boolean;
   // initial value of address.
   initial: string;
-  // whether to disable editing if address is imported.
-  disableEditIfImported?: boolean;
   // handle rename
   renameHandler: (address: string, newName: string) => void;
   // handle remove UI.
