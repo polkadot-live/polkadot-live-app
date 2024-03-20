@@ -74,15 +74,6 @@ export const Manage = ({
         inProgress={false}
         handleCancel={() => cancelImport()}
         handleDone={() => setSection(0)}
-        t={{
-          tDone: 'Done',
-          tCancel: 'Cancel',
-        }}
-        style={{
-          backgroundColor: 'var(--background-modal)',
-          borderTop: '1px solid var(--border-primary-color)',
-          paddingTop: '4px',
-        }}
       />
     </BodyInterfaceWrapper>
   </>

@@ -24,9 +24,4 @@ export type HardwareStatusBarProps = ComponentBase & {
   handleCancel?: () => void;
   // handle finish import.
   handleDone?: () => void;
-  // required component translations.
-  t: {
-    tDone: string;
-    tCancel: string;
-  };
 };
