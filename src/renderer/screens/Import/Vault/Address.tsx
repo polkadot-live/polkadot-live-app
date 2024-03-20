@@ -5,6 +5,7 @@ import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
 import {
   getLocalAccountName,
+  postRenameAccount,
   renameLocalAccount,
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
@@ -27,9 +28,12 @@ export const Address = ({
   const { openOverlayWith } = useOverlay();
 
   // Handler to rename an account.
-  const renameHandler = (who: string, value: string) => {
-    setAccountName(value);
-    renameLocalAccount(who, value, 'vault');
+  const renameHandler = (who: string, newName: string) => {
+    setAccountName(newName);
+    renameLocalAccount(who, newName, 'vault');
+
+    // Post message to main renderer to process the account rename.
+    postRenameAccount(who, newName);
   };
 
   return (

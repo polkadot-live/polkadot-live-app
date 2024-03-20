@@ -21,7 +21,7 @@ import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
-  const { importAddress, removeAddress } = useAddresses();
+  const { importAddress, removeAddress, updateAccountName } = useAddresses();
   const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
   const { setRenderedSubscriptions } = useManage();
@@ -114,6 +114,28 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleRenameAccount
+     * @summary Rename an account managed by the accounts controller and update state.
+     */
+    const handleRenameAccount = (ev: MessageEvent) => {
+      const { address, chainId, newName } = ev.data.data;
+      const account = AccountsController.get(chainId, address);
+
+      if (!account) {
+        console.log('account not imported');
+        // Account not found.
+        return;
+      }
+
+      // Set new account name and persist new account data to storage.
+      account.name = newName;
+      AccountsController.set(chainId, account);
+
+      // Update react state.
+      updateAccountName(address, chainId, newName);
+    };
+
+    /**
      * @name handleInitAction
      * @summary Set initial state for the action window.
      */
@@ -198,6 +220,10 @@ export const useMessagePorts = () => {
               }
               case 'address:delete': {
                 await handleRemoveAddress(ev);
+                break;
+              }
+              case 'renderer:account:rename': {
+                handleRenameAccount(ev);
                 break;
               }
               default: {

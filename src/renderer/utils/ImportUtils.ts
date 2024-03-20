@@ -8,6 +8,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@/types/accounts';
+import { getAddressChainId } from '../Utils';
 
 /**
  * @name getLocalAccountName
@@ -70,4 +71,19 @@ export const renameLocalAccount = (
     );
     localStorage.setItem(storageKey, JSON.stringify(updated));
   }
+};
+
+/**
+ * @name postRenameAccount
+ * @summary Post a message to the main renderer to process an account rename.
+ */
+export const postRenameAccount = (address: string, newName: string) => {
+  ConfigImport.portImport.postMessage({
+    task: 'renderer:account:rename',
+    data: {
+      address,
+      chainId: getAddressChainId(address),
+      newName,
+    },
+  });
 };

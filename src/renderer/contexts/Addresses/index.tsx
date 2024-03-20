@@ -44,7 +44,6 @@ export const AddressesProvider = ({
   };
 
   // Saves received address as an imported address.
-  // IMPORTANT: Should only be called in main window.
   const importAddress = (
     chain: ChainID,
     source: AccountSource,
@@ -59,7 +58,6 @@ export const AddressesProvider = ({
   };
 
   // Removes an imported address.
-  // IMPORTANT: Should only be called in main window.
   const removeAddress = (chain: ChainID, address: string) => {
     // Set address state.
     setAddresses(AccountsController.getAllFlattenedAccountData());
@@ -100,6 +98,41 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
+  // Update an existing account.
+  const updateAccountName = (
+    address: string,
+    chainId: ChainID,
+    newName: string
+  ) => {
+    if (!addresses || !addressExists(address)) {
+      return;
+    }
+
+    setAddressesState((prev: FlattenedAccounts) => {
+      // Clone existing state.
+      const clone: FlattenedAccounts = new Map();
+
+      for (const [c, accounts] of prev.entries()) {
+        clone.set(c, [...accounts]);
+      }
+
+      // Get accounts for provided chain ID.
+      const fetched = clone.get(chainId);
+      if (!fetched) {
+        return clone;
+      }
+
+      // Update account name for provided address.
+      const updated = fetched.map((a: FlattenedAccountData) =>
+        a.address !== address ? a : { ...a, name: newName }
+      );
+
+      // Update cloned map and return it.
+      clone.set(chainId, updated);
+      return clone;
+    });
+  };
+
   return (
     <AddressesContext.Provider
       value={{
@@ -110,6 +143,7 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
+        updateAccountName,
       }}
     >
       {children}

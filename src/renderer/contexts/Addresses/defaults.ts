@@ -12,4 +12,5 @@ export const defaultAddressesContext: AddressesContextInterface = {
   importAddress: (n, a) => {},
   removeAddress: (n, a) => {},
   getAddress: (a) => null,
+  updateAccountName: (a, c, n) => {},
 };
