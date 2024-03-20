@@ -14,15 +14,12 @@ export const HardwareStatusBar = ({
   help,
   Icon,
   inProgress,
-  style,
-  t: { tDone, tCancel },
   text,
 }: HardwareStatusBarProps) => {
   const { helpKey, handleHelp } = help || {};
 
   return (
     <Wrapper
-      style={style}
       initial="hidden"
       animate={show ? 'show' : undefined}
       variants={{
@@ -65,14 +62,14 @@ export const HardwareStatusBar = ({
         <section>
           {inProgress ? (
             <ButtonMonoInvert
-              text={tCancel}
+              text={'Cancel'}
               onClick={() =>
                 typeof handleCancel === 'function' && handleCancel()
               }
             />
           ) : (
             <ButtonPrimaryInvert
-              text={tDone}
+              text={'Done'}
               onClick={() => {
                 if (typeof handleDone === 'function') {
                   handleDone();

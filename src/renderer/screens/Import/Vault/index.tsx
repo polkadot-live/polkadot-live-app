@@ -15,7 +15,7 @@ export const ImportVault = ({
   section: number;
   setSection: AnyFunction;
 }) => {
-  // Store addresses retreived from Polkadot Vault. Defaults to addresses saved in local storage.
+  // Get vault addresses from local storage.
   const [addresses, setAddressesState] = useState<LocalAddress[]>(() => {
     const key = ConfigImport.getStorageKey('vault');
     const fetched: string | null = localStorage.getItem(key);

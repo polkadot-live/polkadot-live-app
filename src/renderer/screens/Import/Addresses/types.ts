@@ -23,3 +23,9 @@ export interface RemoveProps {
   setAddresses: AnyFunction;
   source: AccountSource;
 }
+
+export interface DeleteProps {
+  address: string;
+  setAddresses: AnyFunction;
+  source: AccountSource;
+}

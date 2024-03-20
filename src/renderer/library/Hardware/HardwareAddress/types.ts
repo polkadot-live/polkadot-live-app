@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ComponentBase } from '@/renderer/types';
-import type { ReactNode } from 'react';
 
 export type HardwareAddressProps = ComponentBase & {
   // the address to import.
@@ -15,17 +14,12 @@ export type HardwareAddressProps = ComponentBase & {
   initial: string;
   // whether to disable editing if address is imported.
   disableEditIfImported?: boolean;
-  // identicon of address.
-  Identicon: ReactNode;
   // handle rename
   renameHandler: (address: string, newName: string) => void;
   // handle remove UI.
-  openRemoveHandler: (address: string) => void;
+  openRemoveHandler: () => void;
   // handle confirm import UI.
-  openConfirmHandler: (address: string, index: number) => void;
-  // required component translations.
-  t: {
-    tImport: string;
-    tRemove: string;
-  };
+  openConfirmHandler: () => void;
+  // handle confirm delete UI.
+  openDeleteHandler: () => void;
 };

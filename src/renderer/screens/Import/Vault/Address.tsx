@@ -3,7 +3,6 @@
 
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { useOverlay } from '@app/contexts/Overlay';
-import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
@@ -11,6 +10,7 @@ import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Config as ConfigImport } from '@/config/processes/import';
 import type { AddressProps } from '../Addresses/types';
 import type { LocalAddress } from '@/types/accounts';
+import { Delete } from '../Addresses/Delete';
 
 export const Address = ({
   address,
@@ -88,7 +88,6 @@ export const Address = ({
       isImported={isImported}
       index={index}
       initial={initialName()}
-      Identicon={<Identicon value={address} size={40} />}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
         openOverlayWith(
@@ -111,11 +110,16 @@ export const Address = ({
           'small'
         )
       }
+      openDeleteHandler={() =>
+        openOverlayWith(
+          <Delete
+            setAddresses={setAddresses}
+            address={address}
+            source="vault"
+          />
+        )
+      }
       disableEditIfImported
-      t={{
-        tRemove: 'Remove',
-        tImport: 'Import',
-      }}
     />
   );
 };

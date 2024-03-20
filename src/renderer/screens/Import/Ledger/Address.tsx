@@ -3,7 +3,6 @@
 
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { useOverlay } from '@app/contexts/Overlay';
-import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { Confirm } from '../Addresses/Confirm';
 import { Remove } from '../Addresses/Remove';
@@ -11,6 +10,7 @@ import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Config as ConfigImport } from '@/config/processes/import';
 import type { LedgerAddressProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
+import { Delete } from '../Addresses/Delete';
 
 export const Address = ({
   address,
@@ -87,7 +87,6 @@ export const Address = ({
       address={address}
       index={index}
       initial={initialName()}
-      Identicon={<Identicon value={address} size={40} />}
       renameHandler={renameHandler}
       isImported={isImported}
       openRemoveHandler={() =>
@@ -111,11 +110,16 @@ export const Address = ({
           'small'
         )
       }
+      openDeleteHandler={() =>
+        openOverlayWith(
+          <Delete
+            setAddresses={setAddresses}
+            address={address}
+            source="ledger"
+          />
+        )
+      }
       disableEditIfImported
-      t={{
-        tRemove: 'Remove',
-        tImport: 'Import',
-      }}
     />
   );
 };

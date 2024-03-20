@@ -5,12 +5,14 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const Wrapper = styled(motion.div)`
-  padding: 0 0.5rem 0.5rem;
+  padding: 0.5rem;
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   z-index: 10;
+  background-color: var(--background-modal);
+  border-top: 1px solid var(--border-primary-color);
 
   > .inner {
     background: var(--background-list-item);
