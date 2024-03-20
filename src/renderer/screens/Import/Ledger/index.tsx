@@ -79,10 +79,7 @@ export const ImportLedger = ({
       // TODO: Make dynamic
       const appName = 'Polkadot';
 
-      const nextIndex = getNextAddressIndex();
-      console.log(`next index: ${nextIndex}`);
-
-      window.myAPI.doLedgerLoop(nextIndex, appName, tasks);
+      window.myAPI.doLedgerLoop(getNextAddressIndex(), appName, tasks);
     }, 2000);
   };
 
