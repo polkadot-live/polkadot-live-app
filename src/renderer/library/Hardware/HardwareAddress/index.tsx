@@ -9,6 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
 import { unescape } from '@w3ux/utils';
+import { Flip, ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
@@ -16,7 +17,6 @@ import { validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
-import { Flip, ToastContainer, toast } from 'react-toastify';
 
 export const HardwareAddress = ({
   address,
@@ -55,14 +55,14 @@ export const HardwareAddress = ({
         position: 'top-center',
         autoClose: 3000,
         hideProgressBar: true,
-        closeOnClick: true,
+        closeOnClick: false,
         closeButton: false,
-        pauseOnHover: true,
+        pauseOnHover: false,
         draggable: false,
         progress: undefined,
         theme: 'dark',
         transition: Flip,
-        toastId: `toast-${Date.now()}`, // prevent duplicate alerts
+        toastId: 'toast-error', // prevent duplicate alerts
       });
 
       setEditName(accountName);
@@ -70,24 +70,23 @@ export const HardwareAddress = ({
       return;
     }
 
-    // Otherwise rename account.
-    renameHandler(address, editName);
-
     // Render success alert.
     toast.success('Account name updated.', {
       position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
-      closeOnClick: true,
+      closeOnClick: false,
       closeButton: false,
-      pauseOnHover: true,
+      pauseOnHover: false,
       draggable: false,
       progress: undefined,
       theme: 'dark',
       transition: Flip,
-      toastId: `toast-${Date.now()}`, // prevent duplicate alerts
+      toastId: 'toast-success', // prevent duplicate alerts
     });
 
+    // Otherwise rename account.
+    renameHandler(address, editName);
     setEditing(false);
   };
 

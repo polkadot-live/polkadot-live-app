@@ -33,7 +33,7 @@ export const Manage = ({
             <div className="heading">
               <h4>
                 <AppSVG />
-                <span>Polkadot</span>
+                <span>Accounts</span>
               </h4>
             </div>
             <div className="items">
