@@ -17,7 +17,6 @@ import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 import { Flip, ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 export const HardwareAddress = ({
   address,
@@ -37,8 +36,8 @@ export const HardwareAddress = ({
 
   // Cancel button clicked for edit input.
   const cancelEditing = () => {
-    setEditName(accountName);
     setEditing(false);
+    setEditName(accountName);
   };
 
   // Validate input and rename account.
@@ -63,7 +62,7 @@ export const HardwareAddress = ({
         progress: undefined,
         theme: 'dark',
         transition: Flip,
-        toastId: 'toast-error', // prevent duplicate alerts
+        toastId: `toast-${Date.now()}`, // prevent duplicate alerts
       });
 
       setEditName(accountName);
@@ -86,7 +85,7 @@ export const HardwareAddress = ({
       progress: undefined,
       theme: 'dark',
       transition: Flip,
-      toastId: 'toast-success', // prevent duplicate alerts
+      toastId: `toast-${Date.now()}`, // prevent duplicate alerts
     });
 
     setEditing(false);
@@ -114,7 +113,6 @@ export const HardwareAddress = ({
                 value={editing ? editName : accountName}
                 onChange={(e) => handleChange(e)}
                 onFocus={() => setEditing(true)}
-                onBlur={() => commitEdit()}
                 onKeyUp={(e) => {
                   if (e.key === 'Enter') {
                     commitEdit();
@@ -127,6 +125,7 @@ export const HardwareAddress = ({
                 <div style={{ display: 'flex' }}>
                   &nbsp;
                   <button
+                    id="commit-btn"
                     type="button"
                     className="edit"
                     onClick={() => commitEdit()}
