@@ -66,6 +66,9 @@ export const Manage = ({
                   );
                 }}
               />
+              <p style={{ paddingLeft: '6px' }}>
+                Rename an account by clicking on its address or current name.
+              </p>
             </div>
           </AddressWrapper>
         ) : null}

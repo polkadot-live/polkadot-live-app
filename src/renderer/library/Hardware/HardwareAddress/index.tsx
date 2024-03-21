@@ -43,6 +43,13 @@ export const HardwareAddress = ({
 
   // Validate input and rename account.
   const commitEdit = () => {
+    // Return if account name hasn't changed.
+    if (editName === accountName) {
+      setEditing(false);
+      return;
+    }
+
+    // Handle validation failure.
     if (!validateAccountName(editName)) {
       // Render error alert.
       toast.error('Bad account name.', {
@@ -64,9 +71,8 @@ export const HardwareAddress = ({
       return;
     }
 
-    if (editName !== accountName) {
-      renameHandler(address, editName);
-    }
+    // Otherwise rename account.
+    renameHandler(address, editName);
 
     // Render success alert.
     toast.success('Account name updated.', {
