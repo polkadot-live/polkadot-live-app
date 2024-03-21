@@ -7,52 +7,90 @@ import {
   faTimes,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { FormEvent } from 'react';
-import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
-import { Identicon } from '@app/library/Identicon';
-import { Wrapper } from './Wrapper';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
+import { unescape } from '@w3ux/utils';
+import { Flip, ToastContainer, toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Identicon } from '@app/library/Identicon';
+import { useState } from 'react';
+import { validateAccountName } from '@/renderer/utils/ImportUtils';
+import { Wrapper } from './Wrapper';
+import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
   address,
   index,
   isImported,
-  initial,
-  disableEditIfImported = false,
+  accountName,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
 }: HardwareAddressProps) => {
-  // store whether this address is being edited.
+  // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
-  // store the currently saved name.
-  const [name, setName] = useState<string>(initial);
+  // Store the currently edited name and validation errors flag.
+  const [editName, setEditName] = useState<string>(accountName);
 
-  // store the currently edited name.
-  const [editName, setEditName] = useState<string>(initial);
-
+  // Cancel button clicked for edit input.
   const cancelEditing = () => {
-    setEditName(name);
+    setEditing(false);
+    setEditName(accountName);
+  };
+
+  // Validate input and rename account.
+  const commitEdit = () => {
+    // Return if account name hasn't changed.
+    if (editName === accountName) {
+      setEditing(false);
+      return;
+    }
+
+    // Handle validation failure.
+    if (!validateAccountName(editName)) {
+      // Render error alert.
+      toast.error('Bad account name.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-error', // prevent duplicate alerts
+      });
+
+      setEditName(accountName);
+      setEditing(false);
+      return;
+    }
+
+    // Render success alert.
+    toast.success('Account name updated.', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId: 'toast-success', // prevent duplicate alerts
+    });
+
+    // Otherwise rename account.
+    renameHandler(address, editName);
     setEditing(false);
   };
 
-  const commitEdit = () => {
-    let newName = editName;
-    if (editName === '') {
-      newName = ellipsisFn(address, 6);
-    }
-    if (newName !== name) {
-      setName(newName);
-      setEditName(newName);
-      renameHandler(address, newName);
-    }
-    setEditing(false);
-  };
+  // Input change handler.
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
     let val = e.currentTarget.value || '';
     val = unescape(val);
@@ -70,12 +108,10 @@ export const HardwareAddress = ({
           <div>
             <section className="row">
               <input
-                disabled={isImported && disableEditIfImported}
                 type="text"
-                value={editing ? editName : name}
+                value={editing ? editName : accountName}
                 onChange={(e) => handleChange(e)}
                 onFocus={() => setEditing(true)}
-                onBlur={() => commitEdit()}
                 onKeyUp={(e) => {
                   if (e.key === 'Enter') {
                     commitEdit();
@@ -88,6 +124,7 @@ export const HardwareAddress = ({
                 <div style={{ display: 'flex' }}>
                   &nbsp;
                   <button
+                    id="commit-btn"
                     type="button"
                     className="edit"
                     onClick={() => commitEdit()}
@@ -135,6 +172,7 @@ export const HardwareAddress = ({
           onClick={() => openDeleteHandler()}
         />
       </div>
+      <ToastContainer />
     </Wrapper>
   );
 };

@@ -33,7 +33,7 @@ export const Manage = ({
             <div className="heading">
               <h4>
                 <AppSVG />
-                <span>Polkadot</span>
+                <span>Accounts</span>
               </h4>
             </div>
             <div className="items">
@@ -66,6 +66,9 @@ export const Manage = ({
                   );
                 }}
               />
+              <p style={{ paddingLeft: '6px' }}>
+                Rename an account by clicking on its address or current name.
+              </p>
             </div>
           </AddressWrapper>
         ) : null}

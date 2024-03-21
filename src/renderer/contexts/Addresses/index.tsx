@@ -44,7 +44,6 @@ export const AddressesProvider = ({
   };
 
   // Saves received address as an imported address.
-  // IMPORTANT: Should only be called in main window.
   const importAddress = (
     chain: ChainID,
     source: AccountSource,
@@ -59,7 +58,6 @@ export const AddressesProvider = ({
   };
 
   // Removes an imported address.
-  // IMPORTANT: Should only be called in main window.
   const removeAddress = (chain: ChainID, address: string) => {
     // Set address state.
     setAddresses(AccountsController.getAllFlattenedAccountData());

@@ -1,16 +1,18 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ellipsisFn, unescape } from '@w3ux/utils';
+import { Confirm } from '../Addresses/Confirm';
+import { Delete } from '../Addresses/Delete';
+import {
+  getLocalAccountName,
+  postRenameAccount,
+  renameLocalAccount,
+} from '@/renderer/utils/ImportUtils';
+import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
+import { Remove } from '../Addresses/Remove';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useState } from 'react';
-import { Confirm } from '../Addresses/Confirm';
-import { Remove } from '../Addresses/Remove';
-import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
-import { Config as ConfigImport } from '@/config/processes/import';
 import type { AddressProps } from '../Addresses/types';
-import type { LocalAddress } from '@/types/accounts';
-import { Delete } from '../Addresses/Delete';
 
 export const Address = ({
   address,
@@ -18,67 +20,20 @@ export const Address = ({
   setAddresses,
   isImported,
 }: AddressProps) => {
+  // State for account name.
+  const [accountName, setAccountName] = useState<string>(
+    getLocalAccountName(address, 'vault')
+  );
+
   const { openOverlayWith } = useOverlay();
 
-  /**
-   * Store the current name of the address.
-   */
-  const initialName = () => {
-    const defaultName = ellipsisFn(address);
-    const stored = localStorage.getItem(ConfigImport.getStorageKey('vault'));
+  // Handler to rename an account.
+  const renameHandler = (who: string, newName: string) => {
+    setAccountName(newName);
+    renameLocalAccount(who, newName, 'vault');
 
-    // Return shortened address if no storage found.
-    if (!stored) {
-      return defaultName;
-    }
-
-    // Parse fetched addresses and see if this address has a custom name.
-    const parsed: LocalAddress[] = JSON.parse(stored);
-
-    const localAddress = parsed.find(
-      (i: LocalAddress) => i.address === address
-    );
-
-    return localAddress?.name ? unescape(localAddress.name) : defaultName;
-  };
-
-  const [name, setName] = useState<string>(initialName());
-
-  /**
-   * Handler to rename an account.
-   */
-  const renameHandler = (who: string, value: string) => {
-    setName(value);
-    renameLocalAccount(who, value);
-  };
-
-  /**
-   * Called in the rename handler parent function.
-   */
-  const renameLocalAccount = (who: string, newName: string) => {
-    const storageKey = ConfigImport.getStorageKey('vault');
-
-    // Get vault addresses from local storage.
-    const stored = localStorage.getItem(storageKey);
-    if (!stored) {
-      return false;
-    }
-
-    const parsed: LocalAddress[] = JSON.parse(stored);
-
-    // Update the target vault addresses with the new name.
-    const updated = parsed.map((i: LocalAddress) => {
-      if (i.address !== who) {
-        return i;
-      } else {
-        return {
-          ...i,
-          name: newName,
-        };
-      }
-    });
-
-    localStorage.setItem(storageKey, JSON.stringify(updated));
+    // Post message to main renderer to process the account rename.
+    postRenameAccount(who, newName);
   };
 
   return (
@@ -87,7 +42,7 @@ export const Address = ({
       address={address}
       isImported={isImported}
       index={index}
-      initial={initialName()}
+      accountName={accountName}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
         openOverlayWith(
@@ -104,7 +59,7 @@ export const Address = ({
           <Confirm
             setAddresses={setAddresses}
             address={address}
-            name={name}
+            name={accountName}
             source="vault"
           />,
           'small'
@@ -119,7 +74,6 @@ export const Address = ({
           />
         )
       }
-      disableEditIfImported
     />
   );
 };

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Wrapper = styled.div`
   border-bottom: 1px solid var(--border-primary-color);
@@ -10,6 +11,12 @@ export const Wrapper = styled.div`
   align-items: center;
   margin-top: 1rem;
   padding: 1rem 0.5rem;
+
+  .Toastify__toast {
+    font-size: 1.2rem;
+    color: var(--text-color-primary);
+    background-color: var(--background-menu);
+  }
 
   > .action {
     height: 100%;
