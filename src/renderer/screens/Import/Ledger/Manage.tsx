@@ -44,6 +44,7 @@ export const Manage = ({
                   setAddresses={setAddresses}
                   index={index}
                   isImported={isImported}
+                  setSection={setSection}
                 />
               )
             )}
@@ -51,8 +52,12 @@ export const Manage = ({
           <div className="more">
             <ButtonText
               iconLeft={faArrowDown}
-              text={isImporting ? ' Getting Account' : 'Get Another Account'}
-              disabled={isImporting}
+              text={
+                isImporting
+                  ? ' Getting Account'
+                  : 'Get Another Account (Coming Soon)'
+              }
+              disabled={isImporting || true}
               onClick={() => toggleImport(true)}
             />
           </div>

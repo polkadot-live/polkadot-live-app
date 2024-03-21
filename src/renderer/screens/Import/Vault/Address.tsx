@@ -71,6 +71,7 @@ export const Address = ({
             setAddresses={setAddresses}
             address={address}
             source="vault"
+            setSection={null}
           />
         )
       }

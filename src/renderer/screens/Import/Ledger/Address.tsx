@@ -19,6 +19,7 @@ export const Address = ({
   setAddresses,
   index,
   isImported,
+  setSection,
 }: LedgerAddressProps) => {
   // State for account name.
   const [accountName, setAccountName] = useState<string>(
@@ -71,6 +72,7 @@ export const Address = ({
             setAddresses={setAddresses}
             address={address}
             source="ledger"
+            setSection={setSection}
           />
         )
       }
