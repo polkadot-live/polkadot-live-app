@@ -10,8 +10,8 @@ export type HardwareAddressProps = ComponentBase & {
   index: number;
   // Whether this address is imported in main window.
   isImported: boolean;
-  // initial value of address.
-  initial: string;
+  // current name of the account.
+  accountName: string;
   // handle rename
   renameHandler: (address: string, newName: string) => void;
   // handle remove UI.

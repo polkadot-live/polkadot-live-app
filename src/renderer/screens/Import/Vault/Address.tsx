@@ -42,7 +42,7 @@ export const Address = ({
       address={address}
       isImported={isImported}
       index={index}
-      initial={accountName}
+      accountName={accountName}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
         openOverlayWith(

@@ -11,6 +11,12 @@ export const Wrapper = styled.div`
   margin-top: 1rem;
   padding: 1rem 0.5rem;
 
+  .Toastify__toast {
+    font-size: 1.2rem;
+    color: var(--text-color-primary);
+    background-color: var(--background-menu);
+  }
+
   > .action {
     height: 100%;
     flex-basis: auto;

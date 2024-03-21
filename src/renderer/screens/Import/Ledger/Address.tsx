@@ -41,7 +41,7 @@ export const Address = ({
       key={index}
       address={address}
       index={index}
-      initial={accountName}
+      accountName={accountName}
       renameHandler={renameHandler}
       isImported={isImported}
       openRemoveHandler={() =>

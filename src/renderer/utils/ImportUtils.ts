@@ -87,3 +87,25 @@ export const postRenameAccount = (address: string, newName: string) => {
     },
   });
 };
+
+/**
+ * @name validateAccountName
+ * @summary Validate an account name received from user input.
+ */
+
+export const validateAccountName = (accountName: string): boolean => {
+  // Regulare expression for allowed characters in the account name (including spaces).
+  const regex = /^[a-zA-Z0-9_-\s]+$/;
+
+  // Check if the length of the nickname is between 3 and 30 characters.
+  if (accountName.length < 3 || accountName.length > 20) {
+    return false;
+  }
+
+  // Check if the account name contains only allowed characters.
+  if (!regex.test(accountName)) {
+    return false;
+  }
+
+  return true;
+};

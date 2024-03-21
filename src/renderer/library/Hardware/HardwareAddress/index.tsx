@@ -7,51 +7,86 @@ import {
   faTimes,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { FormEvent } from 'react';
-import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
-import { Identicon } from '@app/library/Identicon';
-import { Wrapper } from './Wrapper';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
+import { unescape } from '@w3ux/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Identicon } from '@app/library/Identicon';
+import { useState } from 'react';
+import { validateAccountName } from '@/renderer/utils/ImportUtils';
+import { Wrapper } from './Wrapper';
+import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
+import { Flip, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const HardwareAddress = ({
   address,
   index,
   isImported,
-  initial,
+  accountName,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
 }: HardwareAddressProps) => {
-  // store whether this address is being edited.
+  // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
-  // store the currently saved name.
-  const [name, setName] = useState<string>(initial);
+  // Store the currently edited name and validation errors flag.
+  const [editName, setEditName] = useState<string>(accountName);
 
-  // store the currently edited name.
-  const [editName, setEditName] = useState<string>(initial);
-
+  // Cancel button clicked for edit input.
   const cancelEditing = () => {
-    setEditName(name);
+    setEditName(accountName);
     setEditing(false);
   };
 
+  // Validate input and rename account.
   const commitEdit = () => {
-    let newName = editName;
-    if (editName === '') {
-      newName = ellipsisFn(address, 6);
+    if (!validateAccountName(editName)) {
+      // Render error alert.
+      toast.error('Bad account name.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-error', // prevent duplicate alerts
+      });
+
+      setEditName(accountName);
+      setEditing(false);
+      return;
     }
-    if (newName !== name) {
-      setName(newName);
-      setEditName(newName);
-      renameHandler(address, newName);
+
+    if (editName !== accountName) {
+      renameHandler(address, editName);
     }
+
+    // Render success alert.
+    toast.success('Account name updated.', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      closeButton: false,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId: 'toast-success', // prevent duplicate alerts
+    });
+
     setEditing(false);
   };
+
+  // Input change handler.
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
     let val = e.currentTarget.value || '';
     val = unescape(val);
@@ -70,7 +105,7 @@ export const HardwareAddress = ({
             <section className="row">
               <input
                 type="text"
-                value={editing ? editName : name}
+                value={editing ? editName : accountName}
                 onChange={(e) => handleChange(e)}
                 onFocus={() => setEditing(true)}
                 onBlur={() => commitEdit()}
@@ -133,6 +168,7 @@ export const HardwareAddress = ({
           onClick={() => openDeleteHandler()}
         />
       </div>
+      <ToastContainer />
     </Wrapper>
   );
 };
