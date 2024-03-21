@@ -11,7 +11,12 @@ import { useOverlay } from '@/renderer/contexts/Overlay';
 import type { DeleteProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
-export const Delete = ({ address, setAddresses, source }: DeleteProps) => {
+export const Delete = ({
+  address,
+  setAddresses,
+  source,
+  setSection,
+}: DeleteProps) => {
   const { setStatus } = useOverlay();
 
   // Click handler function.
@@ -40,6 +45,9 @@ export const Delete = ({ address, setAddresses, source }: DeleteProps) => {
 
       return newAddresses;
     });
+
+    // Go back to import home page.
+    setSection(0);
 
     postAddressDeleteMessage();
   };

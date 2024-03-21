@@ -28,4 +28,5 @@ export interface DeleteProps {
   address: string;
   setAddresses: AnyFunction;
   source: AccountSource;
+  setSection: AnyFunction | null;
 }
