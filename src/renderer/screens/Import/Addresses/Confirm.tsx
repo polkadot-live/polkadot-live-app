@@ -71,7 +71,7 @@ export const Confirm = ({
   // Send address data to main window to process.
   const postAddressToMainWindow = () => {
     ConfigImport.portImport.postMessage({
-      task: 'address:import',
+      task: 'renderer:address:import',
       data: {
         chainId: getAddressChainId(address),
         source,

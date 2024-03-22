@@ -49,11 +49,11 @@ export const Action = () => {
   useEffect(() => {
     try {
       ConfigAction.portAction.postMessage({
-        task: 'main:tx:init',
+        task: 'renderer:tx:init',
         data: { chainId, from, nonce, pallet, method, args },
       });
     } catch (err) {
-      console.log('Warning: Action port not received yet: main:tx:init');
+      console.log('Warning: Action port not received yet: renderer:tx:init');
     }
   }, [from, nonce]);
 
@@ -63,7 +63,7 @@ export const Action = () => {
       try {
         // Send signature and submit transaction on main window.
         ConfigAction.portAction.postMessage({
-          task: 'main:tx:vault:submit',
+          task: 'renderer:tx:vault:submit',
           data: {
             signature: getTxSignature(),
           },
@@ -71,12 +71,12 @@ export const Action = () => {
 
         // Update event show that it is stale and an action has been executed.
         ConfigAction.portAction.postMessage({
-          task: 'main:event:update:stale',
+          task: 'renderer:event:update:stale',
           data: { uid, who: { chain: chainId, address: from } },
         });
       } catch (err) {
         console.log(
-          'Warning: Action port not received yet: main:tx:vault:submit'
+          'Warning: Action port not received yet: renderer:tx:vault:submit'
         );
       }
     }
@@ -86,13 +86,13 @@ export const Action = () => {
   useEffect(
     () => () => {
       try {
-        console.log('post main:tx:reset');
+        console.log('post renderer:tx:reset');
 
         ConfigAction.portAction.postMessage({
-          task: 'main:tx:reset',
+          task: 'renderer:tx:reset',
         });
       } catch (err) {
-        console.log('Warning: Action port not received yet: main:tx:reset');
+        console.log('Warning: Action port not received yet: renderer:tx:reset');
       }
     },
     []

@@ -210,15 +210,15 @@ export const useMessagePorts = () => {
           ConfigRenderer.portToImport.onmessage = async (ev: MessageEvent) => {
             // Message received from `import`.
             switch (ev.data.task) {
-              case 'address:import': {
+              case 'renderer:address:import': {
                 await handleImportAddress(ev);
                 break;
               }
-              case 'address:remove': {
+              case 'renderer:address:remove': {
                 await handleRemoveAddress(ev);
                 break;
               }
-              case 'address:delete': {
+              case 'renderer:address:delete': {
                 await handleRemoveAddress(ev);
                 break;
               }
@@ -252,24 +252,24 @@ export const useMessagePorts = () => {
           ConfigRenderer.portToAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `action`.
             switch (ev.data.task) {
-              case 'main:tx:init': {
-                console.log('> handle main:tx:init');
+              case 'renderer:tx:init': {
+                console.log('> handle renderer:tx:init');
                 await handleActionTxInit(ev);
                 break;
               }
-              case 'main:tx:vault:submit': {
-                console.log('> handle main:tx:vault:submit');
+              case 'renderer:tx:vault:submit': {
+                console.log('> handle renderer:tx:vault:submit');
                 handleTxVaultSubmit(ev);
                 break;
               }
-              case 'main:tx:reset': {
-                console.log('> handle main:tx:reset');
+              case 'renderer:tx:reset': {
+                console.log('> handle renderer:tx:reset');
                 ExtrinsicsController.reset();
                 break;
               }
               // TODO: Implement stale events (where action has been executed)
-              case 'main:event:update:stale': {
-                console.log('> handle main:event:update:stale');
+              case 'renderer:event:update:stale': {
+                console.log('> handle renderer:event:update:stale');
                 console.log(ev.data.data);
                 break;
               }

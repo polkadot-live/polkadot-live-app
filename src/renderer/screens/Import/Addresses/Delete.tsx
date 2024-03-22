@@ -81,7 +81,7 @@ export const Delete = ({
   // Send address data to main window to process removal.
   const postAddressDeleteMessage = () => {
     ConfigImport.portImport.postMessage({
-      task: 'address:delete',
+      task: 'renderer:address:delete',
       data: {
         address,
         chainId: getAddressChainId(address),

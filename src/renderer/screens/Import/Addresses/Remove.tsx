@@ -66,7 +66,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
   // Send address data to main window to process removal.
   const postAddressToMainWindow = () => {
     ConfigImport.portImport.postMessage({
-      task: 'address:remove',
+      task: 'renderer:address:remove',
       data: {
         address,
         chainId: getAddressChainId(address),
