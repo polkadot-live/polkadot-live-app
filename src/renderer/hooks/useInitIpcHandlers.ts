@@ -8,19 +8,22 @@ import {
   fetchAccountBalances,
   fetchAccountNominationPoolData,
 } from '@/utils/AccountUtils';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOnlineStatus } from '@app/contexts/OnlineStatus';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 
 export const useInitIpcHandlers = () => {
+  // App loading flag.
+  const [appLoading, setAppLoading] = useState(true);
+
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setOnline } = useOnlineStatus();
-
   const refAppInitialized = useRef(false);
 
   useEffect(() => {
@@ -29,13 +32,15 @@ export const useInitIpcHandlers = () => {
      */
     window.myAPI.initializeApp(async () => {
       if (!refAppInitialized.current) {
+        const isOnline = await window.myAPI.getOnlineStatus();
+
         // Initialize accounts from persisted state.
         await AccountsController.initialize();
 
         // Initialize chain APIs.
         await APIsController.initialize(Array.from(ChainList.keys()));
 
-        if (await window.myAPI.getOnlineStatus()) {
+        if (isOnline) {
           // Fetch account nonce and balance.
           await fetchAccountBalances();
 
@@ -52,12 +57,21 @@ export const useInitIpcHandlers = () => {
         // Set accounts to render.
         setAddresses(AccountsController.accounts);
 
+        // Disconnect from any API instances that are not currently needed.
+        if (isOnline) {
+          await handleApiDisconnects();
+        }
+
         // Set application state.
         setSubscriptionsAndChainConnections();
 
         refAppInitialized.current = true;
 
+        // Wait 1.5 seconds to avoid a snapping loading spinner.
         console.log('App initialized...');
+        setTimeout(() => {
+          setAppLoading(false);
+        }, 1500);
       }
     });
 
@@ -121,4 +135,8 @@ export const useInitIpcHandlers = () => {
       }
     };
   }, []);
+
+  return {
+    appLoading,
+  };
 };

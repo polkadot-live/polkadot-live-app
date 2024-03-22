@@ -81,7 +81,7 @@ export const createMainWindow = (isTest: boolean) => {
   loadUrlWithRoute(mainWindow, {});
 
   // Initially hide the menu bar.
-  mainWindow.hide();
+  //mainWindow.hide();
 
   // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
@@ -92,10 +92,8 @@ export const createMainWindow = (isTest: boolean) => {
     mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
       ConfigMain.getPortPair('main-action').port1,
     ]);
-  });
 
-  mainWindow.on('show', async () => {
-    // Initialize app if necessary.
+    // Send IPC message to renderer for app Initialization.
     WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
 
     // Report online status to renderer.
