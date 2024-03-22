@@ -9,6 +9,7 @@ export interface AddressProps {
   index: number;
   setAddresses: AnyFunction;
   isImported: boolean;
+  setSection: AnyFunction;
 }
 
 export interface ConfirmProps {

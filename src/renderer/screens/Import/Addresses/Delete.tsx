@@ -54,11 +54,15 @@ export const Delete = ({
 
   // Handle deletion of a vault address.
   const handleDeleteVaultAddress = () => {
+    let goBack = false;
+
     // Update import window's managed address state and local storage.
     setAddresses((prevState: LocalAddress[]) => {
       const newAddresses = prevState.filter(
         (a: LocalAddress) => a.address !== address
       );
+
+      newAddresses.length === 0 && (goBack = true);
 
       localStorage.setItem(
         ConfigImport.getStorageKey(source),
@@ -69,6 +73,9 @@ export const Delete = ({
     });
 
     postAddressDeleteMessage();
+
+    // Go back to import home screen if no more vault addresses are imported.
+    goBack && setSection(0);
   };
 
   // Send address data to main window to process removal.

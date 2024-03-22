@@ -19,6 +19,7 @@ export const Address = ({
   index,
   setAddresses,
   isImported,
+  setSection,
 }: AddressProps) => {
   // State for account name.
   const [accountName, setAccountName] = useState<string>(
@@ -71,7 +72,7 @@ export const Address = ({
             setAddresses={setAddresses}
             address={address}
             source="vault"
-            setSection={null}
+            setSection={setSection}
           />
         )
       }

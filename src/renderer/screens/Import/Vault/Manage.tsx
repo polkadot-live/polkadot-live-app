@@ -44,6 +44,7 @@ export const Manage = ({
                   address={address}
                   index={index}
                   isImported={isImported || false}
+                  setSection={setSection}
                 />
               ))}
             </div>
