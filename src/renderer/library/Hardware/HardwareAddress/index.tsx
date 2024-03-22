@@ -42,14 +42,16 @@ export const HardwareAddress = ({
 
   // Validate input and rename account.
   const commitEdit = () => {
+    const trimmed = editName.trim();
+
     // Return if account name hasn't changed.
-    if (editName === accountName) {
+    if (trimmed === accountName) {
       setEditing(false);
       return;
     }
 
     // Handle validation failure.
-    if (!validateAccountName(editName)) {
+    if (!validateAccountName(trimmed)) {
       // Render error alert.
       toast.error('Bad account name.', {
         position: 'top-center',
@@ -62,7 +64,7 @@ export const HardwareAddress = ({
         progress: undefined,
         theme: 'dark',
         transition: Flip,
-        toastId: `toast-${editName}`, // prevent duplicate alerts
+        toastId: `toast-${trimmed}`, // prevent duplicate alerts
       });
 
       setEditName(accountName);
@@ -82,11 +84,12 @@ export const HardwareAddress = ({
       progress: undefined,
       theme: 'dark',
       transition: Flip,
-      toastId: `toast-${editName}`, // prevent duplicate alerts
+      toastId: `toast-${trimmed}`, // prevent duplicate alerts
     });
 
     // Otherwise rename account.
-    renameHandler(address, editName);
+    renameHandler(address, trimmed);
+    setEditName(trimmed);
     setEditing(false);
   };
 

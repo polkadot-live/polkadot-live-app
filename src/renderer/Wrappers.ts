@@ -45,7 +45,7 @@ export const BodyInterfaceWrapper = styled.div<{
       margin-top: 20px;
     }
 
-    /* Spinner 2 */
+    /* Grid spinner */
     .lds-grid {
       display: inline-block;
       position: relative;
