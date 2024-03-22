@@ -11,16 +11,18 @@ import {
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOnlineStatus } from '@app/contexts/OnlineStatus';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 
 export const useInitIpcHandlers = () => {
+  // App loading flag.
+  const [appLoading, setAppLoading] = useState(true);
+
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { setOnline } = useOnlineStatus();
-
   const refAppInitialized = useRef(false);
 
   useEffect(() => {
@@ -57,7 +59,11 @@ export const useInitIpcHandlers = () => {
 
         refAppInitialized.current = true;
 
+        // Wait 1.5 seconds to avoid a snapping loading spinner.
         console.log('App initialized...');
+        setTimeout(() => {
+          setAppLoading(false);
+        }, 1500);
       }
     });
 
@@ -121,4 +127,8 @@ export const useInitIpcHandlers = () => {
       }
     };
   }, []);
+
+  return {
+    appLoading,
+  };
 };

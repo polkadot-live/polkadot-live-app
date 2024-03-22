@@ -14,16 +14,18 @@ import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
 import type { DismissEvent } from '@/types/reporter';
+import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
   const { addEvent, dismissEvent } = useEvents();
 
+  // Set up app initialization and online/offline switching handlers.
+  const { appLoading } = useInitIpcHandlers();
+
   // Store the currently active menu tab.
   const [section, setSection] = useState<number>(0);
 
-  // Listen for changes in chains.
-  // TODO: move to a new hook to manage communication between main and renderer.
   useEffect(() => {
     // Listen for event callbacks.
     window.myAPI.reportNewEvent((_: IpcRendererEvent, eventData: AnyJson) => {
@@ -55,6 +57,7 @@ export const Home = () => {
         {/* Manage Button */}
         <button
           type="button"
+          disabled={appLoading}
           className={section === 1 ? 'active' : undefined}
           onClick={() => {
             setSection(1);
@@ -83,15 +86,40 @@ export const Home = () => {
         >
           {/* Render Events Content */}
           <div className="scrollable">
-            <IconWrapper>
-              <IconSVG width={175} opacity={0.08} />
-            </IconWrapper>
-            <Events />
+            {appLoading ? (
+              <>
+                <IconWrapper>
+                  <IconSVG width={175} opacity={0.02} />
+                </IconWrapper>
+                <div className="app-loading">
+                  <div className="lds-grid">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                  <p>Loading Polkadot Live</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <IconWrapper>
+                  <IconSVG width={175} opacity={0.08} />
+                </IconWrapper>
+
+                <Events />
+              </>
+            )}
           </div>
           {/* Render Manage Content */}
           <div>
             <div className="container">
-              <Manage addresses={getAddresses()} />
+              {!appLoading && <Manage addresses={getAddresses()} />}
             </div>
           </div>
         </CarouselWrapper>
