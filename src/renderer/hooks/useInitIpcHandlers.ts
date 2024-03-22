@@ -8,6 +8,7 @@ import {
   fetchAccountBalances,
   fetchAccountNominationPoolData,
 } from '@/utils/AccountUtils';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
@@ -31,13 +32,15 @@ export const useInitIpcHandlers = () => {
      */
     window.myAPI.initializeApp(async () => {
       if (!refAppInitialized.current) {
+        const isOnline = await window.myAPI.getOnlineStatus();
+
         // Initialize accounts from persisted state.
         await AccountsController.initialize();
 
         // Initialize chain APIs.
         await APIsController.initialize(Array.from(ChainList.keys()));
 
-        if (await window.myAPI.getOnlineStatus()) {
+        if (isOnline) {
           // Fetch account nonce and balance.
           await fetchAccountBalances();
 
@@ -53,6 +56,11 @@ export const useInitIpcHandlers = () => {
 
         // Set accounts to render.
         setAddresses(AccountsController.accounts);
+
+        // Disconnect from any API instances that are not currently needed.
+        if (isOnline) {
+          await handleApiDisconnects();
+        }
 
         // Set application state.
         setSubscriptionsAndChainConnections();

@@ -47,6 +47,16 @@ export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
 };
 
 /**
+ * @name handleApiDisconnects
+ * @summary Disconnect from any API instances that are not currently required.
+ */
+export const handleApiDisconnects = async () => {
+  for (const chainId of ['Kusama', 'Polkadot', 'Westend'] as ChainID[]) {
+    !isApiInstanceRequiredFor(chainId) && (await APIsController.close(chainId));
+  }
+};
+
+/**
  * @name isApiInstanceRequiredFor
  * @summary Returns `true` if an API instance is still needed for any chain or account subscriptions.
  * @returns {boolean}
