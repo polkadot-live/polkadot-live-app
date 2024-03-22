@@ -62,7 +62,7 @@ export const HardwareAddress = ({
         progress: undefined,
         theme: 'dark',
         transition: Flip,
-        toastId: 'toast-error', // prevent duplicate alerts
+        toastId: `toast-${editName}`, // prevent duplicate alerts
       });
 
       setEditName(accountName);
@@ -82,7 +82,7 @@ export const HardwareAddress = ({
       progress: undefined,
       theme: 'dark',
       transition: Flip,
-      toastId: 'toast-success', // prevent duplicate alerts
+      toastId: `toast-${editName}`, // prevent duplicate alerts
     });
 
     // Otherwise rename account.
@@ -127,7 +127,7 @@ export const HardwareAddress = ({
                     id="commit-btn"
                     type="button"
                     className="edit"
-                    onClick={() => commitEdit()}
+                    onPointerDown={() => commitEdit()}
                   >
                     <FontAwesomeIcon
                       icon={faCheck}
@@ -139,7 +139,7 @@ export const HardwareAddress = ({
                   <button
                     type="button"
                     className="edit"
-                    onClick={() => cancelEditing()}
+                    onPointerDown={() => cancelEditing()}
                   >
                     <FontAwesomeIcon icon={faXmark} transform="grow-1" />
                   </button>
