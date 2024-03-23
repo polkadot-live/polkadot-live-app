@@ -42,7 +42,7 @@ export const Home = () => {
 
   return (
     <>
-      <Header showMenu={true} />
+      {!appLoading && <Header showMenu={true} />}
       <TabsWrapper>
         {/* Events Button */}
         <button
@@ -111,7 +111,6 @@ export const Home = () => {
                 <IconWrapper>
                   <IconSVG width={175} opacity={0.08} />
                 </IconWrapper>
-
                 <Events />
               </>
             )}
@@ -124,7 +123,7 @@ export const Home = () => {
           </div>
         </CarouselWrapper>
       </BodyInterfaceWrapper>
-      <Footer />
+      {!appLoading && <Footer />}
     </>
   );
 };
