@@ -110,6 +110,7 @@ export const Wrapper = styled.div`
         }
 
         input {
+          border: 1px solid var(--border-primary-color);
           background: var(--background-list-item);
           color: var(--text-color-primary);
           border-radius: 0.75rem;
@@ -122,7 +123,7 @@ export const Wrapper = styled.div`
           width: 100%;
           max-width: 175px;
           transition:
-            background 0.2s,
+            background-color 0.2s,
             max-width 0.2s,
             padding 0.2s;
 
