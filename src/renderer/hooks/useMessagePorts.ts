@@ -108,6 +108,9 @@ export const useMessagePorts = () => {
         )
       );
 
+      // Disconnect from any API instances that are not currently needed.
+      await handleApiDisconnects();
+
       // Report chain connections to UI.
       for (const apiData of APIsController.getAllFlattenedAPIData()) {
         addChain(apiData);
