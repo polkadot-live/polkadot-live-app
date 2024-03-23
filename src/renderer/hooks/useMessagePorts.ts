@@ -11,6 +11,7 @@ import {
   fetchAccountBalances,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
@@ -59,6 +60,9 @@ export const useMessagePorts = () => {
 
         // Initialize nomination pool data for account if necessary.
         await fetchNominationPoolDataForAccount(account, chainId);
+
+        // Disconnect from any API instances that are not currently needed.
+        await handleApiDisconnects();
       }
 
       // Add account to address context state.
