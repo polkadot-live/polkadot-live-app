@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
-import { ConfigMain } from '@/config/ConfigMain';
+import { Config as ConfigMain } from '@/config/processes/main';
 import type { AnyJson } from '@/types/misc';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type { FlattenedAccountData } from '@/types/accounts';

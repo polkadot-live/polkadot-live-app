@@ -1,36 +1,41 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@app/contexts/Overlay';
-import { Identicon } from '@app/library/Identicon';
-import { ConfirmWrapper } from './Wrappers';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { Config as ConfigImport } from '@/config/processes/import';
+import { ConfirmWrapper } from './Wrappers';
 import { getAddressChainId } from '@/renderer/Utils';
-import type { RemoveProps } from './types';
+import { Identicon } from '@/renderer/library/Identicon';
+import { useOverlay } from '@/renderer/contexts/Overlay';
+import type { DeleteProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
-export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
+export const Delete = ({
+  address,
+  setAddresses,
+  source,
+  setSection,
+}: DeleteProps) => {
   const { setStatus } = useOverlay();
 
   // Click handler function.
-  const handleRemoveAddress = () => {
+  const handleDeleteAddress = () => {
     if (source === 'vault') {
-      handleRemoveVaultAddress();
+      handleDeleteVaultAddress();
     } else if (source === 'ledger') {
-      handleRemoveLedgerAddress();
+      handleDeleteLedgerAddress();
     }
 
     setStatus(0);
   };
 
-  // Handle removal of a ledger address.
-  const handleRemoveLedgerAddress = () => {
+  // Handle deletion of a ledger address.
+  const handleDeleteLedgerAddress = () => {
     // Update import window's managed address state and local storage.
     setAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
+      const newAddresses = prevState.filter(
+        (a: LedgerLocalAddress) => a.address !== address
       );
 
       localStorage.setItem(
@@ -41,16 +46,23 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       return newAddresses;
     });
 
-    postAddressToMainWindow();
+    // Go back to import home page.
+    setSection(0);
+
+    postAddressDeleteMessage();
   };
 
-  // Handle removal of a vault address.
-  const handleRemoveVaultAddress = () => {
+  // Handle deletion of a vault address.
+  const handleDeleteVaultAddress = () => {
+    let goBack = false;
+
     // Update import window's managed address state and local storage.
     setAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
+      const newAddresses = prevState.filter(
+        (a: LocalAddress) => a.address !== address
       );
+
+      newAddresses.length === 0 && (goBack = true);
 
       localStorage.setItem(
         ConfigImport.getStorageKey(source),
@@ -60,13 +72,16 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       return newAddresses;
     });
 
-    postAddressToMainWindow();
+    postAddressDeleteMessage();
+
+    // Go back to import home screen if no more vault addresses are imported.
+    goBack && setSection(0);
   };
 
   // Send address data to main window to process removal.
-  const postAddressToMainWindow = () => {
+  const postAddressDeleteMessage = () => {
     ConfigImport.portImport.postMessage({
-      task: 'renderer:address:remove',
+      task: 'renderer:address:delete',
       data: {
         address,
         chainId: getAddressChainId(address),
@@ -77,18 +92,17 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
   return (
     <ConfirmWrapper>
       <Identicon value={address} size={60} />
-      <h3>Remove Account</h3>
+      <h3>Delete Account</h3>
       <h5>{address}</h5>
       <p>
-        Removing this account will unsubscribe it from all of its events. After
-        removal, this account will need to be re-imported to resume receiving
-        events.
+        Deleting this account will unsubscribe it from all of its events. After
+        deleted, it will need to be re-imported into the application.
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
         <ButtonMono
-          text="Remove Account"
-          onClick={() => handleRemoveAddress()}
+          text="Delete Account"
+          onClick={() => handleDeleteAddress()}
         />
       </div>
     </ConfirmWrapper>

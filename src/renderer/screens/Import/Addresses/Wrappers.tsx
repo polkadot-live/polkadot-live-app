@@ -7,7 +7,7 @@ export const AddressWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0rem 0rem 8rem 0rem;
+  padding: 0rem 0rem 5rem 0rem;
   height: 100vh;
   overflow: scroll;
   padding-right: 20px;

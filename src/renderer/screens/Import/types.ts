@@ -51,4 +51,5 @@ export interface LedgerAddressProps {
   index: number;
   isImported: boolean;
   setAddresses: AnyFunction;
+  setSection: AnyFunction;
 }

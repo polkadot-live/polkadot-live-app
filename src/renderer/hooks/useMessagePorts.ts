@@ -3,12 +3,15 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
-import { ExtrinsicsController } from '@/controller/main/ExtrinsicsController';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { Config as ConfigAction } from '@/config/processes/action';
+import { Config as ConfigImport } from '@/config/processes/import';
+import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchAccountBalances,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
@@ -19,7 +22,7 @@ import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
-  const { importAddress, removeAddress } = useAddresses();
+  const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
   const { setRenderedSubscriptions } = useManage();
@@ -57,6 +60,9 @@ export const useMessagePorts = () => {
 
         // Initialize nomination pool data for account if necessary.
         await fetchNominationPoolDataForAccount(account, chainId);
+
+        // Disconnect from any API instances that are not currently needed.
+        await handleApiDisconnects();
       }
 
       // Add account to address context state.
@@ -82,7 +88,7 @@ export const useMessagePorts = () => {
       const account = AccountsController.get(chainId, address);
 
       if (!account) {
-        console.log('Account could not be added, probably already added');
+        console.log('Account could not be added, probably not imported yet');
         return;
       }
 
@@ -102,6 +108,9 @@ export const useMessagePorts = () => {
         )
       );
 
+      // Disconnect from any API instances that are not currently needed.
+      await handleApiDisconnects();
+
       // Report chain connections to UI.
       for (const apiData of APIsController.getAllFlattenedAPIData()) {
         addChain(apiData);
@@ -109,6 +118,28 @@ export const useMessagePorts = () => {
 
       // Transition away from rendering toggles.
       setRenderedSubscriptions({ type: '', tasks: [] });
+    };
+
+    /**
+     * @name handleRenameAccount
+     * @summary Rename an account managed by the accounts controller and update state.
+     */
+    const handleRenameAccount = (ev: MessageEvent) => {
+      const { address, chainId, newName } = ev.data.data;
+      const account = AccountsController.get(chainId, address);
+
+      if (!account) {
+        // Account not found in controller.
+        console.log('account not imported');
+        return;
+      }
+
+      // Set new account name and persist new account data to storage.
+      account.name = newName;
+      AccountsController.set(chainId, account);
+
+      // Update react state.
+      setAddresses(AccountsController.getAllFlattenedAccountData());
     };
 
     /**
@@ -181,17 +212,25 @@ export const useMessagePorts = () => {
 
       switch (e.data.target) {
         case 'main-import:main': {
-          ConfigRenderer.portMain = e.ports[0];
+          ConfigRenderer.portToImport = e.ports[0];
 
-          ConfigRenderer.portMain.onmessage = async (ev: MessageEvent) => {
+          ConfigRenderer.portToImport.onmessage = async (ev: MessageEvent) => {
             // Message received from `import`.
             switch (ev.data.task) {
-              case 'address:import': {
+              case 'renderer:address:import': {
                 await handleImportAddress(ev);
                 break;
               }
-              case 'address:remove': {
+              case 'renderer:address:remove': {
                 await handleRemoveAddress(ev);
+                break;
+              }
+              case 'renderer:address:delete': {
+                await handleRemoveAddress(ev);
+                break;
+              }
+              case 'renderer:account:rename': {
+                handleRenameAccount(ev);
                 break;
               }
               default: {
@@ -200,44 +239,44 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portMain.start();
+          ConfigRenderer.portToImport.start();
           break;
         }
         case 'main-import:import': {
-          ConfigRenderer.portImport = e.ports[0];
+          ConfigImport.portImport = e.ports[0];
 
-          ConfigRenderer.portImport.onmessage = (ev: MessageEvent) => {
+          ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
             console.log(ev.data);
           };
 
-          ConfigRenderer.portImport.start();
+          ConfigImport.portImport.start();
           break;
         }
         case 'main-action:main': {
-          ConfigRenderer.portMainB = e.ports[0];
+          ConfigRenderer.portToAction = e.ports[0];
 
-          ConfigRenderer.portMainB.onmessage = async (ev: MessageEvent) => {
+          ConfigRenderer.portToAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `action`.
             switch (ev.data.task) {
-              case 'main:tx:init': {
-                console.log('> handle main:tx:init');
+              case 'renderer:tx:init': {
+                console.log('> handle renderer:tx:init');
                 await handleActionTxInit(ev);
                 break;
               }
-              case 'main:tx:vault:submit': {
-                console.log('> handle main:tx:vault:submit');
+              case 'renderer:tx:vault:submit': {
+                console.log('> handle renderer:tx:vault:submit');
                 handleTxVaultSubmit(ev);
                 break;
               }
-              case 'main:tx:reset': {
-                console.log('> handle main:tx:reset');
+              case 'renderer:tx:reset': {
+                console.log('> handle renderer:tx:reset');
                 ExtrinsicsController.reset();
                 break;
               }
               // TODO: Implement stale events (where action has been executed)
-              case 'main:event:update:stale': {
-                console.log('> handle main:event:update:stale');
+              case 'renderer:event:update:stale': {
+                console.log('> handle renderer:event:update:stale');
                 console.log(ev.data.data);
                 break;
               }
@@ -247,13 +286,13 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portMainB.start();
+          ConfigRenderer.portToAction.start();
           break;
         }
         case 'main-action:action': {
-          ConfigRenderer.portAction = e.ports[0];
+          ConfigAction.portAction = e.ports[0];
 
-          ConfigRenderer.portAction.onmessage = async (ev: MessageEvent) => {
+          ConfigAction.portAction.onmessage = async (ev: MessageEvent) => {
             // Message received from `main`.
             switch (ev.data.task) {
               case 'action:init': {
@@ -277,7 +316,7 @@ export const useMessagePorts = () => {
             }
           };
 
-          ConfigRenderer.portAction.start();
+          ConfigAction.portAction.start();
           break;
         }
         default: {

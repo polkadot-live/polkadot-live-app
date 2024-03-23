@@ -4,7 +4,7 @@
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainIcon } from '@/config/chains';
-import { ConfigRenderer } from '@/config/ConfigRenderer';
+import { Config as ConfigAction } from '@/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
 import { ellipsisFn } from '@w3ux/utils';
@@ -48,12 +48,12 @@ export const Action = () => {
   // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
     try {
-      ConfigRenderer.portAction.postMessage({
-        task: 'main:tx:init',
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:tx:init',
         data: { chainId, from, nonce, pallet, method, args },
       });
     } catch (err) {
-      console.log('Warning: Action port not received yet: main:tx:init');
+      console.log('Warning: Action port not received yet: renderer:tx:init');
     }
   }, [from, nonce]);
 
@@ -62,21 +62,21 @@ export const Action = () => {
     if (getTxSignature()) {
       try {
         // Send signature and submit transaction on main window.
-        ConfigRenderer.portAction.postMessage({
-          task: 'main:tx:vault:submit',
+        ConfigAction.portAction.postMessage({
+          task: 'renderer:tx:vault:submit',
           data: {
             signature: getTxSignature(),
           },
         });
 
         // Update event show that it is stale and an action has been executed.
-        ConfigRenderer.portAction.postMessage({
-          task: 'main:event:update:stale',
+        ConfigAction.portAction.postMessage({
+          task: 'renderer:event:update:stale',
           data: { uid, who: { chain: chainId, address: from } },
         });
       } catch (err) {
         console.log(
-          'Warning: Action port not received yet: main:tx:vault:submit'
+          'Warning: Action port not received yet: renderer:tx:vault:submit'
         );
       }
     }
@@ -86,13 +86,13 @@ export const Action = () => {
   useEffect(
     () => () => {
       try {
-        console.log('post main:tx:reset');
+        console.log('post renderer:tx:reset');
 
-        ConfigRenderer.portAction.postMessage({
-          task: 'main:tx:reset',
+        ConfigAction.portAction.postMessage({
+          task: 'renderer:tx:reset',
         });
       } catch (err) {
-        console.log('Warning: Action port not received yet: main:tx:reset');
+        console.log('Warning: Action port not received yet: renderer:tx:reset');
       }
     },
     []
@@ -159,7 +159,7 @@ export const Action = () => {
             <>
               <h3>Bond Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.pendingRewards} DOT`} />
+                <ActionItem text={`Claim ${actionData.extra} DOT`} />
                 <p>
                   Once submitted, your rewards will be bonded back into the
                   pool. You own these additional bonded funds and will be able
@@ -173,7 +173,7 @@ export const Action = () => {
             <>
               <h3>Withdraw Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.pendingRewards} DOT`} />
+                <ActionItem text={`Claim ${actionData.extra} DOT`} />
                 <p>
                   Withdrawing rewards will immediately transfer them to your
                   account as free balance.

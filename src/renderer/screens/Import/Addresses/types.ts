@@ -9,6 +9,7 @@ export interface AddressProps {
   index: number;
   setAddresses: AnyFunction;
   isImported: boolean;
+  setSection: AnyFunction;
 }
 
 export interface ConfirmProps {
@@ -22,4 +23,11 @@ export interface RemoveProps {
   address: string;
   setAddresses: AnyFunction;
   source: AccountSource;
+}
+
+export interface DeleteProps {
+  address: string;
+  setAddresses: AnyFunction;
+  source: AccountSource;
+  setSection: AnyFunction | null;
 }

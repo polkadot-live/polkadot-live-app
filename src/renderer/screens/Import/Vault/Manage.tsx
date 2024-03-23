@@ -33,21 +33,20 @@ export const Manage = ({
             <div className="heading">
               <h4>
                 <AppSVG />
-                <span>Polkadot</span>
+                <span>Accounts</span>
               </h4>
             </div>
             <div className="items">
-              {addresses.map(
-                ({ address, index, isImported }: LocalAddress, i: number) => (
-                  <Address
-                    key={i}
-                    setAddresses={setAddresses}
-                    address={address}
-                    index={index}
-                    isImported={isImported || false}
-                  />
-                )
-              )}
+              {addresses.map(({ address, index, isImported }: LocalAddress) => (
+                <Address
+                  key={address}
+                  setAddresses={setAddresses}
+                  address={address}
+                  index={index}
+                  isImported={isImported || false}
+                  setSection={setSection}
+                />
+              ))}
             </div>
             <div className="more">
               <ButtonText
@@ -80,15 +79,6 @@ export const Manage = ({
           } Imported`}
           inProgress={false}
           handleDone={() => setSection(0)}
-          t={{
-            tDone: 'Done',
-            tCancel: 'Cancel',
-          }}
-          style={{
-            backgroundColor: 'var(--background-modal)',
-            borderTop: '1px solid var(--border-primary-color)',
-            paddingTop: '4px',
-          }}
         />
       </BodyInterfaceWrapper>
     </>

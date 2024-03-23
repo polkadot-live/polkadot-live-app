@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import 'websocket-polyfill';
-import type { IpcMainInvokeEvent } from 'electron';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
+import { Config as ConfigMain } from './config/processes/main';
+import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import { WindowsController } from '@/controller/main/WindowsController';
 import AutoLaunch from 'auto-launch';
@@ -20,9 +21,8 @@ import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
+import type { IpcMainInvokeEvent } from 'electron';
 import type { SubscriptionTask } from '@/types/subscriptions';
-import { executeLedgerLoop } from './ledger';
-import { ConfigMain } from './config/ConfigMain';
 
 const debug = MainDebug;
 
@@ -153,27 +153,33 @@ app.whenReady().then(async () => {
     app.quit();
   });
 
-  // Remove event from store.
-  ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>
-    EventsController.removeEvent(event)
-  );
-
-  /**
-   * Handle switching between online and offline.
-   */
-
-  ipcMain.on('app:connection:status', () => {
-    OnlineStatusController.handleStatusChange();
+  // Open clicked URL in a browser window.
+  ipcMain.on('app:url:open', (_, url) => {
+    shell.openExternal(url);
   });
 
   /**
-   * New handlers
+   * Account management
    */
 
-  // Send connection status to frontend.
-  ipcMain.handle('app:online:status', async () =>
-    OnlineStatusController.getStatus()
+  // Attempt an account import.
+  ipcMain.on(
+    'app:account:import',
+    async (_, chain: ChainID, source, address, name) => {
+      await AppOrchestrator.next({
+        task: 'app:account:import',
+        data: { chain, source, address, name },
+      });
+    }
   );
+
+  // Attempt an account removal.
+  ipcMain.on('app:account:remove', async (_, address) => {
+    await AppOrchestrator.next({
+      task: 'app:account:remove',
+      data: { address },
+    });
+  });
 
   // Send stringified persisted accounts to frontend.
   ipcMain.handle('app:accounts:get', async () => {
@@ -184,20 +190,14 @@ app.whenReady().then(async () => {
     return stored ? stored : '';
   });
 
-  // Send stringified persisted account tasks to frontend.
-  ipcMain.handle(
-    'app:accounts:tasks:get',
-    async (_, account: FlattenedAccountData) => {
-      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
-      const stored = (store as Record<string, AnyData>).get(key) as string;
-      return stored ? stored : '';
-    }
-  );
-
   // Set persisted accounts in store.
   ipcMain.on('app:accounts:set', (_, accounts: FlattenedAccounts) => {
     (store as Record<string, AnyData>).set('imported_accounts', accounts);
   });
+
+  /**
+   * Events
+   */
 
   // Persist an event and report it back to frontend.
   ipcMain.on('app:event:persist', (_, e: EventCallback) => {
@@ -208,6 +208,44 @@ app.whenReady().then(async () => {
       eventWithUid
     );
   });
+
+  // Remove event from store.
+  ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>
+    EventsController.removeEvent(event)
+  );
+
+  // Request dismiss event
+  ipcMain.on('app:event:dismiss', (_, eventData: DismissEvent) => {
+    reportDismissEvent(eventData);
+  });
+
+  /**
+   * Online status
+   */
+
+  // Handle switching between online and offline.
+  ipcMain.on('app:connection:status', () => {
+    OnlineStatusController.handleStatusChange();
+  });
+
+  // Send connection status to frontend.
+  ipcMain.handle('app:online:status', async () =>
+    OnlineStatusController.getStatus()
+  );
+
+  /**
+   * Subscriptions
+   */
+
+  // Send stringified persisted account tasks to frontend.
+  ipcMain.handle(
+    'app:accounts:tasks:get',
+    async (_, account: FlattenedAccountData) => {
+      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
+      const stored = (store as Record<string, AnyData>).get(key) as string;
+      return stored ? stored : '';
+    }
+  );
 
   // Get persisted chain subscription tasks.
   ipcMain.handle('app:subscriptions:chain:get', async () => {
@@ -238,7 +276,7 @@ app.whenReady().then(async () => {
   });
 
   /**
-   * Window management handlers.
+   * Window management
    */
 
   // Hides a window by its key.
@@ -266,34 +304,5 @@ app.whenReady().then(async () => {
         accountIndex,
       });
     }
-  });
-
-  // Attempt an account import.
-  ipcMain.on(
-    'app:account:import',
-    async (_, chain: ChainID, source, address, name) => {
-      await AppOrchestrator.next({
-        task: 'app:account:import',
-        data: { chain, source, address, name },
-      });
-    }
-  );
-
-  // Attempt an account removal.
-  ipcMain.on('app:account:remove', async (_, address) => {
-    await AppOrchestrator.next({
-      task: 'app:account:remove',
-      data: { address },
-    });
-  });
-
-  // Request dismiss event
-  ipcMain.on('app:event:dismiss', (_, eventData: DismissEvent) => {
-    reportDismissEvent(eventData);
-  });
-
-  // Open a browser window.
-  ipcMain.on('app:url:open', (_, url) => {
-    shell.openExternal(url);
   });
 });

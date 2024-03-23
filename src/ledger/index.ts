@@ -134,7 +134,7 @@ export const handleGetAddress = async (
 
   // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
   // as getting an address that does not require confirmation.
-  const withTimeout = (millis: number, promise: Promise<AnyFunction>) => {
+  const withTimeout = async (millis: number, promise: Promise<AnyFunction>) => {
     const timeout = new Promise((_, reject) =>
       setTimeout(async () => {
         transport?.device?.close();

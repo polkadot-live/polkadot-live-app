@@ -14,7 +14,6 @@ import { useTheme } from 'styled-components';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
 import { useMessagePorts } from '@app/hooks/useMessagePorts';
-import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -23,10 +22,8 @@ export const RouterInner = () => {
   // Set up message ports communication between windows.
   useMessagePorts();
 
-  // Set up app initialization and online/offline switching handlers.
-  useInitIpcHandlers();
-
   useEffect(() => {
+    // Listen for online status change.
     window.myAPI.reportOnlineStatus((_: IpcRendererEvent, status: boolean) => {
       setOnline(status);
     });

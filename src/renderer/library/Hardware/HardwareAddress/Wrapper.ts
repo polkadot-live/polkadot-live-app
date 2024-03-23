@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Wrapper = styled.div`
   border-bottom: 1px solid var(--border-primary-color);
@@ -11,17 +12,24 @@ export const Wrapper = styled.div`
   margin-top: 1rem;
   padding: 1rem 0.5rem;
 
+  .Toastify__toast {
+    font-size: 1.2rem;
+    color: var(--text-color-primary);
+    background-color: var(--background-menu);
+  }
+
   > .action {
     height: 100%;
     flex-basis: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    column-gap: 1rem;
     padding-left: 1rem;
 
     > button {
       flex-basis: 50%;
       flex-grow: 1;
-      width: 8rem;
+      padding: 1rem;
     }
   }
 
@@ -102,6 +110,7 @@ export const Wrapper = styled.div`
         }
 
         input {
+          border: 1px solid var(--border-primary-color);
           background: var(--background-list-item);
           color: var(--text-color-primary);
           border-radius: 0.75rem;
@@ -114,7 +123,7 @@ export const Wrapper = styled.div`
           width: 100%;
           max-width: 175px;
           transition:
-            background 0.2s,
+            background-color 0.2s,
             max-width 0.2s,
             padding 0.2s;
 

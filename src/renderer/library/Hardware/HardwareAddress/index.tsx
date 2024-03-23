@@ -7,52 +7,93 @@ import {
   faTimes,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { FormEvent } from 'react';
-import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
-import { Wrapper } from './Wrapper';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
+import { unescape } from '@w3ux/utils';
+import { Flip, ToastContainer, toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Identicon } from '@app/library/Identicon';
+import { useState } from 'react';
+import { validateAccountName } from '@/renderer/utils/ImportUtils';
+import { Wrapper } from './Wrapper';
+import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
   address,
   index,
   isImported,
-  initial,
-  disableEditIfImported = false,
-  Identicon,
+  accountName,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
-  t: { tImport, tRemove },
+  openDeleteHandler,
 }: HardwareAddressProps) => {
-  // store whether this address is being edited.
+  // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
-  // store the currently saved name.
-  const [name, setName] = useState<string>(initial);
+  // Store the currently edited name and validation errors flag.
+  const [editName, setEditName] = useState<string>(accountName);
 
-  // store the currently edited name.
-  const [editName, setEditName] = useState<string>(initial);
-
+  // Cancel button clicked for edit input.
   const cancelEditing = () => {
-    setEditName(name);
+    setEditing(false);
+    setEditName(accountName);
+  };
+
+  // Validate input and rename account.
+  const commitEdit = () => {
+    const trimmed = editName.trim();
+
+    // Return if account name hasn't changed.
+    if (trimmed === accountName) {
+      setEditing(false);
+      return;
+    }
+
+    // Handle validation failure.
+    if (!validateAccountName(trimmed)) {
+      // Render error alert.
+      toast.error('Bad account name.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: `toast-${trimmed}`, // prevent duplicate alerts
+      });
+
+      setEditName(accountName);
+      setEditing(false);
+      return;
+    }
+
+    // Render success alert.
+    toast.success('Account name updated.', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId: `toast-${trimmed}`, // prevent duplicate alerts
+    });
+
+    // Otherwise rename account.
+    renameHandler(address, trimmed);
+    setEditName(trimmed);
     setEditing(false);
   };
 
-  const commitEdit = () => {
-    let newName = editName;
-    if (editName === '') {
-      newName = ellipsisFn(address, 6);
-    }
-    if (newName !== name) {
-      setName(newName);
-      setEditName(newName);
-      renameHandler(address, newName);
-    }
-    setEditing(false);
-  };
+  // Input change handler.
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
     let val = e.currentTarget.value || '';
     val = unescape(val);
@@ -64,18 +105,16 @@ export const HardwareAddress = ({
       <div className="content">
         <div className="inner">
           <div className="identicon">
-            {Identicon}
+            <Identicon value={address} size={40} />
             <div className="index-icon ">{index + 1}</div>
           </div>
           <div>
             <section className="row">
               <input
-                disabled={isImported && disableEditIfImported}
                 type="text"
-                value={editing ? editName : name}
+                value={editing ? editName : accountName}
                 onChange={(e) => handleChange(e)}
                 onFocus={() => setEditing(true)}
-                onBlur={() => commitEdit()}
                 onKeyUp={(e) => {
                   if (e.key === 'Enter') {
                     commitEdit();
@@ -88,9 +127,10 @@ export const HardwareAddress = ({
                 <div style={{ display: 'flex' }}>
                   &nbsp;
                   <button
+                    id="commit-btn"
                     type="button"
                     className="edit"
-                    onClick={() => commitEdit()}
+                    onPointerDown={() => commitEdit()}
                   >
                     <FontAwesomeIcon
                       icon={faCheck}
@@ -102,7 +142,7 @@ export const HardwareAddress = ({
                   <button
                     type="button"
                     className="edit"
-                    onClick={() => cancelEditing()}
+                    onPointerDown={() => cancelEditing()}
                   >
                     <FontAwesomeIcon icon={faXmark} transform="grow-1" />
                   </button>
@@ -119,17 +159,23 @@ export const HardwareAddress = ({
         {isImported ? (
           <ButtonText
             iconLeft={faTimes}
-            text={tRemove}
-            onClick={() => openRemoveHandler(address)}
+            text={'Remove'}
+            onClick={() => openRemoveHandler()}
           />
         ) : (
           <ButtonText
             iconLeft={faPlus}
-            text={tImport}
-            onClick={() => openConfirmHandler(address, index)}
+            text={'Import'}
+            onClick={() => openConfirmHandler()}
           />
         )}
+        <ButtonText
+          iconLeft={faTimes}
+          text={'Delete'}
+          onClick={() => openDeleteHandler()}
+        />
       </div>
+      <ToastContainer />
     </Wrapper>
   );
 };

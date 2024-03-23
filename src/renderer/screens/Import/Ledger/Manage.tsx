@@ -37,16 +37,14 @@ export const Manage = ({
           </div>
           <div className="items">
             {addresses.map(
-              (
-                { address, index, isImported }: LedgerLocalAddress,
-                i: number
-              ) => (
+              ({ address, index, isImported }: LedgerLocalAddress) => (
                 <Address
-                  key={i}
+                  key={address}
                   address={address}
                   setAddresses={setAddresses}
                   index={index}
                   isImported={isImported}
+                  setSection={setSection}
                 />
               )
             )}
@@ -54,8 +52,12 @@ export const Manage = ({
           <div className="more">
             <ButtonText
               iconLeft={faArrowDown}
-              text={isImporting ? ' Getting Account' : 'Get Another Account'}
-              disabled={isImporting}
+              text={
+                isImporting
+                  ? ' Getting Account'
+                  : 'Get Another Account (Coming Soon)'
+              }
+              disabled={isImporting || true}
               onClick={() => toggleImport(true)}
             />
           </div>
@@ -77,15 +79,6 @@ export const Manage = ({
         inProgress={false}
         handleCancel={() => cancelImport()}
         handleDone={() => setSection(0)}
-        t={{
-          tDone: 'Done',
-          tCancel: 'Cancel',
-        }}
-        style={{
-          backgroundColor: 'var(--background-modal)',
-          borderTop: '1px solid var(--border-primary-color)',
-          paddingTop: '4px',
-        }}
       />
     </BodyInterfaceWrapper>
   </>

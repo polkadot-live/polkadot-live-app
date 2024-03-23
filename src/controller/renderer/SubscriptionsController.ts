@@ -1,8 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { accountTasks as allAccountTasks } from '@/config/accountTasks';
-import { chainTasks as allChainTasks } from '@/config/chainTasks';
+import { accountTasks as allAccountTasks } from '@/config/subscriptions/account';
+import { chainTasks as allChainTasks } from '@/config/subscriptions/chain';
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { Account, ImportedAccounts } from '@/model/Account';
