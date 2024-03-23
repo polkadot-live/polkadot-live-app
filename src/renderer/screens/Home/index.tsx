@@ -123,7 +123,7 @@ export const Home = () => {
           </div>
         </CarouselWrapper>
       </BodyInterfaceWrapper>
-      {!appLoading && <Footer />}
+      <Footer />
     </>
   );
 };
