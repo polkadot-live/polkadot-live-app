@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
-import { ellipsisFn, unescape } from '@w3ux/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -32,11 +32,13 @@ export const getLocalAccountName = (
     const fetched = parsed.find(
       (a: LedgerLocalAddress) => a.address === address
     );
-    return fetched ? unescape(fetched.name) : defaultName;
-  } else {
+    return fetched ? fetched.name : defaultName;
+  } else if (source === 'vault') {
     const parsed: LocalAddress[] = JSON.parse(stored);
     const fetched = parsed.find((a: LocalAddress) => a.address === address);
-    return fetched ? unescape(fetched.name) : defaultName;
+    return fetched ? fetched.name : defaultName;
+  } else {
+    return 'System Account';
   }
 };
 
