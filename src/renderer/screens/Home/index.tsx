@@ -42,7 +42,7 @@ export const Home = () => {
 
   return (
     <>
-      {!appLoading && <Header showMenu={true} />}
+      <Header showMenu={true} appLoading={appLoading} />
       <TabsWrapper>
         {/* Events Button */}
         <button
