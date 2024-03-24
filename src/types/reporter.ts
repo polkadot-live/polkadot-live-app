@@ -1,9 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ExtendedAccount } from './blockstream';
-import type { ChainID } from './chains';
 import type { AnyData, AnyJson } from './misc';
+import type { ChainID } from './chains';
+import type { ExtendedAccount } from './blockstream';
 
 // Batch notification config.
 export interface BatchConfig {
@@ -78,8 +78,8 @@ export interface EventCallback {
   uid: string;
   category: string;
   who: {
-    chain: ChainID;
-    address: string;
+    origin: 'account' | 'chain';
+    data: EventAccountData | EventChainData;
   };
   title: string;
   subtitle: string;
@@ -88,10 +88,21 @@ export interface EventCallback {
   actions: EventAction[];
 }
 
+// Data to identify an account with an event.
+export interface EventAccountData {
+  address: string;
+  chainId: ChainID;
+}
+
+// Data to identify a chain ID with an event.
+export interface EventChainData {
+  chainId: ChainID;
+}
+
 export interface DismissEvent {
   uid: string;
   who: {
-    chain: ChainID;
-    address: string;
+    origin: 'account' | 'chain';
+    data: EventAccountData | EventChainData;
   };
 }

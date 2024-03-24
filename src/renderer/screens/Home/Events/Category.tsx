@@ -5,6 +5,7 @@ import { chainCategory, chainIcon } from '@/config/chains';
 import { HeadingWrapper } from '../Wrappers';
 import { Item } from './Item';
 import { EventGroup } from './Wrappers';
+import { getEventChainId } from '@/utils/EventUtils';
 import type { EventCategoryProps } from './types';
 import type { EventCallback } from '@/types/reporter';
 
@@ -18,14 +19,8 @@ export const Category = ({
   const { name, icon } = chainCategory(chain, category);
 
   // Return a unique key for event item.
-  const getKey = (event: EventCallback): string => {
-    const {
-      uid,
-      who: { chain: chainId },
-    } = event;
-
-    return `${chainId}_${uid}`;
-  };
+  const getKey = (event: EventCallback): string =>
+    `${getEventChainId(event)}_${event.uid}`;
 
   return (
     <EventGroup style={i === 0 ? { marginTop: '1.7rem' } : undefined}>

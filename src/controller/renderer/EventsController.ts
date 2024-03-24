@@ -6,7 +6,11 @@ import { ellipsisFn } from '@w3ux/utils';
 import { getUnixTime } from 'date-fns';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
-import type { EventCallback } from '@/types/reporter';
+import type {
+  EventAccountData,
+  EventCallback,
+  EventChainData,
+} from '@/types/reporter';
 
 export class EventsController {
   /**
@@ -25,8 +29,8 @@ export class EventsController {
           uid: '',
           category: 'debugging',
           who: {
-            chain: entry.task.chainId,
-            address: 'none',
+            origin: 'chain',
+            data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: `${entry.task.chainId}: New Timestamp`,
           subtitle: `${newVal}`,
@@ -46,8 +50,8 @@ export class EventsController {
           uid: '',
           category: 'debugging',
           who: {
-            chain: entry.task.chainId,
-            address: 'none',
+            origin: 'chain',
+            data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: `${entry.task.chainId}: Current Slot`,
           subtitle: `${newVal}`,
@@ -69,8 +73,8 @@ export class EventsController {
           uid: '',
           category: 'balances',
           who: {
-            chain: entry.task.chainId,
-            address,
+            origin: 'account',
+            data: { address, chainId: entry.task.chainId } as EventAccountData,
           },
           title: `${ellipsisFn(address)}`,
           subtitle: `Free: ${newVal.free}, Reserved: ${newVal.reserved}, Nonce: ${newVal.nonce}`,
@@ -94,7 +98,10 @@ export class EventsController {
         return {
           uid: '',
           category: 'nominationPools',
-          who: { chain: chainId, address },
+          who: {
+            origin: 'account',
+            data: { address, chainId: entry.task.chainId } as EventAccountData,
+          },
           title: `${ellipsisFn(address)}: Unclaimed Nomination Pool Rewards`,
           subtitle: `${pendingRewards?.toString()} ${chainCurrency(chainId)}`,
           data: { pendingRewards: pendingRewards?.toString() },

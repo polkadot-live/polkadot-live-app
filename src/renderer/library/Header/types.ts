@@ -3,5 +3,5 @@
 
 export interface HeaderProps {
   showMenu?: boolean;
-  appLoading: boolean;
+  appLoading?: boolean;
 }

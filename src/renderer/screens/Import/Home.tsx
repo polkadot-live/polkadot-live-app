@@ -15,8 +15,8 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
-import type { HomeProps } from './types';
 import { ToastContainer } from 'react-toastify';
+import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => (
   <>

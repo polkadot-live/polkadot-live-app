@@ -1,21 +1,24 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { setStateWithRef } from '@w3ux/utils';
 import React, { createContext, useContext, useRef, useState } from 'react';
+import {
+  pushEventAndFilterDuplicates,
+  getEventChainId,
+} from '@/utils/EventUtils';
+import { setStateWithRef } from '@w3ux/utils';
 import * as defaults from './defaults';
+import type { ChainID } from '@/types/chains';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type {
   EventsContextInterface,
   EventsState,
   SortedChainEvents,
 } from './types';
-import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
 
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext
 );
-import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 
 export const useEvents = () => useContext(EventsContext);
 
@@ -29,17 +32,16 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     setStateWithRef(newEvents, setEventsState, eventsRef);
   };
 
-  // Removes an event item on a specified chain; compares address and event uid.
-  const dismissEvent = ({ who: { chain, address }, uid }: DismissEvent) => {
+  // Removes an event item on a specified chain; compares event uid.
+  const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
     const cloned: EventsState = new Map(eventsRef.current);
+    const chainId = data.chainId;
 
-    const filtered = cloned
-      .get(chain)
-      ?.filter((e) => !(e.uid === uid && e.who.address === address));
+    const filtered = cloned.get(chainId)?.filter((e) => !(e.uid === uid));
 
     filtered && filtered.length > 0
-      ? cloned.set(chain, filtered)
-      : cloned.has(chain) && cloned.delete(chain);
+      ? cloned.set(chainId, filtered)
+      : cloned.has(chainId) && cloned.delete(chainId);
 
     setEvents(cloned);
   };
@@ -47,7 +49,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
     const cloned = new Map(eventsRef.current);
-    let curEvents = cloned.get(event.who.chain);
+    const chainId = getEventChainId(event);
+
+    let curEvents = cloned.get(chainId);
 
     // Filter any duplicate events from current events array.
     curEvents !== undefined
@@ -55,7 +59,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       : (curEvents = [event]);
 
     // Add the event and set new state.
-    cloned.set(event.who.chain, curEvents);
+    cloned.set(chainId, curEvents);
 
     setEvents(cloned);
   };
