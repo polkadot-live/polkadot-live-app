@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import 'websocket-polyfill';
 import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
