@@ -32,7 +32,7 @@ export class EventsController {
             origin: 'chain',
             data: { chainId: entry.task.chainId } as EventChainData,
           },
-          title: `${entry.task.chainId}: New Timestamp`,
+          title: 'New Timestamp',
           subtitle: `${newVal}`,
           data: {
             timestamp: `${newVal}`,
@@ -53,7 +53,7 @@ export class EventsController {
             origin: 'chain',
             data: { chainId: entry.task.chainId } as EventChainData,
           },
-          title: `${entry.task.chainId}: Current Slot`,
+          title: 'Current Slot',
           subtitle: `${newVal}`,
           data: {
             timestamp: `${newVal}`,
@@ -68,13 +68,18 @@ export class EventsController {
        */
       case 'subscribe:query.system.account': {
         const address = entry.task.actionArgs!.at(0)!;
+        const accountName = entry.task.account?.name || ellipsisFn(address);
 
         return {
           uid: '',
           category: 'balances',
           who: {
             origin: 'account',
-            data: { address, chainId: entry.task.chainId } as EventAccountData,
+            data: {
+              accountName,
+              address,
+              chainId: entry.task.chainId,
+            } as EventAccountData,
           },
           title: `${ellipsisFn(address)}`,
           subtitle: `Free: ${newVal.free}, Reserved: ${newVal.reserved}, Nonce: ${newVal.nonce}`,
@@ -91,6 +96,7 @@ export class EventsController {
        */
       case 'subscribe:nominationPools:query.system.account': {
         const address = entry.task.account!.address;
+        const accountName = entry.task.account?.name || ellipsisFn(address);
         const chainId = entry.task.chainId;
         const pendingRewards =
           entry.task.account!.nominationPoolData?.poolPendingRewards;
@@ -100,7 +106,11 @@ export class EventsController {
           category: 'nominationPools',
           who: {
             origin: 'account',
-            data: { address, chainId: entry.task.chainId } as EventAccountData,
+            data: {
+              accountName,
+              address,
+              chainId: entry.task.chainId,
+            } as EventAccountData,
           },
           title: `${ellipsisFn(address)}: Unclaimed Nomination Pool Rewards`,
           subtitle: `${pendingRewards?.toString()} ${chainCurrency(chainId)}`,

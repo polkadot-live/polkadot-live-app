@@ -30,6 +30,12 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
 
+  // Extract account name from event.
+  const accountName =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).accountName
+      : chainId;
+
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -105,7 +111,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                 </div>
               </div>
               <div>
-                <h4>{title}</h4>
+                <h4>{`${accountName}: ${title}`}</h4>
                 <p>{subtitle}</p>
               </div>
             </section>

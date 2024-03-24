@@ -6,7 +6,6 @@ import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
-import { WindowsController } from '@/controller/main/WindowsController';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
@@ -14,6 +13,7 @@ import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+import { WindowsController } from '@/controller/main/WindowsController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -207,6 +207,23 @@ app.whenReady().then(async () => {
       'renderer:event:new',
       eventWithUid
     );
+  });
+
+  // Update a collection of event's associated account name.
+  ipcMain.on('app:events:update:accountName', (_, address, newName) => {
+    // Update events in storage.
+    const updated = EventsController.updateEventAccountName(address, newName);
+
+    // Update account's subscription tasks in storage.
+    SubscriptionsController.updateCachedAccountNameForTasks(address, newName);
+
+    // Report updated events to renderer to update state.
+    for (const event of updated) {
+      WindowsController.get('menu')?.webContents?.send(
+        'renderer:event:new',
+        event
+      );
+    }
   });
 
   // Remove event from store.

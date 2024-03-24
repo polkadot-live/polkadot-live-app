@@ -7,7 +7,7 @@ import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@w3ux/utils/types';
-import type { EventCallback } from '@/types/reporter';
+import type { EventAccountData, EventCallback } from '@/types/reporter';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -68,6 +68,52 @@ export class EventsController {
     debug('🔷 Event persisted (%o total in store)', events.length);
 
     return event;
+  }
+
+  /**
+   * @name updateEventAccountName
+   * @summary Update the associated account name for a particular event.
+   */
+  static updateEventAccountName(
+    address: string,
+    newName: string
+  ): EventCallback[] {
+    const all = EventsController.getEventsFromStore();
+
+    const updated = all.map((e: EventCallback) => {
+      if (e.who.origin === 'chain') {
+        return e;
+      }
+
+      // Extract address and account name from iterated event.
+      const { address: nextAddress, accountName } = e.who
+        .data as EventAccountData;
+
+      // Handle name change.
+      if (address === nextAddress && newName !== accountName) {
+        return {
+          ...e,
+          who: { ...e.who, data: { ...e.who.data, accountName: newName } },
+        };
+      } else {
+        return e;
+      }
+    });
+
+    // Persist updated events to store.
+    EventsController.persistEventsToStore(updated);
+
+    // Return the updated events.
+    const filtered = updated.filter((e: EventCallback) => {
+      if (e.who.origin === 'chain') {
+        return false;
+      }
+
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      return nextAddress === address ? true : false;
+    });
+
+    return filtered;
   }
 
   /**

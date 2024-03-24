@@ -18,7 +18,9 @@ export interface PreloadAPI {
   getPersistedAccounts: ApiGetPersistedAccounts;
   getPersistedAccountTasks: ApiGetPersistedAccountTasks;
   setPersistedAccounts: ApiSetPersistedAccounts;
+
   persistEvent: ApiPersistEvent;
+  updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
   getChainSubscriptions: ApiGetChainSubscriptions;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
@@ -129,3 +131,8 @@ type ApiUpdatePersistedAccountTask = (
 ) => Promise<void>;
 
 type ApiShowNotification = (content: { title: string; body: string }) => void;
+
+type ApiUpdateAccountNameForEventsAndTasks = (
+  address: string,
+  newName: string
+) => void;

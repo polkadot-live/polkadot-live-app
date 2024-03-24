@@ -3,7 +3,7 @@
 
 import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
-import type { AnyJson } from '@/types/misc';
+import type { AnyData, AnyJson } from '@/types/misc';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import type { FlattenedAccountData } from '@/types/accounts';
 
@@ -69,6 +69,27 @@ export class SubscriptionsController {
     (store as Record<string, AnyJson>).delete(
       ConfigMain.getSubscriptionsStorageKeyFor(address)
     );
+  }
+
+  /**
+   * @name updateCachedAccountNameForTasks
+   * @summary Called when an account is renamed.
+   */
+  static updateCachedAccountNameForTasks(address: string, newName: string) {
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+    const stored = (store as Record<string, AnyData>).get(key) as string;
+    const parsed: SubscriptionTask[] = JSON.parse(stored);
+
+    if (parsed.length === 0) {
+      return;
+    }
+
+    const updated = parsed.map((task) => ({
+      ...task,
+      account: { ...task.account, name: newName },
+    }));
+
+    (store as Record<string, AnyJson>).set(key, JSON.stringify(updated));
   }
 
   /*------------------------------------------------------------

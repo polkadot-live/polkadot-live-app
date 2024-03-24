@@ -90,6 +90,7 @@ export interface EventCallback {
 
 // Data to identify an account with an event.
 export interface EventAccountData {
+  accountName: string;
   address: string;
   chainId: ChainID;
 }

@@ -26,9 +26,9 @@ export const pushEventAndFilterDuplicates = (
   // Check if the new event replaces another persisted event.
   switch (event.category) {
     case 'balances': {
+      // Perform a filter if event is in balances category.
       const address = (event.who.data as EventAccountData).address;
 
-      // Perform a filter if event is in balances category.
       events = events.filter((e) => {
         if (e.category === 'balances' && e.data) {
           // We know that the event is of origin `account`.

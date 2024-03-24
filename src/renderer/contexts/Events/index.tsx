@@ -25,7 +25,7 @@ export const useEvents = () => useContext(EventsContext);
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
-  const eventsRef = useRef(events);
+  const eventsRef = useRef<EventsState>(events);
 
   // Set events state
   const setEvents = (newEvents: EventsState) => {
@@ -102,6 +102,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         // NOTE: Could pass both state and ref props
         events,
+        eventsRef,
         addEvent,
         dismissEvent,
         sortChainEvents,

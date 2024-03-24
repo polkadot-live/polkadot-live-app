@@ -140,6 +140,9 @@ export const useMessagePorts = () => {
 
       // Update react state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
+
+      // The updated events will be sent back to the renderer for updating React state.
+      window.myAPI.updateAccountNameForEventsAndTasks(address, newName);
     };
 
     /**
