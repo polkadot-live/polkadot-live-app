@@ -16,6 +16,7 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import type { HomeProps } from './types';
+import { ToastContainer } from 'react-toastify';
 
 export const Home = ({ setSection, setSource }: HomeProps) => (
   <>
@@ -124,6 +125,8 @@ export const Home = ({ setSection, setSource }: HomeProps) => (
           </ModalHardwareItem>
         </ModalConnectItem>
       </div>
+
+      <ToastContainer />
     </ContentWrapper>
   </>
 );

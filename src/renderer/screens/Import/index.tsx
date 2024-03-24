@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
-import type { AccountSource } from '@/types/accounts';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
+import type { AccountSource } from '@/types/accounts';
 
 export const Import: React.FC = () => {
   const [source, setSource] = useState<AccountSource | undefined>('ledger');

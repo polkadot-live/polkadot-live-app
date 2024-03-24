@@ -5,10 +5,11 @@ import type { AccountSource } from '@/types/accounts';
 import type { AnyFunction } from '@w3ux/utils/types';
 
 export interface AddressProps {
+  accountName: string;
   address: string;
   index: number;
-  setAddresses: AnyFunction;
   isImported: boolean;
+  setAddresses: AnyFunction;
   setSection: AnyFunction;
 }
 

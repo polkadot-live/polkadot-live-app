@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 // action content wrapper
 export const ContentWrapper = styled.div`
@@ -10,6 +11,12 @@ export const ContentWrapper = styled.div`
   overflow: hidden;
   position: relative;
   padding: 1rem 1.5rem;
+
+  .Toastify__toast {
+    font-size: 1.2rem;
+    color: var(--text-color-primary);
+    background-color: var(--background-menu);
+  }
 
   .svg-title {
     height: 0.85rem;

@@ -37,16 +37,19 @@ export const Manage = ({
               </h4>
             </div>
             <div className="items">
-              {addresses.map(({ address, index, isImported }: LocalAddress) => (
-                <Address
-                  key={address}
-                  setAddresses={setAddresses}
-                  address={address}
-                  index={index}
-                  isImported={isImported || false}
-                  setSection={setSection}
-                />
-              ))}
+              {addresses.map(
+                ({ address, index, isImported, name }: LocalAddress) => (
+                  <Address
+                    key={address}
+                    accountName={name}
+                    setAddresses={setAddresses}
+                    address={address}
+                    index={index}
+                    isImported={isImported || false}
+                    setSection={setSection}
+                  />
+                )
+              )}
             </div>
             <div className="more">
               <ButtonText

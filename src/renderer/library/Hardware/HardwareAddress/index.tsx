@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ButtonText } from '../../../kits/Buttons/ButtonText';
 import { unescape } from '@w3ux/utils';
-import { Flip, ToastContainer, toast } from 'react-toastify';
+import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
@@ -175,7 +175,6 @@ export const HardwareAddress = ({
           onClick={() => openDeleteHandler()}
         />
       </div>
-      <ToastContainer />
     </Wrapper>
   );
 };

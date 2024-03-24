@@ -37,10 +37,11 @@ export const Manage = ({
           </div>
           <div className="items">
             {addresses.map(
-              ({ address, index, isImported }: LedgerLocalAddress) => (
+              ({ address, index, isImported, name }: LedgerLocalAddress) => (
                 <Address
                   key={address}
                   address={address}
+                  accountName={name}
                   setAddresses={setAddresses}
                   index={index}
                   isImported={isImported}
