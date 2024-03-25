@@ -209,21 +209,19 @@ app.whenReady().then(async () => {
   });
 
   // Update a collection of event's associated account name.
-  ipcMain.on('app:events:update:accountName', (_, address, newName) => {
-    // Update events in storage.
-    const updated = EventsController.updateEventAccountName(address, newName);
+  ipcMain.handle(
+    'app:events:update:accountName',
+    async (_, address, newName) => {
+      // Update events in storage.
+      const updated = EventsController.updateEventAccountName(address, newName);
 
-    // Update account's subscription tasks in storage.
-    SubscriptionsController.updateCachedAccountNameForTasks(address, newName);
+      // Update account's subscription tasks in storage.
+      SubscriptionsController.updateCachedAccountNameForTasks(address, newName);
 
-    // Report updated events to renderer to update state.
-    for (const event of updated) {
-      WindowsController.get('menu')?.webContents?.send(
-        'renderer:event:new',
-        event
-      );
+      // Return updated events.
+      return updated;
     }
-  });
+  );
 
   // Remove event from store.
   ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>

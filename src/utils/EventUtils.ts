@@ -23,26 +23,28 @@ export const pushEventAndFilterDuplicates = (
   event: EventCallback,
   events: EventCallback[]
 ): EventCallback[] => {
-  // Check if the new event replaces another persisted event.
+  // Initially mark the event to push.
+  let push = true;
+
+  // Check if the new event is a duplicate of another persisted event.
   switch (event.category) {
     case 'balances': {
-      // Perform a filter if event is in balances category.
-      const address = (event.who.data as EventAccountData).address;
+      const { address } = event.who.data as EventAccountData;
 
       events = events.filter((e) => {
         if (e.category === 'balances' && e.data) {
           // We know that the event is of origin `account`.
-          const nextAddress = (e.who.data as EventAccountData).address;
+          const { address: nextAddress } = e.who.data as EventAccountData;
 
           if (
+            // Handle same balance.
             address === nextAddress &&
             event.data.balances.free === e.data.balances.free &&
             event.data.balances.reserved === e.data.balances.reserved &&
             event.data.balances.nonce === e.data.balances.nonce
           ) {
-            // Duplicate event found, filter out the older one.
-            return false;
-          } else {
+            // Duplicate event found, don't push new event.
+            push = false;
             return true;
           }
         }
@@ -55,7 +57,9 @@ export const pushEventAndFilterDuplicates = (
   }
 
   // Add event to array.
-  events.push(event);
+  if (push) {
+    events.push(event);
+  }
 
   return events;
 };

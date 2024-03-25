@@ -135,4 +135,4 @@ type ApiShowNotification = (content: { title: string; body: string }) => void;
 type ApiUpdateAccountNameForEventsAndTasks = (
   address: string,
   newName: string
-) => void;
+) => Promise<EventCallback[]>;

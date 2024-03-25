@@ -29,7 +29,7 @@ export const Home = () => {
   useEffect(() => {
     // Listen for event callbacks.
     window.myAPI.reportNewEvent((_: IpcRendererEvent, eventData: AnyJson) => {
-      addEvent(eventData);
+      addEvent({ ...eventData });
     });
 
     // Listen for dismiss callbacks.

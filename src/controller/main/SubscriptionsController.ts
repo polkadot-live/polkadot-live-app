@@ -78,8 +78,12 @@ export class SubscriptionsController {
   static updateCachedAccountNameForTasks(address: string, newName: string) {
     const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
     const stored = (store as Record<string, AnyData>).get(key) as string;
-    const parsed: SubscriptionTask[] = JSON.parse(stored);
 
+    if (!stored) {
+      return;
+    }
+
+    const parsed: SubscriptionTask[] = JSON.parse(stored);
     if (parsed.length === 0) {
       return;
     }
