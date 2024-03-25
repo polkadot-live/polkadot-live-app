@@ -30,6 +30,23 @@ export const SubscriptionsProvider = ({
     Map<string, SubscriptionTask[]>
   >(new Map());
 
+  // Update cached account name for an account's subscription tasks.
+  const updateAccountNameInTasks = (address: string, newName: string) => {
+    const tasks = accountSubscriptionsState.get(address);
+
+    if (!tasks) {
+      return;
+    }
+
+    setAccountSubscriptionsState((prev) => {
+      prev.set(
+        address,
+        tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } }))
+      );
+      return prev;
+    });
+  };
+
   // Set chain subscription tasks.
   const setChainSubscriptions = (
     subscriptions: Map<ChainID, SubscriptionTask[]>
@@ -103,6 +120,7 @@ export const SubscriptionsProvider = ({
         setAccountSubscriptions,
         getAccountSubscriptions,
         updateTask,
+        updateAccountNameInTasks,
       }}
     >
       {children}

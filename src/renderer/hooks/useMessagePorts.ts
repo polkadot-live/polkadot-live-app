@@ -23,9 +23,10 @@ import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
   const { setRenderedSubscriptions } = useManage();
+  const { setAccountSubscriptions, updateAccountNameInTasks } =
+    useSubscriptions();
 
   // Action window specific.
   const {
@@ -138,8 +139,11 @@ export const useMessagePorts = () => {
       account.name = newName;
       AccountsController.set(chainId, account);
 
-      // Update react state.
+      // Update account react state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
+
+      // Update subscription task react state.
+      updateAccountNameInTasks(address, newName);
 
       // The updated events will be sent back to the renderer for updating React state.
       window.myAPI.updateAccountNameForEventsAndTasks(address, newName);

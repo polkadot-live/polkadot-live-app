@@ -12,4 +12,5 @@ export interface SubscriptionsContextInterface {
   setAccountSubscriptions: (a: Map<string, SubscriptionTask[]>) => void;
   getAccountSubscriptions: (a: string) => SubscriptionTask[];
   updateTask: (type: string, task: SubscriptionTask, address?: string) => void;
+  updateAccountNameInTasks: (address: string, newName: string) => void;
 }
