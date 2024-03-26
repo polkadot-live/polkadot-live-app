@@ -14,7 +14,7 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import type { EventAccountData } from '@/types/reporter';
 import type { EventItemProps } from './types';
-import { getEventChainId } from '@/utils/EventUtils';
+import { getEventChainId, timestampToDate } from '@/utils/EventUtils';
 
 const FADE_TRANSITION = 200;
 
@@ -53,7 +53,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
 
   // Manually define event item height. Add extra height if actions are present.
   // This could be refactored into a helper function in the future.
-  const itemHeight = actions.length ? '9.25rem' : '6.25rem';
+  const itemHeight = actions.length ? '12.5rem' : '8.75rem';
 
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event
   // _after_ the fade-out ensures there will be no race conditions. E.g. the UI rendering and
@@ -90,6 +90,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             ease: 'easeInOut',
           }}
         >
+          <span>{timestampToDate(event.timestamp)}</span>
           {/* Dismiss button */}
           <button
             type="button"
@@ -115,7 +116,8 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                 </div>
               </div>
               <div>
-                <h4>{`${accountName}: ${title}`}</h4>
+                <h4>{`${accountName}`}</h4>
+                <h5>{title}</h5>
                 <p>{subtitle}</p>
               </div>
             </section>

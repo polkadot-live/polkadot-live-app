@@ -100,3 +100,24 @@ export const pushUniqueEvent = (
 
   return events;
 };
+/**
+ * @name timestampToDate
+ * @summary Format a timestamp into a date to render on an event item.
+ */
+export const timestampToDate = (timestamp: number): string => {
+  // Convert timestamp to milliseconds
+  const milliseconds = timestamp * 1000;
+
+  // Create a new Date object
+  const date = new Date(milliseconds);
+
+  // Get day, month, and year
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // Note: Months are zero-based
+  const year = date.getFullYear();
+
+  // Format day, month, and year as DD/MM/YYYY
+  const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+
+  return formattedDate;
+};

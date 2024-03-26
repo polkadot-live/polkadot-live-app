@@ -33,7 +33,7 @@ export class EventsController {
             origin: 'chain',
             data: { chainId: entry.task.chainId } as EventChainData,
           },
-          title: 'New Timestamp',
+          title: 'Current Timestamp',
           subtitle: `${newVal}`,
           data: {
             timestamp: `${newVal}`,
@@ -70,6 +70,7 @@ export class EventsController {
       case 'subscribe:query.system.account': {
         const address = entry.task.actionArgs!.at(0)!;
         const accountName = entry.task.account?.name || ellipsisFn(address);
+        const { chainId } = entry.task;
 
         return {
           uid: '',
@@ -82,8 +83,8 @@ export class EventsController {
               chainId: entry.task.chainId,
             } as EventAccountData,
           },
-          title: `${ellipsisFn(address)}`,
-          subtitle: `Free: ${newVal.free}, Reserved: ${newVal.reserved}, Nonce: ${newVal.nonce}`,
+          title: 'Current Balance',
+          subtitle: `${newVal.free} ${chainCurrency(chainId)}`,
           data: {
             balances: newVal,
           },
@@ -121,7 +122,7 @@ export class EventsController {
               chainId: entry.task.chainId,
             } as EventAccountData,
           },
-          title: `${ellipsisFn(address)}: Unclaimed Nomination Pool Rewards`,
+          title: 'Unclaimed Nomination Pool Rewards',
           subtitle: `${pendingRewardsUnit.toString()} ${chainCurrency(chainId)}`,
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
