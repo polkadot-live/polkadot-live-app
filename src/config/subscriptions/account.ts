@@ -19,38 +19,38 @@ export const accountTasks: SubscriptionTask[] = [
     action: 'subscribe:query.system.account',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Transfers (Polkadot)',
+    label: 'Transfers',
   },
   {
     action: 'subscribe:nominationPools:query.system.account',
     chainId: 'Polkadot',
     status: 'disable',
-    label: 'Nomination Pool Rewards (Polkadot)',
+    label: 'Nomination Pool Rewards',
   },
   // Westend
   {
     action: 'subscribe:query.system.account',
     chainId: 'Westend',
     status: 'disable',
-    label: 'Transfers (Westend)',
+    label: 'Transfers',
   },
   {
     action: 'subscribe:nominationPools:query.system.account',
     chainId: 'Westend',
     status: 'disable',
-    label: 'Nomination Pool Rewards (Westend)',
+    label: 'Nomination Pool Rewards',
   },
   // Kusama
   {
     action: 'subscribe:query.system.account',
     chainId: 'Kusama',
     status: 'disable',
-    label: 'Transfers (Kusama)',
+    label: 'Transfers',
   },
   {
     action: 'subscribe:nominationPools:query.system.account',
     chainId: 'Kusama',
     status: 'disable',
-    label: 'Nomination Pool Rewards (Kusama)',
+    label: 'Nomination Pool Rewards',
   },
 ];
