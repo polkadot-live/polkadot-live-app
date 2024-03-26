@@ -12,4 +12,5 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   setAccountSubscriptions: () => {},
   getAccountSubscriptions: () => [],
   updateTask: () => {},
+  updateAccountNameInTasks: () => {},
 };

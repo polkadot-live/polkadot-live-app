@@ -47,6 +47,7 @@ export interface ImportLedgerManageProps {
 }
 
 export interface LedgerAddressProps {
+  accountName: string;
   address: string;
   index: number;
   isImported: boolean;

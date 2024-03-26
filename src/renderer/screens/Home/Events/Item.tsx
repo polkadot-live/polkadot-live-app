@@ -7,18 +7,34 @@ import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
 import { useTooltip } from '@app/contexts/Tooltip';
 import { Identicon } from '@app/library/Identicon';
 import { EventItem } from './Wrappers';
-import type { EventItemProps } from './types';
 import { useEvents } from '@/renderer/contexts/Events';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import type { EventAccountData } from '@/types/reporter';
+import type { EventItemProps } from './types';
+import { getEventChainId } from '@/utils/EventUtils';
 
 const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
   const { uid, title, subtitle, actions, data } = event;
-  const { address, chain } = event.who;
+
+  // Extract address from event.
+  const address =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).address
+      : 'Chain Event';
+
+  // Extract chain ID from event.
+  const chainId = getEventChainId(event);
+
+  // Extract account name from event.
+  const accountName =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).accountName
+      : chainId;
 
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -44,7 +60,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
   // removing the event before_ the event transition is finished.
   useEffect(() => {
     if (display === 'out') {
-      dismissEvent({ uid, who: { address, chain } });
+      dismissEvent({ uid, who: event.who });
     }
   }, [display]);
 
@@ -95,7 +111,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                 </div>
               </div>
               <div>
-                <h4>{title}</h4>
+                <h4>{`${accountName}: ${title}`}</h4>
                 <p>{subtitle}</p>
               </div>
             </section>
@@ -124,7 +140,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                           await window.myAPI.openWindow('action', {
                             uid,
                             action: `${uid}_${uri}`,
-                            chain,
+                            chainId,
                             address,
                             data: JSON.stringify(data),
                           });

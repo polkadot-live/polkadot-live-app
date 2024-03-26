@@ -1,73 +1,70 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { setStateWithRef } from '@w3ux/utils';
-import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import {
+  pushEventAndFilterDuplicates,
+  getEventChainId,
+} from '@/utils/EventUtils';
 import * as defaults from './defaults';
+import type { ChainID } from '@/types/chains';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type {
   EventsContextInterface,
   EventsState,
   SortedChainEvents,
 } from './types';
-import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
 
 export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext
 );
-import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
 
 export const useEvents = () => useContext(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   // Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
-  const eventsRef = useRef(events);
 
-  // Set events state
-  const setEvents = (newEvents: EventsState) => {
-    setStateWithRef(newEvents, setEventsState, eventsRef);
-  };
+  // Removes an event item on a specified chain; compares event uid.
+  const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
+    setEventsState((prev) => {
+      const cloned: EventsState = new Map(prev);
+      const chainId = data.chainId;
+      const filtered = cloned.get(chainId)?.filter((e) => !(e.uid === uid));
 
-  // Removes an event item on a specified chain; compares address and event uid.
-  const dismissEvent = ({ who: { chain, address }, uid }: DismissEvent) => {
-    const cloned: EventsState = new Map(eventsRef.current);
+      filtered && filtered.length > 0
+        ? cloned.set(chainId, filtered)
+        : cloned.has(chainId) && cloned.delete(chainId);
 
-    const filtered = cloned
-      .get(chain)
-      ?.filter((e) => !(e.uid === uid && e.who.address === address));
-
-    filtered && filtered.length > 0
-      ? cloned.set(chain, filtered)
-      : cloned.has(chain) && cloned.delete(chain);
-
-    setEvents(cloned);
+      return cloned;
+    });
   };
 
   // Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
-    const cloned = new Map(eventsRef.current);
-    let curEvents = cloned.get(event.who.chain);
+    setEventsState((prev) => {
+      const cloned = new Map(prev);
+      const chainId = getEventChainId(event);
+      let curEvents = cloned.get(chainId);
 
-    // Filter any duplicate events from current events array.
-    curEvents !== undefined
-      ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
-      : (curEvents = [event]);
+      curEvents !== undefined
+        ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
+        : (curEvents = [event]);
 
-    // Add the event and set new state.
-    cloned.set(event.who.chain, curEvents);
-
-    setEvents(cloned);
+      cloned.set(chainId, curEvents);
+      return cloned;
+    });
   };
 
   // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
-    if (!eventsRef.current.has(chain)) {
+    if (!events.has(chain)) {
       return new Map();
     }
 
     // Get all events for the chain ID.
-    const allEvents = eventsRef.current.get(chain)!;
+    const cloned = new Map(events);
+    const allEvents = cloned.get(chain)!;
 
     // Store events by category.
     const sortedMap = new Map<string, EventCallback[]>();
@@ -93,14 +90,35 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     return sortedMap;
   };
 
+  // Update events with a new cached account name.
+  const updateEventsOnAccountRename = (
+    updated: EventCallback[],
+    chainId: ChainID
+  ) => {
+    setEventsState((prev) => {
+      const cloned = new Map(prev);
+      let curEvents = cloned.get(chainId);
+
+      if (curEvents !== undefined) {
+        for (const event of updated) {
+          curEvents = curEvents.map((e) => (e.uid === event.uid ? event : e));
+        }
+        cloned.set(chainId, curEvents);
+        return cloned;
+      } else {
+        return prev;
+      }
+    });
+  };
+
   return (
     <EventsContext.Provider
       value={{
-        // NOTE: Could pass both state and ref props
         events,
         addEvent,
         dismissEvent,
         sortChainEvents,
+        updateEventsOnAccountRename,
       }}
     >
       {children}

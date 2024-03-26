@@ -61,6 +61,12 @@ export const API: PreloadAPI = {
   persistEvent: (event: EventCallback) =>
     ipcRenderer.send('app:event:persist', event),
 
+  updateAccountNameForEventsAndTasks: async (
+    address: string,
+    newName: string
+  ): Promise<EventCallback[]> =>
+    await ipcRenderer.invoke('app:events:update:accountName', address, newName),
+
   getChainSubscriptions: async () =>
     await ipcRenderer.invoke('app:subscriptions:chain:get'),
 

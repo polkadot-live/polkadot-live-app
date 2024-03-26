@@ -4,7 +4,6 @@
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
 import {
-  getLocalAccountName,
   postRenameAccount,
   renameLocalAccount,
 } from '@/renderer/utils/ImportUtils';
@@ -17,20 +16,18 @@ import type { AddressProps } from '../Addresses/types';
 export const Address = ({
   address,
   index,
+  accountName,
   setAddresses,
   isImported,
   setSection,
 }: AddressProps) => {
   // State for account name.
-  const [accountName, setAccountName] = useState<string>(
-    getLocalAccountName(address, 'vault')
-  );
-
+  const [accountNameState, setAccountNameState] = useState<string>(accountName);
   const { openOverlayWith } = useOverlay();
 
   // Handler to rename an account.
   const renameHandler = (who: string, newName: string) => {
-    setAccountName(newName);
+    setAccountNameState(newName);
     renameLocalAccount(who, newName, 'vault');
 
     // Post message to main renderer to process the account rename.
@@ -43,7 +40,7 @@ export const Address = ({
       address={address}
       isImported={isImported}
       index={index}
-      accountName={accountName}
+      accountName={accountNameState}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
         openOverlayWith(
@@ -60,7 +57,7 @@ export const Address = ({
           <Confirm
             setAddresses={setAddresses}
             address={address}
-            name={accountName}
+            name={accountNameState}
             source="vault"
           />,
           'small'

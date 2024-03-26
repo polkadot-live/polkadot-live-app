@@ -11,7 +11,7 @@ import type { ActionMeta } from '@/types/tx';
 import type { HeaderProps } from './types';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 
-export const Header = ({ showMenu, appLoading }: HeaderProps) => {
+export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
 
   // Determine active window by pathname.

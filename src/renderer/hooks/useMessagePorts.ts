@@ -16,6 +16,7 @@ import { SubscriptionsController } from '@/controller/renderer/SubscriptionsCont
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useChains } from '@app/contexts/Chains';
+import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
@@ -23,9 +24,11 @@ import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { setAccountSubscriptions } = useSubscriptions();
   const { addChain } = useChains();
+  const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
+  const { setAccountSubscriptions, updateAccountNameInTasks } =
+    useSubscriptions();
 
   // Action window specific.
   const {
@@ -124,7 +127,7 @@ export const useMessagePorts = () => {
      * @name handleRenameAccount
      * @summary Rename an account managed by the accounts controller and update state.
      */
-    const handleRenameAccount = (ev: MessageEvent) => {
+    const handleRenameAccount = async (ev: MessageEvent) => {
       const { address, chainId, newName } = ev.data.data;
       const account = AccountsController.get(chainId, address);
 
@@ -138,8 +141,21 @@ export const useMessagePorts = () => {
       account.name = newName;
       AccountsController.set(chainId, account);
 
-      // Update react state.
+      // Update account react state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
+
+      // Update subscription task react state.
+      updateAccountNameInTasks(address, newName);
+
+      // The updated events will be sent back to the renderer for updating React state.
+      const updated = await window.myAPI.updateAccountNameForEventsAndTasks(
+        address,
+        newName
+      );
+
+      if (updated && updated.length > 0) {
+        updateEventsOnAccountRename(updated, chainId);
+      }
     };
 
     /**
@@ -230,7 +246,7 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'renderer:account:rename': {
-                handleRenameAccount(ev);
+                await handleRenameAccount(ev);
                 break;
               }
               default: {
