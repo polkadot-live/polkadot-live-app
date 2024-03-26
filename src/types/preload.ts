@@ -126,8 +126,8 @@ type ApiGetChainSubscriptions = () => Promise<string>;
 type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
 
 type ApiUpdatePersistedAccountTask = (
-  task: SubscriptionTask,
-  account: FlattenedAccountData
+  serializedTask: string,
+  serializedAccount: string
 ) => Promise<void>;
 
 type ApiShowNotification = (content: { title: string; body: string }) => void;

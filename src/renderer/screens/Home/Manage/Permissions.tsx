@@ -99,8 +99,8 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
         // Update account tasks in store.
         await window.myAPI.updatePersistedAccountTask(
-          newWrapped.tasks[0],
-          account.flatten()
+          JSON.stringify(newWrapped.tasks[0]),
+          JSON.stringify(account.flatten())
         );
 
         break;

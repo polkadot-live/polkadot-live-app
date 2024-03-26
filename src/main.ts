@@ -279,7 +279,9 @@ app.whenReady().then(async () => {
   // Update a persisted account subscription task.
   ipcMain.handle(
     'app:subscriptions:account:update',
-    async (_, task: SubscriptionTask, account: FlattenedAccountData) => {
+    async (_, serializedTask: string, serializedAccount: string) => {
+      const task: SubscriptionTask = JSON.parse(serializedTask);
+      const account: FlattenedAccountData = JSON.parse(serializedAccount);
       SubscriptionsController.updateAccountTaskInStore(task, account);
     }
   );
