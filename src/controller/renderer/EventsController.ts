@@ -1,8 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chainCurrency } from '@/config/chains';
-import { ellipsisFn } from '@w3ux/utils';
+import { chainCurrency, chainUnits } from '@/config/chains';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { getUnixTime } from 'date-fns';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
@@ -11,6 +11,7 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
+import BigNumber from 'bignumber.js';
 
 export class EventsController {
   /**
@@ -95,11 +96,19 @@ export class EventsController {
        * subscribe:nominationPools:query.system.account
        */
       case 'subscribe:nominationPools:query.system.account': {
-        const address = entry.task.account!.address;
-        const accountName = entry.task.account?.name || ellipsisFn(address);
-        const chainId = entry.task.chainId;
-        const pendingRewards =
-          entry.task.account!.nominationPoolData?.poolPendingRewards;
+        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        // Data attached to event.
+        const { address, name: accountName } = entry.task.account;
+        const { chainId } = entry.task;
+        const { poolPendingRewards } = entry.task.account.nominationPoolData;
+
+        const pendingRewardsUnit = planckToUnit(
+          new BigNumber(poolPendingRewards.toString()),
+          chainUnits(chainId)
+        );
 
         return {
           uid: '',
@@ -113,8 +122,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: `${ellipsisFn(address)}: Unclaimed Nomination Pool Rewards`,
-          subtitle: `${pendingRewards?.toString()} ${chainCurrency(chainId)}`,
-          data: { pendingRewards: pendingRewards?.toString() },
+          subtitle: `${pendingRewardsUnit.toString()} ${chainCurrency(chainId)}`,
+          data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           actions: [
             {

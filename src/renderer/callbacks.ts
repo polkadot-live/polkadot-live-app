@@ -3,9 +3,8 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/renderer/EventsController';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
@@ -179,31 +178,30 @@ export class Callbacks {
       return;
     }
 
-    // Get current pending rewards.
-    const { poolPendingRewards } = account.nominationPoolData;
-
     // Fetch pending rewards for the account.
-    const pendingRewardsResult =
+    const pendingRewardsPlanck: BigNumber =
       await api.call.nominationPoolsApi.pendingRewards(account.address);
 
-    const fetchedPendingRewards = planckToUnit(
-      new BigNumber(pendingRewardsResult.toString()),
-      chainUnits(chainId)
-    );
-
-    // Return if pending rewards has not changed for the account.
-    if (fetchedPendingRewards.eq(poolPendingRewards)) {
+    // Return if pending rewards is zero.
+    if (pendingRewardsPlanck.eq(0)) {
       return;
     }
 
     // Add nomination pool data to account.
     account.nominationPoolData = {
       ...account.nominationPoolData,
-      poolPendingRewards: fetchedPendingRewards,
+      poolPendingRewards: pendingRewardsPlanck,
     };
 
     // Update account data in controller.
     AccountsController.set(chainId, account);
+
+    // Update entry account data.
+    entry.task.account = account.flatten();
+
+    // We need to send a new event if the account has pending rewards.
+    // Another process can then check if the event should be rendererd,
+    // or whether it's a duplicate.
 
     // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, {});

@@ -66,6 +66,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
 
   return (
     <AnimatePresence>
+      {/* Event item wrapper */}
       {display !== 'out' && (
         <EventItem
           whileHover={{ scale: 1.01 }}
@@ -89,12 +90,15 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             ease: 'easeInOut',
           }}
         >
+          {/* Dismiss button */}
           <button
             type="button"
             onClick={async () => await handleDismissEvent()}
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
+
+          {/* Main content */}
           <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>
             <section>
               <div>
@@ -115,6 +119,8 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                 <p>{subtitle}</p>
               </div>
             </section>
+
+            {/* Render actions */}
             {actions.length > 0 && (
               <section className="actions">
                 {actions.map(({ uri, text }, i) => {
