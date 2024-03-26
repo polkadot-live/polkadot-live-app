@@ -20,7 +20,8 @@ export const MenuWrapper = styled.div`
   padding: 0.45rem 0;
   overflow: hidden;
 
-  > button {
+  > button,
+  > button:disabled {
     font-family: InterSemiBold, sans-serif;
     width: 100%;
     display: flex;
@@ -30,6 +31,13 @@ export const MenuWrapper = styled.div`
     transition: background 0.15s;
     &:hover {
       background: var(--button-hover-background);
+    }
+  }
+
+  > button:disabled {
+    color: #636363;
+    &:hover {
+      background: inherit;
     }
   }
 `;

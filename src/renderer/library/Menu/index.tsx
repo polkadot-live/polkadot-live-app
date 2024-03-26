@@ -51,11 +51,21 @@ export const Menu = () => {
           </button>
           <button
             type="button"
+            disabled
             onClick={() => {
-              toggleMenu(false);
+              console.log('TODO: Open import data.');
             }}
           >
-            Settings
+            Import Data
+          </button>
+          <button
+            type="button"
+            disabled
+            onClick={() => {
+              console.log('TODO: Open export data.');
+            }}
+          >
+            Export Data
           </button>
           <Separator />
           <button
