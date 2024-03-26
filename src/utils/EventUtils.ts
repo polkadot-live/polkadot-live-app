@@ -3,23 +3,21 @@
 
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
+import type BigNumber from 'bignumber.js';
 
 /**
  * @name getEventChainId
  * @summary Get the associated chain ID for an event.
  */
-// Utility to get the event's associated ChainID.
 export const getEventChainId = (event: EventCallback): ChainID =>
   event.who.data.chainId;
 
 /**
- * @name pushEventAndFilterDuplicates
- * @summary Pushes an event to an array of the same type, and filters out any previous
- * events that are considered redundant or duplicates.
- *
+ * @name pushUniqueEvent
+ * @summary Throws away a new event if a duplicate event is already exists.
  * This function is called for both React state and when persisting events.
  */
-export const pushEventAndFilterDuplicates = (
+export const pushUniqueEvent = (
   event: EventCallback,
   events: EventCallback[]
 ): EventCallback[] => {
@@ -28,35 +26,74 @@ export const pushEventAndFilterDuplicates = (
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.category) {
+    /**
+     * The new event is considered a duplicate if another event has
+     * matching address and balance data.
+     */
     case 'balances': {
-      const { address } = event.who.data as EventAccountData;
+      interface Target {
+        balances: {
+          free: BigNumber;
+          reserved: BigNumber;
+          nonce: BigNumber;
+        };
+      }
 
-      events = events.filter((e) => {
+      const { address } = event.who.data as EventAccountData;
+      const { balances }: Target = event.data;
+
+      events.forEach((e) => {
         if (e.category === 'balances' && e.data) {
-          // We know that the event is of origin `account`.
           const { address: nextAddress } = e.who.data as EventAccountData;
+          const { balances: nextBalances }: Target = e.data;
 
           if (
-            // Handle same balance.
             address === nextAddress &&
-            event.data.balances.free === e.data.balances.free &&
-            event.data.balances.reserved === e.data.balances.reserved &&
-            event.data.balances.nonce === e.data.balances.nonce
+            balances.free === nextBalances.free &&
+            balances.reserved === nextBalances.reserved &&
+            balances.nonce === nextBalances.nonce
           ) {
-            // Duplicate event found, don't push new event.
             push = false;
-            return true;
           }
         }
-        return true;
       });
+
+      break;
+    }
+
+    /**
+     * The new event is considered a duplicate if another event has
+     * a matching address and pending rewards balance.
+     */
+    case 'nominationPools': {
+      interface Target {
+        pendingRewards: string;
+      }
+
+      const { address } = event.who.data as EventAccountData;
+      const { pendingRewards }: Target = event.data;
+
+      events.forEach((e) => {
+        if (e.category === 'nominationPools' && e.data) {
+          const { address: nextAddress } = e.who.data as EventAccountData;
+          const { pendingRewards: nextPendingRewards }: Target = e.data;
+
+          if (
+            address === nextAddress &&
+            pendingRewards === nextPendingRewards
+          ) {
+            push = false;
+          }
+        }
+      });
+
       break;
     }
     default:
       break;
   }
 
-  // Add event to array.
+  // Add event to array if it's unique.
   if (push) {
     events.push(event);
   }

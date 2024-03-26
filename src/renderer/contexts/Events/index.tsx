@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useContext, useState } from 'react';
-import {
-  pushEventAndFilterDuplicates,
-  getEventChainId,
-} from '@/utils/EventUtils';
+import { pushUniqueEvent, getEventChainId } from '@/utils/EventUtils';
 import * as defaults from './defaults';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
@@ -48,7 +45,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       let curEvents = cloned.get(chainId);
 
       curEvents !== undefined
-        ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
+        ? (curEvents = pushUniqueEvent(event, curEvents))
         : (curEvents = [event]);
 
       cloned.set(chainId, curEvents);

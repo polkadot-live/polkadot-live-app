@@ -3,7 +3,7 @@
 
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
+import { pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@w3ux/utils/types';
@@ -58,7 +58,7 @@ export class EventsController {
       event.uid = getUid();
     }
 
-    const events = pushEventAndFilterDuplicates(
+    const events = pushUniqueEvent(
       event,
       EventsController.getEventsFromStore()
     );
