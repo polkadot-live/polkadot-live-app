@@ -1,15 +1,12 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { faTimes, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
-import type { ActionMeta } from '@/types/tx';
 import type { HeaderProps } from './types';
-import { AccountsController } from '@/controller/renderer/AccountsController';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -24,41 +21,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  // Temporary click handler to open action window.
-  const handleOpenActions = () => {
-    window.myAPI.openWindow('action');
-
-    // Send action metadata to `action` window.
-    const account = AccountsController.get(
-      'Westend',
-      '5HGXNKKQxfkENeE7GjPy3KaAcqYUmMxjzDai5ptYM5cSBJxm'
-    );
-
-    if (account) {
-      ConfigRenderer.portToAction.postMessage({
-        task: 'action:init',
-        data: {
-          uid: 'dummyuid',
-          from: '5HGXNKKQxfkENeE7GjPy3KaAcqYUmMxjzDai5ptYM5cSBJxm',
-          action: 'nominationPools_pendingRewards_bond',
-          accountName: 'Test Account',
-          balance: JSON.stringify(account.balance),
-          pallet: 'nominationPools',
-          method: 'bondExtra',
-          chainId: 'Westend',
-          args: [{ FreeBalance: '10000000000000' }],
-          account: account.flatten(),
-          // Misc data, currently not used
-          data: {
-            extra: 10000000000000,
-          },
-        } as ActionMeta,
-      });
-    } else {
-      console.log('Account not found.');
-    }
-  };
-
   return (
     <HeaderWrapper>
       <div />
@@ -68,7 +30,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <button
               type="button"
               disabled={appLoading}
-              onClick={() => handleOpenActions()}
+              onClick={() => console.log('TODO')}
             >
               <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
             </button>
