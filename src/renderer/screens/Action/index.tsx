@@ -51,7 +51,7 @@ export const Action = () => {
     } catch (err) {
       console.log('Warning: Action port not received yet: renderer:tx:init');
     }
-  }, [from, nonce]);
+  }, [from, nonce, pallet, method]);
 
   // Auto transaction submission and event dismiss when signature updates.
   useEffect(() => {
@@ -153,9 +153,11 @@ export const Action = () => {
 
           {action === 'nominationPools_pendingRewards_bond' && (
             <>
-              <h3>Bond Rewards</h3>
+              <h3>Compound Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.extra.toString()} DOT`} />
+                <ActionItem
+                  text={`Compound ${actionData.extra.toString()} DOT`}
+                />
                 <p>
                   Once submitted, your rewards will be bonded back into the
                   pool. You own these additional bonded funds and will be able
@@ -167,7 +169,7 @@ export const Action = () => {
 
           {action === 'nominationPools_pendingRewards_withdraw' && (
             <>
-              <h3>Withdraw Rewards</h3>
+              <h3>Claim Rewards</h3>
               <div className="body">
                 <ActionItem text={`Claim ${actionData.extra} DOT`} />
                 <p>

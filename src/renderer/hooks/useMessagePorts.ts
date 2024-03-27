@@ -164,6 +164,7 @@ export const useMessagePorts = () => {
      */
     const handleInitAction = (ev: MessageEvent) => {
       const data: ActionMeta = JSON.parse(ev.data.data);
+      console.log(data);
       setActionMeta(data);
     };
 

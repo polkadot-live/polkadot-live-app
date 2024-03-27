@@ -149,7 +149,7 @@ export class EventsController {
                 pallet: 'nominationPools',
                 method: 'bondExtra',
                 chainId,
-                args: [{ extra: 'Rewards' }],
+                args: [{ Rewards: null }],
                 data: {
                   extra: pendingRewardsUnit.toNumber(),
                 },
@@ -158,6 +158,19 @@ export class EventsController {
             {
               uri: 'withdraw',
               text: 'Withdraw',
+              txMeta: {
+                uid: '',
+                from: address,
+                accountName,
+                action: 'nominationPools_pendingRewards_withdraw',
+                pallet: 'nominationPools',
+                method: 'claimPayout',
+                chainId,
+                args: [],
+                data: {
+                  extra: pendingRewardsUnit.toNumber(),
+                },
+              } as ActionMeta,
             },
             {
               uri: `https://staking.polkadot.network/#/pools?n=${chainId}&a=${address}`,
