@@ -10,6 +10,7 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
+import type { ChainID } from './types/chains';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -66,6 +67,12 @@ export const API: PreloadAPI = {
     newName: string
   ): Promise<EventCallback[]> =>
     await ipcRenderer.invoke('app:events:update:accountName', address, newName),
+
+  markEventStale: (uid: string, chainId: ChainID) =>
+    ipcRenderer.send('app:event:stale', uid, chainId),
+
+  reportStaleEvent: (callback) =>
+    ipcRenderer.on('renderer:event:stale', callback),
 
   getChainSubscriptions: async () =>
     await ipcRenderer.invoke('app:subscriptions:chain:get'),

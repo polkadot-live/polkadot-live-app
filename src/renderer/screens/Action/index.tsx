@@ -3,7 +3,7 @@
 
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { chainIcon } from '@/config/chains';
+import { chainCurrency, chainIcon } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
@@ -46,7 +46,7 @@ export const Action = () => {
     try {
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:init',
-        data: { chainId, from, nonce, pallet, method, args },
+        data: { chainId, from, nonce, pallet, method, args, uid },
       });
     } catch (err) {
       console.log('Warning: Action port not received yet: renderer:tx:init');
@@ -63,12 +63,6 @@ export const Action = () => {
           data: {
             signature: getTxSignature(),
           },
-        });
-
-        // Update event show that it is stale and an action has been executed.
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:event:update:stale',
-          data: { uid, who: { chain: chainId, address: from } },
         });
       } catch (err) {
         console.log(
@@ -156,7 +150,7 @@ export const Action = () => {
               <h3>Compound Rewards</h3>
               <div className="body">
                 <ActionItem
-                  text={`Compound ${actionData.extra.toString()} DOT`}
+                  text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
                 />
                 <p>
                   Once submitted, your rewards will be bonded back into the
@@ -171,7 +165,9 @@ export const Action = () => {
             <>
               <h3>Claim Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.extra} DOT`} />
+                <ActionItem
+                  text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
+                />
                 <p>
                   Withdrawing rewards will immediately transfer them to your
                   account as free balance.

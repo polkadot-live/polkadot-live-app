@@ -11,14 +11,15 @@ import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
-import type { AnyJson } from '@/types/misc';
-import type { IpcRendererEvent } from 'electron';
-import type { DismissEvent } from '@/types/reporter';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
+import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { DismissEvent } from '@/types/reporter';
+import type { IpcRendererEvent } from 'electron';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
-  const { addEvent, dismissEvent } = useEvents();
+  const { addEvent, dismissEvent, markStaleEvent } = useEvents();
 
   // Set up app initialization and online/offline switching handlers.
   const { appLoading } = useInitIpcHandlers();
@@ -31,6 +32,13 @@ export const Home = () => {
     window.myAPI.reportNewEvent((_: IpcRendererEvent, eventData: AnyJson) => {
       addEvent({ ...eventData });
     });
+
+    // Listen for stale events.
+    window.myAPI.reportStaleEvent(
+      (_: IpcRendererEvent, uid: string, chainId: ChainID) => {
+        markStaleEvent(uid, chainId);
+      }
+    );
 
     // Listen for dismiss callbacks.
     window.myAPI.reportDismissEvent(

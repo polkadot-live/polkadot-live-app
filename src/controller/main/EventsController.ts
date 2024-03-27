@@ -135,6 +135,21 @@ export class EventsController {
   }
 
   /**
+   * @name persistStaleEvent
+   * @summary Mark an event stale and persist it to store.
+   */
+  static persistStaleEvent(uid: string) {
+    const stored = EventsController.getEventsFromStore();
+
+    const updated = stored.map((e) => {
+      e.uid === uid && (e.stale = true);
+      return e;
+    });
+
+    EventsController.persistEventsToStore(updated);
+  }
+
+  /**
    * @name getEventsFromStore
    * @summary Utility to get parsed events array from the store.
    */

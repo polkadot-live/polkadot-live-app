@@ -173,7 +173,7 @@ export const useMessagePorts = () => {
      * @summary Initialize extrinsics controller with tx data.
      */
     const handleActionTxInit = async (ev: MessageEvent) => {
-      const { chainId, from, nonce, pallet, method, args } = ev.data.data;
+      const { chainId, from, nonce, pallet, method, args, uid } = ev.data.data;
 
       await ExtrinsicsController.new(
         chainId,
@@ -181,7 +181,8 @@ export const useMessagePorts = () => {
         nonce,
         pallet,
         method,
-        args
+        args,
+        uid
       );
     };
 
@@ -289,12 +290,6 @@ export const useMessagePorts = () => {
               case 'renderer:tx:reset': {
                 console.log('> handle renderer:tx:reset');
                 ExtrinsicsController.reset();
-                break;
-              }
-              // TODO: Implement stale events (where action has been executed)
-              case 'renderer:event:update:stale': {
-                console.log('> handle renderer:event:update:stale');
-                console.log(ev.data.data);
                 break;
               }
               default: {

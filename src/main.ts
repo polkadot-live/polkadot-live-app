@@ -233,6 +233,19 @@ app.whenReady().then(async () => {
     reportDismissEvent(eventData);
   });
 
+  // Mark event stale.
+  ipcMain.on('app:event:stale', (_, uid: string, chainId: ChainID) => {
+    // Update persisted event as stale.
+    EventsController.persistStaleEvent(uid);
+
+    // Send message to main renderer to update event in react state.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:stale',
+      uid,
+      chainId
+    );
+  });
+
   /**
    * Online status
    */

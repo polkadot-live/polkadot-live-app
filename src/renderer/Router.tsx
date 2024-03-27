@@ -7,13 +7,13 @@ import { Tooltip } from '@app/library/Tooltip';
 import { useEffect } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
-import { Home } from '@app/screens/Home';
+import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { useOnlineStatus } from '@app/contexts/OnlineStatus';
+import { useMessagePorts } from '@app/hooks/useMessagePorts';
 import { useTheme } from 'styled-components';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
-import { useMessagePorts } from '@app/hooks/useMessagePorts';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();

@@ -53,6 +53,26 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  // Mark an event as stale.
+  const markStaleEvent = (uid: string, chainId: ChainID) => {
+    setEventsState((prev) => {
+      const cloned = new Map(prev);
+      let curEvents = cloned.get(chainId);
+
+      if (!curEvents) {
+        return cloned;
+      }
+
+      curEvents = curEvents.map((e) => {
+        e.uid === uid && (e.stale = true);
+        return e;
+      });
+
+      cloned.set(chainId, curEvents);
+      return cloned;
+    });
+  };
+
   // Order chain events by category and sorts them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!events.has(chain)) {
@@ -116,6 +136,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         dismissEvent,
         sortChainEvents,
         updateEventsOnAccountRename,
+        markStaleEvent,
       }}
     >
       {children}

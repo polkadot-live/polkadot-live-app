@@ -26,6 +26,8 @@ export class ExtrinsicsController {
 
   static from: string | null = null;
 
+  static eventUid: string | null = null;
+
   // instantiates a new tx based on the request received by renderer.
   static new = async (
     chainId: ChainID,
@@ -33,7 +35,8 @@ export class ExtrinsicsController {
     accountNonce: number,
     pallet: string,
     method: string,
-    args: AnyJson[]
+    args: AnyJson[],
+    eventUid: string
   ) => {
     try {
       const { api } = await getApiInstance(chainId);
@@ -46,6 +49,9 @@ export class ExtrinsicsController {
       this.tx = tx;
       this.from = from;
       this.txId = this.txId + 1;
+
+      // Set associated even uid.
+      this.eventUid = eventUid;
 
       // Get estimated tx fee.
       const { partialFee } = await tx.paymentInfo(from);
@@ -141,6 +147,10 @@ export class ExtrinsicsController {
 
   // handle signed transaction.
   static submit = async () => {
+    // Cache correct event UID in function for lambdas.
+    const uid = this.eventUid || '';
+    const chainId = this.chainId || 'Polkadot';
+
     if (this.signature) {
       try {
         this.tx.addSignature(this.from, this.signature, this.payload);
@@ -148,7 +158,7 @@ export class ExtrinsicsController {
         const unsub = await this.tx.send(({ status }: AnyJson) => {
           if (status.isInBlock) {
             // Report Tx Status to Action UI.
-            ExtrinsicsController.postTxStatus('in_block');
+            ExtrinsicsController.postTxStatus('in_block', uid, chainId);
 
             // Show native OS notification.
             window.myAPI.showNotification({
@@ -157,7 +167,7 @@ export class ExtrinsicsController {
             });
           } else if (status.isFinalized) {
             // Report Tx Status to Action UI.
-            ExtrinsicsController.postTxStatus('finalized');
+            ExtrinsicsController.postTxStatus('finalized', uid, chainId);
 
             // Show native OS notification.
             window.myAPI.showNotification({
@@ -170,7 +180,7 @@ export class ExtrinsicsController {
         });
 
         // Report Tx Status to Action UI.
-        ExtrinsicsController.postTxStatus('submitted');
+        ExtrinsicsController.postTxStatus('submitted', uid, chainId);
 
         // Show native OS notification.
         window.myAPI.showNotification({
@@ -180,7 +190,7 @@ export class ExtrinsicsController {
 
         this.reset();
       } catch (e) {
-        ExtrinsicsController.postTxStatus('error');
+        ExtrinsicsController.postTxStatus('error', uid, chainId);
 
         console.log(e);
         // Handle error.
@@ -189,12 +199,22 @@ export class ExtrinsicsController {
   };
 
   // Send tx status message to `action` window.
-  private static postTxStatus = (status: TxStatus) => {
+  private static postTxStatus = (
+    status: TxStatus,
+    uid: string,
+    chainId: ChainID
+  ) => {
+    // Report status in actions window.
     ConfigRenderer.portToAction.postMessage({
       task: 'action:tx:report:status',
       data: {
         status,
       },
     });
+
+    // Mark event as stale if status is finalized.
+    if (status === 'finalized') {
+      window.myAPI.markEventStale(uid, chainId);
+    }
   };
 }

@@ -21,6 +21,8 @@ export interface PreloadAPI {
 
   persistEvent: ApiPersistEvent;
   updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
+  markEventStale: ApiMarkEventStale;
+  reportStaleEvent: ApiReportStaleEvent;
   getChainSubscriptions: ApiGetChainSubscriptions;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
@@ -136,3 +138,9 @@ type ApiUpdateAccountNameForEventsAndTasks = (
   address: string,
   newName: string
 ) => Promise<EventCallback[]>;
+
+type ApiMarkEventStale = (uid: string, chainId: ChainID) => void;
+
+type ApiReportStaleEvent = (
+  callback: (_: IpcRendererEvent, uid: string, chainId: ChainID) => void
+) => Electron.IpcRenderer;
