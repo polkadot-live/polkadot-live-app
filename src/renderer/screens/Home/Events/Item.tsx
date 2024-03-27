@@ -17,7 +17,7 @@ import type { EventItemProps } from './types';
 import {
   getEventChainId,
   getAddressNonce,
-  timestampToDate,
+  renderTimeAgo,
 } from '@/utils/EventUtils';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import type { AccountSource } from '@/types/accounts';
@@ -102,7 +102,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             ease: 'easeInOut',
           }}
         >
-          <span>{timestampToDate(event.timestamp)}</span>
+          <span>{renderTimeAgo(event.timestamp)}</span>
           {/* Dismiss button */}
           <button
             type="button"

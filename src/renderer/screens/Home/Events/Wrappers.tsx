@@ -59,8 +59,8 @@ export const EventItem = styled(motion.div)`
   > span:first-child {
     text-align: right;
     position: absolute;
-    bottom: 2.2rem;
-    right: 15px;
+    top: 18px;
+    right: 40px;
     color: #4d4c4c;
     transition: color ease-out 0.1s;
     cursor: pointer;
@@ -157,7 +157,7 @@ export const EventItem = styled(motion.div)`
         }
         h5 {
           color: var(--text-color-secondary);
-          margin-bottom: 0.35rem;
+          margin: 0.35rem 0;
         }
         p {
           font-weight: 600;
