@@ -3,7 +3,7 @@
 
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
-import type { FlattenedAccountData } from './accounts';
+//import type { FlattenedAccountData } from './accounts';
 
 export type TxStatus =
   | 'pending'
@@ -14,9 +14,9 @@ export type TxStatus =
 
 export interface ActionMeta {
   // Account data making transaction.
-  account: FlattenedAccountData;
+  //account: FlattenedAccountData;
   // Stringified account balance (big number).
-  balance: string;
+  //balance: string;
   // Type of transaction.
   action: string;
   // Pallet of associated transaction.

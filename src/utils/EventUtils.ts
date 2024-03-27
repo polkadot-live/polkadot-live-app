@@ -87,6 +87,19 @@ export const pushUniqueEvent = (
         }
       });
 
+      // If the account has past nomination pool events, make them stale.
+      // We don't want the user to try and submit out-of-date extrinsics.
+      if (push) {
+        events = events.map((e) => {
+          if (e.category === 'nominationPools' && e.data) {
+            const { address: nextAddress } = e.who.data as EventAccountData;
+            address === nextAddress && (e.stale = true);
+            return e;
+          }
+          return e;
+        });
+      }
+
       break;
     }
     default:
@@ -100,6 +113,7 @@ export const pushUniqueEvent = (
 
   return events;
 };
+
 /**
  * @name timestampToDate
  * @summary Format a timestamp into a date to render on an event item.

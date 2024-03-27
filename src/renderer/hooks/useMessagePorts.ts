@@ -163,7 +163,7 @@ export const useMessagePorts = () => {
      * @summary Set initial state for the action window.
      */
     const handleInitAction = (ev: MessageEvent) => {
-      const data: ActionMeta = ev.data.data;
+      const data: ActionMeta = JSON.parse(ev.data.data);
       setActionMeta(data);
     };
 

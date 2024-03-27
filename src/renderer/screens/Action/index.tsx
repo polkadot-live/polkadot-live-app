@@ -15,7 +15,7 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
+//import type { AccountBalance } from '@/types/accounts';
 import BigNumber from 'bignumber.js';
 
 export const Action = () => {
@@ -27,23 +27,26 @@ export const Action = () => {
 
   const chainId = actionMeta?.chainId || 'Polkadot';
   const action = actionMeta?.action || '';
-  const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
-  const from = fromAccount?.address || '';
+  //const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
+  const from = /*fromAccount?.address ||*/ '';
   const actionData = actionMeta?.data || {};
   const uid = actionMeta?.uid || '';
 
-  const balance: AccountBalance | null = actionMeta
+  /*const balance: AccountBalance | null = null; /*actionMeta
     ? JSON.parse(actionMeta.balance)
-    : null;
+    : null;*/
 
-  const nonce: BigNumber = balance ? balance.nonce : new BigNumber(0);
-  const fromName = fromAccount?.name || ellipsisFn(from);
+  // TODO: Get live none from renderer when opening action window.
+  const nonce: BigNumber = /*balance ? balance.nonce :*/ new BigNumber(0);
+  const fromName = /*fromAccount?.name ||*/ ellipsisFn(from);
   const pallet = actionMeta?.pallet || '';
   const method = actionMeta?.method || '';
   const args = actionMeta?.args || [];
 
   // Store whether the tx is submitting.
   const [submitting] = useState<boolean>(false);
+
+  console.log(actionMeta?.data.extra);
 
   // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
@@ -159,7 +162,7 @@ export const Action = () => {
             <>
               <h3>Bond Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.extra} DOT`} />
+                <ActionItem text={`Claim ${actionData.extra.toString()} DOT`} />
                 <p>
                   Once submitted, your rewards will be bonded back into the
                   pool. You own these additional bonded funds and will be able

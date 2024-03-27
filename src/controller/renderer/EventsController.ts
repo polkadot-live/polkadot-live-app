@@ -39,6 +39,7 @@ export class EventsController {
             timestamp: `${newVal}`,
           },
           timestamp: getUnixTime(new Date()),
+          stale: false,
           actions: [],
         };
       }
@@ -60,6 +61,7 @@ export class EventsController {
             timestamp: `${newVal}`,
           },
           timestamp: getUnixTime(new Date()),
+          stale: false,
           actions: [],
         };
       }
@@ -71,6 +73,11 @@ export class EventsController {
         const address = entry.task.actionArgs!.at(0)!;
         const accountName = entry.task.account?.name || ellipsisFn(address);
         const { chainId } = entry.task;
+
+        const freeBalance = planckToUnit(
+          new BigNumber(newVal.free.toString()),
+          chainUnits(chainId)
+        );
 
         return {
           uid: '',
@@ -84,11 +91,12 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Current Balance',
-          subtitle: `${newVal.free} ${chainCurrency(chainId)}`,
+          subtitle: `${freeBalance} ${chainCurrency(chainId)}`,
           data: {
             balances: newVal,
           },
           timestamp: getUnixTime(new Date()),
+          stale: false,
           actions: [],
         };
       }
@@ -126,10 +134,22 @@ export class EventsController {
           subtitle: `${pendingRewardsUnit.toString()} ${chainCurrency(chainId)}`,
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
+          stale: false,
           actions: [
             {
               uri: 'bond',
-              text: 'Bond',
+              text: 'Compound',
+              txMeta: {
+                uid: '',
+                action: 'nominationPools_pendingRewards_bond',
+                pallet: 'nominationPools',
+                method: 'bondExtra',
+                chainId,
+                args: [{ extra: 'Rewards' }],
+                data: {
+                  extra: pendingRewardsUnit.toNumber(),
+                },
+              },
             },
             {
               uri: 'withdraw',

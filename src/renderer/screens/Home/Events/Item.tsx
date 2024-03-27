@@ -15,11 +15,12 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import type { EventAccountData } from '@/types/reporter';
 import type { EventItemProps } from './types';
 import { getEventChainId, timestampToDate } from '@/utils/EventUtils';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 
 const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
-  const { uid, title, subtitle, actions, data } = event;
+  const { uid, title, subtitle, actions /*, data*/ } = event;
 
   // Extract address from event.
   const address =
@@ -125,7 +126,10 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             {/* Render actions */}
             {actions.length > 0 && (
               <section className="actions">
-                {actions.map(({ uri, text }, i) => {
+                {actions.map((action, i) => {
+                  const { uri, text } = action;
+                  action.txMeta && (action.txMeta.uid = event.uid);
+
                   const isUrl = isValidHttpUrl(uri);
                   if (isUrl) {
                     return (
@@ -134,7 +138,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
-                          window.myAPI.closeWindow('menu');
+                          //window.myAPI.closeWindow('menu');
                           window.myAPI.openBrowserURL(uri);
                         }}
                       />
@@ -142,15 +146,19 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                   } else {
                     return (
                       <ButtonMono
+                        disabled={event.stale}
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={async () => {
-                          await window.myAPI.openWindow('action', {
-                            uid,
-                            action: `${uid}_${uri}`,
-                            chainId,
-                            address,
-                            data: JSON.stringify(data),
+                          const serializedActionMeta = JSON.stringify(
+                            action.txMeta
+                          );
+
+                          window.myAPI.openWindow('action');
+
+                          ConfigRenderer.portToAction.postMessage({
+                            task: 'action:init',
+                            data: serializedActionMeta,
                           });
                         }}
                       />

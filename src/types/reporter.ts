@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ActionMeta } from './tx';
 import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { ExtendedAccount } from './blockstream';
@@ -71,6 +72,7 @@ export interface EventInner {
 export interface EventAction {
   uri: string;
   text?: string;
+  txMeta?: ActionMeta;
 }
 
 // Callback event interface
@@ -86,6 +88,7 @@ export interface EventCallback {
   data: AnyJson;
   timestamp: number;
   actions: EventAction[];
+  stale: boolean;
 }
 
 // Data to identify an account with an event.
