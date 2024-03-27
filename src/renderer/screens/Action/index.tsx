@@ -15,7 +15,6 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-//import type { AccountBalance } from '@/types/accounts';
 import BigNumber from 'bignumber.js';
 
 export const Action = () => {
@@ -25,20 +24,16 @@ export const Action = () => {
 
   const ChainIcon = chainIcon('Polkadot');
 
-  const chainId = actionMeta?.chainId || 'Polkadot';
+  // Tx metadata.
   const action = actionMeta?.action || '';
-  //const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
-  const from = /*fromAccount?.address ||*/ '';
   const actionData = actionMeta?.data || {};
   const uid = actionMeta?.uid || '';
 
-  /*const balance: AccountBalance | null = null; /*actionMeta
-    ? JSON.parse(actionMeta.balance)
-    : null;*/
+  const from: string = actionMeta?.from || '';
+  const fromName = actionMeta?.accountName || ellipsisFn(from);
 
-  // TODO: Get live none from renderer when opening action window.
-  const nonce: BigNumber = /*balance ? balance.nonce :*/ new BigNumber(0);
-  const fromName = /*fromAccount?.name ||*/ ellipsisFn(from);
+  const chainId = actionMeta?.chainId || 'Polkadot';
+  const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
   const pallet = actionMeta?.pallet || '';
   const method = actionMeta?.method || '';
   const args = actionMeta?.args || [];

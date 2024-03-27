@@ -14,7 +14,11 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import type { EventAccountData } from '@/types/reporter';
 import type { EventItemProps } from './types';
-import { getEventChainId, timestampToDate } from '@/utils/EventUtils';
+import {
+  getEventChainId,
+  getAddressNonce,
+  timestampToDate,
+} from '@/utils/EventUtils';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 
 const FADE_TRANSITION = 200;
@@ -138,7 +142,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
-                          //window.myAPI.closeWindow('menu');
                           window.myAPI.openBrowserURL(uri);
                         }}
                       />
@@ -150,15 +153,19 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={async () => {
-                          const serializedActionMeta = JSON.stringify(
-                            action.txMeta
-                          );
-
                           window.myAPI.openWindow('action');
+
+                          // Set nonce.
+                          if (action.txMeta) {
+                            action.txMeta.nonce = await getAddressNonce(
+                              address,
+                              chainId
+                            );
+                          }
 
                           ConfigRenderer.portToAction.postMessage({
                             task: 'action:init',
-                            data: serializedActionMeta,
+                            data: JSON.stringify(action.txMeta),
                           });
                         }}
                       />

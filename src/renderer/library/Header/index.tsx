@@ -39,7 +39,9 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         task: 'action:init',
         data: {
           uid: 'dummyuid',
+          from: '5HGXNKKQxfkENeE7GjPy3KaAcqYUmMxjzDai5ptYM5cSBJxm',
           action: 'nominationPools_pendingRewards_bond',
+          accountName: 'Test Account',
           balance: JSON.stringify(account.balance),
           pallet: 'nominationPools',
           method: 'bondExtra',

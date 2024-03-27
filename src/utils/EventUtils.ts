@@ -1,9 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import BigNumber from 'bignumber.js';
+import { getApiInstance } from './ApiUtils';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
-import type BigNumber from 'bignumber.js';
 
 /**
  * @name getEventChainId
@@ -134,4 +136,14 @@ export const timestampToDate = (timestamp: number): string => {
   const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
 
   return formattedDate;
+};
+
+/**
+ * @name getNonceForAddress
+ * @summary Get the live nonce for an address.
+ */
+export const getAddressNonce = async (address: string, chainId: ChainID) => {
+  const instance = await getApiInstance(chainId);
+  const result: AnyData = await instance.api.query.system.account(address);
+  return new BigNumber(result.nonce);
 };

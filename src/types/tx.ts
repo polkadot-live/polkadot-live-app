@@ -3,7 +3,7 @@
 
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
-//import type { FlattenedAccountData } from './accounts';
+import type BigNumber from 'bignumber.js';
 
 export type TxStatus =
   | 'pending'
@@ -13,12 +13,14 @@ export type TxStatus =
   | 'error';
 
 export interface ActionMeta {
-  // Account data making transaction.
-  //account: FlattenedAccountData;
-  // Stringified account balance (big number).
-  //balance: string;
+  // Account nonce.
+  nonce?: BigNumber;
+  // Name of account sending tx.
+  accountName: string;
   // Type of transaction.
   action: string;
+  // Address of tx sender.
+  from: string;
   // Pallet of associated transaction.
   pallet: string;
   // Method of associated transaction.

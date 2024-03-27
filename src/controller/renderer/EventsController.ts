@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { getUnixTime } from 'date-fns';
@@ -11,7 +12,7 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
-import BigNumber from 'bignumber.js';
+import type { ActionMeta } from '@/types/tx';
 
 export class EventsController {
   /**
@@ -141,6 +142,8 @@ export class EventsController {
               text: 'Compound',
               txMeta: {
                 uid: '',
+                from: address,
+                accountName,
                 action: 'nominationPools_pendingRewards_bond',
                 pallet: 'nominationPools',
                 method: 'bondExtra',
@@ -149,7 +152,7 @@ export class EventsController {
                 data: {
                   extra: pendingRewardsUnit.toNumber(),
                 },
-              },
+              } as ActionMeta,
             },
             {
               uri: 'withdraw',
