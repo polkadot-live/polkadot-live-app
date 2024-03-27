@@ -41,8 +41,6 @@ export const Action = () => {
   // Store whether the tx is submitting.
   const [submitting] = useState<boolean>(false);
 
-  console.log(actionMeta?.data.extra);
-
   // Send message to main renderer to initiate a new transaction.
   useEffect(() => {
     try {

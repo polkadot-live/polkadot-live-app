@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { AccountSource } from './accounts';
 import type { ActionMeta } from './tx';
 import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
@@ -96,6 +97,7 @@ export interface EventAccountData {
   accountName: string;
   address: string;
   chainId: ChainID;
+  source: AccountSource;
 }
 
 // Data to identify a chain ID with an event.

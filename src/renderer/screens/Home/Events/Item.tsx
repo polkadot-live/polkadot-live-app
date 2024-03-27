@@ -20,6 +20,7 @@ import {
   timestampToDate,
 } from '@/utils/EventUtils';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import type { AccountSource } from '@/types/accounts';
 
 const FADE_TRANSITION = 200;
 
@@ -31,6 +32,12 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).address
       : 'Chain Event';
+
+  // Extract account source from event.
+  const source: AccountSource =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).source
+      : 'ledger';
 
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
@@ -149,7 +156,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                   } else {
                     return (
                       <ButtonMono
-                        disabled={event.stale}
+                        disabled={event.stale || source === 'ledger'}
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={async () => {

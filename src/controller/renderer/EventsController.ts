@@ -111,7 +111,7 @@ export class EventsController {
         }
 
         // Data attached to event.
-        const { address, name: accountName } = entry.task.account;
+        const { address, name: accountName, source } = entry.task.account;
         const { chainId } = entry.task;
         const { poolPendingRewards } = entry.task.account.nominationPoolData;
 
@@ -129,6 +129,7 @@ export class EventsController {
               accountName,
               address,
               chainId: entry.task.chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Unclaimed Nomination Pool Rewards',
