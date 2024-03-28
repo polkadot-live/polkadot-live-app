@@ -23,9 +23,10 @@ export const getEventChainId = (event: EventCallback): ChainID =>
 export const pushUniqueEvent = (
   event: EventCallback,
   events: EventCallback[]
-): EventCallback[] => {
+): { events: EventCallback[]; updated: boolean } => {
   // Initially mark the event to push.
   let push = true;
+  let updated = false;
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.category) {
@@ -112,9 +113,10 @@ export const pushUniqueEvent = (
   // Add event to array if it's unique.
   if (push) {
     events.push(event);
+    updated = true;
   }
 
-  return events;
+  return { events, updated };
 };
 
 /**

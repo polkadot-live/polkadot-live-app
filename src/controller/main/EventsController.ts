@@ -58,14 +58,16 @@ export class EventsController {
       event.uid = getUid();
     }
 
-    const events = pushUniqueEvent(
+    const { events, updated } = pushUniqueEvent(
       event,
       EventsController.getEventsFromStore()
     );
 
     // Persist new array to store.
-    EventsController.persistEventsToStore(events);
-    debug('🔷 Event persisted (%o total in store)', events.length);
+    if (updated) {
+      EventsController.persistEventsToStore(events);
+      debug('🔷 Event persisted (%o total in store)', events.length);
+    }
 
     return event;
   }

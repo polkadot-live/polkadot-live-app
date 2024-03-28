@@ -44,9 +44,12 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       const chainId = getEventChainId(event);
       let curEvents = cloned.get(chainId);
 
-      curEvents !== undefined
-        ? (curEvents = pushUniqueEvent(event, curEvents))
-        : (curEvents = [event]);
+      if (curEvents !== undefined) {
+        const { events: newEvents } = pushUniqueEvent(event, curEvents);
+        curEvents = newEvents;
+      } else {
+        curEvents = [event];
+      }
 
       cloned.set(chainId, curEvents);
       return cloned;
