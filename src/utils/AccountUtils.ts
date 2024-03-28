@@ -11,7 +11,7 @@ import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 import type { AccountBalance } from '@/types/accounts';
-import type { AnyJson } from '@/types/misc';
+import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
@@ -111,12 +111,20 @@ const setNominationPoolDataForAccount = async (
     chainUnits(chainId)
   );
 
+  // Get nomination pool state.
+  const stateResult: AnyData = (
+    await api.query.nominationPools.bondedPools(poolId)
+  ).toHuman();
+
+  const poolState = stateResult.state;
+
   if (poolRewardAddress) {
     // Add nomination pool data to account.
     account.nominationPoolData = {
       poolId,
       poolRewardAddress,
       poolPendingRewards,
+      poolState,
     };
 
     // Store updated account data in controller.
