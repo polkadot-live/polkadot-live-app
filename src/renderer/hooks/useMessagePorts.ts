@@ -173,7 +173,8 @@ export const useMessagePorts = () => {
      * @summary Initialize extrinsics controller with tx data.
      */
     const handleActionTxInit = async (ev: MessageEvent) => {
-      const { chainId, from, nonce, pallet, method, args, uid } = ev.data.data;
+      const { chainId, from, nonce, pallet, method, args, eventUid } =
+        ev.data.data;
 
       await ExtrinsicsController.new(
         chainId,
@@ -182,7 +183,7 @@ export const useMessagePorts = () => {
         pallet,
         method,
         args,
-        uid
+        eventUid
       );
     };
 

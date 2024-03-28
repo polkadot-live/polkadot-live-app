@@ -27,7 +27,7 @@ export const Action = () => {
   // Tx metadata.
   const action = actionMeta?.action || '';
   const actionData = actionMeta?.data || {};
-  const uid = actionMeta?.uid || '';
+  const eventUid = actionMeta?.eventUid || '';
 
   const from: string = actionMeta?.from || '';
   const fromName = actionMeta?.accountName || ellipsisFn(from);
@@ -46,7 +46,7 @@ export const Action = () => {
     try {
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:init',
-        data: { chainId, from, nonce, pallet, method, args, uid },
+        data: { chainId, from, nonce, pallet, method, args, eventUid },
       });
     } catch (err) {
       console.log('Warning: Action port not received yet: renderer:tx:init');

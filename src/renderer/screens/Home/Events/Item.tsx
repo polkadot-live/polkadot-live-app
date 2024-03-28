@@ -139,7 +139,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
               <section className="actions">
                 {actions.map((action, i) => {
                   const { uri, text } = action;
-                  action.txMeta && (action.txMeta.uid = event.uid);
+                  action.txMeta && (action.txMeta.eventUid = event.uid);
 
                   const isUrl = isValidHttpUrl(uri);
                   if (isUrl) {

@@ -142,7 +142,7 @@ export class EventsController {
               uri: 'bond',
               text: 'Compound',
               txMeta: {
-                uid: '',
+                eventUid: '',
                 from: address,
                 accountName,
                 action: 'nominationPools_pendingRewards_bond',
@@ -159,7 +159,7 @@ export class EventsController {
               uri: 'withdraw',
               text: 'Withdraw',
               txMeta: {
-                uid: '',
+                eventUid: '',
                 from: address,
                 accountName,
                 action: 'nominationPools_pendingRewards_withdraw',
