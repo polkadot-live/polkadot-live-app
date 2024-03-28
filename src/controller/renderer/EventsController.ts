@@ -30,6 +30,7 @@ export class EventsController {
         return {
           uid: '',
           category: 'debugging',
+          taskAction: entry.task.action,
           who: {
             origin: 'chain',
             data: { chainId: entry.task.chainId } as EventChainData,
@@ -52,6 +53,7 @@ export class EventsController {
         return {
           uid: '',
           category: 'debugging',
+          taskAction: entry.task.action,
           who: {
             origin: 'chain',
             data: { chainId: entry.task.chainId } as EventChainData,
@@ -83,6 +85,7 @@ export class EventsController {
         return {
           uid: '',
           category: 'balances',
+          taskAction: entry.task.action,
           who: {
             origin: 'account',
             data: {
@@ -123,6 +126,7 @@ export class EventsController {
         return {
           uid: '',
           category: 'nominationPools',
+          taskAction: entry.task.action,
           who: {
             origin: 'account',
             data: {
@@ -177,6 +181,40 @@ export class EventsController {
               text: undefined,
             },
           ],
+        };
+      }
+      /**
+       * subscribe:nominationPoolState:query.nominationPools.bondedPools
+       */
+      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        const { address, name: accountName } = entry.task.account;
+        const { chainId } = entry.task;
+        const { poolState } = entry.task.account.nominationPoolData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool State',
+          subtitle: `${poolState}`,
+          data: {
+            poolState,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
         };
       }
       default: {

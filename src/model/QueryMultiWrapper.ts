@@ -123,6 +123,13 @@ export class QueryMultiWrapper {
             await Callbacks.callback_nomination_pool_reward_account(entry);
             break;
           }
+          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+            await Callbacks.callback_nomination_pool_state(
+              dataArr[index],
+              entry
+            );
+            break;
+          }
         }
       }
     }

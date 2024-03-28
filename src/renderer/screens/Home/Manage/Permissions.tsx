@@ -40,6 +40,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   /// Handle a toggle, which sends a subscription task to the back-end
   /// and updates the front-end subscriptions state.
   const handleToggle = async (cached: WrappedSubscriptionTasks) => {
+    console.log('TOGGLE:');
+    console.log(cached);
+
     // Invert the task status.
     const newStatus =
       cached.tasks[0].status === 'enable' ? 'disable' : 'enable';

@@ -85,6 +85,17 @@ export class TaskOrchestrator {
             break;
           }
 
+          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+            debug(
+              '🟢 subscribe:nominationPoolState:query.nominationPools.bondedPools'
+            );
+            await TaskOrchestrator.subscribe_nomination_pool_state(
+              task,
+              wrapper
+            );
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -141,6 +152,8 @@ export class TaskOrchestrator {
         return instance.api.query.system.account;
       case 'subscribe:nominationPools:query.system.account':
         return instance.api.query.system.account;
+      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools':
+        return instance.api.query.nominationPools.bondedPools;
       default:
         throw new Error('Subscription action not found');
     }
@@ -200,6 +213,28 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.system.account for a nomination pool's reward address.
    */
   private static async subscribe_nomination_pool_reward_account(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question has not joined a nomination pool.
+      if (!task.account?.nominationPoolData) {
+        debug('🟠 Account has not joined a nomination pool.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nomination_pool_state
+   * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's state.
+   */
+  private static async subscribe_nomination_pool_state(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

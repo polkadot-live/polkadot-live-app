@@ -80,6 +80,7 @@ export interface EventAction {
 export interface EventCallback {
   uid: string;
   category: string;
+  taskAction: string;
   who: {
     origin: 'account' | 'chain';
     data: EventAccountData | EventChainData;

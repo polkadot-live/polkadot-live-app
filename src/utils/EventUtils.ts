@@ -29,12 +29,12 @@ export const pushUniqueEvent = (
   let updated = false;
 
   // Check if the new event is a duplicate of another persisted event.
-  switch (event.category) {
+  switch (event.taskAction) {
     /**
      * The new event is considered a duplicate if another event has
      * matching address and balance data.
      */
-    case 'balances': {
+    case 'subscribe:query.system.account': {
       interface Target {
         balances: {
           free: BigNumber;
@@ -47,7 +47,7 @@ export const pushUniqueEvent = (
       const { balances }: Target = event.data;
 
       events.forEach((e) => {
-        if (e.category === 'balances' && e.data) {
+        if (e.taskAction === event.taskAction && e.data) {
           const { address: nextAddress } = e.who.data as EventAccountData;
           const { balances: nextBalances }: Target = e.data;
 
@@ -64,12 +64,11 @@ export const pushUniqueEvent = (
 
       break;
     }
-
     /**
      * The new event is considered a duplicate if another event has
      * a matching address and pending rewards balance.
      */
-    case 'nominationPools': {
+    case 'subscribe:nominationPools:query.system.account': {
       interface Target {
         pendingRewards: string;
       }
@@ -78,7 +77,7 @@ export const pushUniqueEvent = (
       const { pendingRewards }: Target = event.data;
 
       events.forEach((e) => {
-        if (e.category === 'nominationPools' && e.data) {
+        if (e.taskAction === event.taskAction && e.data) {
           const { address: nextAddress } = e.who.data as EventAccountData;
           const { pendingRewards: nextPendingRewards }: Target = e.data;
 
@@ -95,7 +94,7 @@ export const pushUniqueEvent = (
       // We don't want the user to try and submit out-of-date extrinsics.
       if (push) {
         events = events.map((e) => {
-          if (e.category === 'nominationPools' && e.data) {
+          if (e.taskAction === event.taskAction && e.data) {
             const { address: nextAddress } = e.who.data as EventAccountData;
             address === nextAddress && (e.stale = true);
             return e;
@@ -103,6 +102,31 @@ export const pushUniqueEvent = (
           return e;
         });
       }
+
+      break;
+    }
+    /**
+     * The new event is considered a duplicate if another event has
+     * a matching address and nomination pool state.
+     */
+    case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+      interface Target {
+        poolState: string;
+      }
+
+      const { address } = event.who.data as EventAccountData;
+      const { poolState }: Target = event.data;
+
+      events.forEach((e) => {
+        if (e.taskAction === event.taskAction && e.data) {
+          const { address: nextAddress } = e.who.data as EventAccountData;
+          const { poolState: nextPoolState }: Target = e.data;
+
+          if (address === nextAddress && poolState === nextPoolState) {
+            push = false;
+          }
+        }
+      });
 
       break;
     }
