@@ -209,7 +209,7 @@ export class Callbacks {
 
     window.myAPI.persistEvent(event, {
       title: 'Unclaimed Nomination Pool Rewards',
-      body: `${planckToUnit(pendingRewardsPlanck, chainUnits(chainId))}`,
+      body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
     } as NotificationData);
   }
 }
