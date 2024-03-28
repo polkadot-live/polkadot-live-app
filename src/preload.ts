@@ -6,7 +6,11 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type {
+  DismissEvent,
+  EventCallback,
+  NotificationData,
+} from '@/types/reporter';
 import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
@@ -59,8 +63,8 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.send('app:accounts:set', accounts),
 
-  persistEvent: (event: EventCallback) =>
-    ipcRenderer.send('app:event:persist', event),
+  persistEvent: (event: EventCallback, notification: NotificationData | null) =>
+    ipcRenderer.send('app:event:persist', event, notification),
 
   updateAccountNameForEventsAndTasks: async (
     address: string,

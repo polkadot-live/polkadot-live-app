@@ -6,7 +6,7 @@ import type { ChainID } from './chains';
 import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
-import type { DismissEvent, EventCallback } from './reporter';
+import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
@@ -121,7 +121,10 @@ type ApiGetPersistedAccountTasks = (
 
 type ApiSetPersistedAccounts = (accounts: string) => void;
 
-type ApiPersistEvent = (event: EventCallback) => void;
+type ApiPersistEvent = (
+  event: EventCallback,
+  notification: NotificationData | null
+) => void;
 
 type ApiGetChainSubscriptions = () => Promise<string>;
 

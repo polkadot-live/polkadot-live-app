@@ -3,13 +3,14 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
+import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/renderer/EventsController';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
-import type { EventCallback } from '@/types/reporter';
+import type { EventCallback, NotificationData } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import * as ApiUtils from '@/utils/ApiUtils';
 
 export class Callbacks {
   /**
@@ -49,7 +50,7 @@ export class Callbacks {
 
     // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, String(newVal));
-    window.myAPI.persistEvent(event);
+    window.myAPI.persistEvent(event, null);
   }
 
   /**
@@ -81,7 +82,7 @@ export class Callbacks {
 
     // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, String(newVal));
-    window.myAPI.persistEvent(event);
+    window.myAPI.persistEvent(event, null);
   }
 
   /**
@@ -145,12 +146,12 @@ export class Callbacks {
 
     // Parse data into same format as persisted events.
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
-    window.myAPI.persistEvent(parsed);
 
-    // TMP: Show native OS notification.
-    const title = ellipsisFn(entry.task.account!.address);
-    const body = `Free balance: ${free}`;
-    window.myAPI.showNotification({ title, body });
+    // Send event and notification data to main process.
+    window.myAPI.persistEvent(parsed, {
+      title: ellipsisFn(entry.task.account!.address),
+      body: `Free balance: ${free}`,
+    } as NotificationData);
   }
 
   /**
@@ -205,6 +206,10 @@ export class Callbacks {
 
     // Send IPC message to main process to handle notification and events.
     const event = EventsController.getEvent(entry, {});
-    window.myAPI.persistEvent(event);
+
+    window.myAPI.persistEvent(event, {
+      title: 'Unclaimed Nomination Pool Rewards',
+      body: `${planckToUnit(pendingRewardsPlanck, chainUnits(chainId))}`,
+    } as NotificationData);
   }
 }

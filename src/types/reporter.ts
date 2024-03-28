@@ -92,6 +92,12 @@ export interface EventCallback {
   stale: boolean;
 }
 
+// Notification data
+export interface NotificationData {
+  title: string;
+  body: string;
+}
+
 // Data to identify an account with an event.
 export interface EventAccountData {
   accountName: string;

@@ -18,7 +18,11 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type {
+  DismissEvent,
+  EventCallback,
+  NotificationData,
+} from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -198,15 +202,26 @@ app.whenReady().then(async () => {
    * Events
    */
 
-  // Persist an event and report it back to frontend.
-  ipcMain.on('app:event:persist', (_, e: EventCallback) => {
-    const eventWithUid = EventsController.persistEvent(e);
+  // Persist an event and execut OS notification if event was persisted.
+  // Report event back to frontend after an event UID is assigned.
+  ipcMain.on(
+    'app:event:persist',
+    (_, e: EventCallback, notification: NotificationData | null) => {
+      const { event: eventWithUid, wasPersisted } =
+        EventsController.persistEvent(e);
 
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      eventWithUid
-    );
-  });
+      // Show notification if event was added and notification data was received.
+      if (wasPersisted && notification !== null) {
+        const { title, body } = notification;
+        NotificationsController.showNotification(title, body);
+      }
+
+      WindowsController.get('menu')?.webContents?.send(
+        'renderer:event:new',
+        eventWithUid
+      );
+    }
+  );
 
   // Update a collection of event's associated account name.
   ipcMain.handle(

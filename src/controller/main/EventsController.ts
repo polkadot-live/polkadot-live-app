@@ -53,7 +53,10 @@ export class EventsController {
    * @name persistEvent
    * @summary Persist an event to the store.
    */
-  static persistEvent(event: EventCallback): EventCallback {
+  static persistEvent(event: EventCallback): {
+    event: EventCallback;
+    wasPersisted: boolean;
+  } {
     if (event.uid === '') {
       event.uid = getUid();
     }
@@ -69,7 +72,10 @@ export class EventsController {
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
-    return event;
+    return {
+      event,
+      wasPersisted: updated,
+    };
   }
 
   /**
