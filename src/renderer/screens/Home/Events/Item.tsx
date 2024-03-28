@@ -1,30 +1,35 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
-import { useTooltip } from '@app/contexts/Tooltip';
-import { Identicon } from '@app/library/Identicon';
-import { EventItem } from './Wrappers';
-import { useEvents } from '@/renderer/contexts/Events';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import type { EventAccountData } from '@/types/reporter';
-import type { EventItemProps } from './types';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { EventItem } from './Wrappers';
+import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   getEventChainId,
   getAddressNonce,
   renderTimeAgo,
 } from '@/utils/EventUtils';
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
+import { Identicon } from '@app/library/Identicon';
+import { useEffect, useState } from 'react';
+import { useEvents } from '@/renderer/contexts/Events';
+import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useTooltip } from '@app/contexts/Tooltip';
+import type { EventAccountData } from '@/types/reporter';
+import type { EventItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
 
 const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
+  const { dismissEvent } = useEvents();
+  const { online: isOnline } = useOnlineStatus();
+  const { setTooltipTextAndOpen } = useTooltip();
+
   const { uid, title, subtitle, actions /*, data*/ } = event;
 
   // Extract address from event.
@@ -47,9 +52,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).accountName
       : chainId;
-
-  const { dismissEvent } = useEvents();
-  const { setTooltipTextAndOpen } = useTooltip();
 
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
@@ -156,7 +158,9 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                   } else {
                     return (
                       <ButtonMono
-                        disabled={event.stale || source === 'ledger'}
+                        disabled={
+                          event.stale || source === 'ledger' || !isOnline
+                        }
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={async () => {
