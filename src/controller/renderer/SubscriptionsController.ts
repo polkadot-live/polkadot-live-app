@@ -185,6 +185,14 @@ export class SubscriptionsController {
 
                 return { ...task, actionArgs } as SubscriptionTask;
               }
+              case 'subscribe:account:nominationPools:renamed': {
+                // Provide account's nomination pool id if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
               default: {
                 return t;
               }
