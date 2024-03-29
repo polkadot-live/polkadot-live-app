@@ -237,16 +237,13 @@ export class Callbacks {
     }
 
     // Get the received pool state.
-    console.log('DATA:');
-    console.log(data.toHuman());
-
     const receivedPoolState: string = data.toHuman().state;
 
     // Get associated account and API instances.
     const account = AccountsController.get(chainId, flattenedAccount.address);
 
     if (!account?.nominationPoolData) {
-      console.log('no nomination pool data');
+      // No nomination pool data.
       return;
     }
 
