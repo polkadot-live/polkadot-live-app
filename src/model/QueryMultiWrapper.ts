@@ -344,10 +344,20 @@ export class QueryMultiWrapper {
       // Re-iterate entries up to outerI and check for shared api calls.
       for (const [innerI, { task: innerT }] of entry.callEntries.entries()) {
         if (innerI === outerI) {
-          // No shared call found.
-          dataIndexRegistry.push({ entryIndex: outerI, dataIndex: innerI });
-          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
+          // No shared call found. Increment by 1 to get next data index.
+          const nextDataIndex =
+            dataIndexRegistry.reduce(
+              (acc, { dataIndex }) => (dataIndex > acc ? dataIndex : acc),
+              0
+            ) + 1;
 
+          task.dataIndex = nextDataIndex;
+          dataIndexRegistry.push({
+            entryIndex: outerI,
+            dataIndex: nextDataIndex,
+          });
+
+          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
           const callArray: AnyData[] = task.actionArgs
             ? [apiCall].concat(task.actionArgs)
             : [apiCall];
@@ -359,7 +369,12 @@ export class QueryMultiWrapper {
           if (task.apiCallAsString === innerT.apiCallAsString) {
             // Share if calls are the same with no args.
             if (!task.actionArgs && !innerT.actionArgs) {
-              dataIndexRegistry.push({ entryIndex: outerI, dataIndex: innerI });
+              task.dataIndex = innerT.dataIndex;
+
+              dataIndexRegistry.push({
+                entryIndex: outerI,
+                dataIndex: innerT.dataIndex!,
+              });
               break;
             } else {
               // Check if action args are equal.
@@ -368,7 +383,12 @@ export class QueryMultiWrapper {
 
               // Share api call if they both have no arguments.
               if (!outerHasArgs && !innerHasArgs) {
-                task.dataIndex = innerI;
+                task.dataIndex = innerT.dataIndex;
+
+                dataIndexRegistry.push({
+                  entryIndex: outerI,
+                  dataIndex: innerT.dataIndex!,
+                });
                 break;
               }
 
@@ -384,9 +404,11 @@ export class QueryMultiWrapper {
               if (
                 ApiUtils.arraysAreEqual(task.actionArgs!, innerT.actionArgs!)
               ) {
+                task.dataIndex = innerT.dataIndex;
+
                 dataIndexRegistry.push({
                   entryIndex: outerI,
-                  dataIndex: innerI,
+                  dataIndex: innerT.dataIndex!,
                 });
                 break;
               }
