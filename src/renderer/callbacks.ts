@@ -242,16 +242,12 @@ export class Callbacks {
 
     // Get associated account and API instances.
     const account = AccountsController.get(chainId, flattenedAccount.address);
-
     if (!account?.nominationPoolData) {
-      // No nomination pool data.
       return;
     }
 
     const currentState = account?.nominationPoolData?.poolState;
-
     if (currentState === receivedPoolState) {
-      // Nothing has changed.
       return;
     }
 
@@ -303,16 +299,12 @@ export class Callbacks {
 
     // Get associated account.
     const account = AccountsController.get(chainId, flattenedAccount.address);
-
     if (!account?.nominationPoolData) {
-      // No nomination pool data.
       return;
     }
 
     const currentPoolName = account?.nominationPoolData?.poolName;
-
     if (currentPoolName === receivedPoolName) {
-      // Nothing has changed.
       return;
     }
 
@@ -333,6 +325,69 @@ export class Callbacks {
     window.myAPI.persistEvent(event, {
       title: 'Nomination Pool Name',
       body: `${receivedPoolName}`,
+    } as NotificationData);
+  }
+
+  /**
+   * @name callback_nomination_pool_roles
+   * @summary Callback for 'subscribe:account:nominationPools:roles'
+   *
+   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   */
+  static async callback_nomination_pool_roles(
+    // Data received by api subscription.
+    data: AnyData,
+    // Associated call entry for this task.
+    entry: ApiCallEntry
+  ) {
+    const { account: flattenedAccount, chainId } = entry.task;
+
+    if (!data) {
+      return;
+    }
+
+    if (!flattenedAccount) {
+      console.log('> Error getting flattened account data');
+      return;
+    }
+
+    // Get the received pool roles.
+    const { depositor, root, nominator, bouncer } = data.toHuman().roles;
+
+    // Get associated account.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+    if (!account?.nominationPoolData) {
+      return;
+    }
+
+    // Return if roles have not changed.
+    const poolRoles = account?.nominationPoolData?.poolRoles;
+    if (
+      poolRoles.depositor === depositor &&
+      poolRoles.root === root &&
+      poolRoles.nominator === nominator &&
+      poolRoles.bouncer === bouncer
+    ) {
+      return;
+    }
+
+    // Update account state.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolRoles: { depositor, root, nominator, bouncer },
+    };
+
+    AccountsController.set(chainId, account);
+
+    // Update entry account data.
+    entry.task.account = account.flatten();
+
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, {});
+
+    window.myAPI.persistEvent(event, {
+      title: 'Nomination Pool Roles',
+      body: `Roles have changed`,
     } as NotificationData);
   }
 }

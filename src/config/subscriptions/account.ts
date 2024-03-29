@@ -47,7 +47,7 @@ export const accountTasks: SubscriptionTask[] = [
     action: 'subscribe:account:nominationPools:roles',
     apiCallAsString: 'api.query.nominationPools.bondedPools',
     chainId: 'Polkadot',
-    label: 'Nomination Pool Roles Changed',
+    label: 'Nomination Pool Roles',
     status: 'disable',
   },
   // Westend
@@ -83,7 +83,7 @@ export const accountTasks: SubscriptionTask[] = [
     action: 'subscribe:account:nominationPools:roles',
     apiCallAsString: 'api.query.nominationPools.bondedPools',
     chainId: 'Westend',
-    label: 'Nomination Pool Roles Changed',
+    label: 'Nomination Pool Roles',
     status: 'disable',
   },
   // Kusama
@@ -119,7 +119,7 @@ export const accountTasks: SubscriptionTask[] = [
     action: 'subscribe:account:nominationPools:roles',
     apiCallAsString: 'api.query.nominationPools.bondedPools',
     chainId: 'Kusama',
-    label: 'Nomination Pool Roles Changed',
+    label: 'Nomination Pool Roles',
     status: 'disable',
   },
 ];

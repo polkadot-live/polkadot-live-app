@@ -6,6 +6,7 @@ import type { ActionMeta } from './tx';
 import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { ExtendedAccount } from './blockstream';
+import type { TaskAction } from './subscriptions';
 
 // Batch notification config.
 export interface BatchConfig {
@@ -80,7 +81,7 @@ export interface EventAction {
 export interface EventCallback {
   uid: string;
   category: string;
-  taskAction: string;
+  taskAction: TaskAction;
   who: {
     origin: 'account' | 'chain';
     data: EventAccountData | EventChainData;

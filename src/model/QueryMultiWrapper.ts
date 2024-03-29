@@ -140,6 +140,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominationPools:roles': {
+            await Callbacks.callback_nomination_pool_roles(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
         }
       }
     }
