@@ -20,12 +20,14 @@ export const chainTasks: SubscriptionTask[] = [
     chainId: 'Polkadot',
     status: 'disable',
     label: 'Timestamps',
+    apiCallAsString: 'api.query.timestamp.now',
   },
   {
     action: 'subscribe:chain:currentSlot',
     chainId: 'Polkadot',
     status: 'disable',
     label: 'Current Slot',
+    apiCallAsString: 'api.query.babe.currentSlot',
   },
   // Westend
   {
@@ -33,12 +35,14 @@ export const chainTasks: SubscriptionTask[] = [
     chainId: 'Westend',
     status: 'disable',
     label: 'Timestamps',
+    apiCallAsString: 'api.query.timestamp.now',
   },
   {
     action: 'subscribe:chain:currentSlot',
     chainId: 'Westend',
     status: 'disable',
     label: 'Current Slot',
+    apiCallAsString: 'api.query.babe.currentSlot',
   },
   // Kusama
   {
@@ -46,11 +50,13 @@ export const chainTasks: SubscriptionTask[] = [
     chainId: 'Kusama',
     status: 'disable',
     label: 'Timestamps',
+    apiCallAsString: 'api.query.timestamp.now',
   },
   {
     action: 'subscribe:chain:currentSlot',
     chainId: 'Kusama',
     status: 'disable',
     label: 'Current Slot',
+    apiCallAsString: 'api.query.babe.currentSlot',
   },
 ];

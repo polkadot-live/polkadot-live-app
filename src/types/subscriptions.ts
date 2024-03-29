@@ -8,12 +8,22 @@ import type { FlattenedAccountData } from './accounts';
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
 export interface SubscriptionTask {
+  // Unique id for the task.
   action: TaskAction;
+  // Arguments for the queryMulti call.
   actionArgs?: string[];
+  // Api call representation.
+  apiCallAsString: string;
+  // Task's associated chain.
   chainId: ChainID;
+  // Enabled or disabled.
   status: SubscriptionNextStatus;
+  // Shown in renderer.
   label: string;
+  // Associated account for task.
   account?: FlattenedAccountData;
+  // Index to retrieve api callback data.
+  dataIndex?: number;
 }
 
 // String literals to limit subscription task actions.

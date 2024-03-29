@@ -87,7 +87,6 @@ export class QueryMultiWrapper {
    * @summary Main logic to handle entries (subscription tasks).
    */
   private async handleCallback(
-    index: number,
     entry: ApiCallEntry,
     dataArr: AnyData,
     chainId: ChainID
@@ -100,12 +99,16 @@ export class QueryMultiWrapper {
       case 'Kusama': {
         switch (action) {
           case 'subscribe:chain:timestamp': {
-            Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
+            Callbacks.callback_query_timestamp_now(
+              dataArr[entry.task.dataIndex!],
+              entry,
+              this
+            );
             break;
           }
           case 'subscribe:chain:currentSlot': {
             Callbacks.callback_query_babe_currentSlot(
-              dataArr[index],
+              dataArr[entry.task.dataIndex!],
               entry,
               this
             );
@@ -113,7 +116,7 @@ export class QueryMultiWrapper {
           }
           case 'subscribe:account:balance': {
             Callbacks.callback_query_system_account(
-              dataArr[index],
+              dataArr[entry.task.dataIndex!],
               entry,
               this
             );
@@ -125,14 +128,14 @@ export class QueryMultiWrapper {
           }
           case 'subscribe:account:nominationPools:state': {
             await Callbacks.callback_nomination_pool_state(
-              dataArr[index],
+              dataArr[entry.task.dataIndex!],
               entry
             );
             break;
           }
           case 'subscribe:account:nominationPools:renamed': {
             await Callbacks.callback_nomination_pool_renamed(
-              dataArr[index],
+              dataArr[entry.task.dataIndex!],
               entry
             );
             break;
@@ -154,10 +157,8 @@ export class QueryMultiWrapper {
     }
 
     // Construct the argument for new queryMulti call.
-    const queryMultiArg: AnyData = await this.buildQueryMultiArg(chainId);
-
+    const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
     const instance = await ApiUtils.getApiInstance(chainId);
-    const finalArg = queryMultiArg;
 
     // Make the new call to queryMulti.
     debug('🔷 Call to api.queryMulti.');
@@ -170,8 +171,8 @@ export class QueryMultiWrapper {
         // Work out task to handle
         const { callEntries } = this.subscriptions.get(chainId)!;
 
-        for (const [index, entry] of callEntries.entries()) {
-          await this.handleCallback(index, entry, data, chainId);
+        for (const entry of callEntries) {
+          await this.handleCallback(entry, data, chainId);
         }
       }
     );
@@ -310,22 +311,120 @@ export class QueryMultiWrapper {
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
   private async buildQueryMultiArg(chainId: ChainID) {
+    const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
     const argument: AnyData = [];
 
-    const entry = this.subscriptions.get(chainId);
+    if (!entry) {
+      return argument;
+    }
 
-    if (entry) {
-      for (const { task } of entry.callEntries) {
-        const apiCall = await TaskOrchestrator.getApiCall(task);
-        let callArray: AnyData[] = [apiCall];
+    // Data index registry tracks the entry index and its associated data index.
+    interface RegistryPair {
+      entryIndex: number;
+      dataIndex: number;
+    }
 
-        if (task.actionArgs) {
-          callArray = callArray.concat(task.actionArgs);
-        }
+    // First entry is always going to have dataIndex of 0.
+    const dataIndexRegistry: [RegistryPair] = [{ entryIndex: 0, dataIndex: 0 }];
+
+    // Set each task's dataIndex.
+    for (const [outerI, { task }] of entry.callEntries.entries()) {
+      if (outerI === 0) {
+        // First task in the array cannot share with previous tasks.
+        const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
+
+        const callArray: AnyData[] = task.actionArgs
+          ? [apiCall].concat(task.actionArgs)
+          : [apiCall];
 
         argument.push(callArray);
+        continue;
+      }
+
+      // Re-iterate entries up to outerI and check for shared api calls.
+      for (const [innerI, { task: innerT }] of entry.callEntries.entries()) {
+        if (innerI === outerI) {
+          // No shared call found.
+          dataIndexRegistry.push({ entryIndex: outerI, dataIndex: innerI });
+          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
+
+          const callArray: AnyData[] = task.actionArgs
+            ? [apiCall].concat(task.actionArgs)
+            : [apiCall];
+
+          argument.push(callArray);
+          break;
+        } else {
+          // Check for shared call.
+          if (task.apiCallAsString === innerT.apiCallAsString) {
+            // Share if calls are the same with no args.
+            if (!task.actionArgs && !innerT.actionArgs) {
+              dataIndexRegistry.push({ entryIndex: outerI, dataIndex: innerI });
+              break;
+            } else {
+              // Check if action args are equal.
+              const outerHasArgs = task.actionArgs !== undefined;
+              const innerHasArgs = innerT.actionArgs !== undefined;
+
+              // Share api call if they both have no arguments.
+              if (!outerHasArgs && !innerHasArgs) {
+                task.dataIndex = innerI;
+                break;
+              }
+
+              // Not equal if one has args and the other doesn't.
+              if (
+                (outerHasArgs && !innerHasArgs) ||
+                (!outerHasArgs && innerHasArgs)
+              ) {
+                continue;
+              }
+
+              // Otherwise, check if action args are the same.
+              if (
+                ApiUtils.arraysAreEqual(task.actionArgs!, innerT.actionArgs!)
+              ) {
+                dataIndexRegistry.push({
+                  entryIndex: outerI,
+                  dataIndex: innerI,
+                });
+                break;
+              }
+
+              // Continue if api calls are equal but the action args are not equal.
+              continue;
+            }
+          } else {
+            // Continue of api calls are not equal.
+            continue;
+          }
+        }
       }
     }
+
+    console.log('Data index registry:');
+    console.log(dataIndexRegistry);
+
+    // Get updated entries with correct dataIndex for each task.
+    const updatedEntries = entry.callEntries.map((e, i) => {
+      const { entryIndex, dataIndex } = dataIndexRegistry[i];
+
+      if (entryIndex !== i) {
+        throw new Error("indices don't match");
+      }
+
+      e.task.dataIndex = dataIndex;
+      return e;
+    });
+
+    console.log('Updated entries:');
+    console.log(updatedEntries);
+
+    // Set updated tasks.
+    this.subscriptions.set(chainId, {
+      ...entry,
+      callEntries: [...updatedEntries],
+    });
 
     return argument;
   }
