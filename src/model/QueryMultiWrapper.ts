@@ -99,11 +99,11 @@ export class QueryMultiWrapper {
       case 'Westend':
       case 'Kusama': {
         switch (action) {
-          case 'subscribe:query.timestamp.now': {
+          case 'subscribe:chain:timestamp': {
             Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
             break;
           }
-          case 'subscribe:query.babe.currentSlot': {
+          case 'subscribe:chain:currentSlot': {
             Callbacks.callback_query_babe_currentSlot(
               dataArr[index],
               entry,

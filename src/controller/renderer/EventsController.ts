@@ -24,9 +24,9 @@ export class EventsController {
   static getEvent(entry: ApiCallEntry, newVal: AnyData): EventCallback {
     switch (entry.task.action) {
       /**
-       * subscribe:query.timestamp.now
+       * subscribe:chain:timestamp
        */
-      case 'subscribe:query.timestamp.now': {
+      case 'subscribe:chain:timestamp': {
         return {
           uid: '',
           category: 'debugging',
@@ -47,9 +47,9 @@ export class EventsController {
       }
 
       /**
-       * subscribe:query.babe.currentSlot
+       * subscribe:chain:currentSlot
        */
-      case 'subscribe:query.babe.currentSlot': {
+      case 'subscribe:chain:currentSlot': {
         return {
           uid: '',
           category: 'debugging',

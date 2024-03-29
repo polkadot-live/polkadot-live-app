@@ -15,7 +15,7 @@ import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 export class Callbacks {
   /**
    * @name callback_query_timestamp_now
-   * @summary Callback for 'subscribe:query.timestamp.now'.
+   * @summary Callback for 'subscribe:chain:timestamp'.
    *
    * Get the timestamp of the target chain and render it as a notification on
    * the frontend.
@@ -55,7 +55,7 @@ export class Callbacks {
 
   /**
    * @name callback_query_babe_currentSlot
-   * @summary Callback for 'subscribe:query.babe.currentSlot'.
+   * @summary Callback for 'subscribe:chain:currentSlot'.
    *
    * Get the current slot of the target chain and render it as a notification
    * on the frontend.

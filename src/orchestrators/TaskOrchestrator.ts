@@ -50,14 +50,14 @@ export class TaskOrchestrator {
       case 'Kusama': {
         // Identify task
         switch (task.action) {
-          case 'subscribe:query.timestamp.now': {
-            debug('🟢 subscribe:query.timestamp.now');
+          case 'subscribe:chain:timestamp': {
+            debug('🟢 subscribe:chain:timestamp');
             await TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
             break;
           }
 
-          case 'subscribe:query.babe.currentSlot': {
-            debug('🟢 subscribe:query.babe.currentSlot');
+          case 'subscribe:chain:currentSlot': {
+            debug('🟢 subscribe:chain:currentSlot');
             await TaskOrchestrator.subscribe_query_babe_currentSlot(
               task,
               wrapper
@@ -140,9 +140,9 @@ export class TaskOrchestrator {
     const instance = await ApiUtils.getApiInstance(chainId);
 
     switch (action) {
-      case 'subscribe:query.timestamp.now':
+      case 'subscribe:chain:timestamp':
         return instance.api.query.timestamp.now;
-      case 'subscribe:query.babe.currentSlot':
+      case 'subscribe:chain:currentSlot':
         return instance.api.query.babe.currentSlot;
       case 'subscribe:account:balance':
         return instance.api.query.system.account;
