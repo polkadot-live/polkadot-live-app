@@ -125,6 +125,9 @@ const setNominationPoolDataForAccount = async (
 
   const poolState = stateResult.state;
 
+  // Get nomination pool roles.
+  const poolRoles = stateResult.roles;
+
   // Get nomination pool name.
   const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);
   const poolName: string = u8aToString(u8aUnwrapBytes(poolMeta));
@@ -137,6 +140,7 @@ const setNominationPoolDataForAccount = async (
       poolPendingRewards,
       poolState,
       poolName,
+      poolRoles,
     };
 
     // Store updated account data in controller.
