@@ -130,6 +130,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominationPools:renamed': {
+            await Callbacks.callback_nomination_pool_renamed(
+              dataArr[index],
+              entry
+            );
+            break;
+          }
         }
       }
     }

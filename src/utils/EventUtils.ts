@@ -130,6 +130,34 @@ export const pushUniqueEvent = (
 
       break;
     }
+    /**
+     * The new event is considered a duplicate if another event has
+     * a matching address and nomination pool name.
+     */
+    case 'subscribe:account:nominationPools:renamed': {
+      interface Target {
+        poolName: string;
+      }
+
+      const { address } = event.who.data as EventAccountData;
+      const { poolName }: Target = event.data;
+
+      events.forEach((e) => {
+        if (e.taskAction === event.taskAction && e.data) {
+          const { address: nextAddress } = e.who.data as EventAccountData;
+          const { poolName: nextPoolName }: Target = e.data;
+
+          if (address === nextAddress && poolName === nextPoolName) {
+            push = false;
+          }
+        }
+      });
+
+      break;
+    }
+    /**
+     * Default case.
+     */
     default:
       break;
   }

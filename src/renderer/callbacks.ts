@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/renderer/EventsController';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
@@ -271,6 +272,67 @@ export class Callbacks {
     window.myAPI.persistEvent(event, {
       title: 'Nomination Pool State',
       body: `${receivedPoolState}`,
+    } as NotificationData);
+  }
+
+  /**
+   * @name callback_nomination_pool_renamed
+   * @summary Callback for 'subscribe:account:nominationPools:renamed'
+   *
+   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   */
+  static async callback_nomination_pool_renamed(
+    // Data received by api subscription.
+    data: AnyData,
+    // Associated call entry for this task.
+    entry: ApiCallEntry
+  ) {
+    const { account: flattenedAccount, chainId } = entry.task;
+
+    if (!data) {
+      return;
+    }
+
+    if (!flattenedAccount) {
+      console.log('> Error getting flattened account data');
+      return;
+    }
+
+    // Get the received pool name.
+    const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
+
+    // Get associated account.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+
+    if (!account?.nominationPoolData) {
+      // No nomination pool data.
+      return;
+    }
+
+    const currentPoolName = account?.nominationPoolData?.poolName;
+
+    if (currentPoolName === receivedPoolName) {
+      // Nothing has changed.
+      return;
+    }
+
+    // Update account state.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolName: receivedPoolName,
+    };
+
+    AccountsController.set(chainId, account);
+
+    // Update entry account data.
+    entry.task.account = account.flatten();
+
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, {});
+
+    window.myAPI.persistEvent(event, {
+      title: 'Nomination Pool Name',
+      body: `${receivedPoolName}`,
     } as NotificationData);
   }
 }

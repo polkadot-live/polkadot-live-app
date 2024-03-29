@@ -217,6 +217,40 @@ export class EventsController {
           actions: [],
         };
       }
+      /**
+       * subscribe:account:nominationPools:renamed
+       */
+      case 'subscribe:account:nominationPools:renamed': {
+        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        const { address, name: accountName } = entry.task.account;
+        const { chainId } = entry.task;
+        const { poolName } = entry.task.account.nominationPoolData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool Name',
+          subtitle: `${poolName}`,
+          data: {
+            poolName,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
       default: {
         throw new Error('Subscription task action not recognized');
       }

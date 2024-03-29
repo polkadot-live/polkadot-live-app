@@ -92,6 +92,15 @@ export class TaskOrchestrator {
             break;
           }
 
+          case 'subscribe:account:nominationPools:renamed': {
+            debug('🟢 subscribe:account:nominationPools:renamed');
+            await TaskOrchestrator.subscribe_nomination_pool_renamed(
+              task,
+              wrapper
+            );
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -150,6 +159,8 @@ export class TaskOrchestrator {
         return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:state':
         return instance.api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominationPools:renamed':
+        return instance.api.query.nominationPools.metadata;
       default:
         throw new Error('Subscription action not found');
     }
@@ -231,6 +242,28 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's state.
    */
   private static async subscribe_nomination_pool_state(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question has not joined a nomination pool.
+      if (!task.account?.nominationPoolData) {
+        debug('🟠 Account has not joined a nomination pool.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nomination_pool_renamed
+   * @summary Handle a task that subscribes to the API function api.query.nominationPools.metadata to fetch a pool's name.
+   */
+  private static async subscribe_nomination_pool_renamed(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
