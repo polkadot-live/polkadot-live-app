@@ -24,9 +24,9 @@ export class EventsController {
   static getEvent(entry: ApiCallEntry, newVal: AnyData): EventCallback {
     switch (entry.task.action) {
       /**
-       * subscribe:query.timestamp.now
+       * subscribe:chain:timestamp
        */
-      case 'subscribe:query.timestamp.now': {
+      case 'subscribe:chain:timestamp': {
         return {
           uid: '',
           category: 'debugging',
@@ -47,9 +47,9 @@ export class EventsController {
       }
 
       /**
-       * subscribe:query.babe.currentSlot
+       * subscribe:chain:currentSlot
        */
-      case 'subscribe:query.babe.currentSlot': {
+      case 'subscribe:chain:currentSlot': {
         return {
           uid: '',
           category: 'debugging',
@@ -72,7 +72,7 @@ export class EventsController {
       /**
        * subscribe:query.system.account
        */
-      case 'subscribe:query.system.account': {
+      case 'subscribe:account:balance': {
         const address = entry.task.actionArgs!.at(0)!;
         const accountName = entry.task.account?.name || ellipsisFn(address);
         const { chainId } = entry.task;
@@ -106,9 +106,9 @@ export class EventsController {
       }
 
       /**
-       * subscribe:nominationPools:query.system.account
+       * subscribe:account:nominationPools:rewards
        */
-      case 'subscribe:nominationPools:query.system.account': {
+      case 'subscribe:account:nominationPools:rewards': {
         if (!entry.task.account || !entry.task.account.nominationPoolData) {
           throw new Error('EventsController: account data not found for event');
         }
@@ -184,9 +184,9 @@ export class EventsController {
         };
       }
       /**
-       * subscribe:nominationPoolState:query.nominationPools.bondedPools
+       * subscribe:account:nominationPools:state
        */
-      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+      case 'subscribe:account:nominationPools:state': {
         if (!entry.task.account || !entry.task.account.nominationPoolData) {
           throw new Error('EventsController: account data not found for event');
         }
@@ -211,6 +211,40 @@ export class EventsController {
           subtitle: `${poolState}`,
           data: {
             poolState,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominationPools:renamed
+       */
+      case 'subscribe:account:nominationPools:renamed': {
+        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        const { address, name: accountName } = entry.task.account;
+        const { chainId } = entry.task;
+        const { poolName } = entry.task.account.nominationPoolData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool Name',
+          subtitle: `${poolName}`,
+          data: {
+            poolName,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

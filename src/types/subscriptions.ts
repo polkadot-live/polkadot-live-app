@@ -8,13 +8,22 @@ import type { FlattenedAccountData } from './accounts';
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
 export interface SubscriptionTask {
-  action: string;
+  action: TaskAction;
   actionArgs?: string[];
   chainId: ChainID;
   status: SubscriptionNextStatus;
   label: string;
   account?: FlattenedAccountData;
 }
+
+// String literals to limit subscription task actions.
+export type TaskAction =
+  | 'subscribe:chain:timestamp'
+  | 'subscribe:chain:currentSlot'
+  | 'subscribe:account:balance'
+  | 'subscribe:account:nominationPools:rewards'
+  | 'subscribe:account:nominationPools:state'
+  | 'subscribe:account:nominationPools:renamed';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

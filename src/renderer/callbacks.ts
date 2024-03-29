@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
 import { EventsController } from '@/controller/renderer/EventsController';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
@@ -15,7 +16,7 @@ import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 export class Callbacks {
   /**
    * @name callback_query_timestamp_now
-   * @summary Callback for 'subscribe:query.timestamp.now'.
+   * @summary Callback for 'subscribe:chain:timestamp'.
    *
    * Get the timestamp of the target chain and render it as a notification on
    * the frontend.
@@ -55,7 +56,7 @@ export class Callbacks {
 
   /**
    * @name callback_query_babe_currentSlot
-   * @summary Callback for 'subscribe:query.babe.currentSlot'.
+   * @summary Callback for 'subscribe:chain:currentSlot'.
    *
    * Get the current slot of the target chain and render it as a notification
    * on the frontend.
@@ -87,7 +88,7 @@ export class Callbacks {
 
   /**
    * @name callback_query_system_account
-   * @summary Callback for 'subscribe:query.system.account'.
+   * @summary Callback for 'subscribe:account:balance'.
    *
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
@@ -121,7 +122,7 @@ export class Callbacks {
         newVal.reserved.eq(curVal.reserved) &&
         newVal.nonce.eq(curVal.nonce)
       ) {
-        console.log('Balances are the same, skip.');
+        // Balances are the same, skip.
         return;
       }
     }
@@ -156,7 +157,7 @@ export class Callbacks {
 
   /**
    * @name callback_nomination_pool_reward_account
-   * @summary Callback for 'subscribe:nominationPools:query.system.account'.
+   * @summary Callback for 'subscribe:account:nominationPools:rewards'.
    *
    * When a nomination pool's free balance changes, check that the subscribed
    * account's pending rewards has changed. If pending rewards have changed,
@@ -215,7 +216,7 @@ export class Callbacks {
 
   /**
    * @name callback_nomination_pool_state
-   * @summary Callback for 'subscribe:nominationPoolState:query.nominationPools.bondedPools'
+   * @summary Callback for 'subscribe:account:nominationPools:state'
    *
    * When a nomination pool's state changes, dispatch an event and notificaiton.
    */
@@ -271,6 +272,67 @@ export class Callbacks {
     window.myAPI.persistEvent(event, {
       title: 'Nomination Pool State',
       body: `${receivedPoolState}`,
+    } as NotificationData);
+  }
+
+  /**
+   * @name callback_nomination_pool_renamed
+   * @summary Callback for 'subscribe:account:nominationPools:renamed'
+   *
+   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   */
+  static async callback_nomination_pool_renamed(
+    // Data received by api subscription.
+    data: AnyData,
+    // Associated call entry for this task.
+    entry: ApiCallEntry
+  ) {
+    const { account: flattenedAccount, chainId } = entry.task;
+
+    if (!data) {
+      return;
+    }
+
+    if (!flattenedAccount) {
+      console.log('> Error getting flattened account data');
+      return;
+    }
+
+    // Get the received pool name.
+    const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
+
+    // Get associated account.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+
+    if (!account?.nominationPoolData) {
+      // No nomination pool data.
+      return;
+    }
+
+    const currentPoolName = account?.nominationPoolData?.poolName;
+
+    if (currentPoolName === receivedPoolName) {
+      // Nothing has changed.
+      return;
+    }
+
+    // Update account state.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolName: receivedPoolName,
+    };
+
+    AccountsController.set(chainId, account);
+
+    // Update entry account data.
+    entry.task.account = account.flatten();
+
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, {});
+
+    window.myAPI.persistEvent(event, {
+      title: 'Nomination Pool Name',
+      body: `${receivedPoolName}`,
     } as NotificationData);
   }
 }

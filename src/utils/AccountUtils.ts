@@ -9,7 +9,14 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
-import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
+import {
+  BN,
+  bnToU8a,
+  stringToU8a,
+  u8aConcat,
+  u8aToString,
+  u8aUnwrapBytes,
+} from '@polkadot/util';
 import type { AccountBalance } from '@/types/accounts';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -118,6 +125,10 @@ const setNominationPoolDataForAccount = async (
 
   const poolState = stateResult.state;
 
+  // Get nomination pool name.
+  const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);
+  const poolName: string = u8aToString(u8aUnwrapBytes(poolMeta));
+
   if (poolRewardAddress) {
     // Add nomination pool data to account.
     account.nominationPoolData = {
@@ -125,6 +136,7 @@ const setNominationPoolDataForAccount = async (
       poolRewardAddress,
       poolPendingRewards,
       poolState,
+      poolName,
     };
 
     // Store updated account data in controller.

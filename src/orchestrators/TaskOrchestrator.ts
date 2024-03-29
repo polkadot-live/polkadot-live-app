@@ -50,14 +50,14 @@ export class TaskOrchestrator {
       case 'Kusama': {
         // Identify task
         switch (task.action) {
-          case 'subscribe:query.timestamp.now': {
-            debug('🟢 subscribe:query.timestamp.now');
+          case 'subscribe:chain:timestamp': {
+            debug('🟢 subscribe:chain:timestamp');
             await TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
             break;
           }
 
-          case 'subscribe:query.babe.currentSlot': {
-            debug('🟢 subscribe:query.babe.currentSlot');
+          case 'subscribe:chain:currentSlot': {
+            debug('🟢 subscribe:chain:currentSlot');
             await TaskOrchestrator.subscribe_query_babe_currentSlot(
               task,
               wrapper
@@ -65,7 +65,7 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:query.system.account': {
+          case 'subscribe:account:balance': {
             debug('🟢 subscribe:query.system.account (account)');
             await TaskOrchestrator.subscribe_query_system_account(
               task,
@@ -74,10 +74,8 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:nominationPools:query.system.account': {
-            debug(
-              '🟢 subscribe:nominationPools:query.system.account (rewards)'
-            );
+          case 'subscribe:account:nominationPools:rewards': {
+            debug('🟢 subscribe:account:nominationPools:rewards');
             await TaskOrchestrator.subscribe_nomination_pool_reward_account(
               task,
               wrapper
@@ -85,11 +83,18 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
-            debug(
-              '🟢 subscribe:nominationPoolState:query.nominationPools.bondedPools'
-            );
+          case 'subscribe:account:nominationPools:state': {
+            debug('🟢 subscribe:account:nominationPools:state');
             await TaskOrchestrator.subscribe_nomination_pool_state(
+              task,
+              wrapper
+            );
+            break;
+          }
+
+          case 'subscribe:account:nominationPools:renamed': {
+            debug('🟢 subscribe:account:nominationPools:renamed');
+            await TaskOrchestrator.subscribe_nomination_pool_renamed(
               task,
               wrapper
             );
@@ -144,16 +149,18 @@ export class TaskOrchestrator {
     const instance = await ApiUtils.getApiInstance(chainId);
 
     switch (action) {
-      case 'subscribe:query.timestamp.now':
+      case 'subscribe:chain:timestamp':
         return instance.api.query.timestamp.now;
-      case 'subscribe:query.babe.currentSlot':
+      case 'subscribe:chain:currentSlot':
         return instance.api.query.babe.currentSlot;
-      case 'subscribe:query.system.account':
+      case 'subscribe:account:balance':
         return instance.api.query.system.account;
-      case 'subscribe:nominationPools:query.system.account':
+      case 'subscribe:account:nominationPools:rewards':
         return instance.api.query.system.account;
-      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools':
+      case 'subscribe:account:nominationPools:state':
         return instance.api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominationPools:renamed':
+        return instance.api.query.nominationPools.metadata;
       default:
         throw new Error('Subscription action not found');
     }
@@ -235,6 +242,28 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's state.
    */
   private static async subscribe_nomination_pool_state(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question has not joined a nomination pool.
+      if (!task.account?.nominationPoolData) {
+        debug('🟠 Account has not joined a nomination pool.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nomination_pool_renamed
+   * @summary Handle a task that subscribes to the API function api.query.nominationPools.metadata to fetch a pool's name.
+   */
+  private static async subscribe_nomination_pool_renamed(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

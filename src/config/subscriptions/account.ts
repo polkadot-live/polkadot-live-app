@@ -16,59 +16,77 @@ import type { SubscriptionTask } from '@/types/subscriptions';
 export const accountTasks: SubscriptionTask[] = [
   // Polkadot
   {
-    action: 'subscribe:query.system.account',
+    action: 'subscribe:account:balance',
     chainId: 'Polkadot',
     status: 'disable',
     label: 'Transfers',
   },
   {
-    action: 'subscribe:nominationPools:query.system.account',
+    action: 'subscribe:account:nominationPools:rewards',
     chainId: 'Polkadot',
     status: 'disable',
     label: 'Nomination Pool Rewards',
   },
   {
-    action: 'subscribe:nominationPoolState:query.nominationPools.bondedPools',
+    action: 'subscribe:account:nominationPools:state',
     chainId: 'Polkadot',
     status: 'disable',
     label: 'Nomination Pool State',
+  },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Polkadot',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
   },
   // Westend
   {
-    action: 'subscribe:query.system.account',
+    action: 'subscribe:account:balance',
     chainId: 'Westend',
     status: 'disable',
     label: 'Transfers',
   },
   {
-    action: 'subscribe:nominationPools:query.system.account',
+    action: 'subscribe:account:nominationPools:rewards',
     chainId: 'Westend',
     status: 'disable',
     label: 'Nomination Pool Rewards',
   },
   {
-    action: 'subscribe:nominationPoolState:query.nominationPools.bondedPools',
+    action: 'subscribe:account:nominationPools:state',
     chainId: 'Westend',
     status: 'disable',
     label: 'Nomination Pool State',
+  },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
   },
   // Kusama
   {
-    action: 'subscribe:query.system.account',
+    action: 'subscribe:account:balance',
     chainId: 'Kusama',
     status: 'disable',
     label: 'Transfers',
   },
   {
-    action: 'subscribe:nominationPools:query.system.account',
+    action: 'subscribe:account:nominationPools:rewards',
     chainId: 'Kusama',
     status: 'disable',
     label: 'Nomination Pool Rewards',
   },
   {
-    action: 'subscribe:nominationPoolState:query.nominationPools.bondedPools',
+    action: 'subscribe:account:nominationPools:state',
     chainId: 'Kusama',
     status: 'disable',
     label: 'Nomination Pool State',
+  },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
   },
 ];

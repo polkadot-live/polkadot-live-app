@@ -34,7 +34,7 @@ export const pushUniqueEvent = (
      * The new event is considered a duplicate if another event has
      * matching address and balance data.
      */
-    case 'subscribe:query.system.account': {
+    case 'subscribe:account:balance': {
       interface Target {
         balances: {
           free: BigNumber;
@@ -68,7 +68,7 @@ export const pushUniqueEvent = (
      * The new event is considered a duplicate if another event has
      * a matching address and pending rewards balance.
      */
-    case 'subscribe:nominationPools:query.system.account': {
+    case 'subscribe:account:nominationPools:rewards': {
       interface Target {
         pendingRewards: string;
       }
@@ -109,7 +109,7 @@ export const pushUniqueEvent = (
      * The new event is considered a duplicate if another event has
      * a matching address and nomination pool state.
      */
-    case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+    case 'subscribe:account:nominationPools:state': {
       interface Target {
         poolState: string;
       }
@@ -130,6 +130,34 @@ export const pushUniqueEvent = (
 
       break;
     }
+    /**
+     * The new event is considered a duplicate if another event has
+     * a matching address and nomination pool name.
+     */
+    case 'subscribe:account:nominationPools:renamed': {
+      interface Target {
+        poolName: string;
+      }
+
+      const { address } = event.who.data as EventAccountData;
+      const { poolName }: Target = event.data;
+
+      events.forEach((e) => {
+        if (e.taskAction === event.taskAction && e.data) {
+          const { address: nextAddress } = e.who.data as EventAccountData;
+          const { poolName: nextPoolName }: Target = e.data;
+
+          if (address === nextAddress && poolName === nextPoolName) {
+            push = false;
+          }
+        }
+      });
+
+      break;
+    }
+    /**
+     * Default case.
+     */
     default:
       break;
   }

@@ -99,11 +99,11 @@ export class QueryMultiWrapper {
       case 'Westend':
       case 'Kusama': {
         switch (action) {
-          case 'subscribe:query.timestamp.now': {
+          case 'subscribe:chain:timestamp': {
             Callbacks.callback_query_timestamp_now(dataArr[index], entry, this);
             break;
           }
-          case 'subscribe:query.babe.currentSlot': {
+          case 'subscribe:chain:currentSlot': {
             Callbacks.callback_query_babe_currentSlot(
               dataArr[index],
               entry,
@@ -111,7 +111,7 @@ export class QueryMultiWrapper {
             );
             break;
           }
-          case 'subscribe:query.system.account': {
+          case 'subscribe:account:balance': {
             Callbacks.callback_query_system_account(
               dataArr[index],
               entry,
@@ -119,12 +119,19 @@ export class QueryMultiWrapper {
             );
             break;
           }
-          case 'subscribe:nominationPools:query.system.account': {
+          case 'subscribe:account:nominationPools:rewards': {
             await Callbacks.callback_nomination_pool_reward_account(entry);
             break;
           }
-          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+          case 'subscribe:account:nominationPools:state': {
             await Callbacks.callback_nomination_pool_state(
+              dataArr[index],
+              entry
+            );
+            break;
+          }
+          case 'subscribe:account:nominationPools:renamed': {
+            await Callbacks.callback_nomination_pool_renamed(
               dataArr[index],
               entry
             );

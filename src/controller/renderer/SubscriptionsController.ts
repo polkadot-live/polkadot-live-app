@@ -166,10 +166,10 @@ export class SubscriptionsController {
             const task = { ...t, account: a.flatten() };
 
             switch (t.action) {
-              case 'subscribe:query.system.account': {
+              case 'subscribe:account:balance': {
                 return { ...task, actionArgs: [a.address] } as SubscriptionTask;
               }
-              case 'subscribe:nominationPools:query.system.account': {
+              case 'subscribe:account:nominationPools:rewards': {
                 // Provide an account's nomination pool reward address if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolRewardAddress]
@@ -177,7 +177,15 @@ export class SubscriptionsController {
 
                 return { ...task, actionArgs } as SubscriptionTask;
               }
-              case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+              case 'subscribe:account:nominationPools:state': {
+                // Provide account's nomination pool id if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
+              case 'subscribe:account:nominationPools:renamed': {
                 // Provide account's nomination pool id if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolId]
