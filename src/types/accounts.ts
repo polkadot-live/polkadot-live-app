@@ -32,6 +32,7 @@ export interface AccountNominationPoolData {
   poolId: number;
   poolRewardAddress: string;
   poolPendingRewards: BigNumber;
+  poolState: string;
 }
 
 /*

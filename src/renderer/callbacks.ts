@@ -212,4 +212,65 @@ export class Callbacks {
       body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
     } as NotificationData);
   }
+
+  /**
+   * @name callback_nomination_pool_state
+   * @summary Callback for 'subscribe:nominationPoolState:query.nominationPools.bondedPools'
+   *
+   * When a nomination pool's state changes, dispatch an event and notificaiton.
+   */
+  static async callback_nomination_pool_state(
+    // Data received by api subscription.
+    data: AnyData,
+    // Associated call entry for this task.
+    entry: ApiCallEntry
+  ) {
+    const { account: flattenedAccount, chainId } = entry.task;
+
+    if (!data) {
+      return;
+    }
+
+    if (!flattenedAccount) {
+      console.log('> Error getting flattened account data');
+      return;
+    }
+
+    // Get the received pool state.
+    const receivedPoolState: string = data.toHuman().state;
+
+    // Get associated account and API instances.
+    const account = AccountsController.get(chainId, flattenedAccount.address);
+
+    if (!account?.nominationPoolData) {
+      // No nomination pool data.
+      return;
+    }
+
+    const currentState = account?.nominationPoolData?.poolState;
+
+    if (currentState === receivedPoolState) {
+      // Nothing has changed.
+      return;
+    }
+
+    // Update account state.
+    account.nominationPoolData = {
+      ...account.nominationPoolData,
+      poolState: receivedPoolState,
+    };
+
+    AccountsController.set(chainId, account);
+
+    // Update entry account data.
+    entry.task.account = account.flatten();
+
+    // Send IPC message to main process to handle notification and events.
+    const event = EventsController.getEvent(entry, {});
+
+    window.myAPI.persistEvent(event, {
+      title: 'Nomination Pool State',
+      body: `${receivedPoolState}`,
+    } as NotificationData);
+  }
 }
