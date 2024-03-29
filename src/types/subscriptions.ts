@@ -22,7 +22,8 @@ export type TaskAction =
   | 'subscribe:chain:currentSlot'
   | 'subscribe:account:balance'
   | 'subscribe:account:nominationPools:rewards'
-  | 'subscribe:account:nominationPools:state';
+  | 'subscribe:account:nominationPools:state'
+  | 'subscribe:account:nominationPools:renamed';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

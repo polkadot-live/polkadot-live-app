@@ -33,6 +33,12 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
     label: 'Nomination Pool State',
   },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Polkadot',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -52,6 +58,12 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
     label: 'Nomination Pool State',
   },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Westend',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
+  },
   // Kusama
   {
     action: 'subscribe:account:balance',
@@ -70,5 +82,11 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Kusama',
     status: 'disable',
     label: 'Nomination Pool State',
+  },
+  {
+    action: 'subscribe:account:nominationPools:renamed',
+    chainId: 'Kusama',
+    status: 'disable',
+    label: 'Nomination Pool Renamed',
   },
 ];
