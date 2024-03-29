@@ -43,6 +43,13 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Nomination Pool Renamed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominationPools:roles',
+    apiCallAsString: 'api.query.nominationPools.bondedPools',
+    chainId: 'Polkadot',
+    label: 'Nomination Pool Roles Changed',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -72,6 +79,13 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Nomination Pool Renamed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominationPools:roles',
+    apiCallAsString: 'api.query.nominationPools.bondedPools',
+    chainId: 'Westend',
+    label: 'Nomination Pool Roles Changed',
+    status: 'disable',
+  },
   // Kusama
   {
     action: 'subscribe:account:balance',
@@ -99,6 +113,13 @@ export const accountTasks: SubscriptionTask[] = [
     apiCallAsString: 'api.query.nominationPools.metadata',
     chainId: 'Kusama',
     label: 'Nomination Pool Renamed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominationPools:roles',
+    apiCallAsString: 'api.query.nominationPools.bondedPools',
+    chainId: 'Kusama',
+    label: 'Nomination Pool Roles Changed',
     status: 'disable',
   },
 ];
