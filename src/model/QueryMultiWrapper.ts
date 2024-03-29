@@ -111,7 +111,7 @@ export class QueryMultiWrapper {
             );
             break;
           }
-          case 'subscribe:query.system.account': {
+          case 'subscribe:account:balance': {
             Callbacks.callback_query_system_account(
               dataArr[index],
               entry,
@@ -119,11 +119,11 @@ export class QueryMultiWrapper {
             );
             break;
           }
-          case 'subscribe:nominationPools:query.system.account': {
+          case 'subscribe:account:nominationPools:rewards': {
             await Callbacks.callback_nomination_pool_reward_account(entry);
             break;
           }
-          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+          case 'subscribe:account:nominationPools:state': {
             await Callbacks.callback_nomination_pool_state(
               dataArr[index],
               entry

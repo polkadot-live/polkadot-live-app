@@ -87,7 +87,7 @@ export class Callbacks {
 
   /**
    * @name callback_query_system_account
-   * @summary Callback for 'subscribe:query.system.account'.
+   * @summary Callback for 'subscribe:account:balance'.
    *
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
@@ -121,7 +121,7 @@ export class Callbacks {
         newVal.reserved.eq(curVal.reserved) &&
         newVal.nonce.eq(curVal.nonce)
       ) {
-        console.log('Balances are the same, skip.');
+        // Balances are the same, skip.
         return;
       }
     }
@@ -156,7 +156,7 @@ export class Callbacks {
 
   /**
    * @name callback_nomination_pool_reward_account
-   * @summary Callback for 'subscribe:nominationPools:query.system.account'.
+   * @summary Callback for 'subscribe:account:nominationPools:rewards'.
    *
    * When a nomination pool's free balance changes, check that the subscribed
    * account's pending rewards has changed. If pending rewards have changed,
@@ -215,7 +215,7 @@ export class Callbacks {
 
   /**
    * @name callback_nomination_pool_state
-   * @summary Callback for 'subscribe:nominationPoolState:query.nominationPools.bondedPools'
+   * @summary Callback for 'subscribe:account:nominationPools:state'
    *
    * When a nomination pool's state changes, dispatch an event and notificaiton.
    */

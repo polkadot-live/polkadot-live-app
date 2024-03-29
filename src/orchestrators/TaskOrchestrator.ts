@@ -65,7 +65,7 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:query.system.account': {
+          case 'subscribe:account:balance': {
             debug('🟢 subscribe:query.system.account (account)');
             await TaskOrchestrator.subscribe_query_system_account(
               task,
@@ -74,10 +74,8 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:nominationPools:query.system.account': {
-            debug(
-              '🟢 subscribe:nominationPools:query.system.account (rewards)'
-            );
+          case 'subscribe:account:nominationPools:rewards': {
+            debug('🟢 subscribe:account:nominationPools:rewards');
             await TaskOrchestrator.subscribe_nomination_pool_reward_account(
               task,
               wrapper
@@ -85,10 +83,8 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
-            debug(
-              '🟢 subscribe:nominationPoolState:query.nominationPools.bondedPools'
-            );
+          case 'subscribe:account:nominationPools:state': {
+            debug('🟢 subscribe:account:nominationPools:state');
             await TaskOrchestrator.subscribe_nomination_pool_state(
               task,
               wrapper
@@ -148,11 +144,11 @@ export class TaskOrchestrator {
         return instance.api.query.timestamp.now;
       case 'subscribe:query.babe.currentSlot':
         return instance.api.query.babe.currentSlot;
-      case 'subscribe:query.system.account':
+      case 'subscribe:account:balance':
         return instance.api.query.system.account;
-      case 'subscribe:nominationPools:query.system.account':
+      case 'subscribe:account:nominationPools:rewards':
         return instance.api.query.system.account;
-      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools':
+      case 'subscribe:account:nominationPools:state':
         return instance.api.query.nominationPools.bondedPools;
       default:
         throw new Error('Subscription action not found');

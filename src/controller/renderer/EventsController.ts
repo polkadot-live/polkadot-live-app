@@ -72,7 +72,7 @@ export class EventsController {
       /**
        * subscribe:query.system.account
        */
-      case 'subscribe:query.system.account': {
+      case 'subscribe:account:balance': {
         const address = entry.task.actionArgs!.at(0)!;
         const accountName = entry.task.account?.name || ellipsisFn(address);
         const { chainId } = entry.task;
@@ -106,9 +106,9 @@ export class EventsController {
       }
 
       /**
-       * subscribe:nominationPools:query.system.account
+       * subscribe:account:nominationPools:rewards
        */
-      case 'subscribe:nominationPools:query.system.account': {
+      case 'subscribe:account:nominationPools:rewards': {
         if (!entry.task.account || !entry.task.account.nominationPoolData) {
           throw new Error('EventsController: account data not found for event');
         }
@@ -184,9 +184,9 @@ export class EventsController {
         };
       }
       /**
-       * subscribe:nominationPoolState:query.nominationPools.bondedPools
+       * subscribe:account:nominationPools:state
        */
-      case 'subscribe:nominationPoolState:query.nominationPools.bondedPools': {
+      case 'subscribe:account:nominationPools:state': {
         if (!entry.task.account || !entry.task.account.nominationPoolData) {
           throw new Error('EventsController: account data not found for event');
         }
