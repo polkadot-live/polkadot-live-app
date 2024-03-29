@@ -140,7 +140,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
     switch (task.action) {
       case 'subscribe:account:nominationPools:rewards':
-      case 'subscribe:account:nominationPools:state:': {
+      case 'subscribe:account:nominationPools:state': {
         return task.account?.nominationPoolData ? false : true;
       }
       default: {
