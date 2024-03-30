@@ -157,22 +157,31 @@ export const pushUniqueEvent = (
     }
     /**
      * The new event is considered a duplicate if another event has
-     * a matching address and nomination pool state.
+     * a matching address and roles.
      */
     case 'subscribe:account:nominationPools:roles': {
       interface Target {
         depositor: string;
+        root: string;
+        nominator: string;
+        bouncer: string;
       }
 
       const { address } = event.who.data as EventAccountData;
-      const { depositor }: Target = event.data;
+      const { depositor, root, nominator, bouncer }: Target = event.data;
 
       events.forEach((e) => {
         if (e.taskAction === event.taskAction && e.data) {
           const { address: nextAddress } = e.who.data as EventAccountData;
-          const { depositor: nextDepositor }: Target = e.data;
+          const next: Target = e.data;
 
-          if (address === nextAddress && depositor === nextDepositor) {
+          if (
+            address === nextAddress &&
+            depositor === next.depositor &&
+            root === next.root &&
+            nominator === next.nominator &&
+            bouncer === next.bouncer
+          ) {
             push = false;
           }
         }
