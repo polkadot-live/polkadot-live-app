@@ -195,7 +195,7 @@ export const getAddressNonce = async (address: string, chainId: ChainID) => {
 
 /**
  * @name checkAccountWithProperties
- * @summary Check if an account data exists with an API call entry, and if
+ * @summary Check if account data exists with an API call entry, and if
  * the associated account, along with the passed dynamic properties, also
  * exist. Callbacks will exit early if this function fails.
  */
