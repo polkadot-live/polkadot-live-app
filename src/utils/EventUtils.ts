@@ -24,177 +24,36 @@ export const pushUniqueEvent = (
 ): { events: EventCallback[]; updated: boolean } => {
   // Initially mark the event to push.
   let push = true;
-  let updated = false;
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
-    /**
-     * The new event is considered a duplicate if another event has
-     * matching address and balance data.
-     */
     case 'subscribe:account:balance': {
-      interface Target {
-        balances: {
-          free: BigNumber;
-          reserved: BigNumber;
-          nonce: BigNumber;
-        };
-      }
-
-      const { address } = event.who.data as EventAccountData;
-      const { balances }: Target = event.data;
-
-      events.forEach((e) => {
-        if (e.taskAction === event.taskAction && e.data) {
-          const { address: nextAddress } = e.who.data as EventAccountData;
-          const { balances: nextBalances }: Target = e.data;
-
-          if (
-            address === nextAddress &&
-            balances.free === nextBalances.free &&
-            balances.reserved === nextBalances.reserved &&
-            balances.nonce === nextBalances.nonce
-          ) {
-            push = false;
-          }
-        }
-      });
-
+      push = filter_query_system_account(events, event);
       break;
     }
-    /**
-     * The new event is considered a duplicate if another event has
-     * a matching address and pending rewards balance.
-     */
     case 'subscribe:account:nominationPools:rewards': {
-      interface Target {
-        pendingRewards: string;
-      }
-
-      const { address } = event.who.data as EventAccountData;
-      const { pendingRewards }: Target = event.data;
-
-      events.forEach((e) => {
-        if (e.taskAction === event.taskAction && e.data) {
-          const { address: nextAddress } = e.who.data as EventAccountData;
-          const { pendingRewards: nextPendingRewards }: Target = e.data;
-
-          if (
-            address === nextAddress &&
-            pendingRewards === nextPendingRewards
-          ) {
-            push = false;
-          }
-        }
-      });
-
-      // If the account has past nomination pool events, make them stale.
-      // We don't want the user to try and submit out-of-date extrinsics.
-      if (push) {
-        events = events.map((e) => {
-          if (e.taskAction === event.taskAction && e.data) {
-            const { address: nextAddress } = e.who.data as EventAccountData;
-            address === nextAddress && (e.stale = true);
-            return e;
-          }
-          return e;
-        });
-      }
-
+      push = filter_nomination_pool_rewards(events, event);
       break;
     }
-    /**
-     * The new event is considered a duplicate if another event has
-     * a matching address and nomination pool state.
-     */
     case 'subscribe:account:nominationPools:state': {
-      interface Target {
-        poolState: string;
-      }
-
-      const { address } = event.who.data as EventAccountData;
-      const { poolState }: Target = event.data;
-
-      events.forEach((e) => {
-        if (e.taskAction === event.taskAction && e.data) {
-          const { address: nextAddress } = e.who.data as EventAccountData;
-          const { poolState: nextPoolState }: Target = e.data;
-
-          if (address === nextAddress && poolState === nextPoolState) {
-            push = false;
-          }
-        }
-      });
-
+      push = filter_nomination_pool_state(events, event);
       break;
     }
-    /**
-     * The new event is considered a duplicate if another event has
-     * a matching address and nomination pool name.
-     */
     case 'subscribe:account:nominationPools:renamed': {
-      interface Target {
-        poolName: string;
-      }
-
-      const { address } = event.who.data as EventAccountData;
-      const { poolName }: Target = event.data;
-
-      events.forEach((e) => {
-        if (e.taskAction === event.taskAction && e.data) {
-          const { address: nextAddress } = e.who.data as EventAccountData;
-          const { poolName: nextPoolName }: Target = e.data;
-
-          if (address === nextAddress && poolName === nextPoolName) {
-            push = false;
-          }
-        }
-      });
-
+      push = filter_nomination_pool_renamed(events, event);
       break;
     }
-    /**
-     * The new event is considered a duplicate if another event has
-     * a matching address and roles.
-     */
     case 'subscribe:account:nominationPools:roles': {
-      interface Target {
-        depositor: string;
-        root: string;
-        nominator: string;
-        bouncer: string;
-      }
-
-      const { address } = event.who.data as EventAccountData;
-      const { depositor, root, nominator, bouncer }: Target = event.data;
-
-      events.forEach((e) => {
-        if (e.taskAction === event.taskAction && e.data) {
-          const { address: nextAddress } = e.who.data as EventAccountData;
-          const next: Target = e.data;
-
-          if (
-            address === nextAddress &&
-            depositor === next.depositor &&
-            root === next.root &&
-            nominator === next.nominator &&
-            bouncer === next.bouncer
-          ) {
-            push = false;
-          }
-        }
-      });
-
+      push = filter_nomination_pool_roles(events, event);
       break;
     }
-    /**
-     * Default case.
-     */
     default:
       break;
   }
 
   // Add event to array if it's unique.
+  let updated = false;
+
   if (push) {
     events.push(event);
     updated = true;
@@ -202,6 +61,195 @@ export const pushUniqueEvent = (
 
   return { events, updated };
 };
+
+/**
+ * @name filter_query_system_account
+ * @summary The new event is considered a duplicate if another event has
+ * matching address and balance data.
+ */
+const filter_query_system_account = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  interface Target {
+    balances: {
+      free: BigNumber;
+      reserved: BigNumber;
+      nonce: BigNumber;
+    };
+  }
+
+  const { address } = event.who.data as EventAccountData;
+  const { balances }: Target = event.data;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { balances: nextBalances }: Target = e.data;
+
+      if (
+        address === nextAddress &&
+        balances.free === nextBalances.free &&
+        balances.reserved === nextBalances.reserved &&
+        balances.nonce === nextBalances.nonce
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nomination_pool_rewards
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and pending rewards balance.
+ */
+const filter_nomination_pool_rewards = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  interface Target {
+    pendingRewards: string;
+  }
+
+  const { address } = event.who.data as EventAccountData;
+  const { pendingRewards }: Target = event.data;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { pendingRewards: nextPendingRewards }: Target = e.data;
+
+      if (address === nextAddress && pendingRewards === nextPendingRewards) {
+        isUnique = false;
+      }
+    }
+  });
+
+  // If the account has past nomination pool events, make them stale.
+  // We don't want the user to try and submit out-of-date extrinsics.
+  if (isUnique) {
+    events = events.map((e) => {
+      if (e.taskAction === event.taskAction && e.data) {
+        const { address: nextAddress } = e.who.data as EventAccountData;
+        address === nextAddress && (e.stale = true);
+        return e;
+      }
+      return e;
+    });
+  }
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nomination_pool_state
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and nomination pool state.
+ */
+const filter_nomination_pool_state = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  interface Target {
+    poolState: string;
+  }
+
+  const { address } = event.who.data as EventAccountData;
+  const { poolState }: Target = event.data;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { poolState: nextPoolState }: Target = e.data;
+
+      if (address === nextAddress && poolState === nextPoolState) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nomination_pool_renamed
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and nomination pool name.
+ */
+const filter_nomination_pool_renamed = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  interface Target {
+    poolName: string;
+  }
+
+  const { address } = event.who.data as EventAccountData;
+  const { poolName }: Target = event.data;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { poolName: nextPoolName }: Target = e.data;
+
+      if (address === nextAddress && poolName === nextPoolName) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nomination_pool_roles
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and roles.
+ */
+const filter_nomination_pool_roles = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  interface Target {
+    depositor: string;
+    root: string;
+    nominator: string;
+    bouncer: string;
+  }
+  const { address } = event.who.data as EventAccountData;
+  const { depositor, root, nominator, bouncer }: Target = event.data;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const next: Target = e.data;
+
+      if (
+        address === nextAddress &&
+        depositor === next.depositor &&
+        root === next.root &&
+        nominator === next.nominator &&
+        bouncer === next.bouncer
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * Other utilities
+ */
 
 /**
  * @name timestampToDate
