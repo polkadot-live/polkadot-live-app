@@ -187,7 +187,7 @@ export class Callbacks {
       return;
     }
 
-    // Update data in account and entry.
+    // Update account and entry data.
     account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
     AccountsController.set(chainId, account);
     entry.task.account = account.flatten();
@@ -206,51 +206,28 @@ export class Callbacks {
    * When a nomination pool's state changes, dispatch an event and notificaiton.
    */
   static async callback_nomination_pool_state(
-    // Data received by api subscription.
     data: AnyData,
-    // Associated call entry for this task.
     entry: ApiCallEntry
   ) {
-    const { account: flattenedAccount, chainId } = entry.task;
-
-    if (!data) {
-      return;
-    }
-
-    if (!flattenedAccount) {
-      console.log('> Error getting flattened account data');
+    // Exit early if initial checks fail.
+    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+    if (account === null) {
       return;
     }
 
     // Get the received pool state.
     const receivedPoolState: string = data.toHuman().state;
-
-    // Get associated account and API instances.
-    const account = AccountsController.get(chainId, flattenedAccount.address);
-    if (!account?.nominationPoolData) {
+    if (account.nominationPoolData!.poolState === receivedPoolState) {
       return;
     }
 
-    const currentState = account?.nominationPoolData?.poolState;
-    if (currentState === receivedPoolState) {
-      return;
-    }
-
-    // Update account state.
-    account.nominationPoolData = {
-      ...account.nominationPoolData,
-      poolState: receivedPoolState,
-    };
-
-    AccountsController.set(chainId, account);
-
-    // Update entry account data.
+    // Update account and entry data.
+    account.nominationPoolData!.poolState = receivedPoolState;
+    AccountsController.set(account.chain, account);
     entry.task.account = account.flatten();
 
-    // Send IPC message to main process to handle notification and events.
-    const event = EventsController.getEvent(entry, {});
-
-    window.myAPI.persistEvent(event, {
+    // Handle notification and events in main process.
+    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
       title: 'Nomination Pool State',
       body: `${receivedPoolState}`,
     } as NotificationData);
