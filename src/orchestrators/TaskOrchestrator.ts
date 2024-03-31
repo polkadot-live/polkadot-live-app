@@ -101,6 +101,15 @@ export class TaskOrchestrator {
             break;
           }
 
+          case 'subscribe:account:nominationPools:roles': {
+            debug('🟢 subscribe:account:nominationPools:roles');
+            await TaskOrchestrator.subscribe_nomination_pool_roles(
+              task,
+              wrapper
+            );
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -161,6 +170,8 @@ export class TaskOrchestrator {
         return instance.api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:renamed':
         return instance.api.query.nominationPools.metadata;
+      case 'subscribe:account:nominationPools:roles':
+        return instance.api.query.nominationPools.bondedPools;
       default:
         throw new Error('Subscription action not found');
     }
@@ -264,6 +275,28 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.nominationPools.metadata to fetch a pool's name.
    */
   private static async subscribe_nomination_pool_renamed(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question has not joined a nomination pool.
+      if (!task.account?.nominationPoolData) {
+        debug('🟠 Account has not joined a nomination pool.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nomination_pool_roles
+   * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's roles.
+   */
+  private static async subscribe_nomination_pool_roles(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

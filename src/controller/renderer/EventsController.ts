@@ -113,7 +113,6 @@ export class EventsController {
           throw new Error('EventsController: account data not found for event');
         }
 
-        // Data attached to event.
         const { address, name: accountName, source } = entry.task.account;
         const { chainId } = entry.task;
         const { poolPendingRewards } = entry.task.account.nominationPoolData;
@@ -245,6 +244,40 @@ export class EventsController {
           subtitle: `${poolName}`,
           data: {
             poolName,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominationPools:roles
+       */
+      case 'subscribe:account:nominationPools:roles': {
+        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        const { address, name: accountName } = entry.task.account;
+        const { chainId } = entry.task;
+        const { poolRoles } = entry.task.account.nominationPoolData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool Roles',
+          subtitle: 'Roles have changed.',
+          data: {
+            depositor: poolRoles.depositor,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

@@ -193,6 +193,13 @@ export class SubscriptionsController {
 
                 return { ...task, actionArgs } as SubscriptionTask;
               }
+              case 'subscribe:account:nominationPools:roles': {
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
               default: {
                 return t;
               }
