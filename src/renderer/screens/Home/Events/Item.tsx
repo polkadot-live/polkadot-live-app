@@ -8,11 +8,8 @@ import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  getEventChainId,
-  getAddressNonce,
-  renderTimeAgo,
-} from '@/utils/EventUtils';
+import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
+import { getAddressNonce } from '@/utils/AccountUtils';
 import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState } from 'react';

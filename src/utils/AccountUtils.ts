@@ -181,3 +181,13 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
     reward: createAccount(poolIdBigNumber, 1),
   };
 };
+
+/**
+ * @name getNonceForAddress
+ * @summary Get the live nonce for an address.
+ */
+export const getAddressNonce = async (address: string, chainId: ChainID) => {
+  const instance = await ApiUtils.getApiInstance(chainId);
+  const result: AnyData = await instance.api.query.system.account(address);
+  return new BigNumber(result.nonce);
+};
