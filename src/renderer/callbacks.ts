@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
+import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
@@ -162,23 +163,20 @@ export class Callbacks {
    * When a nomination pool's free balance changes, check that the subscribed
    * account's pending rewards has changed. If pending rewards have changed,
    * send a notification to inform the user.
+   *
+   * We need to send a new event if the account has pending rewards.
+   * Another process can then check if the event should be rendererd,
+   * or whether it's a duplicate.
    */
   static async callback_nomination_pool_reward_account(entry: ApiCallEntry) {
-    const { account: flattenedAccount, chainId } = entry.task;
-
-    if (!flattenedAccount) {
-      console.log('> Error getting flattened account data');
+    // Exit early if initial checks fail.
+    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+    if (account === null) {
       return;
     }
 
-    // Get associated account and API instances.
-    const account = AccountsController.get(chainId, flattenedAccount.address);
+    const chainId = account.chain;
     const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Return if nomination pool data for account not found.
-    if (!account?.nominationPoolData) {
-      return;
-    }
 
     // Fetch pending rewards for the account.
     const pendingRewardsPlanck: BigNumber =
@@ -189,26 +187,13 @@ export class Callbacks {
       return;
     }
 
-    // Add nomination pool data to account.
-    account.nominationPoolData = {
-      ...account.nominationPoolData,
-      poolPendingRewards: pendingRewardsPlanck,
-    };
-
-    // Update account data in controller.
+    // Update data in account and entry.
+    account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
     AccountsController.set(chainId, account);
-
-    // Update entry account data.
     entry.task.account = account.flatten();
 
-    // We need to send a new event if the account has pending rewards.
-    // Another process can then check if the event should be rendererd,
-    // or whether it's a duplicate.
-
-    // Send IPC message to main process to handle notification and events.
-    const event = EventsController.getEvent(entry, {});
-
-    window.myAPI.persistEvent(event, {
+    // Handle notification and events in main process.
+    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
       title: 'Unclaimed Nomination Pool Rewards',
       body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
     } as NotificationData);

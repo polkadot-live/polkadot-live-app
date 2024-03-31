@@ -18,6 +18,7 @@ import {
   u8aUnwrapBytes,
 } from '@polkadot/util';
 import type { AccountBalance } from '@/types/accounts';
+import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
@@ -190,4 +191,50 @@ export const getAddressNonce = async (address: string, chainId: ChainID) => {
   const instance = await ApiUtils.getApiInstance(chainId);
   const result: AnyData = await instance.api.query.system.account(address);
   return new BigNumber(result.nonce);
+};
+
+/**
+ * @name checkAccountWithProperties
+ * @summary Check if an account data exists with an API call entry, and if
+ * the associated account, along with the passed dynamic properties, also
+ * exist. Callbacks will exit early if this function fails.
+ */
+export const checkAccountWithProperties = (
+  entry: ApiCallEntry,
+  properties: (keyof Account)[]
+): Account | null => {
+  // Check for account existence and fetch it.
+  if (!entry.task.account) {
+    return null;
+  }
+
+  // eslint-disable-next-line prettier/prettier
+  const { chainId, account: { address } } = entry.task;
+  const account = AccountsController.get(chainId, address);
+
+  if (account === undefined) {
+    return null;
+  }
+
+  // Utility to access an instance property dynamically.
+  const getProperty = (instance: Account, key: keyof Account): AnyData => {
+    switch (key) {
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
+      default:
+        return null;
+    }
+  };
+
+  // Iterate properties and return false if any are undefined or null.
+  for (const key of properties) {
+    const result = getProperty(account, key);
+
+    if (result === null || result === undefined) {
+      return null;
+    }
+  }
+
+  // Otherwise, return the account.
+  return account;
 };
