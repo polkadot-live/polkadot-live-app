@@ -274,33 +274,20 @@ export class Callbacks {
    * When a nomination pool's name changes, dispatch an event and notificaiton.
    */
   static async callback_nomination_pool_roles(
-    // Data received by api subscription.
     data: AnyData,
-    // Associated call entry for this task.
     entry: ApiCallEntry
   ) {
-    const { account: flattenedAccount, chainId } = entry.task;
-
-    if (!data) {
-      return;
-    }
-
-    if (!flattenedAccount) {
-      console.log('> Error getting flattened account data');
+    // Exit early if initial checks fail.
+    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+    if (account === null) {
       return;
     }
 
     // Get the received pool roles.
     const { depositor, root, nominator, bouncer } = data.toHuman().roles;
 
-    // Get associated account.
-    const account = AccountsController.get(chainId, flattenedAccount.address);
-    if (!account?.nominationPoolData) {
-      return;
-    }
-
     // Return if roles have not changed.
-    const poolRoles = account?.nominationPoolData?.poolRoles;
+    const poolRoles = account.nominationPoolData!.poolRoles;
     if (
       poolRoles.depositor === depositor &&
       poolRoles.root === root &&
@@ -310,21 +297,14 @@ export class Callbacks {
       return;
     }
 
-    // Update account state.
-    account.nominationPoolData = {
-      ...account.nominationPoolData,
-      poolRoles: { depositor, root, nominator, bouncer },
-    };
-
-    AccountsController.set(chainId, account);
-
-    // Update entry account data.
+    // Update account and entry data.
+    // eslint-disable-next-line prettier/prettier
+    account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
+    AccountsController.set(account.chain, account);
     entry.task.account = account.flatten();
 
-    // Send IPC message to main process to handle notification and events.
-    const event = EventsController.getEvent(entry, {});
-
-    window.myAPI.persistEvent(event, {
+    // Handle notification and events in main process.
+    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
       title: 'Nomination Pool Roles',
       body: `Roles have changed`,
     } as NotificationData);
