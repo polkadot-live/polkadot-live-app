@@ -3005,12 +3005,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/types@npm:8.32.2, @wdio/types@npm:^8.32.2":
+"@wdio/types@npm:8.32.2":
   version: 8.32.2
   resolution: "@wdio/types@npm:8.32.2"
   dependencies:
     "@types/node": "npm:^20.1.0"
   checksum: a6fa5b083ab60059cdd5c80a90f62369486226196e48f9ee91c4dfca8226b6b28b611c059d599dd59c6c930f43612ddf58fcf77095119fb13a3abb95f7ba39f1
+  languageName: node
+  linkType: hard
+
+"@wdio/types@npm:^8.32.4":
+  version: 8.32.4
+  resolution: "@wdio/types@npm:8.32.4"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+  checksum: da63d446ecbc54e4f1f2f3b167f0402a08d125881ee3e27f0d4df0717383eb26a83e3d7d967c12b5d821054f8b40ce8ae2231a82ce5f309016e708e74b946b68
   languageName: node
   linkType: hard
 
@@ -9686,7 +9695,7 @@ __metadata:
     "@wdio/local-runner": "npm:^8.32.3"
     "@wdio/mocha-framework": "npm:^8.32.3"
     "@wdio/spec-reporter": "npm:^8.32.2"
-    "@wdio/types": "npm:^8.32.2"
+    "@wdio/types": "npm:^8.32.4"
     "@zondax/ledger-substrate": "npm:^0.41.3"
     auto-launch: "npm:^5.0.6"
     bignumber.js: "npm:^9.1.2"

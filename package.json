@@ -50,7 +50,7 @@
     "@wdio/local-runner": "^8.32.3",
     "@wdio/mocha-framework": "^8.32.3",
     "@wdio/spec-reporter": "^8.32.2",
-    "@wdio/types": "^8.32.2",
+    "@wdio/types": "^8.32.4",
     "debug": "^4.3.4",
     "electron": "^28.2.3",
     "eslint": "^8.57.0",
