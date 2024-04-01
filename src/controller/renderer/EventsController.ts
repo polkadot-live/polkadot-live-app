@@ -309,7 +309,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
-        const { poolCommission } = flattenedAccount.nominationPoolData!;
+        const { poolCommission, poolId } = flattenedAccount.nominationPoolData!;
         const { poolCommission: prevCommission } = miscData;
 
         return {
@@ -334,7 +334,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
+              text: `Subscan`,
+            },
+          ],
         };
       }
       default: {
