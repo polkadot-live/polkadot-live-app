@@ -2,13 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainCurrency, chainUnits } from '@/config/chains';
+import { chainUnits } from '@/config/chains';
 import {
   checkAccountWithProperties,
   checkFlattenedAccountWithProperties,
 } from '@/utils/AccountUtils';
-import { planckToUnit } from '@w3ux/utils';
+import {
+  getFreeBalanceText,
+  getNominationPoolRenamedText,
+  getNominationPoolRolesText,
+  getNominationPoolStateText,
+  getPendingRewardsText,
+} from '@/utils/EventUtils';
 import { getUnixTime } from 'date-fns';
+import { planckToUnit } from '@w3ux/utils';
+import type { ActionMeta } from '@/types/tx';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type {
@@ -16,8 +24,6 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
-import type { ActionMeta } from '@/types/tx';
-import { getNominationPoolStateText } from '@/utils/EventUtils';
 
 export class EventsController {
   /**
@@ -84,11 +90,6 @@ export class EventsController {
         const address = account.address;
         const accountName = entry.task.account!.name;
 
-        const freeBalance = planckToUnit(
-          new BigNumber(miscData.free.toString()),
-          chainUnits(chainId)
-        );
-
         return {
           uid: '',
           category: 'balances',
@@ -101,8 +102,8 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Current Balance',
-          subtitle: `${freeBalance} ${chainCurrency(chainId)}`,
+          title: 'Free Balance',
+          subtitle: getFreeBalanceText(account),
           data: {
             balances: miscData,
           },
@@ -143,7 +144,10 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Unclaimed Nomination Pool Rewards',
-          subtitle: `${pendingRewardsUnit.toString()} ${chainCurrency(chainId)}`,
+          subtitle: getPendingRewardsText(
+            chainId,
+            miscData.pendingRewardsPlanck
+          ),
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -202,11 +206,6 @@ export class EventsController {
         const { poolState } = flattenedAccount.nominationPoolData!;
         const { prevState } = miscData;
 
-        const subtitle =
-          prevState !== poolState
-            ? `Changed from ${prevState} to ${poolState}.`
-            : `Current state is ${poolState}`;
-
         return {
           uid: '',
           category: 'nominationPools',
@@ -220,7 +219,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool State',
-          subtitle,
+          subtitle: getNominationPoolStateText(poolState, prevState),
           data: {
             poolState,
           },
@@ -242,11 +241,6 @@ export class EventsController {
         const { poolName } = flattenedAccount.nominationPoolData!;
         const { prevName } = miscData;
 
-        const subtitle =
-          poolName !== prevName
-            ? `Changed from ${prevName} to ${poolName}`
-            : `Current name is ${poolName}`;
-
         return {
           uid: '',
           category: 'nominationPools',
@@ -260,7 +254,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Name',
-          subtitle,
+          subtitle: getNominationPoolRenamedText(poolName, prevName),
           data: {
             poolName,
           },
@@ -295,7 +289,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
-          subtitle: getNominationPoolStateText(poolRoles, prevRoles),
+          subtitle: getNominationPoolRolesText(poolRoles, prevRoles),
           data: {
             depositor: poolRoles.depositor,
           },

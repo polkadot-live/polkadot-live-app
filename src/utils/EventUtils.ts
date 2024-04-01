@@ -1,8 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type BigNumber from 'bignumber.js';
+import BigNumber from 'bignumber.js';
+import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
+import { planckToUnit } from '@w3ux/utils';
+import type { Account } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
 import type { NominationPoolRoles } from '@/types/accounts';
@@ -282,10 +285,10 @@ export const renderTimeAgo = (timestamp: number): string => {
 };
 
 /**
- * @name getNominationPoolStateText
- * @summary Text to render for nomination pool state events.
+ * @name getNominationPoolRolesText
+ * @summary Text to render for nomination pool roles events.
  */
-export const getNominationPoolStateText = (
+export const getNominationPoolRolesText = (
   curState: NominationPoolRoles,
   prevState: NominationPoolRoles
 ) => {
@@ -310,3 +313,53 @@ export const getNominationPoolStateText = (
 
   return text;
 };
+
+/**
+ * @name getNominationPoolRenamedText
+ * @summary Text to render for nomination pool rename events.
+ */
+export const getNominationPoolRenamedText = (
+  curName: string,
+  prevName: string
+) =>
+  curName !== prevName
+    ? `Changed from ${prevName} to ${curName}`
+    : `Current name is ${curName}`;
+
+/**
+ * @name getNominationPoolStateText
+ * @summary Text to render for nomination state events.
+ */
+export const getNominationPoolStateText = (
+  curState: string,
+  prevState: string
+) =>
+  curState !== prevState
+    ? `Changed from ${prevState} to ${curState}.`
+    : `Current state is ${curState}.`;
+
+/**
+ * @name getFreeBalanceText
+ * @summary Text to render for transfer events.
+ */
+export const getFreeBalanceText = (account: Account) => {
+  const freeBalance = planckToUnit(
+    new BigNumber(account.balance!.free.toString()),
+    chainUnits(account.chain)
+  );
+
+  return `${freeBalance} ${chainCurrency(account.chain)}`;
+};
+
+/**
+ * @name getPendingRewardsText
+ * @summary Text to render for transfer events.
+ */
+export const getPendingRewardsText = (
+  chainId: ChainID,
+  pendingRewards: BigNumber
+) =>
+  `${planckToUnit(
+    new BigNumber(pendingRewards.toString()),
+    chainUnits(chainId)
+  )} ${chainCurrency(chainId)}`;

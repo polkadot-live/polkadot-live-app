@@ -178,7 +178,7 @@ export class Callbacks {
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {}),
+        EventsController.getEvent(entry, { pendingRewardsPlanck }),
         NotificationsController.getNotification(entry, account, {
           pendingRewardsPlanck,
         })
