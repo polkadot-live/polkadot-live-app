@@ -200,6 +200,13 @@ export class SubscriptionsController {
 
                 return { ...task, actionArgs } as SubscriptionTask;
               }
+              case 'subscribe:account:nominationPools:commission': {
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
               default: {
                 return t;
               }
