@@ -324,7 +324,7 @@ export const getNominationPoolRenamedText = (
 ) =>
   curName !== prevName
     ? `Changed from ${prevName} to ${curName}`
-    : `Current name is ${curName}`;
+    : `${curName}`;
 
 /**
  * @name getNominationPoolStateText
