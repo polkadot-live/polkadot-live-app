@@ -2769,12 +2769,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/extension-assets@npm:^0.0.15":
-  version: 0.0.15
-  resolution: "@w3ux/extension-assets@npm:0.0.15"
+"@w3ux/extension-assets@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@w3ux/extension-assets@npm:0.2.3"
   peerDependencies:
     react: ^18
-  checksum: 9ecb5b93a4b6e8ff44f413cd309eb3d411c7cf01537bf323ad2928d77b5ff06ab6aeb30bb8fc02626c57390a3a19c3b03037a8cef3c40f2131cd701d2fdc3948
+  checksum: 7cda51bf0653e22df71f46c1bd449df8605433e1b6d1ffc85f1b9d468d2da57377aada90783d21e4b737570098f22a10a46c94cc3e4b278d36962591db80f73e
   languageName: node
   linkType: hard
 
@@ -9676,7 +9676,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.1.0"
     "@typescript-eslint/parser": "npm:^7.1.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
-    "@w3ux/extension-assets": "npm:^0.0.15"
+    "@w3ux/extension-assets": "npm:^0.2.3"
     "@w3ux/react-connect-kit": "npm:^0.0.4"
     "@w3ux/react-polkicon": "npm:^0.0.2"
     "@w3ux/utils": "npm:^0.0.2"
