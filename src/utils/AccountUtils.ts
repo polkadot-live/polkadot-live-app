@@ -17,7 +17,12 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
+import type {
+  AccountBalance,
+  FlattenedAccountData,
+  NominationPoolCommision,
+  NominationPoolRoles,
+} from '@/types/accounts';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -119,15 +124,14 @@ const setNominationPoolDataForAccount = async (
     chainUnits(chainId)
   );
 
-  // Get nomination pool state.
-  const stateResult: AnyData = (
+  // Get nomination pool data.
+  const npResult: AnyData = (
     await api.query.nominationPools.bondedPools(poolId)
   ).toHuman();
 
-  const poolState = stateResult.state;
-
-  // Get nomination pool roles.
-  const poolRoles = stateResult.roles;
+  const poolState: string = npResult.state;
+  const poolRoles: NominationPoolRoles = npResult.roles;
+  const poolCommission: NominationPoolCommision = npResult.commission;
 
   // Get nomination pool name.
   const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);
@@ -142,6 +146,7 @@ const setNominationPoolDataForAccount = async (
       poolState,
       poolName,
       poolRoles,
+      poolCommission,
     };
 
     // Store updated account data in controller.
