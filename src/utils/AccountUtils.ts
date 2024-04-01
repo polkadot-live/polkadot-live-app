@@ -17,7 +17,7 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import type { AccountBalance } from '@/types/accounts';
+import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -240,4 +240,39 @@ export const checkAccountWithProperties = (
 
   // Otherwise, return the account.
   return account;
+};
+
+export const checkFlattenedAccountWithProperties = (
+  entry: ApiCallEntry,
+  properties: (keyof FlattenedAccountData)[]
+) => {
+  // Check for account existence.
+  if (!entry.task.account) {
+    return null;
+  }
+
+  // Utility to access an instance property dynamically.
+  const getProperty = (
+    instance: FlattenedAccountData,
+    key: keyof FlattenedAccountData
+  ): AnyData => {
+    switch (key) {
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
+      default:
+        return null;
+    }
+  };
+
+  // Iterate properties and return false if any are undefined or null.
+  for (const key of properties) {
+    const result = getProperty(entry.task.account, key);
+
+    if (result === null || result === undefined) {
+      return null;
+    }
+  }
+
+  // Otherwise, return the account.
+  return entry.task.account;
 };

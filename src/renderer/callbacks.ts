@@ -50,7 +50,7 @@ export class Callbacks {
     const now = new Date(data * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
-    // Send IPC message to main process to handle notification and events.
+    // Send event and notification data to main process.
     const event = EventsController.getEvent(entry, String(newVal));
     window.myAPI.persistEvent(event, null);
   }
@@ -82,7 +82,7 @@ export class Callbacks {
     // Debugging.
     console.log(`Current Sot: ${newVal}`);
 
-    // Send IPC message to main process to handle notification and events.
+    // Send event and notification data to main process.
     const event = EventsController.getEvent(entry, String(newVal));
     window.myAPI.persistEvent(event, null);
   }

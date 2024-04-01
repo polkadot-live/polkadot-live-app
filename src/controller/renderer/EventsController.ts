@@ -3,7 +3,11 @@
 
 import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import {
+  checkAccountWithProperties,
+  checkFlattenedAccountWithProperties,
+} from '@/utils/AccountUtils';
+import { planckToUnit } from '@w3ux/utils';
 import { getUnixTime } from 'date-fns';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
@@ -73,9 +77,16 @@ export class EventsController {
        * subscribe:query.system.account
        */
       case 'subscribe:account:balance': {
-        const address = entry.task.actionArgs!.at(0)!;
-        const accountName = entry.task.account?.name || ellipsisFn(address);
+        // Exit early if data checks fail.
+        const account = checkAccountWithProperties(entry, ['balance']);
+        if (!account) {
+          throw new Error('EventsController: account data not found for event');
+        }
+
+        // Get data for event.
         const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
 
         const freeBalance = planckToUnit(
           new BigNumber(newVal.free.toString()),
@@ -91,7 +102,7 @@ export class EventsController {
             data: {
               accountName,
               address,
-              chainId: entry.task.chainId,
+              chainId,
             } as EventAccountData,
           },
           title: 'Current Balance',
@@ -109,13 +120,19 @@ export class EventsController {
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+        // Exit early if data checks fail.
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        if (!flattenedAccount) {
           throw new Error('EventsController: account data not found for event');
         }
 
-        const { address, name: accountName, source } = entry.task.account;
+        // Get data for event.
         const { chainId } = entry.task;
-        const { poolPendingRewards } = entry.task.account.nominationPoolData;
+        const { address, name: accountName, source } = flattenedAccount;
+        const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
 
         const pendingRewardsUnit = planckToUnit(
           new BigNumber(poolPendingRewards.toString()),
@@ -186,13 +203,19 @@ export class EventsController {
        * subscribe:account:nominationPools:state
        */
       case 'subscribe:account:nominationPools:state': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+        // Exit early if data checks fail.
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        if (!flattenedAccount) {
           throw new Error('EventsController: account data not found for event');
         }
 
-        const { address, name: accountName } = entry.task.account;
+        // Get data for event.
         const { chainId } = entry.task;
-        const { poolState } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolState } = flattenedAccount.nominationPoolData!;
 
         return {
           uid: '',
@@ -220,13 +243,19 @@ export class EventsController {
        * subscribe:account:nominationPools:renamed
        */
       case 'subscribe:account:nominationPools:renamed': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+        // Exit early if data checks fail.
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        if (!flattenedAccount) {
           throw new Error('EventsController: account data not found for event');
         }
 
-        const { address, name: accountName } = entry.task.account;
+        // Get data for event.
         const { chainId } = entry.task;
-        const { poolName } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolName } = flattenedAccount.nominationPoolData!;
 
         return {
           uid: '',
@@ -254,13 +283,19 @@ export class EventsController {
        * subscribe:account:nominationPools:roles
        */
       case 'subscribe:account:nominationPools:roles': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
+        // Exit early if data checks fail.
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        if (!flattenedAccount) {
           throw new Error('EventsController: account data not found for event');
         }
 
-        const { address, name: accountName } = entry.task.account;
+        // Get data for event.
         const { chainId } = entry.task;
-        const { poolRoles } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolRoles } = flattenedAccount.nominationPoolData!;
 
         return {
           uid: '',
