@@ -5854,7 +5854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect-webdriverio@npm:^4.11.2, expect-webdriverio@npm:^4.11.9":
+"expect-webdriverio@npm:^4.11.2":
   version: 4.11.9
   resolution: "expect-webdriverio@npm:4.11.9"
   dependencies:
@@ -5873,6 +5873,28 @@ __metadata:
     webdriverio:
       optional: true
   checksum: 08d26f3313975d3b9b71a1ac3519fb15951c3d098001eae913239c0c86a46a3f3af97a25db0ce801de3da6d90330c8f578564efd4bef11dff1e5ea966facdce6
+  languageName: node
+  linkType: hard
+
+"expect-webdriverio@npm:^4.12.2":
+  version: 4.12.2
+  resolution: "expect-webdriverio@npm:4.12.2"
+  dependencies:
+    "@vitest/snapshot": "npm:^1.2.2"
+    "@wdio/globals": "npm:^8.29.3"
+    "@wdio/logger": "npm:^8.28.0"
+    expect: "npm:^29.7.0"
+    jest-matcher-utils: "npm:^29.7.0"
+    lodash.isequal: "npm:^4.5.0"
+    webdriverio: "npm:^8.29.3"
+  dependenciesMeta:
+    "@wdio/globals":
+      optional: true
+    "@wdio/logger":
+      optional: true
+    webdriverio:
+      optional: true
+  checksum: bc5d124893bd7f1ee310eed4f91a7b2eb45b15995f021aea5a037f5ccfe63211fef0c975aca79a868c1c9345ff2911bd46dd81763cc190666bc4e53549c99df5
   languageName: node
   linkType: hard
 
@@ -9706,7 +9728,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-unused-imports: "npm:^3.1.0"
     expect: "npm:^29.7.0"
-    expect-webdriverio: "npm:^4.11.9"
+    expect-webdriverio: "npm:^4.12.2"
     framer-motion: "npm:^11.0.7"
     html5-qrcode: "npm:^2.3.8"
     prettier: "npm:^3.2.5"
