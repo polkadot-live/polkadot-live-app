@@ -94,65 +94,43 @@ export class Callbacks {
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
    */
-  static callback_query_system_account(
-    data: AnyData,
-    entry: ApiCallEntry,
-    wrapper: QueryMultiWrapper
-  ) {
-    const { action, chainId } = entry.task;
-
-    if (!data) {
+  static callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
+    // Exit early if initial checks fail.
+    const account = checkAccountWithProperties(entry, ['balance']);
+    if (account === null) {
       return;
     }
 
-    // Check if event data is same as cached value.
-    const newVal = {
-      address: entry.task.account!.address,
+    // Get the received balance.
+    const received = {
       free: new BigNumber(data.data.free),
       reserved: new BigNumber(data.data.reserved),
+      frozen: new BigNumber(data.data.frozen),
       nonce: new BigNumber(data.nonce),
     };
 
-    const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
-
-    if (curVal !== null) {
-      // Check if newVal === curVal
-      if (
-        newVal.address === curVal.address &&
-        newVal.free.eq(curVal.free) &&
-        newVal.reserved.eq(curVal.reserved) &&
-        newVal.nonce.eq(curVal.nonce)
-      ) {
-        // Balances are the same, skip.
-        return;
-      }
+    // Exit early if balance hasn't changed.
+    if (
+      received.free.eq(account.balance!.free) &&
+      received.reserved.eq(account.balance!.reserved) &&
+      received.frozen.eq(account.balance!.frozen) &&
+      received.nonce.eq(account.balance!.nonce)
+    ) {
+      return;
     }
 
-    // Cache new value.
-    wrapper.setChainTaskVal(entry, newVal, chainId);
+    // Update account data.
+    account.balance = received;
+    AccountsController.set(account.chain, account);
 
-    // Extract values.
-    const { free, reserved, nonce } = newVal;
-
-    // Debugging.
-    console.log(
-      `Account: Free balance is ${free} with ${reserved} reserved (nonce: ${nonce}).`
-    );
-
-    // Create event.
-    const event = EventsController.getEvent(entry, {
-      nonce,
-      free,
-      reserved,
-    });
-
-    // Parse data into same format as persisted events.
+    // Create event and parse into same format as persisted events.
+    const event = EventsController.getEvent(entry, { ...received });
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
     // Send event and notification data to main process.
     window.myAPI.persistEvent(parsed, {
       title: ellipsisFn(entry.task.account!.address),
-      body: `Free balance: ${free}`,
+      body: `Free balance: ${received.free}`,
     } as NotificationData);
   }
 

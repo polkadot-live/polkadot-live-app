@@ -221,6 +221,9 @@ export const checkAccountWithProperties = (
     switch (key) {
       case 'nominationPoolData':
         return instance.nominationPoolData;
+      case 'balance': {
+        return instance.balance;
+      }
       default:
         return null;
     }
