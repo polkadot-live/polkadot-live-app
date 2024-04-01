@@ -3,15 +3,14 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@/config/chains';
 import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
-import type { EventCallback, NotificationData } from '@/types/reporter';
+import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 
 export class Callbacks {
@@ -135,10 +134,10 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Send event and notification data to main process.
-      window.myAPI.persistEvent(parsed, {
-        title: ellipsisFn(entry.task.account!.address),
-        body: `Free balance: ${received.free}`,
-      } as NotificationData);
+      window.myAPI.persistEvent(
+        parsed,
+        NotificationsController.getNotification(entry, account)
+      );
     } catch (err) {
       console.error(err);
       return;
@@ -178,10 +177,12 @@ export class Callbacks {
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-        title: 'Unclaimed Nomination Pool Rewards',
-        body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
-      } as NotificationData);
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, {}),
+        NotificationsController.getNotification(entry, account, {
+          pendingRewardsPlanck,
+        })
+      );
     } catch (err) {
       console.error(err);
     }
@@ -212,10 +213,10 @@ export class Callbacks {
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-        title: 'Nomination Pool State',
-        body: `${receivedPoolState}`,
-      } as NotificationData);
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, {}),
+        NotificationsController.getNotification(entry, account)
+      );
     } catch (err) {
       console.error(err);
       return;
@@ -247,10 +248,10 @@ export class Callbacks {
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-        title: 'Nomination Pool Name',
-        body: `${receivedPoolName}`,
-      } as NotificationData);
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, {}),
+        NotificationsController.getNotification(entry, account)
+      );
     } catch (err) {
       console.error(err);
       return;
@@ -291,10 +292,10 @@ export class Callbacks {
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-        title: 'Nomination Pool Roles',
-        body: `Roles have changed`,
-      } as NotificationData);
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, {}),
+        NotificationsController.getNotification(entry, account)
+      );
     } catch (err) {
       console.error(err);
       return;
