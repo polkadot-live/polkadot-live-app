@@ -117,8 +117,7 @@ export class QueryMultiWrapper {
           case 'subscribe:account:balance': {
             Callbacks.callback_query_system_account(
               dataArr[entry.task.dataIndex!],
-              entry,
-              this
+              entry
             );
             break;
           }

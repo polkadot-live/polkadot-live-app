@@ -79,8 +79,8 @@ export const EventItem = styled(motion.div)`
     background: var(--background-default);
     width: 100%;
     border-radius: 1.75rem;
-    padding: 0 1.25rem;
-    margin-bottom: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
     text-align: left;
     display: flex;
     flex-direction: column;

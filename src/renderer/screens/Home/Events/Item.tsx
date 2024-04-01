@@ -8,12 +8,9 @@ import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  getEventChainId,
-  getAddressNonce,
-  renderTimeAgo,
-} from '@/utils/EventUtils';
-import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
+import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
+import { getAddressNonce } from '@/utils/AccountUtils';
+import { isValidHttpUrl /*, remToUnit*/ } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState } from 'react';
 import { useEvents } from '@/renderer/contexts/Events';
@@ -65,10 +62,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
     console.log(`Remove result: ${result}`);
   };
 
-  // Manually define event item height. Add extra height if actions are present.
-  // This could be refactored into a helper function in the future.
-  const itemHeight = actions.length ? '12.5rem' : '8.75rem';
-
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event
   // _after_ the fade-out ensures there will be no race conditions. E.g. the UI rendering and
   // removing the event before_ the event transition is finished.
@@ -89,7 +82,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             hidden: { opacity: 0, height: 0 },
             show: {
               opacity: 1,
-              height: remToUnit(itemHeight), // Doesn't play well with `rem` units.
+              height: 'min-content',
             },
           }}
           animate={
@@ -114,7 +107,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
           </button>
 
           {/* Main content */}
-          <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>
+          <div>
             <section>
               <div>
                 <div className="icon ">

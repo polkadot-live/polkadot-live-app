@@ -2,9 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainCurrency, chainUnits } from '@/config/chains';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { chainUnits } from '@/config/chains';
+import {
+  checkAccountWithProperties,
+  checkFlattenedAccountWithProperties,
+} from '@/utils/AccountUtils';
+import {
+  getFreeBalanceText,
+  getNominationPoolRenamedText,
+  getNominationPoolRolesText,
+  getNominationPoolStateText,
+  getPendingRewardsText,
+} from '@/utils/EventUtils';
 import { getUnixTime } from 'date-fns';
+import { planckToUnit } from '@w3ux/utils';
+import type { ActionMeta } from '@/types/tx';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type {
@@ -12,7 +24,6 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
-import type { ActionMeta } from '@/types/tx';
 
 export class EventsController {
   /**
@@ -21,7 +32,7 @@ export class EventsController {
    *
    * NOTE: `uid` is set to an empty string on the renderer side and initialized in the main process.
    */
-  static getEvent(entry: ApiCallEntry, newVal: AnyData): EventCallback {
+  static getEvent(entry: ApiCallEntry, miscData: AnyData): EventCallback {
     switch (entry.task.action) {
       /**
        * subscribe:chain:timestamp
@@ -36,9 +47,9 @@ export class EventsController {
             data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: 'Current Timestamp',
-          subtitle: `${newVal}`,
+          subtitle: `${miscData}`,
           data: {
-            timestamp: `${newVal}`,
+            timestamp: `${miscData}`,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -59,9 +70,9 @@ export class EventsController {
             data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: 'Current Slot',
-          subtitle: `${newVal}`,
+          subtitle: `${miscData}`,
           data: {
-            timestamp: `${newVal}`,
+            timestamp: `${miscData}`,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -73,14 +84,11 @@ export class EventsController {
        * subscribe:query.system.account
        */
       case 'subscribe:account:balance': {
-        const address = entry.task.actionArgs!.at(0)!;
-        const accountName = entry.task.account?.name || ellipsisFn(address);
-        const { chainId } = entry.task;
+        const account = checkAccountWithProperties(entry, ['balance']);
 
-        const freeBalance = planckToUnit(
-          new BigNumber(newVal.free.toString()),
-          chainUnits(chainId)
-        );
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
 
         return {
           uid: '',
@@ -91,13 +99,13 @@ export class EventsController {
             data: {
               accountName,
               address,
-              chainId: entry.task.chainId,
+              chainId,
             } as EventAccountData,
           },
-          title: 'Current Balance',
-          subtitle: `${freeBalance} ${chainCurrency(chainId)}`,
+          title: 'Free Balance',
+          subtitle: getFreeBalanceText(account),
           data: {
-            balances: newVal,
+            balances: miscData,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -109,13 +117,13 @@ export class EventsController {
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
-          throw new Error('EventsController: account data not found for event');
-        }
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
 
-        const { address, name: accountName, source } = entry.task.account;
         const { chainId } = entry.task;
-        const { poolPendingRewards } = entry.task.account.nominationPoolData;
+        const { address, name: accountName, source } = flattenedAccount;
+        const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
 
         const pendingRewardsUnit = planckToUnit(
           new BigNumber(poolPendingRewards.toString()),
@@ -136,7 +144,10 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Unclaimed Nomination Pool Rewards',
-          subtitle: `${pendingRewardsUnit.toString()} ${chainCurrency(chainId)}`,
+          subtitle: getPendingRewardsText(
+            chainId,
+            miscData.pendingRewardsPlanck
+          ),
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -186,13 +197,14 @@ export class EventsController {
        * subscribe:account:nominationPools:state
        */
       case 'subscribe:account:nominationPools:state': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
-          throw new Error('EventsController: account data not found for event');
-        }
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
 
-        const { address, name: accountName } = entry.task.account;
         const { chainId } = entry.task;
-        const { poolState } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolState } = flattenedAccount.nominationPoolData!;
+        const { prevState } = miscData;
 
         return {
           uid: '',
@@ -207,7 +219,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool State',
-          subtitle: `${poolState}`,
+          subtitle: getNominationPoolStateText(poolState, prevState),
           data: {
             poolState,
           },
@@ -220,13 +232,14 @@ export class EventsController {
        * subscribe:account:nominationPools:renamed
        */
       case 'subscribe:account:nominationPools:renamed': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
-          throw new Error('EventsController: account data not found for event');
-        }
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
 
-        const { address, name: accountName } = entry.task.account;
         const { chainId } = entry.task;
-        const { poolName } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolName } = flattenedAccount.nominationPoolData!;
+        const { prevName } = miscData;
 
         return {
           uid: '',
@@ -241,7 +254,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Name',
-          subtitle: `${poolName}`,
+          subtitle: getNominationPoolRenamedText(poolName, prevName),
           data: {
             poolName,
           },
@@ -254,13 +267,14 @@ export class EventsController {
        * subscribe:account:nominationPools:roles
        */
       case 'subscribe:account:nominationPools:roles': {
-        if (!entry.task.account || !entry.task.account.nominationPoolData) {
-          throw new Error('EventsController: account data not found for event');
-        }
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
 
-        const { address, name: accountName } = entry.task.account;
         const { chainId } = entry.task;
-        const { poolRoles } = entry.task.account.nominationPoolData;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolRoles } = flattenedAccount.nominationPoolData!;
+        const { poolRoles: prevRoles } = miscData;
 
         return {
           uid: '',
@@ -275,7 +289,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
-          subtitle: 'Roles have changed.',
+          subtitle: getNominationPoolRolesText(poolRoles, prevRoles),
           data: {
             depositor: poolRoles.depositor,
           },
@@ -285,7 +299,7 @@ export class EventsController {
         };
       }
       default: {
-        throw new Error('Subscription task action not recognized');
+        throw new Error('getEvent: Subscription task action not recognized');
       }
     }
   }
