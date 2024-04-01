@@ -8,6 +8,7 @@ import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
+import { getNominationPoolStateText } from '@/utils/EventUtils';
 
 export class NotificationsController {
   /**
@@ -64,28 +65,9 @@ export class NotificationsController {
         const { poolRoles } = account.nominationPoolData!;
         const { poolRoles: prevRoles } = miscData;
 
-        // Add changed roles to an array.
-        const changedRoles: string[] = [];
-
-        for (const key in poolRoles) {
-          const k = key as keyof typeof poolRoles;
-          if (poolRoles[k] !== prevRoles[k]) {
-            changedRoles.push(key);
-          }
-        }
-
-        // Compute the body depending on if roles have changed.
-        const body =
-          changedRoles.length === 0
-            ? 'Roles remain unchanged.'
-            : changedRoles.reduce(
-                (acc, r) => (acc === '' ? `${acc} ${r}` : `${acc} + ${r}`),
-                ''
-              ) + ' changed.';
-
         return {
           title: 'Nomination Pool Roles',
-          body,
+          body: getNominationPoolStateText(poolRoles, prevRoles),
         };
       }
       default: {

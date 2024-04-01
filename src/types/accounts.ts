@@ -34,12 +34,14 @@ export interface AccountNominationPoolData {
   poolPendingRewards: BigNumber;
   poolState: string;
   poolName: string;
-  poolRoles: {
-    depositor: string;
-    root: string;
-    nominator: string;
-    bouncer: string;
-  };
+  poolRoles: NominationPoolRoles;
+}
+
+export interface NominationPoolRoles {
+  depositor: string;
+  root: string;
+  nominator: string;
+  bouncer: string;
 }
 
 /*

@@ -17,6 +17,7 @@ import type {
   EventChainData,
 } from '@/types/reporter';
 import type { ActionMeta } from '@/types/tx';
+import { getNominationPoolStateText } from '@/utils/EventUtils';
 
 export class EventsController {
   /**
@@ -281,25 +282,6 @@ export class EventsController {
         const { poolRoles } = flattenedAccount.nominationPoolData!;
         const { poolRoles: prevRoles } = miscData;
 
-        // Add changed roles to an array.
-        const changedRoles: string[] = [];
-
-        for (const key in poolRoles) {
-          const k = key as keyof typeof poolRoles;
-          if (poolRoles[k] !== prevRoles[k]) {
-            changedRoles.push(key);
-          }
-        }
-
-        // Compute the subtitle depending on if roles have changed.
-        const subtitle =
-          changedRoles.length === 0
-            ? 'Roles remain unchanged.'
-            : changedRoles.reduce(
-                (acc, r) => (acc === '' ? `${acc} ${r}` : `${acc} + ${r}`),
-                ''
-              ) + ' changed.';
-
         return {
           uid: '',
           category: 'nominationPools',
@@ -313,7 +295,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
-          subtitle,
+          subtitle: getNominationPoolStateText(poolRoles, prevRoles),
           data: {
             depositor: poolRoles.depositor,
           },

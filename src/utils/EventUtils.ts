@@ -5,6 +5,7 @@ import type BigNumber from 'bignumber.js';
 import { formatDistanceToNow } from 'date-fns';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
+import type { NominationPoolRoles } from '@/types/accounts';
 
 /**
  * @name getEventChainId
@@ -282,4 +283,34 @@ export const renderTimeAgo = (timestamp: number): string => {
     includeSeconds: true,
   });
   return `${distance} ago`;
+};
+
+/**
+ * @name getNominationPoolStateText
+ * @summary Text to render for nomination pool state events.
+ */
+export const getNominationPoolStateText = (
+  curState: NominationPoolRoles,
+  prevState: NominationPoolRoles
+) => {
+  // Add changed roles to an array.
+  const changedRoles: string[] = [];
+
+  for (const key in curState) {
+    const k = key as keyof NominationPoolRoles;
+    if (curState[k] !== prevState[k]) {
+      changedRoles.push(key);
+    }
+  }
+
+  // Compute the subtitle depending on if roles have changed.
+  const text =
+    changedRoles.length === 0
+      ? 'Roles remain unchanged.'
+      : changedRoles.reduce(
+          (acc, r) => (acc === '' ? `${acc} ${r}` : `${acc} + ${r}`),
+          ''
+        ) + ' changed.';
+
+  return text;
 };
