@@ -425,13 +425,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/plugin-auto-unpack-natives@npm:7.2.0":
-  version: 7.2.0
-  resolution: "@electron-forge/plugin-auto-unpack-natives@npm:7.2.0"
+"@electron-forge/plugin-auto-unpack-natives@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@electron-forge/plugin-auto-unpack-natives@npm:7.3.1"
   dependencies:
-    "@electron-forge/plugin-base": "npm:7.2.0"
-    "@electron-forge/shared-types": "npm:7.2.0"
-  checksum: d2fbf07af187cf73556e3bef004462c050e5e553b6755854d9d6abb31e94c5b478a0f2cfb4e5bd5536673ad139b64332a5ffa15f64c323502302e566b87c2be2
+    "@electron-forge/plugin-base": "npm:7.3.1"
+    "@electron-forge/shared-types": "npm:7.3.1"
+  checksum: 965be04ee54b2fcc40efb691a1f24cd3512b8faf6f984b6d5970dca0763ffabbcf3bbe246969f5b0e0c383c2f85ab987a23a08d8fece6222d31f92adcd9a549e
   languageName: node
   linkType: hard
 
@@ -441,6 +441,15 @@ __metadata:
   dependencies:
     "@electron-forge/shared-types": "npm:7.2.0"
   checksum: ac25b5ced3ef080c0f7e08180cda5dc15e741a216405a5547de54d9514940ff5087d8439947533c37e838c6f69cfcfc3ce8ede9d06e68ab20f9c4d9d63b0b5ea
+  languageName: node
+  linkType: hard
+
+"@electron-forge/plugin-base@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@electron-forge/plugin-base@npm:7.3.1"
+  dependencies:
+    "@electron-forge/shared-types": "npm:7.3.1"
+  checksum: bbabbfcd51302ffe6916cae62bba26352155476192abe34034a585acd44840c7edb483a75a63c3c819d37c6b0f7b48c068efae33283906ed0f34c88b964edd23
   languageName: node
   linkType: hard
 
@@ -477,6 +486,18 @@ __metadata:
     "@electron/rebuild": "npm:^3.2.10"
     listr2: "npm:^5.0.3"
   checksum: 156ae0315d67c09f6455f039304ae0a1eaef95d28666a1c040a62eb12b10bd7307ed9882e1467be41276a517479e558f42fa6761a0e0305cb760cefb24ab988c
+  languageName: node
+  linkType: hard
+
+"@electron-forge/shared-types@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@electron-forge/shared-types@npm:7.3.1"
+  dependencies:
+    "@electron-forge/tracer": "npm:7.3.1"
+    "@electron/packager": "npm:^18.1.3"
+    "@electron/rebuild": "npm:^3.2.10"
+    listr2: "npm:^5.0.3"
+  checksum: 1e40a6f8483ef2e90efb887f5d21429b08465c02b9aebbe68f210bce128de3a9f3a3eeff44af30c4e86d5704043ba8faa4502d19581b2c46d6a9854d248df2d2
   languageName: node
   linkType: hard
 
@@ -543,6 +564,15 @@ __metadata:
   dependencies:
     chrome-trace-event: "npm:^1.0.3"
   checksum: 852253a46eaeb28f62b306cc1e99058654ccb5b76014aada0ff96308c0dcfc18a1639d802866df4ac2b8f99a27272cbabc8754eb4126622b5936c038e8f7864b
+  languageName: node
+  linkType: hard
+
+"@electron-forge/tracer@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@electron-forge/tracer@npm:7.3.1"
+  dependencies:
+    chrome-trace-event: "npm:^1.0.3"
+  checksum: 5aae59b1c43e39f818a385a67580c4eef3bf9f8c551a8ca974b2aec35b578b824a75190c344273da2f53121da0bb5a173a7ecc5bf653e6574535df18538a4fdc
   languageName: node
   linkType: hard
 
@@ -665,6 +695,35 @@ __metadata:
   bin:
     electron-packager: bin/electron-packager.js
   checksum: 7e3a0c2b182dc502bdd250efca9f6c47c4219148d14604b310032e82181a15d7f947097366b6b7ac4f21e8e71ecb8163d658cdb30d9c272551c3a2a2be49c907
+  languageName: node
+  linkType: hard
+
+"@electron/packager@npm:^18.1.3":
+  version: 18.3.1
+  resolution: "@electron/packager@npm:18.3.1"
+  dependencies:
+    "@electron/asar": "npm:^3.2.1"
+    "@electron/get": "npm:^3.0.0"
+    "@electron/notarize": "npm:^2.1.0"
+    "@electron/osx-sign": "npm:^1.0.5"
+    "@electron/universal": "npm:^2.0.1"
+    "@electron/windows-sign": "npm:^1.0.0"
+    debug: "npm:^4.0.1"
+    extract-zip: "npm:^2.0.0"
+    filenamify: "npm:^4.1.0"
+    fs-extra: "npm:^11.1.0"
+    galactus: "npm:^1.0.0"
+    get-package-info: "npm:^1.0.0"
+    junk: "npm:^3.1.0"
+    parse-author: "npm:^2.0.0"
+    plist: "npm:^3.0.0"
+    resedit: "npm:^2.0.0"
+    resolve: "npm:^1.1.6"
+    semver: "npm:^7.1.3"
+    yargs-parser: "npm:^21.1.1"
+  bin:
+    electron-packager: bin/electron-packager.js
+  checksum: c42a11feeab9793296bce12b724d9d0d1dd12dae8d3ece721b6d0ef483f5468cd05d575b8067fc7b9c77261a27e7474f1e7a7f14fd53dfd24ef30f91884d5623
   languageName: node
   linkType: hard
 
@@ -9584,6 +9643,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pe-library@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "pe-library@npm:1.0.0"
+  checksum: 697a39d3dd97cb0b859f6088689b72a58969f39145faaf478d7ac4be88602cd556f08c0ab8332d018f091c05de5848accb699fc20d358127127f5bded85074f1
+  languageName: node
+  linkType: hard
+
 "pend@npm:~1.2.0":
   version: 1.2.0
   resolution: "pend@npm:1.2.0"
@@ -9650,7 +9716,7 @@ __metadata:
     "@electron-forge/maker-rpm": "npm:7.2.0"
     "@electron-forge/maker-squirrel": "npm:7.2.0"
     "@electron-forge/maker-zip": "npm:7.2.0"
-    "@electron-forge/plugin-auto-unpack-natives": "npm:7.2.0"
+    "@electron-forge/plugin-auto-unpack-natives": "npm:7.3.1"
     "@electron-forge/plugin-vite": "npm:7.2.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.5.0"
     "@fortawesome/free-brands-svg-icons": "npm:^6.5.0"
@@ -10351,6 +10417,15 @@ __metadata:
   version: 2.0.2
   resolution: "require-from-string@npm:2.0.2"
   checksum: aaa267e0c5b022fc5fd4eef49d8285086b15f2a1c54b28240fdf03599cbd9c26049fee3eab894f2e1f6ca65e513b030a7c264201e3f005601e80c49fb2937ce2
+  languageName: node
+  linkType: hard
+
+"resedit@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "resedit@npm:2.0.0"
+  dependencies:
+    pe-library: "npm:^1.0.0"
+  checksum: 35c7dba2ad22282b1c6c351fd547709d411c4e14675edff35d4fe03b0b635dbbd55b66aa656548dfbb604220d4c6a8cc6abbd78e41ed4f89a5e1981331c9756d
   languageName: node
   linkType: hard
 
