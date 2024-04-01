@@ -218,20 +218,16 @@ const filter_nomination_pool_roles = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  interface Target {
-    depositor: string;
-    root: string;
-    nominator: string;
-    bouncer: string;
-  }
   const { address } = event.who.data as EventAccountData;
-  const { depositor, root, nominator, bouncer }: Target = event.data;
+  const { depositor, root, nominator, bouncer }: NominationPoolRoles =
+    event.data;
+
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const next: Target = e.data;
+      const next: NominationPoolRoles = e.data;
 
       if (
         address === nextAddress &&
