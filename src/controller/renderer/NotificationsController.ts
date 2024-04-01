@@ -3,6 +3,7 @@
 
 import {
   getFreeBalanceText,
+  getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
@@ -64,6 +65,15 @@ export class NotificationsController {
         return {
           title: 'Nomination Pool Roles',
           body: getNominationPoolRolesText(poolRoles, prevRoles),
+        };
+      }
+      case 'subscribe:account:nominationPools:commission': {
+        const { poolCommission: cur } = account.nominationPoolData!;
+        const { poolCommission: prev } = miscData;
+
+        return {
+          title: 'Nomination Pool Commission',
+          body: getNominationPoolCommissionText(cur, prev),
         };
       }
       default: {

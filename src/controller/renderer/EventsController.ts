@@ -9,6 +9,7 @@ import {
 } from '@/utils/AccountUtils';
 import {
   getFreeBalanceText,
+  getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
@@ -292,6 +293,44 @@ export class EventsController {
           subtitle: getNominationPoolRolesText(poolRoles, prevRoles),
           data: {
             depositor: poolRoles.depositor,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominationPools:commission
+       */
+      case 'subscribe:account:nominationPools:commission': {
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        const { chainId } = entry.task;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolCommission } = flattenedAccount.nominationPoolData!;
+        const { poolCommission: prevCommission } = miscData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool Commission',
+          subtitle: getNominationPoolCommissionText(
+            poolCommission,
+            prevCommission
+          ),
+          data: {
+            ...poolCommission,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

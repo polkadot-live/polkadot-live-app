@@ -303,4 +303,52 @@ export class Callbacks {
       return;
     }
   }
+
+  /**
+   * @name callback_nomination_pool_commission
+   * @summary Callback for 'subscribe:account:nominationPools:commission'
+   *
+   * When a nomination pool's commission data changes, dispatch an event and notificaiton.
+   */
+  static async callback_nomination_pool_commission(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
+    try {
+      const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+
+      // Get the received pool commission.
+      const { changeRate, current, max, throttleFrom } =
+        data.toHuman().commission;
+
+      // Return if roles have not changed.
+      const poolCommission = account.nominationPoolData!.poolCommission;
+      if (
+        // eslint-disable-next-line prettier/prettier
+        JSON.stringify(poolCommission.changeRate) === JSON.stringify(changeRate) &&
+        JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
+        poolCommission.throttleFrom === (throttleFrom as string | null) &&
+        poolCommission.max === (max as string | null)
+      ) {
+        return;
+      }
+
+      // Update account and entry data.
+      // eslint-disable-next-line prettier/prettier
+      account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
+      AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { poolCommission }),
+        NotificationsController.getNotification(entry, account, {
+          poolCommission,
+        })
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
 }
