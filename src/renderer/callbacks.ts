@@ -203,7 +203,8 @@ export class Callbacks {
 
       // Get the received pool state.
       const receivedPoolState: string = data.toHuman().state;
-      if (account.nominationPoolData!.poolState === receivedPoolState) {
+      const prevState = account.nominationPoolData!.poolState;
+      if (prevState === receivedPoolState) {
         return;
       }
 
@@ -214,8 +215,8 @@ export class Callbacks {
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {}),
-        NotificationsController.getNotification(entry, account)
+        EventsController.getEvent(entry, { prevState }),
+        NotificationsController.getNotification(entry, account, { prevState })
       );
     } catch (err) {
       console.error(err);
@@ -238,7 +239,8 @@ export class Callbacks {
 
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
-      if (account.nominationPoolData!.poolName === receivedPoolName) {
+      const prevName = account.nominationPoolData!.poolName;
+      if (prevName === receivedPoolName) {
         return;
       }
 
@@ -249,8 +251,8 @@ export class Callbacks {
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {}),
-        NotificationsController.getNotification(entry, account)
+        EventsController.getEvent(entry, { prevName }),
+        NotificationsController.getNotification(entry, account, { prevName })
       );
     } catch (err) {
       console.error(err);
@@ -293,8 +295,8 @@ export class Callbacks {
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {}),
-        NotificationsController.getNotification(entry, account)
+        EventsController.getEvent(entry, { poolRoles }),
+        NotificationsController.getNotification(entry, account, { poolRoles })
       );
     } catch (err) {
       console.error(err);

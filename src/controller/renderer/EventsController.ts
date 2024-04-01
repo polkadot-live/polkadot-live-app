@@ -25,7 +25,7 @@ export class EventsController {
    *
    * NOTE: `uid` is set to an empty string on the renderer side and initialized in the main process.
    */
-  static getEvent(entry: ApiCallEntry, newVal: AnyData): EventCallback {
+  static getEvent(entry: ApiCallEntry, miscData: AnyData): EventCallback {
     switch (entry.task.action) {
       /**
        * subscribe:chain:timestamp
@@ -40,9 +40,9 @@ export class EventsController {
             data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: 'Current Timestamp',
-          subtitle: `${newVal}`,
+          subtitle: `${miscData}`,
           data: {
-            timestamp: `${newVal}`,
+            timestamp: `${miscData}`,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -63,9 +63,9 @@ export class EventsController {
             data: { chainId: entry.task.chainId } as EventChainData,
           },
           title: 'Current Slot',
-          subtitle: `${newVal}`,
+          subtitle: `${miscData}`,
           data: {
-            timestamp: `${newVal}`,
+            timestamp: `${miscData}`,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -84,7 +84,7 @@ export class EventsController {
         const accountName = entry.task.account!.name;
 
         const freeBalance = planckToUnit(
-          new BigNumber(newVal.free.toString()),
+          new BigNumber(miscData.free.toString()),
           chainUnits(chainId)
         );
 
@@ -103,7 +103,7 @@ export class EventsController {
           title: 'Current Balance',
           subtitle: `${freeBalance} ${chainCurrency(chainId)}`,
           data: {
-            balances: newVal,
+            balances: miscData,
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -199,6 +199,12 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolState } = flattenedAccount.nominationPoolData!;
+        const { prevState } = miscData;
+
+        const subtitle =
+          prevState !== poolState
+            ? `Changed from ${prevState} to ${poolState}.`
+            : `Current state is ${poolState}`;
 
         return {
           uid: '',
@@ -213,7 +219,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool State',
-          subtitle: `${poolState}`,
+          subtitle,
           data: {
             poolState,
           },
@@ -233,6 +239,12 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolName } = flattenedAccount.nominationPoolData!;
+        const { prevName } = miscData;
+
+        const subtitle =
+          poolName !== prevName
+            ? `Changed from ${prevName} to ${poolName}`
+            : `Current name is ${poolName}`;
 
         return {
           uid: '',
@@ -247,7 +259,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Name',
-          subtitle: `${poolName}`,
+          subtitle,
           data: {
             poolName,
           },
@@ -267,6 +279,26 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolRoles } = flattenedAccount.nominationPoolData!;
+        const { poolRoles: prevRoles } = miscData;
+
+        // Add changed roles to an array.
+        const changedRoles: string[] = [];
+
+        for (const key in poolRoles) {
+          const k = key as keyof typeof poolRoles;
+          if (poolRoles[k] !== prevRoles[k]) {
+            changedRoles.push(key);
+          }
+        }
+
+        // Compute the subtitle depending on if roles have changed.
+        const subtitle =
+          changedRoles.length === 0
+            ? 'Roles remain unchanged.'
+            : changedRoles.reduce(
+                (acc, r) => (acc === '' ? `${acc} ${r}` : `${acc} + ${r}`),
+                ''
+              ) + ' changed.';
 
         return {
           uid: '',
@@ -281,7 +313,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
-          subtitle: 'Roles have changed.',
+          subtitle,
           data: {
             depositor: poolRoles.depositor,
           },
