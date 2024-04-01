@@ -8,7 +8,10 @@ import { planckToUnit } from '@w3ux/utils';
 import type { Account } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
-import type { NominationPoolRoles } from '@/types/accounts';
+import type {
+  NominationPoolCommision,
+  NominationPoolRoles,
+} from '@/types/accounts';
 
 /**
  * @name getEventChainId
@@ -52,6 +55,7 @@ export const pushUniqueEvent = (
       break;
     }
     default:
+      push = filter_nomination_pool_commission(events, event);
       break;
   }
 
@@ -248,6 +252,41 @@ const filter_nomination_pool_roles = (
 };
 
 /**
+ * @name filter_nomination_pool_commission
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and commission data.
+ */
+const filter_nomination_pool_commission = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { changeRate, current, max, throttleFrom }: NominationPoolCommision =
+    event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const next: NominationPoolCommision = e.data;
+
+      if (
+        address === nextAddress &&
+        throttleFrom === next.throttleFrom &&
+        max === next.max &&
+        JSON.stringify(changeRate) === JSON.stringify(next.changeRate) &&
+        JSON.stringify(current) === JSON.stringify(next.current)
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
  * Other utilities
  */
 
@@ -353,7 +392,7 @@ export const getFreeBalanceText = (account: Account) => {
 
 /**
  * @name getPendingRewardsText
- * @summary Text to render for transfer events.
+ * @summary Text to render for nomination pool pending rewards events.
  */
 export const getPendingRewardsText = (
   chainId: ChainID,
@@ -363,3 +402,18 @@ export const getPendingRewardsText = (
     new BigNumber(pendingRewards.toString()),
     chainUnits(chainId)
   )} ${chainCurrency(chainId)}`;
+
+/**
+ * @name getNominationPoolCommissionText
+ * @summary Text to render for nomination pool commission events.
+ */
+export const getNominationPoolCommissionText = (
+  cur: NominationPoolCommision,
+  prev: NominationPoolCommision
+) =>
+  JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
+  JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
+  cur.throttleFrom === prev.throttleFrom &&
+  cur.max === prev.max
+    ? 'Pool commission has changed.'
+    : 'Pool commission unchaged.';

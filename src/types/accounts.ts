@@ -35,6 +35,7 @@ export interface AccountNominationPoolData {
   poolState: string;
   poolName: string;
   poolRoles: NominationPoolRoles;
+  poolCommission: NominationPoolCommision;
 }
 
 export interface NominationPoolRoles {
@@ -42,6 +43,16 @@ export interface NominationPoolRoles {
   root: string;
   nominator: string;
   bouncer: string;
+}
+
+export interface NominationPoolCommision {
+  changeRate: null | {
+    maxIncrease: string;
+    minDelay: string;
+  };
+  current: null | string[];
+  max: null | string;
+  throttleFrom: null | string;
 }
 
 /*

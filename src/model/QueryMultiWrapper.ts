@@ -146,6 +146,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominationPools:commission': {
+            await Callbacks.callback_nomination_pool_commission(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
         }
       }
     }

@@ -9,6 +9,7 @@ import {
 } from '@/utils/AccountUtils';
 import {
   getFreeBalanceText,
+  getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
@@ -296,6 +297,49 @@ export class EventsController {
           timestamp: getUnixTime(new Date()),
           stale: false,
           actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominationPools:commission
+       */
+      case 'subscribe:account:nominationPools:commission': {
+        const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
+          'nominationPoolData',
+        ]);
+
+        const { chainId } = entry.task;
+        const { address, name: accountName } = flattenedAccount;
+        const { poolCommission, poolId } = flattenedAccount.nominationPoolData!;
+        const { poolCommission: prevCommission } = miscData;
+
+        return {
+          uid: '',
+          category: 'nominationPools',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nomination Pool Commission',
+          subtitle: getNominationPoolCommissionText(
+            poolCommission,
+            prevCommission
+          ),
+          data: {
+            ...poolCommission,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
+              text: `Subscan`,
+            },
+          ],
         };
       }
       default: {
