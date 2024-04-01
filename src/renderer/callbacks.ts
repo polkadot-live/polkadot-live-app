@@ -27,32 +27,37 @@ export class Callbacks {
     entry: ApiCallEntry,
     wrapper: QueryMultiWrapper
   ) {
-    const { action, chainId } = entry.task;
-    const timeBuffer = 20;
+    try {
+      const { action, chainId } = entry.task;
+      const timeBuffer = 20;
 
-    const newVal = new BigNumber(data);
-    const curVal = new BigNumber(
-      wrapper.getChainTaskCurrentVal(action, chainId)
-    );
+      const newVal = new BigNumber(data);
+      const curVal = new BigNumber(
+        wrapper.getChainTaskCurrentVal(action, chainId)
+      );
 
-    // Return if value hasn't changed since last callback or time buffer hasn't passed.
-    if (
-      JSON.stringify(newVal) === JSON.stringify(curVal) ||
-      newVal.minus(curVal).lte(timeBuffer)
-    ) {
+      // Return if value hasn't changed since last callback or time buffer hasn't passed.
+      if (
+        JSON.stringify(newVal) === JSON.stringify(curVal) ||
+        newVal.minus(curVal).lte(timeBuffer)
+      ) {
+        return;
+      }
+
+      // Cache new value.
+      wrapper.setChainTaskVal(entry, newVal, chainId);
+
+      // Debugging.
+      const now = new Date(data * 1000).toDateString();
+      console.log(`Now: ${now} | ${data}`);
+
+      // Send event and notification data to main process.
+      const event = EventsController.getEvent(entry, String(newVal));
+      window.myAPI.persistEvent(event, null);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Cache new value.
-    wrapper.setChainTaskVal(entry, newVal, chainId);
-
-    // Debugging.
-    const now = new Date(data * 1000).toDateString();
-    console.log(`Now: ${now} | ${data}`);
-
-    // Send event and notification data to main process.
-    const event = EventsController.getEvent(entry, String(newVal));
-    window.myAPI.persistEvent(event, null);
   }
 
   /**
@@ -67,24 +72,29 @@ export class Callbacks {
     entry: ApiCallEntry,
     wrapper: QueryMultiWrapper
   ) {
-    const { action, chainId } = entry.task;
-    const newVal = new BigNumber(data);
-    const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
+    try {
+      const { action, chainId } = entry.task;
+      const newVal = new BigNumber(data);
+      const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
 
-    // Return if value hasn't changed since last callback.
-    if (JSON.stringify(newVal) === JSON.stringify(curVal)) {
+      // Return if value hasn't changed since last callback.
+      if (JSON.stringify(newVal) === JSON.stringify(curVal)) {
+        return;
+      }
+
+      // Cache new value.
+      wrapper.setChainTaskVal(entry, newVal, chainId);
+
+      // Debugging.
+      console.log(`Current Sot: ${newVal}`);
+
+      // Send event and notification data to main process.
+      const event = EventsController.getEvent(entry, String(newVal));
+      window.myAPI.persistEvent(event, null);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Cache new value.
-    wrapper.setChainTaskVal(entry, newVal, chainId);
-
-    // Debugging.
-    console.log(`Current Sot: ${newVal}`);
-
-    // Send event and notification data to main process.
-    const event = EventsController.getEvent(entry, String(newVal));
-    window.myAPI.persistEvent(event, null);
   }
 
   /**
@@ -95,43 +105,44 @@ export class Callbacks {
    * the balance's nonce, free and reserved values.
    */
   static callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
-    // Exit early if initial checks fail.
-    const account = checkAccountWithProperties(entry, ['balance']);
-    if (account === null) {
+    try {
+      const account = checkAccountWithProperties(entry, ['balance']);
+
+      // Get the received balance.
+      const received = {
+        free: new BigNumber(data.data.free),
+        reserved: new BigNumber(data.data.reserved),
+        frozen: new BigNumber(data.data.frozen),
+        nonce: new BigNumber(data.nonce),
+      };
+
+      // Exit early if balance hasn't changed.
+      if (
+        received.free.eq(account.balance!.free) &&
+        received.reserved.eq(account.balance!.reserved) &&
+        received.frozen.eq(account.balance!.frozen) &&
+        received.nonce.eq(account.balance!.nonce)
+      ) {
+        return;
+      }
+
+      // Update account data.
+      account.balance = received;
+      AccountsController.set(account.chain, account);
+
+      // Create event and parse into same format as persisted events.
+      const event = EventsController.getEvent(entry, { ...received });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Send event and notification data to main process.
+      window.myAPI.persistEvent(parsed, {
+        title: ellipsisFn(entry.task.account!.address),
+        body: `Free balance: ${received.free}`,
+      } as NotificationData);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Get the received balance.
-    const received = {
-      free: new BigNumber(data.data.free),
-      reserved: new BigNumber(data.data.reserved),
-      frozen: new BigNumber(data.data.frozen),
-      nonce: new BigNumber(data.nonce),
-    };
-
-    // Exit early if balance hasn't changed.
-    if (
-      received.free.eq(account.balance!.free) &&
-      received.reserved.eq(account.balance!.reserved) &&
-      received.frozen.eq(account.balance!.frozen) &&
-      received.nonce.eq(account.balance!.nonce)
-    ) {
-      return;
-    }
-
-    // Update account data.
-    account.balance = received;
-    AccountsController.set(account.chain, account);
-
-    // Create event and parse into same format as persisted events.
-    const event = EventsController.getEvent(entry, { ...received });
-    const parsed: EventCallback = JSON.parse(JSON.stringify(event));
-
-    // Send event and notification data to main process.
-    window.myAPI.persistEvent(parsed, {
-      title: ellipsisFn(entry.task.account!.address),
-      body: `Free balance: ${received.free}`,
-    } as NotificationData);
   }
 
   /**
@@ -147,34 +158,33 @@ export class Callbacks {
    * or whether it's a duplicate.
    */
   static async callback_nomination_pool_reward_account(entry: ApiCallEntry) {
-    // Exit early if initial checks fail.
-    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-    if (account === null) {
-      return;
+    try {
+      const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+      const chainId = account.chain;
+      const { api } = await ApiUtils.getApiInstance(chainId);
+
+      // Fetch pending rewards for the account.
+      const pendingRewardsPlanck: BigNumber =
+        await api.call.nominationPoolsApi.pendingRewards(account.address);
+
+      // Return if pending rewards is zero.
+      if (pendingRewardsPlanck.eq(0)) {
+        return;
+      }
+
+      // Update account and entry data.
+      account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
+      AccountsController.set(chainId, account);
+      entry.task.account = account.flatten();
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
+        title: 'Unclaimed Nomination Pool Rewards',
+        body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
+      } as NotificationData);
+    } catch (err) {
+      console.error(err);
     }
-
-    const chainId = account.chain;
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Fetch pending rewards for the account.
-    const pendingRewardsPlanck: BigNumber =
-      await api.call.nominationPoolsApi.pendingRewards(account.address);
-
-    // Return if pending rewards is zero.
-    if (pendingRewardsPlanck.eq(0)) {
-      return;
-    }
-
-    // Update account and entry data.
-    account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
-    AccountsController.set(chainId, account);
-    entry.task.account = account.flatten();
-
-    // Handle notification and events in main process.
-    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-      title: 'Unclaimed Nomination Pool Rewards',
-      body: `${planckToUnit(new BigNumber(pendingRewardsPlanck.toString()), chainUnits(chainId))}`,
-    } as NotificationData);
   }
 
   /**
@@ -187,28 +197,29 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry
   ) {
-    // Exit early if initial checks fail.
-    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-    if (account === null) {
+    try {
+      const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+
+      // Get the received pool state.
+      const receivedPoolState: string = data.toHuman().state;
+      if (account.nominationPoolData!.poolState === receivedPoolState) {
+        return;
+      }
+
+      // Update account and entry data.
+      account.nominationPoolData!.poolState = receivedPoolState;
+      AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
+        title: 'Nomination Pool State',
+        body: `${receivedPoolState}`,
+      } as NotificationData);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Get the received pool state.
-    const receivedPoolState: string = data.toHuman().state;
-    if (account.nominationPoolData!.poolState === receivedPoolState) {
-      return;
-    }
-
-    // Update account and entry data.
-    account.nominationPoolData!.poolState = receivedPoolState;
-    AccountsController.set(account.chain, account);
-    entry.task.account = account.flatten();
-
-    // Handle notification and events in main process.
-    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-      title: 'Nomination Pool State',
-      body: `${receivedPoolState}`,
-    } as NotificationData);
   }
 
   /**
@@ -221,28 +232,29 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry
   ) {
-    // Exit early if initial checks fail.
-    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-    if (account === null) {
+    try {
+      const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+
+      // Get the received pool name.
+      const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
+      if (account.nominationPoolData!.poolName === receivedPoolName) {
+        return;
+      }
+
+      // Update account and entry data.
+      account.nominationPoolData!.poolName = receivedPoolName;
+      AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
+        title: 'Nomination Pool Name',
+        body: `${receivedPoolName}`,
+      } as NotificationData);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Get the received pool name.
-    const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
-    if (account.nominationPoolData!.poolName === receivedPoolName) {
-      return;
-    }
-
-    // Update account and entry data.
-    account.nominationPoolData!.poolName = receivedPoolName;
-    AccountsController.set(account.chain, account);
-    entry.task.account = account.flatten();
-
-    // Handle notification and events in main process.
-    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-      title: 'Nomination Pool Name',
-      body: `${receivedPoolName}`,
-    } as NotificationData);
   }
 
   /**
@@ -255,36 +267,37 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry
   ) {
-    // Exit early if initial checks fail.
-    const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-    if (account === null) {
+    try {
+      const account = checkAccountWithProperties(entry, ['nominationPoolData']);
+
+      // Get the received pool roles.
+      const { depositor, root, nominator, bouncer } = data.toHuman().roles;
+
+      // Return if roles have not changed.
+      const poolRoles = account.nominationPoolData!.poolRoles;
+      if (
+        poolRoles.depositor === depositor &&
+        poolRoles.root === root &&
+        poolRoles.nominator === nominator &&
+        poolRoles.bouncer === bouncer
+      ) {
+        return;
+      }
+
+      // Update account and entry data.
+      // eslint-disable-next-line prettier/prettier
+      account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
+      AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
+        title: 'Nomination Pool Roles',
+        body: `Roles have changed`,
+      } as NotificationData);
+    } catch (err) {
+      console.error(err);
       return;
     }
-
-    // Get the received pool roles.
-    const { depositor, root, nominator, bouncer } = data.toHuman().roles;
-
-    // Return if roles have not changed.
-    const poolRoles = account.nominationPoolData!.poolRoles;
-    if (
-      poolRoles.depositor === depositor &&
-      poolRoles.root === root &&
-      poolRoles.nominator === nominator &&
-      poolRoles.bouncer === bouncer
-    ) {
-      return;
-    }
-
-    // Update account and entry data.
-    // eslint-disable-next-line prettier/prettier
-    account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
-    AccountsController.set(account.chain, account);
-    entry.task.account = account.flatten();
-
-    // Handle notification and events in main process.
-    window.myAPI.persistEvent(EventsController.getEvent(entry, {}), {
-      title: 'Nomination Pool Roles',
-      body: `Roles have changed`,
-    } as NotificationData);
   }
 }

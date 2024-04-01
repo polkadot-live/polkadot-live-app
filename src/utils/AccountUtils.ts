@@ -202,10 +202,10 @@ export const getAddressNonce = async (address: string, chainId: ChainID) => {
 export const checkAccountWithProperties = (
   entry: ApiCallEntry,
   properties: (keyof Account)[]
-): Account | null => {
+): Account => {
   // Check for account existence and fetch it.
   if (!entry.task.account) {
-    return null;
+    throw new Error('checkAccountWithProperties: Account not found');
   }
 
   // eslint-disable-next-line prettier/prettier
@@ -213,7 +213,7 @@ export const checkAccountWithProperties = (
   const account = AccountsController.get(chainId, address);
 
   if (account === undefined) {
-    return null;
+    throw new Error('checkAccountWithProperties: Account not found');
   }
 
   // Utility to access an instance property dynamically.
@@ -234,7 +234,7 @@ export const checkAccountWithProperties = (
     const result = getProperty(account, key);
 
     if (result === null || result === undefined) {
-      return null;
+      throw new Error('checkAccountWithProperties: Account data not found');
     }
   }
 
@@ -248,7 +248,7 @@ export const checkFlattenedAccountWithProperties = (
 ) => {
   // Check for account existence.
   if (!entry.task.account) {
-    return null;
+    throw new Error('checkFlattenedAccountWithProperties: Account not found');
   }
 
   // Utility to access an instance property dynamically.
@@ -269,7 +269,7 @@ export const checkFlattenedAccountWithProperties = (
     const result = getProperty(entry.task.account, key);
 
     if (result === null || result === undefined) {
-      return null;
+      throw new Error('checkFlattenedAccountWithProperties: Data not found');
     }
   }
 

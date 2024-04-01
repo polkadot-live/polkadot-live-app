@@ -77,13 +77,8 @@ export class EventsController {
        * subscribe:query.system.account
        */
       case 'subscribe:account:balance': {
-        // Exit early if data checks fail.
         const account = checkAccountWithProperties(entry, ['balance']);
-        if (!account) {
-          throw new Error('EventsController: account data not found for event');
-        }
 
-        // Get data for event.
         const { chainId } = entry.task;
         const address = account.address;
         const accountName = entry.task.account!.name;
@@ -120,16 +115,10 @@ export class EventsController {
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {
-        // Exit early if data checks fail.
         const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
           'nominationPoolData',
         ]);
 
-        if (!flattenedAccount) {
-          throw new Error('EventsController: account data not found for event');
-        }
-
-        // Get data for event.
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
@@ -203,16 +192,10 @@ export class EventsController {
        * subscribe:account:nominationPools:state
        */
       case 'subscribe:account:nominationPools:state': {
-        // Exit early if data checks fail.
         const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
           'nominationPoolData',
         ]);
 
-        if (!flattenedAccount) {
-          throw new Error('EventsController: account data not found for event');
-        }
-
-        // Get data for event.
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolState } = flattenedAccount.nominationPoolData!;
@@ -243,16 +226,10 @@ export class EventsController {
        * subscribe:account:nominationPools:renamed
        */
       case 'subscribe:account:nominationPools:renamed': {
-        // Exit early if data checks fail.
         const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
           'nominationPoolData',
         ]);
 
-        if (!flattenedAccount) {
-          throw new Error('EventsController: account data not found for event');
-        }
-
-        // Get data for event.
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolName } = flattenedAccount.nominationPoolData!;
@@ -283,16 +260,10 @@ export class EventsController {
        * subscribe:account:nominationPools:roles
        */
       case 'subscribe:account:nominationPools:roles': {
-        // Exit early if data checks fail.
         const flattenedAccount = checkFlattenedAccountWithProperties(entry, [
           'nominationPoolData',
         ]);
 
-        if (!flattenedAccount) {
-          throw new Error('EventsController: account data not found for event');
-        }
-
-        // Get data for event.
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
         const { poolRoles } = flattenedAccount.nominationPoolData!;
@@ -320,7 +291,7 @@ export class EventsController {
         };
       }
       default: {
-        throw new Error('Subscription task action not recognized');
+        throw new Error('getEvent: Subscription task action not recognized');
       }
     }
   }
