@@ -74,7 +74,7 @@ export class AppOrchestrator {
    */
   private static async importNewAddress({ name }: ImportNewAddressArg) {
     // Show notification.
-    NotificationsController.accountImported(name);
+    NotificationsController.showNotification('Account Imported', name);
   }
 
   /**
