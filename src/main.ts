@@ -102,11 +102,6 @@ app.whenReady().then(async () => {
     }
   });
 
-  // App initialization process.
-  await AppOrchestrator.next({
-    task: 'app:initialize',
-  });
-
   // Ask for camera permission (Mac OS)
   if (process.platform === 'darwin' && !isTest) {
     systemPreferences
@@ -264,6 +259,11 @@ app.whenReady().then(async () => {
   /**
    * Online status
    */
+
+  // Handle initializing online status controller.
+  ipcMain.handle('app:connection:init', async () => {
+    await OnlineStatusController.initialize();
+  });
 
   // Handle switching between online and offline.
   ipcMain.on('app:connection:status', () => {

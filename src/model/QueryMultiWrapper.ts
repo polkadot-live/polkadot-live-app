@@ -437,7 +437,7 @@ export class QueryMultiWrapper {
       }
     }
 
-    console.log('Data index registry:');
+    console.log('debug: data index registry:');
     console.log(dataIndexRegistry);
 
     // Get updated entries with correct dataIndex for each task.
@@ -451,9 +451,6 @@ export class QueryMultiWrapper {
       e.task.dataIndex = dataIndex;
       return e;
     });
-
-    console.log('Updated entries:');
-    console.log(updatedEntries);
 
     // Set updated tasks.
     this.subscriptions.set(chainId, {

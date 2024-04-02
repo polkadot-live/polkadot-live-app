@@ -20,7 +20,10 @@ export class LiveReporter implements Reporter {
       for (const { account, pallet, method } of report.details) {
         if (account !== 'Wildcard') {
           const clipped = account.nickname;
-          NotificationsController.chainNotification(clipped, pallet, method);
+          NotificationsController.showNotification(
+            clipped,
+            `${pallet}.${method}`
+          );
         }
       }
 
