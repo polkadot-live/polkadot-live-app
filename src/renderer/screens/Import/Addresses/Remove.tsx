@@ -20,6 +20,8 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       handleRemoveVaultAddress();
     } else if (source === 'ledger') {
       handleRemoveLedgerAddress();
+    } else if (source === 'read-only') {
+      console.log('TODO: handleRemoveReadOnlyAddress()');
     }
 
     setStatus(0);

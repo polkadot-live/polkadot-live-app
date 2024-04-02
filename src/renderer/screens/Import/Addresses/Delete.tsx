@@ -25,6 +25,8 @@ export const Delete = ({
       handleDeleteVaultAddress();
     } else if (source === 'ledger') {
       handleDeleteLedgerAddress();
+    } else if (source === 'read-only') {
+      console.log('TODO: handleDeleteReadOnlyAddress()');
     }
 
     setStatus(0);

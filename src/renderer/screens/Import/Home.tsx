@@ -1,8 +1,12 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faChrome, faUsb } from '@fortawesome/free-brands-svg-icons';
-import { faExternalLinkAlt, faQrcode } from '@fortawesome/free-solid-svg-icons';
+import { faChrome, faReadme, faUsb } from '@fortawesome/free-brands-svg-icons';
+import {
+  faExternalLinkAlt,
+  faKeyboard,
+  faQrcode,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragClose } from '@app/library/DragClose';
 import { ContentWrapper } from '@app/screens/Wrappers';
@@ -23,7 +27,12 @@ export const Home = ({ setSection, setSource }: HomeProps) => (
     <DragClose windowName="import" />
     <ContentWrapper>
       <h3>Manage Accounts</h3>
-      <ActionItem text={'Hardware'} style={{ marginTop: '1.75rem' }} />
+
+      {/* Hardware */}
+      <ActionItem
+        text={'Hardware or Read Only'}
+        style={{ marginTop: '1.75rem' }}
+      />
       <div style={{ display: 'flex' }}>
         <ModalConnectItem>
           <ModalHardwareItem>
@@ -125,6 +134,44 @@ export const Home = ({ setSection, setSource }: HomeProps) => (
           </ModalHardwareItem>
         </ModalConnectItem>
       </div>
+
+      {/* Read-only*/}
+      {/*<ActionItem text={'Read Only'} style={{ marginTop: '1.75rem' }} />*/}
+      <ModalConnectItem>
+        <ModalHardwareItem>
+          <div className="body">
+            <div className="status">
+              <ButtonHelp
+                onClick={() => {
+                  /* Empty */
+                }}
+              />
+            </div>
+            <div className="row">
+              <FontAwesomeIcon icon={faReadme} className="logo mono" />
+            </div>
+            <div className="row">
+              <ButtonText
+                text="Read Only"
+                disabled
+                marginRight
+                style={{ opacity: 0.5 }}
+              />
+            </div>
+            <div className="row margin" style={{ marginBottom: '0.75rem' }}>
+              <ButtonMonoInvert
+                text="Manage"
+                onClick={() => {
+                  setSource('read-only');
+                  setSection(1);
+                }}
+                iconLeft={faKeyboard}
+                iconTransform="shrink-1"
+              />
+            </div>
+          </div>
+        </ModalHardwareItem>
+      </ModalConnectItem>
 
       <ToastContainer />
     </ContentWrapper>

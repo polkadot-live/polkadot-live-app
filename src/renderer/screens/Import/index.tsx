@@ -8,6 +8,7 @@ import { ImportVault } from './Vault';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import type { AccountSource } from '@/types/accounts';
+import { ImportReadOnly } from './ReadOnly';
 
 export const Import: React.FC = () => {
   const [source, setSource] = useState<AccountSource | undefined>('ledger');
@@ -62,6 +63,9 @@ export const Import: React.FC = () => {
           )}
           {source === 'vault' && (
             <ImportVault section={section} setSection={setSection} />
+          )}
+          {source === 'read-only' && (
+            <ImportReadOnly section={section} setSection={setSection} />
           )}
         </div>
       </ModalMotionTwoSection>

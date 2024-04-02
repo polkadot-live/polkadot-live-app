@@ -25,6 +25,8 @@ export const Confirm = ({
       handleVaultImport();
     } else if (source === 'ledger') {
       handleLedgerImport();
+    } else if (source === 'read-only') {
+      console.log('TODO: handleReadOnlyImport()');
     }
 
     setStatus(0);
