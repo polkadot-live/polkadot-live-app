@@ -204,7 +204,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
-        const { poolState } = flattenedAccount.nominationPoolData!;
+        const { poolState, poolId } = flattenedAccount.nominationPoolData!;
         const { prevState } = miscData;
 
         return {
@@ -226,7 +226,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
+              text: `Subscan`,
+            },
+          ],
         };
       }
       /**
@@ -239,7 +244,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
-        const { poolName } = flattenedAccount.nominationPoolData!;
+        const { poolName, poolId } = flattenedAccount.nominationPoolData!;
         const { prevName } = miscData;
 
         return {
@@ -261,7 +266,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
+              text: `Subscan`,
+            },
+          ],
         };
       }
       /**
@@ -274,7 +284,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
-        const { poolRoles } = flattenedAccount.nominationPoolData!;
+        const { poolRoles, poolId } = flattenedAccount.nominationPoolData!;
         const { poolRoles: prevRoles } = miscData;
 
         return {
@@ -296,7 +306,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
+              text: `Subscan`,
+            },
+          ],
         };
       }
       /**
@@ -309,7 +324,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName } = flattenedAccount;
-        const { poolCommission, poolId } = flattenedAccount.nominationPoolData!;
+        const { poolCommission } = flattenedAccount.nominationPoolData!;
         const { poolCommission: prevCommission } = miscData;
 
         return {
@@ -334,12 +349,7 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
-            {
-              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
-              text: `Subscan`,
-            },
-          ],
+          actions: [],
         };
       }
       default: {
