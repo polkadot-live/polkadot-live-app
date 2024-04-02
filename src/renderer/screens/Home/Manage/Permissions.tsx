@@ -1,17 +1,19 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faAngleLeft, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { AnyJson } from '@/types/misc';
 import type {
   SubscriptionTask,
+  SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import {
   AccountWrapper,
   AccountsWrapper,
   BreadcrumbsWrapper,
+  HeadingWrapper,
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect } from 'react';
@@ -131,6 +133,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   };
 
+  /// TODO: Add `toggleable` field on subscription task type.
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
@@ -140,7 +143,10 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
     switch (task.action) {
       case 'subscribe:account:nominationPools:rewards':
-      case 'subscribe:account:nominationPools:state': {
+      case 'subscribe:account:nominationPools:state':
+      case 'subscribe:account:nominationPools:renamed':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:commission': {
         return task.account?.nominationPoolData ? false : true;
       }
       default: {
@@ -159,53 +165,87 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       ? `${type}_${chainId}_${address}_${action}`
       : `${type}_${chainId}_${action}`;
 
-  /// Renders a list of subscription tasks that can be toggled.
-  const renderSubscriptionTasks = () => {
-    const { type, tasks } = renderedSubscriptions;
+  /// Return subscription tasks mapped by category.
+  const getCategorised = (): Map<string, SubscriptionTask[]> => {
+    const { tasks } = renderedSubscriptions;
 
-    return (
-      <>
-        {tasks.map((task: SubscriptionTask, i: number) => (
-          <AccountWrapper
-            whileHover={{ scale: 1.01 }}
-            key={`${i}_${getKey(type, task.action, task.chainId, task.account?.address)}`}
-          >
-            <div className="inner">
-              <div>
-                <span className="icon">
-                  <FontAwesomeIcon icon={faUserGroup} />
-                </span>
-                <div className="content">
-                  <h3>{task.label}</h3>
-                </div>
-              </div>
-              <div>
-                <Switch
-                  type="secondary"
-                  isOn={task.status === 'enable'}
-                  disabled={getDisabled(task)}
-                  handleToggle={async () => {
-                    // Send an account or chain subscription task.
-                    await handleToggle({
-                      type,
-                      tasks: [
-                        {
-                          ...task,
-                          actionArgs: task.actionArgs
-                            ? [...task.actionArgs]
-                            : undefined,
-                        },
-                      ],
-                    });
-                  }}
-                />
-              </div>
-            </div>
-          </AccountWrapper>
-        ))}
-      </>
-    );
+    const map = new Map<string, SubscriptionTask[]>();
+
+    tasks.forEach((t) => {
+      const category = t.category;
+
+      if (map.has(category)) {
+        const cur = map.get(category);
+        if (cur !== undefined) {
+          map.set(category, [...cur, { ...t }]);
+        } else {
+          map.set(category, [{ ...t }]);
+        }
+      } else {
+        map.set(category, [{ ...t }]);
+      }
+    });
+
+    return map;
   };
+
+  /// Return the type of subscription based on its action string.
+  const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
+    task.action.startsWith('subscribe:account') ? 'account' : 'chain';
+
+  /// Renders a list of categorised subscription tasks that can be toggled.
+  const renderSubscriptionTasks = () => (
+    <>
+      {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
+        <div key={`${category}_${j}`}>
+          <HeadingWrapper>
+            <h5>
+              <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+              <span>{category}</span>
+            </h5>
+          </HeadingWrapper>
+
+          {tasks
+            .sort((a, b) => a.label.localeCompare(b.label))
+            .map((task: SubscriptionTask, i: number) => (
+              <AccountWrapper
+                whileHover={{ scale: 1.01 }}
+                key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
+              >
+                <div className="inner">
+                  <div>
+                    <div className="content">
+                      <h3>{task.label}</h3>
+                    </div>
+                  </div>
+                  <div>
+                    <Switch
+                      type="secondary"
+                      isOn={task.status === 'enable'}
+                      disabled={getDisabled(task)}
+                      handleToggle={async () => {
+                        // Send an account or chain subscription task.
+                        await handleToggle({
+                          type: getTaskType(task),
+                          tasks: [
+                            {
+                              ...task,
+                              actionArgs: task.actionArgs
+                                ? [...task.actionArgs]
+                                : undefined,
+                            },
+                          ],
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </AccountWrapper>
+            ))}
+        </div>
+      ))}
+    </>
+  );
 
   return (
     <>

@@ -18,6 +18,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
+    category: 'Chain',
     chainId: 'Polkadot',
     label: 'Timestamps',
     status: 'disable',
@@ -25,6 +26,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:chain:currentSlot',
     apiCallAsString: 'api.query.babe.currentSlot',
+    category: 'Chain',
     chainId: 'Polkadot',
     label: 'Current Slot',
     status: 'disable',
@@ -33,6 +35,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
+    category: 'Chain',
     chainId: 'Westend',
     label: 'Timestamps',
     status: 'disable',
@@ -40,6 +43,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     apiCallAsString: 'api.query.babe.currentSlot',
     action: 'subscribe:chain:currentSlot',
+    category: 'Chain',
     chainId: 'Westend',
     label: 'Current Slot',
     status: 'disable',
@@ -48,6 +52,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
+    category: 'Chain',
     chainId: 'Kusama',
     label: 'Timestamps',
     status: 'disable',
@@ -55,6 +60,7 @@ export const chainTasks: SubscriptionTask[] = [
   {
     action: 'subscribe:chain:currentSlot',
     apiCallAsString: 'api.query.babe.currentSlot',
+    category: 'Chain',
     chainId: 'Kusama',
     label: 'Current Slot',
     status: 'disable',

@@ -14,6 +14,8 @@ export interface SubscriptionTask {
   actionArgs?: string[];
   // Api call representation.
   apiCallAsString: string;
+  // Task category.
+  category: string;
   // Task's associated chain.
   chainId: ChainID;
   // Enabled or disabled.
