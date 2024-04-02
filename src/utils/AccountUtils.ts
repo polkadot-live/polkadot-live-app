@@ -20,7 +20,7 @@ import {
 import type {
   AccountBalance,
   FlattenedAccountData,
-  NominationPoolCommision,
+  NominationPoolCommission,
   NominationPoolRoles,
 } from '@/types/accounts';
 import type { ApiCallEntry } from '@/types/subscriptions';
@@ -131,7 +131,7 @@ const setNominationPoolDataForAccount = async (
 
   const poolState: string = npResult.state;
   const poolRoles: NominationPoolRoles = npResult.roles;
-  const poolCommission: NominationPoolCommision = npResult.commission;
+  const poolCommission: NominationPoolCommission = npResult.commission;
 
   // Get nomination pool name.
   const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);

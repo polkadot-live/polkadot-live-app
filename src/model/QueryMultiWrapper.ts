@@ -338,7 +338,7 @@ export class QueryMultiWrapper {
     }
 
     // First entry is always going to have dataIndex of 0.
-    const dataIndexRegistry: [RegistryPair] = [{ entryIndex: 0, dataIndex: 0 }];
+    const dataIndexRegistry: RegistryPair[] = [{ entryIndex: 0, dataIndex: 0 }];
 
     // Set each task's dataIndex.
     for (const [outerI, { task }] of entry.callEntries.entries()) {

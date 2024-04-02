@@ -9,7 +9,7 @@ import type { Account } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
 import type {
-  NominationPoolCommision,
+  NominationPoolCommission,
   NominationPoolRoles,
 } from '@/types/accounts';
 
@@ -261,7 +261,7 @@ const filter_nomination_pool_commission = (
   event: EventCallback
 ): boolean => {
   const { address } = event.who.data as EventAccountData;
-  const { changeRate, current, max, throttleFrom }: NominationPoolCommision =
+  const { changeRate, current, max, throttleFrom }: NominationPoolCommission =
     event.data;
 
   let isUnique = true;
@@ -269,7 +269,7 @@ const filter_nomination_pool_commission = (
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const next: NominationPoolCommision = e.data;
+      const next: NominationPoolCommission = e.data;
 
       if (
         address === nextAddress &&
@@ -408,8 +408,8 @@ export const getPendingRewardsText = (
  * @summary Text to render for nomination pool commission events.
  */
 export const getNominationPoolCommissionText = (
-  cur: NominationPoolCommision,
-  prev: NominationPoolCommision
+  cur: NominationPoolCommission,
+  prev: NominationPoolCommission
 ) =>
   JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
   JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
