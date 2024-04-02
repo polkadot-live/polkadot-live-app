@@ -6,7 +6,6 @@ import type {
   AppOrchestratorArg,
   RemoveImportedAccountArg,
 } from '@/types/orchestrator';
-import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { NotificationsController } from '@/controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
@@ -15,10 +14,6 @@ import { SubscriptionsController } from '@/controller/main/SubscriptionsControll
 export class AppOrchestrator {
   static async next({ task, data = {} }: AppOrchestratorArg) {
     switch (task) {
-      // Initialize app: should only be called once when the app is starting up.
-      case 'app:initialize':
-        await this.initialize();
-        break;
       // Initialize in online mode.
       case 'app:initialize:online':
         await this.initializeOnline();
@@ -38,14 +33,6 @@ export class AppOrchestrator {
       default:
         break;
     }
-  }
-
-  /**
-   * @name initialize
-   * @summary Initializes app state.
-   */
-  private static async initialize() {
-    await OnlineStatusController.initialize();
   }
 
   /**

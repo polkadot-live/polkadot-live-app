@@ -32,7 +32,10 @@ export const useInitIpcHandlers = () => {
      */
     window.myAPI.initializeApp(async () => {
       if (!refAppInitialized.current) {
+        // Initialise online status controller and set online state.
+        await window.myAPI.initOnlineStatus();
         const isOnline = await window.myAPI.getOnlineStatus();
+        setOnline(isOnline);
 
         // Initialize accounts from persisted state.
         await AccountsController.initialize();
@@ -71,7 +74,7 @@ export const useInitIpcHandlers = () => {
         console.log('App initialized...');
         setTimeout(() => {
           setAppLoading(false);
-        }, 1500);
+        }, 100);
       }
     });
 
