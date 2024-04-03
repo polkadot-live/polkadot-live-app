@@ -54,3 +54,10 @@ export interface LedgerAddressProps {
   setAddresses: AnyFunction;
   setSection: AnyFunction;
 }
+
+export interface ManageReadOnlyProps {
+  setSection: AnyFunction;
+  section: number;
+  addresses: LocalAddress[];
+  setAddresses: AnyFunction;
+}

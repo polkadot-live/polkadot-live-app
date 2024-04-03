@@ -152,7 +152,10 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                     return (
                       <ButtonMono
                         disabled={
-                          event.stale || source === 'ledger' || !isOnline
+                          event.stale ||
+                          source === 'ledger' ||
+                          source == 'read-only' ||
+                          !isOnline
                         }
                         key={`action_${uid}_${i}`}
                         text={text || ''}

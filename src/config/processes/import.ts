@@ -14,6 +14,7 @@ export class Config {
   // Local storage keys.
   private static _ledgerAddressesStorageKey = 'ledger_addresses';
   private static _vaultAddressesStorageKey = 'vault_addresses';
+  private static _readOnlyAddressesStorageKey = 'read_only_addresses';
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -23,6 +24,9 @@ export class Config {
       }
       case 'vault': {
         return Config._vaultAddressesStorageKey;
+      }
+      case 'read-only': {
+        return Config._readOnlyAddressesStorageKey;
       }
       default: {
         throw new Error('source not recognized');

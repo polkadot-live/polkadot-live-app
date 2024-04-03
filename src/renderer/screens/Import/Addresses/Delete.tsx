@@ -25,6 +25,8 @@ export const Delete = ({
       handleDeleteVaultAddress();
     } else if (source === 'ledger') {
       handleDeleteLedgerAddress();
+    } else if (source === 'read-only') {
+      handleDeleteReadOnlyAddress();
     }
 
     setStatus(0);
@@ -76,6 +78,25 @@ export const Delete = ({
 
     // Go back to import home screen if no more vault addresses are imported.
     goBack && setSection(0);
+  };
+
+  // Handle deletion of a read-only address.
+  const handleDeleteReadOnlyAddress = () => {
+    // Update import window's managed address state and local storage.
+    setAddresses((prevState: LocalAddress[]) => {
+      const newAddresses = prevState.filter(
+        (a: LocalAddress) => a.address !== address
+      );
+
+      localStorage.setItem(
+        ConfigImport.getStorageKey(source),
+        JSON.stringify(newAddresses)
+      );
+
+      return newAddresses;
+    });
+
+    postAddressDeleteMessage();
   };
 
   // Send address data to main window to process removal.
