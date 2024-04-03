@@ -189,7 +189,7 @@ app.whenReady().then(async () => {
   });
 
   // Set persisted accounts in store.
-  ipcMain.on('app:accounts:set', (_, accounts: FlattenedAccounts) => {
+  ipcMain.handle('app:accounts:set', async (_, accounts: FlattenedAccounts) => {
     (store as Record<string, AnyData>).set('imported_accounts', accounts);
   });
 

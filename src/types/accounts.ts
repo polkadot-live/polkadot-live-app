@@ -56,6 +56,14 @@ export interface NominationPoolCommission {
 }
 
 /*
+ * Account's nominating pool data.
+ */
+
+export interface AccountNominatingData {
+  validatorIds: string[];
+}
+
+/*
  * Account data saved in Electron store.
  */
 export interface StoredAccount {

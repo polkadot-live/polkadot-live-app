@@ -120,7 +120,7 @@ type ApiGetPersistedAccountTasks = (
   account: FlattenedAccountData
 ) => Promise<string>;
 
-type ApiSetPersistedAccounts = (accounts: string) => void;
+type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
 type ApiPersistEvent = (
   event: EventCallback,

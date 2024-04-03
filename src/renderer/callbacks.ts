@@ -103,7 +103,10 @@ export class Callbacks {
    * Get the balance of the task target account on the target chain. Returns
    * the balance's nonce, free and reserved values.
    */
-  static callback_query_system_account(data: AnyData, entry: ApiCallEntry) {
+  static async callback_query_system_account(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
     try {
       const account = checkAccountWithProperties(entry, ['balance']);
 
@@ -127,7 +130,7 @@ export class Callbacks {
 
       // Update account data.
       account.balance = received;
-      AccountsController.set(account.chain, account);
+      await AccountsController.set(account.chain, account);
 
       // Create event and parse into same format as persisted events.
       const event = EventsController.getEvent(entry, { ...received });
@@ -173,7 +176,7 @@ export class Callbacks {
 
       // Update account and entry data.
       account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
-      AccountsController.set(chainId, account);
+      await AccountsController.set(chainId, account);
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
@@ -210,7 +213,7 @@ export class Callbacks {
 
       // Update account and entry data.
       account.nominationPoolData!.poolState = receivedPoolState;
-      AccountsController.set(account.chain, account);
+      await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
@@ -246,7 +249,7 @@ export class Callbacks {
 
       // Update account and entry data.
       account.nominationPoolData!.poolName = receivedPoolName;
-      AccountsController.set(account.chain, account);
+      await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
@@ -290,7 +293,7 @@ export class Callbacks {
       // Update account and entry data.
       // eslint-disable-next-line prettier/prettier
       account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
-      AccountsController.set(account.chain, account);
+      await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
@@ -336,7 +339,7 @@ export class Callbacks {
       // Update account and entry data.
       // eslint-disable-next-line prettier/prettier
       account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
-      AccountsController.set(account.chain, account);
+      await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
       // Handle notification and events in main process.
