@@ -28,7 +28,7 @@ export const Address = ({
   // Handler to rename an account.
   const renameHandler = (who: string, newName: string) => {
     setAccountNameState(newName);
-    renameLocalAccount(who, newName, 'vault');
+    renameLocalAccount(who, newName, 'read-only');
 
     // Post message to main renderer to process the account rename.
     postRenameAccount(who, newName);
