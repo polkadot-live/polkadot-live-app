@@ -136,7 +136,6 @@ export const Home = ({ setSection, setSource }: HomeProps) => (
       </div>
 
       {/* Read-only*/}
-      {/*<ActionItem text={'Read Only'} style={{ marginTop: '1.75rem' }} />*/}
       <ModalConnectItem>
         <ModalHardwareItem>
           <div className="body">
