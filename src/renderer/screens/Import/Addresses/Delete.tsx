@@ -82,6 +82,7 @@ export const Delete = ({
 
   // Handle deletion of a read-only address.
   const handleDeleteReadOnlyAddress = () => {
+    // Update import window's managed address state and local storage.
     setAddresses((prevState: LocalAddress[]) => {
       const newAddresses = prevState.filter(
         (a: LocalAddress) => a.address !== address

@@ -72,6 +72,7 @@ export const Confirm = ({
 
   // Handle a read-only address import.
   const handleReadOnlyImport = () => {
+    // Update import window's managed address state and local storage.
     setAddresses((prevState: LocalAddress[]) => {
       const newAddresses = prevState.map((a: LocalAddress) =>
         a.address === address ? { ...a, isImported: true } : a

@@ -21,7 +21,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
     } else if (source === 'ledger') {
       handleRemoveLedgerAddress();
     } else if (source === 'read-only') {
-      console.log('TODO: handleRemoveReadOnlyAddress()');
+      handleRemoveReadOnlyAddress();
     }
 
     setStatus(0);
@@ -48,6 +48,25 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
 
   // Handle removal of a vault address.
   const handleRemoveVaultAddress = () => {
+    // Update import window's managed address state and local storage.
+    setAddresses((prevState: LocalAddress[]) => {
+      const newAddresses = prevState.map((a: LocalAddress) =>
+        a.address === address ? { ...a, isImported: false } : a
+      );
+
+      localStorage.setItem(
+        ConfigImport.getStorageKey(source),
+        JSON.stringify(newAddresses)
+      );
+
+      return newAddresses;
+    });
+
+    postAddressToMainWindow();
+  };
+
+  // Handle removal of a read-only address.
+  const handleRemoveReadOnlyAddress = () => {
     // Update import window's managed address state and local storage.
     setAddresses((prevState: LocalAddress[]) => {
       const newAddresses = prevState.map((a: LocalAddress) =>
