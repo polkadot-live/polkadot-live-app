@@ -8,13 +8,13 @@ import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
+import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
+import { Identicon } from '@/renderer/library/Identicon';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
-import { Identicon } from '@/renderer/library/Identicon';
 import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
@@ -49,6 +49,17 @@ export const Manage = ({
     return false;
   };
 
+  // Verify that the address is not already imported.
+  const isAlreadyImported = (address: string): boolean => {
+    for (const next of addresses) {
+      if (next.address === address) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   // Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
@@ -57,7 +68,24 @@ export const Manage = ({
   const onImport = () => {
     const trimmed = editName.trim();
 
-    if (!validateAddress(trimmed)) {
+    if (isAlreadyImported(trimmed)) {
+      // Render error alert.
+      toast.error('Address is already imported.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: `toast-${trimmed}`, // prevent duplicate alerts
+      });
+
+      return;
+    } else if (!validateAddress(trimmed)) {
       // Render error alert.
       toast.error('Bad account name.', {
         position: 'top-center',

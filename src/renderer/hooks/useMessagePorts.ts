@@ -91,7 +91,7 @@ export const useMessagePorts = () => {
       const account = AccountsController.get(chainId, address);
 
       if (!account) {
-        console.log('Account could not be added, probably not imported yet');
+        console.log('Account could not be fetched, probably not imported yet');
         return;
       }
 
