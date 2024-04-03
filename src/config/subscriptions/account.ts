@@ -63,6 +63,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Commission Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    label: 'Unclaimed Rewards',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -159,6 +167,14 @@ export const accountTasks: SubscriptionTask[] = [
     category: 'Nomination Pools',
     chainId: 'Kusama',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    label: 'Unclaimed Rewards',
     status: 'disable',
   },
 ];
