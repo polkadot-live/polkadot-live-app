@@ -62,7 +62,7 @@ export const useInitIpcHandlers = () => {
         await SubscriptionsController.initChainSubscriptions();
 
         // Set accounts to render.
-        setAddresses(AccountsController.accounts);
+        setAddresses(AccountsController.getAllFlattenedAccountData());
 
         // Disconnect from any API instances that are not currently needed.
         if (isOnline) {

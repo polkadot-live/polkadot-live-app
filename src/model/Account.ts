@@ -79,6 +79,7 @@ export class Account {
       chain: this.chain,
       name: this.name,
       nominationPoolData: this.nominationPoolData,
+      nominatingData: this.nominatingData,
       source: this.source,
     }) as FlattenedAccountData;
 

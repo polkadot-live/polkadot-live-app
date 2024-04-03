@@ -153,6 +153,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominating:rewards': {
+            await Callbacks.callback_nominating_rewards(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
         }
       }
     }

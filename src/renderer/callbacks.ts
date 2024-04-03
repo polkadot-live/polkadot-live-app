@@ -354,4 +354,47 @@ export class Callbacks {
       return;
     }
   }
+
+  static async callback_nominating_rewards(data: AnyData, entry: ApiCallEntry) {
+    try {
+      // Check if account has any nominating rewards from the previous era (current era - 1).
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+
+      // eslint-disable-next-line prettier/prettier
+      const curEra: number = parseInt((data.toHuman() as string).replace(/,/g, ''));
+      const prevEra: number = curEra - 1;
+
+      // Get validators and their reward points from the previous era.
+      const rewardPoints: AnyData = (
+        await api.query.staking.erasRewardPoints(prevEra)
+      ).toHuman();
+
+      // Calculate sum of the account's nominated validator reward points.
+      let totalPoints = 0;
+      for (const prop in rewardPoints.individual) {
+        const validatorId: string = prop;
+        if (account.nominatingData!.validatorIds.includes(validatorId)) {
+          totalPoints += parseInt(
+            rewardPoints.individual[prop].replace(/,/g, '')
+          );
+        }
+      }
+
+      // The account has received rewards in the previous era if points exist.
+      if (totalPoints === 0) {
+        console.log(`no points received last era: ${totalPoints}`);
+        return;
+      }
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { prevEra }),
+        NotificationsController.getNotification(entry, account, { prevEra })
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
 }

@@ -80,6 +80,7 @@ export interface FlattenedAccountData {
   chain: ChainID;
   name: string;
   nominationPoolData: AccountNominationPoolData | null;
+  nominatingData: AccountNominatingData | null;
   source: AccountSource;
 }
 

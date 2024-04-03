@@ -58,6 +58,10 @@ export const ChainList = new Map<ChainID, Chain>([
           name: 'Nomination Pools',
           icon: faUserGroup,
         },
+        nominating: {
+          name: 'Nominating',
+          icon: faUserGroup,
+        },
       },
     },
   ],
@@ -88,6 +92,10 @@ export const ChainList = new Map<ChainID, Chain>([
           name: 'Nomination Pools',
           icon: faUserGroup,
         },
+        nominating: {
+          name: 'Nominating',
+          icon: faUserGroup,
+        },
       },
     },
   ],
@@ -116,6 +124,10 @@ export const ChainList = new Map<ChainID, Chain>([
         },
         nominationPools: {
           name: 'Nomination Pools',
+          icon: faUserGroup,
+        },
+        nominating: {
+          name: 'Nominating',
           icon: faUserGroup,
         },
       },

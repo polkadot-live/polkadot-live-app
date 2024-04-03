@@ -68,7 +68,7 @@ export const accountTasks: SubscriptionTask[] = [
     apiCallAsString: 'api.query.staking.currentEra',
     category: 'Nominating',
     chainId: 'Polkadot',
-    label: 'Unclaimed Rewards',
+    label: 'Era Pending Payouts',
     status: 'disable',
   },
   // Westend
@@ -118,6 +118,14 @@ export const accountTasks: SubscriptionTask[] = [
     category: 'Nomination Pools',
     chainId: 'Westend',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    label: 'Era Pending Payouts',
     status: 'disable',
   },
   // Kusama
@@ -174,7 +182,7 @@ export const accountTasks: SubscriptionTask[] = [
     apiCallAsString: 'api.query.staking.currentEra',
     category: 'Nominating',
     chainId: 'Kusama',
-    label: 'Unclaimed Rewards',
+    label: 'Era Pending Payouts',
     status: 'disable',
   },
 ];

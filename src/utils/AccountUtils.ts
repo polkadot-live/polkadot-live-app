@@ -1,10 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/**
- * @todo Move to `renderer/AccountUtils.ts`
- */
-
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
@@ -284,11 +280,14 @@ export const checkAccountWithProperties = (
   // Utility to access an instance property dynamically.
   const getProperty = (instance: Account, key: keyof Account): AnyData => {
     switch (key) {
-      case 'nominationPoolData':
-        return instance.nominationPoolData;
       case 'balance': {
         return instance.balance;
       }
+      case 'nominatingData': {
+        return instance.nominatingData;
+      }
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
       default:
         return null;
     }
