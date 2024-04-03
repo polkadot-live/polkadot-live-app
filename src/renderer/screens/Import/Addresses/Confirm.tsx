@@ -26,7 +26,7 @@ export const Confirm = ({
     } else if (source === 'ledger') {
       handleLedgerImport();
     } else if (source === 'read-only') {
-      console.log('TODO: handleReadOnlyImport()');
+      handleReadOnlyImport();
     }
 
     setStatus(0);
@@ -54,6 +54,24 @@ export const Confirm = ({
   // Handle a vault address import.
   const handleVaultImport = () => {
     // Update import window's managed address state and local storage.
+    setAddresses((prevState: LocalAddress[]) => {
+      const newAddresses = prevState.map((a: LocalAddress) =>
+        a.address === address ? { ...a, isImported: true } : a
+      );
+
+      localStorage.setItem(
+        ConfigImport.getStorageKey(source),
+        JSON.stringify(newAddresses)
+      );
+
+      return newAddresses;
+    });
+
+    postAddressToMainWindow();
+  };
+
+  // Handle a read-only address import.
+  const handleReadOnlyImport = () => {
     setAddresses((prevState: LocalAddress[]) => {
       const newAddresses = prevState.map((a: LocalAddress) =>
         a.address === address ? { ...a, isImported: true } : a
