@@ -208,7 +208,7 @@ export class SubscriptionsController {
                 return { ...task, actionArgs } as SubscriptionTask;
               }
               default: {
-                return t;
+                return task;
               }
             }
           })

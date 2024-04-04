@@ -10,6 +10,7 @@ import type {
   AccountSource,
   FlattenedAccountData,
   AccountNominationPoolData,
+  AccountNominatingData,
 } from '@/types/accounts';
 
 /**
@@ -40,6 +41,8 @@ export class Account {
   private _chain: ChainID;
 
   private _nominationPoolData: AccountNominationPoolData | null = null;
+
+  private _nominatingData: AccountNominatingData | null = null;
 
   private _balance: AccountBalance | null = null;
 
@@ -76,6 +79,7 @@ export class Account {
       chain: this.chain,
       name: this.name,
       nominationPoolData: this.nominationPoolData,
+      nominatingData: this.nominatingData,
       source: this.source,
     }) as FlattenedAccountData;
 
@@ -128,6 +132,14 @@ export class Account {
 
   set nominationPoolData(data: AccountNominationPoolData | null) {
     this._nominationPoolData = data;
+  }
+
+  get nominatingData() {
+    return this._nominatingData;
+  }
+
+  set nominatingData(data: AccountNominatingData | null) {
+    this._nominatingData = data;
   }
 
   get queryMulti() {

@@ -7,6 +7,7 @@ import { ChainList } from '@/config/chains';
 import {
   fetchAccountBalances,
   fetchAccountNominationPoolData,
+  fetchAccountNominatingData,
 } from '@/utils/AccountUtils';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -49,6 +50,9 @@ export const useInitIpcHandlers = () => {
 
           // Use API instance to initialize account nomination pool data.
           await fetchAccountNominationPoolData();
+
+          // Initialize account nominating data.
+          await fetchAccountNominatingData();
         }
 
         // Initialize persisted account subscriptions.
@@ -58,7 +62,7 @@ export const useInitIpcHandlers = () => {
         await SubscriptionsController.initChainSubscriptions();
 
         // Set accounts to render.
-        setAddresses(AccountsController.accounts);
+        setAddresses(AccountsController.getAllFlattenedAccountData());
 
         // Disconnect from any API instances that are not currently needed.
         if (isOnline) {
@@ -106,6 +110,9 @@ export const useInitIpcHandlers = () => {
 
       // Fetch up-to-date nomination pool data for managed accounts.
       await fetchAccountNominationPoolData();
+
+      // Fetch up-to-data nominating data for managed accounts.
+      await fetchAccountNominatingData();
 
       // Re-subscribe to managed accounts cached subscription tasks.
       await AccountsController.resubscribeAccounts();

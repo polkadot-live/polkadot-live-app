@@ -54,6 +54,10 @@ export const pushUniqueEvent = (
       push = filter_nomination_pool_roles(events, event);
       break;
     }
+    case 'subscribe:account:nominating:rewards': {
+      push = filter_nominating_rewards(events, event);
+      break;
+    }
     default:
       push = filter_nomination_pool_commission(events, event);
       break;
@@ -278,6 +282,34 @@ const filter_nomination_pool_commission = (
         JSON.stringify(changeRate) === JSON.stringify(next.changeRate) &&
         JSON.stringify(current) === JSON.stringify(next.current)
       ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nomination_pool_commission
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and era number.
+ */
+const filter_nominating_rewards = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { era } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const nextEra: number = event.data.era;
+
+      if (address === nextAddress && era === nextEra) {
         isUnique = false;
       }
     }

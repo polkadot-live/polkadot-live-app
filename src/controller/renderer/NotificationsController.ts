@@ -76,6 +76,12 @@ export class NotificationsController {
           body: getNominationPoolCommissionText(cur, prev),
         };
       }
+      case 'subscribe:account:nominating:rewards': {
+        return {
+          title: 'Pending Payout',
+          body: 'Staking rewards received in the previous era.',
+        };
+      }
       default: {
         throw new Error(
           `getNotification: Not implemented for ${entry.task.action}`

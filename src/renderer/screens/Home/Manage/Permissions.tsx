@@ -89,6 +89,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         );
 
         if (!account) {
+          console.log('no account found');
           result = false;
           break;
         }
@@ -148,6 +149,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       case 'subscribe:account:nominationPools:roles':
       case 'subscribe:account:nominationPools:commission': {
         return task.account?.nominationPoolData ? false : true;
+      }
+      case 'subscribe:account:nominating:rewards': {
+        return task.account?.nominatingData ? false : true;
       }
       default: {
         return false;

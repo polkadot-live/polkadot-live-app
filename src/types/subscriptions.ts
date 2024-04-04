@@ -37,7 +37,8 @@ export type TaskAction =
   | 'subscribe:account:nominationPools:state'
   | 'subscribe:account:nominationPools:renamed'
   | 'subscribe:account:nominationPools:roles'
-  | 'subscribe:account:nominationPools:commission';
+  | 'subscribe:account:nominationPools:commission'
+  | 'subscribe:account:nominating:rewards';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

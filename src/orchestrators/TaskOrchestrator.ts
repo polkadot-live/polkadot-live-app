@@ -119,6 +119,12 @@ export class TaskOrchestrator {
             break;
           }
 
+          case 'subscribe:account:nominating:rewards': {
+            debug('🟢 subscribe:account:nominating:rewards');
+            await TaskOrchestrator.subscribe_nominating_rewards(task, wrapper);
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -183,6 +189,8 @@ export class TaskOrchestrator {
         return instance.api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:commission':
         return instance.api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominating:rewards':
+        return instance.api.query.staking.currentEra;
       default:
         throw new Error('Subscription action not found');
     }
@@ -337,6 +345,28 @@ export class TaskOrchestrator {
       // Exit early if the account in question has not joined a nomination pool.
       if (!task.account?.nominationPoolData) {
         debug('🟠 Account has not joined a nomination pool.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nominating_rewards
+   * @summary Handle a task that subscribes to the API function api.query.currentEra and notifies an account's pending rewards.
+   */
+  private static async subscribe_nominating_rewards(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question is not nominating.
+      if (!task.account?.nominatingData) {
+        console.log('🟠 Account is not nominating.');
         return;
       }
 

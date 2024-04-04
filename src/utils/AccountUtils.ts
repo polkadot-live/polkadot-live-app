@@ -1,10 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/**
- * @todo Move to `renderer/AccountUtils.ts`
- */
-
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
@@ -58,6 +54,67 @@ export const fetchAccountBalances = async () => {
 };
 
 /**
+ * @name fetchAccountNominatingData
+ * @summary Fetch an account's nominated validator ids.
+ */
+export const fetchAccountNominatingData = async () => {
+  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+    // Only allow nominating data on specific chains.
+    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
+      continue;
+    }
+
+    const { api } = await ApiUtils.getApiInstance(chainId);
+
+    // Iterate accounts associated with chain and initialise nominating data.
+    for (const account of accounts) {
+      console.log(`>>> set nominating data for ${account.name}`);
+      await setNominatingDataForAccount(api, account);
+    }
+  }
+};
+
+/**
+ * @name fetchNominatingDataForAccount
+ * @summary Fetch nomination pool data for a single account.
+ */
+export const fetchNominatingDataForAccount = async (
+  account: Account,
+  chainId: ChainID
+) => {
+  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
+    const { api } = await ApiUtils.getApiInstance(chainId);
+    await setNominatingDataForAccount(api, account);
+  }
+};
+
+/**
+ * @name setNominatingDataForAccount
+ * @summary Fetch nominating data for a single account.
+ */
+export const setNominatingDataForAccount = async (
+  api: ApiPromise,
+  account: Account
+) => {
+  // Check if account is currently nominating.
+  const result: AnyData = await api.query.staking.nominators(account.address);
+  const nominators = result.toHuman();
+
+  // Return early if account is not nominating.
+  if (nominators === null) {
+    return;
+  }
+
+  // Set account's nominating data.
+  account.nominatingData = {
+    validatorIds: nominators.targets as string[],
+  };
+
+  // Update account data in controller.
+  await AccountsController.set(account.chain, account);
+};
+
+/**
  * @name fetchAccountNominationPoolData
  * @summary Fetch nomination pool data for all accounts managed by the accounts controller.
  */
@@ -69,7 +126,6 @@ export const fetchAccountNominationPoolData = async () => {
     }
 
     const { api } = await ApiUtils.getApiInstance(chainId);
-    console.log(`API instance fetched for ${chainId}`);
 
     // Iterate accounts associated with chain and initialise nomination pool data.
     for (const account of accounts) {
@@ -150,7 +206,7 @@ const setNominationPoolDataForAccount = async (
     };
 
     // Store updated account data in controller.
-    AccountsController.set(chainId, account);
+    await AccountsController.set(chainId, account);
   }
 };
 
@@ -224,11 +280,14 @@ export const checkAccountWithProperties = (
   // Utility to access an instance property dynamically.
   const getProperty = (instance: Account, key: keyof Account): AnyData => {
     switch (key) {
-      case 'nominationPoolData':
-        return instance.nominationPoolData;
       case 'balance': {
         return instance.balance;
       }
+      case 'nominatingData': {
+        return instance.nominatingData;
+      }
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
       default:
         return null;
     }

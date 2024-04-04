@@ -9,6 +9,7 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchAccountBalances,
+  fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
@@ -63,6 +64,9 @@ export const useMessagePorts = () => {
 
         // Initialize nomination pool data for account if necessary.
         await fetchNominationPoolDataForAccount(account, chainId);
+
+        // Initialize nominating data for account if necessary.
+        await fetchNominatingDataForAccount(account, chainId);
 
         // Disconnect from any API instances that are not currently needed.
         await handleApiDisconnects();
@@ -139,7 +143,7 @@ export const useMessagePorts = () => {
 
       // Set new account name and persist new account data to storage.
       account.name = newName;
-      AccountsController.set(chainId, account);
+      await AccountsController.set(chainId, account);
 
       // Update account react state.
       setAddresses(AccountsController.getAllFlattenedAccountData());

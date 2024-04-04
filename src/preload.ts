@@ -61,7 +61,7 @@ export const API: PreloadAPI = {
 
   // Overwrite persisted accounts in store.
   setPersistedAccounts: (accounts: string) =>
-    ipcRenderer.send('app:accounts:set', accounts),
+    ipcRenderer.invoke('app:accounts:set', accounts),
 
   persistEvent: (event: EventCallback, notification: NotificationData | null) =>
     ipcRenderer.send('app:event:persist', event, notification),

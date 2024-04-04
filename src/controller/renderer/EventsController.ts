@@ -352,6 +352,40 @@ export class EventsController {
           actions: [],
         };
       }
+      /**
+       * subscribe:account:nominating:rewards
+       */
+      case 'subscribe:account:nominating:rewards': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Era Pending Payout',
+          subtitle: 'Staking rewards received in the previous era.',
+          data: {
+            era: miscData.prevEra,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://staking.polkadot.network/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Staking Dashboard',
+            },
+          ],
+        };
+      }
       default: {
         throw new Error('getEvent: Subscription task action not recognized');
       }

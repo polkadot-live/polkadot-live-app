@@ -115,7 +115,7 @@ export class QueryMultiWrapper {
             break;
           }
           case 'subscribe:account:balance': {
-            Callbacks.callback_query_system_account(
+            await Callbacks.callback_query_system_account(
               dataArr[entry.task.dataIndex!],
               entry
             );
@@ -148,6 +148,13 @@ export class QueryMultiWrapper {
           }
           case 'subscribe:account:nominationPools:commission': {
             await Callbacks.callback_nomination_pool_commission(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
+          case 'subscribe:account:nominating:rewards': {
+            await Callbacks.callback_nominating_rewards(
               dataArr[entry.task.dataIndex!],
               entry
             );

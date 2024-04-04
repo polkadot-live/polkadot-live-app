@@ -105,6 +105,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
       account.name = params.updated.name;
       account.source = params.updated.source;
 
+      // TODO: Make async
       AccountsController.set(params.original.chainId, account);
 
       // Get updated account

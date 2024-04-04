@@ -63,6 +63,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Commission Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    label: 'Era Pending Payouts',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -112,6 +120,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Commission Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    label: 'Era Pending Payouts',
+    status: 'disable',
+  },
   // Kusama
   {
     action: 'subscribe:account:balance',
@@ -159,6 +175,14 @@ export const accountTasks: SubscriptionTask[] = [
     category: 'Nomination Pools',
     chainId: 'Kusama',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:rewards',
+    apiCallAsString: 'api.query.staking.currentEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    label: 'Era Pending Payouts',
     status: 'disable',
   },
 ];

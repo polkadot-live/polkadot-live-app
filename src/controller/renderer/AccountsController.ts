@@ -164,7 +164,7 @@ export class AccountsController {
    * @param {ChainID} chain - the chain the account belongs to.
    * @param {Account} account - the account to set.
    */
-  static set = (chain: ChainID, account: Account) => {
+  static set = async (chain: ChainID, account: Account) => {
     this.accounts.set(
       chain,
       this.accounts
@@ -173,7 +173,7 @@ export class AccountsController {
     );
 
     // Send IPC message to update persisted accounts in store.
-    window.myAPI.setPersistedAccounts(this.serializeAccounts());
+    await window.myAPI.setPersistedAccounts(this.serializeAccounts());
   };
 
   /**
