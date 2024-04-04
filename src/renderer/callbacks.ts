@@ -368,7 +368,7 @@ export class Callbacks {
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
       // eslint-disable-next-line prettier/prettier
-      const curEra: number = parseInt((data.toHuman() as string).replace(/,/g, ''));
+      const curEra: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
       const prevEra: number = curEra - 1;
 
       // Get validators and their reward points from the previous era.
