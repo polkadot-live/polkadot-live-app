@@ -355,6 +355,12 @@ export class Callbacks {
     }
   }
 
+  /**
+   * @name callback_nominating_rewards
+   * @summary Callback for 'subscribe:account:nominating:rewards'
+   *
+   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
+   */
   static async callback_nominating_rewards(data: AnyData, entry: ApiCallEntry) {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
