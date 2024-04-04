@@ -6,7 +6,7 @@ import type { ChainID } from './chains';
 import type { AnyJson } from './misc';
 import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
-import type { DismissEvent, EventCallback } from './reporter';
+import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
@@ -21,6 +21,8 @@ export interface PreloadAPI {
 
   persistEvent: ApiPersistEvent;
   updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
+  markEventStale: ApiMarkEventStale;
+  reportStaleEvent: ApiReportStaleEvent;
   getChainSubscriptions: ApiGetChainSubscriptions;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
@@ -44,6 +46,7 @@ export interface PreloadAPI {
 
   requestDismissEvent: ApiRequestDismissEvent;
 
+  initOnlineStatus: ApiInitOnlineStatus;
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
 
@@ -119,15 +122,18 @@ type ApiGetPersistedAccountTasks = (
 
 type ApiSetPersistedAccounts = (accounts: string) => void;
 
-type ApiPersistEvent = (event: EventCallback) => void;
+type ApiPersistEvent = (
+  event: EventCallback,
+  notification: NotificationData | null
+) => void;
 
 type ApiGetChainSubscriptions = () => Promise<string>;
 
 type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
 
 type ApiUpdatePersistedAccountTask = (
-  task: SubscriptionTask,
-  account: FlattenedAccountData
+  serializedTask: string,
+  serializedAccount: string
 ) => Promise<void>;
 
 type ApiShowNotification = (content: { title: string; body: string }) => void;
@@ -136,3 +142,11 @@ type ApiUpdateAccountNameForEventsAndTasks = (
   address: string,
   newName: string
 ) => Promise<EventCallback[]>;
+
+type ApiMarkEventStale = (uid: string, chainId: ChainID) => void;
+
+type ApiReportStaleEvent = (
+  callback: (_: IpcRendererEvent, uid: string, chainId: ChainID) => void
+) => Electron.IpcRenderer;
+
+type ApiInitOnlineStatus = () => Promise<void>;

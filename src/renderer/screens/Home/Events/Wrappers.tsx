@@ -56,9 +56,22 @@ export const EventItem = styled(motion.div)`
 
   position: relative;
 
+  > span:first-child {
+    text-align: right;
+    position: absolute;
+    top: 18px;
+    right: 40px;
+    color: #4d4c4c;
+    transition: color ease-out 0.1s;
+    cursor: pointer;
+  }
+  > span:first-child:hover {
+    color: var(--text-color-secondary);
+  }
+
   > button {
     position: absolute;
-    top: 10px;
+    top: 1.5rem;
     right: 15px;
   }
 
@@ -66,8 +79,8 @@ export const EventItem = styled(motion.div)`
     background: var(--background-default);
     width: 100%;
     border-radius: 1.75rem;
-    padding: 0 1.25rem;
-    margin-bottom: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -88,6 +101,7 @@ export const EventItem = styled(motion.div)`
         display: flex;
         flex-direction: column;
         justify-content: center;
+        row-gap: 0.5rem;
 
         &:first-child {
           width: var(--event-item-left-width);
@@ -131,17 +145,23 @@ export const EventItem = styled(motion.div)`
         &:last-child {
           flex-grow: 1;
         }
-        h5 {
-          color: var(--text-color-secondary);
-          margin-bottom: 0.35rem;
+
+        h4,
+        h5,
+        p {
+          font-size: 1.1rem;
         }
         h4 {
           color: var(--text-color-primary);
           font-weight: 600;
         }
+        h5 {
+          color: var(--text-color-secondary);
+          margin: 0.35rem 0;
+        }
         p {
           font-weight: 600;
-          margin: 0.2rem 0 0 0;
+          margin: 0.2rem 0 0.4rem;
         }
       }
     }

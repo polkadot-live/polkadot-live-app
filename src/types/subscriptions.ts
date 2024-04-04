@@ -8,13 +8,36 @@ import type { FlattenedAccountData } from './accounts';
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
 export interface SubscriptionTask {
-  action: string;
+  // Unique id for the task.
+  action: TaskAction;
+  // Arguments for the queryMulti call.
   actionArgs?: string[];
+  // Api call representation.
+  apiCallAsString: string;
+  // Task category.
+  category: string;
+  // Task's associated chain.
   chainId: ChainID;
+  // Enabled or disabled.
   status: SubscriptionNextStatus;
+  // Shown in renderer.
   label: string;
+  // Associated account for task.
   account?: FlattenedAccountData;
+  // Index to retrieve api callback data.
+  dataIndex?: number;
 }
+
+// String literals to limit subscription task actions.
+export type TaskAction =
+  | 'subscribe:chain:timestamp'
+  | 'subscribe:chain:currentSlot'
+  | 'subscribe:account:balance'
+  | 'subscribe:account:nominationPools:rewards'
+  | 'subscribe:account:nominationPools:state'
+  | 'subscribe:account:nominationPools:renamed'
+  | 'subscribe:account:nominationPools:roles'
+  | 'subscribe:account:nominationPools:commission';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

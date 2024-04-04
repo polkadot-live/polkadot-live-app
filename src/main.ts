@@ -18,7 +18,11 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type {
+  DismissEvent,
+  EventCallback,
+  NotificationData,
+} from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SubscriptionTask } from '@/types/subscriptions';
@@ -96,11 +100,6 @@ app.whenReady().then(async () => {
     if (!isEnabled) {
       autoLaunch.enable();
     }
-  });
-
-  // App initialization process.
-  await AppOrchestrator.next({
-    task: 'app:initialize',
   });
 
   // Ask for camera permission (Mac OS)
@@ -198,15 +197,26 @@ app.whenReady().then(async () => {
    * Events
    */
 
-  // Persist an event and report it back to frontend.
-  ipcMain.on('app:event:persist', (_, e: EventCallback) => {
-    const eventWithUid = EventsController.persistEvent(e);
+  // Persist an event and execut OS notification if event was persisted.
+  // Report event back to frontend after an event UID is assigned.
+  ipcMain.on(
+    'app:event:persist',
+    (_, e: EventCallback, notification: NotificationData | null) => {
+      const { event: eventWithUid, wasPersisted } =
+        EventsController.persistEvent(e);
 
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:new',
-      eventWithUid
-    );
-  });
+      // Show notification if event was added and notification data was received.
+      if (wasPersisted && notification !== null) {
+        const { title, body } = notification;
+        NotificationsController.showNotification(title, body);
+      }
+
+      WindowsController.get('menu')?.webContents?.send(
+        'renderer:event:new',
+        eventWithUid
+      );
+    }
+  );
 
   // Update a collection of event's associated account name.
   ipcMain.handle(
@@ -233,9 +243,27 @@ app.whenReady().then(async () => {
     reportDismissEvent(eventData);
   });
 
+  // Mark event stale.
+  ipcMain.on('app:event:stale', (_, uid: string, chainId: ChainID) => {
+    // Update persisted event as stale.
+    EventsController.persistStaleEvent(uid);
+
+    // Send message to main renderer to update event in react state.
+    WindowsController.get('menu')?.webContents?.send(
+      'renderer:event:stale',
+      uid,
+      chainId
+    );
+  });
+
   /**
    * Online status
    */
+
+  // Handle initializing online status controller.
+  ipcMain.handle('app:connection:init', async () => {
+    await OnlineStatusController.initialize();
+  });
 
   // Handle switching between online and offline.
   ipcMain.on('app:connection:status', () => {
@@ -279,7 +307,9 @@ app.whenReady().then(async () => {
   // Update a persisted account subscription task.
   ipcMain.handle(
     'app:subscriptions:account:update',
-    async (_, task: SubscriptionTask, account: FlattenedAccountData) => {
+    async (_, serializedTask: string, serializedAccount: string) => {
+      const task: SubscriptionTask = JSON.parse(serializedTask);
+      const account: FlattenedAccountData = JSON.parse(serializedAccount);
       SubscriptionsController.updateAccountTaskInStore(task, account);
     }
   );

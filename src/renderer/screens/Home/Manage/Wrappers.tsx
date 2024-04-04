@@ -61,10 +61,11 @@ export const HeadingWrapper = styled.div`
   > h5 {
     display: flex;
     align-items: center;
+    margin: 1rem 0;
 
     > span {
+      margin-left: 1rem;
       color: var(--text-color-primary);
-      margin-right: 0.5rem;
     }
     .icon {
       fill: var(--text-color-primary);

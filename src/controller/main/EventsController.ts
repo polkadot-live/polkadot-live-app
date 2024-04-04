@@ -3,7 +3,7 @@
 
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { pushEventAndFilterDuplicates } from '@/utils/EventUtils';
+import { pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@w3ux/utils/types';
@@ -53,21 +53,29 @@ export class EventsController {
    * @name persistEvent
    * @summary Persist an event to the store.
    */
-  static persistEvent(event: EventCallback): EventCallback {
+  static persistEvent(event: EventCallback): {
+    event: EventCallback;
+    wasPersisted: boolean;
+  } {
     if (event.uid === '') {
       event.uid = getUid();
     }
 
-    const events = pushEventAndFilterDuplicates(
+    const { events, updated } = pushUniqueEvent(
       event,
       EventsController.getEventsFromStore()
     );
 
     // Persist new array to store.
-    EventsController.persistEventsToStore(events);
-    debug('🔷 Event persisted (%o total in store)', events.length);
+    if (updated) {
+      EventsController.persistEventsToStore(events);
+      debug('🔷 Event persisted (%o total in store)', events.length);
+    }
 
-    return event;
+    return {
+      event,
+      wasPersisted: updated,
+    };
   }
 
   /**
@@ -132,6 +140,21 @@ export class EventsController {
     debug('🔷 Event removed (%o total in store)', updated.length);
 
     return true;
+  }
+
+  /**
+   * @name persistStaleEvent
+   * @summary Mark an event stale and persist it to store.
+   */
+  static persistStaleEvent(uid: string) {
+    const stored = EventsController.getEventsFromStore();
+
+    const updated = stored.map((e) => {
+      e.uid === uid && (e.stale = true);
+      return e;
+    });
+
+    EventsController.persistEventsToStore(updated);
   }
 
   /**

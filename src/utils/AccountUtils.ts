@@ -9,9 +9,22 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import { planckToUnit } from '@w3ux/utils';
 import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
-import { BN, bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
-import type { AccountBalance } from '@/types/accounts';
-import type { AnyJson } from '@/types/misc';
+import {
+  BN,
+  bnToU8a,
+  stringToU8a,
+  u8aConcat,
+  u8aToString,
+  u8aUnwrapBytes,
+} from '@polkadot/util';
+import type {
+  AccountBalance,
+  FlattenedAccountData,
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@/types/accounts';
+import type { ApiCallEntry } from '@/types/subscriptions';
+import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
@@ -111,12 +124,29 @@ const setNominationPoolDataForAccount = async (
     chainUnits(chainId)
   );
 
+  // Get nomination pool data.
+  const npResult: AnyData = (
+    await api.query.nominationPools.bondedPools(poolId)
+  ).toHuman();
+
+  const poolState: string = npResult.state;
+  const poolRoles: NominationPoolRoles = npResult.roles;
+  const poolCommission: NominationPoolCommission = npResult.commission;
+
+  // Get nomination pool name.
+  const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);
+  const poolName: string = u8aToString(u8aUnwrapBytes(poolMeta));
+
   if (poolRewardAddress) {
     // Add nomination pool data to account.
     account.nominationPoolData = {
       poolId,
       poolRewardAddress,
       poolPendingRewards,
+      poolState,
+      poolName,
+      poolRoles,
+      poolCommission,
     };
 
     // Store updated account data in controller.
@@ -156,4 +186,98 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
     stash: createAccount(poolIdBigNumber, 0),
     reward: createAccount(poolIdBigNumber, 1),
   };
+};
+
+/**
+ * @name getNonceForAddress
+ * @summary Get the live nonce for an address.
+ */
+export const getAddressNonce = async (address: string, chainId: ChainID) => {
+  const instance = await ApiUtils.getApiInstance(chainId);
+  const result: AnyData = await instance.api.query.system.account(address);
+  return new BigNumber(result.nonce);
+};
+
+/**
+ * @name checkAccountWithProperties
+ * @summary Check if account data exists with an API call entry, and if
+ * the associated account, along with the passed dynamic properties, also
+ * exist. Callbacks will exit early if this function fails.
+ */
+export const checkAccountWithProperties = (
+  entry: ApiCallEntry,
+  properties: (keyof Account)[]
+): Account => {
+  // Check for account existence and fetch it.
+  if (!entry.task.account) {
+    throw new Error('checkAccountWithProperties: Account not found');
+  }
+
+  // eslint-disable-next-line prettier/prettier
+  const { chainId, account: { address } } = entry.task;
+  const account = AccountsController.get(chainId, address);
+
+  if (account === undefined) {
+    throw new Error('checkAccountWithProperties: Account not found');
+  }
+
+  // Utility to access an instance property dynamically.
+  const getProperty = (instance: Account, key: keyof Account): AnyData => {
+    switch (key) {
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
+      case 'balance': {
+        return instance.balance;
+      }
+      default:
+        return null;
+    }
+  };
+
+  // Iterate properties and return false if any are undefined or null.
+  for (const key of properties) {
+    const result = getProperty(account, key);
+
+    if (result === null || result === undefined) {
+      throw new Error('checkAccountWithProperties: Account data not found');
+    }
+  }
+
+  // Otherwise, return the account.
+  return account;
+};
+
+export const checkFlattenedAccountWithProperties = (
+  entry: ApiCallEntry,
+  properties: (keyof FlattenedAccountData)[]
+) => {
+  // Check for account existence.
+  if (!entry.task.account) {
+    throw new Error('checkFlattenedAccountWithProperties: Account not found');
+  }
+
+  // Utility to access an instance property dynamically.
+  const getProperty = (
+    instance: FlattenedAccountData,
+    key: keyof FlattenedAccountData
+  ): AnyData => {
+    switch (key) {
+      case 'nominationPoolData':
+        return instance.nominationPoolData;
+      default:
+        return null;
+    }
+  };
+
+  // Iterate properties and return false if any are undefined or null.
+  for (const key of properties) {
+    const result = getProperty(entry.task.account, key);
+
+    if (result === null || result === undefined) {
+      throw new Error('checkFlattenedAccountWithProperties: Data not found');
+    }
+  }
+
+  // Otherwise, return the account.
+  return entry.task.account;
 };

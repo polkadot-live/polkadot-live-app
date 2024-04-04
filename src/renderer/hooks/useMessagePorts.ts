@@ -91,7 +91,7 @@ export const useMessagePorts = () => {
       const account = AccountsController.get(chainId, address);
 
       if (!account) {
-        console.log('Account could not be added, probably not imported yet');
+        console.log('Account could not be fetched, probably not imported yet');
         return;
       }
 
@@ -163,7 +163,8 @@ export const useMessagePorts = () => {
      * @summary Set initial state for the action window.
      */
     const handleInitAction = (ev: MessageEvent) => {
-      const data: ActionMeta = ev.data.data;
+      const data: ActionMeta = JSON.parse(ev.data.data);
+      console.log(data);
       setActionMeta(data);
     };
 
@@ -172,7 +173,8 @@ export const useMessagePorts = () => {
      * @summary Initialize extrinsics controller with tx data.
      */
     const handleActionTxInit = async (ev: MessageEvent) => {
-      const { chainId, from, nonce, pallet, method, args } = ev.data.data;
+      const { chainId, from, nonce, pallet, method, args, eventUid } =
+        ev.data.data;
 
       await ExtrinsicsController.new(
         chainId,
@@ -180,7 +182,8 @@ export const useMessagePorts = () => {
         nonce,
         pallet,
         method,
-        args
+        args,
+        eventUid
       );
     };
 
@@ -288,12 +291,6 @@ export const useMessagePorts = () => {
               case 'renderer:tx:reset': {
                 console.log('> handle renderer:tx:reset');
                 ExtrinsicsController.reset();
-                break;
-              }
-              // TODO: Implement stale events (where action has been executed)
-              case 'renderer:event:update:stale': {
-                console.log('> handle renderer:event:update:stale');
-                console.log(ev.data.data);
                 break;
               }
               default: {

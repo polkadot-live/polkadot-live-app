@@ -6,7 +6,7 @@ import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from './chains';
 
-export type AccountSource = 'vault' | 'ledger' | 'system';
+export type AccountSource = 'vault' | 'ledger' | 'system' | 'read-only';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 
@@ -32,6 +32,27 @@ export interface AccountNominationPoolData {
   poolId: number;
   poolRewardAddress: string;
   poolPendingRewards: BigNumber;
+  poolState: string;
+  poolName: string;
+  poolRoles: NominationPoolRoles;
+  poolCommission: NominationPoolCommission;
+}
+
+export interface NominationPoolRoles {
+  depositor: string;
+  root: string;
+  nominator: string;
+  bouncer: string;
+}
+
+export interface NominationPoolCommission {
+  changeRate: null | {
+    maxIncrease: string;
+    minDelay: string;
+  };
+  current: null | string[];
+  max: null | string;
+  throttleFrom: null | string;
 }
 
 /*

@@ -166,16 +166,46 @@ export class SubscriptionsController {
             const task = { ...t, account: a.flatten() };
 
             switch (t.action) {
-              case 'subscribe:query.system.account': {
-                return { ...task, actionArgs: [a.address] };
+              case 'subscribe:account:balance': {
+                return { ...task, actionArgs: [a.address] } as SubscriptionTask;
               }
-              case 'subscribe:nominationPools:query.system.account': {
+              case 'subscribe:account:nominationPools:rewards': {
                 // Provide an account's nomination pool reward address if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolRewardAddress]
                   : undefined;
 
-                return { ...task, actionArgs };
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
+              case 'subscribe:account:nominationPools:state': {
+                // Provide account's nomination pool id if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
+              case 'subscribe:account:nominationPools:renamed': {
+                // Provide account's nomination pool id if exists.
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
+              case 'subscribe:account:nominationPools:roles': {
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
+              }
+              case 'subscribe:account:nominationPools:commission': {
+                const actionArgs = a.nominationPoolData
+                  ? [a.nominationPoolData.poolId]
+                  : undefined;
+
+                return { ...task, actionArgs } as SubscriptionTask;
               }
               default: {
                 return t;

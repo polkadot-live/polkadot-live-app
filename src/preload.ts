@@ -6,10 +6,15 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type {
+  DismissEvent,
+  EventCallback,
+  NotificationData,
+} from '@/types/reporter';
 import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
+import type { ChainID } from './types/chains';
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -58,14 +63,20 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.send('app:accounts:set', accounts),
 
-  persistEvent: (event: EventCallback) =>
-    ipcRenderer.send('app:event:persist', event),
+  persistEvent: (event: EventCallback, notification: NotificationData | null) =>
+    ipcRenderer.send('app:event:persist', event, notification),
 
   updateAccountNameForEventsAndTasks: async (
     address: string,
     newName: string
   ): Promise<EventCallback[]> =>
     await ipcRenderer.invoke('app:events:update:accountName', address, newName),
+
+  markEventStale: (uid: string, chainId: ChainID) =>
+    ipcRenderer.send('app:event:stale', uid, chainId),
+
+  reportStaleEvent: (callback) =>
+    ipcRenderer.on('renderer:event:stale', callback),
 
   getChainSubscriptions: async () =>
     await ipcRenderer.invoke('app:subscriptions:chain:get'),
@@ -74,10 +85,14 @@ export const API: PreloadAPI = {
     await ipcRenderer.invoke('app:subscriptions:chain:update', task),
 
   updatePersistedAccountTask: async (
-    task: SubscriptionTask,
-    account: FlattenedAccountData
+    serializedTask: string,
+    serializedAccount: string
   ) =>
-    await ipcRenderer.invoke('app:subscriptions:account:update', task, account),
+    await ipcRenderer.invoke(
+      'app:subscriptions:account:update',
+      serializedTask,
+      serializedAccount
+    ),
 
   showNotification: (content: { title: string; body: string }) =>
     ipcRenderer.send('app:notification:show', content),
@@ -139,6 +154,9 @@ export const API: PreloadAPI = {
   /**
    * Online status
    */
+
+  // Initialise the online status controller when app starts.
+  initOnlineStatus: async () => await ipcRenderer.invoke('app:connection:init'),
 
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),

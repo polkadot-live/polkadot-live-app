@@ -1,31 +1,45 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isValidHttpUrl, remToUnit } from '@w3ux/utils';
-import { useTooltip } from '@app/contexts/Tooltip';
-import { Identicon } from '@app/library/Identicon';
-import { EventItem } from './Wrappers';
-import { useEvents } from '@/renderer/contexts/Events';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { EventItem } from './Wrappers';
+import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
+import { getAddressNonce } from '@/utils/AccountUtils';
+import { isValidHttpUrl /*, remToUnit*/ } from '@w3ux/utils';
+import { Identicon } from '@app/library/Identicon';
+import { useEffect, useState } from 'react';
+import { useEvents } from '@/renderer/contexts/Events';
+import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useTooltip } from '@app/contexts/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { EventItemProps } from './types';
-import { getEventChainId } from '@/utils/EventUtils';
+import type { AccountSource } from '@/types/accounts';
 
 const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
-  const { uid, title, subtitle, actions, data } = event;
+  const { dismissEvent } = useEvents();
+  const { online: isOnline } = useOnlineStatus();
+  const { setTooltipTextAndOpen } = useTooltip();
+
+  const { uid, title, subtitle, actions /*, data*/ } = event;
 
   // Extract address from event.
   const address =
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).address
       : 'Chain Event';
+
+  // Extract account source from event.
+  const source: AccountSource =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).source
+      : 'ledger';
 
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
@@ -35,9 +49,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).accountName
       : chainId;
-
-  const { dismissEvent } = useEvents();
-  const { setTooltipTextAndOpen } = useTooltip();
 
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
@@ -51,10 +62,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
     console.log(`Remove result: ${result}`);
   };
 
-  // Manually define event item height. Add extra height if actions are present.
-  // This could be refactored into a helper function in the future.
-  const itemHeight = actions.length ? '9.25rem' : '6.25rem';
-
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event
   // _after_ the fade-out ensures there will be no race conditions. E.g. the UI rendering and
   // removing the event before_ the event transition is finished.
@@ -66,6 +73,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
 
   return (
     <AnimatePresence>
+      {/* Event item wrapper */}
       {display !== 'out' && (
         <EventItem
           whileHover={{ scale: 1.01 }}
@@ -74,7 +82,7 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             hidden: { opacity: 0, height: 0 },
             show: {
               opacity: 1,
-              height: remToUnit(itemHeight), // Doesn't play well with `rem` units.
+              height: 'min-content',
             },
           }}
           animate={
@@ -89,13 +97,17 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
             ease: 'easeInOut',
           }}
         >
+          <span>{renderTimeAgo(event.timestamp)}</span>
+          {/* Dismiss button */}
           <button
             type="button"
             onClick={async () => await handleDismissEvent()}
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
-          <div style={{ height: `calc(${itemHeight} - 0.5rem)` }}>
+
+          {/* Main content */}
+          <div>
             <section>
               <div>
                 <div className="icon ">
@@ -111,13 +123,19 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                 </div>
               </div>
               <div>
-                <h4>{`${accountName}: ${title}`}</h4>
+                <h4>{`${accountName}`}</h4>
+                <h5>{title}</h5>
                 <p>{subtitle}</p>
               </div>
             </section>
+
+            {/* Render actions */}
             {actions.length > 0 && (
               <section className="actions">
-                {actions.map(({ uri, text }, i) => {
+                {actions.map((action, i) => {
+                  const { uri, text } = action;
+                  action.txMeta && (action.txMeta.eventUid = event.uid);
+
                   const isUrl = isValidHttpUrl(uri);
                   if (isUrl) {
                     return (
@@ -126,7 +144,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
                         onClick={() => {
-                          window.myAPI.closeWindow('menu');
                           window.myAPI.openBrowserURL(uri);
                         }}
                       />
@@ -134,15 +151,28 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                   } else {
                     return (
                       <ButtonMono
+                        disabled={
+                          event.stale ||
+                          source === 'ledger' ||
+                          source == 'read-only' ||
+                          !isOnline
+                        }
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         onClick={async () => {
-                          await window.myAPI.openWindow('action', {
-                            uid,
-                            action: `${uid}_${uri}`,
-                            chainId,
-                            address,
-                            data: JSON.stringify(data),
+                          window.myAPI.openWindow('action');
+
+                          // Set nonce.
+                          if (action.txMeta) {
+                            action.txMeta.nonce = await getAddressNonce(
+                              address,
+                              chainId
+                            );
+                          }
+
+                          ConfigRenderer.portToAction.postMessage({
+                            task: 'action:init',
+                            data: JSON.stringify(action.txMeta),
                           });
                         }}
                       />

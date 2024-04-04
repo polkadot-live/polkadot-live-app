@@ -3,7 +3,7 @@
 
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { chainIcon } from '@/config/chains';
+import { chainCurrency, chainIcon } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
@@ -15,7 +15,6 @@ import { SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
-import type { AccountBalance, FlattenedAccountData } from '@/types/accounts';
 import BigNumber from 'bignumber.js';
 
 export const Action = () => {
@@ -25,19 +24,16 @@ export const Action = () => {
 
   const ChainIcon = chainIcon('Polkadot');
 
-  const chainId = actionMeta?.chainId || 'Polkadot';
+  // Tx metadata.
   const action = actionMeta?.action || '';
-  const fromAccount: FlattenedAccountData | null = actionMeta?.account || null;
-  const from = fromAccount?.address || '';
   const actionData = actionMeta?.data || {};
-  const uid = actionMeta?.uid || '';
+  const eventUid = actionMeta?.eventUid || '';
 
-  const balance: AccountBalance | null = actionMeta
-    ? JSON.parse(actionMeta.balance)
-    : null;
+  const from: string = actionMeta?.from || '';
+  const fromName = actionMeta?.accountName || ellipsisFn(from);
 
-  const nonce: BigNumber = balance ? balance.nonce : new BigNumber(0);
-  const fromName = fromAccount?.name || ellipsisFn(from);
+  const chainId = actionMeta?.chainId || 'Polkadot';
+  const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
   const pallet = actionMeta?.pallet || '';
   const method = actionMeta?.method || '';
   const args = actionMeta?.args || [];
@@ -50,12 +46,12 @@ export const Action = () => {
     try {
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:init',
-        data: { chainId, from, nonce, pallet, method, args },
+        data: { chainId, from, nonce, pallet, method, args, eventUid },
       });
     } catch (err) {
       console.log('Warning: Action port not received yet: renderer:tx:init');
     }
-  }, [from, nonce]);
+  }, [from, nonce, pallet, method]);
 
   // Auto transaction submission and event dismiss when signature updates.
   useEffect(() => {
@@ -67,12 +63,6 @@ export const Action = () => {
           data: {
             signature: getTxSignature(),
           },
-        });
-
-        // Update event show that it is stale and an action has been executed.
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:event:update:stale',
-          data: { uid, who: { chain: chainId, address: from } },
         });
       } catch (err) {
         console.log(
@@ -157,9 +147,11 @@ export const Action = () => {
 
           {action === 'nominationPools_pendingRewards_bond' && (
             <>
-              <h3>Bond Rewards</h3>
+              <h3>Compound Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.extra} DOT`} />
+                <ActionItem
+                  text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
+                />
                 <p>
                   Once submitted, your rewards will be bonded back into the
                   pool. You own these additional bonded funds and will be able
@@ -171,9 +163,11 @@ export const Action = () => {
 
           {action === 'nominationPools_pendingRewards_withdraw' && (
             <>
-              <h3>Withdraw Rewards</h3>
+              <h3>Claim Rewards</h3>
               <div className="body">
-                <ActionItem text={`Claim ${actionData.extra} DOT`} />
+                <ActionItem
+                  text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
+                />
                 <p>
                   Withdrawing rewards will immediately transfer them to your
                   account as free balance.

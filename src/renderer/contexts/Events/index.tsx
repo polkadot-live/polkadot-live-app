@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useContext, useState } from 'react';
-import {
-  pushEventAndFilterDuplicates,
-  getEventChainId,
-} from '@/utils/EventUtils';
+import { pushUniqueEvent, getEventChainId } from '@/utils/EventUtils';
 import * as defaults from './defaults';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
@@ -47,9 +44,32 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       const chainId = getEventChainId(event);
       let curEvents = cloned.get(chainId);
 
-      curEvents !== undefined
-        ? (curEvents = pushEventAndFilterDuplicates(event, curEvents))
-        : (curEvents = [event]);
+      if (curEvents !== undefined) {
+        const { events: newEvents } = pushUniqueEvent(event, curEvents);
+        curEvents = newEvents;
+      } else {
+        curEvents = [event];
+      }
+
+      cloned.set(chainId, curEvents);
+      return cloned;
+    });
+  };
+
+  // Mark an event as stale.
+  const markStaleEvent = (uid: string, chainId: ChainID) => {
+    setEventsState((prev) => {
+      const cloned = new Map(prev);
+      let curEvents = cloned.get(chainId);
+
+      if (!curEvents) {
+        return cloned;
+      }
+
+      curEvents = curEvents.map((e) => {
+        e.uid === uid && (e.stale = true);
+        return e;
+      });
 
       cloned.set(chainId, curEvents);
       return cloned;
@@ -119,6 +139,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         dismissEvent,
         sortChainEvents,
         updateEventsOnAccountRename,
+        markStaleEvent,
       }}
     >
       {children}
