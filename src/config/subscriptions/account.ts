@@ -79,6 +79,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Exposure Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:commission',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    label: 'Commission Changed',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -199,6 +207,14 @@ export const accountTasks: SubscriptionTask[] = [
     category: 'Nominating',
     chainId: 'Kusama',
     label: 'Exposure Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:commission',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    label: 'Commission Changed',
     status: 'disable',
   },
 ];

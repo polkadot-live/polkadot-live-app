@@ -11,6 +11,7 @@ import type { EventAccountData, EventCallback } from '@/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
+  ValidatorData,
 } from '@/types/accounts';
 
 /**
@@ -64,6 +65,10 @@ export const pushUniqueEvent = (
     }
     case 'subscribe:account:nominating:exposure': {
       push = filter_nominating_exposure(events, event);
+      break;
+    }
+    case 'subscribe:account:nominating:commission': {
+      push = filter_nominating_commission(events, event);
       break;
     }
     default: {
@@ -351,6 +356,48 @@ const filter_nominating_exposure = (
         exposed === nextExposed
       ) {
         isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nominating_commission
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and changed validator data.
+ */
+const filter_nominating_commission = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { updated }: { updated: ValidatorData[] } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { updated: nextUpdated }: { updated: ValidatorData[] } = e.data;
+
+      if (address === nextAddress && updated.length === nextUpdated.length) {
+        let isSameData = true;
+
+        for (let i = 0; i < updated.length; ++i) {
+          const { validatorId: valId1, commission: com1 } = updated[i];
+          const { validatorId: valId2, commission: com2 } = nextUpdated[i];
+
+          if (valId1 !== valId2 || com1 !== com2) {
+            isSameData = false;
+            break;
+          }
+        }
+
+        if (isSameData) {
+          isUnique = false;
+        }
       }
     }
   });

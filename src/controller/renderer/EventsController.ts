@@ -25,6 +25,7 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
+import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {
   /**
@@ -415,6 +416,41 @@ export class EventsController {
           data: {
             era,
             exposed,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominating:commission
+       */
+      case 'subscribe:account:nominating:commission': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { updated }: { updated: ValidatorData[] } = miscData;
+
+        const subtitle =
+          updated.length === 1
+            ? `${updated.length} nominated validator has changed commission.`
+            : `${updated.length} nominated validators have changed commission.`;
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Commission Changed',
+          subtitle,
+          data: {
+            updated: [...updated],
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

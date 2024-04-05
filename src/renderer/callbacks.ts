@@ -12,6 +12,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -377,10 +378,14 @@ export class Callbacks {
       ).toHuman();
 
       // Calculate sum of the account's nominated validator reward points.
+      const validatorIds = account.nominatingData!.validators.map(
+        (v) => v.validatorId
+      );
+
       let totalPoints = 0;
       for (const prop in rewardPoints.individual) {
         const validatorId: string = prop;
-        if (account.nominatingData!.validatorIds.includes(validatorId)) {
+        if (validatorIds.includes(validatorId)) {
           totalPoints += parseInt(
             rewardPoints.individual[prop].replace(/,/g, '')
           );
@@ -460,6 +465,73 @@ export class Callbacks {
         NotificationsController.getNotification(entry, account, {
           era,
           exposed,
+        })
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
+   * @name callback_nominating_commission
+   * @summary Callback for 'subscribe:account:nominating:commission'
+   *
+   * Dispatches an event and native OS notification if the account's nominated
+   * validator's commission has changed.
+   */
+  static async callback_nominating_commission(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
+    try {
+      // Check if account has any nominating rewards from the previous era (current era - 1).
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+
+      // eslint-disable-next-line prettier/prettier
+      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+
+      // Get an array of changed validators.
+      const validatorData = account.nominatingData!.validators;
+      const changedValidators: ValidatorData[] = [];
+
+      for (const { validatorId, commission } of validatorData) {
+        const prefs: AnyData = (
+          await api.query.staking.erasValidatorPrefs(era, validatorId)
+        ).toHuman();
+
+        const nextCommission: string = prefs.commission as string;
+        if (commission !== nextCommission) {
+          changedValidators.push({ validatorId, commission: nextCommission });
+        }
+      }
+
+      // Exit early if there are no commission changes.
+      if (changedValidators.length === 0) {
+        return;
+      }
+
+      // Update account nominating data with new commissions.
+      const updated = account.nominatingData!.validators.map((v) => {
+        const changed = changedValidators.find(
+          (x) => x.validatorId === v.validatorId
+        );
+
+        return changed !== undefined
+          ? ({ ...v, commission: changed.commission } as ValidatorData)
+          : v;
+      });
+
+      // Persist updated data.
+      account.nominatingData = { validators: [...updated] };
+      await AccountsController.set(account.chain, account);
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { updated: [...changedValidators] }),
+        NotificationsController.getNotification(entry, account, {
+          updated: [...changedValidators],
         })
       );
     } catch (err) {

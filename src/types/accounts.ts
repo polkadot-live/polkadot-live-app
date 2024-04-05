@@ -60,7 +60,12 @@ export interface NominationPoolCommission {
  */
 
 export interface AccountNominatingData {
-  validatorIds: string[];
+  validators: ValidatorData[];
+}
+
+export interface ValidatorData {
+  validatorId: string;
+  commission: string;
 }
 
 /*

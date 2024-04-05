@@ -13,6 +13,7 @@ import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
+import type { ValidatorData } from '@/types/accounts';
 
 export class NotificationsController {
   /**
@@ -91,6 +92,19 @@ export class NotificationsController {
 
         return {
           title: 'Era Exposure',
+          body,
+        };
+      }
+      case 'subscribe:account:nominating:commission': {
+        const { updated }: { updated: ValidatorData[] } = miscData;
+
+        const body =
+          updated.length === 1
+            ? `${updated.length} nominated validator has changed commission.`
+            : `${updated.length} nominated validators have changed commission.`;
+
+        return {
+          title: 'Commission Changed',
           body,
         };
       }

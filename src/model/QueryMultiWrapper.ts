@@ -167,6 +167,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominating:commission': {
+            await Callbacks.callback_nominating_commission(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
         }
       }
     }
