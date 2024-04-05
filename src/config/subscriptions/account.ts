@@ -144,6 +144,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Era Pending Payouts',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:commission',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    label: 'Commission Changed',
+    status: 'disable',
+  },
   // Kusama
   {
     action: 'subscribe:account:balance',
