@@ -208,6 +208,8 @@ export class TaskOrchestrator {
         return instance.api.query.staking.activeEra;
       case 'subscribe:account:nominating:exposure':
         return instance.api.query.staking.activeEra;
+      case 'subscribe:account:nominating:commission':
+        return instance.api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
     }

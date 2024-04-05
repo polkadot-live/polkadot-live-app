@@ -145,6 +145,14 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
   },
   {
+    action: 'subscribe:account:nominating:exposure',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    label: 'Exposure Changed',
+    status: 'disable',
+  },
+  {
     action: 'subscribe:account:nominating:commission',
     apiCallAsString: 'api.query.staking.activeEra',
     category: 'Nominating',

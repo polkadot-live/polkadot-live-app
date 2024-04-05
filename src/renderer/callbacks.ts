@@ -425,7 +425,6 @@ export class Callbacks {
     entry: ApiCallEntry
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
@@ -454,6 +453,93 @@ export class Callbacks {
         }
 
         // Break if the inner loop found exposure.
+        if (exposed) {
+          break;
+        }
+      }
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { era, exposed }),
+        NotificationsController.getNotification(entry, account, {
+          era,
+          exposed,
+        })
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
+   * @name callback_nominating_exposure_westend
+   * @summary Callback for 'subscribe:account:nominating:exposure' with on 'Westend'
+   */
+  static async callback_nominating_exposure_westend(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
+    try {
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+
+      // eslint-disable-next-line prettier/prettier
+      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const validators = account.nominatingData!.validators.map(
+        (v) => v.validatorId
+      );
+
+      let exposed = false;
+
+      for (const vId of validators) {
+        // Try to get validator overview data.
+        const overview: AnyData = (
+          await api.query.staking.erasStakersOverview(era, vId)
+        ).toHuman();
+
+        // Continue if validator is not selected for this era.
+        if (!overview) {
+          continue;
+        }
+
+        // Check if target address is the validator.
+        if (account.address === vId) {
+          exposed = true;
+          break;
+        }
+
+        // Get page count.
+        const pageCount: number = parseInt(
+          (overview.pageCount as string).replace(/,/g, '')
+        );
+
+        // Iterate nominator pages of validator to find the target address.
+        let counter = 0;
+        let counterExceeded = false;
+
+        for (let page = 0; page < pageCount; ++page) {
+          const pagedData: AnyData = (
+            await api.query.staking.erasStakersPaged(era, vId, page)
+          ).toHuman();
+
+          for (const { who } of pagedData.others) {
+            if (counter >= 512) {
+              counterExceeded = true;
+              break;
+            } else if (who === account.address) {
+              exposed = true;
+              break;
+            }
+            counter += 1;
+          }
+
+          if (counterExceeded || exposed) {
+            break;
+          }
+        }
+
+        // Stop scraping validators if exposure found.
         if (exposed) {
           break;
         }

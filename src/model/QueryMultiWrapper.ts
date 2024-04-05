@@ -93,88 +93,95 @@ export class QueryMultiWrapper {
   ) {
     const { action } = entry.task;
 
-    switch (chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        switch (action) {
-          case 'subscribe:chain:timestamp': {
-            Callbacks.callback_query_timestamp_now(
-              dataArr[entry.task.dataIndex!],
-              entry,
-              this
-            );
-            break;
-          }
-          case 'subscribe:chain:currentSlot': {
-            Callbacks.callback_query_babe_currentSlot(
-              dataArr[entry.task.dataIndex!],
-              entry,
-              this
-            );
-            break;
-          }
-          case 'subscribe:account:balance': {
-            await Callbacks.callback_query_system_account(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:rewards': {
-            await Callbacks.callback_nomination_pool_reward_account(entry);
-            break;
-          }
-          case 'subscribe:account:nominationPools:state': {
-            await Callbacks.callback_nomination_pool_state(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:renamed': {
-            await Callbacks.callback_nomination_pool_renamed(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:roles': {
-            await Callbacks.callback_nomination_pool_roles(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:commission': {
-            await Callbacks.callback_nomination_pool_commission(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominating:rewards': {
-            await Callbacks.callback_nominating_rewards(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominating:exposure': {
+    switch (action) {
+      case 'subscribe:chain:timestamp': {
+        Callbacks.callback_query_timestamp_now(
+          dataArr[entry.task.dataIndex!],
+          entry,
+          this
+        );
+        break;
+      }
+      case 'subscribe:chain:currentSlot': {
+        Callbacks.callback_query_babe_currentSlot(
+          dataArr[entry.task.dataIndex!],
+          entry,
+          this
+        );
+        break;
+      }
+      case 'subscribe:account:balance': {
+        await Callbacks.callback_query_system_account(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        await Callbacks.callback_nomination_pool_reward_account(entry);
+        break;
+      }
+      case 'subscribe:account:nominationPools:state': {
+        await Callbacks.callback_nomination_pool_state(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:renamed': {
+        await Callbacks.callback_nomination_pool_renamed(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:roles': {
+        await Callbacks.callback_nomination_pool_roles(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:commission': {
+        await Callbacks.callback_nomination_pool_commission(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominating:rewards': {
+        await Callbacks.callback_nominating_rewards(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominating:exposure': {
+        switch (chainId) {
+          case 'Polkadot':
+          case 'Kusama': {
             await Callbacks.callback_nominating_exposure(
               dataArr[entry.task.dataIndex!],
               entry
             );
             break;
           }
-          case 'subscribe:account:nominating:commission': {
-            await Callbacks.callback_nominating_commission(
+          case 'Westend': {
+            await Callbacks.callback_nominating_exposure_westend(
               dataArr[entry.task.dataIndex!],
               entry
             );
             break;
           }
         }
+        break;
+      }
+      case 'subscribe:account:nominating:commission': {
+        await Callbacks.callback_nominating_commission(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
       }
     }
   }
