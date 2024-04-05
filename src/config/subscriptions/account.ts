@@ -71,6 +71,14 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Era Pending Payouts',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:exposure',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    label: 'Exposure Changed',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance',
@@ -183,6 +191,14 @@ export const accountTasks: SubscriptionTask[] = [
     category: 'Nominating',
     chainId: 'Kusama',
     label: 'Era Pending Payouts',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:exposure',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    label: 'Exposure Changed',
     status: 'disable',
   },
 ];
