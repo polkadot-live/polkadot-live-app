@@ -386,6 +386,41 @@ export class EventsController {
           ],
         };
       }
+      /**
+       * subscribe:account:nominating:exposure
+       */
+      case 'subscribe:account:nominating:exposure': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { era, exposed }: { era: number; exposed: boolean } = miscData;
+
+        const subtitle = exposed
+          ? `Actively nominating in the current era.`
+          : `NOT actively nominating in the current era.`;
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Era Exposure',
+          subtitle,
+          data: {
+            era,
+            exposed,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
       default: {
         throw new Error('getEvent: Subscription task action not recognized');
       }

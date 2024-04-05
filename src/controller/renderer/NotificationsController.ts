@@ -82,6 +82,18 @@ export class NotificationsController {
           body: 'Staking rewards received in the previous era.',
         };
       }
+      case 'subscribe:account:nominating:exposure': {
+        const { exposed } = miscData;
+
+        const body = exposed
+          ? `Actively nominating in the current era.`
+          : `NOT actively nominating in the current era.`;
+
+        return {
+          title: 'Era Exposure',
+          body,
+        };
+      }
       default: {
         throw new Error(
           `getNotification: Not implemented for ${entry.task.action}`

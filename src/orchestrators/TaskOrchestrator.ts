@@ -125,6 +125,12 @@ export class TaskOrchestrator {
             break;
           }
 
+          case 'subscribe:account:nominating:exposure': {
+            debug('🟢 subscribe:account:nominating:exposure');
+            await TaskOrchestrator.subscribe_nominating_exposure(task, wrapper);
+            break;
+          }
+
           default: {
             throw new Error('Subscription action not found');
           }
@@ -190,6 +196,8 @@ export class TaskOrchestrator {
       case 'subscribe:account:nominationPools:commission':
         return instance.api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominating:rewards':
+        return instance.api.query.staking.activeEra;
+      case 'subscribe:account:nominating:exposure':
         return instance.api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
@@ -357,9 +365,31 @@ export class TaskOrchestrator {
 
   /**
    * @name subscribe_nominating_rewards
-   * @summary Handle a task that subscribes to the API function api.query.currentEra and notifies an account's pending rewards.
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's pending rewards.
    */
   private static async subscribe_nominating_rewards(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question is not nominating.
+      if (!task.account?.nominatingData) {
+        console.log('🟠 Account is not nominating.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nominating_exposure
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's exposure.
+   */
+  private static async subscribe_nominating_exposure(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

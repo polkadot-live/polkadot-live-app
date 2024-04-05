@@ -403,4 +403,68 @@ export class Callbacks {
       return;
     }
   }
+
+  /**
+   * @name callback_nominating_exposure
+   * @summary Callback for 'subscribe:account:nominating:exposure'
+   *
+   * Dispatch an event and notificaiton informing whether a nominator is
+   * exposed in the current era. A nominator is exposed if at least one
+   * of their nominated validators is in the era's validator set.
+   *
+   * The nominating account needs to be in the top 512 nominators (have
+   * enough stake) to earn rewards from a particular validator.
+   */
+  static async callback_nominating_exposure(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
+    try {
+      // Check if account has any nominating rewards from the previous era (current era - 1).
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+
+      // eslint-disable-next-line prettier/prettier
+      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const result: AnyData = await api.query.staking.erasStakers.entries(era);
+
+      let exposed = false;
+      for (const val of result) {
+        // Check if account address is the validator.
+        if (val[0].toHuman() === account.address) {
+          exposed = true;
+          break;
+        }
+
+        // Check if account address is nominating this validator.
+        let counter = 0;
+        for (const { who } of val[1].toHuman().others) {
+          if (counter >= 512) {
+            break;
+          } else if (who === account.address) {
+            exposed = true;
+            break;
+          }
+          counter += 1;
+        }
+
+        // Break if the inner loop found exposure.
+        if (exposed) {
+          break;
+        }
+      }
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { era, exposed }),
+        NotificationsController.getNotification(entry, account, {
+          era,
+          exposed,
+        })
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
 }

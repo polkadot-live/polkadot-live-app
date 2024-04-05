@@ -54,13 +54,21 @@ export const pushUniqueEvent = (
       push = filter_nomination_pool_roles(events, event);
       break;
     }
+    case 'subscribe:account:nominationPools:commission': {
+      push = filter_nomination_pool_commission(events, event);
+      break;
+    }
     case 'subscribe:account:nominating:rewards': {
       push = filter_nominating_rewards(events, event);
       break;
     }
-    default:
-      push = filter_nomination_pool_commission(events, event);
+    case 'subscribe:account:nominating:exposure': {
+      push = filter_nominating_exposure(events, event);
       break;
+    }
+    default: {
+      break;
+    }
   }
 
   // Add event to array if it's unique.
@@ -291,7 +299,7 @@ const filter_nomination_pool_commission = (
 };
 
 /**
- * @name filter_nomination_pool_commission
+ * @name filter_nominating_rewards
  * @summary The new event is considered a duplicate if another event has
  * a matching address and era number.
  */
@@ -307,9 +315,41 @@ const filter_nominating_rewards = (
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextEra: number = event.data.era;
+      const nextEra: number = e.data.era;
 
       if (address === nextAddress && era === nextEra) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nominating_exposure
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address, era number, and exposed flag.
+ */
+const filter_nominating_exposure = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { era, exposed } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { era: nextEra, exposed: nextExposed } = e.data;
+
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        exposed === nextExposed
+      ) {
         isUnique = false;
       }
     }

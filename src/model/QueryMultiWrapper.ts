@@ -160,6 +160,13 @@ export class QueryMultiWrapper {
             );
             break;
           }
+          case 'subscribe:account:nominating:exposure': {
+            await Callbacks.callback_nominating_exposure(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
         }
       }
     }
