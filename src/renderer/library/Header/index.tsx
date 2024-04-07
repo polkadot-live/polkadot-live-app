@@ -28,13 +28,17 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
   // Function to calculate an account's unclaimed payouts.
   const doUnclaimedPayouts = async () => {
-    const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
-    const chainId = 'Polkadot' as ChainID;
+    //const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
+    //const chainId = 'Polkadot' as ChainID;
+
+    const address = '5HNPNNpzmcko3azyoVEoVnBCKcevXMJWuwQn5hskbGLC2RHa';
+    const chainId = 'Westend' as ChainID;
     const { api } = await getApiInstance(chainId);
 
-    const unclaimed = await getUnclaimedPayouts(address, api);
+    const unclaimed = await getUnclaimedPayouts(address, api, chainId, true);
 
     let pendingPayout = new BigNumber(0);
+
     for (const validatorToPayout of unclaimed.values()) {
       for (const payoutItem of validatorToPayout.values()) {
         const payout = payoutItem[1];
@@ -42,7 +46,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       }
     }
 
-    console.log(`pending payout: ${pendingPayout}`);
+    console.log(`Pending payout: ${pendingPayout}`);
   };
 
   return (

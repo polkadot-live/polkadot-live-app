@@ -160,7 +160,7 @@ export class QueryMultiWrapper {
             break;
           }
           case 'Westend': {
-            await Callbacks.callback_nominating_pending_payouts_westend(
+            await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
               entry
             );

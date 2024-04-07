@@ -373,7 +373,12 @@ export class Callbacks {
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
       // Map<era: string, Map<validator: string, payout: [number, string]>>
-      const unclaimed = await getUnclaimedPayouts(account.address, api);
+      const unclaimed = await getUnclaimedPayouts(
+        account.address,
+        api,
+        account.chain,
+        true
+      );
 
       let pendingPayout = new BigNumber(0);
       for (const validatorToPayout of unclaimed.values()) {
@@ -402,19 +407,6 @@ export class Callbacks {
       console.error(err);
       return;
     }
-  }
-
-  /*
-   * @name callback_nominating_pending_payouts_westend
-   * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
-   *
-   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
-   */
-  static async callback_nominating_pending_payouts_westend(
-    data: AnyData,
-    entry: ApiCallEntry
-  ) {
-    console.log('TODO', data, entry);
   }
 
   /**
