@@ -45,6 +45,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     era: BigNumber,
     accountAddress: string
   ): Promise<string[]> => {
+    // Fetch array of exposure data for each validator in the era.
     const result = await api.query.staking.erasStakers.entries(era.toNumber());
     const validators: string[] = [];
 
@@ -80,7 +81,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const getLocalEraExposure = async (
     api: ApiPromise,
     era: string,
-    account: string,
+    accountAddress: string,
     validator: string
   ) => {
     const result: AnyData = (
@@ -89,12 +90,12 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
     // total, own others: { who, value }
     for (const { who, value } of result.others) {
-      if (who === account) {
+      if (who === accountAddress) {
         console.log('---------- STAKER FOUND ----------');
         return {
           staked: value as string,
           total: result.total as string,
-          isValidator: account === validator,
+          isValidator: accountAddress === validator,
         } as LocalValidatorExposure;
       }
     }
@@ -179,7 +180,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     );
 
     /**
-     * Fetch controllers in order to query ledgers (controllers of uniqueValidators array)
+     * Fetch controllers in order to query ledgers (controllers of uniqueValidators array).
      */
     const bondedResults =
       await api.query.staking.bonded.multi<AnyData>(uniqueValidators);
@@ -208,7 +209,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     //
     // Use `staking.ledger` to get unclaimed reward eras. Read `LegacyClaimedRewards`.
     // Use `claimedRewards`.
-    const ledgerResults: AnyData = await api.query.staking.ledger.multi(
+    const ledgerResults = await api.query.staking.ledger.multi<AnyData>(
       Array.from(validatorControllers.values())
     );
 
@@ -311,15 +312,21 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         const eraValidatorPrefs = pref.toHuman();
         const commission = new BigNumber(
           eraValidatorPrefs.commission.replace(/%/g, '')
-        );
+        ).multipliedBy(0.01);
 
         // Get validator from era exposure data (`null` if not found).
         const validator = unclaimedValidators[j] || '';
         const localExposed: LocalValidatorExposure | null =
           await getLocalEraExposure(api, era, address, validator);
 
-        const staked = new BigNumber(localExposed?.staked || '0');
-        const total = new BigNumber(localExposed?.total || '0');
+        const staked = localExposed?.staked
+          ? new BigNumber(rmCommas(localExposed.staked))
+          : new BigNumber(0);
+
+        const total = localExposed?.total
+          ? new BigNumber(rmCommas(localExposed?.total))
+          : new BigNumber(0);
+
         const isValidator = localExposed?.isValidator || false;
         const exposedPage = 1; // TODO: change when integrating new API.
 
