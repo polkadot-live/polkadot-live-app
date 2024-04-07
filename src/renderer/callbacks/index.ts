@@ -13,6 +13,7 @@ import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { ValidatorData } from '@/types/accounts';
+import { getUnclaimedPayouts } from './nominating';
 
 export class Callbacks {
   /**
@@ -371,40 +372,29 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
-      // eslint-disable-next-line prettier/prettier
-      const curEra: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const prevEra: number = curEra - 1;
+      // Map<era: string, Map<validator: string, payout: [number, string]>>
+      const unclaimed = await getUnclaimedPayouts(account.address, api);
 
-      // Get validators and their reward points from the previous era.
-      const rewardPoints: AnyData = (
-        await api.query.staking.erasRewardPoints(prevEra)
-      ).toHuman();
-
-      // Calculate sum of the account's nominated validator reward points.
-      const validatorIds = account.nominatingData!.validators.map(
-        (v) => v.validatorId
-      );
-
-      let totalPoints = 0;
-      for (const prop in rewardPoints.individual) {
-        const validatorId: string = prop;
-        if (validatorIds.includes(validatorId)) {
-          totalPoints += parseInt(
-            rewardPoints.individual[prop].replace(/,/g, '')
-          );
+      let pendingPayout = new BigNumber(0);
+      for (const validatorToPayout of unclaimed.values()) {
+        for (const payoutItem of validatorToPayout.values()) {
+          const payout = payoutItem[1];
+          pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
         }
       }
 
-      // The account has received rewards in the previous era if points exist.
-      if (totalPoints === 0) {
-        console.log(`no points received last era: ${totalPoints}`);
+      // Return if no pending payout.
+      if (pendingPayout.isZero()) {
         return;
       }
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { prevEra }),
-        NotificationsController.getNotification(entry, account, { prevEra })
+        EventsController.getEvent(entry, { pendingPayout }),
+        NotificationsController.getNotification(entry, account, {
+          pendingPayout,
+          chainId: account.chain,
+        })
       );
     } catch (err) {
       console.error(err);

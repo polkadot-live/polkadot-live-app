@@ -3,6 +3,7 @@
 
 import {
   getFreeBalanceText,
+  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
@@ -78,9 +79,11 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominating:pendingPayouts': {
+        const { pendingPayout, chainId } = miscData;
+
         return {
-          title: 'Pending Payout',
-          body: 'Staking rewards received in the previous era.',
+          title: 'Nominating Pending Payout',
+          body: getNominatingPendingPayoutText(pendingPayout, chainId),
         };
       }
       case 'subscribe:account:nominating:exposure': {

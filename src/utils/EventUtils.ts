@@ -536,3 +536,19 @@ export const getNominationPoolCommissionText = (
   cur.max === prev.max
     ? 'Pool commission has changed.'
     : 'Pool commission unchaged.';
+
+/**
+ * @name getNominatingPendingPayoutsText
+ * @summary Text to render for nominating pending payout events.
+ */
+export const getNominatingPendingPayoutText = (
+  pendingPayout: BigNumber,
+  chainId: ChainID
+) => {
+  const pendingPayoutUnit = planckToUnit(
+    pendingPayout as BigNumber,
+    chainUnits(chainId)
+  );
+
+  return `${pendingPayoutUnit.toString()} ${chainCurrency(chainId)}`;
+};

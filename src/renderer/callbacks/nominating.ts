@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { getApiInstance } from '@/utils/ApiUtils';
 import { rmCommas } from '@w3ux/utils';
 import type { ApiPromise } from '@polkadot/api';
 import type { AnyData } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 
 const MaxSupportedPayoutEras = 7;
 
@@ -99,12 +97,12 @@ const getLocalEraExposure = async (
  */
 export const getUnclaimedPayouts = async (
   address: string,
-  chainId: ChainID
+  api: ApiPromise,
+  showDebug = false
 ) => {
   /**
    * Get API instance and active era.
    */
-  const { api } = await getApiInstance(chainId);
   const era_res: AnyData = (await api.query.staking.activeEra()).toHuman();
   const activeEra: BigNumber = new BigNumber(
     parseInt((era_res.index as string).replace(/,/g, ''))
@@ -135,11 +133,12 @@ export const getUnclaimedPayouts = async (
   );
 
   // Sanity check.
-  console.log('ERAS TO CHECK:');
-  console.log(erasToCheck);
-
-  console.log('UNIQUE VALIDATORS:');
-  console.log(uniqueValidators);
+  if (showDebug) {
+    console.log('ERAS TO CHECK:');
+    console.log(erasToCheck);
+    console.log('UNIQUE VALIDATORS:');
+    console.log(uniqueValidators);
+  }
 
   /**
    * Helper function to check which eras a validator was exposed in.
@@ -182,8 +181,10 @@ export const getUnclaimedPayouts = async (
   }
 
   // Sanity check.
-  console.log('VALIDATOR CONTROLLERS:');
-  console.log(validatorControllers);
+  if (showDebug) {
+    console.log('VALIDATOR CONTROLLERS:');
+    console.log(validatorControllers);
+  }
 
   /**
    * Unclaimed rewards by validator. Map<validator, eras[]>
@@ -225,8 +226,10 @@ export const getUnclaimedPayouts = async (
   }
 
   // Sanity check,
-  console.log('UNCLAIMED REWARDS: <validatorId, eras_unclaimed>');
-  console.log(unclaimedRewards);
+  if (showDebug) {
+    console.log('UNCLAIMED REWARDS: <validatorId, eras_unclaimed>');
+    console.log(unclaimedRewards);
+  }
 
   /**
    * Reformat `unclaimedRewards` to be <era: validators[]>
@@ -246,8 +249,10 @@ export const getUnclaimedPayouts = async (
   });
 
   // Sanity check.
-  console.log('UNCLAIMED BY ERA:');
-  console.log(unclaimedByEra);
+  if (showDebug) {
+    console.log('UNCLAIMED BY ERA:');
+    console.log(unclaimedByEra);
+  }
 
   /**
    * Accumulate calls needed to fetch data to accumulate rewards.
@@ -274,8 +279,10 @@ export const getUnclaimedPayouts = async (
   }
 
   // Sanity check.
-  console.log('CALLS:');
-  console.log(calls);
+  if (showDebug) {
+    console.log('CALLS:');
+    console.log(calls);
+  }
 
   /**
    * Iterate calls and determine unclaimed payouts.
@@ -334,23 +341,23 @@ export const getUnclaimedPayouts = async (
             .dividedBy(total)
             .plus(isValidator ? valCut : 0);
 
-      //------------------------------------------------------------
       // Debugging
-      console.log('localExposed:');
-      console.log(localExposed);
-      console.log(`total reward points: ${totalRewardPoints.toString()}`);
-      console.log(
-        `validator reward points: ${validatorRewardPoints.toString()}`
-      );
-      console.log(`avail: ${avail}`);
-      console.log(`staked: ${staked}`);
-      console.log(`total: ${total}`);
-      console.log(`commission: ${commission}`);
-      console.log(`valCut: ${valCut}`);
+      if (showDebug) {
+        console.log('localExposed:');
+        console.log(localExposed);
+        console.log(`total reward points: ${totalRewardPoints.toString()}`);
+        console.log(
+          `validator reward points: ${validatorRewardPoints.toString()}`
+        );
+        console.log(`avail: ${avail}`);
+        console.log(`staked: ${staked}`);
+        console.log(`total: ${total}`);
+        console.log(`commission: ${commission}`);
+        console.log(`valCut: ${valCut}`);
 
-      console.log('UNCLAIMED FOR VALIDATOR:');
-      console.log(unclaimedPayout.toString());
-      //------------------------------------------------------------
+        console.log('UNCLAIMED FOR VALIDATOR:');
+        console.log(unclaimedPayout.toString());
+      }
 
       if (!unclaimedPayout.isZero()) {
         const fetched = unclaimed.get(era) || new Map();
@@ -367,7 +374,10 @@ export const getUnclaimedPayouts = async (
     i++;
   }
 
-  // TODO: Set this data somewhere.
-  console.log(`UNCLAIMED:`);
-  console.log(unclaimed);
+  if (showDebug) {
+    console.log(`UNCLAIMED:`);
+    console.log(unclaimed);
+  }
+
+  return unclaimed;
 };

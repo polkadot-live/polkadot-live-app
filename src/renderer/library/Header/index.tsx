@@ -8,6 +8,8 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
 //TMP
+import BigNumber from 'bignumber.js';
+import { getApiInstance } from '@/utils/ApiUtils';
 import { getUnclaimedPayouts } from '@/renderer/callbacks/nominating';
 import type { ChainID } from '@/types/chains';
 
@@ -28,8 +30,19 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const doUnclaimedPayouts = async () => {
     const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
     const chainId = 'Polkadot' as ChainID;
+    const { api } = await getApiInstance(chainId);
 
-    await getUnclaimedPayouts(address, chainId);
+    const unclaimed = await getUnclaimedPayouts(address, api);
+
+    let pendingPayout = new BigNumber(0);
+    for (const validatorToPayout of unclaimed.values()) {
+      for (const payoutItem of validatorToPayout.values()) {
+        const payout = payoutItem[1];
+        pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
+      }
+    }
+
+    console.log(`pending payout: ${pendingPayout}`);
   };
 
   return (

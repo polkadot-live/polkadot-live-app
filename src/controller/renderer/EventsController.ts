@@ -9,6 +9,7 @@ import {
 } from '@/utils/AccountUtils';
 import {
   getFreeBalanceText,
+  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
@@ -359,6 +360,7 @@ export class EventsController {
       case 'subscribe:account:nominating:pendingPayouts': {
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
+        const { pendingPayout } = miscData;
 
         return {
           uid: '',
@@ -372,10 +374,10 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Era Pending Payout',
-          subtitle: 'Staking rewards received in the previous era.',
+          title: 'Nominating Pending Payout',
+          subtitle: getNominatingPendingPayoutText(pendingPayout, chainId),
           data: {
-            era: miscData.prevEra,
+            pendingPayoutUnit: planckToUnit(pendingPayout, chainUnits(chainId)),
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
