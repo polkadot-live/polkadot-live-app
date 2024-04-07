@@ -31,23 +31,6 @@ export const chainTasks: SubscriptionTask[] = [
     label: 'Current Slot',
     status: 'disable',
   },
-  // Westend
-  {
-    action: 'subscribe:chain:timestamp',
-    apiCallAsString: 'api.query.timestamp.now',
-    category: 'Chain',
-    chainId: 'Westend',
-    label: 'Timestamps',
-    status: 'disable',
-  },
-  {
-    apiCallAsString: 'api.query.babe.currentSlot',
-    action: 'subscribe:chain:currentSlot',
-    category: 'Chain',
-    chainId: 'Westend',
-    label: 'Current Slot',
-    status: 'disable',
-  },
   // Kusama
   {
     action: 'subscribe:chain:timestamp',
@@ -62,6 +45,23 @@ export const chainTasks: SubscriptionTask[] = [
     apiCallAsString: 'api.query.babe.currentSlot',
     category: 'Chain',
     chainId: 'Kusama',
+    label: 'Current Slot',
+    status: 'disable',
+  },
+  // Westend
+  {
+    action: 'subscribe:chain:timestamp',
+    apiCallAsString: 'api.query.timestamp.now',
+    category: 'Chain',
+    chainId: 'Westend',
+    label: 'Timestamps',
+    status: 'disable',
+  },
+  {
+    apiCallAsString: 'api.query.babe.currentSlot',
+    action: 'subscribe:chain:currentSlot',
+    category: 'Chain',
+    chainId: 'Westend',
     label: 'Current Slot',
     status: 'disable',
   },
