@@ -59,8 +59,8 @@ export const pushUniqueEvent = (
       push = filter_nomination_pool_commission(events, event);
       break;
     }
-    case 'subscribe:account:nominating:rewards': {
-      push = filter_nominating_rewards(events, event);
+    case 'subscribe:account:nominating:pendingPayouts': {
+      push = filter_nominating_pending_payouts(events, event);
       break;
     }
     case 'subscribe:account:nominating:exposure': {
@@ -308,7 +308,7 @@ const filter_nomination_pool_commission = (
  * @summary The new event is considered a duplicate if another event has
  * a matching address and era number.
  */
-const filter_nominating_rewards = (
+const filter_nominating_pending_payouts = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {

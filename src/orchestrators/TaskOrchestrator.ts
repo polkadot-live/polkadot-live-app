@@ -119,9 +119,12 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:account:nominating:rewards': {
-            debug('🟢 subscribe:account:nominating:rewards');
-            await TaskOrchestrator.subscribe_nominating_rewards(task, wrapper);
+          case 'subscribe:account:nominating:pendingPayouts': {
+            debug('🟢 subscribe:account:nominating:pendingPayouts');
+            await TaskOrchestrator.subscribe_nominating_pending_payouts(
+              task,
+              wrapper
+            );
             break;
           }
 
@@ -204,7 +207,7 @@ export class TaskOrchestrator {
         return instance.api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:commission':
         return instance.api.query.nominationPools.bondedPools;
-      case 'subscribe:account:nominating:rewards':
+      case 'subscribe:account:nominating:pendingPayouts':
         return instance.api.query.staking.activeEra;
       case 'subscribe:account:nominating:exposure':
         return instance.api.query.staking.activeEra;
@@ -375,10 +378,10 @@ export class TaskOrchestrator {
   }
 
   /**
-   * @name subscribe_nominating_rewards
-   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's pending rewards.
+   * @name subscribe_nominating_pending_payouts
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's pending payouts.
    */
-  private static async subscribe_nominating_rewards(
+  private static async subscribe_nominating_pending_payouts(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

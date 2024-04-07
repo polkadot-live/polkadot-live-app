@@ -64,7 +64,7 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
   },
   {
-    action: 'subscribe:account:nominating:rewards',
+    action: 'subscribe:account:nominating:pendingPayouts',
     apiCallAsString: 'api.query.staking.activeEra',
     category: 'Nominating',
     chainId: 'Polkadot',
@@ -137,7 +137,7 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
   },
   {
-    action: 'subscribe:account:nominating:rewards',
+    action: 'subscribe:account:nominating:pendingPayouts',
     apiCallAsString: 'api.query.staking.activeEra',
     category: 'Nominating',
     chainId: 'Kusama',
@@ -210,7 +210,7 @@ export const accountTasks: SubscriptionTask[] = [
     status: 'disable',
   },
   {
-    action: 'subscribe:account:nominating:rewards',
+    action: 'subscribe:account:nominating:pendingPayouts',
     apiCallAsString: 'api.query.staking.activeEra',
     category: 'Nominating',
     chainId: 'Westend',

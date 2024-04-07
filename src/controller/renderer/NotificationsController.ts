@@ -77,7 +77,7 @@ export class NotificationsController {
           body: getNominationPoolCommissionText(cur, prev),
         };
       }
-      case 'subscribe:account:nominating:rewards': {
+      case 'subscribe:account:nominating:pendingPayouts': {
         return {
           title: 'Pending Payout',
           body: 'Staking rewards received in the previous era.',

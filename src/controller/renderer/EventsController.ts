@@ -354,9 +354,9 @@ export class EventsController {
         };
       }
       /**
-       * subscribe:account:nominating:rewards
+       * subscribe:account:nominating:pendingPayouts
        */
-      case 'subscribe:account:nominating:rewards': {
+      case 'subscribe:account:nominating:pendingPayouts': {
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
 

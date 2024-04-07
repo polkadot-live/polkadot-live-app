@@ -356,13 +356,16 @@ export class Callbacks {
     }
   }
 
-  /**
-   * @name callback_nominating_rewards
-   * @summary Callback for 'subscribe:account:nominating:rewards'
+  /*
+   * @name callback_nominating_pending_payouts
+   * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
    *
    * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
    */
-  static async callback_nominating_rewards(data: AnyData, entry: ApiCallEntry) {
+  static async callback_nominating_pending_payouts(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
       const account = checkAccountWithProperties(entry, ['nominatingData']);
@@ -407,6 +410,19 @@ export class Callbacks {
       console.error(err);
       return;
     }
+  }
+
+  /*
+   * @name callback_nominating_pending_payouts_westend
+   * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
+   *
+   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
+   */
+  static async callback_nominating_pending_payouts_westend(
+    data: AnyData,
+    entry: ApiCallEntry
+  ) {
+    console.log('TODO', data, entry);
   }
 
   /**

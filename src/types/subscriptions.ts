@@ -38,7 +38,7 @@ export type TaskAction =
   | 'subscribe:account:nominationPools:renamed'
   | 'subscribe:account:nominationPools:roles'
   | 'subscribe:account:nominationPools:commission'
-  | 'subscribe:account:nominating:rewards'
+  | 'subscribe:account:nominating:pendingPayouts'
   | 'subscribe:account:nominating:exposure'
   | 'subscribe:account:nominating:commission';
 

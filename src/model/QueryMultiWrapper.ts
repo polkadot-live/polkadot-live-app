@@ -149,11 +149,24 @@ export class QueryMultiWrapper {
         );
         break;
       }
-      case 'subscribe:account:nominating:rewards': {
-        await Callbacks.callback_nominating_rewards(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+      case 'subscribe:account:nominating:pendingPayouts': {
+        switch (chainId) {
+          case 'Polkadot':
+          case 'Kusama': {
+            await Callbacks.callback_nominating_pending_payouts(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
+          case 'Westend': {
+            await Callbacks.callback_nominating_pending_payouts_westend(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
+        }
         break;
       }
       case 'subscribe:account:nominating:exposure': {

@@ -150,7 +150,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       case 'subscribe:account:nominationPools:commission': {
         return task.account?.nominationPoolData ? false : true;
       }
-      case 'subscribe:account:nominating:rewards':
+      case 'subscribe:account:nominating:pendingPayouts':
       case 'subscribe:account:nominating:exposure':
       case 'subscribe:account:nominating:commission': {
         return task.account?.nominatingData ? false : true;
