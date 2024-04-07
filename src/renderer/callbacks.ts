@@ -474,7 +474,7 @@ export class Callbacks {
 
   /**
    * @name callback_nominating_exposure_westend
-   * @summary Callback for 'subscribe:account:nominating:exposure' with on 'Westend'
+   * @summary Callback for 'subscribe:account:nominating:exposure' on 'Westend'
    */
   static async callback_nominating_exposure_westend(
     data: AnyData,
