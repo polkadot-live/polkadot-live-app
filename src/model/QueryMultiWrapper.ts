@@ -116,7 +116,13 @@ export class QueryMultiWrapper {
     dataArr: AnyData,
     chainId: ChainID
   ) {
-    const { action } = entry.task;
+    const { action, justBuilt } = entry.task;
+
+    // Exit early if the task was just built (toggled on).
+    if (justBuilt) {
+      this.setJustBuilt(entry, false);
+      return;
+    }
 
     switch (action) {
       case 'subscribe:chain:timestamp': {
@@ -180,16 +186,14 @@ export class QueryMultiWrapper {
           case 'Kusama': {
             await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
-              entry,
-              this
+              entry
             );
             break;
           }
           case 'Westend': {
             await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
-              entry,
-              this
+              entry
             );
             break;
           }
@@ -202,16 +206,14 @@ export class QueryMultiWrapper {
           case 'Kusama': {
             await Callbacks.callback_nominating_exposure(
               dataArr[entry.task.dataIndex!],
-              entry,
-              this
+              entry
             );
             break;
           }
           case 'Westend': {
             await Callbacks.callback_nominating_exposure_westend(
               dataArr[entry.task.dataIndex!],
-              entry,
-              this
+              entry
             );
             break;
           }
@@ -221,8 +223,7 @@ export class QueryMultiWrapper {
       case 'subscribe:account:nominating:commission': {
         await Callbacks.callback_nominating_commission(
           dataArr[entry.task.dataIndex!],
-          entry,
-          this
+          entry
         );
         break;
       }

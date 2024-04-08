@@ -113,6 +113,7 @@ export const AccountWrapper = styled(motion.div)`
       position: relative;
       flex: 1;
       align-items: center;
+      column-gap: 1.25rem;
 
       &:first-child {
         overflow: hidden;

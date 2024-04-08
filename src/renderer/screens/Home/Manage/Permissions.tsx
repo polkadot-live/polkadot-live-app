@@ -26,6 +26,8 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import * as ApiUtils from '@/utils/ApiUtils';
 import { useChains } from '@/renderer/contexts/Chains';
 import { APIsController } from '@/controller/renderer/APIsController';
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { executeOneShot } from '@/renderer/callbacks/oneshots';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
@@ -199,6 +201,11 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
 
+  /// Handle a one-shot event.
+  const handleOneShot = async (task: SubscriptionTask) => {
+    await executeOneShot(task);
+  };
+
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
     <>
@@ -225,8 +232,14 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                     </div>
                   </div>
                   <div>
+                    <ButtonMono
+                      text="show"
+                      disabled={getDisabled(task)}
+                      onClick={async () => await handleOneShot(task)}
+                    />
                     <Switch
                       type="secondary"
+                      size="lg"
                       isOn={task.status === 'enable'}
                       disabled={getDisabled(task)}
                       handleToggle={async () => {
