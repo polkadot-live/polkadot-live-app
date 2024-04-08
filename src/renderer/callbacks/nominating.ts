@@ -258,9 +258,9 @@ export const getUnclaimedPayouts = async (
 
   // Sanity check.
   if (showDebug) {
-    console.log('ERAS TO CHECK:');
+    console.log('> getUnclaimedPayputs: erasToCheck');
     console.log(erasToCheck);
-    console.log('UNIQUE VALIDATORS:');
+    console.log('> getUnclaimedPayouts: uniqueValidators');
     console.log(uniqueValidators);
   }
 
@@ -306,7 +306,7 @@ export const getUnclaimedPayouts = async (
 
   // Sanity check.
   if (showDebug) {
-    console.log('VALIDATOR CONTROLLERS:');
+    console.log('> getUnclaimedPayouts: validatorControllers:');
     console.log(validatorControllers);
   }
 
@@ -389,7 +389,9 @@ export const getUnclaimedPayouts = async (
 
   // Sanity check,
   if (showDebug) {
-    console.log('UNCLAIMED REWARDS: <validatorId, eras_unclaimed>');
+    console.log(
+      '> getUnclaimedPayouts: unclaimedRewards: <validatorId, erasUnclaimed>'
+    );
     console.log(unclaimedRewards);
   }
 
@@ -412,7 +414,7 @@ export const getUnclaimedPayouts = async (
 
   // Sanity check.
   if (showDebug) {
-    console.log('UNCLAIMED BY ERA:');
+    console.log('> getUnclaimedPayouts: unclaimedByEra');
     console.log(unclaimedByEra);
   }
 
@@ -442,7 +444,7 @@ export const getUnclaimedPayouts = async (
 
   // Sanity check.
   if (showDebug) {
-    console.log('CALLS:');
+    console.log('> getUnclaimedPayouts: calls');
     console.log(calls);
   }
 
@@ -506,24 +508,6 @@ export const getUnclaimedPayouts = async (
             .dividedBy(total)
             .plus(isValidator ? valCut : 0);
 
-      // Debugging
-      if (showDebug) {
-        console.log('localExposed:');
-        console.log(localExposed);
-        console.log(`total reward points: ${totalRewardPoints.toString()}`);
-        console.log(
-          `validator reward points: ${validatorRewardPoints.toString()}`
-        );
-        console.log(`avail: ${avail}`);
-        console.log(`staked: ${staked}`);
-        console.log(`total: ${total}`);
-        console.log(`commission: ${commission}`);
-        console.log(`valCut: ${valCut}`);
-
-        console.log('UNCLAIMED FOR VALIDATOR:');
-        console.log(unclaimedPayout.toString());
-      }
-
       if (!unclaimedPayout.isZero()) {
         const fetched = unclaimed.get(era) || new Map();
         fetched.set(validator, [exposedPage, unclaimedPayout.toString()]);
@@ -532,15 +516,12 @@ export const getUnclaimedPayouts = async (
       }
     }
 
-    // Could set this data somewhere.
-    console.log(era, address, unclaimed.get(era), endEra.toString());
-
     // Increment outer loop index.
     i++;
   }
 
   if (showDebug) {
-    console.log(`UNCLAIMED:`);
+    console.log(`> getUnclaimedPayouts: unclaimed`);
     console.log(unclaimed);
   }
 

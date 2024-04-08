@@ -389,8 +389,6 @@ export class Callbacks {
         }
       }
 
-      console.log(`Pending payout: ${pendingPayout}`);
-
       // Return if no pending payout.
       if (pendingPayout.isZero()) {
         return;
