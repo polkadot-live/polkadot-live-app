@@ -370,8 +370,7 @@ export class Callbacks {
   ) {
     try {
       // Exit early if task just built.
-      const { justBuilt } = entry.task;
-      if (justBuilt) {
+      if (entry.task!.justBuilt) {
         wrapper.setJustBuilt(entry, false);
         return;
       }
@@ -429,9 +428,16 @@ export class Callbacks {
    */
   static async callback_nominating_exposure(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    wrapper: QueryMultiWrapper
   ) {
     try {
+      // Exit early if task just built.
+      if (entry.task!.justBuilt) {
+        wrapper.setJustBuilt(entry, false);
+        return;
+      }
+
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
@@ -485,9 +491,16 @@ export class Callbacks {
    */
   static async callback_nominating_exposure_westend(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    wrapper: QueryMultiWrapper
   ) {
     try {
+      // Exit early if task just built.
+      if (entry.task!.justBuilt) {
+        wrapper.setJustBuilt(entry, false);
+        return;
+      }
+
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const { api } = await ApiUtils.getApiInstance(account.chain);
 
@@ -552,9 +565,16 @@ export class Callbacks {
    */
   static async callback_nominating_commission(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    wrapper: QueryMultiWrapper
   ) {
     try {
+      // Exit early if task just built.
+      if (entry.task!.justBuilt) {
+        wrapper.setJustBuilt(entry, false);
+        return;
+      }
+
       // Check if account has any nominating rewards from the previous era (current era - 1).
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const { api } = await ApiUtils.getApiInstance(account.chain);

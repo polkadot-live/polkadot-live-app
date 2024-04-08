@@ -202,14 +202,16 @@ export class QueryMultiWrapper {
           case 'Kusama': {
             await Callbacks.callback_nominating_exposure(
               dataArr[entry.task.dataIndex!],
-              entry
+              entry,
+              this
             );
             break;
           }
           case 'Westend': {
             await Callbacks.callback_nominating_exposure_westend(
               dataArr[entry.task.dataIndex!],
-              entry
+              entry,
+              this
             );
             break;
           }
@@ -219,7 +221,8 @@ export class QueryMultiWrapper {
       case 'subscribe:account:nominating:commission': {
         await Callbacks.callback_nominating_commission(
           dataArr[entry.task.dataIndex!],
-          entry
+          entry,
+          this
         );
         break;
       }
