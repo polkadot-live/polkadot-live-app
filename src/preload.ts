@@ -63,8 +63,11 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),
 
-  persistEvent: (event: EventCallback, notification: NotificationData | null) =>
-    ipcRenderer.send('app:event:persist', event, notification),
+  persistEvent: (
+    event: EventCallback,
+    notification: NotificationData | null,
+    isOneShot = false
+  ) => ipcRenderer.send('app:event:persist', event, notification, isOneShot),
 
   updateAccountNameForEventsAndTasks: async (
     address: string,

@@ -67,5 +67,5 @@ const oneShot_nominating_commission = async (task: SubscriptionTask) => {
   const { api } = await getApiInstance(task.chainId);
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_commission(data, entry);
+  await Callbacks.callback_nominating_commission(data, entry, true);
 };

@@ -544,7 +544,8 @@ export class Callbacks {
    */
   static async callback_nominating_commission(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
@@ -569,9 +570,8 @@ export class Callbacks {
         }
       }
 
-      // TODO: Render notification if it's a one-shot.
       // Exit early if there are no commission changes.
-      if (changedValidators.length > 0) {
+      if (changedValidators.length > 0 && !isOneShot) {
         return;
       }
 
@@ -595,7 +595,8 @@ export class Callbacks {
         EventsController.getEvent(entry, { updated: [...changedValidators] }),
         NotificationsController.getNotification(entry, account, {
           updated: [...changedValidators],
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
