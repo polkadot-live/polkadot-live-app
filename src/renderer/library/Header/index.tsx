@@ -30,13 +30,11 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const doUnclaimedPayouts = async () => {
     //const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
     //const chainId = 'Polkadot' as ChainID;
-
     const address = '5ExuYYE7Qfq2BJYqUygBa8Nr2y1qemkuGwZHEuEujkqnL4Xs';
     const chainId = 'Westend' as ChainID;
     const { api } = await getApiInstance(chainId);
 
-    const unclaimed = await getUnclaimedPayouts(address, api, chainId, true);
-
+    const unclaimed = await getUnclaimedPayouts(address, api, chainId);
     let pendingPayout = new BigNumber(0);
 
     for (const validatorToPayout of unclaimed.values()) {

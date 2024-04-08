@@ -493,56 +493,33 @@ export class Callbacks {
 
       let exposed = false;
 
-      for (const vId of validators) {
-        // Try to get validator overview data.
-        const overview: AnyData = (
-          await api.query.staking.erasStakersOverview(era, vId)
-        ).toHuman();
-
-        // Continue if validator is not selected for this era.
-        if (!overview) {
-          continue;
-        }
-
+      // Iterate validators account is nominating.
+      validatorLoop: for (const vId of validators) {
         // Check if target address is the validator.
         if (account.address === vId) {
           exposed = true;
           break;
         }
 
-        // Get page count.
-        const pageCount: number = parseInt(
-          (overview.pageCount as string).replace(/,/g, '')
-        );
+        // Iterate validator paged exposures.
+        const result: AnyData =
+          await api.query.staking.erasStakersPaged.entries(era, vId);
 
-        // Iterate nominator pages of validator to find the target address.
         let counter = 0;
-        let counterExceeded = false;
 
-        for (let page = 0; page < pageCount; ++page) {
-          const pagedData: AnyData = (
-            await api.query.staking.erasStakersPaged(era, vId, page)
-          ).toHuman();
-
-          for (const { who } of pagedData.others) {
+        for (const item of result) {
+          for (const { who } of item[1].toHuman().others) {
+            // Move to next validator if account is not in top 512 stakers for this validator.
             if (counter >= 512) {
-              counterExceeded = true;
-              break;
-            } else if (who === account.address) {
+              continue validatorLoop;
+            }
+            // We know the account is exposed for this era if their address is found.
+            if ((who as string) === account.address) {
               exposed = true;
-              break;
+              break validatorLoop;
             }
             counter += 1;
           }
-
-          if (counterExceeded || exposed) {
-            break;
-          }
-        }
-
-        // Stop scraping validators if exposure found.
-        if (exposed) {
-          break;
         }
       }
 
