@@ -83,6 +83,31 @@ export class QueryMultiWrapper {
   }
 
   /**
+   * @name setJustBuilt
+   * @summary Update a task's `justBuilt` flag.
+   */
+  setJustBuilt(entry: ApiCallEntry, flag: boolean) {
+    const { chainId, action } = entry.task;
+    const retrieved = this.subscriptions.get(chainId);
+
+    if (retrieved) {
+      const newEntries = retrieved.callEntries.map((e) =>
+        e.task.action === action
+          ? ({
+              ...e,
+              task: { ...e.task, justBuilt: flag } as SubscriptionTask,
+            } as ApiCallEntry)
+          : e
+      );
+
+      this.subscriptions.set(chainId, {
+        unsub: retrieved.unsub,
+        callEntries: newEntries,
+      });
+    }
+  }
+
+  /**
    * @name handleCallback
    * @summary Main logic to handle entries (subscription tasks).
    */
@@ -155,14 +180,16 @@ export class QueryMultiWrapper {
           case 'Kusama': {
             await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
-              entry
+              entry,
+              this
             );
             break;
           }
           case 'Westend': {
             await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
-              entry
+              entry,
+              this
             );
             break;
           }
@@ -481,7 +508,7 @@ export class QueryMultiWrapper {
     console.log('debug: data index registry:');
     console.log(dataIndexRegistry);
 
-    // Get updated entries with correct dataIndex for each task.
+    // Get updated entries with correct dataIndex for each task and set `justBuilt` flag.
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
 
@@ -490,10 +517,10 @@ export class QueryMultiWrapper {
       }
 
       e.task.dataIndex = dataIndex;
+      e.task.justBuilt = true;
       return e;
     });
 
-    // Set updated tasks.
     this.subscriptions.set(chainId, {
       ...entry,
       callEntries: [...updatedEntries],
