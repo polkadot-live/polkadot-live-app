@@ -106,55 +106,37 @@ const getEraValidatorsWestend = async (
   let nominatedValidatorCount = 0;
 
   // Iterate the validators.
-  for (const item of results) {
+  validatorLoop: for (const item of results) {
     const validator = item[0].toHuman()[1];
-    const pageCount = parseInt(rmCommas(item[1].toHuman().pageCount));
-
-    console.log(validator, pageCount);
 
     let counter = 0;
-    let counterExceeded = false;
     let addressFound = false;
 
-    // For each validator, check if account is a nominator. If it is, add to validator list.
-    for (let page = 0; page < pageCount; page++) {
-      const exposureData: AnyData = (
-        await api.query.staking.erasStakersPaged(
-          era.toNumber(),
-          validator,
-          page
-        )
-      ).toHuman();
+    // Use erasStakersPaged.entries() to iterate pages.
+    const pagesData: AnyData = await api.query.staking.erasStakersPaged.entries(
+      era.toNumber(),
+      validator
+    );
 
-      for (const { who } of exposureData.others) {
+    for (const paged of pagesData) {
+      for (const { who } of paged[1].toHuman().others) {
         if (counter >= 512) {
-          counterExceeded = true;
-          break;
-        }
-
-        if ((who as string) === accountAddress) {
+          continue validatorLoop;
+        } else if ((who as string) === accountAddress) {
           validators.push(validator);
-          addressFound = true;
           nominatedValidatorCount += 1;
+          addressFound = true;
           break;
         }
+
+        counter += 1;
       }
 
-      // Break out of page loop if account exposure found.
-      if (addressFound || counterExceeded) {
-        break;
+      if (nominatedValidatorCount >= 16) {
+        break validatorLoop;
+      } else if (addressFound) {
+        continue validatorLoop;
       }
-
-      counter += 1;
-    }
-    // Stop scraping if account has nominated 16 validators.
-    if (nominatedValidatorCount > 16) {
-      break;
-    }
-
-    // Move onto next validator if address was found or is not in top 512 nominators.
-    if (counterExceeded || addressFound) {
-      continue;
     }
   }
 
@@ -199,26 +181,25 @@ const getLocalEraExposureWestend = async (
   accountAddress: string,
   validator: string
 ): Promise<LocalValidatorExposure | null> => {
-  // Get page count for validator.
-  const result: AnyData = (
-    await api.query.staking.erasStakersOverview(era, validator)
-  ).toHuman();
+  const result: AnyData = await api.query.staking.erasStakersPaged.entries(
+    era,
+    validator
+  );
 
-  const pageCount: number = parseInt(rmCommas(result.pageCount as string));
-
-  // Iterate validator's paged stakers data to find the account's exposure.
-  for (let page = 0; page < pageCount; page++) {
-    const exposureData: AnyData = (
-      await api.query.staking.erasStakersPaged(era, validator, page)
-    ).toHuman();
-
-    for (const { who, value } of exposureData.others) {
+  for (const item of result) {
+    for (const { who, value } of item[1].toHuman().others) {
       if ((who as string) === accountAddress) {
+        const exposedPage = parseInt(rmCommas(item[0].toHuman()[2] as string));
+
+        const overview: AnyData = (
+          await api.query.staking.erasStakersOverview(era, validator)
+        ).toHuman();
+
         return {
           staked: value as string,
-          total: result.total as string,
+          total: overview.total as string,
           isValidator: accountAddress === validator,
-          exposedPage: page,
+          exposedPage,
         } as LocalValidatorExposure;
       }
     }
@@ -340,7 +321,7 @@ export const getUnclaimedPayouts = async (
       .map((era) => uniqueValidators.map((v) => [era, v]))
       .flat();
 
-    const results: AnyData[] = await Promise.all(
+    const results: AnyData = await Promise.all(
       unclaimedRewardsEntries.map(([era, v]) =>
         api.query.staking.claimedRewards<AnyData>(era, v)
       )
@@ -357,17 +338,12 @@ export const getUnclaimedPayouts = async (
         validator
       );
 
-      // Continue loop if no exposure for account found.
-      if (!exposure?.exposedPage) {
-        continue;
-      }
-
       // Add to `unclaimedRewards` if payout page has not yet been claimed.
-      if (!pages.includes(exposure.exposedPage)) {
-        if (unclaimedRewards.has(validator)) {
-          const fetched = unclaimedRewards.get(validator)!;
-          fetched.push(era);
-          unclaimedRewards.set(validator, fetched);
+      if (!pages.includes(exposure!.exposedPage)) {
+        const fetched = unclaimedRewards.get(validator);
+
+        if (fetched) {
+          unclaimedRewards.set(validator, [...fetched, era]);
         } else {
           unclaimedRewards.set(validator, [era]);
         }

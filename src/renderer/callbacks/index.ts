@@ -381,6 +381,7 @@ export class Callbacks {
       );
 
       let pendingPayout = new BigNumber(0);
+
       for (const validatorToPayout of unclaimed.values()) {
         for (const payoutItem of validatorToPayout.values()) {
           const payout = payoutItem[1];
@@ -388,7 +389,7 @@ export class Callbacks {
         }
       }
 
-      console.log(`Pending payouts: ${pendingPayout.toString()}`);
+      console.log(`Pending payout: ${pendingPayout}`);
 
       // Return if no pending payout.
       if (pendingPayout.isZero()) {

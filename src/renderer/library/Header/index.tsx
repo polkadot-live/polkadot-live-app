@@ -31,7 +31,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     //const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
     //const chainId = 'Polkadot' as ChainID;
 
-    const address = '5HNPNNpzmcko3azyoVEoVnBCKcevXMJWuwQn5hskbGLC2RHa';
+    const address = '5ExuYYE7Qfq2BJYqUygBa8Nr2y1qemkuGwZHEuEujkqnL4Xs';
     const chainId = 'Westend' as ChainID;
     const { api } = await getApiInstance(chainId);
 
