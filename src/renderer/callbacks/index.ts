@@ -365,7 +365,8 @@ export class Callbacks {
    */
   static async callback_nominating_pending_payouts(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
@@ -390,17 +391,20 @@ export class Callbacks {
       }
 
       // Return if no pending payout.
-      if (pendingPayout.isZero()) {
+      if (!isOneShot && pendingPayout.isZero()) {
         return;
       }
 
       // Handle notification and events in main process.
+      const era = data.toHuman().index as string;
+
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { pendingPayout }),
+        EventsController.getEvent(entry, { pendingPayout, era }),
         NotificationsController.getNotification(entry, account, {
           pendingPayout,
           chainId: account.chain,
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
@@ -421,7 +425,8 @@ export class Callbacks {
    */
   static async callback_nominating_exposure(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominatingData']);
@@ -463,7 +468,8 @@ export class Callbacks {
         NotificationsController.getNotification(entry, account, {
           era,
           exposed,
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
@@ -477,7 +483,8 @@ export class Callbacks {
    */
   static async callback_nominating_exposure_westend(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominatingData']);
@@ -527,7 +534,8 @@ export class Callbacks {
         NotificationsController.getNotification(entry, account, {
           era,
           exposed,
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);

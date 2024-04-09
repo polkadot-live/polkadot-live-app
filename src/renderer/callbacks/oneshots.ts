@@ -33,7 +33,7 @@ const oneShot_nominating_pending_payouts = async (task: SubscriptionTask) => {
   const { api } = await getApiInstance(task.chainId);
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_pending_payouts(data, entry);
+  await Callbacks.callback_nominating_pending_payouts(data, entry, true);
 };
 
 /**
@@ -49,11 +49,11 @@ const oneShot_nominating_exposure = async (task: SubscriptionTask) => {
   switch (chainId) {
     case 'Polkadot':
     case 'Kusama': {
-      await Callbacks.callback_nominating_exposure(data, entry);
+      await Callbacks.callback_nominating_exposure(data, entry, true);
       break;
     }
     case 'Westend': {
-      await Callbacks.callback_nominating_exposure_westend(data, entry);
+      await Callbacks.callback_nominating_exposure_westend(data, entry, true);
       break;
     }
   }
