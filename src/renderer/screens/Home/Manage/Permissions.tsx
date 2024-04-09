@@ -16,7 +16,7 @@ import {
   HeadingWrapper,
 } from './Wrappers';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
@@ -30,6 +30,8 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
+  const [oneShotProcessing, setOneShotProcessing] = useState(false);
+
   const { updateTask } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
@@ -203,7 +205,13 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
   /// Handle a one-shot event.
   const handleOneShot = async (task: SubscriptionTask) => {
+    setOneShotProcessing(true);
     await executeOneShot(task);
+
+    // Wait some time to avoid the spinner snapping.
+    setTimeout(() => {
+      setOneShotProcessing(false);
+    }, 600);
   };
 
   /// Renders a list of categorised subscription tasks that can be toggled.
@@ -232,11 +240,29 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                     </div>
                   </div>
                   <div>
-                    <ButtonMono
-                      text="show"
-                      disabled={getDisabled(task)}
-                      onClick={async () => await handleOneShot(task)}
-                    />
+                    <div>
+                      <ButtonMono
+                        style={
+                          !oneShotProcessing
+                            ? { position: 'relative' }
+                            : { position: 'relative', color: 'inherit' }
+                        }
+                        text="show"
+                        disabled={getDisabled(task) || oneShotProcessing}
+                        onClick={async () => await handleOneShot(task)}
+                      />
+                      {oneShotProcessing && (
+                        <div
+                          style={{ position: 'absolute' }}
+                          className="lds-ellipsis"
+                        >
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </div>
+                      )}
+                    </div>
                     <Switch
                       type="secondary"
                       size="lg"
