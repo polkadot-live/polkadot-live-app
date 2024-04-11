@@ -326,7 +326,8 @@ export class Callbacks {
    */
   static async callback_nomination_pool_commission(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -338,6 +339,7 @@ export class Callbacks {
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
       if (
+        !isOneShot &&
         // eslint-disable-next-line prettier/prettier
         JSON.stringify(poolCommission.changeRate) === JSON.stringify(changeRate) &&
         JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
@@ -358,7 +360,8 @@ export class Callbacks {
         EventsController.getEvent(entry, { poolCommission }),
         NotificationsController.getNotification(entry, account, {
           poolCommission,
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);

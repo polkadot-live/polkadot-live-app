@@ -539,12 +539,13 @@ export const getNominationPoolCommissionText = (
   cur: NominationPoolCommission,
   prev: NominationPoolCommission
 ) =>
+  // TODO: Improve text message.
   JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
   JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
   cur.throttleFrom === prev.throttleFrom &&
   cur.max === prev.max
-    ? 'Pool commission has changed.'
-    : 'Pool commission unchaged.';
+    ? `Pool commission is ${cur.current}.`
+    : `Pool commission set to ${cur.current}.`;
 
 /**
  * @name getNominatingPendingPayoutsText
