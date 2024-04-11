@@ -306,23 +306,32 @@ const filter_nomination_pool_commission = (
 /**
  * @name filter_nominating_rewards
  * @summary The new event is considered a duplicate if another event has
- * a matching address and era number.
+ * a matching address, pending payout and era number.
  */
 const filter_nominating_pending_payouts = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
+  interface Target {
+    era: string;
+    pendingPayout: string;
+  }
+
   const { address } = event.who.data as EventAccountData;
-  const { era } = event.data;
+  const { era, pendingPayout }: Target = event.data;
 
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextEra: number = e.data.era;
+      const { era: nextEra, pendingPayout: nextPendingPayout }: Target = e.data;
 
-      if (address === nextAddress && era === nextEra) {
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        pendingPayout === nextPendingPayout
+      ) {
         isUnique = false;
       }
     }
@@ -530,12 +539,13 @@ export const getNominationPoolCommissionText = (
   cur: NominationPoolCommission,
   prev: NominationPoolCommission
 ) =>
+  // TODO: Improve text message.
   JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
   JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
   cur.throttleFrom === prev.throttleFrom &&
   cur.max === prev.max
-    ? 'Pool commission has changed.'
-    : 'Pool commission unchaged.';
+    ? `Pool commission is ${cur.current}.`
+    : `Pool commission set to ${cur.current}.`;
 
 /**
  * @name getNominatingPendingPayoutsText

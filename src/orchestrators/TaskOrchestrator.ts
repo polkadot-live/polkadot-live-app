@@ -76,7 +76,7 @@ export class TaskOrchestrator {
 
           case 'subscribe:account:nominationPools:rewards': {
             debug('🟢 subscribe:account:nominationPools:rewards');
-            await TaskOrchestrator.subscribe_nomination_pool_reward_account(
+            await TaskOrchestrator.subscribe_nomination_pool_rewards(
               task,
               wrapper
             );
@@ -268,10 +268,10 @@ export class TaskOrchestrator {
   }
 
   /**
-   * @name subscribe_nomination_pool_reward_account
+   * @name subscribe_nomination_pool_rewards
    * @summary Handle a task that subscribes to the API function api.query.system.account for a nomination pool's reward address.
    */
-  private static async subscribe_nomination_pool_reward_account(
+  private static async subscribe_nomination_pool_rewards(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

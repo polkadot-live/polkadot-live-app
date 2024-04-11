@@ -358,9 +358,10 @@ export class EventsController {
        * subscribe:account:nominating:pendingPayouts
        */
       case 'subscribe:account:nominating:pendingPayouts': {
+        // eslint-disable-next-line prettier/prettier
+        const { pendingPayout, era }: { pendingPayout: BigNumber; era: string } = miscData;
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
-        const { pendingPayout } = miscData;
 
         return {
           uid: '',
@@ -377,7 +378,8 @@ export class EventsController {
           title: 'Nominating Pending Payout',
           subtitle: getNominatingPendingPayoutText(pendingPayout, chainId),
           data: {
-            pendingPayoutUnit: planckToUnit(pendingPayout, chainUnits(chainId)),
+            era,
+            pendingPayout: pendingPayout.toString(), // string required
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

@@ -1,6 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AccountsController } from '@/controller/renderer/AccountsController';
+import { APIsController } from '@/controller/renderer/APIsController';
 import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { AnyJson } from '@/types/misc';
@@ -10,28 +12,27 @@ import type {
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import {
-  AccountWrapper,
   AccountsWrapper,
   BreadcrumbsWrapper,
   HeadingWrapper,
 } from './Wrappers';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { PermissionRow } from './PermissionRow';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
+import { useChains } from '@/renderer/contexts/Chains';
 import { useEffect } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { Switch } from '@app/library/Switch';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { AccountsController } from '@/controller/renderer/AccountsController';
 import * as ApiUtils from '@/utils/ApiUtils';
-import { useChains } from '@/renderer/contexts/Chains';
-import { APIsController } from '@/controller/renderer/APIsController';
+import type { AnyFunction } from '@w3ux/utils/types';
 
 export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const { updateTask } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
-  const { online: isOnline } = useOnlineStatus();
   const { addChain } = useChains();
+  const { online: isOnline } = useOnlineStatus();
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -73,12 +74,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
     switch (newWrapped.type) {
       case 'chain': {
-        // Subscribe to task.
+        // Subscribe to and persist task.
         await SubscriptionsController.subscribeChainTask(newWrapped.tasks[0]);
-
-        // Update chain tasks in store.
         await window.myAPI.updatePersistedChainTask(newWrapped.tasks[0]);
-
         break;
       }
       case 'account': {
@@ -89,18 +87,16 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         );
 
         if (!account) {
-          console.log('no account found');
           result = false;
           break;
         }
 
-        // Subscribe to the task.
+        // Subscribe to and persist the task.
         await SubscriptionsController.subscribeAccountTask(
           newWrapped.tasks[0],
           account
         );
 
-        // Update account tasks in store.
         await window.myAPI.updatePersistedAccountTask(
           JSON.stringify(newWrapped.tasks[0]),
           JSON.stringify(account.flatten())
@@ -109,7 +105,6 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         break;
       }
       default: {
-        console.log('Something went wrong...');
         result = false;
         return;
       }
@@ -161,6 +156,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   };
 
+  /// Get unique key for the task row component.
   const getKey = (
     type: string,
     action: string,
@@ -199,6 +195,20 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
 
+  /// Handle a one-shot event.
+  const handleOneShot = async (
+    task: SubscriptionTask,
+    setOneShotProcessing: AnyFunction
+  ) => {
+    setOneShotProcessing(true);
+    await executeOneShot(task);
+
+    // Wait some time to avoid the spinner snapping.
+    setTimeout(() => {
+      setOneShotProcessing(false);
+    }, 550);
+  };
+
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
     <>
@@ -214,39 +224,14 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
           {tasks
             .sort((a, b) => a.label.localeCompare(b.label))
             .map((task: SubscriptionTask, i: number) => (
-              <AccountWrapper
-                whileHover={{ scale: 1.01 }}
+              <PermissionRow
                 key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
-              >
-                <div className="inner">
-                  <div>
-                    <div className="content">
-                      <h3>{task.label}</h3>
-                    </div>
-                  </div>
-                  <div>
-                    <Switch
-                      type="secondary"
-                      isOn={task.status === 'enable'}
-                      disabled={getDisabled(task)}
-                      handleToggle={async () => {
-                        // Send an account or chain subscription task.
-                        await handleToggle({
-                          type: getTaskType(task),
-                          tasks: [
-                            {
-                              ...task,
-                              actionArgs: task.actionArgs
-                                ? [...task.actionArgs]
-                                : undefined,
-                            },
-                          ],
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              </AccountWrapper>
+                task={task}
+                handleToggle={handleToggle}
+                handleOneShot={handleOneShot}
+                getDisabled={getDisabled}
+                getTaskType={getTaskType}
+              />
             ))}
         </div>
       ))}

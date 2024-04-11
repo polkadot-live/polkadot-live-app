@@ -201,12 +201,17 @@ app.whenReady().then(async () => {
   // Report event back to frontend after an event UID is assigned.
   ipcMain.on(
     'app:event:persist',
-    (_, e: EventCallback, notification: NotificationData | null) => {
+    (
+      _,
+      e: EventCallback,
+      notification: NotificationData | null,
+      isOneShot: boolean
+    ) => {
       const { event: eventWithUid, wasPersisted } =
         EventsController.persistEvent(e);
 
       // Show notification if event was added and notification data was received.
-      if (wasPersisted && notification !== null) {
+      if ((wasPersisted || isOneShot) && notification !== null) {
         const { title, body } = notification;
         NotificationsController.showNotification(title, body);
       }
