@@ -175,7 +175,7 @@ export class Callbacks {
         await api.call.nominationPoolsApi.pendingRewards(account.address);
 
       // Return if pending rewards is zero.
-      if (pendingRewardsPlanck.eq(0)) {
+      if (!isOneShot && pendingRewardsPlanck.eq(0)) {
         return;
       }
 
@@ -214,14 +214,18 @@ export class Callbacks {
       // Get the received pool state.
       const receivedPoolState: string = data.toHuman().state;
       const prevState = account.nominationPoolData!.poolState;
-      if (!isOneShot && prevState === receivedPoolState) {
+      const changed = prevState === receivedPoolState;
+
+      if (!isOneShot && changed) {
         return;
       }
 
       // Update account and entry data.
-      account.nominationPoolData!.poolState = receivedPoolState;
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
+      if (changed) {
+        account.nominationPoolData!.poolState = receivedPoolState;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -243,7 +247,8 @@ export class Callbacks {
    */
   static async callback_nomination_pool_renamed(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -251,19 +256,24 @@ export class Callbacks {
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
       const prevName = account.nominationPoolData!.poolName;
-      if (prevName === receivedPoolName) {
+      const changed = prevName === receivedPoolName;
+
+      if (!isOneShot && changed) {
         return;
       }
 
       // Update account and entry data.
-      account.nominationPoolData!.poolName = receivedPoolName;
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
+      if (changed) {
+        account.nominationPoolData!.poolName = receivedPoolName;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { prevName }),
-        NotificationsController.getNotification(entry, account, { prevName })
+        NotificationsController.getNotification(entry, account, { prevName }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
@@ -290,21 +300,24 @@ export class Callbacks {
 
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
-      if (
-        !isOneShot &&
+
+      const changed =
         poolRoles.depositor === depositor &&
         poolRoles.root === root &&
         poolRoles.nominator === nominator &&
-        poolRoles.bouncer === bouncer
-      ) {
+        poolRoles.bouncer === bouncer;
+
+      if (!isOneShot && changed) {
         return;
       }
 
       // Update account and entry data.
-      // eslint-disable-next-line prettier/prettier
-      account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
+      if (changed) {
+        // eslint-disable-next-line prettier/prettier
+        account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -338,22 +351,25 @@ export class Callbacks {
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
-      if (
-        !isOneShot &&
+
+      const changed =
         // eslint-disable-next-line prettier/prettier
         JSON.stringify(poolCommission.changeRate) === JSON.stringify(changeRate) &&
         JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
         poolCommission.throttleFrom === (throttleFrom as string | null) &&
-        poolCommission.max === (max as string | null)
-      ) {
+        poolCommission.max === (max as string | null);
+
+      if (!isOneShot && changed) {
         return;
       }
 
       // Update account and entry data.
-      // eslint-disable-next-line prettier/prettier
-      account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
+      if (changed) {
+        // eslint-disable-next-line prettier/prettier
+        account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
