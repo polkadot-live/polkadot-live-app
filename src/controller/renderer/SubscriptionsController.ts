@@ -163,7 +163,7 @@ export class SubscriptionsController {
           .filter((t) => t.chainId === a.chain)
           // Populate tasks with correct arguments.
           .map((t) => {
-            const task = { ...t, account: a.flatten() };
+            const task = { ...t, account: a.flatten() } as SubscriptionTask;
 
             switch (t.action) {
               case 'subscribe:account:balance': {

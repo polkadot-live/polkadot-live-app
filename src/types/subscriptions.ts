@@ -26,6 +26,8 @@ export interface SubscriptionTask {
   account?: FlattenedAccountData;
   // Index to retrieve api callback data.
   dataIndex?: number;
+  // Flag to determine if native OS notifications are shown for the task.
+  enableOsNotifications: boolean;
   // Flag to determine if the subscription was just built.
   justBuilt?: boolean;
 }
