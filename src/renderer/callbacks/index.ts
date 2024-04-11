@@ -205,7 +205,8 @@ export class Callbacks {
    */
   static async callback_nomination_pool_state(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -213,7 +214,7 @@ export class Callbacks {
       // Get the received pool state.
       const receivedPoolState: string = data.toHuman().state;
       const prevState = account.nominationPoolData!.poolState;
-      if (prevState === receivedPoolState) {
+      if (!isOneShot && prevState === receivedPoolState) {
         return;
       }
 
@@ -225,7 +226,8 @@ export class Callbacks {
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { prevState }),
-        NotificationsController.getNotification(entry, account, { prevState })
+        NotificationsController.getNotification(entry, account, { prevState }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);

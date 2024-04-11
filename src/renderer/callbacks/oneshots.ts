@@ -11,6 +11,10 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       await oneShot_nomination_pool_rewards(task);
       break;
     }
+    case 'subscribe:account:nominationPools:state': {
+      await oneShot_nomination_pool_state(task);
+      break;
+    }
     case 'subscribe:account:nominating:pendingPayouts': {
       await oneShot_nominating_pending_payouts(task);
       break;
@@ -36,6 +40,18 @@ export const executeOneShot = async (task: SubscriptionTask) => {
 const oneShot_nomination_pool_rewards = async (task: SubscriptionTask) => {
   const entry: ApiCallEntry = { curVal: null, task };
   await Callbacks.callback_nomination_pool_rewards(entry, true);
+};
+
+/**
+ * @name oneShot_nomination_pool_state
+ * @summary One-shot call to fetch an account's nominating pool state.
+ */
+const oneShot_nomination_pool_state = async (task: SubscriptionTask) => {
+  const { api } = await getApiInstance(task.chainId);
+  // eslint-disable-next-line prettier/prettier
+  const data = await api.query.nominationPools.bondedPools(task.actionArgs || []);
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_nomination_pool_state(data, entry, true);
 };
 
 /**
