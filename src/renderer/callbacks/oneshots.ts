@@ -7,6 +7,10 @@ import { Callbacks } from '.';
 
 export const executeOneShot = async (task: SubscriptionTask) => {
   switch (task.action) {
+    case 'subscribe:account:balance': {
+      await oneShot_query_system_account(task);
+      break;
+    }
     case 'subscribe:account:nominationPools:rewards': {
       await oneShot_nomination_pool_rewards(task);
       break;
@@ -43,6 +47,17 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       break;
     }
   }
+};
+
+/**
+ * @name oneShot_query_system_account
+ * @summary One-shot call to fetch an account's balance.
+ */
+const oneShot_query_system_account = async (task: SubscriptionTask) => {
+  const { api } = await getApiInstance(task.chainId);
+  const data = await api.query.system.account(task.account!.address);
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_query_system_account(data, entry, true);
 };
 
 /**

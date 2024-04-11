@@ -107,7 +107,8 @@ export class Callbacks {
    */
   static async callback_query_system_account(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['balance']);
@@ -121,18 +122,21 @@ export class Callbacks {
       };
 
       // Exit early if balance hasn't changed.
-      if (
+      const changed =
         received.free.eq(account.balance!.free) &&
         received.reserved.eq(account.balance!.reserved) &&
         received.frozen.eq(account.balance!.frozen) &&
-        received.nonce.eq(account.balance!.nonce)
-      ) {
+        received.nonce.eq(account.balance!.nonce);
+
+      if (!isOneShot && changed) {
         return;
       }
 
-      // Update account data.
-      account.balance = received;
-      await AccountsController.set(account.chain, account);
+      if (changed) {
+        // Update account data.
+        account.balance = received;
+        await AccountsController.set(account.chain, account);
+      }
 
       // Create event and parse into same format as persisted events.
       const event = EventsController.getEvent(entry, { ...received });
@@ -141,7 +145,8 @@ export class Callbacks {
       // Send event and notification data to main process.
       window.myAPI.persistEvent(
         parsed,
-        NotificationsController.getNotification(entry, account)
+        NotificationsController.getNotification(entry, account),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
