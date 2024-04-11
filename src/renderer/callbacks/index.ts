@@ -279,7 +279,8 @@ export class Callbacks {
    */
   static async callback_nomination_pool_roles(
     data: AnyData,
-    entry: ApiCallEntry
+    entry: ApiCallEntry,
+    isOneShot = false
   ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -290,6 +291,7 @@ export class Callbacks {
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
       if (
+        !isOneShot &&
         poolRoles.depositor === depositor &&
         poolRoles.root === root &&
         poolRoles.nominator === nominator &&
@@ -307,7 +309,8 @@ export class Callbacks {
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { poolRoles }),
-        NotificationsController.getNotification(entry, account, { poolRoles })
+        NotificationsController.getNotification(entry, account, { poolRoles }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);
