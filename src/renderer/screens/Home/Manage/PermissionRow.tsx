@@ -25,29 +25,31 @@ export const PermissionRow = ({
           </div>
         </div>
         <div>
-          <div>
-            {/* One Shot Button */}
-            <ButtonMono
-              style={
-                !oneShotProcessing
-                  ? { position: 'relative' }
-                  : { position: 'relative', color: 'inherit' }
-              }
-              text="show"
-              disabled={getDisabled(task) || oneShotProcessing}
-              onClick={async () =>
-                await handleOneShot(task, setOneShotProcessing)
-              }
-            />
-            {oneShotProcessing && !getDisabled(task) && (
-              <div style={{ position: 'absolute' }} className="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            )}
-          </div>
+          {/* One Shot Button */}
+          {getTaskType(task) === 'account' && (
+            <div>
+              <ButtonMono
+                style={
+                  !oneShotProcessing
+                    ? { position: 'relative' }
+                    : { position: 'relative', color: 'inherit' }
+                }
+                text="show"
+                disabled={getDisabled(task) || oneShotProcessing}
+                onClick={async () =>
+                  await handleOneShot(task, setOneShotProcessing)
+                }
+              />
+              {oneShotProcessing && !getDisabled(task) && (
+                <div style={{ position: 'absolute' }} className="lds-ellipsis">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Toggle Switch */}
           <Switch
