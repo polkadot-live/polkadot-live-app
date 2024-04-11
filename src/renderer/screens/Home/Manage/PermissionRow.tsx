@@ -1,11 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountWrapper } from './Wrappers';
-import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { AccountWrapper, PermissionCheckBox } from './Wrappers';
 import { Switch } from '@app/library/Switch';
 import { useState } from 'react';
 import type { PermissionRowProps } from './types';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
 export const PermissionRow = ({
   task,
@@ -28,11 +28,18 @@ export const PermissionRow = ({
           {/* One Shot Button */}
           {getTaskType(task) === 'account' && (
             <div>
-              <ButtonMono
+              <ButtonMonoInvert
                 style={
                   !oneShotProcessing
-                    ? { position: 'relative' }
-                    : { position: 'relative', color: 'inherit' }
+                    ? {
+                        position: 'relative',
+                        color: 'var(--text-color-secondary)',
+                        borderColor: 'var(--text-color-secondary)',
+                      }
+                    : {
+                        position: 'relative',
+                        color: 'var(--background-default)',
+                      }
                 }
                 text="show"
                 disabled={getDisabled(task) || oneShotProcessing}
@@ -51,10 +58,20 @@ export const PermissionRow = ({
             </div>
           )}
 
+          {/* Native OS Notification Checkbox */}
+          <PermissionCheckBox isdisabled={String(getDisabled(task))}>
+            <div className="checkbox-wrapper-29">
+              <label className="checkbox">
+                <input type="checkbox" className="checkbox__input" />
+                <span className="checkbox__label"></span>
+                <span className="checkbox__title">native</span>
+              </label>
+            </div>
+          </PermissionCheckBox>
+
           {/* Toggle Switch */}
           <Switch
             type="secondary"
-            size="lg"
             isOn={task.status === 'enable'}
             disabled={getDisabled(task)}
             handleToggle={async () => {

@@ -4,6 +4,10 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+interface PermissionCheckBoxProps {
+  isdisabled: string;
+}
+
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -82,6 +86,86 @@ export const AccountsWrapper = styled.div`
   margin-top: 1.25rem;
   margin-bottom: 2rem;
   padding: 0 0.5rem;
+`;
+
+export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
+  /* Checkbox */
+  .checkbox-wrapper-29 {
+    --size: 1.4rem;
+    --background: var(--background-color-secondary);
+    font-size: var(--size);
+  }
+  .checkbox-wrapper-29 *,
+  .checkbox-wrapper-29 *::after,
+  .checkbox-wrapper-29 *::before {
+    box-sizing: border-box;
+  }
+  .checkbox-wrapper-29 input[type='checkbox'] {
+    visibility: hidden;
+    display: none;
+  }
+  .checkbox-wrapper-29 .checkbox__label {
+    width: var(--size);
+  }
+  .checkbox-wrapper-29 .checkbox__label:before {
+    content: ' ';
+    display: block;
+    height: var(--size);
+    width: var(--size);
+    position: absolute;
+    top: calc(var(--size) * 0.125);
+    left: 0;
+    background: var(--background);
+  }
+  .checkbox-wrapper-29 .checkbox__label:after {
+    content: ' ';
+    display: block;
+    height: var(--size);
+    width: var(--size);
+    border: calc(var(--size) * 0.1) solid
+      ${(props: PermissionCheckBoxProps) =>
+        props.isdisabled === 'true'
+          ? '#4a4a4a'
+          : 'var(--text-color-secondary)'};
+    border-radius: 2px;
+    transition: 200ms;
+    position: absolute;
+    top: calc(var(--size) * 0.125);
+    left: 0;
+    background: var(--background);
+  }
+  .checkbox-wrapper-29 .checkbox__label:after {
+    transition: 100ms ease-in-out;
+  }
+  .checkbox-wrapper-29 .checkbox__input:checked ~ .checkbox__label:after {
+    border-top-style: none;
+    border-right-style: none;
+    -ms-transform: rotate(-45deg); /* IE9 */
+    transform: rotate(-45deg);
+    height: calc(var(--size) * 0.5);
+    border-color: green;
+    border-width: 2px;
+  }
+  .checkbox-wrapper-29 .checkbox {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+    /* Mobile Safari: */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+  .checkbox-wrapper-29 .checkbox__label:after:hover,
+  .checkbox-wrapper-29 .checkbox__label:after:active {
+    border-color: green;
+  }
+  .checkbox-wrapper-29 .checkbox__label {
+    margin-right: calc(var(--size) * 0.47);
+  }
+  .checkbox-wrapper-29 .checkbox__title {
+    color: ${(props: PermissionCheckBoxProps) =>
+      props.isdisabled === 'true' ? '#4a4a4a' : 'var(--background)'};
+    font-size: 1.12rem;
+    margin-top: 2px;
+  }
 `;
 
 export const AccountWrapper = styled(motion.div)`
@@ -177,7 +261,7 @@ export const AccountWrapper = styled(motion.div)`
       position: relative;
       flex: 1;
       align-items: center;
-      column-gap: 1.25rem;
+      column-gap: 1.5rem;
 
       &:first-child {
         overflow: hidden;
