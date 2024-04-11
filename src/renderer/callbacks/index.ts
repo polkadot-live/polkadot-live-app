@@ -150,7 +150,7 @@ export class Callbacks {
   }
 
   /**
-   * @name callback_nomination_pool_reward_account
+   * @name callback_nomination_pool_rewards
    * @summary Callback for 'subscribe:account:nominationPools:rewards'.
    *
    * When a nomination pool's free balance changes, check that the subscribed
@@ -161,7 +161,10 @@ export class Callbacks {
    * Another process can then check if the event should be rendererd,
    * or whether it's a duplicate.
    */
-  static async callback_nomination_pool_reward_account(entry: ApiCallEntry) {
+  static async callback_nomination_pool_rewards(
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
       const chainId = account.chain;
@@ -186,7 +189,8 @@ export class Callbacks {
         EventsController.getEvent(entry, { pendingRewardsPlanck }),
         NotificationsController.getNotification(entry, account, {
           pendingRewardsPlanck,
-        })
+        }),
+        isOneShot
       );
     } catch (err) {
       console.error(err);

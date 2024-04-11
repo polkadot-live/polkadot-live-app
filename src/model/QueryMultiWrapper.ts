@@ -149,7 +149,7 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
-        await Callbacks.callback_nomination_pool_reward_account(entry);
+        await Callbacks.callback_nomination_pool_rewards(entry);
         break;
       }
       case 'subscribe:account:nominationPools:state': {

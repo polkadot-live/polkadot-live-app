@@ -7,6 +7,10 @@ import { Callbacks } from '.';
 
 export const executeOneShot = async (task: SubscriptionTask) => {
   switch (task.action) {
+    case 'subscribe:account:nominationPools:rewards': {
+      await oneShot_nomination_pool_rewards(task);
+      break;
+    }
     case 'subscribe:account:nominating:pendingPayouts': {
       await oneShot_nominating_pending_payouts(task);
       break;
@@ -23,6 +27,15 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       break;
     }
   }
+};
+
+/**
+ * @name oneShot_nomination_pool_rewards
+ * @summary One-shot call to fetch an account's nominating pool rewards.
+ */
+const oneShot_nomination_pool_rewards = async (task: SubscriptionTask) => {
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_nomination_pool_rewards(entry, true);
 };
 
 /**
