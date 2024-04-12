@@ -11,10 +11,14 @@ export const PermissionRow = ({
   task,
   handleToggle,
   handleOneShot,
+  handleNativeCheckbox,
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
+  const [nativeChecked, setNativeChecked] = useState(
+    task.enableOsNotifications
+  );
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -62,7 +66,15 @@ export const PermissionRow = ({
           <PermissionCheckBox isdisabled={String(getDisabled(task))}>
             <div className="checkbox-wrapper-29">
               <label className="checkbox">
-                <input type="checkbox" className="checkbox__input" />
+                <input
+                  disabled={getDisabled(task)}
+                  type="checkbox"
+                  checked={!getDisabled(task) && nativeChecked}
+                  className="checkbox__input"
+                  onChange={async (e) =>
+                    await handleNativeCheckbox(e, task, setNativeChecked)
+                  }
+                />
                 <span className="checkbox__label"></span>
                 <span className="checkbox__title">native</span>
               </label>

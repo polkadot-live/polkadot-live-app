@@ -209,6 +209,29 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }, 550);
   };
 
+  /// Handle clicking the native check.
+  const handleNativeCheckbox = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    task: SubscriptionTask,
+    setNativeChecked: AnyFunction
+  ) => {
+    // Update checkbox state.
+    const checked: boolean = e.target.checked;
+    setNativeChecked(checked);
+
+    // Update task and and persist.
+    task.enableOsNotifications = checked;
+    if (task.account) {
+      await window.myAPI.updatePersistedAccountTask(
+        JSON.stringify(task),
+        JSON.stringify(task.account!)
+      );
+
+      // Update react state for tasks.
+      updateTask('account', task, task.account.address);
+    }
+  };
+
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
     <>
@@ -229,6 +252,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                 task={task}
                 handleToggle={handleToggle}
                 handleOneShot={handleOneShot}
+                handleNativeCheckbox={handleNativeCheckbox}
                 getDisabled={getDisabled}
                 getTaskType={getTaskType}
               />

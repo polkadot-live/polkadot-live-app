@@ -16,5 +16,10 @@ export interface PermissionRowProps {
     task: SubscriptionTask,
     setOneShotProcessing: AnyFunction
   ) => Promise<void>;
+  handleNativeCheckbox: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    task: SubscriptionTask,
+    setNativeChecked: AnyFunction
+  ) => Promise<void>;
   handleToggle: (cached: WrappedSubscriptionTasks) => Promise<void>;
 }
