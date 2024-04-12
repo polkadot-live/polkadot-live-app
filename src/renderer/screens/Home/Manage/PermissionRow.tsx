@@ -63,23 +63,25 @@ export const PermissionRow = ({
           )}
 
           {/* Native OS Notification Checkbox */}
-          <PermissionCheckBox isdisabled={String(getDisabled(task))}>
-            <div className="checkbox-wrapper-29">
-              <label className="checkbox">
-                <input
-                  disabled={getDisabled(task)}
-                  type="checkbox"
-                  checked={!getDisabled(task) && nativeChecked}
-                  className="checkbox__input"
-                  onChange={async (e) =>
-                    await handleNativeCheckbox(e, task, setNativeChecked)
-                  }
-                />
-                <span className="checkbox__label"></span>
-                <span className="checkbox__title">native</span>
-              </label>
-            </div>
-          </PermissionCheckBox>
+          {task.account && (
+            <PermissionCheckBox isdisabled={String(getDisabled(task))}>
+              <div className="checkbox-wrapper-29">
+                <label className="checkbox">
+                  <input
+                    disabled={getDisabled(task)}
+                    type="checkbox"
+                    checked={!getDisabled(task) && nativeChecked}
+                    className="checkbox__input"
+                    onChange={async (e) =>
+                      await handleNativeCheckbox(e, task, setNativeChecked)
+                    }
+                  />
+                  <span className="checkbox__label"></span>
+                  <span className="checkbox__title">native</span>
+                </label>
+              </div>
+            </PermissionCheckBox>
+          )}
 
           {/* Toggle Switch */}
           <Switch

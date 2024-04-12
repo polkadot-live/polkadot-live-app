@@ -143,11 +143,10 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
-      console.log(`enable os native: ${entry.task.enableOsNotifications}`);
-
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account)
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account)
+          : null;
 
       // Send event and notification data to main process.
       window.myAPI.persistEvent(parsed, notification, isOneShot);
@@ -193,11 +192,12 @@ export class Callbacks {
       entry.task.account = account.flatten();
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            pendingRewardsPlanck,
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              pendingRewardsPlanck,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -241,9 +241,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, { prevState })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              prevState,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -288,9 +291,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, { prevName })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              prevName,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -343,9 +349,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, { poolRoles })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              poolRoles,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -400,11 +409,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            poolCommission,
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              poolCommission,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -460,12 +470,13 @@ export class Callbacks {
       const era = data.toHuman().index as string;
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            pendingPayout,
-            chainId: account.chain,
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              pendingPayout,
+              chainId: account.chain,
+            })
+          : null;
 
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { pendingPayout, era }),
@@ -529,12 +540,13 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            era,
-            exposed,
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              era,
+              exposed,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -600,12 +612,13 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            era,
-            exposed,
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              era,
+              exposed,
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -675,11 +688,12 @@ export class Callbacks {
       await AccountsController.set(account.chain, account);
 
       // Get notification.
-      const notification = entry.task.enableOsNotifications
-        ? NotificationsController.getNotification(entry, account, {
-            updated: [...changedValidators],
-          })
-        : null;
+      const notification =
+        entry.task.enableOsNotifications || isOneShot
+          ? NotificationsController.getNotification(entry, account, {
+              updated: [...changedValidators],
+            })
+          : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
