@@ -198,9 +198,12 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   /// Handle a one-shot event.
   const handleOneShot = async (
     task: SubscriptionTask,
-    setOneShotProcessing: AnyFunction
+    setOneShotProcessing: AnyFunction,
+    nativeChecked: boolean
   ) => {
     setOneShotProcessing(true);
+
+    task.enableOsNotifications = nativeChecked;
     await executeOneShot(task);
 
     // Wait some time to avoid the spinner snapping.
@@ -219,9 +222,11 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     const checked: boolean = e.target.checked;
     setNativeChecked(checked);
 
-    // Update task and and persist.
-    task.enableOsNotifications = checked;
     if (task.account) {
+      // Update received task.
+      task.enableOsNotifications = checked;
+
+      // Update persisted task data.
       await window.myAPI.updatePersistedAccountTask(
         JSON.stringify(task),
         JSON.stringify(task.account!)
@@ -229,6 +234,16 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
       // Update react state for tasks.
       updateTask('account', task, task.account.address);
+
+      // Update cached task in account's query multi wrapper.
+      const account = AccountsController.get(
+        task.chainId,
+        task.account.address
+      );
+
+      if (account) {
+        account.queryMulti?.setOsNotificationsFlag(task);
+      }
     }
   };
 

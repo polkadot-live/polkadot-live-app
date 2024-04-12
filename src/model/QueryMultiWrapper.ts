@@ -370,6 +370,29 @@ export class QueryMultiWrapper {
   }
 
   /**
+   * @name setOsNotificationsFlag
+   * @summary Set the enableOsNotifications for a task.
+   */
+  setOsNotificationsFlag(task: SubscriptionTask) {
+    const { chainId } = task;
+    const chainEntry = this.subscriptions.get(chainId);
+
+    if (chainEntry) {
+      this.subscriptions.set(chainId, {
+        unsub: chainEntry.unsub,
+        callEntries: chainEntry.callEntries.map((e) =>
+          e.task.action === task.action
+            ? {
+                ...e,
+                task,
+              }
+            : e
+        ),
+      });
+    }
+  }
+
+  /**
    * Utils
    */
 

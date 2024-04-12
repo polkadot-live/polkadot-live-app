@@ -48,7 +48,7 @@ export const PermissionRow = ({
                 text="show"
                 disabled={getDisabled(task) || oneShotProcessing}
                 onClick={async () =>
-                  await handleOneShot(task, setOneShotProcessing)
+                  await handleOneShot(task, setOneShotProcessing, nativeChecked)
                 }
               />
               {oneShotProcessing && !getDisabled(task) && (
