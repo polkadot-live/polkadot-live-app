@@ -42,7 +42,10 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
   /// Handle a toggle, which sends a subscription task to the back-end
   /// and updates the front-end subscriptions state.
-  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
+  const handleToggle = async (
+    cached: WrappedSubscriptionTasks,
+    setNativeChecked: AnyFunction
+  ) => {
     // Invert the task status.
     const newStatus =
       cached.tasks[0].status === 'enable' ? 'disable' : 'enable';
@@ -55,6 +58,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       ...cached.tasks[0],
       actionArgs: args ? [...args] : undefined,
       status: newStatus,
+      enableOsNotifications: false,
     };
 
     // Copy the wrapped subscription and set the new task.
@@ -97,9 +101,19 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
           account
         );
 
+        // Render checbox correctly.
+        setNativeChecked(false);
+
         await window.myAPI.updatePersistedAccountTask(
           JSON.stringify(newWrapped.tasks[0]),
           JSON.stringify(account.flatten())
+        );
+
+        // Update react state.
+        updateTask(
+          'account',
+          newWrapped.tasks[0],
+          newWrapped.tasks[0].account?.address
         );
 
         break;

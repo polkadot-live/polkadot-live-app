@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 interface PermissionCheckBoxProps {
-  isdisabled: string;
+  disabled: boolean;
 }
 
 export const Wrapper = styled.div`
@@ -124,9 +124,7 @@ export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
     width: var(--size);
     border: calc(var(--size) * 0.1) solid
       ${(props: PermissionCheckBoxProps) =>
-        props.isdisabled === 'true'
-          ? '#4a4a4a'
-          : 'var(--text-color-secondary)'};
+        props.disabled ? '#4a4a4a' : 'var(--text-color-secondary)'};
     border-radius: 2px;
     transition: 200ms;
     position: absolute;
@@ -162,7 +160,7 @@ export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
   }
   .checkbox-wrapper-29 .checkbox__title {
     color: ${(props: PermissionCheckBoxProps) =>
-      props.isdisabled === 'true' ? '#4a4a4a' : 'var(--background)'};
+      props.disabled ? '#4a4a4a' : 'var(--background)'};
     font-size: 1.12rem;
     margin-top: 2px;
   }

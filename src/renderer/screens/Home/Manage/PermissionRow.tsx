@@ -64,11 +64,13 @@ export const PermissionRow = ({
 
           {/* Native OS Notification Checkbox */}
           {task.account && (
-            <PermissionCheckBox isdisabled={String(getDisabled(task))}>
+            <PermissionCheckBox
+              disabled={getDisabled(task) || task.status === 'disable'}
+            >
               <div className="checkbox-wrapper-29">
                 <label className="checkbox">
                   <input
-                    disabled={getDisabled(task)}
+                    disabled={getDisabled(task) || task.status === 'disable'}
                     type="checkbox"
                     checked={!getDisabled(task) && nativeChecked}
                     className="checkbox__input"
@@ -90,17 +92,20 @@ export const PermissionRow = ({
             disabled={getDisabled(task)}
             handleToggle={async () => {
               // Send an account or chain subscription task.
-              await handleToggle({
-                type: getTaskType(task),
-                tasks: [
-                  {
-                    ...task,
-                    actionArgs: task.actionArgs
-                      ? [...task.actionArgs]
-                      : undefined,
-                  },
-                ],
-              });
+              await handleToggle(
+                {
+                  type: getTaskType(task),
+                  tasks: [
+                    {
+                      ...task,
+                      actionArgs: task.actionArgs
+                        ? [...task.actionArgs]
+                        : undefined,
+                    },
+                  ],
+                },
+                setNativeChecked
+              );
             }}
           />
         </div>

@@ -105,7 +105,6 @@ export class SubscriptionsController {
     task: SubscriptionTask,
     key: string
   ) {
-    // Add or remove task depending on its status.
     if (task.status === 'enable') {
       // Remove task from array if it already exists.
       this.taskExistsInArray(tasks, task) &&
@@ -113,6 +112,7 @@ export class SubscriptionsController {
 
       tasks.push(task);
     } else {
+      // Otherwise, remove the task.
       tasks = tasks.filter(
         (t) => !(t.action === task.action && t.chainId === task.chainId)
       );
