@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { TaskQueue } from '@/orchestrators/TaskQueue';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { AnyFunction } from '@w3ux/utils/types';
 
@@ -39,6 +40,14 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       setSection(0);
     }
   }, [renderedSubscriptions]);
+
+  const handleQueuedToggle = async (
+    cached: WrappedSubscriptionTasks,
+    setNativeChecked: AnyFunction
+  ) => {
+    const p = async () => await handleToggle(cached, setNativeChecked);
+    TaskQueue.add(p);
+  };
 
   /// Handle a toggle, which sends a subscription task to the back-end
   /// and updates the front-end subscriptions state.
@@ -279,7 +288,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
               <PermissionRow
                 key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
                 task={task}
-                handleToggle={handleToggle}
+                handleToggle={handleQueuedToggle}
                 handleOneShot={handleOneShot}
                 handleNativeCheckbox={handleNativeCheckbox}
                 getDisabled={getDisabled}
