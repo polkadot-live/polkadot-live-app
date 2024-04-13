@@ -42,7 +42,10 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
   /// Handle a toggle, which sends a subscription task to the back-end
   /// and updates the front-end subscriptions state.
-  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
+  const handleToggle = async (
+    cached: WrappedSubscriptionTasks,
+    setNativeChecked: AnyFunction
+  ) => {
     // Invert the task status.
     const newStatus =
       cached.tasks[0].status === 'enable' ? 'disable' : 'enable';
@@ -55,6 +58,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
       ...cached.tasks[0],
       actionArgs: args ? [...args] : undefined,
       status: newStatus,
+      enableOsNotifications: false,
     };
 
     // Copy the wrapped subscription and set the new task.
@@ -97,9 +101,19 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
           account
         );
 
+        // Render checbox correctly.
+        setNativeChecked(false);
+
         await window.myAPI.updatePersistedAccountTask(
           JSON.stringify(newWrapped.tasks[0]),
           JSON.stringify(account.flatten())
+        );
+
+        // Update react state.
+        updateTask(
+          'account',
+          newWrapped.tasks[0],
+          newWrapped.tasks[0].account?.address
         );
 
         break;
@@ -198,15 +212,53 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
   /// Handle a one-shot event.
   const handleOneShot = async (
     task: SubscriptionTask,
-    setOneShotProcessing: AnyFunction
+    setOneShotProcessing: AnyFunction,
+    nativeChecked: boolean
   ) => {
     setOneShotProcessing(true);
+
+    task.enableOsNotifications = nativeChecked;
     await executeOneShot(task);
 
     // Wait some time to avoid the spinner snapping.
     setTimeout(() => {
       setOneShotProcessing(false);
     }, 550);
+  };
+
+  /// Handle clicking the native check.
+  const handleNativeCheckbox = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    task: SubscriptionTask,
+    setNativeChecked: AnyFunction
+  ) => {
+    // Update checkbox state.
+    const checked: boolean = e.target.checked;
+    setNativeChecked(checked);
+
+    if (task.account) {
+      // Update received task.
+      task.enableOsNotifications = checked;
+
+      // Update persisted task data.
+      await window.myAPI.updatePersistedAccountTask(
+        JSON.stringify(task),
+        JSON.stringify(task.account!)
+      );
+
+      // Update react state for tasks.
+      updateTask('account', task, task.account.address);
+
+      // Update cached task in account's query multi wrapper.
+      const account = AccountsController.get(
+        task.chainId,
+        task.account.address
+      );
+
+      if (account) {
+        account.queryMulti?.setOsNotificationsFlag(task);
+      }
+    }
   };
 
   /// Renders a list of categorised subscription tasks that can be toggled.
@@ -229,6 +281,7 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
                 task={task}
                 handleToggle={handleToggle}
                 handleOneShot={handleOneShot}
+                handleNativeCheckbox={handleNativeCheckbox}
                 getDisabled={getDisabled}
                 getTaskType={getTaskType}
               />

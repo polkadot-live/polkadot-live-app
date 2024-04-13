@@ -32,17 +32,17 @@ export const Switch = ({
     switch (type) {
       case 'secondary': {
         if (disabled) {
-          setBgColor('grey');
-          setBorderColor('#CBCBCB');
-          setButtonColor('#CBCBCB');
+          setBgColor('grdey');
+          setBorderColor('#393939');
+          setButtonColor('#393939');
           break;
         }
         setBorderColor('var(--border-secondary-color)');
         if (!switchOn) {
           setButtonColor('var(--accent-color-secondary)');
-          setBgColor('var(--background-invert)');
+          setBgColor('var(--background-color-primary)');
         } else {
-          setButtonColor('#FFFFFF');
+          setButtonColor('var(--text-color-primary)');
           setBgColor('var(--accent-color-secondary)');
         }
         break;
