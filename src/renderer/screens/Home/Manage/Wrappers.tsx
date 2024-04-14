@@ -65,8 +65,17 @@ export const HeadingWrapper = styled.div`
   > h5 {
     display: flex;
     align-items: center;
-    margin: 1rem 0;
+    margin: 0.1rem 0;
+    padding: 1rem;
 
+    cursor: pointer;
+    background-color: #181818;
+    border-radius: 1rem;
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover {
+      background-color: #141414;
+    }
     > span {
       margin-left: 1rem;
       color: var(--text-color-primary);

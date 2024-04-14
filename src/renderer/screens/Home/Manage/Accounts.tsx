@@ -17,6 +17,12 @@ import type {
 import { useManage } from './provider';
 import { getIcon } from '@/renderer/Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
@@ -60,69 +66,33 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
 
   return (
     <AccountsWrapper>
-      {/* Manage Chains */}
-      <HeadingWrapper>
-        <h5 style={{ marginBottom: '0.5rem' }}>
-          <PolkadotIcon className="icon" />
-          Chains
-        </h5>
-      </HeadingWrapper>
-      <div style={{ padding: '0 0.75rem' }}>
-        {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-          <AccountWrapper
-            whileHover={{ scale: 1.01 }}
-            key={`manage_chain_${i}`}
-          >
-            <button
-              type="button"
-              onClick={() => handleClickChain(chain)}
-            ></button>
-            <div className="inner">
-              <div>
-                <span>{getIcon(chain, 'chain-icon')}</span>
-                <div className="content">
-                  <h3>{chain}</h3>
-                </div>
-              </div>
-              <div>
-                <ButtonText
-                  text=""
-                  iconRight={faChevronRight}
-                  iconTransform="shrink-3"
-                />
-              </div>
-            </div>
-          </AccountWrapper>
-        ))}
-      </div>
-
-      {/* Manage Accounts */}
-      {addresses.length ? (
-        <>
-          <HeadingWrapper>
-            <h5 style={{ marginBottom: '0.5rem' }}>
-              <PolkadotIcon className="icon" />
-              Accounts
-            </h5>
-          </HeadingWrapper>
-          <div style={{ padding: '0 0.75rem' }}>
-            {addresses.map(
-              ({ address, name }: FlattenedAccountData, i: number) => (
+      <Accordion multiple defaultIndex={[0, 1]}>
+        <AccordionItem key={1}>
+          {/* Manage Chains */}
+          <AccordionHeader>
+            <HeadingWrapper>
+              <h5 style={{ marginBottom: '0.5rem' }}>
+                <PolkadotIcon className="icon" />
+                Chains
+              </h5>
+            </HeadingWrapper>
+          </AccordionHeader>
+          <AccordionPanel>
+            <div style={{ padding: '0 0.75rem' }}>
+              {Array.from(chainSubscriptions.keys()).map((chain, i) => (
                 <AccountWrapper
                   whileHover={{ scale: 1.01 }}
-                  key={`manage_account_${i}`}
+                  key={`manage_chain_${i}`}
                 >
                   <button
                     type="button"
-                    onClick={() => handleClickAccount(name, address)}
+                    onClick={() => handleClickChain(chain)}
                   ></button>
                   <div className="inner">
                     <div>
-                      <span className="icon">
-                        <Identicon value={address} size={26} />
-                      </span>
+                      <span>{getIcon(chain, 'chain-icon')}</span>
                       <div className="content">
-                        <h3>{name}</h3>
+                        <h3>{chain}</h3>
                       </div>
                     </div>
                     <div>
@@ -134,13 +104,61 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
                     </div>
                   </div>
                 </AccountWrapper>
-              )
-            )}
-          </div>
-        </>
-      ) : (
-        <NoAccounts />
-      )}
+              ))}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
+
+        {/* Manage Accounts */}
+        {addresses.length ? (
+          <AccordionItem>
+            <AccordionHeader>
+              <HeadingWrapper>
+                <h5 style={{ marginBottom: '0.5rem' }}>
+                  <PolkadotIcon className="icon" />
+                  Accounts
+                </h5>
+              </HeadingWrapper>
+            </AccordionHeader>
+            <AccordionPanel>
+              <div style={{ padding: '0 0.75rem' }}>
+                {addresses.map(
+                  ({ address, name }: FlattenedAccountData, i: number) => (
+                    <AccountWrapper
+                      whileHover={{ scale: 1.01 }}
+                      key={`manage_account_${i}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleClickAccount(name, address)}
+                      ></button>
+                      <div className="inner">
+                        <div>
+                          <span className="icon">
+                            <Identicon value={address} size={26} />
+                          </span>
+                          <div className="content">
+                            <h3>{name}</h3>
+                          </div>
+                        </div>
+                        <div>
+                          <ButtonText
+                            text=""
+                            iconRight={faChevronRight}
+                            iconTransform="shrink-3"
+                          />
+                        </div>
+                      </div>
+                    </AccountWrapper>
+                  )
+                )}
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+        ) : (
+          <NoAccounts />
+        )}
+      </Accordion>
     </AccountsWrapper>
   );
 };

@@ -282,19 +282,21 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
             </h5>
           </HeadingWrapper>
 
-          {tasks
-            .sort((a, b) => a.label.localeCompare(b.label))
-            .map((task: SubscriptionTask, i: number) => (
-              <PermissionRow
-                key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
-                task={task}
-                handleToggle={handleQueuedToggle}
-                handleOneShot={handleOneShot}
-                handleNativeCheckbox={handleNativeCheckbox}
-                getDisabled={getDisabled}
-                getTaskType={getTaskType}
-              />
-            ))}
+          <div style={{ padding: '0 0.75rem' }}>
+            {tasks
+              .sort((a, b) => a.label.localeCompare(b.label))
+              .map((task: SubscriptionTask, i: number) => (
+                <PermissionRow
+                  key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
+                  task={task}
+                  handleToggle={handleQueuedToggle}
+                  handleOneShot={handleOneShot}
+                  handleNativeCheckbox={handleNativeCheckbox}
+                  getDisabled={getDisabled}
+                  getTaskType={getTaskType}
+                />
+              ))}
+          </div>
         </div>
       ))}
     </>
@@ -317,13 +319,11 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         </ul>
       </BreadcrumbsWrapper>
       <AccountsWrapper>
-        <div style={{ padding: '0 0.75rem' }}>
-          {renderedSubscriptions.tasks.length > 0 ? (
-            renderSubscriptionTasks()
-          ) : (
-            <p>No subscriptions for this item.</p>
-          )}
-        </div>
+        {renderedSubscriptions.tasks.length > 0 ? (
+          renderSubscriptionTasks()
+        ) : (
+          <p>No subscriptions for this item.</p>
+        )}
       </AccountsWrapper>
     </>
   );

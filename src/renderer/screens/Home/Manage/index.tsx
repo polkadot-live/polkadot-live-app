@@ -33,6 +33,7 @@ export const Manage = ({ addresses }: AnyJson) => {
       }}
     >
       <div>
+        {/* List of accounts and chains */}
         <Wrapper className="scrollable">
           <Accounts
             setSection={setSection}
@@ -42,6 +43,7 @@ export const Manage = ({ addresses }: AnyJson) => {
         </Wrapper>
       </div>
       <div>
+        {/* Subscription toggles for selected account or chain */}
         <Permissions
           setSection={setSection}
           section={section}
