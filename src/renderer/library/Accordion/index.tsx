@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, Children } from 'react';
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { createContext, useContext, useState, Children } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { AnyData } from '@/types/misc';
 import type { ReactNode } from 'react';
+import type { AccordionProps } from './types';
 
 // Accordion Context
 const AccordionContext = createContext({
@@ -13,7 +16,11 @@ const AccordionContext = createContext({
 
 export const useAccordion = () => useContext(AccordionContext);
 
-export function Accordion({ children, multiple, defaultIndex }: AnyData) {
+export function Accordion({
+  children,
+  multiple,
+  defaultIndex,
+}: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
   );
