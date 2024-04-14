@@ -1,6 +1,12 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
@@ -272,34 +278,37 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
 
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
-    <>
+    <Accordion multiple defaultIndex={[0, 1, 2]}>
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
-        <div key={`${category}_${j}`}>
-          <HeadingWrapper>
-            <h5>
-              <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-              <span>{category}</span>
-            </h5>
-          </HeadingWrapper>
-
-          <div style={{ padding: '0 0.75rem' }}>
-            {tasks
-              .sort((a, b) => a.label.localeCompare(b.label))
-              .map((task: SubscriptionTask, i: number) => (
-                <PermissionRow
-                  key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
-                  task={task}
-                  handleToggle={handleQueuedToggle}
-                  handleOneShot={handleOneShot}
-                  handleNativeCheckbox={handleNativeCheckbox}
-                  getDisabled={getDisabled}
-                  getTaskType={getTaskType}
-                />
-              ))}
-          </div>
-        </div>
+        <AccordionItem key={`${category}_${j}`}>
+          <AccordionHeader>
+            <HeadingWrapper>
+              <h5>
+                <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+                <span>{category}</span>
+              </h5>
+            </HeadingWrapper>
+          </AccordionHeader>
+          <AccordionPanel>
+            <div style={{ padding: '0 0.75rem' }}>
+              {tasks
+                .sort((a, b) => a.label.localeCompare(b.label))
+                .map((task: SubscriptionTask, i: number) => (
+                  <PermissionRow
+                    key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
+                    task={task}
+                    handleToggle={handleQueuedToggle}
+                    handleOneShot={handleOneShot}
+                    handleNativeCheckbox={handleNativeCheckbox}
+                    getDisabled={getDisabled}
+                    getTaskType={getTaskType}
+                  />
+                ))}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
       ))}
-    </>
+    </Accordion>
   );
 
   return (

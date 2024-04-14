@@ -1,35 +1,35 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { NoAccounts } from '../NoAccounts';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { Identicon } from '@app/library/Identicon';
-import type { FlattenedAccountData } from '@/types/accounts';
-import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
-import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
-import type { AnyJson } from '@/types/misc';
-import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
-import type { ChainID } from '@/types/chains';
-import type {
-  WrappedSubscriptionTasks,
-  SubscriptionTask,
-} from '@/types/subscriptions';
-import { useManage } from './provider';
-import { getIcon } from '@/renderer/Utils';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import {
   Accordion,
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
+import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { getIcon } from '@/renderer/Utils';
+import { Identicon } from '@app/library/Identicon';
+import { NoAccounts } from '../NoAccounts';
+import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
+import { useManage } from './provider';
+import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
+import type { AnyJson } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import type { FlattenedAccountData } from '@/types/accounts';
+import type {
+  WrappedSubscriptionTasks,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 
 export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
 
-  // Utility: Copy tasks.
+  // Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
     tasks.map((t) => ({
       ...t,
