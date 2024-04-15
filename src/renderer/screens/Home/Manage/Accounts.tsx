@@ -16,7 +16,7 @@ import { NoAccounts } from '../NoAccounts';
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import { useManage } from './provider';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
-import type { AnyJson } from '@/types/misc';
+import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type {
@@ -25,11 +25,11 @@ import type {
 } from '@/types/subscriptions';
 
 export const Accounts = ({
-  setSection,
-  setBreadcrumb,
   addresses,
+  setBreadcrumb,
+  setSection,
   setTypeClicked,
-}: AnyJson) => {
+}: AccountsProps) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();

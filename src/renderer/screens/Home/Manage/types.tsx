@@ -2,17 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { FlattenedAccountData } from '@/types/accounts';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
-export interface PermissionsProps {
+export interface AccountsProps {
+  addresses: FlattenedAccountData[];
+  setBreadcrumb: (s: string) => void;
   setSection: (n: number) => void;
-  section: number;
+  setTypeClicked: (t: SubscriptionTaskType) => void;
+}
+
+export interface PermissionsProps {
   breadcrumb: string;
+  section: number;
   typeClicked: SubscriptionTaskType;
+  setSection: (n: number) => void;
 }
 
 export interface PermissionRowProps {
