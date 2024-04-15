@@ -9,6 +9,10 @@ import type {
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
+export interface ManageProps {
+  addresses: FlattenedAccountData[];
+}
+
 export interface AccountsProps {
   addresses: FlattenedAccountData[];
   setBreadcrumb: (s: string) => void;
