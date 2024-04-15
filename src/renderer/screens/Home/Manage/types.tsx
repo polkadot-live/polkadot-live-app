@@ -8,6 +8,13 @@ import type {
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
+export interface PermissionsProps {
+  setSection: (n: number) => void;
+  section: number;
+  breadcrumb: string;
+  typeClicked: SubscriptionTaskType;
+}
+
 export interface PermissionRowProps {
   task: SubscriptionTask;
   getDisabled: (task: SubscriptionTask) => boolean;

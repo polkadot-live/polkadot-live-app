@@ -2,40 +2,40 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  AccountsWrapper,
+  BreadcrumbsWrapper,
+  HeadingWrapper,
+} from './Wrappers';
+import {
   Accordion,
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { AnyJson } from '@/types/misc';
-import type {
-  SubscriptionTask,
-  SubscriptionTaskType,
-  WrappedSubscriptionTasks,
-} from '@/types/subscriptions';
-import {
-  AccountsWrapper,
-  BreadcrumbsWrapper,
-  HeadingWrapper,
-} from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { PermissionsProps } from './types';
+import type {
+  SubscriptionTask,
+  SubscriptionTaskType,
+  WrappedSubscriptionTasks,
+} from '@/types/subscriptions';
 
 export const Permissions = ({
-  setSection,
-  section,
   breadcrumb,
+  section,
   typeClicked,
-}: AnyJson) => {
+  setSection,
+}: PermissionsProps) => {
   const { updateTask, handleQueuedToggle } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
