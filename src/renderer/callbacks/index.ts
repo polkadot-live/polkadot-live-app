@@ -131,7 +131,7 @@ export class Callbacks {
       }
 
       // Exit early if nothing has changed.
-      if (isOneShot || isSame) {
+      if (!isOneShot && isSame) {
         return;
       }
 

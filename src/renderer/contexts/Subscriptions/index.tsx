@@ -137,33 +137,26 @@ export const SubscriptionsProvider = ({
     setNativeChecked: AnyFunction
   ) => {
     // Invert the task status.
-    const newWrapped: WrappedSubscriptionTasks = {
-      ...cached,
-      tasks: [
-        {
-          ...cached.tasks[0],
-          status: cached.tasks[0].status === 'enable' ? 'disable' : 'enable',
-          enableOsNotifications: false,
-        },
-      ],
-    };
+    const task: SubscriptionTask = { ...cached.tasks[0] };
+    task.status = task.status === 'enable' ? 'disable' : 'enable';
+    task.enableOsNotifications = false;
 
     // Send task and its associated data to backend.
-    switch (newWrapped.type) {
+    switch (cached.type) {
       case 'chain': {
         // Subscribe to and persist task.
-        await SubscriptionsController.subscribeChainTask(newWrapped.tasks[0]);
-        await window.myAPI.updatePersistedChainTask(newWrapped.tasks[0]);
+        await SubscriptionsController.subscribeChainTask(task);
+        await window.myAPI.updatePersistedChainTask(task);
 
         // Update react state.
-        updateTask('chain', newWrapped.tasks[0]);
+        updateTask('chain', task);
         break;
       }
       case 'account': {
         // Fetch account task belongs to.
         const account = AccountsController.get(
-          newWrapped.tasks[0].chainId,
-          newWrapped.tasks[0].account?.address
+          task.chainId,
+          task.account?.address
         );
 
         if (!account) {
@@ -171,25 +164,18 @@ export const SubscriptionsProvider = ({
         }
 
         // Subscribe to and persist the task.
-        await SubscriptionsController.subscribeAccountTask(
-          newWrapped.tasks[0],
-          account
-        );
+        await SubscriptionsController.subscribeAccountTask(task, account);
 
         // Render checbox correctly.
         setNativeChecked(false);
 
         await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(newWrapped.tasks[0]),
+          JSON.stringify(task),
           JSON.stringify(account.flatten())
         );
 
         // Update react state.
-        updateTask(
-          'account',
-          newWrapped.tasks[0],
-          newWrapped.tasks[0].account?.address
-        );
+        updateTask('account', task, task.account?.address);
 
         break;
       }
@@ -199,7 +185,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.checkAndHandleApiDisconnect(newWrapped.tasks[0]);
+    await ApiUtils.checkAndHandleApiDisconnect(task);
 
     // Update chain state.
     for (const apiData of APIsController.getAllFlattenedAPIData()) {
