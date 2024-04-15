@@ -12,7 +12,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { ValidatorData } from '@/types/accounts';
+import type { AccountBalance, ValidatorData } from '@/types/accounts';
 import { getUnclaimedPayouts } from './nominating';
 
 export class Callbacks {
@@ -114,38 +114,44 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['balance']);
 
       // Get the received balance.
-      const received = {
+      const received: AccountBalance = {
         free: new BigNumber(data.data.free),
         reserved: new BigNumber(data.data.reserved),
         frozen: new BigNumber(data.data.frozen),
         nonce: new BigNumber(data.nonce),
       };
 
-      // Exit early if balance hasn't changed.
-      const changed =
-        received.free.eq(account.balance!.free) &&
-        received.reserved.eq(account.balance!.reserved) &&
-        received.frozen.eq(account.balance!.frozen) &&
-        received.nonce.eq(account.balance!.nonce);
+      let isSame = false;
+      if (account.balance) {
+        isSame =
+          received.free.eq(account.balance.free) &&
+          received.reserved.eq(account.balance.reserved) &&
+          received.frozen.eq(account.balance.frozen) &&
+          received.nonce.eq(account.balance.nonce);
+      }
 
-      if (!isOneShot && changed) {
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
         return;
       }
 
-      if (changed) {
-        // Update account data.
+      // Update account data if balance has changed.
+      if (!isSame) {
         account.balance = received;
         await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Create event and parse into same format as persisted events.
-      const event = EventsController.getEvent(entry, { ...received });
+      const event = EventsController.getEvent(entry, { received });
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
       const notification =
         entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account)
+          ? NotificationsController.getNotification(entry, account, {
+              received,
+            })
           : null;
 
       // Send event and notification data to main process.
@@ -227,14 +233,14 @@ export class Callbacks {
       // Get the received pool state.
       const receivedPoolState: string = data.toHuman().state;
       const prevState = account.nominationPoolData!.poolState;
-      const changed = prevState === receivedPoolState;
+      const isSame = prevState === receivedPoolState;
 
-      if (!isOneShot && changed) {
+      if (!isOneShot && isSame) {
         return;
       }
 
       // Update account and entry data.
-      if (changed) {
+      if (!isSame) {
         account.nominationPoolData!.poolState = receivedPoolState;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
@@ -277,14 +283,14 @@ export class Callbacks {
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
       const prevName = account.nominationPoolData!.poolName;
-      const changed = prevName === receivedPoolName;
+      const isSame = prevName === receivedPoolName;
 
-      if (!isOneShot && changed) {
+      if (!isOneShot && isSame) {
         return;
       }
 
       // Update account and entry data.
-      if (changed) {
+      if (!isSame) {
         account.nominationPoolData!.poolName = receivedPoolName;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
@@ -330,18 +336,18 @@ export class Callbacks {
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
 
-      const changed =
+      const isSame =
         poolRoles.depositor === depositor &&
         poolRoles.root === root &&
         poolRoles.nominator === nominator &&
         poolRoles.bouncer === bouncer;
 
-      if (!isOneShot && changed) {
+      if (!isOneShot && isSame) {
         return;
       }
 
       // Update account and entry data.
-      if (changed) {
+      if (!isSame) {
         // eslint-disable-next-line prettier/prettier
         account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
         await AccountsController.set(account.chain, account);
@@ -389,19 +395,19 @@ export class Callbacks {
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
 
-      const changed =
+      const isSame =
         // eslint-disable-next-line prettier/prettier
         JSON.stringify(poolCommission.changeRate) === JSON.stringify(changeRate) &&
         JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
         poolCommission.throttleFrom === (throttleFrom as string | null) &&
         poolCommission.max === (max as string | null);
 
-      if (!isOneShot && changed) {
+      if (!isOneShot && isSame) {
         return;
       }
 
       // Update account and entry data.
-      if (changed) {
+      if (!isSame) {
         // eslint-disable-next-line prettier/prettier
         account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
         await AccountsController.set(account.chain, account);

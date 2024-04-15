@@ -1,8 +1,12 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { AnyFunction } from '@w3ux/utils/types';
 import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type {
+  SubscriptionTask,
+  WrappedSubscriptionTasks,
+} from '@/types/subscriptions';
 
 export interface SubscriptionsContextInterface {
   chainSubscriptions: Map<ChainID, SubscriptionTask[]>;
@@ -13,4 +17,8 @@ export interface SubscriptionsContextInterface {
   getAccountSubscriptions: (a: string) => SubscriptionTask[];
   updateTask: (type: string, task: SubscriptionTask, address?: string) => void;
   updateAccountNameInTasks: (address: string, newName: string) => void;
+  handleQueuedToggle: (
+    cached: WrappedSubscriptionTasks,
+    setNativeCheckbox: AnyFunction
+  ) => Promise<void>;
 }

@@ -30,7 +30,7 @@ export class NotificationsController {
       case 'subscribe:account:balance': {
         return {
           title: 'Free Balance',
-          body: getFreeBalanceText(account),
+          body: getFreeBalanceText(miscData.received.free, account.chain),
         };
       }
       case 'subscribe:account:nominationPools:rewards': {

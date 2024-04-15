@@ -1,8 +1,13 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { APIsController } from '@/controller/renderer/APIsController';
 import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { AnyJson } from '@/types/misc';
@@ -20,20 +25,25 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { PermissionRow } from './PermissionRow';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
-import { useChains } from '@/renderer/contexts/Chains';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { TaskQueue } from '@/orchestrators/TaskQueue';
-import * as ApiUtils from '@/utils/ApiUtils';
 import type { AnyFunction } from '@w3ux/utils/types';
 
-export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
-  const { updateTask } = useSubscriptions();
+export const Permissions = ({
+  setSection,
+  section,
+  breadcrumb,
+  typeClicked,
+}: AnyJson) => {
+  const { updateTask, handleQueuedToggle } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
-  const { addChain } = useChains();
   const { online: isOnline } = useOnlineStatus();
+
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >([0, 1, 2]);
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -41,115 +51,17 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   }, [renderedSubscriptions]);
 
-  const handleQueuedToggle = async (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
-  ) => {
-    const p = async () => await handleToggle(cached, setNativeChecked);
-    TaskQueue.add(p);
-  };
-
-  /// Handle a toggle, which sends a subscription task to the back-end
-  /// and updates the front-end subscriptions state.
+  /// Handle a toggle and update rendered subscription state.
   const handleToggle = async (
     cached: WrappedSubscriptionTasks,
     setNativeChecked: AnyFunction
   ) => {
-    // Invert the task status.
-    const newStatus =
-      cached.tasks[0].status === 'enable' ? 'disable' : 'enable';
+    await handleQueuedToggle(cached, setNativeChecked);
 
-    // Reference to actionArgs.
-    const args = cached.tasks[0].actionArgs;
-
-    // Copy task and set new status.
-    const newTask: SubscriptionTask = {
-      ...cached.tasks[0],
-      actionArgs: args ? [...args] : undefined,
-      status: newStatus,
-      enableOsNotifications: false,
-    };
-
-    // Copy the wrapped subscription and set the new task.
-    const newWrapped: WrappedSubscriptionTasks = {
-      ...cached,
-      tasks: [
-        {
-          ...newTask,
-          actionArgs: args ? [...args] : undefined,
-          status: newStatus,
-        },
-      ],
-    };
-
-    // Send task and its associated data to backend.
-    let result = true;
-
-    switch (newWrapped.type) {
-      case 'chain': {
-        // Subscribe to and persist task.
-        await SubscriptionsController.subscribeChainTask(newWrapped.tasks[0]);
-        await window.myAPI.updatePersistedChainTask(newWrapped.tasks[0]);
-        break;
-      }
-      case 'account': {
-        // Fetch account task belongs to.
-        const account = AccountsController.get(
-          newWrapped.tasks[0].chainId,
-          newWrapped.tasks[0].account?.address
-        );
-
-        if (!account) {
-          result = false;
-          break;
-        }
-
-        // Subscribe to and persist the task.
-        await SubscriptionsController.subscribeAccountTask(
-          newWrapped.tasks[0],
-          account
-        );
-
-        // Render checbox correctly.
-        setNativeChecked(false);
-
-        await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(newWrapped.tasks[0]),
-          JSON.stringify(account.flatten())
-        );
-
-        // Update react state.
-        updateTask(
-          'account',
-          newWrapped.tasks[0],
-          newWrapped.tasks[0].account?.address
-        );
-
-        break;
-      }
-      default: {
-        result = false;
-        return;
-      }
-    }
-
-    // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.checkAndHandleApiDisconnect(newWrapped.tasks[0]);
-
-    // Update chain state.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
-
-    if (result) {
-      // Update subscriptions context state.
-      cached.tasks[0].account?.address
-        ? updateTask(cached.type, newTask, cached.tasks[0].account.address)
-        : updateTask(cached.type, newTask);
-
-      // Update rendererd subscription tasks state.
-      updateRenderedSubscriptions(newTask);
-    }
+    // Update rendererd subscription tasks state.
+    const task: SubscriptionTask = cached.tasks[0];
+    task.status = task.status === 'enable' ? 'disable' : 'enable';
+    updateRenderedSubscriptions(task);
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -270,34 +182,53 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   };
 
+  /// Get dynamic accordion indices state for account categories or
+  /// static accordion indices for chain categories.
+  const getAccordionIndices = () =>
+    typeClicked === 'account' ? accordionActiveIndices : [0];
+
+  /// Provide the external indices setter if we are about to render
+  /// account subscription tasks in the accordion.
+  const getAccordionIndicesSetter = () =>
+    typeClicked === 'account' ? setAccordionActiveIndices : undefined;
+
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
-    <>
+    <Accordion
+      multiple
+      defaultIndex={getAccordionIndices()}
+      setExternalIndices={getAccordionIndicesSetter()}
+    >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
-        <div key={`${category}_${j}`}>
-          <HeadingWrapper>
-            <h5>
-              <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-              <span>{category}</span>
-            </h5>
-          </HeadingWrapper>
-
-          {tasks
-            .sort((a, b) => a.label.localeCompare(b.label))
-            .map((task: SubscriptionTask, i: number) => (
-              <PermissionRow
-                key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
-                task={task}
-                handleToggle={handleQueuedToggle}
-                handleOneShot={handleOneShot}
-                handleNativeCheckbox={handleNativeCheckbox}
-                getDisabled={getDisabled}
-                getTaskType={getTaskType}
-              />
-            ))}
-        </div>
+        <AccordionItem key={`${category}_${j}`}>
+          <AccordionHeader>
+            <HeadingWrapper>
+              <h5>
+                <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+                <span>{category}</span>
+              </h5>
+            </HeadingWrapper>
+          </AccordionHeader>
+          <AccordionPanel>
+            <div style={{ padding: '0 0.75rem' }}>
+              {tasks
+                .sort((a, b) => a.label.localeCompare(b.label))
+                .map((task: SubscriptionTask, i: number) => (
+                  <PermissionRow
+                    key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
+                    task={task}
+                    handleToggle={handleToggle}
+                    handleOneShot={handleOneShot}
+                    handleNativeCheckbox={handleNativeCheckbox}
+                    getDisabled={getDisabled}
+                    getTaskType={getTaskType}
+                  />
+                ))}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
       ))}
-    </>
+    </Accordion>
   );
 
   return (
@@ -317,13 +248,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         </ul>
       </BreadcrumbsWrapper>
       <AccountsWrapper>
-        <div style={{ padding: '0 0.75rem' }}>
-          {renderedSubscriptions.tasks.length > 0 ? (
-            renderSubscriptionTasks()
-          ) : (
-            <p>No subscriptions for this item.</p>
-          )}
-        </div>
+        {/* Render separate accordions for account and chain subscription tasks. */}
+        {typeClicked === 'account' && renderSubscriptionTasks()}
+        {typeClicked === 'chain' && renderSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );
