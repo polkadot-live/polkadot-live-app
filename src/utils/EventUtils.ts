@@ -5,7 +5,6 @@ import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
-import type { Account } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
 import type {
@@ -35,10 +34,6 @@ export const pushUniqueEvent = (
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
-    case 'subscribe:account:balance': {
-      push = filter_query_system_account(events, event);
-      break;
-    }
     case 'subscribe:account:nominationPools:rewards': {
       push = filter_nomination_pool_rewards(events, event);
       break;
@@ -91,7 +86,12 @@ export const pushUniqueEvent = (
  * @name filter_query_system_account
  * @summary The new event is considered a duplicate if another event has
  * matching address and balance data.
+ *
+ * TODO:
+ * Fix (something wrong with comparing account data and event data)
+ * This filter function is currently not being used.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const filter_query_system_account = (
   events: EventCallback[],
   event: EventCallback
@@ -509,13 +509,13 @@ export const getNominationPoolStateText = (
  * @name getFreeBalanceText
  * @summary Text to render for transfer events.
  */
-export const getFreeBalanceText = (account: Account) => {
+export const getFreeBalanceText = (newBalance: BigNumber, chainId: ChainID) => {
   const freeBalance = planckToUnit(
-    new BigNumber(account.balance!.free.toString()),
-    chainUnits(account.chain)
+    newBalance as BigNumber,
+    chainUnits(chainId)
   );
 
-  return `${freeBalance} ${chainCurrency(account.chain)}`;
+  return `${freeBalance} ${chainCurrency(chainId)}`;
 };
 
 /**

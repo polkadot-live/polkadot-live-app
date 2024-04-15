@@ -143,6 +143,7 @@ export const SubscriptionsProvider = ({
         {
           ...cached.tasks[0],
           status: cached.tasks[0].status === 'enable' ? 'disable' : 'enable',
+          enableOsNotifications: false,
         },
       ],
     };

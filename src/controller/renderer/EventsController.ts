@@ -88,6 +88,7 @@ export class EventsController {
        */
       case 'subscribe:account:balance': {
         const account = checkAccountWithProperties(entry, ['balance']);
+        const newBalance = miscData.received.free;
 
         const { chainId } = entry.task;
         const address = account.address;
@@ -106,7 +107,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Free Balance',
-          subtitle: getFreeBalanceText(account),
+          subtitle: getFreeBalanceText(newBalance, chainId),
           data: {
             balances: miscData,
           },
