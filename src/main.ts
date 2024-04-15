@@ -197,6 +197,11 @@ app.whenReady().then(async () => {
    * Events
    */
 
+  // Delete outdated reward events that have been persisted to the store.
+  ipcMain.handle('app:events:delete:outdated', async (_, e: EventCallback) => {
+    EventsController.removeOutdatedEvents(e);
+  });
+
   // Persist an event and execut OS notification if event was persisted.
   // Report event back to frontend after an event UID is assigned.
   ipcMain.on(
