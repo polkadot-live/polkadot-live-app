@@ -20,6 +20,7 @@ export function Accordion({
   children,
   multiple,
   defaultIndex,
+  setExternalIndices,
 }: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
@@ -32,15 +33,23 @@ export function Accordion({
         return index === (activeIndex as number) ? -1 : index;
       }
 
-      const activeIndices = currentActiveIndex as number[];
+      let activeIndices = currentActiveIndex as number[];
 
-      // Remove index if it's in the active array.
       if (activeIndices.includes(index)) {
-        return activeIndices.filter((i) => i !== index);
+        // Remove index if it's in the active array.
+        activeIndices = activeIndices.filter((i) => i !== index);
+      } else {
+        // Otherwise, add index to active array.
+        activeIndices = activeIndices.concat(index);
       }
 
-      // Otherwise, add index to active array.
-      return activeIndices.concat(index);
+      // Set external indices state.
+      if (setExternalIndices !== undefined) {
+        setExternalIndices(activeIndices);
+      }
+
+      // Update internal indices state.
+      return activeIndices;
     });
   }
 

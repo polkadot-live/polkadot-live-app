@@ -1,12 +1,13 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@/types/misc';
 import { useState } from 'react';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
+import type { AnyJson } from '@/types/misc';
+import type { SubscriptionTaskType } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: AnyJson) => {
   // Store the currently active maange tab.
@@ -14,6 +15,9 @@ export const Manage = ({ addresses }: AnyJson) => {
 
   // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+
+  // Whether the user has clicked on an account or chain.
+  const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
 
   return (
     <CarouselWrapper
@@ -39,6 +43,7 @@ export const Manage = ({ addresses }: AnyJson) => {
             setSection={setSection}
             setBreadcrumb={setBreadcrumb}
             addresses={addresses}
+            setTypeClicked={setTypeClicked}
           />
         </Wrapper>
       </div>
@@ -48,6 +53,7 @@ export const Manage = ({ addresses }: AnyJson) => {
           setSection={setSection}
           section={section}
           breadcrumb={breadcrumb}
+          typeClicked={typeClicked}
         />
       </div>
     </CarouselWrapper>

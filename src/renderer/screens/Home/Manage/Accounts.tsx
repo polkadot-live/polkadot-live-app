@@ -24,7 +24,12 @@ import type {
   SubscriptionTask,
 } from '@/types/subscriptions';
 
-export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
+export const Accounts = ({
+  setSection,
+  setBreadcrumb,
+  addresses,
+  setTypeClicked,
+}: AnyJson) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
@@ -41,6 +46,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
     const tasks = getChainSubscriptions(chain as ChainID);
     const copy = copyTasks(tasks);
 
+    setTypeClicked('chain');
     setRenderedSubscriptions({
       type: 'chain',
       tasks: copy,
@@ -54,6 +60,7 @@ export const Accounts = ({ setSection, setBreadcrumb, addresses }: AnyJson) => {
     const tasks = getAccountSubscriptions(address);
     const copy = copyTasks(tasks);
 
+    setTypeClicked('account');
     setRenderedSubscriptions({
       type: 'account',
       address,

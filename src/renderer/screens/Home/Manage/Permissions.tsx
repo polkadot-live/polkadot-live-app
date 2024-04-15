@@ -27,7 +27,7 @@ import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { PermissionRow } from './PermissionRow';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useChains } from '@/renderer/contexts/Chains';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -35,11 +35,21 @@ import { TaskQueue } from '@/orchestrators/TaskQueue';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { AnyFunction } from '@w3ux/utils/types';
 
-export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
+export const Permissions = ({
+  setSection,
+  section,
+  breadcrumb,
+  typeClicked,
+}: AnyJson) => {
   const { updateTask } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { addChain } = useChains();
   const { online: isOnline } = useOnlineStatus();
+
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >([0, 1, 2]);
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -276,9 +286,23 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
     }
   };
 
+  /// Get dynamic accordion indices state for account categories or
+  /// static accordion indices for chain categories.
+  const getAccordionIndices = () =>
+    typeClicked === 'account' ? accordionActiveIndices : [0];
+
+  /// Provide the external indices setter if we are about to render
+  /// account subscription tasks in the accordion.
+  const getAccordionIndicesSetter = () =>
+    typeClicked === 'account' ? setAccordionActiveIndices : undefined;
+
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
-    <Accordion multiple defaultIndex={[0, 1, 2]}>
+    <Accordion
+      multiple
+      defaultIndex={getAccordionIndices()}
+      setExternalIndices={getAccordionIndicesSetter()}
+    >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
           <AccordionHeader>
@@ -328,11 +352,9 @@ export const Permissions = ({ setSection, section, breadcrumb }: AnyJson) => {
         </ul>
       </BreadcrumbsWrapper>
       <AccountsWrapper>
-        {renderedSubscriptions.tasks.length > 0 ? (
-          renderSubscriptionTasks()
-        ) : (
-          <p>No subscriptions for this item.</p>
-        )}
+        {/* Render separate accordions for account and chain subscription tasks. */}
+        {typeClicked === 'account' && renderSubscriptionTasks()}
+        {typeClicked === 'chain' && renderSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );
