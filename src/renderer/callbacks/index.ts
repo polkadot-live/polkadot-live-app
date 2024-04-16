@@ -633,14 +633,18 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
+
+      // Exit early if this era validator data is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
       // Get an array of changed validators.
+      const { api } = await ApiUtils.getApiInstance(account.chain);
       const validatorData = account.nominatingData!.validators;
       const changedValidators: ValidatorData[] = [];
 
@@ -656,7 +660,7 @@ export class Callbacks {
       }
 
       // Exit early if there are no commission changes.
-      if (changedValidators.length > 0 && !isOneShot) {
+      if (changedValidators.length === 0 && !isOneShot) {
         return;
       }
 
