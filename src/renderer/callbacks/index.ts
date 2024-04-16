@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import {
   checkAccountWithProperties,
   getAccountExposed,
+  getAccountExposedWestend,
 } from '@/utils/AccountUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
 import { getUnclaimedPayouts } from './nominating';
@@ -537,7 +538,7 @@ export class Callbacks {
       const { api } = await ApiUtils.getApiInstance(account.chain);
       const exposed = await getAccountExposed(api, era, account);
 
-      // Update account data if one-shot got new data.
+      // Update account data.
       if (account.nominatingData!.lastCheckedEra < era) {
         account.nominatingData!.exposed = exposed;
         account.nominatingData!.lastCheckedEra = era;
@@ -576,45 +577,26 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const validators = account.nominatingData!.validators.map(
-        (v) => v.validatorId
-      );
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      let exposed = false;
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-      // Iterate validators account is nominating.
-      validatorLoop: for (const vId of validators) {
-        // Check if target address is the validator.
-        if (account.address === vId) {
-          exposed = true;
-          break;
-        }
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const vs = account.nominatingData!.validators;
+      const exposed = await getAccountExposedWestend(api, era, account, vs);
 
-        // Iterate validator paged exposures.
-        const result: AnyData =
-          await api.query.staking.erasStakersPaged.entries(era, vId);
-
-        let counter = 0;
-
-        for (const item of result) {
-          for (const { who } of item[1].toHuman().others) {
-            // Move to next validator if account is not in top 512 stakers for this validator.
-            if (counter >= 512) {
-              continue validatorLoop;
-            }
-            // We know the account is exposed for this era if their address is found.
-            if ((who as string) === account.address) {
-              exposed = true;
-              break validatorLoop;
-            }
-            counter += 1;
-          }
-        }
+      // Update account data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
