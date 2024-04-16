@@ -47,7 +47,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     const { address } = event.who.data as EventAccountData;
 
     switch (taskAction) {
-      case 'subscribe:account:nominationPools:rewards': {
+      case 'subscribe:account:nominationPools:rewards':
+      case 'subscribe:account:nominating:pendingPayouts': {
         setEventsState((prev) => {
           const cloned = new Map(prev);
           const chainId = getEventChainId(event);

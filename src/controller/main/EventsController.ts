@@ -148,10 +148,10 @@ export class EventsController {
    */
   static removeOutdatedEvents(event: EventCallback) {
     switch (event.taskAction) {
-      case 'subscribe:account:nominationPools:rewards': {
+      case 'subscribe:account:nominationPools:rewards':
+      case 'subscribe:account:nominating:pendingPayouts': {
         const { address, chainId } = event.who.data as EventAccountData;
         const { taskAction } = event;
-
         const all = EventsController.getEventsFromStore();
 
         const updated = all.filter((ev) => {
