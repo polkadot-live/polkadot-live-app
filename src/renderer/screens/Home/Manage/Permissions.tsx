@@ -59,7 +59,7 @@ export const Permissions = ({
     await handleQueuedToggle(cached, setNativeChecked);
 
     // Update rendererd subscription tasks state.
-    const task: SubscriptionTask = cached.tasks[0];
+    const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
   };
@@ -147,7 +147,7 @@ export const Permissions = ({
     }, 550);
   };
 
-  /// Handle clicking the native check.
+  /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
     e: React.ChangeEvent<HTMLInputElement>,
     task: SubscriptionTask,
