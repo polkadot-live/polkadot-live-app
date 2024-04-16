@@ -72,10 +72,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
               // Otherwise, keep the event.
               return true;
             });
-
             cloned.set(chainId, curEvents);
           }
-
           return cloned;
         });
         break;

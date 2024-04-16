@@ -194,7 +194,7 @@ export class EventsController {
             },
             {
               uri: `https://staking.polkadot.network/#/pools?n=${chainId}&a=${address}`,
-              text: undefined,
+              text: 'Dashboard',
             },
           ],
         };

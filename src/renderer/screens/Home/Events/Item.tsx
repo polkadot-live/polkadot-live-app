@@ -148,14 +148,11 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                         }}
                       />
                     );
-                  } else {
+                  } else if (source !== 'read-only') {
                     return (
                       <ButtonMono
                         disabled={
-                          event.stale ||
-                          source === 'ledger' ||
-                          source == 'read-only' ||
-                          !isOnline
+                          event.stale || source === 'ledger' || !isOnline
                         }
                         key={`action_${uid}_${i}`}
                         text={text || ''}
