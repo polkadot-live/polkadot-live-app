@@ -3,13 +3,13 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
+import { checkAccountWithProperties } from '@/utils/AccountUtils';
+import { EventsController } from '@/controller/renderer/EventsController';
 import {
-  checkAccountWithProperties,
   getAccountExposed,
   getAccountExposedWestend,
-} from '@/utils/AccountUtils';
-import { EventsController } from '@/controller/renderer/EventsController';
-import { getUnclaimedPayouts } from './nominating';
+  getUnclaimedPayouts,
+} from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';

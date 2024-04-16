@@ -11,6 +11,10 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
+import {
+  getAccountExposed,
+  getAccountExposedWestend,
+} from '@/renderer/callbacks/nominating';
 import type {
   AccountBalance,
   FlattenedAccountData,
@@ -133,94 +137,6 @@ export const setNominatingDataForAccount = async (
 
   // Update account data in controller.
   await AccountsController.set(account.chain, account);
-};
-
-/**
- * @name getAccountExposed
- * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
- */
-export const getAccountExposed = async (
-  api: ApiPromise,
-  era: number,
-  account: Account
-): Promise<boolean> => {
-  const result: AnyData = await api.query.staking.erasStakers.entries(era);
-
-  let exposed = false;
-  for (const val of result) {
-    // Check if account address is the validator.
-    if (val[0].toHuman() === account.address) {
-      exposed = true;
-      break;
-    }
-
-    // Check if account address is nominating this validator.
-    let counter = 0;
-    for (const { who } of val[1].toHuman().others) {
-      if (counter >= 512) {
-        break;
-      } else if (who === account.address) {
-        exposed = true;
-        break;
-      }
-      counter += 1;
-    }
-
-    // Break if the inner loop found exposure.
-    if (exposed) {
-      break;
-    }
-  }
-
-  return exposed;
-};
-
-/**
- * @name getAccountExposedWestend
- * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
- */
-export const getAccountExposedWestend = async (
-  api: ApiPromise,
-  era: number,
-  account: Account,
-  validatorData: ValidatorData[]
-): Promise<boolean> => {
-  const validators = validatorData.map((v) => v.validatorId);
-  let exposed = false;
-
-  // Iterate validators account is nominating.
-  validatorLoop: for (const vId of validators) {
-    // Check if target address is the validator.
-    if (account.address === vId) {
-      exposed = true;
-      break;
-    }
-
-    // Iterate validator paged exposures.
-    const result: AnyData = await api.query.staking.erasStakersPaged.entries(
-      era,
-      vId
-    );
-
-    let counter = 0;
-
-    for (const item of result) {
-      for (const { who } of item[1].toHuman().others) {
-        // Move to next validator if account is not in top 512 stakers for this validator.
-        if (counter >= 512) {
-          continue validatorLoop;
-        }
-        // We know the account is exposed for this era if their address is found.
-        if ((who as string) === account.address) {
-          exposed = true;
-          break validatorLoop;
-        }
-        counter += 1;
-      }
-    }
-  }
-
-  return exposed;
 };
 
 /**
