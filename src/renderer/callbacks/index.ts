@@ -343,7 +343,14 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      const { depositor, root, nominator, bouncer } = data.toHuman().roles;
+      interface Target {
+        depositor: string;
+        root: string;
+        nominator: string;
+        bouncer: string;
+      }
+      const humanData: AnyData = data.toHuman();
+      const { depositor, root, nominator, bouncer }: Target = humanData.roles;
 
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
@@ -401,8 +408,8 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool commission.
-      const { changeRate, current, max, throttleFrom } =
-        data.toHuman().commission;
+      const humanData: AnyData = data.toHuman();
+      const { changeRate, current, max, throttleFrom } = humanData.commission;
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
