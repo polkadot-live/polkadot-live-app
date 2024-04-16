@@ -201,14 +201,14 @@ export const Permissions = ({
     >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
-          <AccordionHeader>
-            <HeadingWrapper>
+          <HeadingWrapper>
+            <AccordionHeader>
               <h5>
                 <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
                 <span>{category}</span>
               </h5>
-            </HeadingWrapper>
-          </AccordionHeader>
+            </AccordionHeader>
+          </HeadingWrapper>
           <AccordionPanel>
             <div style={{ padding: '0 0.75rem' }}>
               {tasks

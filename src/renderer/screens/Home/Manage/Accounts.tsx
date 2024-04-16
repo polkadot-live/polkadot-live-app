@@ -76,14 +76,14 @@ export const Accounts = ({
       <Accordion multiple defaultIndex={[0, 1]}>
         <AccordionItem key={1}>
           {/* Manage Chains */}
-          <AccordionHeader>
-            <HeadingWrapper>
+          <HeadingWrapper>
+            <AccordionHeader>
               <h5 style={{ marginBottom: '0.5rem' }}>
                 <PolkadotIcon className="icon" />
                 Chains
               </h5>
-            </HeadingWrapper>
-          </AccordionHeader>
+            </AccordionHeader>
+          </HeadingWrapper>
           <AccordionPanel>
             <div style={{ padding: '0 0.75rem' }}>
               {Array.from(chainSubscriptions.keys()).map((chain, i) => (
@@ -119,14 +119,14 @@ export const Accounts = ({
         {/* Manage Accounts */}
         {addresses.length ? (
           <AccordionItem>
-            <AccordionHeader>
-              <HeadingWrapper>
+            <HeadingWrapper>
+              <AccordionHeader>
                 <h5 style={{ marginBottom: '0.5rem' }}>
                   <PolkadotIcon className="icon" />
                   Accounts
                 </h5>
-              </HeadingWrapper>
-            </AccordionHeader>
+              </AccordionHeader>
+            </HeadingWrapper>
             <AccordionPanel>
               <div style={{ padding: '0 0.75rem' }}>
                 {addresses.map(
