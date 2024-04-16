@@ -3,8 +3,12 @@
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
-import { checkAccountWithProperties } from '@/utils/AccountUtils';
+import {
+  checkAccountWithProperties,
+  getAccountExposed,
+} from '@/utils/AccountUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
+import { getUnclaimedPayouts } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
@@ -13,7 +17,6 @@ import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { AccountBalance, ValidatorData } from '@/types/accounts';
-import { getUnclaimedPayouts } from './nominating';
 
 export class Callbacks {
   /**
@@ -520,37 +523,26 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const result: AnyData = await api.query.staking.erasStakers.entries(era);
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      let exposed = false;
-      for (const val of result) {
-        // Check if account address is the validator.
-        if (val[0].toHuman() === account.address) {
-          exposed = true;
-          break;
-        }
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-        // Check if account address is nominating this validator.
-        let counter = 0;
-        for (const { who } of val[1].toHuman().others) {
-          if (counter >= 512) {
-            break;
-          } else if (who === account.address) {
-            exposed = true;
-            break;
-          }
-          counter += 1;
-        }
+      // Otherwise get exposure.
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const exposed = await getAccountExposed(api, era, account);
 
-        // Break if the inner loop found exposure.
-        if (exposed) {
-          break;
-        }
+      // Update account data if one-shot got new data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
@@ -698,7 +690,7 @@ export class Callbacks {
       });
 
       // Persist updated data.
-      account.nominatingData = { validators: [...updated] };
+      account.nominatingData!.validators = [...updated];
       await AccountsController.set(account.chain, account);
 
       // Get notification.

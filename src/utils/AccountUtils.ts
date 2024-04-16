@@ -106,8 +106,8 @@ export const setNominatingDataForAccount = async (
 
   // Set account's nominating data.
   const accumulated: ValidatorData[] = [];
-  const resB: AnyData = (await api.query.staking.activeEra()).toHuman();
-  const era: number = parseInt((resB.index as string).replace(/,/g, ''));
+  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
 
   for (const validatorId of nominators.targets as string[]) {
     const prefs: AnyData = (
@@ -120,11 +120,53 @@ export const setNominatingDataForAccount = async (
 
   // Set account's nominator data.
   account.nominatingData = {
+    exposed: await getAccountExposed(api, era, account),
+    lastCheckedEra: era,
     validators: accumulated,
   };
 
   // Update account data in controller.
   await AccountsController.set(account.chain, account);
+};
+
+/**
+ * @name getAccountExposed
+ * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
+ */
+export const getAccountExposed = async (
+  api: ApiPromise,
+  era: number,
+  account: Account
+) => {
+  const result: AnyData = await api.query.staking.erasStakers.entries(era);
+
+  let exposed = false;
+  for (const val of result) {
+    // Check if account address is the validator.
+    if (val[0].toHuman() === account.address) {
+      exposed = true;
+      break;
+    }
+
+    // Check if account address is nominating this validator.
+    let counter = 0;
+    for (const { who } of val[1].toHuman().others) {
+      if (counter >= 512) {
+        break;
+      } else if (who === account.address) {
+        exposed = true;
+        break;
+      }
+      counter += 1;
+    }
+
+    // Break if the inner loop found exposure.
+    if (exposed) {
+      break;
+    }
+  }
+
+  return exposed;
 };
 
 /**
