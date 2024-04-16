@@ -638,46 +638,88 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      // Exit early if this era validator data is already known for this account.
+      // Exit early if nominator data for this era is already known for this account.
       if (!isOneShot && alreadyKnown) {
         return;
       }
 
-      // Get an array of changed validators.
+      // Get live nominator data and check to see if it has changed.
       const { api } = await ApiUtils.getApiInstance(account.chain);
-      const validatorData = account.nominatingData!.validators;
-      const changedValidators: ValidatorData[] = [];
+      const nominatorData: AnyData = (
+        await api.query.staking.nominators(account.address)
+      ).toHuman();
 
-      for (const { validatorId, commission } of validatorData) {
+      // Return if account is no longer nominating.
+      if (nominatorData === null) {
+        account.nominatingData = null;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Return if retrieved `submittedIn` matches account data.
+      const submittedIn: number = parseInt(
+        (nominatorData.submittedIn as string).replace(/,/g, '')
+      );
+
+      const isSame = account.nominatingData!.submittedIn === submittedIn;
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Something may have changed, firstly get new validator info.
+      const accumulated: ValidatorData[] = [];
+
+      for (const validatorId of nominatorData.targets as string[]) {
         const prefs: AnyData = (
           await api.query.staking.erasValidatorPrefs(era, validatorId)
         ).toHuman();
 
-        const nextCommission: string = prefs.commission as string;
-        if (commission !== nextCommission) {
-          changedValidators.push({ validatorId, commission: nextCommission });
+        const commission: string = prefs.commission as string;
+        accumulated.push({ validatorId, commission });
+      }
+
+      // Get an array of changed validators.
+      const changedValidators: ValidatorData[] = [];
+
+      const validatorData = account.nominatingData!.validators;
+      const oldIds = validatorData.map((v) => v.validatorId);
+      const newIds = accumulated.map((v) => v.validatorId);
+
+      const idsInOld = newIds.filter((vid) => oldIds.includes(vid));
+      const idsNew = newIds.filter((vid) => !oldIds.includes(vid));
+
+      // Add old validators with commission changes.
+      for (const vid of idsInOld) {
+        const oldData = validatorData.find((v) => v.validatorId === vid);
+        const newData = accumulated.find((v) => v.validatorId === vid);
+
+        if (!oldData || !newData) {
+          continue;
+        } else if (oldData.commission !== newData.commission) {
+          changedValidators.push(newData);
+        }
+      }
+
+      // Add new validator commissions.
+      for (const vid of idsNew) {
+        const vData = accumulated.find((v) => v.validatorId === vid);
+        if (vData) {
+          changedValidators.push(vData);
         }
       }
 
       // Exit early if there are no commission changes.
-      if (changedValidators.length === 0 && !isOneShot) {
+      if (!isOneShot && changedValidators.length === 0) {
         return;
       }
 
       // Update account nominating data with new commissions.
-      const updated = account.nominatingData!.validators.map((v) => {
-        const changed = changedValidators.find(
-          (x) => x.validatorId === v.validatorId
-        );
-
-        return changed !== undefined
-          ? ({ ...v, commission: changed.commission } as ValidatorData)
-          : v;
-      });
-
-      // Persist updated data.
-      account.nominatingData!.validators = [...updated];
-      await AccountsController.set(account.chain, account);
+      if (changedValidators.length > 0) {
+        account.nominatingData!.validators = [...accumulated];
+        account.nominatingData!.submittedIn = submittedIn;
+        AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
       const notification =

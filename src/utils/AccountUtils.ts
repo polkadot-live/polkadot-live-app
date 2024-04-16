@@ -100,13 +100,20 @@ export const setNominatingDataForAccount = async (
   account: Account
 ) => {
   // Check if account is currently nominating.
-  const resA: AnyData = await api.query.staking.nominators(account.address);
-  const nominators = resA.toHuman();
+  const nominatorData: AnyData = await api.query.staking.nominators(
+    account.address
+  );
+  const nominators = nominatorData.toHuman();
 
   // Return early if account is not nominating.
   if (nominators === null) {
     return;
   }
+
+  // Get submitted in era.
+  const submittedIn: number = parseInt(
+    (nominators.submittedIn as string).replace(/,/g, '')
+  );
 
   // Set account's nominating data.
   const accumulated: ValidatorData[] = [];
@@ -132,6 +139,7 @@ export const setNominatingDataForAccount = async (
   account.nominatingData = {
     exposed,
     lastCheckedEra: era,
+    submittedIn,
     validators: accumulated,
   };
 
