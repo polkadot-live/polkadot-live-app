@@ -6291,24 +6291,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.0.7":
-  version: 11.0.7
-  resolution: "framer-motion@npm:11.0.7"
+"framer-motion@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "framer-motion@npm:11.1.1"
   dependencies:
-    "@emotion/is-prop-valid": "npm:^0.8.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
+    "@emotion/is-prop-valid": "*"
     react: ^18.0.0
     react-dom: ^18.0.0
-  dependenciesMeta:
+  peerDependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  peerDependenciesMeta:
     react:
       optional: true
     react-dom:
       optional: true
-  checksum: 29a483eadfe9e3631478c63c8a8e69d0fa30ff7135a0b27c584a694792d0729476a0168c9d7bd86169032aad364b352e4c4b581299652e542f11881e11f8f0ca
+  checksum: 0f80828f27ab18937a0dee55efacbd124f248f8eb869e581aeabbbbd755eb2cd42f70f5490edf1280abdef3d08c4c0d3f404db8fe6d32583d3842cb575f09cdb
   languageName: node
   linkType: hard
 
@@ -9707,7 +9706,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.1.0"
     expect: "npm:^29.7.0"
     expect-webdriverio: "npm:^4.11.9"
-    framer-motion: "npm:^11.0.7"
+    framer-motion: "npm:^11.1.1"
     html5-qrcode: "npm:^2.3.8"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
