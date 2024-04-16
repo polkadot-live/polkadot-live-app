@@ -2973,6 +2973,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/reporter@npm:8.36.0":
+  version: 8.36.0
+  resolution: "@wdio/reporter@npm:8.36.0"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+    "@wdio/logger": "npm:8.28.0"
+    "@wdio/types": "npm:8.36.0"
+    diff: "npm:^5.0.0"
+    object-inspect: "npm:^1.12.0"
+  checksum: 5758d4437f88ab5841f950f604d4a156e3bd5f65d7339657729ab836d9e46782d63841432c4c3fc67e8f743f4c95744de7a5a18954fa3e18a0fbdc9aa8279615
+  languageName: node
+  linkType: hard
+
 "@wdio/runner@npm:8.32.3":
   version: 8.32.3
   resolution: "@wdio/runner@npm:8.32.3"
@@ -2992,16 +3005,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/spec-reporter@npm:^8.32.2":
-  version: 8.32.2
-  resolution: "@wdio/spec-reporter@npm:8.32.2"
+"@wdio/spec-reporter@npm:^8.36.0":
+  version: 8.36.0
+  resolution: "@wdio/spec-reporter@npm:8.36.0"
   dependencies:
-    "@wdio/reporter": "npm:8.32.2"
-    "@wdio/types": "npm:8.32.2"
+    "@wdio/reporter": "npm:8.36.0"
+    "@wdio/types": "npm:8.36.0"
     chalk: "npm:^5.1.2"
     easy-table: "npm:^1.2.0"
     pretty-ms: "npm:^7.0.0"
-  checksum: dead0376556413cd07a9d7b85c0360dc3f201bbce2bb46e107de1c648fef4dcff53ec62c5e347985267d9fd985e2b385f583909013a8d2ddcb9a4b154b63e0a6
+  checksum: 6afc408da0732a51df861692c74fe8af70ba302d7ba0ced52990ca57ce034431f9fca5f75c0290459067dbf5f0a1bac96ffc444cb95b17a9210273b51007f731
   languageName: node
   linkType: hard
 
@@ -3011,6 +3024,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20.1.0"
   checksum: a6fa5b083ab60059cdd5c80a90f62369486226196e48f9ee91c4dfca8226b6b28b611c059d599dd59c6c930f43612ddf58fcf77095119fb13a3abb95f7ba39f1
+  languageName: node
+  linkType: hard
+
+"@wdio/types@npm:8.36.0":
+  version: 8.36.0
+  resolution: "@wdio/types@npm:8.36.0"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+  checksum: 2ab322d7221e5cd237cdf6c77db0871524804235ac64f00673a76f9c9409788dde04471886966c7f800ba0fbf7752e30e2845694661f77a5b7649a95f3605ad2
   languageName: node
   linkType: hard
 
@@ -9685,7 +9707,7 @@ __metadata:
     "@wdio/globals": "npm:^8.32.3"
     "@wdio/local-runner": "npm:^8.32.3"
     "@wdio/mocha-framework": "npm:^8.32.3"
-    "@wdio/spec-reporter": "npm:^8.32.2"
+    "@wdio/spec-reporter": "npm:^8.36.0"
     "@wdio/types": "npm:^8.32.2"
     "@zondax/ledger-substrate": "npm:^0.41.3"
     auto-launch: "npm:^5.0.6"
