@@ -61,8 +61,9 @@ export const HeadingWrapper = styled.div`
   padding: 0.5rem 1rem;
   z-index: 3;
   opacity: 0.75;
+  user-select: none;
 
-  > h5 {
+  > div > h5 {
     display: flex;
     align-items: center;
     margin: 0.1rem 0;

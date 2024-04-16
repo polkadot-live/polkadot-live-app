@@ -2,40 +2,40 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  AccountsWrapper,
+  BreadcrumbsWrapper,
+  HeadingWrapper,
+} from './Wrappers';
+import {
   Accordion,
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { AnyJson } from '@/types/misc';
-import type {
-  SubscriptionTask,
-  SubscriptionTaskType,
-  WrappedSubscriptionTasks,
-} from '@/types/subscriptions';
-import {
-  AccountsWrapper,
-  BreadcrumbsWrapper,
-  HeadingWrapper,
-} from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { useManage } from './provider';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { PermissionsProps } from './types';
+import type {
+  SubscriptionTask,
+  SubscriptionTaskType,
+  WrappedSubscriptionTasks,
+} from '@/types/subscriptions';
 
 export const Permissions = ({
-  setSection,
-  section,
   breadcrumb,
+  section,
   typeClicked,
-}: AnyJson) => {
+  setSection,
+}: PermissionsProps) => {
   const { updateTask, handleQueuedToggle } = useSubscriptions();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
@@ -59,7 +59,7 @@ export const Permissions = ({
     await handleQueuedToggle(cached, setNativeChecked);
 
     // Update rendererd subscription tasks state.
-    const task: SubscriptionTask = cached.tasks[0];
+    const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
   };
@@ -147,7 +147,7 @@ export const Permissions = ({
     }, 550);
   };
 
-  /// Handle clicking the native check.
+  /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
     e: React.ChangeEvent<HTMLInputElement>,
     task: SubscriptionTask,
@@ -201,14 +201,14 @@ export const Permissions = ({
     >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
-          <AccordionHeader>
-            <HeadingWrapper>
+          <HeadingWrapper>
+            <AccordionHeader>
               <h5>
                 <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
                 <span>{category}</span>
               </h5>
-            </HeadingWrapper>
-          </AccordionHeader>
+            </AccordionHeader>
+          </HeadingWrapper>
           <AccordionPanel>
             <div style={{ padding: '0 0.75rem' }}>
               {tasks

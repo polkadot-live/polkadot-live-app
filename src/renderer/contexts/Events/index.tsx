@@ -5,7 +5,11 @@ import React, { createContext, useContext, useState } from 'react';
 import { pushUniqueEvent, getEventChainId } from '@/utils/EventUtils';
 import * as defaults from './defaults';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type {
+  DismissEvent,
+  EventAccountData,
+  EventCallback,
+} from '@/types/reporter';
 import type {
   EventsContextInterface,
   EventsState,
@@ -35,6 +39,50 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
 
       return cloned;
     });
+  };
+
+  // Remove any outdated events in the state.
+  const removeOutdatedEvents = (event: EventCallback) => {
+    const { taskAction } = event;
+    const { address } = event.who.data as EventAccountData;
+
+    switch (taskAction) {
+      case 'subscribe:account:nominationPools:rewards':
+      case 'subscribe:account:nominating:pendingPayouts': {
+        setEventsState((prev) => {
+          const cloned = new Map(prev);
+          const chainId = getEventChainId(event);
+          let curEvents = cloned.get(chainId);
+
+          // Filter outdated events if any exist.
+          if (curEvents !== undefined) {
+            curEvents = curEvents.filter((ev) => {
+              if (ev.who.origin === 'chain') {
+                return true;
+              }
+
+              // Extract target data from next event.
+              const { taskAction: nextTaskAction } = ev;
+              const { address: nextAddress } = ev.who.data as EventAccountData;
+
+              // Remove event if its task action and address are the same.
+              if (nextTaskAction === taskAction && nextAddress === address) {
+                return false;
+              }
+
+              // Otherwise, keep the event.
+              return true;
+            });
+            cloned.set(chainId, curEvents);
+          }
+          return cloned;
+        });
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   };
 
   // Adds an event to the events state.
@@ -140,6 +188,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         sortChainEvents,
         updateEventsOnAccountRename,
         markStaleEvent,
+        removeOutdatedEvents,
       }}
     >
       {children}

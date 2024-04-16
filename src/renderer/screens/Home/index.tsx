@@ -12,14 +12,14 @@ import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
-import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent } from '@/types/reporter';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
-  const { addEvent, dismissEvent, markStaleEvent } = useEvents();
+  const { addEvent, dismissEvent, markStaleEvent, removeOutdatedEvents } =
+    useEvents();
 
   // Set up app initialization and online/offline switching handlers.
   const { appLoading } = useInitIpcHandlers();
@@ -29,9 +29,15 @@ export const Home = () => {
 
   useEffect(() => {
     // Listen for event callbacks.
-    window.myAPI.reportNewEvent((_: IpcRendererEvent, eventData: AnyJson) => {
-      addEvent({ ...eventData });
-    });
+    window.myAPI.reportNewEvent(
+      (_: IpcRendererEvent, eventData: EventCallback) => {
+        // Remove any outdated events in the state.
+        removeOutdatedEvents(eventData);
+
+        // Add received event to state.
+        addEvent({ ...eventData });
+      }
+    );
 
     // Listen for stale events.
     window.myAPI.reportStaleEvent(

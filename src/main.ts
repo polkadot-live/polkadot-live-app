@@ -207,6 +207,10 @@ app.whenReady().then(async () => {
       notification: NotificationData | null,
       isOneShot: boolean
     ) => {
+      // Remove any outdated events of the same type.
+      EventsController.removeOutdatedEvents(e);
+
+      // Persist new event to store.
       const { event: eventWithUid, wasPersisted } =
         EventsController.persistEvent(e);
 

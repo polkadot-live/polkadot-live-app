@@ -109,7 +109,9 @@ export class EventsController {
           title: 'Free Balance',
           subtitle: getFreeBalanceText(newBalance, chainId),
           data: {
-            balances: miscData,
+            free: miscData.received.free.toString(),
+            reserved: miscData.received.reserved.toString(),
+            nonce: miscData.received.nonce.toString(),
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -192,7 +194,7 @@ export class EventsController {
             },
             {
               uri: `https://staking.polkadot.network/#/pools?n=${chainId}&a=${address}`,
-              text: undefined,
+              text: 'Dashboard',
             },
           ],
         };

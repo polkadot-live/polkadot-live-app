@@ -6,10 +6,10 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
-import type { AnyJson } from '@/types/misc';
+import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
-export const Manage = ({ addresses }: AnyJson) => {
+export const Manage = ({ addresses }: ManageProps) => {
   // Store the currently active maange tab.
   const [section, setSection] = useState<number>(0);
 

@@ -75,7 +75,12 @@ export function AccordionHeader({ children }: { children: ReactNode }) {
   const { index, onChangeIndex } = useAccordion();
 
   return (
-    <motion.div onClick={() => onChangeIndex(index)}>{children}</motion.div>
+    <motion.div
+      style={{ userSelect: 'none' }}
+      onClick={() => onChangeIndex(index)}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -90,6 +95,7 @@ export function AccordionPanel({ children }: { children: ReactNode }) {
           animate={{ height: 'auto' }}
           exit={{ height: 0 }}
           transition={{ type: 'spring', duration: 0.2, bounce: 0 }}
+          style={{ userSelect: 'none' }}
         >
           {children}
         </motion.div>

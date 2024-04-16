@@ -34,6 +34,10 @@ export const pushUniqueEvent = (
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
+    case 'subscribe:account:balance': {
+      push = filter_query_system_account(events, event);
+      break;
+    }
     case 'subscribe:account:nominationPools:rewards': {
       push = filter_nomination_pool_rewards(events, event);
       break;
@@ -91,27 +95,24 @@ export const pushUniqueEvent = (
  * Fix (something wrong with comparing account data and event data)
  * This filter function is currently not being used.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const filter_query_system_account = (
   events: EventCallback[],
   event: EventCallback
 ) => {
   interface Target {
-    balances: {
-      free: BigNumber;
-      reserved: BigNumber;
-      nonce: BigNumber;
-    };
+    free: string;
+    reserved: string;
+    nonce: string;
   }
 
   const { address } = event.who.data as EventAccountData;
-  const { balances }: Target = event.data;
+  const balances: Target = event.data;
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const { balances: nextBalances }: Target = e.data;
+      const nextBalances: Target = e.data;
 
       if (
         address === nextAddress &&
