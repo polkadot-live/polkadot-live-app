@@ -187,15 +187,23 @@ export class Callbacks {
       const pendingRewardsPlanck: BigNumber =
         await api.call.nominationPoolsApi.pendingRewards(account.address);
 
-      // Return if pending rewards is zero.
-      if (!isOneShot && pendingRewardsPlanck.eq(0)) {
+      const isSame =
+        account.nominationPoolData!.poolPendingRewards.eq(pendingRewardsPlanck);
+
+      // Return if pending rewards is zero or no change.
+      if (
+        (!isOneShot && isSame) ||
+        (!isOneShot && pendingRewardsPlanck.eq(0))
+      ) {
         return;
       }
 
       // Update account and entry data.
-      account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
-      await AccountsController.set(chainId, account);
-      entry.task.account = account.flatten();
+      if (!isSame) {
+        account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
+        await AccountsController.set(chainId, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
       const notification =

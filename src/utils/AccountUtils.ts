@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { planckToUnit } from '@w3ux/utils';
-import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import {
   BN,
@@ -186,14 +184,9 @@ const setNominationPoolDataForAccount = async (
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
   // Get pending rewards for the account.
-  const pendingRewardsResult = await api.call.nominationPoolsApi.pendingRewards(
-    account.address
-  );
-
-  const poolPendingRewards = planckToUnit(
-    new BigNumber(pendingRewardsResult.toString()),
-    chainUnits(chainId)
-  );
+  const pendingRewardsResult: AnyJson =
+    await api.call.nominationPoolsApi.pendingRewards(account.address);
+  const poolPendingRewards = new BigNumber(pendingRewardsResult);
 
   // Get nomination pool data.
   const npResult: AnyData = (
