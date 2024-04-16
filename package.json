@@ -80,7 +80,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@ledgerhq/hw-transport-node-hid": "^6.28.4",
-    "@polkadot/api": "^10.11.2",
+    "@polkadot/api": "^10.13.1",
     "@polkadot/rpc-provider": "^10.11.2",
     "@polkadot/types": "^10.11.2",
     "@polkadot/types-codec": "^10.11.2",
