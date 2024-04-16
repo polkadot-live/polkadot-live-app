@@ -83,6 +83,31 @@ export class QueryMultiWrapper {
   }
 
   /**
+   * @name setJustBuilt
+   * @summary Update a task's `justBuilt` flag.
+   */
+  setJustBuilt(entry: ApiCallEntry, flag: boolean) {
+    const { chainId, action } = entry.task;
+    const retrieved = this.subscriptions.get(chainId);
+
+    if (retrieved) {
+      const newEntries = retrieved.callEntries.map((e) =>
+        e.task.action === action
+          ? ({
+              ...e,
+              task: { ...e.task, justBuilt: flag } as SubscriptionTask,
+            } as ApiCallEntry)
+          : e
+      );
+
+      this.subscriptions.set(chainId, {
+        unsub: retrieved.unsub,
+        callEntries: newEntries,
+      });
+    }
+  }
+
+  /**
    * @name handleCallback
    * @summary Main logic to handle entries (subscription tasks).
    */
@@ -91,76 +116,116 @@ export class QueryMultiWrapper {
     dataArr: AnyData,
     chainId: ChainID
   ) {
-    const { action } = entry.task;
+    const { action, justBuilt } = entry.task;
 
-    switch (chainId) {
-      case 'Polkadot':
-      case 'Westend':
-      case 'Kusama': {
-        switch (action) {
-          case 'subscribe:chain:timestamp': {
-            Callbacks.callback_query_timestamp_now(
-              dataArr[entry.task.dataIndex!],
-              entry,
-              this
-            );
-            break;
-          }
-          case 'subscribe:chain:currentSlot': {
-            Callbacks.callback_query_babe_currentSlot(
-              dataArr[entry.task.dataIndex!],
-              entry,
-              this
-            );
-            break;
-          }
-          case 'subscribe:account:balance': {
-            await Callbacks.callback_query_system_account(
+    // Exit early if the task was just built (toggled on).
+    if (justBuilt) {
+      this.setJustBuilt(entry, false);
+      return;
+    }
+
+    switch (action) {
+      case 'subscribe:chain:timestamp': {
+        Callbacks.callback_query_timestamp_now(
+          dataArr[entry.task.dataIndex!],
+          entry,
+          this
+        );
+        break;
+      }
+      case 'subscribe:chain:currentSlot': {
+        Callbacks.callback_query_babe_currentSlot(
+          dataArr[entry.task.dataIndex!],
+          entry,
+          this
+        );
+        break;
+      }
+      case 'subscribe:account:balance': {
+        await Callbacks.callback_query_system_account(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        await Callbacks.callback_nomination_pool_rewards(entry);
+        break;
+      }
+      case 'subscribe:account:nominationPools:state': {
+        await Callbacks.callback_nomination_pool_state(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:renamed': {
+        await Callbacks.callback_nomination_pool_renamed(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:roles': {
+        await Callbacks.callback_nomination_pool_roles(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominationPools:commission': {
+        await Callbacks.callback_nomination_pool_commission(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominating:pendingPayouts': {
+        switch (chainId) {
+          case 'Polkadot':
+          case 'Kusama': {
+            await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
               entry
             );
             break;
           }
-          case 'subscribe:account:nominationPools:rewards': {
-            await Callbacks.callback_nomination_pool_reward_account(entry);
-            break;
-          }
-          case 'subscribe:account:nominationPools:state': {
-            await Callbacks.callback_nomination_pool_state(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:renamed': {
-            await Callbacks.callback_nomination_pool_renamed(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:roles': {
-            await Callbacks.callback_nomination_pool_roles(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominationPools:commission': {
-            await Callbacks.callback_nomination_pool_commission(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'subscribe:account:nominating:rewards': {
-            await Callbacks.callback_nominating_rewards(
+          case 'Westend': {
+            await Callbacks.callback_nominating_pending_payouts(
               dataArr[entry.task.dataIndex!],
               entry
             );
             break;
           }
         }
+        break;
+      }
+      case 'subscribe:account:nominating:exposure': {
+        switch (chainId) {
+          case 'Polkadot':
+          case 'Kusama': {
+            await Callbacks.callback_nominating_exposure(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
+          case 'Westend': {
+            await Callbacks.callback_nominating_exposure_westend(
+              dataArr[entry.task.dataIndex!],
+              entry
+            );
+            break;
+          }
+        }
+        break;
+      }
+      case 'subscribe:account:nominating:commission': {
+        await Callbacks.callback_nominating_commission(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
       }
     }
   }
@@ -301,6 +366,29 @@ export class QueryMultiWrapper {
     for (const { unsub } of this.subscriptions.values()) {
       // TODO: Might be clearer if the entry's `unsub` field is also set to `null`.
       unsub();
+    }
+  }
+
+  /**
+   * @name setOsNotificationsFlag
+   * @summary Set the enableOsNotifications for a task.
+   */
+  setOsNotificationsFlag(task: SubscriptionTask) {
+    const { chainId } = task;
+    const chainEntry = this.subscriptions.get(chainId);
+
+    if (chainEntry) {
+      this.subscriptions.set(chainId, {
+        unsub: chainEntry.unsub,
+        callEntries: chainEntry.callEntries.map((e) =>
+          e.task.action === task.action
+            ? {
+                ...e,
+                task,
+              }
+            : e
+        ),
+      });
     }
   }
 
@@ -447,7 +535,7 @@ export class QueryMultiWrapper {
     console.log('debug: data index registry:');
     console.log(dataIndexRegistry);
 
-    // Get updated entries with correct dataIndex for each task.
+    // Get updated entries with correct dataIndex for each task and set `justBuilt` flag.
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
 
@@ -456,10 +544,10 @@ export class QueryMultiWrapper {
       }
 
       e.task.dataIndex = dataIndex;
+      e.task.justBuilt = true;
       return e;
     });
 
-    // Set updated tasks.
     this.subscriptions.set(chainId, {
       ...entry,
       callEntries: [...updatedEntries],

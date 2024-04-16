@@ -18,14 +18,18 @@ export interface SubscriptionTask {
   category: string;
   // Task's associated chain.
   chainId: ChainID;
-  // Enabled or disabled.
-  status: SubscriptionNextStatus;
   // Shown in renderer.
   label: string;
+  // Enabled or disabled.
+  status: SubscriptionNextStatus;
   // Associated account for task.
   account?: FlattenedAccountData;
   // Index to retrieve api callback data.
   dataIndex?: number;
+  // Flag to determine if native OS notifications are shown for the task.
+  enableOsNotifications: boolean;
+  // Flag to determine if the subscription was just built.
+  justBuilt?: boolean;
 }
 
 // String literals to limit subscription task actions.
@@ -38,7 +42,9 @@ export type TaskAction =
   | 'subscribe:account:nominationPools:renamed'
   | 'subscribe:account:nominationPools:roles'
   | 'subscribe:account:nominationPools:commission'
-  | 'subscribe:account:nominating:rewards';
+  | 'subscribe:account:nominating:pendingPayouts'
+  | 'subscribe:account:nominating:exposure'
+  | 'subscribe:account:nominating:commission';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

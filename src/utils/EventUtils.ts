@@ -5,12 +5,12 @@ import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
-import type { Account } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
+  ValidatorData,
 } from '@/types/accounts';
 
 /**
@@ -54,13 +54,25 @@ export const pushUniqueEvent = (
       push = filter_nomination_pool_roles(events, event);
       break;
     }
-    case 'subscribe:account:nominating:rewards': {
-      push = filter_nominating_rewards(events, event);
-      break;
-    }
-    default:
+    case 'subscribe:account:nominationPools:commission': {
       push = filter_nomination_pool_commission(events, event);
       break;
+    }
+    case 'subscribe:account:nominating:pendingPayouts': {
+      push = filter_nominating_pending_payouts(events, event);
+      break;
+    }
+    case 'subscribe:account:nominating:exposure': {
+      push = filter_nominating_exposure(events, event);
+      break;
+    }
+    case 'subscribe:account:nominating:commission': {
+      push = filter_nominating_commission(events, event);
+      break;
+    }
+    default: {
+      break;
+    }
   }
 
   // Add event to array if it's unique.
@@ -78,27 +90,29 @@ export const pushUniqueEvent = (
  * @name filter_query_system_account
  * @summary The new event is considered a duplicate if another event has
  * matching address and balance data.
+ *
+ * TODO:
+ * Fix (something wrong with comparing account data and event data)
+ * This filter function is currently not being used.
  */
 const filter_query_system_account = (
   events: EventCallback[],
   event: EventCallback
 ) => {
   interface Target {
-    balances: {
-      free: BigNumber;
-      reserved: BigNumber;
-      nonce: BigNumber;
-    };
+    free: string;
+    reserved: string;
+    nonce: string;
   }
 
   const { address } = event.who.data as EventAccountData;
-  const { balances }: Target = event.data;
+  const balances: Target = event.data;
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const { balances: nextBalances }: Target = e.data;
+      const nextBalances: Target = e.data;
 
       if (
         address === nextAddress &&
@@ -291,26 +305,109 @@ const filter_nomination_pool_commission = (
 };
 
 /**
- * @name filter_nomination_pool_commission
+ * @name filter_nominating_rewards
  * @summary The new event is considered a duplicate if another event has
- * a matching address and era number.
+ * a matching address, pending payout and era number.
  */
-const filter_nominating_rewards = (
+const filter_nominating_pending_payouts = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
+  interface Target {
+    era: string;
+    pendingPayout: string;
+  }
+
   const { address } = event.who.data as EventAccountData;
-  const { era } = event.data;
+  const { era, pendingPayout }: Target = event.data;
 
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextEra: number = event.data.era;
+      const { era: nextEra, pendingPayout: nextPendingPayout }: Target = e.data;
 
-      if (address === nextAddress && era === nextEra) {
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        pendingPayout === nextPendingPayout
+      ) {
         isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nominating_exposure
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address, era number, and exposed flag.
+ */
+const filter_nominating_exposure = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { era, exposed } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { era: nextEra, exposed: nextExposed } = e.data;
+
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        exposed === nextExposed
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nominating_commission
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and changed validator data.
+ */
+const filter_nominating_commission = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { updated }: { updated: ValidatorData[] } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const { updated: nextUpdated }: { updated: ValidatorData[] } = e.data;
+
+      if (address === nextAddress && updated.length === nextUpdated.length) {
+        let isSameData = true;
+
+        for (let i = 0; i < updated.length; ++i) {
+          const { validatorId: valId1, commission: com1 } = updated[i];
+          const { validatorId: valId2, commission: com2 } = nextUpdated[i];
+
+          if (valId1 !== valId2 || com1 !== com2) {
+            isSameData = false;
+            break;
+          }
+        }
+
+        if (isSameData) {
+          isUnique = false;
+        }
       }
     }
   });
@@ -413,13 +510,13 @@ export const getNominationPoolStateText = (
  * @name getFreeBalanceText
  * @summary Text to render for transfer events.
  */
-export const getFreeBalanceText = (account: Account) => {
+export const getFreeBalanceText = (newBalance: BigNumber, chainId: ChainID) => {
   const freeBalance = planckToUnit(
-    new BigNumber(account.balance!.free.toString()),
-    chainUnits(account.chain)
+    newBalance as BigNumber,
+    chainUnits(chainId)
   );
 
-  return `${freeBalance} ${chainCurrency(account.chain)}`;
+  return `${freeBalance} ${chainCurrency(chainId)}`;
 };
 
 /**
@@ -443,9 +540,26 @@ export const getNominationPoolCommissionText = (
   cur: NominationPoolCommission,
   prev: NominationPoolCommission
 ) =>
+  // TODO: Improve text message.
   JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
   JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
   cur.throttleFrom === prev.throttleFrom &&
   cur.max === prev.max
-    ? 'Pool commission has changed.'
-    : 'Pool commission unchaged.';
+    ? `Pool commission is ${cur.current}.`
+    : `Pool commission set to ${cur.current}.`;
+
+/**
+ * @name getNominatingPendingPayoutsText
+ * @summary Text to render for nominating pending payout events.
+ */
+export const getNominatingPendingPayoutText = (
+  pendingPayout: BigNumber,
+  chainId: ChainID
+) => {
+  const pendingPayoutUnit = planckToUnit(
+    pendingPayout as BigNumber,
+    chainUnits(chainId)
+  );
+
+  return `${pendingPayoutUnit.toString()} ${chainCurrency(chainId)}`;
+};

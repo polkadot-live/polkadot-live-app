@@ -76,7 +76,7 @@ export class TaskOrchestrator {
 
           case 'subscribe:account:nominationPools:rewards': {
             debug('🟢 subscribe:account:nominationPools:rewards');
-            await TaskOrchestrator.subscribe_nomination_pool_reward_account(
+            await TaskOrchestrator.subscribe_nomination_pool_rewards(
               task,
               wrapper
             );
@@ -119,9 +119,27 @@ export class TaskOrchestrator {
             break;
           }
 
-          case 'subscribe:account:nominating:rewards': {
-            debug('🟢 subscribe:account:nominating:rewards');
-            await TaskOrchestrator.subscribe_nominating_rewards(task, wrapper);
+          case 'subscribe:account:nominating:pendingPayouts': {
+            debug('🟢 subscribe:account:nominating:pendingPayouts');
+            await TaskOrchestrator.subscribe_nominating_pending_payouts(
+              task,
+              wrapper
+            );
+            break;
+          }
+
+          case 'subscribe:account:nominating:exposure': {
+            debug('🟢 subscribe:account:nominating:exposure');
+            await TaskOrchestrator.subscribe_nominating_exposure(task, wrapper);
+            break;
+          }
+
+          case 'subscribe:account:nominating:commission': {
+            debug('🟢 subscribe:account:nominating:commission');
+            await TaskOrchestrator.subscribe_nominating_commission(
+              task,
+              wrapper
+            );
             break;
           }
 
@@ -189,8 +207,12 @@ export class TaskOrchestrator {
         return instance.api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:commission':
         return instance.api.query.nominationPools.bondedPools;
-      case 'subscribe:account:nominating:rewards':
-        return instance.api.query.staking.currentEra;
+      case 'subscribe:account:nominating:pendingPayouts':
+        return instance.api.query.staking.activeEra;
+      case 'subscribe:account:nominating:exposure':
+        return instance.api.query.staking.activeEra;
+      case 'subscribe:account:nominating:commission':
+        return instance.api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
     }
@@ -246,10 +268,10 @@ export class TaskOrchestrator {
   }
 
   /**
-   * @name subscribe_nomination_pool_reward_account
+   * @name subscribe_nomination_pool_rewards
    * @summary Handle a task that subscribes to the API function api.query.system.account for a nomination pool's reward address.
    */
-  private static async subscribe_nomination_pool_reward_account(
+  private static async subscribe_nomination_pool_rewards(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
@@ -356,10 +378,54 @@ export class TaskOrchestrator {
   }
 
   /**
-   * @name subscribe_nominating_rewards
-   * @summary Handle a task that subscribes to the API function api.query.currentEra and notifies an account's pending rewards.
+   * @name subscribe_nominating_pending_payouts
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's pending payouts.
    */
-  private static async subscribe_nominating_rewards(
+  private static async subscribe_nominating_pending_payouts(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question is not nominating.
+      if (!task.account?.nominatingData) {
+        console.log('🟠 Account is not nominating.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nominating_exposure
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's exposure.
+   */
+  private static async subscribe_nominating_exposure(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    try {
+      // Exit early if the account in question is not nominating.
+      if (!task.account?.nominatingData) {
+        console.log('🟠 Account is not nominating.');
+        return;
+      }
+
+      // Otherwise rebuild query.
+      await TaskOrchestrator.handleTask(task, wrapper);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  /**
+   * @name subscribe_nominating_commission
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and handles nominated validator commission changes.
+   */
+  private static async subscribe_nominating_commission(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

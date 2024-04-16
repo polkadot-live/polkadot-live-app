@@ -124,7 +124,8 @@ type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
 type ApiPersistEvent = (
   event: EventCallback,
-  notification: NotificationData | null
+  notification: NotificationData | null,
+  isOneShot?: boolean
 ) => void;
 
 type ApiGetChainSubscriptions = () => Promise<string>;

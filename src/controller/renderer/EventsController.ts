@@ -9,6 +9,7 @@ import {
 } from '@/utils/AccountUtils';
 import {
   getFreeBalanceText,
+  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
@@ -25,6 +26,7 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
+import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {
   /**
@@ -86,6 +88,7 @@ export class EventsController {
        */
       case 'subscribe:account:balance': {
         const account = checkAccountWithProperties(entry, ['balance']);
+        const newBalance = miscData.received.free;
 
         const { chainId } = entry.task;
         const address = account.address;
@@ -104,9 +107,11 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Free Balance',
-          subtitle: getFreeBalanceText(account),
+          subtitle: getFreeBalanceText(newBalance, chainId),
           data: {
-            balances: miscData,
+            free: miscData.received.free.toString(),
+            reserved: miscData.received.reserved.toString(),
+            nonce: miscData.received.nonce.toString(),
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -189,7 +194,7 @@ export class EventsController {
             },
             {
               uri: `https://staking.polkadot.network/#/pools?n=${chainId}&a=${address}`,
-              text: undefined,
+              text: 'Dashboard',
             },
           ],
         };
@@ -353,9 +358,11 @@ export class EventsController {
         };
       }
       /**
-       * subscribe:account:nominating:rewards
+       * subscribe:account:nominating:pendingPayouts
        */
-      case 'subscribe:account:nominating:rewards': {
+      case 'subscribe:account:nominating:pendingPayouts': {
+        // eslint-disable-next-line prettier/prettier
+        const { pendingPayout, era }: { pendingPayout: BigNumber; era: string } = miscData;
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
 
@@ -371,10 +378,11 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Era Pending Payout',
-          subtitle: 'Staking rewards received in the previous era.',
+          title: 'Nominating Pending Payout',
+          subtitle: getNominatingPendingPayoutText(pendingPayout, chainId),
           data: {
-            era: miscData.prevEra,
+            era,
+            pendingPayout: pendingPayout.toString(), // string required
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -384,6 +392,76 @@ export class EventsController {
               text: 'Staking Dashboard',
             },
           ],
+        };
+      }
+      /**
+       * subscribe:account:nominating:exposure
+       */
+      case 'subscribe:account:nominating:exposure': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { era, exposed }: { era: number; exposed: boolean } = miscData;
+
+        const subtitle = exposed
+          ? `Actively nominating in the current era.`
+          : `NOT actively nominating in the current era.`;
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Era Exposure',
+          subtitle,
+          data: {
+            era,
+            exposed,
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      /**
+       * subscribe:account:nominating:commission
+       */
+      case 'subscribe:account:nominating:commission': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { updated }: { updated: ValidatorData[] } = miscData;
+
+        const subtitle =
+          updated.length === 1
+            ? `${updated.length} nominated validator has changed commission.`
+            : `${updated.length} nominated validators have changed commission.`;
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Commission Changed',
+          subtitle,
+          data: {
+            updated: [...updated],
+          },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
         };
       }
       default: {

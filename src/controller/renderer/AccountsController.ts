@@ -72,7 +72,9 @@ export class AccountsController {
           stored !== '' ? JSON.parse(stored) : [];
 
         for (const task of tasks) {
-          await account.subscribeToTask(task);
+          if (task.status === 'enable') {
+            await account.subscribeToTask(task);
+          }
         }
       }
     }

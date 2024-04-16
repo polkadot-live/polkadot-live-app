@@ -3,6 +3,7 @@
 
 import {
   getFreeBalanceText,
+  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
@@ -13,6 +14,7 @@ import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
+import type { ValidatorData } from '@/types/accounts';
 
 export class NotificationsController {
   /**
@@ -28,7 +30,7 @@ export class NotificationsController {
       case 'subscribe:account:balance': {
         return {
           title: 'Free Balance',
-          body: getFreeBalanceText(account),
+          body: getFreeBalanceText(miscData.received.free, account.chain),
         };
       }
       case 'subscribe:account:nominationPools:rewards': {
@@ -76,10 +78,37 @@ export class NotificationsController {
           body: getNominationPoolCommissionText(cur, prev),
         };
       }
-      case 'subscribe:account:nominating:rewards': {
+      case 'subscribe:account:nominating:pendingPayouts': {
+        const { pendingPayout, chainId } = miscData;
+
         return {
-          title: 'Pending Payout',
-          body: 'Staking rewards received in the previous era.',
+          title: 'Nominating Pending Payout',
+          body: getNominatingPendingPayoutText(pendingPayout, chainId),
+        };
+      }
+      case 'subscribe:account:nominating:exposure': {
+        const { exposed } = miscData;
+
+        const body = exposed
+          ? `Actively nominating in the current era.`
+          : `NOT actively nominating in the current era.`;
+
+        return {
+          title: 'Era Exposure',
+          body,
+        };
+      }
+      case 'subscribe:account:nominating:commission': {
+        const { updated }: { updated: ValidatorData[] } = miscData;
+
+        const body =
+          updated.length === 1
+            ? `${updated.length} nominated validator has changed commission.`
+            : `${updated.length} nominated validators have changed commission.`;
+
+        return {
+          title: 'Commission Changed',
+          body,
         };
       }
       default: {

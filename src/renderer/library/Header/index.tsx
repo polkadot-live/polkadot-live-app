@@ -7,6 +7,11 @@ import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
+//TMP
+import BigNumber from 'bignumber.js';
+import { getApiInstance } from '@/utils/ApiUtils';
+import { getUnclaimedPayouts } from '@/renderer/callbacks/nominating';
+import type { ChainID } from '@/types/chains';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -21,6 +26,27 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
+  // Function to calculate an account's unclaimed payouts.
+  const doUnclaimedPayouts = async () => {
+    //const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
+    //const chainId = 'Polkadot' as ChainID;
+    const address = '5ExuYYE7Qfq2BJYqUygBa8Nr2y1qemkuGwZHEuEujkqnL4Xs';
+    const chainId = 'Westend' as ChainID;
+    const { api } = await getApiInstance(chainId);
+
+    const unclaimed = await getUnclaimedPayouts(address, api, chainId);
+    let pendingPayout = new BigNumber(0);
+
+    for (const validatorToPayout of unclaimed.values()) {
+      for (const payoutItem of validatorToPayout.values()) {
+        const payout = payoutItem[1];
+        pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
+      }
+    }
+
+    console.log(`Pending payout: ${pendingPayout}`);
+  };
+
   return (
     <HeaderWrapper>
       <div />
@@ -30,7 +56,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <button
               type="button"
               disabled={appLoading}
-              onClick={() => console.log('TODO')}
+              onClick={async () => await doUnclaimedPayouts()}
             >
               <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
             </button>

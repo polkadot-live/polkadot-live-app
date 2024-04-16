@@ -18,6 +18,7 @@ import type {
   FlattenedAccountData,
   NominationPoolCommission,
   NominationPoolRoles,
+  ValidatorData,
 } from '@/types/accounts';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -97,8 +98,8 @@ export const setNominatingDataForAccount = async (
   account: Account
 ) => {
   // Check if account is currently nominating.
-  const result: AnyData = await api.query.staking.nominators(account.address);
-  const nominators = result.toHuman();
+  const resA: AnyData = await api.query.staking.nominators(account.address);
+  const nominators = resA.toHuman();
 
   // Return early if account is not nominating.
   if (nominators === null) {
@@ -106,8 +107,22 @@ export const setNominatingDataForAccount = async (
   }
 
   // Set account's nominating data.
+  const accumulated: ValidatorData[] = [];
+  const resB: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: number = parseInt((resB.index as string).replace(/,/g, ''));
+
+  for (const validatorId of nominators.targets as string[]) {
+    const prefs: AnyData = (
+      await api.query.staking.erasValidatorPrefs(era, validatorId)
+    ).toHuman();
+
+    const commission: string = prefs.commission as string;
+    accumulated.push({ validatorId, commission });
+  }
+
+  // Set account's nominator data.
   account.nominatingData = {
-    validatorIds: nominators.targets as string[],
+    validators: accumulated,
   };
 
   // Update account data in controller.

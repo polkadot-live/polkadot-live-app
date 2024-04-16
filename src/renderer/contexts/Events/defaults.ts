@@ -11,4 +11,5 @@ export const defaultEventsContext: EventsContextInterface = {
   sortChainEvents: (c) => new Map(),
   updateEventsOnAccountRename: (es, c) => {},
   markStaleEvent: (u, c) => {},
+  removeOutdatedEvents: (e) => {},
 };

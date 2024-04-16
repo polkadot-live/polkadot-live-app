@@ -163,14 +163,13 @@ export class SubscriptionsController {
           .filter((t) => t.chainId === a.chain)
           // Populate tasks with correct arguments.
           .map((t) => {
-            const task = { ...t, account: a.flatten() };
+            const task = { ...t, account: a.flatten() } as SubscriptionTask;
 
             switch (t.action) {
               case 'subscribe:account:balance': {
                 return { ...task, actionArgs: [a.address] } as SubscriptionTask;
               }
               case 'subscribe:account:nominationPools:rewards': {
-                // Provide an account's nomination pool reward address if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolRewardAddress]
                   : undefined;
@@ -178,7 +177,6 @@ export class SubscriptionsController {
                 return { ...task, actionArgs } as SubscriptionTask;
               }
               case 'subscribe:account:nominationPools:state': {
-                // Provide account's nomination pool id if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolId]
                   : undefined;
@@ -186,7 +184,6 @@ export class SubscriptionsController {
                 return { ...task, actionArgs } as SubscriptionTask;
               }
               case 'subscribe:account:nominationPools:renamed': {
-                // Provide account's nomination pool id if exists.
                 const actionArgs = a.nominationPoolData
                   ? [a.nominationPoolData.poolId]
                   : undefined;
