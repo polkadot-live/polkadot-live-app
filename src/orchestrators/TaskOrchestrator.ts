@@ -51,13 +51,11 @@ export class TaskOrchestrator {
         // Identify task
         switch (task.action) {
           case 'subscribe:chain:timestamp': {
-            debug('🟢 subscribe:chain:timestamp');
             await TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
             break;
           }
 
           case 'subscribe:chain:currentSlot': {
-            debug('🟢 subscribe:chain:currentSlot');
             await TaskOrchestrator.subscribe_query_babe_currentSlot(
               task,
               wrapper
@@ -66,7 +64,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:balance': {
-            debug('🟢 subscribe:query.system.account (account)');
             await TaskOrchestrator.subscribe_query_system_account(
               task,
               wrapper
@@ -75,7 +72,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominationPools:rewards': {
-            debug('🟢 subscribe:account:nominationPools:rewards');
             await TaskOrchestrator.subscribe_nomination_pool_rewards(
               task,
               wrapper
@@ -84,7 +80,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominationPools:state': {
-            debug('🟢 subscribe:account:nominationPools:state');
             await TaskOrchestrator.subscribe_nomination_pool_state(
               task,
               wrapper
@@ -93,7 +88,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominationPools:renamed': {
-            debug('🟢 subscribe:account:nominationPools:renamed');
             await TaskOrchestrator.subscribe_nomination_pool_renamed(
               task,
               wrapper
@@ -102,7 +96,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominationPools:roles': {
-            debug('🟢 subscribe:account:nominationPools:roles');
             await TaskOrchestrator.subscribe_nomination_pool_roles(
               task,
               wrapper
@@ -111,7 +104,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominationPools:commission': {
-            debug('🟢 subscribe:account:nominationPools:commission');
             await TaskOrchestrator.subscribe_nomination_pool_commission(
               task,
               wrapper
@@ -120,7 +112,6 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominating:pendingPayouts': {
-            debug('🟢 subscribe:account:nominating:pendingPayouts');
             await TaskOrchestrator.subscribe_nominating_pending_payouts(
               task,
               wrapper
@@ -129,13 +120,11 @@ export class TaskOrchestrator {
           }
 
           case 'subscribe:account:nominating:exposure': {
-            debug('🟢 subscribe:account:nominating:exposure');
             await TaskOrchestrator.subscribe_nominating_exposure(task, wrapper);
             break;
           }
 
           case 'subscribe:account:nominating:commission': {
-            debug('🟢 subscribe:account:nominating:commission');
             await TaskOrchestrator.subscribe_nominating_commission(
               task,
               wrapper

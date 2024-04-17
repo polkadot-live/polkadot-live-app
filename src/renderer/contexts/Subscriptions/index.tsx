@@ -128,7 +128,7 @@ export const SubscriptionsProvider = ({
     setNativeChecked: AnyFunction
   ) => {
     const p = async () => await toggleSubscription(cached, setNativeChecked);
-    await TaskQueue.add(p);
+    TaskQueue.add(p);
   };
 
   /// Handle subscription task toggle.

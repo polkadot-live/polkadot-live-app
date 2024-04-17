@@ -84,6 +84,9 @@ export class AccountsController {
    * @name unsubscribeAccounts
    * @summary Calls `unsub` for each account's queryMulti entries, but keeps the
    * subscription data. This method is called when the app goes into offline mode.
+   *
+   * @deprecated Since API instances re-connect automatically, we don't need to
+   * manually unsubscribe and re-build the query multi.
    */
   static unsubscribeAccounts() {
     for (const accounts of this.accounts.values()) {

@@ -15,10 +15,6 @@ export const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   max-height: 100%;
-  overflow: hidden;
-  overflow-y: scroll;
-  width: 105%;
-  padding-right: 5%;
 `;
 
 export const BreadcrumbsWrapper = styled.div`

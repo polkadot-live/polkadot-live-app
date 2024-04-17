@@ -7,31 +7,27 @@ export class TaskQueue {
   private static queue: (() => Promise<AnyData>)[] = [];
   private static executing = false;
 
-  static add = (promiseGenerator: () => Promise<AnyData>) =>
-    new Promise<AnyData>((resolve, reject) => {
-      // The async function stored in the queue.
-      const task = async () => {
-        try {
-          const result = await promiseGenerator();
-          resolve(result);
-        } catch (error) {
-          reject(error);
-        } finally {
-          this.executing = false;
-          this.next();
-        }
-      };
+  static add = (promiseGenerator: () => Promise<AnyData>) => {
+    // Wrap task in an async function.
+    const task = async () => {
+      await promiseGenerator();
+      this.executing = false;
 
-      this.queue.push(task);
+      // Call next to execute the next task.
       this.next();
-    });
+    };
 
-  private static next = () => {
+    // Add async function to queue.
+    this.queue.push(task);
+    this.next();
+  };
+
+  private static next = async () => {
     if (!this.executing && this.queue.length > 0) {
       const task = this.queue.shift();
       if (task) {
         this.executing = true;
-        task();
+        await task();
       }
     }
   };

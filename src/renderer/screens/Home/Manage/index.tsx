@@ -36,9 +36,9 @@ export const Manage = ({ addresses }: ManageProps) => {
         },
       }}
     >
-      <div>
+      <div className="scrollable">
         {/* List of accounts and chains */}
-        <Wrapper className="scrollable">
+        <Wrapper>
           <Accounts
             setSection={setSection}
             setBreadcrumb={setBreadcrumb}
@@ -47,7 +47,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           />
         </Wrapper>
       </div>
-      <div>
+      <div className="scrollable">
         {/* Subscription toggles for selected account or chain */}
         <Permissions
           setSection={setSection}

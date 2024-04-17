@@ -5,6 +5,11 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
+import {
+  getAccountExposed,
+  getAccountExposedWestend,
+  getUnclaimedPayouts,
+} from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
@@ -13,7 +18,6 @@ import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { AccountBalance, ValidatorData } from '@/types/accounts';
-import { getUnclaimedPayouts } from './nominating';
 
 export class Callbacks {
   /**
@@ -111,7 +115,15 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['balance']);
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account) {
+        return;
+      }
 
       // Get the received balance.
       const received: AccountBalance = {
@@ -187,15 +199,23 @@ export class Callbacks {
       const pendingRewardsPlanck: BigNumber =
         await api.call.nominationPoolsApi.pendingRewards(account.address);
 
-      // Return if pending rewards is zero.
-      if (!isOneShot && pendingRewardsPlanck.eq(0)) {
+      const isSame =
+        account.nominationPoolData!.poolPendingRewards.eq(pendingRewardsPlanck);
+
+      // Return if pending rewards is zero or no change.
+      if (
+        (!isOneShot && isSame) ||
+        (!isOneShot && pendingRewardsPlanck.eq(0))
+      ) {
         return;
       }
 
       // Update account and entry data.
-      account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
-      await AccountsController.set(chainId, account);
-      entry.task.account = account.flatten();
+      if (!isSame) {
+        account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
+        await AccountsController.set(chainId, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
       const notification =
@@ -283,7 +303,7 @@ export class Callbacks {
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
       const prevName = account.nominationPoolData!.poolName;
-      const isSame = prevName === receivedPoolName;
+      const isSame = prevName === receivedPoolName || receivedPoolName === '';
 
       if (!isOneShot && isSame) {
         return;
@@ -331,7 +351,14 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      const { depositor, root, nominator, bouncer } = data.toHuman().roles;
+      interface Target {
+        depositor: string;
+        root: string;
+        nominator: string;
+        bouncer: string;
+      }
+      const humanData: AnyData = data.toHuman();
+      const { depositor, root, nominator, bouncer }: Target = humanData.roles;
 
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
@@ -389,8 +416,8 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool commission.
-      const { changeRate, current, max, throttleFrom } =
-        data.toHuman().commission;
+      const humanData: AnyData = data.toHuman();
+      const { changeRate, current, max, throttleFrom } = humanData.commission;
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
@@ -512,37 +539,26 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const result: AnyData = await api.query.staking.erasStakers.entries(era);
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      let exposed = false;
-      for (const val of result) {
-        // Check if account address is the validator.
-        if (val[0].toHuman() === account.address) {
-          exposed = true;
-          break;
-        }
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-        // Check if account address is nominating this validator.
-        let counter = 0;
-        for (const { who } of val[1].toHuman().others) {
-          if (counter >= 512) {
-            break;
-          } else if (who === account.address) {
-            exposed = true;
-            break;
-          }
-          counter += 1;
-        }
+      // Otherwise get exposure.
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const exposed = await getAccountExposed(api, era, account);
 
-        // Break if the inner loop found exposure.
-        if (exposed) {
-          break;
-        }
+      // Update account data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
@@ -576,45 +592,26 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const validators = account.nominatingData!.validators.map(
-        (v) => v.validatorId
-      );
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      let exposed = false;
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-      // Iterate validators account is nominating.
-      validatorLoop: for (const vId of validators) {
-        // Check if target address is the validator.
-        if (account.address === vId) {
-          exposed = true;
-          break;
-        }
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const vs = account.nominatingData!.validators;
+      const exposed = await getAccountExposedWestend(api, era, account, vs);
 
-        // Iterate validator paged exposures.
-        const result: AnyData =
-          await api.query.staking.erasStakersPaged.entries(era, vId);
-
-        let counter = 0;
-
-        for (const item of result) {
-          for (const { who } of item[1].toHuman().others) {
-            // Move to next validator if account is not in top 512 stakers for this validator.
-            if (counter >= 512) {
-              continue validatorLoop;
-            }
-            // We know the account is exposed for this era if their address is found.
-            if ((who as string) === account.address) {
-              exposed = true;
-              break validatorLoop;
-            }
-            counter += 1;
-          }
-        }
+      // Update account data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
@@ -651,47 +648,93 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      // Get an array of changed validators.
-      const validatorData = account.nominatingData!.validators;
-      const changedValidators: ValidatorData[] = [];
+      // Exit early if nominator data for this era is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-      for (const { validatorId, commission } of validatorData) {
+      // Get live nominator data and check to see if it has changed.
+      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const nominatorData: AnyData = (
+        await api.query.staking.nominators(account.address)
+      ).toHuman();
+
+      // Return if account is no longer nominating.
+      if (nominatorData === null) {
+        account.nominatingData = null;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Return if retrieved `submittedIn` matches account data.
+      const submittedIn: number = parseInt(
+        (nominatorData.submittedIn as string).replace(/,/g, '')
+      );
+
+      const isSame = account.nominatingData!.submittedIn === submittedIn;
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Something may have changed, firstly get new validator info.
+      const accumulated: ValidatorData[] = [];
+
+      for (const validatorId of nominatorData.targets as string[]) {
         const prefs: AnyData = (
           await api.query.staking.erasValidatorPrefs(era, validatorId)
         ).toHuman();
 
-        const nextCommission: string = prefs.commission as string;
-        if (commission !== nextCommission) {
-          changedValidators.push({ validatorId, commission: nextCommission });
+        const commission: string = prefs.commission as string;
+        accumulated.push({ validatorId, commission });
+      }
+
+      // Get an array of changed validators.
+      const changedValidators: ValidatorData[] = [];
+
+      const validatorData = account.nominatingData!.validators;
+      const oldIds = validatorData.map((v) => v.validatorId);
+      const newIds = accumulated.map((v) => v.validatorId);
+
+      const idsInOld = newIds.filter((vid) => oldIds.includes(vid));
+      const idsNew = newIds.filter((vid) => !oldIds.includes(vid));
+
+      // Add old validators with commission changes.
+      for (const vid of idsInOld) {
+        const oldData = validatorData.find((v) => v.validatorId === vid);
+        const newData = accumulated.find((v) => v.validatorId === vid);
+
+        if (!oldData || !newData) {
+          continue;
+        } else if (oldData.commission !== newData.commission) {
+          changedValidators.push(newData);
+        }
+      }
+
+      // Add new validator commissions.
+      for (const vid of idsNew) {
+        const vData = accumulated.find((v) => v.validatorId === vid);
+        if (vData) {
+          changedValidators.push(vData);
         }
       }
 
       // Exit early if there are no commission changes.
-      if (changedValidators.length > 0 && !isOneShot) {
+      if (!isOneShot && changedValidators.length === 0) {
         return;
       }
 
       // Update account nominating data with new commissions.
-      const updated = account.nominatingData!.validators.map((v) => {
-        const changed = changedValidators.find(
-          (x) => x.validatorId === v.validatorId
-        );
-
-        return changed !== undefined
-          ? ({ ...v, commission: changed.commission } as ValidatorData)
-          : v;
-      });
-
-      // Persist updated data.
-      account.nominatingData = { validators: [...updated] };
-      await AccountsController.set(account.chain, account);
+      if (changedValidators.length > 0) {
+        account.nominatingData!.validators = [...accumulated];
+        account.nominatingData!.submittedIn = submittedIn;
+        AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
       const notification =

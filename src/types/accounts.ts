@@ -60,6 +60,9 @@ export interface NominationPoolCommission {
  */
 
 export interface AccountNominatingData {
+  exposed: boolean;
+  lastCheckedEra: number;
+  submittedIn: number;
   validators: ValidatorData[];
 }
 

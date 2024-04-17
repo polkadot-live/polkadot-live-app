@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { planckToUnit } from '@w3ux/utils';
-import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import {
   BN,
@@ -13,6 +11,10 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
+import {
+  getAccountExposed,
+  getAccountExposedWestend,
+} from '@/renderer/callbacks/nominating';
 import type {
   AccountBalance,
   FlattenedAccountData,
@@ -50,6 +52,8 @@ export const fetchAccountBalances = async () => {
         reserved: new BigNumber(result.data.reserved),
         frozen: new BigNumber(result.data.frozen),
       } as AccountBalance;
+
+      await AccountsController.set(account.chain, account);
     }
   }
 };
@@ -98,18 +102,25 @@ export const setNominatingDataForAccount = async (
   account: Account
 ) => {
   // Check if account is currently nominating.
-  const resA: AnyData = await api.query.staking.nominators(account.address);
-  const nominators = resA.toHuman();
+  const nominatorData: AnyData = await api.query.staking.nominators(
+    account.address
+  );
+  const nominators = nominatorData.toHuman();
 
   // Return early if account is not nominating.
   if (nominators === null) {
     return;
   }
 
+  // Get submitted in era.
+  const submittedIn: number = parseInt(
+    (nominators.submittedIn as string).replace(/,/g, '')
+  );
+
   // Set account's nominating data.
   const accumulated: ValidatorData[] = [];
-  const resB: AnyData = (await api.query.staking.activeEra()).toHuman();
-  const era: number = parseInt((resB.index as string).replace(/,/g, ''));
+  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
 
   for (const validatorId of nominators.targets as string[]) {
     const prefs: AnyData = (
@@ -120,8 +131,17 @@ export const setNominatingDataForAccount = async (
     accumulated.push({ validatorId, commission });
   }
 
+  // Call correct exposure function.
+  const exposed: boolean =
+    account.chain === 'Westend'
+      ? await getAccountExposedWestend(api, era, account, accumulated)
+      : await getAccountExposed(api, era, account);
+
   // Set account's nominator data.
   account.nominatingData = {
+    exposed,
+    lastCheckedEra: era,
+    submittedIn,
     validators: accumulated,
   };
 
@@ -186,14 +206,9 @@ const setNominationPoolDataForAccount = async (
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
   // Get pending rewards for the account.
-  const pendingRewardsResult = await api.call.nominationPoolsApi.pendingRewards(
-    account.address
-  );
-
-  const poolPendingRewards = planckToUnit(
-    new BigNumber(pendingRewardsResult.toString()),
-    chainUnits(chainId)
-  );
+  const pendingRewardsResult: AnyJson =
+    await api.call.nominationPoolsApi.pendingRewards(account.address);
+  const poolPendingRewards = new BigNumber(pendingRewardsResult);
 
   // Get nomination pool data.
   const npResult: AnyData = (

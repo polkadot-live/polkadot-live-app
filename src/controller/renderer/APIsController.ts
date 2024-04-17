@@ -3,11 +3,8 @@
 
 import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
-import { MainDebug } from '@/utils/DebugUtils';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
-
-const debug = MainDebug.extend('APIs');
 
 /**
  *  A static class that manages active api providers.
@@ -41,7 +38,7 @@ export class APIsController {
       );
     }
 
-    debug('🤖 Creating new api interface: %o', endpoint);
+    console.log('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
     const instance = new Api(endpoint, chainId);
@@ -49,7 +46,7 @@ export class APIsController {
     // Set remaining instance properties and add to instances.
     this.instances.push(instance);
 
-    debug(
+    console.log(
       '🔧 New api disconnected instances: %o',
       this.instances.map((i) => i.chain)
     );
@@ -58,13 +55,12 @@ export class APIsController {
   /**
    * @name close
    * @summary Disconnect from a chain.
-   * @param {ChainID} chain - the chain identifier.
    */
   static close = async (chain: ChainID) => {
     const instance = this.instances.find((s) => s.chain === chain);
 
     if (instance) {
-      debug('🔷 Disconnect chain API instance %o.', chain);
+      console.log('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
     }
   };

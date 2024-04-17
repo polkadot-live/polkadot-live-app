@@ -86,17 +86,6 @@ export const useInitIpcHandlers = () => {
      * Handle switching to offline mode.
      */
     window.myAPI.initializeAppOffline(async () => {
-      // Unsubscribe queryMulti API calls for managed accounts.
-      AccountsController.unsubscribeAccounts();
-
-      // Unsubscribe queryMulti API calls for managed chains.
-      SubscriptionsController.unsubscribeChains();
-
-      // Disconnect from any active API instances.
-      for (const chainId of Array.from(ChainList.keys())) {
-        await APIsController.close(chainId);
-      }
-
       // Report online status to renderer.
       setOnline(await window.myAPI.getOnlineStatus());
     });
