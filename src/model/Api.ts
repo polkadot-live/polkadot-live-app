@@ -151,17 +151,17 @@ export class Api {
    */
   initEvents = () => {
     this.provider?.on('connected', () => {
-      debug('⭕ %o', this.endpoint, ' CONNECTED');
+      console.log('⭕ %o', this.endpoint, ' CONNECTED');
       this.status = 'connected';
     });
 
-    this.provider?.on('disconnected', () => {
-      debug('❌ %o', this.endpoint, ' DISCONNECTED');
+    this.provider?.on('disconnected', async () => {
+      console.log('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
     });
 
-    this.provider?.on('error', () => {
-      debug('❗ %o', this.endpoint, ' ERROR');
+    this.provider?.on('error', async () => {
+      console.log('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
     });
   };
