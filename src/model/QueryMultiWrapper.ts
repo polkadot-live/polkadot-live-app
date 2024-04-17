@@ -26,7 +26,7 @@ export class QueryMultiWrapper {
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
-  requiresApiInstanceForChain(chainId: ChainID) {
+  requiresApiInstanceForChain(chainId: ChainID): boolean {
     return this.subscriptions.has(chainId);
   }
 
@@ -237,16 +237,13 @@ export class QueryMultiWrapper {
    */
   async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
-      debug('🟠 queryMulti map is empty.');
+      console.log('🟠 queryMulti map is empty.');
       return;
     }
 
     // Construct the argument for new queryMulti call.
     const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
     const instance = await ApiUtils.getApiInstance(chainId);
-
-    // Make the new call to queryMulti.
-    debug('🔷 Call to api.queryMulti.');
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
@@ -361,6 +358,9 @@ export class QueryMultiWrapper {
    * @name unsubOnly
    * @summary Unsubscribe from the wrapped queryMulti but keep the cached call entries.
    * This method is called when the app goes into offline mode.
+   *
+   * @deprecated APIs will automatically re-connect to queries. Manually unsubscribing
+   * is not required.
    */
   unsubOnly() {
     for (const { unsub } of this.subscriptions.values()) {
