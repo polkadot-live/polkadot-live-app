@@ -419,8 +419,9 @@ export class QueryMultiWrapper {
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
   private async buildQueryMultiArg(chainId: ChainID) {
-    const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
+    // An array of arrays. The inner array represents a single API call.
     const argument: AnyData = [];
+    const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
       return argument;
@@ -442,7 +443,7 @@ export class QueryMultiWrapper {
         const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
 
         const callArray: AnyData[] = task.actionArgs
-          ? [apiCall].concat(task.actionArgs)
+          ? [apiCall].concat([...task.actionArgs])
           : [apiCall];
 
         argument.push(callArray);
@@ -467,7 +468,7 @@ export class QueryMultiWrapper {
 
           const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
           const callArray: AnyData[] = task.actionArgs
-            ? [apiCall].concat(task.actionArgs)
+            ? [apiCall].concat([...task.actionArgs])
             : [apiCall];
 
           argument.push(callArray);
@@ -535,7 +536,7 @@ export class QueryMultiWrapper {
     console.log('debug: data index registry:');
     console.log(dataIndexRegistry);
 
-    // Get updated entries with correct dataIndex for each task and set `justBuilt` flag.
+    // Get updated entries with correct `dataIndex` for each task and set `justBuilt` flag.
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
 

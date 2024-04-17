@@ -52,6 +52,8 @@ export const fetchAccountBalances = async () => {
         reserved: new BigNumber(result.data.reserved),
         frozen: new BigNumber(result.data.frozen),
       } as AccountBalance;
+
+      await AccountsController.set(account.chain, account);
     }
   }
 };

@@ -115,7 +115,15 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['balance']);
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account) {
+        return;
+      }
 
       // Get the received balance.
       const received: AccountBalance = {
