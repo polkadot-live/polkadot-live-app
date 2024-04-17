@@ -295,7 +295,7 @@ export class Callbacks {
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
       const prevName = account.nominationPoolData!.poolName;
-      const isSame = prevName === receivedPoolName;
+      const isSame = prevName === receivedPoolName || receivedPoolName === '';
 
       if (!isOneShot && isSame) {
         return;
