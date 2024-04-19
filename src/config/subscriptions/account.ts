@@ -111,7 +111,7 @@ export const accountTasks: SubscriptionTask[] = [
     apiCallAsString: 'api.query.system.account',
     category: 'Nomination Pools',
     chainId: 'Kusama',
-    enableOsNotifications: true,
+    enableOsNotifications: false,
     label: 'Unclaimed Rewards',
     status: 'disable',
   },

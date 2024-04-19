@@ -374,7 +374,7 @@ export class QueryMultiWrapper {
    * @summary Set the enableOsNotifications for a task.
    */
   setOsNotificationsFlag(task: SubscriptionTask) {
-    const { chainId } = task;
+    const { chainId, enableOsNotifications } = task;
     const chainEntry = this.subscriptions.get(chainId);
 
     if (chainEntry) {
@@ -384,7 +384,7 @@ export class QueryMultiWrapper {
           e.task.action === task.action
             ? {
                 ...e,
-                task,
+                task: { ...e.task, enableOsNotifications },
               }
             : e
         ),
