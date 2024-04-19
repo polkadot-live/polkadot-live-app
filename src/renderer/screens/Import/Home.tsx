@@ -136,41 +136,44 @@ export const Home = ({ setSection, setSource }: HomeProps) => (
       </div>
 
       {/* Read-only*/}
-      <ModalConnectItem>
-        <ModalHardwareItem>
-          <div className="body">
-            <div className="status">
-              <ButtonHelp
-                onClick={() => {
-                  /* Empty */
-                }}
-              />
+      <div style={{ maxWidth: '50%' }}>
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    /* Empty */
+                  }}
+                />
+              </div>
+              <div className="row">
+                <FontAwesomeIcon icon={faReadme} className="logo mono" />
+              </div>
+              <div className="row">
+                <ButtonText
+                  text="Read Only"
+                  disabled
+                  marginRight
+                  style={{ opacity: 0.5 }}
+                />
+              </div>
+              <div className="row margin" style={{ marginBottom: '0.75rem' }}>
+                <ButtonMonoInvert
+                  text="Manage"
+                  onClick={() => {
+                    setSource('read-only');
+                    setSection(1);
+                  }}
+                  iconLeft={faKeyboard}
+                  iconTransform="shrink-1"
+                />
+              </div>
+              <div className="foot"></div>
             </div>
-            <div className="row">
-              <FontAwesomeIcon icon={faReadme} className="logo mono" />
-            </div>
-            <div className="row">
-              <ButtonText
-                text="Read Only"
-                disabled
-                marginRight
-                style={{ opacity: 0.5 }}
-              />
-            </div>
-            <div className="row margin" style={{ marginBottom: '0.75rem' }}>
-              <ButtonMonoInvert
-                text="Manage"
-                onClick={() => {
-                  setSource('read-only');
-                  setSection(1);
-                }}
-                iconLeft={faKeyboard}
-                iconTransform="shrink-1"
-              />
-            </div>
-          </div>
-        </ModalHardwareItem>
-      </ModalConnectItem>
+          </ModalHardwareItem>
+        </ModalConnectItem>
+      </div>
 
       <ToastContainer />
     </ContentWrapper>
