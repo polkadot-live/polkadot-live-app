@@ -59,7 +59,7 @@ export class APIsController {
   static close = async (chain: ChainID) => {
     const instance = this.instances.find((s) => s.chain === chain);
 
-    if (instance) {
+    if (instance?.status === 'connected') {
       console.log('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
     }
