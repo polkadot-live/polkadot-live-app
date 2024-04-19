@@ -12,7 +12,7 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
 import { Identicon } from '@/renderer/library/Identicon';
-import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
+import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -211,7 +211,7 @@ export const Manage = ({
 
         <HardwareStatusBar
           show={section === 1}
-          Icon={PolkadotVaultSVG}
+          Icon={ReadmeSVG}
           text={`${addresses.length} Account${
             addresses.length == 1 ? '' : 's'
           } Imported`}
