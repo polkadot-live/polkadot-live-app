@@ -94,10 +94,15 @@ export const IconWrapper = styled.div`
 `;
 
 export const NoAccountsWrapper = styled.div`
-  margin-top: 6rem;
   display: flex;
   flex-direction: column;
+  row-gap: 1rem;
   align-items: center;
+  margin: 0.25rem;
+  margin-bottom: 0.75rem;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  background-color: var(--background-default);
 
   button {
     z-index: 1;
@@ -105,7 +110,6 @@ export const NoAccountsWrapper = styled.div`
   }
   h4 {
     text-align: center;
-    margin: 0.65rem 0;
   }
 `;
 
