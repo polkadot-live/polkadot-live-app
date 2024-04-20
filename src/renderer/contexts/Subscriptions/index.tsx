@@ -134,9 +134,9 @@ export const SubscriptionsProvider = ({
     updateRenderedSubscriptions: AnyFunction
   ) => {
     // Get all rendered tasks in the target category that are disabled.
-    const tasks = rendererdSubscriptions.tasks.filter(
-      (t) => t.category === category && t.status === 'disable'
-    );
+    const tasks = rendererdSubscriptions.tasks
+      .filter((t) => t.category === category && t.status === 'disable')
+      .sort((a, b) => a.label.localeCompare(b.label));
 
     // Toggle on the subscription.
     for (const task of tasks) {
