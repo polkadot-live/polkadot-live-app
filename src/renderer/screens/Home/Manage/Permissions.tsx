@@ -212,7 +212,7 @@ export const Permissions = ({
                     size="sm"
                     type="secondary"
                     isOn={false}
-                    disabled={false}
+                    disabled={getDisabled(tasks[0])}
                     handleToggle={async () =>
                       await toggleCategoryTasks(
                         category,
