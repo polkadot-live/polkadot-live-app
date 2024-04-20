@@ -27,7 +27,6 @@ import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
-  SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -37,9 +36,10 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { updateTask, handleQueuedToggle } = useSubscriptions();
-  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
+  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+  const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
+    useSubscriptions();
 
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -127,10 +127,6 @@ export const Permissions = ({
     return map;
   };
 
-  /// Return the type of subscription based on its action string.
-  const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
-    task.action.startsWith('subscribe:account') ? 'account' : 'chain';
-
   /// Handle a one-shot event.
   const handleOneShot = async (
     task: SubscriptionTask,
@@ -217,7 +213,13 @@ export const Permissions = ({
                     type="secondary"
                     isOn={false}
                     disabled={false}
-                    handleToggle={() => console.log('TODO')}
+                    handleToggle={async () =>
+                      await toggleCategoryTasks(
+                        category,
+                        renderedSubscriptions,
+                        updateRenderedSubscriptions
+                      )
+                    }
                   />
                 </div>
               </div>
