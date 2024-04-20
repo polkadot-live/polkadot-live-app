@@ -77,7 +77,15 @@ export function AccordionHeader({ children }: { children: ReactNode }) {
   return (
     <motion.div
       style={{ userSelect: 'none' }}
-      onClick={() => onChangeIndex(index)}
+      onClick={(e) => {
+        // Don't animate accordion if the clicked element is a switch.
+        for (const className of (e.target as HTMLElement).classList) {
+          if (className.includes('switch')) {
+            return;
+          }
+        }
+        onChangeIndex(index);
+      }}
     >
       {children}
     </motion.div>

@@ -18,6 +18,7 @@ import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
+import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
@@ -203,10 +204,23 @@ export const Permissions = ({
         <AccordionItem key={`${category}_${j}`}>
           <HeadingWrapper>
             <AccordionHeader>
-              <h5>
-                <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-                <span>{category}</span>
-              </h5>
+              <div className="flex">
+                <div className="left">
+                  <h5>
+                    <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+                    <span>{category}</span>
+                  </h5>
+                </div>
+                <div className="right">
+                  <Switch
+                    size="sm"
+                    type="secondary"
+                    isOn={false}
+                    disabled={false}
+                    handleToggle={() => console.log('TODO')}
+                  />
+                </div>
+              </div>
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>
