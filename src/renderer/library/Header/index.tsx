@@ -50,6 +50,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 size="sm"
                 type="primary"
                 isOn={silenceToggle}
+                disabled={appLoading}
                 handleToggle={() => handleSilenceNotifications()}
               />
             </a>
