@@ -59,20 +59,34 @@ export const HeadingWrapper = styled.div`
   opacity: 0.75;
   user-select: none;
 
-  > div > h5 {
+  .flex {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    column-gap: 1rem;
+
     margin: 0.1rem 0;
     padding: 1rem;
-
-    cursor: pointer;
     background-color: #181818;
     border-radius: 1rem;
     transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
 
     &:hover {
       background-color: #141414;
     }
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      flex: 1;
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  h5 {
     > span {
       margin-left: 1rem;
       color: var(--text-color-primary);

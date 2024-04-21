@@ -78,10 +78,14 @@ export const Accounts = ({
         <AccordionItem>
           <HeadingWrapper>
             <AccordionHeader>
-              <h5 style={{ marginBottom: '0.5rem' }}>
-                <PolkadotIcon className="icon" />
-                Accounts
-              </h5>
+              <div className="flex">
+                <div className="left">
+                  <h5>
+                    <PolkadotIcon className="icon" />
+                    Accounts
+                  </h5>
+                </div>
+              </div>
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>
@@ -128,10 +132,14 @@ export const Accounts = ({
         <AccordionItem key={1}>
           <HeadingWrapper>
             <AccordionHeader>
-              <h5 style={{ marginBottom: '0.5rem' }}>
-                <PolkadotIcon className="icon" />
-                Chains
-              </h5>
+              <div className="flex">
+                <div className="left">
+                  <h5>
+                    <PolkadotIcon className="icon" />
+                    Chains
+                  </h5>
+                </div>
+              </div>
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>
