@@ -40,8 +40,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       <div />
       <div>
         {showMenu || activeWindow === 'menu' ? (
-          <div style={{ display: 'flex', columnGap: '1rem' }}>
-            <Tooltip id="silence-notifications-tooltip" />
+          <div className="switch-wrapper">
             <a
               data-tooltip-id="silence-notifications-tooltip"
               data-tooltip-content="Silence OS Notifications"
@@ -65,6 +64,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
           </button>
         )}
+        <Tooltip id="silence-notifications-tooltip" />
       </div>
     </HeaderWrapper>
   );

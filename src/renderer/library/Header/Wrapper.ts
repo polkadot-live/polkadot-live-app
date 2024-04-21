@@ -31,6 +31,10 @@ export const HeaderWrapper = styled.div`
       display: flex;
       justify-content: flex-end;
 
+      .switch-wrapper {
+        display: flex;
+        column-gap: 1rem;
+      }
       > button {
         margin-left: 1.4rem;
       }
