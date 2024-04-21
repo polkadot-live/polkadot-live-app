@@ -130,15 +130,18 @@ export const SubscriptionsProvider = ({
   /// Handle toggling on all subscriptions in a category.
   const toggleCategoryTasks = async (
     category: string,
+    isOn: boolean,
     rendererdSubscriptions: WrappedSubscriptionTasks,
     updateRenderedSubscriptions: AnyFunction
   ) => {
-    // Get all rendered tasks in the target category that are disabled.
+    const targetStatus = isOn ? 'enable' : 'disable';
+
+    // Get all rendered tasks in the category that have the target status.
     const tasks = rendererdSubscriptions.tasks
-      .filter((t) => t.category === category && t.status === 'disable')
+      .filter((t) => t.category === category && t.status === targetStatus)
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    // Toggle on the subscription.
+    // Toggle on or off the subscriptions.
     // NOTE: Using subscription queue won't work in this loop.
     for (const task of tasks) {
       await toggleSubscription(
@@ -146,8 +149,8 @@ export const SubscriptionsProvider = ({
         null
       );
 
-      // Update rendered subscription tasks state.
-      task.status = 'enable';
+      // Invert task status and update rendered subscription tasks state.
+      task.status = targetStatus === 'enable' ? 'disable' : 'enable';
       updateRenderedSubscriptions(task);
     }
   };

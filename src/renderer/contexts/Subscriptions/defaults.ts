@@ -16,7 +16,7 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   handleQueuedToggle: async (c, f) => {
     await new Promise(() => {});
   },
-  toggleCategoryTasks: async (c, ts, u) => {
+  toggleCategoryTasks: async (c, i, ts, u) => {
     await new Promise(() => {});
   },
   getTaskType: (t) => '',

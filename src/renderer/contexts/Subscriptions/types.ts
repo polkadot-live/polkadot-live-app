@@ -24,6 +24,7 @@ export interface SubscriptionsContextInterface {
   ) => Promise<void>;
   toggleCategoryTasks: (
     c: string,
+    i: boolean,
     s: WrappedSubscriptionTasks,
     u: AnyFunction
   ) => Promise<void>;

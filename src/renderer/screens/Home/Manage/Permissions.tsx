@@ -233,6 +233,7 @@ export const Permissions = ({
                     handleToggle={async () =>
                       await toggleCategoryTasks(
                         category,
+                        getCategoryToggles().get(category) || false,
                         renderedSubscriptions,
                         updateRenderedSubscriptions
                       )
