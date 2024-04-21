@@ -46,9 +46,15 @@ export const NoEventsWrapper = styled.div`
 export const EventGroup = styled.div`
   width: 100%;
   border-radius: 0.9rem;
-  margin: 1rem 0;
   z-index: 2;
   padding: 0 0.5rem;
+  margin: 1rem 0;
+
+  .items-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+  }
 `;
 
 export const EventItem = styled(motion.div)`
@@ -77,10 +83,11 @@ export const EventItem = styled(motion.div)`
 
   > div {
     background: var(--background-default);
+    border: 1px solid var(--border-primary-color);
     width: 100%;
-    border-radius: 1.75rem;
-    padding: 1.25rem;
-    margin-bottom: 0.75rem;
+    border-radius: 1.25rem;
+    padding: 1rem;
+
     text-align: left;
     display: flex;
     flex-direction: column;

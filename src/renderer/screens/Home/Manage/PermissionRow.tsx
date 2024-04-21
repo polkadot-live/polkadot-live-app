@@ -97,6 +97,7 @@ export const PermissionRow = ({
 
           {/* Toggle Switch */}
           <Switch
+            size="sm"
             type="secondary"
             isOn={isToggled}
             disabled={getDisabled(task)}

@@ -48,7 +48,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             >
               <Switch
                 size="sm"
-                type="primary"
+                type="mono"
                 isOn={silenceToggle}
                 disabled={appLoading}
                 handleToggle={() => handleSilenceNotifications()}
