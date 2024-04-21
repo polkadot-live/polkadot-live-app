@@ -1,14 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
+import { Tooltip } from 'react-tooltip';
 import { useState } from 'react';
-import { Config as RendererConfig } from '@/config/processes/renderer';
 import type { HeaderProps } from './types';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
@@ -39,15 +40,22 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       <div />
       <div>
         {showMenu || activeWindow === 'menu' ? (
-          <>
-            <Switch
-              size="sm"
-              type="primary"
-              isOn={silenceToggle}
-              handleToggle={() => handleSilenceNotifications()}
-            />
+          <div style={{ display: 'flex', columnGap: '1rem' }}>
+            <Tooltip id="silence-notifications-tooltip" />
+            <a
+              data-tooltip-id="silence-notifications-tooltip"
+              data-tooltip-content="Silence OS Notifications"
+              data-tooltip-place="left"
+            >
+              <Switch
+                size="sm"
+                type="primary"
+                isOn={silenceToggle}
+                handleToggle={() => handleSilenceNotifications()}
+              />
+            </a>
             <Menu />
-          </>
+          </div>
         ) : (
           <button
             type="button"
