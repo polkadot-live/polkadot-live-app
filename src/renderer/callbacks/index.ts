@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@/utils/AccountUtils';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
 import {
   getAccountExposed,
@@ -159,12 +160,11 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              received,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            received,
+          })
+        : null;
 
       // Send event and notification data to main process.
       window.myAPI.persistEvent(parsed, notification, isOneShot);
@@ -218,12 +218,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              pendingRewardsPlanck,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            pendingRewardsPlanck,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -267,12 +266,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              prevState,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            prevState,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -317,12 +315,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              prevName,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            prevName,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -382,12 +379,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              poolRoles,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            poolRoles,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -442,12 +438,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              poolCommission,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            poolCommission,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -503,13 +498,12 @@ export class Callbacks {
       const era = data.toHuman().index as string;
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              pendingPayout,
-              chainId: account.chain,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            pendingPayout,
+            chainId: account.chain,
+          })
+        : null;
 
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { pendingPayout, era }),
@@ -562,13 +556,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              era,
-              exposed,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            era,
+            exposed,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -615,13 +608,12 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              era,
-              exposed,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            era,
+            exposed,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -737,12 +729,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              updated: [...changedValidators],
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            updated: [...changedValidators],
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -755,4 +746,15 @@ export class Callbacks {
       return;
     }
   }
+
+  /**
+   * @name showNotificationFlag
+   * @summary Determine if the task should show a native OS notification.
+   */
+  private static getNotificationFlag = (
+    entry: ApiCallEntry,
+    isOneShot: boolean
+  ) =>
+    !RendererConfig.silenceNotifications &&
+    (entry.task.enableOsNotifications || isOneShot);
 }

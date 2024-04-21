@@ -12,6 +12,9 @@ export class Config {
   // Cache the main window's message port to communicate with `action` window.
   private static _portToAction: MessagePort;
 
+  // Flag to silence all native OS notifications.
+  private static _silenceNotifications = false;
+
   // Return the main window's message port.
   static get portToImport(): MessagePort {
     if (!Config._portToImport) {
@@ -38,5 +41,14 @@ export class Config {
   // Set the `main` window's message port for `action` window.
   static set portToAction(port: MessagePort) {
     Config._portToAction = port;
+  }
+
+  // Accessors for `_silenceNotifications` flag.
+  static get silenceNotifications(): boolean {
+    return Config._silenceNotifications;
+  }
+
+  static set silenceNotifications(flag: boolean) {
+    Config._silenceNotifications = flag;
   }
 }
