@@ -127,6 +127,23 @@ export const Permissions = ({
     return map;
   };
 
+  /// Map category name to its global toggle state.
+  const getCategoryToggles = () => {
+    const map = new Map<string, boolean>();
+
+    // A category toggle is set if all of its tasks are enabled.
+    for (const [category, tasks] of getCategorised().entries()) {
+      const allToggled = tasks.reduce(
+        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
+        true
+      );
+
+      map.set(category, allToggled);
+    }
+
+    return map;
+  };
+
   /// Handle a one-shot event.
   const handleOneShot = async (
     task: SubscriptionTask,
@@ -211,7 +228,7 @@ export const Permissions = ({
                   <Switch
                     size="sm"
                     type="secondary"
-                    isOn={false}
+                    isOn={getCategoryToggles().get(category) || false}
                     disabled={getDisabled(tasks[0])}
                     handleToggle={async () =>
                       await toggleCategoryTasks(

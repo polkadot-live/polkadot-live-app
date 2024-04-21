@@ -139,13 +139,10 @@ export const SubscriptionsProvider = ({
       .sort((a, b) => a.label.localeCompare(b.label));
 
     // Toggle on the subscription.
+    // NOTE: Using subscription queue won't work in this loop.
     for (const task of tasks) {
-      // NOTE: Using subscription queue won't work in this loop.
       await toggleSubscription(
-        {
-          type: getTaskType(task),
-          tasks: [task],
-        },
+        { type: getTaskType(task), tasks: [task] } as WrappedSubscriptionTasks,
         null
       );
 
