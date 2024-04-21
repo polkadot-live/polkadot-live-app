@@ -8,11 +8,14 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { useState } from 'react';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import type { HeaderProps } from './types';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
-  const [silenceToggle, setSilenceToggle] = useState(false);
+  const [silenceToggle, setSilenceToggle] = useState(
+    RendererConfig.silenceNotifications
+  );
 
   // Determine active window by pathname.
   let activeWindow: string;
@@ -24,6 +27,13 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
+  // Handle toggle to silence all notifications.
+  const handleSilenceNotifications = () => {
+    const newFlag = !silenceToggle;
+    RendererConfig.silenceNotifications = newFlag;
+    setSilenceToggle(newFlag);
+  };
+
   return (
     <HeaderWrapper>
       <div />
@@ -34,7 +44,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
               size="sm"
               type="primary"
               isOn={silenceToggle}
-              handleToggle={() => setSilenceToggle(!silenceToggle)}
+              handleToggle={() => handleSilenceNotifications()}
             />
             <Menu />
           </>
