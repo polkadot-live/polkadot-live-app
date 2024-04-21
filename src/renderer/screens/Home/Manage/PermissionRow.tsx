@@ -25,6 +25,7 @@ export const PermissionRow = ({
     if (task.status === 'enable') {
       setIsToggled(true);
     } else {
+      setNativeChecked(false);
       setIsToggled(false);
     }
   }, [task]);
