@@ -8,6 +8,7 @@ export const Wrapper = styled.h3`
   color: var(--text-color-primary);
   font-family: InterSemiBold, sans-serif;
   font-weight: 600;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   margin: 1.25rem 0 0;
