@@ -10,3 +10,4 @@ out
 CODEOWNERS
 .yarn
 .licenserc.json
+.env.yarn
