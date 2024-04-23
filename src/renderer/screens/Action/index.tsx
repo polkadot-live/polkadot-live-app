@@ -5,13 +5,13 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainCurrency, chainIcon } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
-import { ContentWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
 import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
-import { SubmittedTxWrapper } from './Wrappers';
+import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
@@ -118,7 +118,18 @@ export const Action = () => {
 
   return (
     <>
-      <DragClose windowName="action" />
+      {/* Header */}
+      <HeaderWrapper>
+        <DragClose windowName="action" />
+        <div className="content">
+          <DragClose windowName="action" />
+          <h4>
+            <ChainIcon className="icon" />
+            Nomination Pools
+          </h4>
+        </div>
+      </HeaderWrapper>
+
       {txStatus !== 'pending' && (
         <SubmittedTxWrapper>
           <div>
@@ -140,11 +151,6 @@ export const Action = () => {
       )}
       <>
         <ContentWrapper>
-          <h5>
-            <ChainIcon className="icon" />
-            Nomination Pools
-          </h5>
-
           {action === 'nominationPools_pendingRewards_bond' && (
             <>
               <h3>Compound Rewards</h3>
@@ -177,7 +183,7 @@ export const Action = () => {
           )}
         </ContentWrapper>
 
-        <div style={{ position: 'fixed', bottom: 0, width: '100%' }}>
+        <FooterWrapper>
           <Tx
             label={'Signer'}
             name={fromName}
@@ -195,8 +201,8 @@ export const Action = () => {
                 from={from}
               />
             }
-          ></Tx>
-        </div>
+          />
+        </FooterWrapper>
       </>
     </>
   );

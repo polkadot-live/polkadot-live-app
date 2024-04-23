@@ -10,6 +10,8 @@ export const HeaderWrapper = styled.div`
   position: -webkit-sticky;
   top: 0;
   z-index: 5;
+  height: 4rem;
+  width: 100%;
 
   background-color: var(--background-menu);
   border-bottom: 1px solid var(--border-primary-color);
@@ -19,10 +21,27 @@ export const HeaderWrapper = styled.div`
     align-items: center;
     padding: 1.25rem;
 
-    h3 {
+    h3,
+    h4 {
       font-weight: 600;
       font-size: 1.25rem;
       user-select: none;
+    }
+    h4 {
+      display: flex;
+      align-items: center;
+      > span {
+        color: var(--text-color-primary);
+        margin-right: 0%.5rem;
+      }
+      svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        margin-right: 0.6rem;
+        path {
+          fill: var(--text-color-primary);
+        }
+      }
     }
   }
 `;
