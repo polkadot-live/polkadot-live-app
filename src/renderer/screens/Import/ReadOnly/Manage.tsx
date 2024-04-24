@@ -157,70 +157,69 @@ export const Manage = ({
       </HeaderWrapper>
 
       <BodyInterfaceWrapper $maxHeight>
-        <AddressWrapper>
-          <Wrapper
-            style={{
-              backgroundColor: 'var(--background-primary)',
-              padding: '2.0rem 1.5rem 1.5rem',
-            }}
-          >
-            <div
-              className="content"
-              style={{
-                padding: '4px',
-              }}
-            >
-              <div className="inner">
-                <div className="identicon">
-                  <Identicon value={editName} size={35} />
-                </div>
-                <div>
-                  <section className="row">
-                    <input
-                      type="text"
-                      placeholder="Input Address"
-                      value={editName}
-                      onChange={(e) => onChange(e)}
-                    />
-                    &nbsp;
-                    <button
-                      className="btn-mono lg"
-                      onPointerDown={() => onImport()}
-                    >
-                      Import
-                    </button>
-                    &nbsp;
-                    <button
-                      className="btn-mono-invert lg"
-                      onPointerDown={() => onCancel()}
-                    >
-                      Clear
-                    </button>
-                  </section>
-                </div>
+        <Wrapper
+          style={{
+            backgroundColor: 'var(--background-primary)',
+            padding: '2.0rem 3rem 1.5rem',
+          }}
+        >
+          <div className="content">
+            <div className="inner">
+              <div className="identicon">
+                <Identicon value={editName} size={35} />
+              </div>
+              <div>
+                <section className="row">
+                  <input
+                    type="text"
+                    placeholder="Input Address"
+                    value={editName}
+                    onChange={(e) => onChange(e)}
+                  />
+                  &nbsp;
+                  <button
+                    className="btn-mono lg"
+                    onPointerDown={() => onImport()}
+                  >
+                    Import
+                  </button>
+                  &nbsp;
+                  <button
+                    className="btn-mono-invert lg"
+                    onPointerDown={() => onCancel()}
+                  >
+                    Clear
+                  </button>
+                </section>
               </div>
             </div>
-          </Wrapper>
-          <div className="items">
-            {addresses.length ? (
-              <>
-                {addresses.map(
-                  ({ address, index, isImported, name }: LocalAddress) => (
-                    <Address
-                      key={address}
-                      accountName={name}
-                      setAddresses={setAddresses}
-                      address={address}
-                      index={index}
-                      isImported={isImported || false}
-                      setSection={setSection}
-                    />
-                  )
-                )}
-              </>
-            ) : (
-              <p>No read only addresses imported.</p>
-            )}
+          </div>
+        </Wrapper>
+
+        <AddressWrapper>
+          <div className="items-wrapper">
+            <div className="items">
+              {addresses.length ? (
+                <>
+                  {addresses.map(
+                    ({ address, index, isImported, name }: LocalAddress) => (
+                      <Address
+                        key={address}
+                        accountName={name}
+                        setAddresses={setAddresses}
+                        address={address}
+                        index={index}
+                        isImported={isImported || false}
+                        isLast={index === addresses.length - 1}
+                        setSection={setSection}
+                      />
+                    )
+                  )}
+                </>
+              ) : (
+                <p>No read only addresses imported.</p>
+              )}
+            </div>
           </div>
         </AddressWrapper>
 

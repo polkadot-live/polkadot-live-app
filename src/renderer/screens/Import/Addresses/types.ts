@@ -11,6 +11,7 @@ export interface AddressProps {
   isImported: boolean;
   setAddresses: AnyFunction;
   setSection: AnyFunction;
+  isLast: boolean;
 }
 
 export interface ConfirmProps {
