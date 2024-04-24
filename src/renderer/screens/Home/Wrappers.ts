@@ -24,10 +24,10 @@ export const CarouselWrapper = styled(motion.div)`
       width: 5px;
     }
     &::-webkit-scrollbar-track {
-      background-color: rgb(45, 41, 45);
+      background-color: #101010;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: rgb(25, 22, 25);
+      background-color: #212121;
     }
   }
   > div {
@@ -48,6 +48,7 @@ export const CarouselWrapper = styled(motion.div)`
 
 export const TabsWrapper = styled.div`
   --tab-height: 3.3rem;
+  background-color: var(--background-menu);
   border-bottom: 2px solid var(--border-primary-color);
   width: 100%;
   display: flex;
@@ -64,7 +65,7 @@ export const TabsWrapper = styled.div`
     font-size: 1.1rem;
 
     &:hover {
-      background: var(--background-menu);
+      background: #1e1e1e;
     }
 
     > span {
@@ -94,10 +95,15 @@ export const IconWrapper = styled.div`
 `;
 
 export const NoAccountsWrapper = styled.div`
-  margin-top: 6rem;
   display: flex;
   flex-direction: column;
+  row-gap: 1rem;
   align-items: center;
+  margin: 0.25rem;
+  margin-bottom: 0.75rem;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  background-color: var(--background-default);
 
   button {
     z-index: 1;
@@ -105,7 +111,6 @@ export const NoAccountsWrapper = styled.div`
   }
   h4 {
     text-align: center;
-    margin: 0.65rem 0;
   }
 `;
 
@@ -113,8 +118,31 @@ export const HeadingWrapper = styled.div`
   width: 100%;
   margin-top: 0rem;
   margin-bottom: 1rem;
-  padding: 0 0.25rem;
   opacity: 0.75;
+  user-select: none;
+
+  .flex {
+    padding: 0.25rem 0;
+    transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid var(--border-secondary-color);
+
+    > div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      column-gap: 1rem;
+      padding: 0.5rem;
+    }
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      flex: 1;
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
 
   h5 {
     display: flex;

@@ -8,7 +8,7 @@ import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
-  fetchAccountBalances,
+  fetchBalanceForAccount,
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
@@ -60,13 +60,13 @@ export const useMessagePorts = () => {
 
       if (await window.myAPI.getOnlineStatus()) {
         // Fetch account nonce and balance.
-        await fetchAccountBalances();
+        await fetchBalanceForAccount(account);
 
         // Initialize nomination pool data for account if necessary.
-        await fetchNominationPoolDataForAccount(account, chainId);
+        await fetchNominationPoolDataForAccount(account);
 
         // Initialize nominating data for account if necessary.
-        await fetchNominatingDataForAccount(account, chainId);
+        await fetchNominatingDataForAccount(account);
 
         // Disconnect from any API instances that are not currently needed.
         await handleApiDisconnects();

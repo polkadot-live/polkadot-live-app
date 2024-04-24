@@ -19,7 +19,8 @@ export const Wrapper = styled.div`
 
 export const BreadcrumbsWrapper = styled.div`
   color: var(--text-color-primary);
-  background-color: rgba(57, 52, 58, 0.4);
+  background-color: var(--background-default);
+  border-bottom: 1px solid #262626;
   padding: 0.75rem 1.75rem;
   font-size: 0.92rem;
   font-weight: 500;
@@ -58,21 +59,36 @@ export const HeadingWrapper = styled.div`
   z-index: 3;
   opacity: 0.75;
   user-select: none;
+  cursor: pointer;
 
-  > div > h5 {
-    display: flex;
-    align-items: center;
-    margin: 0.1rem 0;
-    padding: 1rem;
-
-    cursor: pointer;
-    background-color: #181818;
-    border-radius: 1rem;
+  .flex {
+    padding: 0.25rem 0.5rem;
     transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid var(--border-secondary-color);
 
     &:hover {
       background-color: #141414;
     }
+    > div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      column-gap: 1rem;
+      padding: 0.5rem;
+    }
+
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      flex: 1;
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  h5 {
     > span {
       margin-left: 1rem;
       color: var(--text-color-primary);
@@ -174,12 +190,12 @@ export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
 
 export const AccountWrapper = styled(motion.div)`
   background: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   width: 100%;
   position: relative;
-  margin-bottom: 0.5rem;
   border-radius: 1.25rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  margin: 1rem 0;
 
   /* 3 Dot Spinner */
   .lds-ellipsis {

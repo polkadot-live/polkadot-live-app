@@ -3,7 +3,7 @@
 
 import { AccountWrapper, PermissionCheckBox } from './Wrappers';
 import { Switch } from '@app/library/Switch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PermissionRowProps } from './types';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
@@ -15,10 +15,20 @@ export const PermissionRow = ({
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
+  const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+
+  useEffect(() => {
+    if (task.status === 'enable') {
+      setIsToggled(true);
+    } else {
+      setNativeChecked(false);
+      setIsToggled(false);
+    }
+  }, [task]);
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -87,8 +97,9 @@ export const PermissionRow = ({
 
           {/* Toggle Switch */}
           <Switch
+            size="sm"
             type="secondary"
-            isOn={task.status === 'enable'}
+            isOn={isToggled}
             disabled={getDisabled(task)}
             handleToggle={async () => {
               // Send an account or chain subscription task.

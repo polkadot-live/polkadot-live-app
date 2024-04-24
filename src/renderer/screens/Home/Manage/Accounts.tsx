@@ -74,14 +74,76 @@ export const Accounts = ({
   return (
     <AccountsWrapper>
       <Accordion multiple defaultIndex={[0, 1]}>
-        <AccordionItem key={1}>
-          {/* Manage Chains */}
+        {/* Manage Accounts */}
+        <AccordionItem>
           <HeadingWrapper>
             <AccordionHeader>
-              <h5 style={{ marginBottom: '0.5rem' }}>
-                <PolkadotIcon className="icon" />
-                Chains
-              </h5>
+              <div className="flex">
+                <div>
+                  <div className="left">
+                    <h5>
+                      <PolkadotIcon className="icon" />
+                      Accounts
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </AccordionHeader>
+          </HeadingWrapper>
+          <AccordionPanel>
+            <div style={{ padding: '0 0.75rem' }}>
+              {addresses.length ? (
+                addresses.map(
+                  ({ address, name }: FlattenedAccountData, i: number) => (
+                    <AccountWrapper
+                      whileHover={{ scale: 1.01 }}
+                      key={`manage_account_${i}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleClickAccount(name, address)}
+                      ></button>
+                      <div className="inner">
+                        <div>
+                          <span className="icon">
+                            <Identicon value={address} size={26} />
+                          </span>
+                          <div className="content">
+                            <h3>{name}</h3>
+                          </div>
+                        </div>
+                        <div>
+                          <ButtonText
+                            text=""
+                            iconRight={faChevronRight}
+                            iconTransform="shrink-3"
+                          />
+                        </div>
+                      </div>
+                    </AccountWrapper>
+                  )
+                )
+              ) : (
+                <NoAccounts />
+              )}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
+
+        {/* Manage Chains */}
+        <AccordionItem key={1}>
+          <HeadingWrapper>
+            <AccordionHeader>
+              <div className="flex">
+                <div>
+                  <div className="left">
+                    <h5>
+                      <PolkadotIcon className="icon" />
+                      Chains
+                    </h5>
+                  </div>
+                </div>
+              </div>
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>
@@ -115,56 +177,6 @@ export const Accounts = ({
             </div>
           </AccordionPanel>
         </AccordionItem>
-
-        {/* Manage Accounts */}
-        {addresses.length ? (
-          <AccordionItem>
-            <HeadingWrapper>
-              <AccordionHeader>
-                <h5 style={{ marginBottom: '0.5rem' }}>
-                  <PolkadotIcon className="icon" />
-                  Accounts
-                </h5>
-              </AccordionHeader>
-            </HeadingWrapper>
-            <AccordionPanel>
-              <div style={{ padding: '0 0.75rem' }}>
-                {addresses.map(
-                  ({ address, name }: FlattenedAccountData, i: number) => (
-                    <AccountWrapper
-                      whileHover={{ scale: 1.01 }}
-                      key={`manage_account_${i}`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleClickAccount(name, address)}
-                      ></button>
-                      <div className="inner">
-                        <div>
-                          <span className="icon">
-                            <Identicon value={address} size={26} />
-                          </span>
-                          <div className="content">
-                            <h3>{name}</h3>
-                          </div>
-                        </div>
-                        <div>
-                          <ButtonText
-                            text=""
-                            iconRight={faChevronRight}
-                            iconTransform="shrink-3"
-                          />
-                        </div>
-                      </div>
-                    </AccountWrapper>
-                  )
-                )}
-              </div>
-            </AccordionPanel>
-          </AccordionItem>
-        ) : (
-          <NoAccounts />
-        )}
       </Accordion>
     </AccountsWrapper>
   );

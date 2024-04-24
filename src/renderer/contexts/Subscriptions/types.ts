@@ -5,6 +5,7 @@ import type { AnyFunction } from '@w3ux/utils/types';
 import type { ChainID } from '@/types/chains';
 import type {
   SubscriptionTask,
+  SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -21,4 +22,11 @@ export interface SubscriptionsContextInterface {
     cached: WrappedSubscriptionTasks,
     setNativeCheckbox: AnyFunction
   ) => Promise<void>;
+  toggleCategoryTasks: (
+    c: string,
+    i: boolean,
+    s: WrappedSubscriptionTasks,
+    u: AnyFunction
+  ) => Promise<void>;
+  getTaskType: (t: SubscriptionTask) => SubscriptionTaskType;
 }

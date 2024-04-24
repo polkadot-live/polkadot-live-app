@@ -9,12 +9,7 @@ import { getEventChainId } from '@/utils/EventUtils';
 import type { EventCategoryProps } from './types';
 import type { EventCallback } from '@/types/reporter';
 
-export const Category = ({
-  chain,
-  category,
-  events,
-  i,
-}: EventCategoryProps) => {
+export const Category = ({ chain, category, events }: EventCategoryProps) => {
   const ChainIcon = chainIcon(chain);
   const { name, icon } = chainCategory(chain, category);
 
@@ -23,16 +18,24 @@ export const Category = ({
     `${getEventChainId(event)}_${event.uid}`;
 
   return (
-    <EventGroup style={i === 0 ? { marginTop: '1.7rem' } : undefined}>
+    <EventGroup>
       <HeadingWrapper>
-        <h5>
-          <ChainIcon className="icon" />
-          {name}
-        </h5>
+        <div className="flex">
+          <div>
+            <div className="left">
+              <h5>
+                <ChainIcon className="icon" />
+                {name}
+              </h5>
+            </div>
+          </div>
+        </div>
       </HeadingWrapper>
-      {events?.map((event) => (
-        <Item key={getKey(event)} faIcon={icon} event={event} />
-      ))}
+      <div className="items-wrapper">
+        {events?.map((event) => (
+          <Item key={getKey(event)} faIcon={icon} event={event} />
+        ))}
+      </div>
     </EventGroup>
   );
 };

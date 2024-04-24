@@ -18,6 +18,7 @@ import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
+import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
@@ -26,7 +27,6 @@ import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
-  SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -36,9 +36,10 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { updateTask, handleQueuedToggle } = useSubscriptions();
-  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { online: isOnline } = useOnlineStatus();
+  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+  const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
+    useSubscriptions();
 
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -126,9 +127,22 @@ export const Permissions = ({
     return map;
   };
 
-  /// Return the type of subscription based on its action string.
-  const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
-    task.action.startsWith('subscribe:account') ? 'account' : 'chain';
+  /// Map category name to its global toggle state.
+  const getCategoryToggles = () => {
+    const map = new Map<string, boolean>();
+
+    // A category toggle is set if all of its tasks are enabled.
+    for (const [category, tasks] of getCategorised().entries()) {
+      const allToggled = tasks.reduce(
+        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
+        true
+      );
+
+      map.set(category, allToggled);
+    }
+
+    return map;
+  };
 
   /// Handle a one-shot event.
   const handleOneShot = async (
@@ -203,10 +217,32 @@ export const Permissions = ({
         <AccordionItem key={`${category}_${j}`}>
           <HeadingWrapper>
             <AccordionHeader>
-              <h5>
-                <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-                <span>{category}</span>
-              </h5>
+              <div className="flex">
+                <div>
+                  <div className="left">
+                    <h5>
+                      <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+                      <span>{category}</span>
+                    </h5>
+                  </div>
+                  <div className="right">
+                    <Switch
+                      size="sm"
+                      type="secondary"
+                      isOn={getCategoryToggles().get(category) || false}
+                      disabled={getDisabled(tasks[0])}
+                      handleToggle={async () =>
+                        await toggleCategoryTasks(
+                          category,
+                          getCategoryToggles().get(category) || false,
+                          renderedSubscriptions,
+                          updateRenderedSubscriptions
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>

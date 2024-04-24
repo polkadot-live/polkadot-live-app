@@ -12,12 +12,13 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
 import { Identicon } from '@/renderer/library/Identicon';
-import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
+import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
+import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -144,17 +145,31 @@ export const Manage = ({
 
   return (
     <>
-      <DragClose windowName="import" />
+      {/* Header */}
+      <HeaderWrapper>
+        <div className="content">
+          <DragClose windowName="import" />
+          <h4>
+            <AppSVG />
+            Read Only Accounts
+          </h4>
+        </div>
+      </HeaderWrapper>
+
       <BodyInterfaceWrapper $maxHeight>
         <AddressWrapper>
-          <div className="heading">
-            <h4>
-              <AppSVG />
-              <span>Read Only Accounts</span>
-            </h4>
-          </div>
-          <Wrapper>
-            <div className="content" style={{ padding: '4px' }}>
+          <Wrapper
+            style={{
+              backgroundColor: 'var(--background-primary)',
+              padding: '2.0rem 1.5rem 1.5rem',
+            }}
+          >
+            <div
+              className="content"
+              style={{
+                padding: '4px',
+              }}
+            >
               <div className="inner">
                 <div className="identicon">
                   <Identicon value={editName} size={35} />
@@ -211,7 +226,7 @@ export const Manage = ({
 
         <HardwareStatusBar
           show={section === 1}
-          Icon={PolkadotVaultSVG}
+          Icon={ReadmeSVG}
           text={`${addresses.length} Account${
             addresses.length == 1 ? '' : 's'
           } Imported`}

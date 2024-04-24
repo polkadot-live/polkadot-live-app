@@ -68,7 +68,8 @@ SPDX-License-Identifier: GPL-3.0-only */
 
 
 .modal-hardware-item {
-  background: var(--button-primary-background);
+  background: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   border-radius: 1rem;
   position: relative;
   overflow: hidden;
@@ -109,13 +110,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 }
 
 .modal-connect-item {
-  padding: 0.5rem;
   flex-grow: 0;
-  width: 50%;
-
-  @media (max-width: 800px) {
-    width: 100%;
-  }
 
   &.can-connect {
     > .inner {

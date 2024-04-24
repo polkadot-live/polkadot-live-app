@@ -227,8 +227,6 @@ export class Api {
     this.provider = null;
     this._api = null;
     this.status = 'disconnected';
-
-    console.log(`Disconnected: ${this._chain}`);
   };
 
   /**
