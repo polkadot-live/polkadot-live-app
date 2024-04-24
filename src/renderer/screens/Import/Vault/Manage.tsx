@@ -15,6 +15,7 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageVaultProps } from '../types';
+import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -26,16 +27,21 @@ export const Manage = ({
 
   return (
     <>
+      {/* Header */}
+      <HeaderWrapper>
+        <div className="content">
+          <DragClose windowName="import" />
+          <h4>
+            <AppSVG />
+            Vault Accounts
+          </h4>
+        </div>
+      </HeaderWrapper>
+
       <DragClose windowName="import" />
       <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
-            <div className="heading">
-              <h4>
-                <AppSVG />
-                <span>Accounts</span>
-              </h4>
-            </div>
             <div className="items">
               {addresses.map(
                 ({ address, index, isImported, name }: LocalAddress) => (

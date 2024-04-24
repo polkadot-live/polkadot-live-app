@@ -15,7 +15,7 @@ export const Events = () => {
     <Wrapper>
       {events.size === 0 && <NoEvents />}
 
-      {Array.from(events.keys()).map((chainId, i) => {
+      {Array.from(events.keys()).map((chainId) => {
         // Sort chain events by category and order by timestamp DESC.
         const sortedEvents = sortChainEvents(chainId as ChainID);
 
@@ -28,7 +28,6 @@ export const Events = () => {
                   chain={chainId as ChainID}
                   category={category}
                   events={categoryEvents}
-                  i={i}
                 />
               )
             )}

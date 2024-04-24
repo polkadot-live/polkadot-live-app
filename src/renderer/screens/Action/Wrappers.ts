@@ -3,6 +3,14 @@
 
 import styled from 'styled-components';
 
+export const FooterWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--background-default);
+  border-top: 1px solid var(--border-primary-color);
+`;
+
 export const EstimatedFee = styled.div`
   p {
     color: var(--text-color-secondary);

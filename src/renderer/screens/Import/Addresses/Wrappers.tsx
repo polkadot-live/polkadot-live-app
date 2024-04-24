@@ -59,10 +59,10 @@ export const AddressWrapper = styled.div`
       width: 5px;
     }
     &::-webkit-scrollbar-track {
-      background-color: rgb(45, 41, 45);
+      background-color: #101010;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: rgb(25, 22, 25);
+      background-color: #212121;
     }
   }
 
@@ -85,6 +85,8 @@ export const ConfirmWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2.5rem;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--background-default);
 
   h3,
   h5,

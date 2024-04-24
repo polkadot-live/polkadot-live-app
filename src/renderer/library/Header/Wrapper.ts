@@ -6,6 +6,7 @@ import styled from 'styled-components';
 export const HeaderWrapper = styled.div`
   --header-height: 3rem;
   height: var(--header-height);
+  background-color: var(--background-menu);
   width: 100%;
   display: flex;
   flex-flow: row nowrap;

@@ -5,11 +5,9 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   border-bottom: 1px solid var(--border-primary-color);
-  height: 7rem;
   display: flex;
   align-items: center;
-  margin-top: 1rem;
-  padding: 1rem 0.5rem;
+  padding: 1.25rem 0.5rem;
 
   > .action {
     height: 100%;

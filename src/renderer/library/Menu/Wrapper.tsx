@@ -29,6 +29,8 @@ export const MenuWrapper = styled.div`
     padding: 0.6rem 1rem;
     font-size: 1rem;
     transition: background 0.15s;
+    cursor: pointer;
+
     &:hover {
       background: var(--button-hover-background);
     }

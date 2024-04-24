@@ -79,11 +79,13 @@ export const Accounts = ({
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div className="left">
-                  <h5>
-                    <PolkadotIcon className="icon" />
-                    Accounts
-                  </h5>
+                <div>
+                  <div className="left">
+                    <h5>
+                      <PolkadotIcon className="icon" />
+                      Accounts
+                    </h5>
+                  </div>
                 </div>
               </div>
             </AccordionHeader>
@@ -133,11 +135,13 @@ export const Accounts = ({
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div className="left">
-                  <h5>
-                    <PolkadotIcon className="icon" />
-                    Chains
-                  </h5>
+                <div>
+                  <div className="left">
+                    <h5>
+                      <PolkadotIcon className="icon" />
+                      Chains
+                    </h5>
+                  </div>
                 </div>
               </div>
             </AccordionHeader>

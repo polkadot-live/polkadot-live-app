@@ -218,27 +218,29 @@ export const Permissions = ({
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div className="left">
-                  <h5>
-                    <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-                    <span>{category}</span>
-                  </h5>
-                </div>
-                <div className="right">
-                  <Switch
-                    size="sm"
-                    type="secondary"
-                    isOn={getCategoryToggles().get(category) || false}
-                    disabled={getDisabled(tasks[0])}
-                    handleToggle={async () =>
-                      await toggleCategoryTasks(
-                        category,
-                        getCategoryToggles().get(category) || false,
-                        renderedSubscriptions,
-                        updateRenderedSubscriptions
-                      )
-                    }
-                  />
+                <div>
+                  <div className="left">
+                    <h5>
+                      <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+                      <span>{category}</span>
+                    </h5>
+                  </div>
+                  <div className="right">
+                    <Switch
+                      size="sm"
+                      type="secondary"
+                      isOn={getCategoryToggles().get(category) || false}
+                      disabled={getDisabled(tasks[0])}
+                      handleToggle={async () =>
+                        await toggleCategoryTasks(
+                          category,
+                          getCategoryToggles().get(category) || false,
+                          renderedSubscriptions,
+                          updateRenderedSubscriptions
+                        )
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             </AccordionHeader>

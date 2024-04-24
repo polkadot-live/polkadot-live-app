@@ -18,6 +18,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
+import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -144,17 +145,31 @@ export const Manage = ({
 
   return (
     <>
-      <DragClose windowName="import" />
+      {/* Header */}
+      <HeaderWrapper>
+        <div className="content">
+          <DragClose windowName="import" />
+          <h4>
+            <AppSVG />
+            Read Only Accounts
+          </h4>
+        </div>
+      </HeaderWrapper>
+
       <BodyInterfaceWrapper $maxHeight>
         <AddressWrapper>
-          <div className="heading">
-            <h4>
-              <AppSVG />
-              <span>Read Only Accounts</span>
-            </h4>
-          </div>
-          <Wrapper>
-            <div className="content" style={{ padding: '4px' }}>
+          <Wrapper
+            style={{
+              backgroundColor: 'var(--background-primary)',
+              padding: '2.0rem 1.5rem 1.5rem',
+            }}
+          >
+            <div
+              className="content"
+              style={{
+                padding: '4px',
+              }}
+            >
               <div className="inner">
                 <div className="identicon">
                   <Identicon value={editName} size={35} />
