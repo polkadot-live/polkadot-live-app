@@ -24,3 +24,16 @@ export interface HelpContextState {
   status: HelpStatus;
   definition: MaybeString;
 }
+
+export interface DefinitionWithKeys {
+  title: string;
+  description: string[];
+}
+
+export interface ExternalWithKeys {
+  title: string;
+  url: string;
+  website?: string;
+}
+
+export type HelpConfig = Map<string, string | string[]>;

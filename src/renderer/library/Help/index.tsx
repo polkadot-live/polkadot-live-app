@@ -1,2 +1,94 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
+
+import { ActiveDefinition } from './Items/ActiveDefinition';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { CanvasContainer } from '@/renderer/kits/Overlay/structure/CanvasContainer';
+import { CanvasScroll } from '@/renderer/kits/Overlay/structure/CanvasScroll';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { ModalContent } from '@/renderer/kits/Overlay/structure/ModalContent';
+import { useAnimation } from 'framer-motion';
+import { useCallback, useEffect } from 'react';
+import { useHelp } from '@/renderer/contexts/Help';
+
+export const Help = () => {
+  const controls = useAnimation();
+  const { setStatus, status, definition, closeHelp } = useHelp();
+
+  // TMP
+  console.log(`definition: ${definition}`);
+
+  const onFadeIn = useCallback(async () => {
+    await controls.start('visible');
+  }, []);
+
+  const onFadeOut = useCallback(async () => {
+    await controls.start('hidden');
+    setStatus('closed');
+  }, []);
+
+  // Control canvas fade.
+  useEffect(() => {
+    if (status === 'open') {
+      onFadeIn();
+    } else if (status === 'closing') {
+      onFadeOut();
+    }
+  }, [status]);
+
+  // Return early if help not open.
+  if (status === 'closed') {
+    return null;
+  }
+
+  // TODO: Get items from help config.
+  //let meta: HelpItem | undefined = undefined;
+  //let definitions = meta?.definitions ?? [];
+
+  return (
+    <CanvasContainer
+      initial={{
+        opacity: 0,
+        scale: 1.05,
+      }}
+      animate={controls}
+      transition={{
+        duration: 0.2,
+      }}
+      variants={{
+        hidden: {
+          opacity: 0,
+          scale: 1.05,
+        },
+        visible: {
+          opacity: 1,
+          scale: 1,
+        },
+      }}
+      style={{
+        zIndex: 20,
+      }}
+    >
+      <CanvasScroll>
+        <ModalContent>
+          <div className="buttons">
+            <ButtonPrimaryInvert
+              lg
+              text={'Close'}
+              iconLeft={faTimes}
+              onClick={() => closeHelp()}
+            />
+          </div>
+          <h1>Active Definition</h1>
+          <ActiveDefinition description={['Active definition description.']} />
+
+          {/* TODO: Render active definitions */}
+          {/* TODO: Render active external definitions */}
+        </ModalContent>
+      </CanvasScroll>
+      <button type="button" className="close" onClick={() => closeHelp()}>
+        &nbsp;
+      </button>
+    </CanvasContainer>
+  );
+};
