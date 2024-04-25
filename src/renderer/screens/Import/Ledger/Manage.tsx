@@ -41,32 +41,36 @@ export const Manage = ({
     <BodyInterfaceWrapper $maxHeight>
       {addresses.length ? (
         <AddressWrapper>
-          <div className="items">
-            {addresses.map(
-              ({ address, index, isImported, name }: LedgerLocalAddress) => (
-                <Address
-                  key={address}
-                  address={address}
-                  accountName={name}
-                  setAddresses={setAddresses}
-                  index={index}
-                  isImported={isImported}
-                  setSection={setSection}
-                />
-              )
-            )}
-          </div>
-          <div className="more">
-            <ButtonText
-              iconLeft={faArrowDown}
-              text={
-                isImporting
-                  ? ' Getting Account'
-                  : 'Get Another Account (Coming Soon)'
-              }
-              disabled={isImporting || true}
-              onClick={() => toggleImport(true)}
-            />
+          <div className="items-wrapper">
+            <div className="more">
+              <ButtonText
+                iconLeft={faArrowDown}
+                text={
+                  isImporting
+                    ? ' Getting Account'
+                    : 'Get Another Account (Coming Soon)'
+                }
+                disabled={isImporting || true}
+                onClick={() => toggleImport(true)}
+              />
+            </div>
+
+            <div className="items">
+              {addresses.map(
+                ({ address, index, isImported, name }: LedgerLocalAddress) => (
+                  <Address
+                    key={address}
+                    address={address}
+                    accountName={name}
+                    setAddresses={setAddresses}
+                    index={index}
+                    isImported={isImported}
+                    isLast={index === addresses.length - 1}
+                    setSection={setSection}
+                  />
+                )
+              )}
+            </div>
           </div>
         </AddressWrapper>
       ) : null}

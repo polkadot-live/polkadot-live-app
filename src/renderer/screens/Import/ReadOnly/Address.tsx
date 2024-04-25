@@ -20,6 +20,7 @@ export const Address = ({
   setAddresses,
   isImported,
   setSection,
+  isLast,
 }: AddressProps) => {
   // State for account name.
   const [accountNameState, setAccountNameState] = useState<string>(accountName);
@@ -39,6 +40,7 @@ export const Address = ({
       key={index}
       address={address}
       isImported={isImported}
+      isLast={isLast}
       index={index}
       accountName={accountNameState}
       renameHandler={renameHandler}

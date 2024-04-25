@@ -3,11 +3,19 @@
 
 import styled from 'styled-components';
 
-export const Wrapper = styled.div`
-  border-bottom: 1px solid var(--border-primary-color);
+export const Wrapper = styled.div<{ $noBorder?: boolean }>`
+  border-bottom: ${(props) =>
+    String(props.$noBorder) === 'true'
+      ? 'none'
+      : '1px solid var(--border-primary-color)'};
   display: flex;
   align-items: center;
-  padding: 1.25rem 0.5rem;
+  padding: 1.25rem;
+
+  &:hover {
+    background-color: var(--background-menu);
+    cursor: default;
+  }
 
   > .action {
     height: 100%;

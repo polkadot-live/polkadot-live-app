@@ -4,6 +4,7 @@
 import { AddressesProvider } from '@app/contexts/Addresses';
 import { ChainsProvider } from '@app/contexts/Chains';
 import { EventsProvider } from '@app/contexts/Events';
+import { HelpProvider } from './contexts/Help';
 import { OnlineStatusProvider } from '@app/contexts/OnlineStatus';
 import { OverlayProvider } from '@app/contexts/Overlay';
 import { SubscriptionsProvider } from '@app/contexts/Subscriptions';
@@ -18,6 +19,7 @@ export const Providers = withProviders(
   OnlineStatusProvider,
   AddressesProvider,
   ChainsProvider,
+  HelpProvider,
   SubscriptionsProvider,
   ManageProvider,
   EventsProvider,

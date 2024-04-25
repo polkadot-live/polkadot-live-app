@@ -4,21 +4,24 @@
 import styled from 'styled-components';
 
 export const MenuWrapper = styled.div`
-  box-shadow: -1px 3px 5px 0px var(--card-shadow-color);
-  border: 1px solid var(--border-primary-color);
-  background: var(--background-menu);
-  border-radius: 0.75rem;
-  width: 175px;
-  height: auto;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
   position: absolute;
   right: 0.75rem;
   top: 2.75rem;
   z-index: 10;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  width: 175px;
+  height: auto;
   padding: 0.45rem 0;
+
+  box-shadow: -1px 3px 5px 0px var(--card-shadow-color);
+  border: 1px solid var(--border-mid-color);
+  background: var(--background-menu);
+  border-radius: 0.75rem;
   overflow: hidden;
+  user-select: none;
 
   > button,
   > button:disabled {

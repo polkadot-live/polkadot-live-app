@@ -103,9 +103,9 @@ export const EventItem = styled(motion.div)`
           margin-right: 0.9rem;
         }
         .btn-mono {
-          background-color: #a1385c;
-          border: 1px solid #b5466c;
-          color: #f1f1f1;
+          background-color: #953254;
+          border: 1px solid #a14564;
+          color: #ededed;
         }
         .btn-mono-invert {
           border: 1px solid #a23b5e;
