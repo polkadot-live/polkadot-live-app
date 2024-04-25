@@ -9,6 +9,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
 import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
+import { Help } from './library/Help';
 import { useOnlineStatus } from '@app/contexts/OnlineStatus';
 import { useMessagePorts } from '@app/hooks/useMessagePorts';
 import { useTheme } from 'styled-components';
@@ -31,6 +32,7 @@ export const RouterInner = () => {
 
   return (
     <MainInterfaceWrapper className={`theme-polkadot theme-${mode}`}>
+      <Help />
       <Overlay />
       <Tooltip />
       <Routes>
