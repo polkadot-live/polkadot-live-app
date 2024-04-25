@@ -15,9 +15,6 @@ export const Help = () => {
   const controls = useAnimation();
   const { setStatus, status, definition, closeHelp } = useHelp();
 
-  // TMP
-  console.log(`definition: ${definition}`);
-
   const onFadeIn = useCallback(async () => {
     await controls.start('visible');
   }, []);
@@ -40,10 +37,6 @@ export const Help = () => {
   if (status === 'closed') {
     return null;
   }
-
-  // TODO: Get items from help config.
-  //let meta: HelpItem | undefined = undefined;
-  //let definitions = meta?.definitions ?? [];
 
   return (
     <CanvasContainer
