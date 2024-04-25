@@ -71,19 +71,20 @@ export const Help = () => {
     >
       <CanvasScroll>
         <ModalContent>
-          <div className="buttons">
-            <ButtonPrimaryInvert
-              lg
-              text={'Close'}
-              iconLeft={faTimes}
-              onClick={() => closeHelp()}
-            />
+          <div className="header-wrapper">
+            <div className="title-wrapper">
+              <h1>{definition?.title || ''}</h1>
+            </div>
+            <div className="buttons">
+              <ButtonPrimaryInvert
+                lg
+                text={'Close'}
+                iconLeft={faTimes}
+                onClick={() => closeHelp()}
+              />
+            </div>
           </div>
-          <h1>Active Definition</h1>
-          <ActiveDefinition description={['Active definition description.']} />
-
-          {/* TODO: Render active definitions */}
-          {/* TODO: Render active external definitions */}
+          <ActiveDefinition description={definition?.definition || []} />
         </ModalContent>
       </CanvasScroll>
       <button type="button" className="close" onClick={() => closeHelp()}>

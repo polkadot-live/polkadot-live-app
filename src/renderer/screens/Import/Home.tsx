@@ -49,7 +49,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
                 <div className="status">
                   <ButtonHelp
                     onClick={() => {
-                      openHelp('Key 1');
+                      openHelp('help:import:vault');
                     }}
                   />
                 </div>
@@ -93,7 +93,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
                 <div className="status">
                   <ButtonHelp
                     onClick={() => {
-                      openHelp('Key 1');
+                      openHelp('help:import:ledger');
                     }}
                   />
                 </div>
@@ -150,7 +150,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
                 <div className="status">
                   <ButtonHelp
                     onClick={() => {
-                      openHelp('Key 1');
+                      openHelp('help:import:readOnly');
                     }}
                   />
                 </div>

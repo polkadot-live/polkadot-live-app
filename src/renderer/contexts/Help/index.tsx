@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { HelpConfig } from '@/config/help';
 import * as defaults from './defaults';
 import type {
   HelpContextInterface,
   HelpContextProps,
   HelpContextState,
+  HelpItemKey,
   HelpStatus,
-  MaybeString,
 } from './types';
 
 export const HelpContext = createContext<HelpContextInterface>(
@@ -21,7 +22,7 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
   // Help module state.
   const [state, setState] = useState<HelpContextState>({
     status: 'closed',
-    definition: null,
+    item: null,
   });
 
   // When fade out completes, reset active definition.
@@ -32,7 +33,7 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
       if (state.status === 'closed') {
         setState({
           ...state,
-          definition: null,
+          item: null,
         });
       }
     } else {
@@ -40,10 +41,12 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
     }
   }, [state.status]);
 
-  const setDefinition = (definition: MaybeString) => {
+  const setDefinition = (key: HelpItemKey) => {
+    const item = HelpConfig.find((h) => h.key === key) || null;
+
     setState({
       ...state,
-      definition,
+      item,
     });
   };
 
@@ -54,11 +57,12 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
     });
   };
 
-  const openHelp = (definition: MaybeString) => {
+  const openHelp = (key: HelpItemKey) => {
+    const item = HelpConfig.find((h) => h.key === key) || null;
+
     setState({
-      ...state,
-      definition,
       status: 'open',
+      item,
     });
   };
 
@@ -77,7 +81,7 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
         setStatus,
         setDefinition,
         status: state.status,
-        definition: state.definition,
+        definition: state.item,
       }}
     >
       {children}

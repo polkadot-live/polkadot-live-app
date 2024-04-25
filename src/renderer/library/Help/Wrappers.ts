@@ -36,14 +36,16 @@ export const ListWrapper = styled(motion.div)`
 `;
 
 export const DefinitionWrapper = styled(motion.div)`
-  background: var(--background-floating-card);
+  background: var(--background-modal);
   border-radius: 1.5rem;
+  border: 1px solid var(--border-primary-color);
+
   display: flex;
   flex-flow: row wrap;
   flex: 1;
   overflow: hidden;
   margin-bottom: 1.25rem;
-  padding: 1.5rem 1.5rem 0 1.5rem;
+  padding: 1.75rem;
   width: 100%;
 
   button {
@@ -64,6 +66,10 @@ export const DefinitionWrapper = styled(motion.div)`
   }
 
   > div {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25rem;
+
     position: relative;
     transition: height 0.4s cubic-bezier(0.1, 1, 0.2, 1);
     width: 100%;
@@ -73,7 +79,8 @@ export const DefinitionWrapper = styled(motion.div)`
     }
     h4 {
       font-family: InterSemiBold, sans-serif;
-      margin-bottom: 1.15rem;
+      font-size: 1.2rem;
+      line-height: 2.2rem;
     }
     p {
       color: var(--text-color-primary);

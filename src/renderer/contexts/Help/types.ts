@@ -8,12 +8,12 @@ export type MaybeString = string | null;
 export type HelpStatus = 'closed' | 'open' | 'closing';
 
 export interface HelpContextInterface {
-  openHelp: (d: MaybeString) => void;
+  openHelp: (d: HelpItemKey) => void;
   closeHelp: () => void;
   setStatus: (s: HelpStatus) => void;
-  setDefinition: (d: MaybeString) => void;
+  setDefinition: (d: HelpItemKey) => void;
   status: HelpStatus;
-  definition: MaybeString;
+  definition: HelpItem | null;
 }
 
 export interface HelpContextProps {
@@ -22,7 +22,7 @@ export interface HelpContextProps {
 
 export interface HelpContextState {
   status: HelpStatus;
-  definition: MaybeString;
+  item: HelpItem | null;
 }
 
 export interface DefinitionWithKeys {
@@ -37,3 +37,16 @@ export interface ExternalWithKeys {
 }
 
 export type HelpConfig = Map<string, string | string[]>;
+
+export type HelpItems = HelpItem[];
+
+export type HelpItemKey =
+  | 'help:import:vault'
+  | 'help:import:ledger'
+  | 'help:import:readOnly';
+
+export interface HelpItem {
+  key: HelpItemKey;
+  title: string;
+  definition: string[];
+}
