@@ -50,13 +50,15 @@ export const PermissionRow = ({
         <div>
           {/* New One Shot Button */}
           {getTaskType(task) === 'account' && (
-            <div className="one-shot-wrapper">
+            <div
+              className={`one-shot-wrapper ${!getDisabled(task) && !oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
+              data-tooltip-text={'Execute Once'}
+              onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+            >
               {/* One-shot is enabled and not processing. */}
               {!getDisabled(task) && !oneShotProcessing && (
                 <FontAwesomeIcon
-                  data-tooltip-text={'Execute Once'}
-                  onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
-                  className="enabled tooltip-trigger-element"
+                  className="enabled"
                   icon={faArrowDownFromDottedLine}
                   transform={'grow-8'}
                   onClick={async () =>
@@ -92,15 +94,15 @@ export const PermissionRow = ({
 
           {/* Native OS Notification Checkbox */}
           {task.account && (
-            <div className="native-wrapper">
+            <div
+              className={`native-wrapper ${!getDisabled(task) && task.status === 'enable' ? 'tooltip-trigger-element' : ''}`}
+              data-tooltip-text={getNativeTooltipText()}
+              onMouseMove={() => setTooltipTextAndOpen(getNativeTooltipText())}
+            >
               {/* Native checkbox enabled */}
               {!getDisabled(task) && task.status === 'enable' && (
                 <FontAwesomeIcon
-                  data-tooltip-text={getNativeTooltipText()}
-                  onMouseMove={() =>
-                    setTooltipTextAndOpen(getNativeTooltipText())
-                  }
-                  className={`${nativeChecked ? 'checked' : 'unchecked'} tooltip-trigger-element`}
+                  className={nativeChecked ? 'checked' : 'unchecked'}
                   icon={faListRadio}
                   transform={'grow-8'}
                   onClick={async () => {

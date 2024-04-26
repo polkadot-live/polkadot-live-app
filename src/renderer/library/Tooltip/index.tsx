@@ -32,29 +32,30 @@ export const Tooltip = () => {
   }, [open]);
 
   const mouseMoveCallback = (e: AnyData) => {
-    const { target, pageX, pageY } = e;
+    // Get all trigger elements in the document.
+    const elements = document.querySelectorAll('.tooltip-trigger-element');
+    const { pageX, pageY } = e;
 
-    if (tooltipRef?.current) {
-      const elem: AnyData = tooltipRef.current;
+    // Iterate trigger elements and act if the mouse is hovered over one.
+    for (const element of elements) {
+      if (element.matches(':hover')) {
+        const xPos: number =
+          pageX - (tooltipRef.current?.clientWidth || 0) * 0.5;
+        const offsetY = 45;
+        const yPos: number = pageY - offsetY;
+        setTooltipPosition(xPos, yPos);
 
-      setTooltipPosition(
-        pageX - (elem.clientWidth * 0.5 || 0),
-        pageY - (elem.offsetHeight + 20 || 0)
-      );
-      if (!show) {
-        showTooltip();
+        if (!show) {
+          showTooltip();
+        }
+
+        // Return after processing the tooltip.
+        return;
       }
     }
 
-    const isTriggerElement = target?.classList.contains(
-      'tooltip-trigger-element'
-    );
-    const dataAttribute = target?.getAttribute('data-tooltip-text') ?? false;
-    if (!isTriggerElement) {
-      closeTooltip();
-    } else if (dataAttribute !== text) {
-      closeTooltip();
-    }
+    // Close tooltip if cursor is not over a trigger element.
+    closeTooltip();
   };
 
   return (
