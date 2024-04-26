@@ -4,10 +4,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-interface PermissionCheckBoxProps {
-  disabled: boolean;
-}
-
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -110,84 +106,6 @@ export const AccountsWrapper = styled.div`
   padding: 0 0.5rem;
 `;
 
-export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
-  /* Checkbox */
-  .checkbox-wrapper-29 {
-    --size: 1.4rem;
-    --background: var(--background-color-secondary);
-    font-size: var(--size);
-  }
-  .checkbox-wrapper-29 *,
-  .checkbox-wrapper-29 *::after,
-  .checkbox-wrapper-29 *::before {
-    box-sizing: border-box;
-  }
-  .checkbox-wrapper-29 input[type='checkbox'] {
-    visibility: hidden;
-    display: none;
-  }
-  .checkbox-wrapper-29 .checkbox__label {
-    width: var(--size);
-  }
-  .checkbox-wrapper-29 .checkbox__label:before {
-    content: ' ';
-    display: block;
-    height: var(--size);
-    width: var(--size);
-    position: absolute;
-    top: calc(var(--size) * 0.125);
-    left: 0;
-    background: var(--background);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after {
-    content: ' ';
-    display: block;
-    height: var(--size);
-    width: var(--size);
-    border: calc(var(--size) * 0.1) solid
-      ${(props: PermissionCheckBoxProps) =>
-        props.disabled ? '#4a4a4a' : 'var(--text-color-secondary)'};
-    border-radius: 2px;
-    transition: 200ms;
-    position: absolute;
-    top: calc(var(--size) * 0.125);
-    left: 0;
-    background: var(--background);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after {
-    transition: 100ms ease-in-out;
-  }
-  .checkbox-wrapper-29 .checkbox__input:checked ~ .checkbox__label:after {
-    border-top-style: none;
-    border-right-style: none;
-    -ms-transform: rotate(-45deg); /* IE9 */
-    transform: rotate(-45deg);
-    height: calc(var(--size) * 0.5);
-    border-color: green;
-    border-width: 2px;
-  }
-  .checkbox-wrapper-29 .checkbox {
-    position: relative;
-    display: flex;
-    cursor: pointer;
-    /* Mobile Safari: */
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after:hover,
-  .checkbox-wrapper-29 .checkbox__label:after:active {
-    border-color: green;
-  }
-  .checkbox-wrapper-29 .checkbox__label {
-    margin-right: calc(var(--size) * 0.47);
-  }
-  .checkbox-wrapper-29 .checkbox__title {
-    color: ${(props: PermissionCheckBoxProps) =>
-      props.disabled ? '#4a4a4a' : 'var(--background)'};
-    font-size: 1.12rem;
-    margin-top: 2px;
-  }
-`;
-
 export const AccountWrapper = styled(motion.div)`
   background: var(--background-default);
   border: 1px solid var(--border-primary-color);
@@ -197,67 +115,54 @@ export const AccountWrapper = styled(motion.div)`
   padding: 0.6rem 1.25rem;
   margin: 1rem 0;
 
-  /* 3 Dot Spinner */
-  .lds-ellipsis {
-    /* change color here */
-    color: #afafaf;
-  }
-  .lds-ellipsis,
-  .lds-ellipsis div {
-    box-sizing: border-box;
-  }
-  .lds-ellipsis {
-    margin-left: 8px;
-    top: 12px;
-    display: inline-block;
-    position: relative;
-  }
-  .lds-ellipsis div {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .lds-ellipsis div:nth-child(1) {
-    left: 4px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(2) {
-    left: 4px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(3) {
-    left: 16px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(4) {
-    left: 28px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
+  /* Native icon */
+  .native-wrapper {
+    background-color: var(--background-default);
+
+    .checked {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      cursor: pointer;
     }
-    100% {
-      transform: scale(1);
+    .unchecked {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.4;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+    .disabled {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.15;
     }
   }
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
+
+  /* One-shot icon */
+  .one-shot-wrapper {
+    background-color: var(--background-default);
+    margin-left: 1rem;
+
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
     }
-    100% {
-      transform: scale(0);
+    .processing {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
     }
-  }
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(12px, 0);
+    .disabled {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.4;
     }
   }
 

@@ -163,12 +163,12 @@ export const Permissions = ({
 
   /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
-    e: React.ChangeEvent<HTMLInputElement>,
+    flag: boolean,
     task: SubscriptionTask,
     setNativeChecked: AnyFunction
   ) => {
     // Update checkbox state.
-    const checked: boolean = e.target.checked;
+    const checked: boolean = flag;
     setNativeChecked(checked);
 
     if (task.account) {

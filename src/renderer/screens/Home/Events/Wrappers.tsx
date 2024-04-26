@@ -104,7 +104,7 @@ export const EventItem = styled(motion.div)`
         }
         .btn-mono {
           background-color: #953254;
-          border: 1px solid #a14564;
+          border: 1px solid #953254;
           color: #ededed;
         }
         .btn-mono-invert {
