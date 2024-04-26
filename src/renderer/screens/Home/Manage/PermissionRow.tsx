@@ -10,6 +10,7 @@ import {
   faArrowDownFromDottedLine,
   faListRadio,
 } from '@fortawesome/pro-light-svg-icons';
+import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const PermissionRow = ({
   task,
@@ -25,6 +26,8 @@ export const PermissionRow = ({
     task.enableOsNotifications
   );
 
+  const { setTooltipTextAndOpen } = useTooltip();
+
   useEffect(() => {
     if (task.status === 'enable') {
       setIsToggled(true);
@@ -33,6 +36,8 @@ export const PermissionRow = ({
       setIsToggled(false);
     }
   }, [task]);
+
+  const getNativeTooltipText = () => 'Toggle OS Notifications';
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -46,20 +51,12 @@ export const PermissionRow = ({
           {/* New One Shot Button */}
           {getTaskType(task) === 'account' && (
             <div className="one-shot-wrapper">
-              {/* One-shot is enabled and processing. */}
-              {!getDisabled(task) && oneShotProcessing && (
-                <FontAwesomeIcon
-                  className="processing"
-                  fade
-                  icon={faArrowDownFromDottedLine}
-                  transform={'grow-8'}
-                />
-              )}
-
               {/* One-shot is enabled and not processing. */}
               {!getDisabled(task) && !oneShotProcessing && (
                 <FontAwesomeIcon
-                  className="enabled"
+                  data-tooltip-text={'Execute Once'}
+                  onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+                  className="enabled tooltip-trigger-element"
                   icon={faArrowDownFromDottedLine}
                   transform={'grow-8'}
                   onClick={async () =>
@@ -69,6 +66,16 @@ export const PermissionRow = ({
                       nativeChecked
                     )
                   }
+                />
+              )}
+
+              {/* One-shot is enabled and processing. */}
+              {!getDisabled(task) && oneShotProcessing && (
+                <FontAwesomeIcon
+                  className="processing"
+                  fade
+                  icon={faArrowDownFromDottedLine}
+                  transform={'grow-8'}
                 />
               )}
 
@@ -89,7 +96,11 @@ export const PermissionRow = ({
               {/* Native checkbox enabled */}
               {!getDisabled(task) && task.status === 'enable' && (
                 <FontAwesomeIcon
-                  className={nativeChecked ? 'checked' : 'unchecked'}
+                  data-tooltip-text={getNativeTooltipText()}
+                  onMouseMove={() =>
+                    setTooltipTextAndOpen(getNativeTooltipText())
+                  }
+                  className={`${nativeChecked ? 'checked' : 'unchecked'} tooltip-trigger-element`}
                   icon={faListRadio}
                   transform={'grow-8'}
                   onClick={async () => {

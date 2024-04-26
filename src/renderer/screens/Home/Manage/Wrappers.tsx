@@ -137,7 +137,7 @@ export const AccountWrapper = styled(motion.div)`
     .disabled {
       transition: opacity 0.1s ease-in-out;
       padding: 0.5rem;
-      opacity: 0.2;
+      opacity: 0.15;
     }
   }
 

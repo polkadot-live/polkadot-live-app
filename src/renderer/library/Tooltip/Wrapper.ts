@@ -4,17 +4,20 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  background: var(--background-invert);
+  background: var(--background-modal);
+  border: 1px solid var(--border-mid-color);
+  color: #fff;
   transition: opacity var(--transition-duration);
   display: flex;
   flex-flow: row wrap;
   border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 1rem;
   min-width: 100px;
   z-index: 99;
 
   h3 {
-    color: var(--text-color-invert);
+    width: 100%;
+    color: var(--text-color-primary);
     font-family: InterSemiBold, sans-serif;
     font-size: 0.9rem;
     padding: 0;

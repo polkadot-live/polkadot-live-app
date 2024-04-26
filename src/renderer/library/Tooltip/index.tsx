@@ -35,7 +35,12 @@ export const Tooltip = () => {
     const { target, pageX, pageY } = e;
 
     if (tooltipRef?.current) {
-      setTooltipPosition(pageX, pageY - (tooltipRef.current.offsetHeight || 0));
+      const elem: AnyData = tooltipRef.current;
+
+      setTooltipPosition(
+        pageX - (elem.clientWidth * 0.5 || 0),
+        pageY - (elem.offsetHeight + 20 || 0)
+      );
       if (!show) {
         showTooltip();
       }
