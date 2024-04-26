@@ -4,8 +4,9 @@
 import { AccountWrapper, PermissionCheckBox } from './Wrappers';
 import { Switch } from '@app/library/Switch';
 import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { PermissionRowProps } from './types';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { faArrowDownFromDottedLine as downArrowThin } from '@fortawesome/pro-light-svg-icons';
 
 export const PermissionRow = ({
   task,
@@ -39,35 +40,42 @@ export const PermissionRow = ({
           </div>
         </div>
         <div>
-          {/* One Shot Button */}
+          {/* New One Shot Button */}
           {getTaskType(task) === 'account' && (
-            <div>
-              <ButtonMonoInvert
-                style={
-                  !oneShotProcessing
-                    ? {
-                        position: 'relative',
-                        color: 'var(--text-color-secondary)',
-                        borderColor: 'var(--text-color-secondary)',
-                      }
-                    : {
-                        position: 'relative',
-                        color: 'var(--background-default)',
-                      }
-                }
-                text="show"
-                disabled={getDisabled(task) || oneShotProcessing}
-                onClick={async () =>
-                  await handleOneShot(task, setOneShotProcessing, nativeChecked)
-                }
-              />
-              {oneShotProcessing && !getDisabled(task) && (
-                <div style={{ position: 'absolute' }} className="lds-ellipsis">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
+            <div className="one-shot-wrapper">
+              {/* One-shot is enabled and processing. */}
+              {!getDisabled(task) && oneShotProcessing && (
+                <FontAwesomeIcon
+                  className="processing"
+                  fade
+                  icon={downArrowThin}
+                  transform={'grow-8'}
+                />
+              )}
+
+              {/* One-shot is enabled and not processing. */}
+              {!getDisabled(task) && !oneShotProcessing && (
+                <FontAwesomeIcon
+                  className="enabled"
+                  icon={downArrowThin}
+                  transform={'grow-8'}
+                  onClick={async () =>
+                    await handleOneShot(
+                      task,
+                      setOneShotProcessing,
+                      nativeChecked
+                    )
+                  }
+                />
+              )}
+
+              {/* One-shot disabled. */}
+              {getDisabled(task) && (
+                <FontAwesomeIcon
+                  className="disabled"
+                  icon={downArrowThin}
+                  transform={'grow-8'}
+                />
               )}
             </div>
           )}

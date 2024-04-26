@@ -197,67 +197,26 @@ export const AccountWrapper = styled(motion.div)`
   padding: 0.6rem 1.25rem;
   margin: 1rem 0;
 
-  /* 3 Dot Spinner */
-  .lds-ellipsis {
-    /* change color here */
-    color: #afafaf;
-  }
-  .lds-ellipsis,
-  .lds-ellipsis div {
-    box-sizing: border-box;
-  }
-  .lds-ellipsis {
-    margin-left: 8px;
-    top: 12px;
-    display: inline-block;
-    position: relative;
-  }
-  .lds-ellipsis div {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .lds-ellipsis div:nth-child(1) {
-    left: 4px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(2) {
-    left: 4px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(3) {
-    left: 16px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(4) {
-    left: 28px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
+  /* One-shot icon */
+  .one-shot-wrapper {
+    cursor: pointer;
+    background-color: var(--background-default);
+    margin-left: 1rem;
+
+    .enabled {
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+      &:hover {
+        opacity: 0.6;
+      }
     }
-    100% {
-      transform: scale(1);
+    .processing {
+      padding: 0.5rem;
     }
-  }
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(12px, 0);
+    .disabled {
+      padding: 0.5rem;
+      cursor: default;
+      opacity: 0.4;
     }
   }
 
