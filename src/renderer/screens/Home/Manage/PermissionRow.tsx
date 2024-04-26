@@ -1,12 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountWrapper, PermissionCheckBox } from './Wrappers';
+import { AccountWrapper } from './Wrappers';
 import { Switch } from '@app/library/Switch';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { PermissionRowProps } from './types';
-import { faArrowDownFromDottedLine as downArrowThin } from '@fortawesome/pro-light-svg-icons';
+import {
+  faArrowDownFromDottedLine,
+  faListRadio,
+} from '@fortawesome/pro-light-svg-icons';
 
 export const PermissionRow = ({
   task,
@@ -48,7 +51,7 @@ export const PermissionRow = ({
                 <FontAwesomeIcon
                   className="processing"
                   fade
-                  icon={downArrowThin}
+                  icon={faArrowDownFromDottedLine}
                   transform={'grow-8'}
                 />
               )}
@@ -57,7 +60,7 @@ export const PermissionRow = ({
               {!getDisabled(task) && !oneShotProcessing && (
                 <FontAwesomeIcon
                   className="enabled"
-                  icon={downArrowThin}
+                  icon={faArrowDownFromDottedLine}
                   transform={'grow-8'}
                   onClick={async () =>
                     await handleOneShot(
@@ -73,7 +76,7 @@ export const PermissionRow = ({
               {getDisabled(task) && (
                 <FontAwesomeIcon
                   className="disabled"
-                  icon={downArrowThin}
+                  icon={faArrowDownFromDottedLine}
                   transform={'grow-8'}
                 />
               )}
@@ -82,25 +85,32 @@ export const PermissionRow = ({
 
           {/* Native OS Notification Checkbox */}
           {task.account && (
-            <PermissionCheckBox
-              disabled={getDisabled(task) || task.status === 'disable'}
-            >
-              <div className="checkbox-wrapper-29">
-                <label className="checkbox">
-                  <input
-                    disabled={getDisabled(task) || task.status === 'disable'}
-                    type="checkbox"
-                    checked={!getDisabled(task) && nativeChecked}
-                    className="checkbox__input"
-                    onChange={async (e) =>
-                      await handleNativeCheckbox(e, task, setNativeChecked)
-                    }
-                  />
-                  <span className="checkbox__label"></span>
-                  <span className="checkbox__title">native</span>
-                </label>
-              </div>
-            </PermissionCheckBox>
+            <div className="native-wrapper">
+              {/* Native checkbox enabled */}
+              {!getDisabled(task) && task.status === 'enable' && (
+                <FontAwesomeIcon
+                  className={nativeChecked ? 'checked' : 'unchecked'}
+                  icon={faListRadio}
+                  transform={'grow-8'}
+                  onClick={async () => {
+                    await handleNativeCheckbox(
+                      !nativeChecked,
+                      task,
+                      setNativeChecked
+                    );
+                  }}
+                />
+              )}
+
+              {/* Native checkbox disabled */}
+              {(getDisabled(task) || task.status === 'disable') && (
+                <FontAwesomeIcon
+                  className="disabled"
+                  icon={faListRadio}
+                  transform={'grow-8'}
+                />
+              )}
+            </div>
           )}
 
           {/* Toggle Switch */}
