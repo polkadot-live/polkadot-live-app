@@ -34,28 +34,34 @@ import * as ApiUtils from '@/utils/ApiUtils';
  * @summary Fetch account's nonce and balance data from chain state.
  */
 export const fetchAccountBalances = async () => {
-  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow fetching balance data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Iterate accounts associated with the chain and initialize balance data.
+  // Iterate accounts associated with each chain and initialize balance data.
+  for (const accounts of AccountsController.accounts.values()) {
     for (const account of accounts) {
-      const result: AnyJson = await api.query.system.account(account.address);
-
-      account.balance = {
-        nonce: new BigNumber(result.nonce),
-        free: new BigNumber(result.data.free),
-        reserved: new BigNumber(result.data.reserved),
-        frozen: new BigNumber(result.data.frozen),
-      } as AccountBalance;
-
-      await AccountsController.set(account.chain, account);
+      await fetchBalanceForAccount(account);
     }
   }
+};
+
+/**
+ * @name fetchBalanceForAccount
+ * @summary Fetch balance data for a single account.
+ */
+export const fetchBalanceForAccount = async (account: Account) => {
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const { api } = await ApiUtils.getApiInstance(account.chain);
+  const result: AnyJson = await api.query.system.account(account.address);
+
+  account.balance = {
+    nonce: new BigNumber(result.nonce),
+    free: new BigNumber(result.data.free),
+    reserved: new BigNumber(result.data.reserved),
+    frozen: new BigNumber(result.data.frozen),
+  } as AccountBalance;
+
+  await AccountsController.set(account.chain, account);
 };
 
 /**
@@ -63,18 +69,11 @@ export const fetchAccountBalances = async () => {
  * @summary Fetch an account's nominated validator ids.
  */
 export const fetchAccountNominatingData = async () => {
-  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow nominating data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
+  for (const accounts of AccountsController.accounts.values()) {
     // Iterate accounts associated with chain and initialise nominating data.
     for (const account of accounts) {
       console.log(`>>> set nominating data for ${account.name}`);
-      await setNominatingDataForAccount(api, account);
+      await setNominatingDataForAccount(account);
     }
   }
 };
@@ -83,24 +82,22 @@ export const fetchAccountNominatingData = async () => {
  * @name fetchNominatingDataForAccount
  * @summary Fetch nomination pool data for a single account.
  */
-export const fetchNominatingDataForAccount = async (
-  account: Account,
-  chainId: ChainID
-) => {
-  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await ApiUtils.getApiInstance(chainId);
-    await setNominatingDataForAccount(api, account);
-  }
+export const fetchNominatingDataForAccount = async (account: Account) => {
+  await setNominatingDataForAccount(account);
 };
 
 /**
  * @name setNominatingDataForAccount
  * @summary Fetch nominating data for a single account.
  */
-export const setNominatingDataForAccount = async (
-  api: ApiPromise,
-  account: Account
-) => {
+export const setNominatingDataForAccount = async (account: Account) => {
+  // Only allow nominating data on specific chains.
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const { api } = await ApiUtils.getApiInstance(account.chain);
+
   // Check if account is currently nominating.
   const nominatorData: AnyData = await api.query.staking.nominators(
     account.address
@@ -154,17 +151,9 @@ export const setNominatingDataForAccount = async (
  * @summary Fetch nomination pool data for all accounts managed by the accounts controller.
  */
 export const fetchAccountNominationPoolData = async () => {
-  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow nomination pool data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Iterate accounts associated with chain and initialise nomination pool data.
+  for (const accounts of AccountsController.accounts.values()) {
     for (const account of accounts) {
-      await setNominationPoolDataForAccount(api, account, chainId);
+      await setNominationPoolDataForAccount(account);
     }
   }
 };
@@ -173,14 +162,8 @@ export const fetchAccountNominationPoolData = async () => {
  * @name fetchNominationPoolDataForAccount
  * @summary Fetch nomination pool data for a single account.
  */
-export const fetchNominationPoolDataForAccount = async (
-  account: Account,
-  chainId: ChainID
-) => {
-  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await ApiUtils.getApiInstance(chainId);
-    await setNominationPoolDataForAccount(api, account, chainId);
-  }
+export const fetchNominationPoolDataForAccount = async (account: Account) => {
+  await setNominationPoolDataForAccount(account);
 };
 
 /**
@@ -188,11 +171,13 @@ export const fetchNominationPoolDataForAccount = async (
  * @summary Utility that uses an API instance to get and update an account's nomination
  * pool data.
  */
-const setNominationPoolDataForAccount = async (
-  api: ApiPromise,
-  account: Account,
-  chainId: ChainID
-) => {
+const setNominationPoolDataForAccount = async (account: Account) => {
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const { api } = await ApiUtils.getApiInstance(account.chain);
+
   const result: AnyJson = (
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
@@ -236,7 +221,7 @@ const setNominationPoolDataForAccount = async (
     };
 
     // Store updated account data in controller.
-    await AccountsController.set(chainId, account);
+    await AccountsController.set(account.chain, account);
   }
 };
 

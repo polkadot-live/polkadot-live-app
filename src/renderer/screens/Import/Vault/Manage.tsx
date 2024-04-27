@@ -15,6 +15,7 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageVaultProps } from '../types';
+import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -26,50 +27,59 @@ export const Manage = ({
 
   return (
     <>
+      {/* Header */}
+      <HeaderWrapper>
+        <div className="content">
+          <DragClose windowName="import" />
+          <h4>
+            <AppSVG />
+            Vault Accounts
+          </h4>
+        </div>
+      </HeaderWrapper>
+
       <DragClose windowName="import" />
       <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
-            <div className="heading">
-              <h4>
-                <AppSVG />
-                <span>Accounts</span>
-              </h4>
-            </div>
-            <div className="items">
-              {addresses.map(
-                ({ address, index, isImported, name }: LocalAddress) => (
-                  <Address
-                    key={address}
-                    accountName={name}
-                    setAddresses={setAddresses}
-                    address={address}
-                    index={index}
-                    isImported={isImported || false}
-                    setSection={setSection}
-                  />
-                )
-              )}
-            </div>
-            <div className="more">
-              <ButtonText
-                iconLeft={faQrcode}
-                text={'Import Another Account'}
-                onClick={() => {
-                  openOverlayWith(
-                    <ErrorBoundary
-                      fallback={<h2>Could not load QR Scanner</h2>}
-                    >
-                      <Reader
-                        addresses={addresses}
-                        setAddresses={setAddresses}
-                      />
-                    </ErrorBoundary>,
-                    'small',
-                    true
-                  );
-                }}
-              />
+            <div className="items-wrapper">
+              <div className="more">
+                <ButtonText
+                  iconLeft={faQrcode}
+                  text={'Import Another Account'}
+                  onClick={() => {
+                    openOverlayWith(
+                      <ErrorBoundary
+                        fallback={<h2>Could not load QR Scanner</h2>}
+                      >
+                        <Reader
+                          addresses={addresses}
+                          setAddresses={setAddresses}
+                        />
+                      </ErrorBoundary>,
+                      'small',
+                      true
+                    );
+                  }}
+                />
+              </div>
+
+              <div className="items">
+                {addresses.map(
+                  ({ address, index, isImported, name }: LocalAddress) => (
+                    <Address
+                      key={address}
+                      accountName={name}
+                      setAddresses={setAddresses}
+                      address={address}
+                      index={index}
+                      isImported={isImported || false}
+                      isLast={index === addresses.length - 1}
+                      setSection={setSection}
+                    />
+                  )
+                )}
+              </div>
             </div>
           </AddressWrapper>
         ) : null}

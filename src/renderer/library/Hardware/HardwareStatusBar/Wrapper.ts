@@ -11,15 +11,14 @@ export const Wrapper = styled(motion.div)`
   left: 0;
   width: 100%;
   z-index: 10;
-  background-color: var(--background-modal);
+  background-color: var(--background-primary);
   border-top: 1px solid var(--border-primary-color);
 
   > .inner {
-    background: var(--background-list-item);
     border-radius: 1rem;
     display: flex;
     align-items: center;
-    padding: 0.7rem 1rem;
+    padding: 0.5rem 1rem;
 
     > section {
       display: flex;
@@ -36,6 +35,7 @@ export const Wrapper = styled(motion.div)`
         > .text {
           flex: 1;
           flex-direction: column;
+          margin-left: 0.25rem;
         }
       }
 
@@ -51,6 +51,7 @@ export const Wrapper = styled(motion.div)`
 
     h3,
     h5 {
+      font-size: 1.2rem;
       display: flex;
       align-items: center;
       flex: 1;

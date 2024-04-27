@@ -22,6 +22,7 @@ export const HardwareAddress = ({
   address,
   index,
   isImported,
+  isLast,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -100,8 +101,9 @@ export const HardwareAddress = ({
     setEditName(val);
   };
 
-  return (
-    <Wrapper>
+  // Function to render wrapper JSX.
+  const renderContent = () => (
+    <>
       <div className="content">
         <div className="inner">
           <div className="identicon">
@@ -175,6 +177,13 @@ export const HardwareAddress = ({
           onClick={() => openDeleteHandler()}
         />
       </div>
-    </Wrapper>
+    </>
   );
+
+  // Don't render bottom border on the address if it's the last one.
+  if (isLast) {
+    return <Wrapper $noBorder>{renderContent()}</Wrapper>;
+  } else {
+    return <Wrapper>{renderContent()}</Wrapper>;
+  }
 };

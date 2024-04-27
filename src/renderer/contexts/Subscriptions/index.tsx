@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from './types';
 import type {
   SubscriptionTask,
+  SubscriptionTaskType,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -122,10 +123,42 @@ export const SubscriptionsProvider = ({
     }
   };
 
+  /// Return the type of subscription based on its action string.
+  const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
+    task.action.startsWith('subscribe:account') ? 'account' : 'chain';
+
+  /// Handle toggling on all subscriptions in a category.
+  const toggleCategoryTasks = async (
+    category: string,
+    isOn: boolean,
+    rendererdSubscriptions: WrappedSubscriptionTasks,
+    updateRenderedSubscriptions: AnyFunction
+  ) => {
+    const targetStatus = isOn ? 'enable' : 'disable';
+
+    // Get all rendered tasks in the category that have the target status.
+    const tasks = rendererdSubscriptions.tasks
+      .filter((t) => t.category === category && t.status === targetStatus)
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    // Toggle on or off the subscriptions.
+    // NOTE: Using subscription queue won't work in this loop.
+    for (const task of tasks) {
+      await toggleSubscription(
+        { type: getTaskType(task), tasks: [task] } as WrappedSubscriptionTasks,
+        null
+      );
+
+      // Invert task status and update rendered subscription tasks state.
+      task.status = targetStatus === 'enable' ? 'disable' : 'enable';
+      updateRenderedSubscriptions(task);
+    }
+  };
+
   /// Execute queued subscription task.
   const handleQueuedToggle = async (
     cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
+    setNativeChecked: AnyFunction | null
   ) => {
     const p = async () => await toggleSubscription(cached, setNativeChecked);
     TaskQueue.add(p);
@@ -134,7 +167,7 @@ export const SubscriptionsProvider = ({
   /// Handle subscription task toggle.
   const toggleSubscription = async (
     cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
+    setNativeChecked: AnyFunction | null
   ) => {
     // Invert the task status.
     const task: SubscriptionTask = { ...cached.tasks[0] };
@@ -167,7 +200,9 @@ export const SubscriptionsProvider = ({
         await SubscriptionsController.subscribeAccountTask(task, account);
 
         // Render checbox correctly.
-        setNativeChecked(false);
+        if (setNativeChecked) {
+          setNativeChecked(false);
+        }
 
         await window.myAPI.updatePersistedAccountTask(
           JSON.stringify(task),
@@ -205,6 +240,8 @@ export const SubscriptionsProvider = ({
         updateTask,
         updateAccountNameInTasks,
         handleQueuedToggle,
+        toggleCategoryTasks,
+        getTaskType,
       }}
     >
       {children}

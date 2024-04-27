@@ -9,7 +9,6 @@ export interface EventCategoryProps {
   chain: ChainID;
   category: string;
   events: EventCallback[];
-  i: number;
 }
 
 export interface EventItemProps {

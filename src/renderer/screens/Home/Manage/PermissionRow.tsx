@@ -1,11 +1,16 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountWrapper, PermissionCheckBox } from './Wrappers';
+import { AccountWrapper } from './Wrappers';
 import { Switch } from '@app/library/Switch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { PermissionRowProps } from './types';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import {
+  faArrowDownFromDottedLine,
+  faListRadio,
+} from '@fortawesome/pro-light-svg-icons';
+import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const PermissionRow = ({
   task,
@@ -15,10 +20,24 @@ export const PermissionRow = ({
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
+  const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+
+  const { setTooltipTextAndOpen } = useTooltip();
+
+  useEffect(() => {
+    if (task.status === 'enable') {
+      setIsToggled(true);
+    } else {
+      setNativeChecked(false);
+      setIsToggled(false);
+    }
+  }, [task]);
+
+  const getNativeTooltipText = () => 'Toggle OS Notifications';
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -29,66 +48,89 @@ export const PermissionRow = ({
           </div>
         </div>
         <div>
-          {/* One Shot Button */}
+          {/* New One Shot Button */}
           {getTaskType(task) === 'account' && (
-            <div>
-              <ButtonMonoInvert
-                style={
-                  !oneShotProcessing
-                    ? {
-                        position: 'relative',
-                        color: 'var(--text-color-secondary)',
-                        borderColor: 'var(--text-color-secondary)',
-                      }
-                    : {
-                        position: 'relative',
-                        color: 'var(--background-default)',
-                      }
-                }
-                text="show"
-                disabled={getDisabled(task) || oneShotProcessing}
-                onClick={async () =>
-                  await handleOneShot(task, setOneShotProcessing, nativeChecked)
-                }
-              />
-              {oneShotProcessing && !getDisabled(task) && (
-                <div style={{ position: 'absolute' }} className="lds-ellipsis">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
+            <div
+              className={`one-shot-wrapper ${!getDisabled(task) && !oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
+              data-tooltip-text={'Execute Once'}
+              onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+            >
+              {/* One-shot is enabled and not processing. */}
+              {!getDisabled(task) && !oneShotProcessing && (
+                <FontAwesomeIcon
+                  className="enabled"
+                  icon={faArrowDownFromDottedLine}
+                  transform={'grow-8'}
+                  onClick={async () =>
+                    await handleOneShot(
+                      task,
+                      setOneShotProcessing,
+                      nativeChecked
+                    )
+                  }
+                />
+              )}
+
+              {/* One-shot is enabled and processing. */}
+              {!getDisabled(task) && oneShotProcessing && (
+                <FontAwesomeIcon
+                  className="processing"
+                  fade
+                  icon={faArrowDownFromDottedLine}
+                  transform={'grow-8'}
+                />
+              )}
+
+              {/* One-shot disabled. */}
+              {getDisabled(task) && (
+                <FontAwesomeIcon
+                  className="disabled"
+                  icon={faArrowDownFromDottedLine}
+                  transform={'grow-8'}
+                />
               )}
             </div>
           )}
 
           {/* Native OS Notification Checkbox */}
           {task.account && (
-            <PermissionCheckBox
-              disabled={getDisabled(task) || task.status === 'disable'}
+            <div
+              className={`native-wrapper ${!getDisabled(task) && task.status === 'enable' ? 'tooltip-trigger-element' : ''}`}
+              data-tooltip-text={getNativeTooltipText()}
+              onMouseMove={() => setTooltipTextAndOpen(getNativeTooltipText())}
             >
-              <div className="checkbox-wrapper-29">
-                <label className="checkbox">
-                  <input
-                    disabled={getDisabled(task) || task.status === 'disable'}
-                    type="checkbox"
-                    checked={!getDisabled(task) && nativeChecked}
-                    className="checkbox__input"
-                    onChange={async (e) =>
-                      await handleNativeCheckbox(e, task, setNativeChecked)
-                    }
-                  />
-                  <span className="checkbox__label"></span>
-                  <span className="checkbox__title">native</span>
-                </label>
-              </div>
-            </PermissionCheckBox>
+              {/* Native checkbox enabled */}
+              {!getDisabled(task) && task.status === 'enable' && (
+                <FontAwesomeIcon
+                  className={nativeChecked ? 'checked' : 'unchecked'}
+                  icon={faListRadio}
+                  transform={'grow-8'}
+                  onClick={async () => {
+                    await handleNativeCheckbox(
+                      !nativeChecked,
+                      task,
+                      setNativeChecked
+                    );
+                  }}
+                />
+              )}
+
+              {/* Native checkbox disabled */}
+              {(getDisabled(task) || task.status === 'disable') && (
+                <FontAwesomeIcon
+                  className="disabled"
+                  icon={faListRadio}
+                  transform={'grow-8'}
+                />
+              )}
+            </div>
           )}
 
           {/* Toggle Switch */}
           <Switch
+            size="sm"
             type="secondary"
-            isOn={task.status === 'enable'}
+            isOn={isToggled}
             disabled={getDisabled(task)}
             handleToggle={async () => {
               // Send an account or chain subscription task.

@@ -37,7 +37,7 @@ export interface PermissionRowProps {
     nativeChecked: boolean
   ) => Promise<void>;
   handleNativeCheckbox: (
-    e: React.ChangeEvent<HTMLInputElement>,
+    flag: boolean,
     task: SubscriptionTask,
     setNativeChecked: AnyFunction
   ) => Promise<void>;

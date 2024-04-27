@@ -103,7 +103,7 @@ export const Home = () => {
             {appLoading ? (
               <>
                 <IconWrapper>
-                  <IconSVG width={175} opacity={0.02} />
+                  <IconSVG width={175} opacity={0.01} />
                 </IconWrapper>
                 <div className="app-loading">
                   <div className="lds-grid">
@@ -123,7 +123,7 @@ export const Home = () => {
             ) : (
               <>
                 <IconWrapper>
-                  <IconSVG width={175} opacity={0.08} />
+                  <IconSVG width={175} opacity={0.02} />
                 </IconWrapper>
                 <Events />
               </>

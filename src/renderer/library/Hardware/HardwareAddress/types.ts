@@ -10,6 +10,8 @@ export type HardwareAddressProps = ComponentBase & {
   index: number;
   // Whether this address is imported in main window.
   isImported: boolean;
+  // Whether the address is the last in the list (used for styling).
+  isLast: boolean;
   // current name of the account.
   accountName: string;
   // handle rename

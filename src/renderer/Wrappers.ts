@@ -22,7 +22,7 @@ export const MainInterfaceWrapper = styled.div`
 export const BodyInterfaceWrapper = styled.div<{
   $maxHeight?: boolean;
 }>`
-  max-height: ${(props) => (props.$maxHeight ? '100vh' : 'auto')};
+  max-height: ${(props) => (props.$maxHeight ? 'calc(100vh - 4rem)' : 'auto')};
   width: 100%;
   max-width: 100%;
   flex: 1;

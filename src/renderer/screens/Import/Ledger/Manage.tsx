@@ -13,6 +13,7 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 import type { ImportLedgerManageProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
+import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   addresses,
@@ -25,42 +26,51 @@ export const Manage = ({
   section,
 }: ImportLedgerManageProps) => (
   <>
+    {/* Header */}
+    <HeaderWrapper>
+      <div className="content">
+        <DragClose windowName="import" />
+        <h4>
+          <AppSVG />
+          Ledger Accounts
+        </h4>
+      </div>
+    </HeaderWrapper>
+
     <DragClose windowName="import" />
     <BodyInterfaceWrapper $maxHeight>
       {addresses.length ? (
         <AddressWrapper>
-          <div className="heading">
-            <h4>
-              <AppSVG />
-              <span>Polkadot</span>
-            </h4>
-          </div>
-          <div className="items">
-            {addresses.map(
-              ({ address, index, isImported, name }: LedgerLocalAddress) => (
-                <Address
-                  key={address}
-                  address={address}
-                  accountName={name}
-                  setAddresses={setAddresses}
-                  index={index}
-                  isImported={isImported}
-                  setSection={setSection}
-                />
-              )
-            )}
-          </div>
-          <div className="more">
-            <ButtonText
-              iconLeft={faArrowDown}
-              text={
-                isImporting
-                  ? ' Getting Account'
-                  : 'Get Another Account (Coming Soon)'
-              }
-              disabled={isImporting || true}
-              onClick={() => toggleImport(true)}
-            />
+          <div className="items-wrapper">
+            <div className="more">
+              <ButtonText
+                iconLeft={faArrowDown}
+                text={
+                  isImporting
+                    ? ' Getting Account'
+                    : 'Get Another Account (Coming Soon)'
+                }
+                disabled={isImporting || true}
+                onClick={() => toggleImport(true)}
+              />
+            </div>
+
+            <div className="items">
+              {addresses.map(
+                ({ address, index, isImported, name }: LedgerLocalAddress) => (
+                  <Address
+                    key={address}
+                    address={address}
+                    accountName={name}
+                    setAddresses={setAddresses}
+                    index={index}
+                    isImported={isImported}
+                    isLast={index === addresses.length - 1}
+                    setSection={setSection}
+                  />
+                )
+              )}
+            </div>
           </div>
         </AddressWrapper>
       ) : null}

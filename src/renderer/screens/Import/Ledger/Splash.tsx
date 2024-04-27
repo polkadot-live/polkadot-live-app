@@ -12,7 +12,7 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (
   <>
-    <Header showMenu />
+    <Header showMenu={false} />
     <BodyInterfaceWrapper $maxHeight>
       <SplashWrapper>
         <div className="icon">
