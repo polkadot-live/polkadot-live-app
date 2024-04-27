@@ -211,24 +211,35 @@ export const AccountWrapper = styled(motion.div)`
         }
 
         .content {
+          display: flex;
+          align-items: center;
           height: var(--item-height);
           flex: 1;
-          position: relative;
-          margin-left: 0.75rem;
 
           h3 {
-            &.permission {
-              top: 0.8rem;
-            }
-            position: absolute;
-            top: 0.55rem;
-            left: 0;
+            display: flex;
+            align-items: center;
+            column-gap: 0.75rem;
             width: 100%;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
             margin: 0;
             font-size: 1rem;
+
+            &.permission {
+              top: 0.8rem;
+            }
+            .icon-wrapper {
+              margin-top: -2px;
+              padding: 0 0.3rem;
+              opacity: 0.5;
+              cursor: pointer;
+              transition: opacity 0.1s ease-out;
+              &:hover {
+                opacity: 1;
+              }
+            }
           }
         }
       }

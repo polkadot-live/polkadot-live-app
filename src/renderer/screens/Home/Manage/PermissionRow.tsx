@@ -10,6 +10,7 @@ import {
   faArrowDownFromDottedLine,
   faListRadio,
 } from '@fortawesome/pro-light-svg-icons';
+import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const PermissionRow = ({
@@ -44,11 +45,20 @@ export const PermissionRow = ({
       <div className="inner">
         <div>
           <div className="content">
-            <h3>{task.label}</h3>
+            <h3>
+              <div className="icon-wrapper" onClick={() => console.log('todo')}>
+                <FontAwesomeIcon
+                  className="info-icon"
+                  icon={faInfo}
+                  transform={'shrink-1'}
+                />
+              </div>
+              {task.label}
+            </h3>
           </div>
         </div>
         <div>
-          {/* New One Shot Button */}
+          {/* One Shot Button */}
           {getTaskType(task) === 'account' && (
             <div
               className={`one-shot-wrapper ${!getDisabled(task) && !oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
