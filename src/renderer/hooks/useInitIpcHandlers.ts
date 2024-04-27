@@ -4,6 +4,7 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { ChainList } from '@/config/chains';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import {
   fetchAccountBalances,
   fetchAccountNominationPoolData,
@@ -16,6 +17,7 @@ import { useChains } from '@app/contexts/Chains';
 import { useEffect, useRef, useState } from 'react';
 import { useOnlineStatus } from '@app/contexts/OnlineStatus';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
+import type { ChainID } from '@/types/chains';
 
 export const useInitIpcHandlers = () => {
   // App loading flag.
@@ -86,6 +88,15 @@ export const useInitIpcHandlers = () => {
      * Handle switching to offline mode.
      */
     window.myAPI.initializeAppOffline(async () => {
+      // Set config flag to false to re-start the online mode initialization
+      // when connection status goes back online.
+      RendererConfig.switchingToOnlineMode = false;
+
+      // Disconnect from chains.
+      for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
+        await APIsController.close(chainId);
+      }
+
       // Report online status to renderer.
       setOnline(await window.myAPI.getOnlineStatus());
     });
@@ -94,6 +105,15 @@ export const useInitIpcHandlers = () => {
      * Handle switching to online mode.
      */
     window.myAPI.initializeAppOnline(async () => {
+      // Return if app is already initializing online mode.
+      if (RendererConfig.switchingToOnlineMode) {
+        return;
+      }
+
+      // Set config flag to `true` to make sure the app doesn't re-execute
+      // this function's logic whilst the connection status is online.
+      RendererConfig.switchingToOnlineMode = true;
+
       // Fetch account nonce and balance.
       await fetchAccountBalances();
 
@@ -114,6 +134,9 @@ export const useInitIpcHandlers = () => {
 
       // Set application state.
       setSubscriptionsAndChainConnections();
+
+      // Set config flag to false.
+      RendererConfig.switchingToOnlineMode = false;
     });
 
     // Utility

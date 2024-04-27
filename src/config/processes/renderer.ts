@@ -15,6 +15,9 @@ export class Config {
   // Flag to silence all native OS notifications.
   private static _silenceNotifications = false;
 
+  // Flag set to `true` when app is switching to online mode.
+  private static _switchingToOnlineMode = false;
+
   // Return the main window's message port.
   static get portToImport(): MessagePort {
     if (!Config._portToImport) {
@@ -50,5 +53,14 @@ export class Config {
 
   static set silenceNotifications(flag: boolean) {
     Config._silenceNotifications = flag;
+  }
+
+  // Accessors for `_switchingToOnlineMode` flag.
+  static get switchingToOnlineMode(): boolean {
+    return Config._switchingToOnlineMode;
+  }
+
+  static set switchingToOnlineMode(flag: boolean) {
+    Config._switchingToOnlineMode = flag;
   }
 }
