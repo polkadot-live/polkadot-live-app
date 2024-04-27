@@ -43,7 +43,18 @@ export type HelpItems = HelpItem[];
 export type HelpItemKey =
   | 'help:import:vault'
   | 'help:import:ledger'
-  | 'help:import:readOnly';
+  | 'help:import:readOnly'
+  | 'help:subscription:balances:transfers'
+  | 'help:subscription:nominationPools:commission'
+  | 'help:subscription:nominationPools:name'
+  | 'help:subscription:nominationPools:state'
+  | 'help:subscription:nominationPools:roles'
+  | 'help:subscription:nominationPools:rewards'
+  | 'help:subscription:nominating:commission'
+  | 'help:subscription:nominating:exposure'
+  | 'help:subscription:nominating:payouts'
+  | 'help:subscription:chain:timestamp'
+  | 'help:subscription:chain:currentSlot';
 
 export interface HelpItem {
   key: HelpItemKey;
