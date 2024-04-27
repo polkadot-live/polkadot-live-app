@@ -11,6 +11,7 @@ import {
   faListRadio,
 } from '@fortawesome/pro-light-svg-icons';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
+import { useHelp } from '@/renderer/contexts/Help';
 import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const PermissionRow = ({
@@ -27,6 +28,7 @@ export const PermissionRow = ({
     task.enableOsNotifications
   );
 
+  const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
 
   useEffect(() => {
@@ -46,7 +48,10 @@ export const PermissionRow = ({
         <div>
           <div className="content">
             <h3>
-              <div className="icon-wrapper" onClick={() => console.log('todo')}>
+              <div
+                className="icon-wrapper"
+                onClick={() => openHelp(task.helpKey)}
+              >
                 <FontAwesomeIcon
                   className="info-icon"
                   icon={faInfo}

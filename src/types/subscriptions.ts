@@ -4,6 +4,7 @@
 import type { ChainID } from './chains';
 import type { AnyFunction, AnyData } from './misc';
 import type { FlattenedAccountData } from './accounts';
+import type { HelpItemKey } from '@/renderer/contexts/Help/types';
 
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
@@ -30,6 +31,8 @@ export interface SubscriptionTask {
   enableOsNotifications: boolean;
   // Flag to determine if the subscription was just built.
   justBuilt?: boolean;
+  // Key into help array to retrieve information about the task.
+  helpKey: HelpItemKey;
 }
 
 // String literals to limit subscription task actions.
