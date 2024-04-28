@@ -106,6 +106,24 @@ export const AccountStatusesProvider = ({
     }
   };
 
+  /// Get the processing status of an account.
+  const getStatusForAccount = (address: string, source: AccountSource) => {
+    switch (source) {
+      case 'ledger': {
+        return ledgerAccountStatuses.get(address) || null;
+      }
+      case 'read-only': {
+        return readOnlyAccountStatuses.get(address) || null;
+      }
+      case 'vault': {
+        return vaultAccountStatuses.get(address) || null;
+      }
+      default: {
+        return null;
+      }
+    }
+  };
+
   return (
     <AccountStatusesContext.Provider
       value={{
@@ -116,6 +134,7 @@ export const AccountStatusesProvider = ({
         setReadOnlyAccountStatuses,
         setVaultAccountStatuses,
         setStatusForAccount,
+        getStatusForAccount,
       }}
     >
       {children}

@@ -12,4 +12,5 @@ export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
   setReadOnlyAccountStatuses: (map) => {},
   setVaultAccountStatuses: (map) => {},
   setStatusForAccount: (address, source, status) => {},
+  getStatusForAccount: (address, source) => null,
 };

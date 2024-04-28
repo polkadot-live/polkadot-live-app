@@ -15,4 +15,8 @@ export interface AccountStatusesContextInterface {
     source: AccountSource,
     status: boolean
   ) => void;
+  getStatusForAccount: (
+    address: string,
+    source: AccountSource
+  ) => boolean | null;
 }
