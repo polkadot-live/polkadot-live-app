@@ -12,6 +12,8 @@ import { ManageProvider } from './screens/Home/Manage/provider';
 import { TooltipProvider } from '@app/contexts/Tooltip';
 import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
+// Import window contexts
+import { AccountStatusesProvider } from './contexts/AccountStatuses';
 import { Theme } from './Theme';
 
 export const Providers = withProviders(
@@ -24,5 +26,6 @@ export const Providers = withProviders(
   ManageProvider,
   EventsProvider,
   TxMetaProvider,
-  TooltipProvider
+  TooltipProvider,
+  AccountStatusesProvider
 )(Theme);
