@@ -23,6 +23,7 @@ export const HardwareAddress = ({
   index,
   isImported,
   isLast,
+  isProcessing,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -152,7 +153,10 @@ export const HardwareAddress = ({
               )}
             </section>
             <h5 className="full">
-              <span>{address}</span>
+              <span>
+                {address} &nbsp;{' '}
+                {isProcessing ? 'Processing' : 'Not Processing'}
+              </span>
             </h5>
           </div>
         </div>
