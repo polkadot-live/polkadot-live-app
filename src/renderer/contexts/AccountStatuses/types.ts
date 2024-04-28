@@ -1,6 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { AccountSource } from '@/types/accounts';
+
 export interface AccountStatusesContextInterface {
   ledgerAccountStatuses: Map<string, boolean>;
   readOnlyAccountStatuses: Map<string, boolean>;
@@ -8,4 +10,9 @@ export interface AccountStatusesContextInterface {
   setLedgerAccountStatuses: (map: Map<string, boolean>) => void;
   setReadOnlyAccountStatuses: (map: Map<string, boolean>) => void;
   setVaultAccountStatuses: (map: Map<string, boolean>) => void;
+  setStatusForAccount: (
+    address: string,
+    source: AccountSource,
+    status: boolean
+  ) => void;
 }

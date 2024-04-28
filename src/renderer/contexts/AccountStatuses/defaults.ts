@@ -11,4 +11,5 @@ export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
   setLedgerAccountStatuses: (map) => {},
   setReadOnlyAccountStatuses: (map) => {},
   setVaultAccountStatuses: (map) => {},
+  setStatusForAccount: (address, source, status) => {},
 };

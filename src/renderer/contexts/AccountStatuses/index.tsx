@@ -69,6 +69,43 @@ export const AccountStatusesProvider = ({
     Map<string, boolean>
   >(() => fetchAccountStatuses('read-only'));
 
+  /// Set processing status of an account.
+  const setStatusForAccount = (
+    address: string,
+    source: AccountSource,
+    status: boolean
+  ) => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAccountStatuses((prev) => {
+          const cloned = new Map(prev);
+          cloned.set(address, status);
+          return cloned;
+        });
+        break;
+      }
+      case 'read-only': {
+        setReadOnlyAccountStatuses((prev) => {
+          const cloned = new Map(prev);
+          cloned.set(address, status);
+          return cloned;
+        });
+        break;
+      }
+      case 'vault': {
+        setVaultAccountStatuses((prev) => {
+          const cloned = new Map(prev);
+          cloned.set(address, status);
+          return cloned;
+        });
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
+
   return (
     <AccountStatusesContext.Provider
       value={{
@@ -78,6 +115,7 @@ export const AccountStatusesProvider = ({
         setLedgerAccountStatuses,
         setReadOnlyAccountStatuses,
         setVaultAccountStatuses,
+        setStatusForAccount,
       }}
     >
       {children}
