@@ -40,6 +40,11 @@ export const Address = ({
     postRenameAccount(who, newName);
   };
 
+  // State for account's processing flag.
+  const [isProcessing] = useState(
+    getStatusForAccount(address, source) || false
+  );
+
   return (
     <HardwareAddress
       key={index}
@@ -49,7 +54,7 @@ export const Address = ({
       renameHandler={renameHandler}
       isImported={isImported}
       isLast={isLast}
-      isProcessing={getStatusForAccount(address, source) || false}
+      isProcessing={isProcessing}
       openRemoveHandler={() =>
         openOverlayWith(
           <Remove
