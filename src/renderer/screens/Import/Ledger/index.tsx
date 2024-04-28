@@ -3,6 +3,7 @@
 
 import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
+import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
@@ -27,6 +28,9 @@ export const ImportLedger = ({
   // Store whether import is in process
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
+
+  // Status entry is added for a newly imported account.
+  const { insertAccountStatus } = useAccountStatuses();
 
   // Store addresses retreived from Ledger device. Defaults to addresses saved in local storage.
   const [addresses, setAddresses] = useState<LedgerLocalAddress[]>(() => {
@@ -112,6 +116,9 @@ export const ImportLedger = ({
       setAddresses(newAddresses);
       //setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
+
+      // Insert account status entry.
+      insertAccountStatus(address, 'ledger');
 
       // Stop polling ledger device.
       intervalRef.current && clearInterval(intervalRef.current);

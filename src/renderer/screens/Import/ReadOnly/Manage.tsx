@@ -15,6 +15,7 @@ import { Identicon } from '@/renderer/library/Identicon';
 import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
+import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
@@ -27,6 +28,7 @@ export const Manage = ({
   setAddresses,
 }: ManageReadOnlyProps) => {
   const [editName, setEditName] = useState<string>('');
+  const { insertAccountStatus } = useAccountStatuses();
 
   // Cancel button clicked for address field.
   const onCancel = () => {
@@ -119,6 +121,9 @@ export const Manage = ({
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
     setEditName('');
+
+    // Add account status entry.
+    insertAccountStatus(trimmed, 'read-only');
 
     // Render success alert.
     toast.success('Address addred successfully.', {

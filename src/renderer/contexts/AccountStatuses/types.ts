@@ -19,4 +19,6 @@ export interface AccountStatusesContextInterface {
     address: string,
     source: AccountSource
   ) => boolean | null;
+  insertAccountStatus: (address: string, source: AccountSource) => void;
+  deleteAccountStatus: (address: string, source: AccountSource) => void;
 }

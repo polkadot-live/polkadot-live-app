@@ -7,6 +7,7 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { ConfirmWrapper } from './Wrappers';
 import { getAddressChainId } from '@/renderer/Utils';
 import { Identicon } from '@/renderer/library/Identicon';
+import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import { useOverlay } from '@/renderer/contexts/Overlay';
 import type { DeleteProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
@@ -18,9 +19,13 @@ export const Delete = ({
   setSection,
 }: DeleteProps) => {
   const { setStatus } = useOverlay();
+  const { deleteAccountStatus } = useAccountStatuses();
 
   // Click handler function.
   const handleDeleteAddress = () => {
+    // Remove status entry from account statuses context.
+    deleteAccountStatus(address, source);
+
     if (source === 'vault') {
       handleDeleteVaultAddress();
     } else if (source === 'ledger') {

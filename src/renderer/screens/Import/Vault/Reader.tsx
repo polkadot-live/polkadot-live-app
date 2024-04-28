@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
@@ -17,6 +18,7 @@ import type { ReaderVaultProps } from '../types';
 
 export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
+  const { insertAccountStatus } = useAccountStatuses();
 
   // Check whether initial render.
   const initialRender = useRef<boolean>(true);
@@ -89,6 +91,9 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
     setImported(true);
+
+    // Add account status entry.
+    insertAccountStatus(address, 'vault');
   };
 
   // Gets the next non-imported address index.

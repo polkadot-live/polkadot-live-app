@@ -124,6 +124,54 @@ export const AccountStatusesProvider = ({
     }
   };
 
+  /// Insert an account status entry.
+  const insertAccountStatus = (address: string, source: AccountSource) => {
+    switch (source) {
+      case 'ledger': {
+        ledgerAccountStatuses.set(address, false);
+        break;
+      }
+      case 'read-only': {
+        readOnlyAccountStatuses.set(address, false);
+        break;
+      }
+      case 'vault': {
+        vaultAccountStatuses.set(address, false);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
+
+  /// Delete an account status entry.
+  const deleteAccountStatus = (address: string, source: AccountSource) => {
+    switch (source) {
+      case 'ledger': {
+        if (ledgerAccountStatuses.has(address)) {
+          ledgerAccountStatuses.delete(address);
+        }
+        break;
+      }
+      case 'read-only': {
+        if (readOnlyAccountStatuses.has(address)) {
+          readOnlyAccountStatuses.delete(address);
+        }
+        break;
+      }
+      case 'vault': {
+        if (vaultAccountStatuses.has(address)) {
+          vaultAccountStatuses.delete(address);
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
+
   return (
     <AccountStatusesContext.Provider
       value={{
@@ -135,6 +183,8 @@ export const AccountStatusesProvider = ({
         setVaultAccountStatuses,
         setStatusForAccount,
         getStatusForAccount,
+        insertAccountStatus,
+        deleteAccountStatus,
       }}
     >
       {children}

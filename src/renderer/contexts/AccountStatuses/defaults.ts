@@ -13,4 +13,6 @@ export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
   setVaultAccountStatuses: (map) => {},
   setStatusForAccount: (address, source, status) => {},
   getStatusForAccount: (address, source) => null,
+  insertAccountStatus: (address, source) => {},
+  deleteAccountStatus: (address, source) => {},
 };
