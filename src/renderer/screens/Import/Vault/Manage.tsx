@@ -70,6 +70,7 @@ export const Manage = ({
                     <Address
                       key={address}
                       accountName={name}
+                      source={'vault'}
                       setAddresses={setAddresses}
                       address={address}
                       index={index}

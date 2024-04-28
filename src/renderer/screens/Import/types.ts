@@ -3,7 +3,11 @@
 
 import type { AnyFunction, AnyJson } from '@/types/misc';
 import type { Html5Qrcode } from 'html5-qrcode';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 import type { LedgerResponse } from '@/types/ledger';
 
 export interface HomeProps {
@@ -49,6 +53,7 @@ export interface ImportLedgerManageProps {
 export interface LedgerAddressProps {
   accountName: string;
   address: string;
+  source: AccountSource;
   index: number;
   isImported: boolean;
   isLast: boolean;

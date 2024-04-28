@@ -6,6 +6,7 @@ import type { AnyFunction } from '@w3ux/utils/types';
 
 export interface AddressProps {
   accountName: string;
+  source: AccountSource;
   address: string;
   index: number;
   isImported: boolean;

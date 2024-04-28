@@ -206,6 +206,7 @@ export const Manage = ({
                       <Address
                         key={address}
                         accountName={name}
+                        source={'read-only'}
                         setAddresses={setAddresses}
                         address={address}
                         index={index}

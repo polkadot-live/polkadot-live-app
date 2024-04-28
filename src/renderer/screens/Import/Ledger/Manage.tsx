@@ -61,6 +61,7 @@ export const Manage = ({
                   <Address
                     key={address}
                     address={address}
+                    source={'ledger'}
                     accountName={name}
                     setAddresses={setAddresses}
                     index={index}

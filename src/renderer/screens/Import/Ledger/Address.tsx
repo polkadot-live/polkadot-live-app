@@ -9,6 +9,7 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
+import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { useState } from 'react';
 import type { LedgerAddressProps } from '../types';
@@ -16,6 +17,7 @@ import type { LedgerAddressProps } from '../types';
 export const Address = ({
   address,
   accountName,
+  source,
   setAddresses,
   index,
   isImported,
@@ -25,6 +27,9 @@ export const Address = ({
   // State for account name.
   const [accountNameState, setAccountNameState] = useState<string>(accountName);
   const { openOverlayWith } = useOverlay();
+
+  // Getter for account's processing flag.
+  const { getStatusForAccount } = useAccountStatuses();
 
   // Handler to rename an account.
   const renameHandler = (who: string, newName: string) => {
@@ -44,6 +49,7 @@ export const Address = ({
       renameHandler={renameHandler}
       isImported={isImported}
       isLast={isLast}
+      isProcessing={getStatusForAccount(address, source) || false}
       openRemoveHandler={() =>
         openOverlayWith(
           <Remove

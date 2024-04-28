@@ -16,6 +16,7 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
+import { useAccountStatuses } from '../contexts/AccountStatuses';
 import { useChains } from '@app/contexts/Chains';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
@@ -28,6 +29,7 @@ export const useMessagePorts = () => {
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
+  const { setStatusForAccount } = useAccountStatuses();
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
 
@@ -81,6 +83,16 @@ export const useMessagePorts = () => {
           AccountsController.accounts
         )
       );
+
+      // Send message back to import window to reset account's processing flag.
+      ConfigRenderer.portToImport.postMessage({
+        task: 'import:account:processing',
+        data: {
+          address,
+          source,
+          status: false,
+        },
+      });
     };
 
     /**
@@ -270,7 +282,16 @@ export const useMessagePorts = () => {
 
           ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
-            console.log(ev.data);
+            switch (ev.data.task) {
+              case 'import:account:processing': {
+                const { address, source, status } = ev.data.data;
+                setStatusForAccount(address, source, status);
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
           };
 
           ConfigImport.portImport.start();

@@ -7,7 +7,7 @@ import {
   faTimes,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { ButtonText } from '../../../kits/Buttons/ButtonText';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,6 +23,7 @@ export const HardwareAddress = ({
   index,
   isImported,
   isLast,
+  isProcessing,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -158,20 +159,34 @@ export const HardwareAddress = ({
         </div>
       </div>
       <div className="action">
-        {isImported ? (
-          <ButtonText
+        {isImported && !isProcessing ? (
+          <ButtonMonoInvert
             iconLeft={faTimes}
             text={'Remove'}
             onClick={() => openRemoveHandler()}
           />
         ) : (
-          <ButtonText
-            iconLeft={faPlus}
-            text={'Import'}
-            onClick={() => openConfirmHandler()}
-          />
+          <div style={{ position: 'relative' }}>
+            <ButtonMonoInvert
+              iconLeft={faPlus}
+              text={'Import'}
+              onClick={() => openConfirmHandler()}
+              className={isProcessing ? 'processing' : ''}
+            />
+            {isProcessing && (
+              <div
+                style={{ position: 'absolute', left: '15px', top: '10px' }}
+                className="lds-ellipsis"
+              >
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
+          </div>
         )}
-        <ButtonText
+        <ButtonMonoInvert
           iconLeft={faTimes}
           text={'Delete'}
           onClick={() => openDeleteHandler()}
