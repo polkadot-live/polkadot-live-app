@@ -48,9 +48,7 @@ export const BreadcrumbsWrapper = styled.div`
 `;
 
 export const HeadingWrapper = styled.div`
-  position: sticky;
   width: 100%;
-  top: 0rem;
   padding: 0.5rem 1rem;
   z-index: 3;
   opacity: 0.75;
@@ -58,6 +56,9 @@ export const HeadingWrapper = styled.div`
   cursor: pointer;
 
   .flex {
+    display: flex;
+    column-gap: 0.5rem;
+    align-items: center;
     padding: 0.25rem 0.5rem;
     transition: background-color 0.15s ease-in-out;
     border-bottom: 1px solid var(--border-secondary-color);
@@ -74,26 +75,24 @@ export const HeadingWrapper = styled.div`
     }
 
     .left {
-      display: flex;
-      justify-content: flex-start;
       flex: 1;
+      display: flex;
+      column-gap: 0.75rem;
+      justify-content: flex-start;
+
+      .icon-wrapper {
+        min-width: 0.75rem;
+        opacity: 0.4;
+      }
+      h5 {
+        > span {
+          color: var(--text-color-primary);
+        }
+      }
     }
     .right {
       display: flex;
       justify-content: flex-end;
-    }
-  }
-
-  h5 {
-    > span {
-      margin-left: 1rem;
-      color: var(--text-color-primary);
-    }
-    .icon {
-      fill: var(--text-color-primary);
-      width: 0.95rem;
-      height: 0.95rem;
-      margin-right: 0.5rem;
     }
   }
 `;

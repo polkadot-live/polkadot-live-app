@@ -129,12 +129,12 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
     setOverlayStatus(0);
   };
 
-  const containerStyle = useMemo(() => createImgSize(279), []);
+  const containerStyle = useMemo(() => createImgSize(400), []);
 
   return (
     <QRVieweraWrapper>
       <div className="viewer">
-        <ScanWrapper className={''} style={containerStyle}>
+        <ScanWrapper style={containerStyle}>
           <Html5QrCodePlugin
             fps={10}
             qrCodeSuccessCallback={onScan}

@@ -11,9 +11,10 @@ import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
+import { HeaderWrapper } from '../../Wrappers';
+import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import type { ImportLedgerManageProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
-import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   addresses,
@@ -56,7 +57,7 @@ export const Manage = ({
             </div>
 
             <div className="items">
-              {addresses.map(
+              {getSortedLocalLedgerAddresses(addresses).map(
                 ({ address, index, isImported, name }: LedgerLocalAddress) => (
                   <Address
                     key={address}
