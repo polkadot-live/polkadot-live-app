@@ -66,14 +66,14 @@ export const QRViewerWrapper = styled.div`
       padding: 0.95rem;
       border: 3.75px solid var(--network-color-pending);
     }
+  }
 
-    /* Override QRScanner styles */
-    > div {
-      width: 175px !important;
-      height: 175px !important;
-      > section > section > div {
-        border-width: 20px !important;
-      }
+  /* Override QRScanner styles */
+  > .payload-wrapper {
+    width: 175px !important;
+    height: 175px !important;
+    > section > section > div {
+      border-width: 20px !important;
     }
   }
   .foot {
