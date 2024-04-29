@@ -10,6 +10,8 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
+import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import { HeaderWrapper } from '../../Wrappers';
 import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
 import { Identicon } from '@/renderer/library/Identicon';
 import ReadmeSVG from '@/config/svg/readonly.svg?react';
@@ -19,7 +21,6 @@ import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
-import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -206,7 +207,7 @@ export const Manage = ({
             <div className="items">
               {addresses.length ? (
                 <>
-                  {addresses.map(
+                  {getSortedLocalAddresses(addresses).map(
                     ({ address, index, isImported, name }: LocalAddress) => (
                       <Address
                         key={address}

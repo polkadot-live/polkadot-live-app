@@ -112,3 +112,41 @@ export const getLocalAccountName = (
     return 'System Account';
   }
 };
+
+/**
+ * @name getSortedLocalAddresses
+ * @summary Function to get addresses categorized by chain ID and sorted by name.
+ */
+export const getSortedLocalAddresses = (addresses: LocalAddress[]) => {
+  let sorted: LocalAddress[] = [];
+
+  for (const chainId of ['Polkadot', 'Kusama', 'Westend']) {
+    sorted = sorted.concat(
+      addresses
+        .filter((a) => getAddressChainId(a.address) === chainId)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
+  }
+
+  return sorted;
+};
+
+/**
+ * @name getSortedLocalLedgerAddresses
+ * @summary Same as `getSortedLocalAddresses` but for the local Ledger address type.
+ */
+export const getSortedLocalLedgerAddresses = (
+  addresses: LedgerLocalAddress[]
+) => {
+  let sorted: LedgerLocalAddress[] = [];
+
+  for (const chainId of ['Polkadot', 'Kusama', 'Westend']) {
+    sorted = sorted.concat(
+      addresses
+        .filter((a) => getAddressChainId(a.address) === chainId)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
+  }
+
+  return sorted;
+};

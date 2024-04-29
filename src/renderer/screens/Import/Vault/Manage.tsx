@@ -12,10 +12,11 @@ import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import { HeaderWrapper } from '../../Wrappers';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageVaultProps } from '../types';
-import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -65,7 +66,7 @@ export const Manage = ({
               </div>
 
               <div className="items">
-                {addresses.map(
+                {getSortedLocalAddresses(addresses).map(
                   ({ address, index, isImported, name }: LocalAddress) => (
                     <Address
                       key={address}
