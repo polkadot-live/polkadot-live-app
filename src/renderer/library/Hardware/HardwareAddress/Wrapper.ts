@@ -10,7 +10,7 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
       : '1px solid var(--border-primary-color)'};
   display: flex;
   align-items: center;
-  padding: 1.25rem;
+  padding: 1rem;
 
   /* 3 Dot Spinner */
   .lds-ellipsis {
@@ -108,7 +108,7 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
 
     > .inner {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
 
       > .identicon {
         flex-shrink: 1;
@@ -155,8 +155,32 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
           display: flex;
           padding-left: 1.5rem;
 
+          .input-wrapper {
+            position: relative;
+            display: flex;
+            flex: 1;
+
+            .chain-icon {
+              position: absolute;
+              top: 5px;
+              left: 10px;
+              width: 1.5rem;
+              height: 1.5rem;
+              margin-top: 4px;
+
+              ellipse {
+                fill: #953254;
+              }
+            }
+
+            input {
+              padding-left: 38px;
+            }
+          }
+
           &.row {
             align-items: center;
+            column-gap: 1rem;
 
             .edit {
               margin-left: 0.75rem;
@@ -188,15 +212,15 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
           white-space: nowrap;
           overflow: hidden;
           width: 100%;
-          max-width: 175px;
+          max-width: 300px;
           transition:
             background-color 0.2s,
             max-width 0.2s,
             padding 0.2s;
 
           &:focus {
-            background: var(--background-menu);
-            max-width: 300px;
+            background: var(--background-modal);
+            max-width: 350px;
           }
 
           &:disabled {

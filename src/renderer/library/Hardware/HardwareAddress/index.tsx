@@ -8,6 +8,7 @@ import {
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,6 +18,7 @@ import { validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
+import { getAddressChainId } from '@/renderer/Utils';
 
 export const HardwareAddress = ({
   address,
@@ -102,6 +104,13 @@ export const HardwareAddress = ({
     setEditName(val);
   };
 
+  // Function to render a chain icon.
+  const renderChainIcon = () => {
+    const chainId = getAddressChainId(address);
+    const ChainIcon = chainIcon(chainId);
+    return <ChainIcon className="chain-icon" />;
+  };
+
   // Function to render wrapper JSX.
   const renderContent = () => (
     <>
@@ -113,44 +122,47 @@ export const HardwareAddress = ({
           </div>
           <div>
             <section className="row">
-              <input
-                type="text"
-                value={editing ? editName : accountName}
-                onChange={(e) => handleChange(e)}
-                onFocus={() => setEditing(true)}
-                onKeyUp={(e) => {
-                  if (e.key === 'Enter') {
-                    commitEdit();
-                    e.currentTarget.blur();
-                  }
-                }}
-              />
+              <div className="input-wrapper">
+                {renderChainIcon()}
+                <input
+                  type="text"
+                  value={editing ? editName : accountName}
+                  onChange={(e) => handleChange(e)}
+                  onFocus={() => setEditing(true)}
+                  onKeyUp={(e) => {
+                    if (e.key === 'Enter') {
+                      commitEdit();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                />
 
-              {editing && (
-                <div style={{ display: 'flex' }}>
-                  &nbsp;
-                  <button
-                    id="commit-btn"
-                    type="button"
-                    className="edit"
-                    onPointerDown={() => commitEdit()}
-                  >
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      transform="grow-1"
-                      className="icon"
-                    />
-                  </button>
-                  &nbsp;
-                  <button
-                    type="button"
-                    className="edit"
-                    onPointerDown={() => cancelEditing()}
-                  >
-                    <FontAwesomeIcon icon={faXmark} transform="grow-1" />
-                  </button>
-                </div>
-              )}
+                {editing && (
+                  <div style={{ display: 'flex' }}>
+                    &nbsp;
+                    <button
+                      id="commit-btn"
+                      type="button"
+                      className="edit"
+                      onPointerDown={() => commitEdit()}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        transform="grow-1"
+                        className="icon"
+                      />
+                    </button>
+                    &nbsp;
+                    <button
+                      type="button"
+                      className="edit"
+                      onPointerDown={() => cancelEditing()}
+                    >
+                      <FontAwesomeIcon icon={faXmark} transform="grow-1" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </section>
             <h5 className="full">
               <span>{address}</span>
