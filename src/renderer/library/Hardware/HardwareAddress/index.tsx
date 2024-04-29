@@ -3,6 +3,7 @@
 
 import {
   faCheck,
+  faMinus,
   faPlus,
   faTimes,
   faXmark,
@@ -173,7 +174,7 @@ export const HardwareAddress = ({
       <div className="action">
         {isImported && !isProcessing ? (
           <ButtonMonoInvert
-            iconLeft={faTimes}
+            iconLeft={faMinus}
             text={'Remove'}
             onClick={() => openRemoveHandler()}
           />
