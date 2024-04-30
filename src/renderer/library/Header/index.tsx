@@ -13,6 +13,7 @@ import { useState } from 'react';
 import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
 type ConnectionStatus = 'app:loading' | 'app:online' | 'app:offline';
 
@@ -64,7 +65,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
   // Handler for connection button.
   const handleConnectButtonClick = async () => {
-    setIsConnecting(true);
     const status = getConnectionStatus();
 
     switch (status) {
@@ -77,11 +77,17 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         break;
       }
       case 'app:offline': {
+        setIsConnecting(true);
         await handleInitializeAppOnline();
+        setIsConnecting(false);
         break;
       }
     }
-    setIsConnecting(false);
+  };
+
+  // Handler for aborting connection processing.
+  const handleAbortConnecting = () => {
+    RendererConfig.abortConnecting = true;
   };
 
   return (
@@ -110,6 +116,14 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 <div></div>
               </div>
             )}
+          </div>
+          <div>
+            <ButtonMonoInvert
+              style={{ padding: '0.25rem 1rem' }}
+              text="Abort"
+              disabled={!isConnecting}
+              onClick={() => handleAbortConnecting()}
+            />
           </div>
         </div>
         <div className="grab" />

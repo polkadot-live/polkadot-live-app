@@ -126,6 +126,9 @@ export const OnlineStatusProvider = ({
     // when connection status goes back online.
     RendererConfig.switchingToOnlineMode = false;
 
+    // Re-initialize accounts controller.
+    await AccountsController.initialize();
+
     // Report online status to renderer.
     setOnline(false);
 
@@ -137,38 +140,64 @@ export const OnlineStatusProvider = ({
 
   /// Handle switching to online mode.
   const handleInitializeAppOnline = async () => {
-    // Report online status to renderer.
-    setOnline(await window.myAPI.getOnlineStatus());
-
     // Return if app is already initializing online mode.
     if (RendererConfig.switchingToOnlineMode) {
       return;
     }
+
+    let aborted = false;
+    let intervalRunning = true;
+
+    // Start an interval to check if the abort flag has been set.
+    const intervalId = setInterval(() => {
+      console.log('>> set interval...');
+
+      if (RendererConfig.abortConnecting) {
+        // Set flag to stop processing this function.
+        aborted = true;
+
+        // Reset abort connecting flag.
+        RendererConfig.abortConnecting = false;
+
+        // Stop this interval.
+        clearInterval(intervalId);
+        intervalRunning = false;
+      }
+    }, 1000);
+
+    // Report online status to renderer.
+    setOnline(await window.myAPI.getOnlineStatus());
 
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
 
     // Fetch account nonce and balance.
-    await fetchAccountBalances();
+    !aborted && (await fetchAccountBalances());
 
     // Fetch up-to-date nomination pool data for managed accounts.
-    await fetchAccountNominationPoolData();
+    !aborted && (await fetchAccountNominationPoolData());
 
     // Fetch up-to-data nominating data for managed accounts.
-    await fetchAccountNominatingData();
+    !aborted && (await fetchAccountNominatingData());
 
     // Re-subscribe to managed accounts cached subscription tasks.
-    await AccountsController.resubscribeAccounts();
+    !aborted && (await AccountsController.subscribeAccounts());
 
     // Re-subscribe to managed chain subscription tasks.
-    await SubscriptionsController.resubscribeAccounts();
+    !aborted && (await SubscriptionsController.resubscribeAccounts());
 
     // Set application state.
-    setSubscriptionsAndChainConnections();
+    !aborted && setSubscriptionsAndChainConnections();
 
     // Set config flag to false.
     RendererConfig.switchingToOnlineMode = false;
+
+    // Stop abort checking interval.
+    intervalRunning && clearInterval(intervalId);
+
+    // Set app in offline mode if connection processing was aborted.
+    aborted && (await handleInitializeAppOffline());
   };
 
   /// Utility.

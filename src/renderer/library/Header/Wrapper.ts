@@ -27,6 +27,7 @@ export const HeaderWrapper = styled.div`
       align-items: center;
       justify-content: flex-start;
       padding-top: 0.5rem;
+      column-gap: 0.5rem;
 
       .connection-btn-wrapper {
         position: relative;
