@@ -17,24 +17,32 @@ export const HeaderWrapper = styled.div`
   left: 0;
   z-index: 5;
 
-  > div {
-    &:first-child {
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 0.5rem;
+    }
+    .grab {
       height: 2rem;
       display: flex;
-      flex-grow: 1;
-      justify-content: flex-start;
-      padding-right: 1.25rem;
+      flex: 1;
       -webkit-app-region: drag;
       cursor: grab;
-      border-radius: 1.5rem;
     }
-    &:last-child {
+    > .right {
       display: flex;
       justify-content: flex-end;
 
       .switch-wrapper {
         display: flex;
         column-gap: 1rem;
+        z-index: 5;
       }
       > button {
         margin-left: 1.4rem;
