@@ -127,7 +127,7 @@ export const OnlineStatusProvider = ({
     RendererConfig.switchingToOnlineMode = false;
 
     // Report online status to renderer.
-    setOnline(await window.myAPI.getOnlineStatus());
+    setOnline(false);
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {

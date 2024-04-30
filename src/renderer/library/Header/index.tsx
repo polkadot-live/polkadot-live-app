@@ -18,7 +18,11 @@ type ConnectionStatus = 'app:loading' | 'app:online' | 'app:offline';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
-  const { online: isOnline } = useOnlineStatus();
+  const {
+    online: isOnline,
+    handleInitializeAppOffline,
+    handleInitializeAppOnline,
+  } = useOnlineStatus();
   const [silenceToggle, setSilenceToggle] = useState(
     RendererConfig.silenceNotifications
   );
@@ -49,7 +53,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     const status = getConnectionStatus();
     switch (status) {
       case 'app:loading':
-        return 'Start Offline';
+        return 'Loading';
       case 'app:online':
         return 'Disconnect';
       case 'app:offline':
@@ -62,15 +66,15 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     const status = getConnectionStatus();
     switch (status) {
       case 'app:loading': {
-        console.log('TODO: Handle switch to offline mode');
+        await handleInitializeAppOffline();
         break;
       }
       case 'app:online': {
-        console.log('TODO: Handle switch to offline mode');
+        await handleInitializeAppOffline();
         break;
       }
       case 'app:offline': {
-        console.log('TODO: Handle connect to online mode');
+        await handleInitializeAppOnline();
         break;
       }
     }
@@ -83,6 +87,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
           <ButtonSecondary
             style={{ border: '1px solid var(--border-mid-color)' }}
             text={getConnectionButtonText()}
+            disabled={appLoading}
             onClick={async () => await handleConnectButtonClick()}
           />
         </div>
