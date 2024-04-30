@@ -17,6 +17,7 @@ import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 type ConnectionStatus = 'app:loading' | 'app:online' | 'app:offline';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
+  const [isConnecting, setIsConnecting] = useState(false);
   const { pathname } = useLocation();
   const {
     online: isOnline,
@@ -63,7 +64,9 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
   // Handler for connection button.
   const handleConnectButtonClick = async () => {
+    setIsConnecting(true);
     const status = getConnectionStatus();
+
     switch (status) {
       case 'app:loading': {
         await handleInitializeAppOffline();
@@ -78,18 +81,36 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         break;
       }
     }
+    setIsConnecting(false);
   };
 
   return (
     <HeaderWrapper>
       <div className="content-wrapper">
         <div className="left">
-          <ButtonSecondary
-            style={{ border: '1px solid var(--border-mid-color)' }}
-            text={getConnectionButtonText()}
-            disabled={appLoading}
-            onClick={async () => await handleConnectButtonClick()}
-          />
+          <div className="connection-btn-wrapper">
+            <ButtonSecondary
+              className={isConnecting || appLoading ? 'connecting' : ''}
+              style={{
+                border: '1px solid var(--border-mid-color)',
+                minWidth: '80px',
+              }}
+              text={getConnectionButtonText()}
+              disabled={appLoading || isConnecting}
+              onClick={async () => await handleConnectButtonClick()}
+            />
+            {(isConnecting || appLoading) && (
+              <div
+                style={{ position: 'absolute', left: '15px', top: '10px' }}
+                className="lds-ellipsis"
+              >
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="grab" />
         <div className="right">
