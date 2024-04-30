@@ -82,29 +82,27 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   return (
     <HeaderWrapper>
       <div className="content-wrapper">
-        <div className="left">
-          <div className="connection-btn-wrapper">
-            <ButtonSecondary
-              style={{
-                border: '1px solid var(--border-mid-color)',
-                minWidth: '96px',
-              }}
-              text={
-                isAborting
-                  ? 'Aborting...'
-                  : isConnecting || appLoading
-                    ? 'Abort'
-                    : getConnectionButtonText()
-              }
-              disabled={isAborting}
-              onClick={async () => await handleConnectButtonClick()}
-            />
-          </div>
-        </div>
         <div className="grab" />
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
             <div className="switch-wrapper">
+              <ButtonSecondary
+                className={
+                  isAborting || isConnecting || appLoading
+                    ? 'connect-btn do-pulse'
+                    : 'connect-btn'
+                }
+                text={
+                  isAborting
+                    ? 'Aborting...'
+                    : isConnecting || appLoading
+                      ? 'Abort'
+                      : getConnectionButtonText()
+                }
+                disabled={isAborting}
+                onClick={async () => await handleConnectButtonClick()}
+              />
+
               <a
                 data-tooltip-id="silence-notifications-tooltip"
                 data-tooltip-content="Silence OS Notifications"
