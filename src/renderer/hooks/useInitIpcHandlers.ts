@@ -33,7 +33,7 @@ export const useInitIpcHandlers = () => {
     /**
      * Handle app initialization.
      */
-    window.myAPI.initializeApp(async () => {
+    const handleInitializeApp = async () => {
       if (!refAppInitialized.current) {
         // Initialise online status controller and set online state.
         await window.myAPI.initOnlineStatus();
@@ -82,29 +82,32 @@ export const useInitIpcHandlers = () => {
           setAppLoading(false);
         }, 100);
       }
-    });
+    };
 
     /**
      * Handle switching to offline mode.
      */
-    window.myAPI.initializeAppOffline(async () => {
+    const handleInitializeAppOffline = async () => {
       // Set config flag to false to re-start the online mode initialization
       // when connection status goes back online.
       RendererConfig.switchingToOnlineMode = false;
+
+      // Report online status to renderer.
+      setOnline(await window.myAPI.getOnlineStatus());
 
       // Disconnect from chains.
       for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
         await APIsController.close(chainId);
       }
-
-      // Report online status to renderer.
-      setOnline(await window.myAPI.getOnlineStatus());
-    });
+    };
 
     /**
      * Handle switching to online mode.
      */
-    window.myAPI.initializeAppOnline(async () => {
+    const handleInitializeAppOnline = async () => {
+      // Report online status to renderer.
+      setOnline(await window.myAPI.getOnlineStatus());
+
       // Return if app is already initializing online mode.
       if (RendererConfig.switchingToOnlineMode) {
         return;
@@ -129,17 +132,31 @@ export const useInitIpcHandlers = () => {
       // Re-subscribe to managed chain subscription tasks.
       await SubscriptionsController.resubscribeAccounts();
 
-      // Report online status to renderer.
-      setOnline(await window.myAPI.getOnlineStatus());
-
       // Set application state.
       setSubscriptionsAndChainConnections();
 
       // Set config flag to false.
       RendererConfig.switchingToOnlineMode = false;
+    };
+
+    /**
+     * Pass callbacks to preload API.
+     */
+    window.myAPI.initializeApp(async () => {
+      await handleInitializeApp();
     });
 
-    // Utility
+    window.myAPI.initializeAppOffline(async () => {
+      await handleInitializeAppOffline();
+    });
+
+    window.myAPI.initializeAppOnline(async () => {
+      await handleInitializeAppOnline();
+    });
+
+    /**
+     * Utility
+     */
     const setSubscriptionsAndChainConnections = () => {
       // Set chain subscriptions data for rendering.
       setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
