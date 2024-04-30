@@ -13,15 +13,15 @@ import { useState } from 'react';
 import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-
-type ConnectionStatus = 'app:loading' | 'app:online' | 'app:offline';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const [isConnecting, setIsConnecting] = useState(false);
+
   const { pathname } = useLocation();
   const {
     online: isOnline,
+    isAborting,
+    setIsAborting,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
   } = useOnlineStatus();
@@ -46,47 +46,36 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     setSilenceToggle(newFlag);
   };
 
-  // Utility to get connection status as a type.
-  const getConnectionStatus = (): ConnectionStatus =>
-    appLoading ? 'app:loading' : isOnline ? 'app:online' : 'app:offline';
-
   // Get text for connection button.
   const getConnectionButtonText = () => {
-    const status = getConnectionStatus();
-    switch (status) {
-      case 'app:loading':
-        return 'Loading';
-      case 'app:online':
-        return 'Disconnect';
-      case 'app:offline':
-        return 'Connect';
+    if (isConnecting || appLoading) {
+      return 'Abort';
+    } else if (isOnline) {
+      return 'Disconnect';
+    } else {
+      return 'Connect';
     }
   };
 
   // Handler for connection button.
   const handleConnectButtonClick = async () => {
-    const status = getConnectionStatus();
-
-    switch (status) {
-      case 'app:loading': {
-        await handleInitializeAppOffline();
-        break;
-      }
-      case 'app:online': {
-        await handleInitializeAppOffline();
-        break;
-      }
-      case 'app:offline': {
-        setIsConnecting(true);
-        await handleInitializeAppOnline();
-        setIsConnecting(false);
-        break;
-      }
+    if (isConnecting || appLoading) {
+      // Handle abort.
+      handleAbortConnecting();
+    } else if (isOnline) {
+      // Handle going offline.
+      await handleInitializeAppOffline();
+    } else {
+      // Handle going online.
+      setIsConnecting(true);
+      await handleInitializeAppOnline();
+      setIsConnecting(false);
     }
   };
 
   // Handler for aborting connection processing.
   const handleAbortConnecting = () => {
+    setIsAborting(true);
     RendererConfig.abortConnecting = true;
   };
 
@@ -96,33 +85,19 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="left">
           <div className="connection-btn-wrapper">
             <ButtonSecondary
-              className={isConnecting || appLoading ? 'connecting' : ''}
               style={{
                 border: '1px solid var(--border-mid-color)',
-                minWidth: '80px',
+                minWidth: '96px',
               }}
-              text={getConnectionButtonText()}
-              disabled={appLoading || isConnecting}
+              text={
+                isAborting
+                  ? 'Aborting...'
+                  : isConnecting || appLoading
+                    ? 'Abort'
+                    : getConnectionButtonText()
+              }
+              disabled={isAborting}
               onClick={async () => await handleConnectButtonClick()}
-            />
-            {(isConnecting || appLoading) && (
-              <div
-                style={{ position: 'absolute', left: '15px', top: '10px' }}
-                className="lds-ellipsis"
-              >
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            )}
-          </div>
-          <div>
-            <ButtonMonoInvert
-              style={{ padding: '0.25rem 1rem' }}
-              text="Abort"
-              disabled={!isConnecting}
-              onClick={() => handleAbortConnecting()}
             />
           </div>
         </div>

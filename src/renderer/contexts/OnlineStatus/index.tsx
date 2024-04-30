@@ -39,6 +39,7 @@ export const OnlineStatusProvider = ({
 }) => {
   // App loading flag.
   const [appLoading, setAppLoading] = useState(true);
+  const [isAborting, setIsAborting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
 
   const { addChain } = useChains();
@@ -71,6 +72,24 @@ export const OnlineStatusProvider = ({
   /// Handle app initialization.
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
+      let aborted = false;
+      let intervalRunning = true;
+
+      // Start an interval to check if the abort flag has been set.
+      const intervalId = setInterval(() => {
+        if (RendererConfig.abortConnecting) {
+          // Reset abort connecting flag.
+          RendererConfig.abortConnecting = false;
+
+          // Set flag to stop processing this function.
+          aborted = true;
+
+          // Stop this interval.
+          clearInterval(intervalId);
+          intervalRunning = false;
+        }
+      }, 1000);
+
       // Initialise online status controller and set online state.
       await window.myAPI.initOnlineStatus();
       const isOnline = await window.myAPI.getOnlineStatus();
@@ -80,24 +99,25 @@ export const OnlineStatusProvider = ({
       await AccountsController.initialize();
 
       // Initialize chain APIs.
-      await APIsController.initialize(Array.from(ChainList.keys()));
+      !aborted &&
+        (await APIsController.initialize(Array.from(ChainList.keys())));
 
       if (isOnline) {
         // Fetch account nonce and balance.
-        await fetchAccountBalances();
+        !aborted && (await fetchAccountBalances());
 
         // Use API instance to initialize account nomination pool data.
-        await fetchAccountNominationPoolData();
+        !aborted && (await fetchAccountNominationPoolData());
 
         // Initialize account nominating data.
-        await fetchAccountNominatingData();
+        !aborted && (await fetchAccountNominatingData());
       }
 
       // Initialize persisted account subscriptions.
-      await AccountsController.subscribeAccounts();
+      !aborted && (await AccountsController.subscribeAccounts());
 
       // Initialize persisted chain subscriptions.
-      await SubscriptionsController.initChainSubscriptions();
+      !aborted && (await SubscriptionsController.initChainSubscriptions());
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
@@ -112,7 +132,16 @@ export const OnlineStatusProvider = ({
 
       refAppInitialized.current = true;
 
-      // Wait 1.5 seconds to avoid a snapping loading spinner.
+      // Stop abort checking interval.
+      intervalRunning && clearInterval(intervalId);
+
+      // Set app in offline mode if connection processing was aborted.
+      if (aborted) {
+        await handleInitializeAppOffline();
+        setIsAborting(false);
+      }
+
+      // Wait 100ms to avoid a snapping loading spinner.
       console.log('App initialized...');
       setTimeout(() => {
         setAppLoading(false);
@@ -125,9 +154,6 @@ export const OnlineStatusProvider = ({
     // Set config flag to false to re-start the online mode initialization
     // when connection status goes back online.
     RendererConfig.switchingToOnlineMode = false;
-
-    // Re-initialize accounts controller.
-    await AccountsController.initialize();
 
     // Report online status to renderer.
     setOnline(false);
@@ -150,14 +176,12 @@ export const OnlineStatusProvider = ({
 
     // Start an interval to check if the abort flag has been set.
     const intervalId = setInterval(() => {
-      console.log('>> set interval...');
-
       if (RendererConfig.abortConnecting) {
-        // Set flag to stop processing this function.
-        aborted = true;
-
         // Reset abort connecting flag.
         RendererConfig.abortConnecting = false;
+
+        // Set flag to stop processing this function.
+        aborted = true;
 
         // Stop this interval.
         clearInterval(intervalId);
@@ -197,7 +221,10 @@ export const OnlineStatusProvider = ({
     intervalRunning && clearInterval(intervalId);
 
     // Set app in offline mode if connection processing was aborted.
-    aborted && (await handleInitializeAppOffline());
+    if (aborted) {
+      await handleInitializeAppOffline();
+      setIsAborting(false);
+    }
   };
 
   /// Utility.
@@ -222,8 +249,10 @@ export const OnlineStatusProvider = ({
     <OnlineStatusContext.Provider
       value={{
         appLoading,
+        isAborting,
         online,
         setAppLoading,
+        setIsAborting,
         setOnline,
         handleInitializeApp,
         handleInitializeAppOffline,

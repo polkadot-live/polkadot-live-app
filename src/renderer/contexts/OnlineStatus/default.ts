@@ -7,7 +7,9 @@ import type { OnlineStatusInterface } from './types';
 export const defaultOnlineStatusContext: OnlineStatusInterface = {
   appLoading: true,
   online: false,
-  setAppLoading(b) {},
+  isAborting: false,
+  setAppLoading: (b) => {},
+  setIsAborting: (b) => {},
   setOnline: (b) => {},
   handleInitializeApp: () => new Promise(() => {}),
   handleInitializeAppOffline: () => new Promise(() => {}),
