@@ -15,6 +15,7 @@ import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
+import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 
 export const Home = () => {
   const { getAddresses } = useAddresses();
@@ -22,7 +23,10 @@ export const Home = () => {
     useEvents();
 
   // Set up app initialization and online/offline switching handlers.
-  const { appLoading } = useInitIpcHandlers();
+  useInitIpcHandlers();
+
+  // Get app loading flag.
+  const { appLoading } = useOnlineStatus();
 
   // Store the currently active menu tab.
   const [section, setSection] = useState<number>(0);

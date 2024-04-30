@@ -18,7 +18,6 @@ import { Theme } from './Theme';
 
 export const Providers = withProviders(
   OverlayProvider,
-  OnlineStatusProvider,
   AddressesProvider,
   ChainsProvider,
   HelpProvider,
@@ -27,5 +26,7 @@ export const Providers = withProviders(
   EventsProvider,
   TxMetaProvider,
   TooltipProvider,
-  AccountStatusesProvider
+  AccountStatusesProvider,
+  // Online status provider relies on other contexts being initialized.
+  OnlineStatusProvider
 )(Theme);
