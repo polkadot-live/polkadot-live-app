@@ -13,6 +13,7 @@ import { useState } from 'react';
 import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { Flip, toast } from 'react-toastify';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const [isConnecting, setIsConnecting] = useState(false);
@@ -74,8 +75,21 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         await handleInitializeAppOnline();
         setIsConnecting(false);
       } else {
-        // Error
-        console.log('not online');
+        console.log('render error');
+        // Render error alert.
+        toast.error('You are offline.', {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          closeButton: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: 'dark',
+          transition: Flip,
+          toastId: 'toast-connection', // prevent duplicate alerts
+        });
       }
     }
   };

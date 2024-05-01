@@ -21,7 +21,10 @@ export const MainInterfaceWrapper = styled.div`
   .Toastify__toast {
     font-size: 1.2rem;
     color: var(--text-color-primary);
-    background-color: var(--background-menu);
+    background-color: var(--background-modal);
+    border: 1px solid var(--border-mid-color);
+    border-radius: 1rem;
+    margin: 1rem;
   }
 `;
 
