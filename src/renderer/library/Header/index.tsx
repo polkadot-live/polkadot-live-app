@@ -109,7 +109,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <div className="switch-wrapper">
               <ButtonSecondary
                 className={
-                  (isConnecting && !isAborting) || (isConnecting && appLoading)
+                  (isConnecting && !isAborting) || (appLoading && !isAborting)
                     ? 'connect-btn do-pulse hide-text'
                     : isAborting || isConnecting || appLoading
                       ? 'connect-btn do-pulse'
@@ -125,7 +125,8 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 disabled={isAborting}
                 onClick={async () => await handleConnectButtonClick()}
               />
-              {isConnecting && !isAborting && (
+              {((isConnecting && !isAborting) ||
+                (appLoading && !isAborting)) && (
                 <div className="abort-x do-pulse">
                   <FontAwesomeIcon icon={faX} className="icon-sm" />
                 </div>

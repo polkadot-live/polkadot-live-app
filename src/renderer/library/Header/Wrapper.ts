@@ -48,8 +48,10 @@ export const HeaderWrapper = styled.div`
         }
         .abort-x {
           position: absolute;
+          user-select: none;
           left: 45px;
           bottom: 3px;
+          cursor: pointer;
 
           .icon-sm {
             width: 0.75rem;
