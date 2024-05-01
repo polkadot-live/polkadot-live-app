@@ -204,23 +204,37 @@ export const OnlineStatusProvider = ({
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
 
-    // Fetch account nonce and balance.
-    !aborted && (await fetchAccountBalances());
+    // Connect required API instances before continuing.
+    const chainIds = Array.from(AccountsController.accounts.keys());
+    await Promise.all(
+      chainIds.map((cid) => APIsController.connectInstance(cid))
+    );
 
-    // Fetch up-to-date nomination pool data for managed accounts.
-    !aborted && (await fetchAccountNominationPoolData());
+    // Fetch up-to-date account data.
+    if (!aborted) {
+      await Promise.all([
+        // Fetch account nonce and balance.
+        fetchAccountBalances(),
+        // Use API instance to initialize account nomination pool data.
+        fetchAccountNominationPoolData(),
+        // Initialize account nominating data.
+        fetchAccountNominatingData(),
+      ]);
+    }
 
-    // Fetch up-to-data nominating data for managed accounts.
-    !aborted && (await fetchAccountNominatingData());
+    // Re-subscribe account and chain tasks.
+    if (!aborted) {
+      await Promise.all([
+        AccountsController.subscribeAccounts(),
+        SubscriptionsController.resubscribeAccounts(),
+      ]);
+    }
 
-    // Re-subscribe to managed accounts cached subscription tasks.
-    !aborted && (await AccountsController.subscribeAccounts());
-
-    // Re-subscribe to managed chain subscription tasks.
-    !aborted && (await SubscriptionsController.resubscribeAccounts());
+    // Disconnect from any API instances that are not currently needed.
+    await handleApiDisconnects();
 
     // Set application state.
-    !aborted && setSubscriptionsAndChainConnections();
+    setSubscriptionsAndChainConnections();
 
     // Set config flag to false.
     RendererConfig.switchingToOnlineMode = false;
