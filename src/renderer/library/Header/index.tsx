@@ -66,10 +66,17 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       // Handle going offline.
       await handleInitializeAppOffline();
     } else {
-      // Handle going online.
-      setIsConnecting(true);
-      await handleInitializeAppOnline();
-      setIsConnecting(false);
+      // Confirm online connection.
+      const status = await window.myAPI.getOnlineStatus();
+      if (status) {
+        // Handle going online.
+        setIsConnecting(true);
+        await handleInitializeAppOnline();
+        setIsConnecting(false);
+      } else {
+        // Error
+        console.log('not online');
+      }
     }
   };
 

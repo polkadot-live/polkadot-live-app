@@ -101,14 +101,14 @@ export const OnlineStatusProvider = ({
       // Initialize chain APIs.
       APIsController.initialize(Array.from(ChainList.keys()));
 
-      // Connect required API instances before continuing.
-      const chainIds = Array.from(AccountsController.accounts.keys());
-      await Promise.all(
-        chainIds.map((cid) => APIsController.connectInstance(cid))
-      );
-
       // Fetch up-to-date account data.
       if (isOnline && !aborted) {
+        // Connect required API instances before continuing.
+        const chainIds = Array.from(AccountsController.accounts.keys());
+        await Promise.all(
+          chainIds.map((cid) => APIsController.connectInstance(cid))
+        );
+
         await Promise.all([
           // Fetch account nonce and balance.
           fetchAccountBalances(),
@@ -120,7 +120,7 @@ export const OnlineStatusProvider = ({
       }
 
       // Initialize account and chain subscriptions.
-      if (!aborted) {
+      if (!aborted && isOnline) {
         await Promise.all([
           AccountsController.subscribeAccounts(),
           SubscriptionsController.initChainSubscriptions(),
@@ -197,6 +197,9 @@ export const OnlineStatusProvider = ({
       }
     }, 1000);
 
+    // Report online status to renderer.
+    !aborted && setOnline(await window.myAPI.getOnlineStatus());
+
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
@@ -232,9 +235,6 @@ export const OnlineStatusProvider = ({
 
     // Set application state.
     setSubscriptionsAndChainConnections();
-
-    // Report online status to renderer.
-    !aborted && setOnline(await window.myAPI.getOnlineStatus());
 
     // Set config flag to false.
     RendererConfig.switchingToOnlineMode = false;
