@@ -4,9 +4,11 @@
 export interface OnlineStatusInterface {
   appLoading: boolean;
   isAborting: boolean;
+  isConnecting: boolean;
   online: boolean;
   setAppLoading: (b: boolean) => void;
   setIsAborting: (b: boolean) => void;
+  setIsConnecting: (b: boolean) => void;
   setOnline: (b: boolean) => void;
   handleInitializeApp: () => Promise<void>;
   handleInitializeAppOffline: () => Promise<void>;

@@ -40,6 +40,7 @@ export const OnlineStatusProvider = ({
   // App loading flag.
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
 
   const { addChain } = useChains();
@@ -272,9 +273,11 @@ export const OnlineStatusProvider = ({
       value={{
         appLoading,
         isAborting,
+        isConnecting,
         online,
         setAppLoading,
         setIsAborting,
+        setIsConnecting,
         setOnline,
         handleInitializeApp,
         handleInitializeAppOffline,

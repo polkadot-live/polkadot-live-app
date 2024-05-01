@@ -10,7 +10,7 @@ import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
-import { isValidHttpUrl /*, remToUnit*/ } from '@w3ux/utils';
+import { isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState } from 'react';
 import { useEvents } from '@/renderer/contexts/Events';
@@ -24,7 +24,7 @@ const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
   const { dismissEvent } = useEvents();
-  const { online: isOnline } = useOnlineStatus();
+  const { online: isOnline, isConnecting } = useOnlineStatus();
   const { setTooltipTextAndOpen } = useTooltip();
 
   const { uid, title, subtitle, actions /*, data*/ } = event;
@@ -152,7 +152,10 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
                     return (
                       <ButtonMono
                         disabled={
-                          event.stale || source === 'ledger' || !isOnline
+                          event.stale ||
+                          source === 'ledger' ||
+                          !isOnline ||
+                          (isOnline && isConnecting)
                         }
                         key={`action_${uid}_${i}`}
                         text={text || ''}

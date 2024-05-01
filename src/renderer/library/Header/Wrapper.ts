@@ -43,12 +43,27 @@ export const HeaderWrapper = styled.div`
         align-items: center;
         position: relative;
 
+        .hide-text {
+          color: rgba(0, 0, 0, 0);
+        }
+        .abort-x {
+          position: absolute;
+          left: 45px;
+          bottom: 3px;
+
+          .icon-sm {
+            width: 0.75rem;
+            height: 0.75rem;
+            z-index: 10;
+          }
+        }
         .connect-btn {
           border: 1px solid var(--border-mid-color);
           min-width: 96px;
           font-size: 0.85rem;
           max-height: 18px;
           user-select: none;
+          transition: background-color 0.2s ease-out;
         }
         .do-pulse {
           animation: pulse 3s infinite ease-in-out;

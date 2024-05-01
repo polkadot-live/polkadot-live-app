@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as RendererConfig } from '@/config/processes/renderer';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
@@ -16,13 +16,13 @@ import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
 import { Flip, toast } from 'react-toastify';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
-  const [isConnecting, setIsConnecting] = useState(false);
-
   const { pathname } = useLocation();
   const {
     online: isOnline,
     isAborting,
+    isConnecting,
     setIsAborting,
+    setIsConnecting,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
   } = useOnlineStatus();
@@ -109,13 +109,15 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <div className="switch-wrapper">
               <ButtonSecondary
                 className={
-                  isAborting || isConnecting || appLoading
-                    ? 'connect-btn do-pulse'
-                    : 'connect-btn'
+                  (isConnecting && !isAborting) || (isConnecting && appLoading)
+                    ? 'connect-btn do-pulse hide-text'
+                    : isAborting || isConnecting || appLoading
+                      ? 'connect-btn do-pulse'
+                      : 'connect-btn'
                 }
                 text={
                   isAborting
-                    ? 'Aborting...'
+                    ? 'Canceling..'
                     : isConnecting || appLoading
                       ? 'Abort'
                       : getConnectionButtonText()
@@ -123,7 +125,11 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 disabled={isAborting}
                 onClick={async () => await handleConnectButtonClick()}
               />
-
+              {isConnecting && !isAborting && (
+                <div className="abort-x do-pulse">
+                  <FontAwesomeIcon icon={faX} className="icon-sm" />
+                </div>
+              )}
               <a
                 data-tooltip-id="silence-notifications-tooltip"
                 data-tooltip-content="Silence OS Notifications"
