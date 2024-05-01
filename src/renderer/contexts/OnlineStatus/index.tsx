@@ -99,25 +99,33 @@ export const OnlineStatusProvider = ({
       await AccountsController.initialize();
 
       // Initialize chain APIs.
-      !aborted &&
-        (await APIsController.initialize(Array.from(ChainList.keys())));
+      APIsController.initialize(Array.from(ChainList.keys()));
 
-      if (isOnline) {
-        // Fetch account nonce and balance.
-        !aborted && (await fetchAccountBalances());
+      // Connect required API instances before continuing.
+      const chainIds = Array.from(AccountsController.accounts.keys());
+      await Promise.all(
+        chainIds.map((cid) => APIsController.connectInstance(cid))
+      );
 
-        // Use API instance to initialize account nomination pool data.
-        !aborted && (await fetchAccountNominationPoolData());
-
-        // Initialize account nominating data.
-        !aborted && (await fetchAccountNominatingData());
+      // Fetch up-to-date account data.
+      if (isOnline && !aborted) {
+        await Promise.all([
+          // Fetch account nonce and balance.
+          fetchAccountBalances(),
+          // Use API instance to initialize account nomination pool data.
+          fetchAccountNominationPoolData(),
+          // Initialize account nominating data.
+          fetchAccountNominatingData(),
+        ]);
       }
 
-      // Initialize persisted account subscriptions.
-      !aborted && (await AccountsController.subscribeAccounts());
-
-      // Initialize persisted chain subscriptions.
-      !aborted && (await SubscriptionsController.initChainSubscriptions());
+      // Initialize account and chain subscriptions.
+      if (!aborted) {
+        await Promise.all([
+          AccountsController.subscribeAccounts(),
+          SubscriptionsController.initChainSubscriptions(),
+        ]);
+      }
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
