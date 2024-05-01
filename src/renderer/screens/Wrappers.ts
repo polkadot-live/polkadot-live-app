@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
 
 // Child window header
 export const HeaderWrapper = styled.div`
@@ -52,12 +51,6 @@ export const ContentWrapper = styled.div`
   position: relative;
   padding: 0 1.5rem;
   background-color: var(--background-modal);
-
-  .Toastify__toast {
-    font-size: 1.2rem;
-    color: var(--text-color-primary);
-    background-color: var(--background-menu);
-  }
 
   .grid-wrapper {
     display: grid;
