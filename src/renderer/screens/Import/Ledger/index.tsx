@@ -3,7 +3,7 @@
 
 import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
-import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';

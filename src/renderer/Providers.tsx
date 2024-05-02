@@ -13,7 +13,7 @@ import { TooltipProvider } from '@app/contexts/Tooltip';
 import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
 // Import window contexts
-import { AccountStatusesProvider } from './contexts/AccountStatuses';
+import { AccountStatusesProvider } from './contexts/import/AccountStatuses';
 import { Theme } from './Theme';
 
 export const Providers = withProviders(

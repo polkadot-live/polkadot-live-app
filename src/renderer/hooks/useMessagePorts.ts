@@ -16,7 +16,7 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
-import { useAccountStatuses } from '../contexts/AccountStatuses';
+import { useAccountStatuses } from '../contexts/import/AccountStatuses';
 import { useChains } from '@app/contexts/Chains';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';

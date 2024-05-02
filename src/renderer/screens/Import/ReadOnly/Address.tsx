@@ -9,7 +9,7 @@ import {
   renameLocalAccount,
 } from '@/renderer/utils/ImportUtils';
 import { Remove } from '../Addresses/Remove';
-import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useOverlay } from '@/renderer/contexts/Overlay';
 import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';

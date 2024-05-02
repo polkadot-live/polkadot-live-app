@@ -17,7 +17,7 @@ import { Identicon } from '@/renderer/library/Identicon';
 import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
-import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
