@@ -59,9 +59,6 @@ export class TaskOrchestrator {
     const isOnline = await window.myAPI.getOnlineStatus();
     const chainIds = new Set(tasks.map((t) => t.chainId));
 
-    console.log('chain IDs in tasks array:');
-    console.log(chainIds);
-
     if (isOnline) {
       for (const chainId of chainIds) {
         isOnline && (await wrapper.build(chainId));

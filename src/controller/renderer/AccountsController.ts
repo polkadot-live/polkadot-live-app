@@ -11,6 +11,7 @@ import type {
   StoredAccount,
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -75,10 +76,8 @@ export class AccountsController {
         const tasks: SubscriptionTask[] =
           stored !== '' ? JSON.parse(stored) : [];
 
-        for (const task of tasks) {
-          if (task.status === 'enable') {
-            await account.subscribeToTask(task);
-          }
+        if (account.queryMulti !== null) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }

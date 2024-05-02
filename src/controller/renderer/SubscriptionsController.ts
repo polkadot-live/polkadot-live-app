@@ -48,9 +48,7 @@ export class SubscriptionsController {
       serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
