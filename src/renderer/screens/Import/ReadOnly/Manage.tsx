@@ -187,7 +187,7 @@ export const Manage = ({
                       className="btn-mono lg"
                       onPointerDown={() => onImport()}
                     >
-                      Import
+                      Add
                     </button>
                     <button
                       className="btn-mono-invert lg"
