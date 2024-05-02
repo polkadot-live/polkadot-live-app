@@ -192,7 +192,6 @@ export const HardwareAddress = ({
             className="tooltip-trigger-element"
             data-tooltip-text={'Offline Mode'}
             onMouseMove={() => {
-              console.log('moving');
               !isConnected && setTooltipTextAndOpen('Offline Mode');
             }}
           >
