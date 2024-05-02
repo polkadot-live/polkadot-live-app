@@ -45,12 +45,12 @@ export const Permissions = ({
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
 
-  // Active accordion indices for account subscription tasks categories.
+  /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >([0, 1, 2]);
 
-  // Active accordion indices for chain subscription tasks categories.
+  /// Active accordion indices for chain subscription tasks categories.
   const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
     useState<number[]>([0]);
 

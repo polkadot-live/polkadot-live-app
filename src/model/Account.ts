@@ -67,15 +67,6 @@ export class Account {
     }
   };
 
-  /**
-   * @name unsubQueryMulti
-   * @deprecated Since API instances re-connect automatically, we don't need to
-   * manually unsubscribe and re-build the query multi.
-   */
-  unsubQueryMulti = () => {
-    this.queryMulti?.unsubOnly();
-  };
-
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
 
   flatten = () =>

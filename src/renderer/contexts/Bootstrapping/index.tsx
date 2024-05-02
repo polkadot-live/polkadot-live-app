@@ -234,7 +234,7 @@ export const BootstrappingProvider = ({
     if (!aborted) {
       await Promise.all([
         AccountsController.subscribeAccounts(),
-        SubscriptionsController.resubscribeAccounts(),
+        SubscriptionsController.resubscribeChains(),
       ]);
     }
 

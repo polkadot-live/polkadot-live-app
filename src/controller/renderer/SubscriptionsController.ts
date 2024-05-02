@@ -52,23 +52,11 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name unsubscribeChains
-   * @summary Calls `unsub` for each chain's queryMulti entry, but keeps the
-   * subscription data. This method is called when the app goes into offline mode.
-   *
-   * @deprecated Since API instances re-connect automatically, we don't need to
-   * manually unsubscribe and re-build the query multi.
-   */
-  static unsubscribeChains() {
-    this.chainSubscriptions?.unsubOnly();
-  }
-
-  /**
    * @name resubscribeChains
    * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
    */
-  static async resubscribeAccounts() {
+  static async resubscribeChains() {
     if (!this.chainSubscriptions) {
       return;
     }
