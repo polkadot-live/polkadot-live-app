@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect } from 'react';
-import { useOnlineStatus } from '@app/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 
 export const useInitIpcHandlers = () => {
   const {
     handleInitializeApp,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
-  } = useOnlineStatus();
+  } = useBootstrapping();
 
   useEffect(() => {
     /**

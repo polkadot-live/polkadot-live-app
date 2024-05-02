@@ -5,7 +5,7 @@ import { AddressesProvider } from '@app/contexts/Addresses';
 import { ChainsProvider } from '@app/contexts/Chains';
 import { EventsProvider } from '@app/contexts/Events';
 import { HelpProvider } from './contexts/Help';
-import { OnlineStatusProvider } from '@app/contexts/OnlineStatus';
+import { BootstrappingProvider } from '@/renderer/contexts/Bootstrapping';
 import { OverlayProvider } from '@app/contexts/Overlay';
 import { SubscriptionsProvider } from '@app/contexts/Subscriptions';
 import { ManageProvider } from './screens/Home/Manage/provider';
@@ -28,5 +28,5 @@ export const Providers = withProviders(
   TooltipProvider,
   AccountStatusesProvider,
   // Online status provider relies on other contexts being initialized.
-  OnlineStatusProvider
+  BootstrappingProvider
 )(Theme);

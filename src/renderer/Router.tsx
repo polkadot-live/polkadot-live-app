@@ -10,7 +10,7 @@ import { Action } from '@app/screens/Action';
 import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Help } from './library/Help';
-import { useOnlineStatus } from '@app/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useMessagePorts } from '@app/hooks/useMessagePorts';
 import { useTheme } from 'styled-components';
 import type { AnyJson } from '@/types/misc';
@@ -19,7 +19,7 @@ import { ToastContainer } from 'react-toastify';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
-  const { setOnline } = useOnlineStatus();
+  const { setOnline } = useBootstrapping();
 
   // Set up message ports communication between windows.
   useMessagePorts();

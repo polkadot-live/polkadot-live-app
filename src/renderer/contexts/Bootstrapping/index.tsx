@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { defaultOnlineStatusContext } from './default';
+import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { Config as RendererConfig } from '@/config/processes/renderer';
@@ -20,24 +20,23 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type { OnlineStatusInterface } from './types';
+import type { BootstrappingInterface } from './types';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { useSubscriptions } from '../Subscriptions';
 import { useChains } from '../Chains';
 import type { ChainID } from '@/types/chains';
 
-export const OnlineStatusContext = createContext<OnlineStatusInterface>(
-  defaultOnlineStatusContext
+export const BootstrappingContext = createContext<BootstrappingInterface>(
+  defaultBootstrappingContext
 );
 
-export const useOnlineStatus = () => useContext(OnlineStatusContext);
+export const useBootstrapping = () => useContext(BootstrappingContext);
 
-export const OnlineStatusProvider = ({
+export const BootstrappingProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  // App loading flag.
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -269,7 +268,7 @@ export const OnlineStatusProvider = ({
   };
 
   return (
-    <OnlineStatusContext.Provider
+    <BootstrappingContext.Provider
       value={{
         appLoading,
         isAborting,
@@ -285,6 +284,6 @@ export const OnlineStatusProvider = ({
       }}
     >
       {children}
-    </OnlineStatusContext.Provider>
+    </BootstrappingContext.Provider>
   );
 };

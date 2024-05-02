@@ -14,7 +14,7 @@ import { isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState } from 'react';
 import { useEvents } from '@/renderer/contexts/Events';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useTooltip } from '@app/contexts/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { EventItemProps } from './types';
@@ -24,7 +24,7 @@ const FADE_TRANSITION = 200;
 
 export const Item = ({ faIcon, event }: EventItemProps) => {
   const { dismissEvent } = useEvents();
-  const { online: isOnline, isConnecting } = useOnlineStatus();
+  const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
 
   const { uid, title, subtitle, actions /*, data*/ } = event;

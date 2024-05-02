@@ -10,10 +10,10 @@ import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
 import { useState } from 'react';
-import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
+import type { HeaderProps } from './types';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -25,7 +25,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     setIsConnecting,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
-  } = useOnlineStatus();
+  } = useBootstrapping();
   const [silenceToggle, setSilenceToggle] = useState(
     RendererConfig.silenceNotifications
   );
