@@ -149,6 +149,11 @@ export const BootstrappingProvider = ({
         setIsAborting(false);
       }
 
+      // Notify import renderer of connection status.
+      if (!aborted) {
+        reportConnectionStatusToImport(isOnline);
+      }
+
       // Wait 100ms to avoid a snapping loading spinner.
       console.log('App initialized...');
       setTimeout(() => {
@@ -165,6 +170,9 @@ export const BootstrappingProvider = ({
 
     // Report online status to renderer.
     setOnline(false);
+
+    // Notify import renderer of connection status.
+    reportConnectionStatusToImport(false);
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -236,6 +244,11 @@ export const BootstrappingProvider = ({
     // Set application state.
     setSubscriptionsAndChainConnections();
 
+    // Notify import renderer of connection status.
+    if (!aborted) {
+      reportConnectionStatusToImport(true);
+    }
+
     // Set config flag to false.
     RendererConfig.switchingToOnlineMode = false;
 
@@ -265,6 +278,14 @@ export const BootstrappingProvider = ({
     for (const apiData of APIsController.getAllFlattenedAPIData()) {
       addChain(apiData);
     }
+  };
+
+  /// Report connection status to import renderer.
+  const reportConnectionStatusToImport = (status: boolean) => {
+    RendererConfig.portToImport.postMessage({
+      task: 'import:connection:status',
+      data: { status },
+    });
   };
 
   return (

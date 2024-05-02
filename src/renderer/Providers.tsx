@@ -14,6 +14,7 @@ import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
 // Import window contexts
 import { AccountStatusesProvider } from './contexts/import/AccountStatuses';
+import { ConnectionsProvider } from './contexts/import/Connections';
 import { Theme } from './Theme';
 
 export const Providers = withProviders(
@@ -27,6 +28,7 @@ export const Providers = withProviders(
   TxMetaProvider,
   TooltipProvider,
   AccountStatusesProvider,
+  ConnectionsProvider,
   // Online status provider relies on other contexts being initialized.
   BootstrappingProvider
 )(Theme);
