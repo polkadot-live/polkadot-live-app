@@ -296,7 +296,6 @@ export const useMessagePorts = () => {
               case 'import:connection:status': {
                 const { status } = ev.data.data;
                 setIsConnected(status);
-                console.log(`Connection status set: ${status}`);
                 break;
               }
               default: {

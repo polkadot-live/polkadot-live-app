@@ -40,7 +40,7 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { online: isOnline } = useBootstrapping();
+  const { online: isOnline, isConnecting } = useBootstrapping();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -77,7 +77,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline) {
+    if (!isOnline || isConnecting) {
       return true;
     }
 
