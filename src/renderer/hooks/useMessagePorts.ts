@@ -16,8 +16,9 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
-import { useAccountStatuses } from '../contexts/AccountStatuses';
+import { useAccountStatuses } from '../contexts/import/AccountStatuses';
 import { useChains } from '@app/contexts/Chains';
+import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
@@ -25,15 +26,19 @@ import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
+  /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
-  const { setStatusForAccount } = useAccountStatuses();
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
 
-  // Action window specific.
+  /// Import renderer contexts.
+  const { setIsConnected } = useConnections();
+  const { setStatusForAccount } = useAccountStatuses();
+
+  /// Action window specific.
   const {
     setActionMeta,
     setEstimatedFee,
@@ -286,6 +291,11 @@ export const useMessagePorts = () => {
               case 'import:account:processing': {
                 const { address, source, status } = ev.data.data;
                 setStatusForAccount(address, source, status);
+                break;
+              }
+              case 'import:connection:status': {
+                const { status } = ev.data.data;
+                setIsConnected(status);
                 break;
               }
               default: {

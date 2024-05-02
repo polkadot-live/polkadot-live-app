@@ -20,6 +20,8 @@ import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 import { getAddressChainId } from '@/renderer/Utils';
+import { useConnections } from '@/renderer/contexts/import/Connections';
+import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const HardwareAddress = ({
   address,
@@ -38,6 +40,12 @@ export const HardwareAddress = ({
 
   // Store the currently edited name and validation errors flag.
   const [editName, setEditName] = useState<string>(accountName);
+
+  // Get app connection status.
+  const { isConnected } = useConnections();
+
+  // Use tool tip.
+  const { setTooltipTextAndOpen } = useTooltip();
 
   // Cancel button clicked for edit input.
   const cancelEditing = () => {
@@ -179,8 +187,16 @@ export const HardwareAddress = ({
             onClick={() => openRemoveHandler()}
           />
         ) : (
-          <div style={{ position: 'relative' }}>
+          <div
+            style={{ position: 'relative' }}
+            className="tooltip-trigger-element"
+            data-tooltip-text={'Offline Mode'}
+            onMouseMove={() => {
+              !isConnected && setTooltipTextAndOpen('Offline Mode');
+            }}
+          >
             <ButtonMonoInvert
+              disabled={!isConnected}
               iconLeft={faPlus}
               text={'Import'}
               onClick={() => openConfirmHandler()}

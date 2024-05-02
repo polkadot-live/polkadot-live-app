@@ -17,7 +17,7 @@ import { Identicon } from '@/renderer/library/Identicon';
 import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
-import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
@@ -182,20 +182,20 @@ export const Manage = ({
                     value={editName}
                     onChange={(e) => onChange(e)}
                   />
-                  &nbsp;
-                  <button
-                    className="btn-mono lg"
-                    onPointerDown={() => onImport()}
-                  >
-                    Import
-                  </button>
-                  &nbsp;
-                  <button
-                    className="btn-mono-invert lg"
-                    onPointerDown={() => onCancel()}
-                  >
-                    Clear
-                  </button>
+                  <div className="flex-inner-row">
+                    <button
+                      className="btn-mono lg"
+                      onPointerDown={() => onImport()}
+                    >
+                      Add
+                    </button>
+                    <button
+                      className="btn-mono-invert lg"
+                      onPointerDown={() => onCancel()}
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </section>
               </div>
             </div>

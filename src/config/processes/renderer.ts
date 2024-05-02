@@ -18,6 +18,9 @@ export class Config {
   // Flag set to `true` when app is switching to online mode.
   private static _switchingToOnlineMode = false;
 
+  // Flag set to `true` when app wants to abort connection processing.
+  private static _abortConnecting = false;
+
   // Return the main window's message port.
   static get portToImport(): MessagePort {
     if (!Config._portToImport) {
@@ -62,5 +65,14 @@ export class Config {
 
   static set switchingToOnlineMode(flag: boolean) {
     Config._switchingToOnlineMode = flag;
+  }
+
+  // Accessors for `_abortConnecting` flag.
+  static get abortConnecting(): boolean {
+    return Config._abortConnecting;
+  }
+
+  static set abortConnecting(flag: boolean) {
+    Config._abortConnecting = flag;
   }
 }

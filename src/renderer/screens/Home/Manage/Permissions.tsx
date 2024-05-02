@@ -25,7 +25,7 @@ import { PermissionRow } from './PermissionRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useManage } from './provider';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
@@ -40,7 +40,7 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { online: isOnline } = useOnlineStatus();
+  const { online: isOnline, isConnecting } = useBootstrapping();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -77,7 +77,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline) {
+    if (!isOnline || isConnecting) {
       return true;
     }
 

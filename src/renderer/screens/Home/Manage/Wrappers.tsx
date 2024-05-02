@@ -232,11 +232,12 @@ export const AccountWrapper = styled(motion.div)`
             .icon-wrapper {
               margin-top: -2px;
               padding: 0 0.3rem;
-              opacity: 0.5;
+              color: #4a4a4a;
               cursor: pointer;
-              transition: opacity 0.1s ease-out;
+              transition: color 0.2s ease-out;
+
               &:hover {
-                opacity: 1;
+                color: #953254;
               }
             }
           }

@@ -7,7 +7,7 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { ConfirmWrapper } from './Wrappers';
 import { getAddressChainId } from '@/renderer/Utils';
 import { Identicon } from '@/renderer/library/Identicon';
-import { useAccountStatuses } from '@/renderer/contexts/AccountStatuses';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useOverlay } from '@/renderer/contexts/Overlay';
 import type { DeleteProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';

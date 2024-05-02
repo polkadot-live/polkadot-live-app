@@ -51,9 +51,11 @@ export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
  * @summary Disconnect from any API instances that are not currently required.
  */
 export const handleApiDisconnects = async () => {
-  for (const chainId of ['Kusama', 'Polkadot', 'Westend'] as ChainID[]) {
-    !isApiInstanceRequiredFor(chainId) && (await APIsController.close(chainId));
-  }
+  await Promise.all(
+    (['Polkadot', 'Kusama', 'Westend'] as ChainID[])
+      .filter((c) => !isApiInstanceRequiredFor(c))
+      .map((c) => APIsController.close(c))
+  );
 };
 
 /**
