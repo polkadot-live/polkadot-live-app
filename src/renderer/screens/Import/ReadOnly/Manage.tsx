@@ -182,20 +182,20 @@ export const Manage = ({
                     value={editName}
                     onChange={(e) => onChange(e)}
                   />
-                  &nbsp;
-                  <button
-                    className="btn-mono lg"
-                    onPointerDown={() => onImport()}
-                  >
-                    Import
-                  </button>
-                  &nbsp;
-                  <button
-                    className="btn-mono-invert lg"
-                    onPointerDown={() => onCancel()}
-                  >
-                    Clear
-                  </button>
+                  <div className="flex-inner-row">
+                    <button
+                      className="btn-mono lg"
+                      onPointerDown={() => onImport()}
+                    >
+                      Import
+                    </button>
+                    <button
+                      className="btn-mono-invert lg"
+                      onPointerDown={() => onCancel()}
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </section>
               </div>
             </div>

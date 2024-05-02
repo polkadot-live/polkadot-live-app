@@ -81,6 +81,14 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
     cursor: default;
   }
 
+  // Utility Classes
+  .flex-inner-row {
+    display: flex;
+    align-items: center;
+    column-gap: 0.25rem;
+  }
+  // End Utility Classes
+
   > .action {
     height: 100%;
     flex-basis: auto;
