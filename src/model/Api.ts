@@ -216,13 +216,16 @@ export class Api {
    * @summary Disconnect from a chain.
    */
   disconnect = async () => {
-    this._api &&
-      this._api.isConnected &&
-      (await this._api.disconnect().catch(console.error));
+    // Web socket will disconnect automatically if status goes offline.
+    if (await window.myAPI.getOnlineStatus()) {
+      this._api &&
+        this._api.isConnected &&
+        (await this._api.disconnect().catch(console.error));
 
-    this._provider &&
-      this._provider.isConnected &&
-      this._provider.disconnect().catch(console.error);
+      this._provider &&
+        this._provider.isConnected &&
+        this._provider.disconnect().catch(console.error);
+    }
 
     this.provider = null;
     this._api = null;

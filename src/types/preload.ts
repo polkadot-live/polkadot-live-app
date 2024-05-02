@@ -106,10 +106,12 @@ type ApiOpenBrowserWindow = (url: string) => void;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 
-type ApiInitializeAppOnline = (callback: (_: IpcRendererEvent) => void) => void;
+type ApiInitializeAppOnline = (
+  callback: (_: IpcRendererEvent) => Promise<void>
+) => void;
 
 type ApiInitializeAppOffline = (
-  callback: (_: IpcRendererEvent) => void
+  callback: (_: IpcRendererEvent) => Promise<void>
 ) => void;
 
 type ApiGetOnlineStatus = () => Promise<boolean>;

@@ -163,6 +163,10 @@ SPDX-License-Identifier: GPL-3.0-only */
   position: fixed;
   z-index: 10;
 
+  @media (min-width: 0px) and (max-width: 420px) {
+    padding: 0 1.75rem;
+  }
+
   /* click anywhere behind modal content to close */
   .close {
     @include modal-position;
@@ -204,18 +208,37 @@ SPDX-License-Identifier: GPL-3.0-only */
     column-gap: 1rem;
     padding: 1.25rem 1rem;
 
+    @media (min-width: 0px) and (max-width: 425px) {
+      flex-direction: column;
+      row-gap: 1.25rem;
+      align-items: start;
+      padding: 1.25rem 0.5rem;
+    }
+
     .title-wrapper {
+      order: 1;
       flex: 1;
       justify-content: flex-start;
+      margin-bottom: 0.75rem;
+
+      @media (min-width: 0px) and (max-width: 425px) {
+        order: 2;
+      }
 
       h1 {
         font-family: Unbounded, sans-serif;
+        line-height: 2.4rem;
       }
     }
 
     > .buttons {
+      order: 2;
       display: flex;
       justify-content: flex-end;
+
+      @media (min-width: 0px) and (max-width: 425px) {
+        order: 1;
+      }
 
       > button {
         border: 1px solid var(--accent-color-primary);

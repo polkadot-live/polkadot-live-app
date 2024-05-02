@@ -54,13 +54,14 @@ export const TabsWrapper = styled.div`
   display: flex;
   z-index: 2;
   margin-top: 3rem;
+  padding-top: 0.5rem;
 
   > button {
     font-family: InterSemiBold, sans-serif;
     color: var(--text-color-secondary);
     height: var(--tab-height);
     flex-basis: 50%;
-    transition: background 0.15s;
+    transition: background-color 0.15s;
     padding-top: 0.5rem;
     font-size: 1.1rem;
 

@@ -34,11 +34,9 @@ import * as ApiUtils from '@/utils/ApiUtils';
  * @summary Fetch account's nonce and balance data from chain state.
  */
 export const fetchAccountBalances = async () => {
-  // Iterate accounts associated with each chain and initialize balance data.
-  for (const accounts of AccountsController.accounts.values()) {
-    for (const account of accounts) {
-      await fetchBalanceForAccount(account);
-    }
+  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+    console.log(`fetching balances for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => fetchBalanceForAccount(a)));
   }
 };
 
@@ -69,12 +67,9 @@ export const fetchBalanceForAccount = async (account: Account) => {
  * @summary Fetch an account's nominated validator ids.
  */
 export const fetchAccountNominatingData = async () => {
-  for (const accounts of AccountsController.accounts.values()) {
-    // Iterate accounts associated with chain and initialise nominating data.
-    for (const account of accounts) {
-      console.log(`>>> set nominating data for ${account.name}`);
-      await setNominatingDataForAccount(account);
-    }
+  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+    console.log(`fetching nominating data for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => setNominatingDataForAccount(a)));
   }
 };
 
@@ -151,10 +146,9 @@ export const setNominatingDataForAccount = async (account: Account) => {
  * @summary Fetch nomination pool data for all accounts managed by the accounts controller.
  */
 export const fetchAccountNominationPoolData = async () => {
-  for (const accounts of AccountsController.accounts.values()) {
-    for (const account of accounts) {
-      await setNominationPoolDataForAccount(account);
-    }
+  for (const [chainId, accounts] of AccountsController.accounts.entries()) {
+    console.log(`fetching nomination pool data for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => setNominationPoolDataForAccount(a)));
   }
 };
 

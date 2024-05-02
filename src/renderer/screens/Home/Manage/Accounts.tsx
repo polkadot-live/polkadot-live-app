@@ -9,13 +9,18 @@ import {
 } from '@/renderer/library/Accordion';
 import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretDown,
+  faCaretRight,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
 import { NoAccounts } from '../NoAccounts';
-import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import { useManage } from './provider';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
+import { useState } from 'react';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -33,6 +38,11 @@ export const Accounts = ({
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
+
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >([0, 1]);
 
   // Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
@@ -73,19 +83,31 @@ export const Accounts = ({
 
   return (
     <AccountsWrapper>
-      <Accordion multiple defaultIndex={[0, 1]}>
+      <Accordion
+        multiple
+        defaultIndex={accordionActiveIndices}
+        setExternalIndices={setAccordionActiveIndices}
+      >
         {/* Manage Accounts */}
         <AccordionItem>
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div>
-                  <div className="left">
-                    <h5>
-                      <PolkadotIcon className="icon" />
-                      Accounts
-                    </h5>
+                <div className="left">
+                  <div className="icon-wrapper">
+                    {accordionActiveIndices.includes(0) ? (
+                      <FontAwesomeIcon
+                        icon={faCaretDown}
+                        transform={'shrink-1'}
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faCaretRight}
+                        transform={'shrink-1'}
+                      />
+                    )}
                   </div>
+                  <h5>Accounts</h5>
                 </div>
               </div>
             </AccordionHeader>
@@ -135,13 +157,21 @@ export const Accounts = ({
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div>
-                  <div className="left">
-                    <h5>
-                      <PolkadotIcon className="icon" />
-                      Chains
-                    </h5>
+                <div className="left">
+                  <div className="icon-wrapper">
+                    {accordionActiveIndices.includes(1) ? (
+                      <FontAwesomeIcon
+                        icon={faCaretDown}
+                        transform={'shrink-1'}
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faCaretRight}
+                        transform={'shrink-1'}
+                      />
+                    )}
                   </div>
+                  <h5>Chains</h5>
                 </div>
               </div>
             </AccordionHeader>

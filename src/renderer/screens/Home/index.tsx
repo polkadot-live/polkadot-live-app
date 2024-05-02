@@ -11,6 +11,7 @@ import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
@@ -22,7 +23,10 @@ export const Home = () => {
     useEvents();
 
   // Set up app initialization and online/offline switching handlers.
-  const { appLoading } = useInitIpcHandlers();
+  useInitIpcHandlers();
+
+  // Get app loading flag.
+  const { appLoading } = useBootstrapping();
 
   // Store the currently active menu tab.
   const [section, setSection] = useState<number>(0);

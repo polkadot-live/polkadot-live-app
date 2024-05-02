@@ -12,6 +12,8 @@ export type HardwareAddressProps = ComponentBase & {
   isImported: boolean;
   // Whether the address is the last in the list (used for styling).
   isLast: boolean;
+  // The account's processing flag.
+  isProcessing: boolean;
   // current name of the account.
   accountName: string;
   // handle rename

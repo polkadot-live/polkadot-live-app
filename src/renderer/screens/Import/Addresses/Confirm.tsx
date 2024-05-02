@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useOverlay } from '@app/contexts/Overlay';
 import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
@@ -18,9 +19,14 @@ export const Confirm = ({
   source,
 }: ConfirmProps) => {
   const { setStatus } = useOverlay();
+  const { setStatusForAccount } = useAccountStatuses();
 
   // Click handler function.
   const handleImportAddress = () => {
+    // Set processing flag for account.
+    setStatusForAccount(address, source, true);
+
+    // Process account import in main renderer.
     if (source === 'vault') {
       handleVaultImport();
     } else if (source === 'ledger') {

@@ -9,14 +9,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/Chains';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@/renderer/Utils';
 
 export const Footer = () => {
   const { chains } = useChains();
-  const { online: isOnline } = useOnlineStatus();
+  const { online: isOnline } = useBootstrapping();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 

@@ -10,12 +10,84 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
       : '1px solid var(--border-primary-color)'};
   display: flex;
   align-items: center;
-  padding: 1.25rem;
+  padding: 1rem;
+
+  /* 3 Dot Spinner */
+  .lds-ellipsis {
+    /* change color here */
+    color: #afafaf;
+  }
+  .lds-ellipsis,
+  .lds-ellipsis div {
+    box-sizing: border-box;
+  }
+  .lds-ellipsis {
+    margin-left: 8px;
+    top: 12px;
+    display: inline-block;
+    position: relative;
+  }
+  .lds-ellipsis div {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+  .lds-ellipsis div:nth-child(1) {
+    left: 4px;
+    animation: lds-ellipsis1 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(2) {
+    left: 4px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(3) {
+    left: 16px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(4) {
+    left: 28px;
+    animation: lds-ellipsis3 0.6s infinite;
+  }
+  @keyframes lds-ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes lds-ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+  @keyframes lds-ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(12px, 0);
+    }
+  }
 
   &:hover {
     background-color: var(--background-menu);
     cursor: default;
   }
+
+  // Utility Classes
+  .flex-inner-row {
+    display: flex;
+    align-items: center;
+    column-gap: 0.25rem;
+  }
+  // End Utility Classes
 
   > .action {
     height: 100%;
@@ -25,10 +97,14 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
     column-gap: 1rem;
     padding-left: 1rem;
 
-    > button {
+    button {
       flex-basis: 50%;
       flex-grow: 1;
-      padding: 1rem;
+      border: 1px solid var(--border-mid-color);
+    }
+    .processing {
+      background-color: var(--background-modal);
+      color: var(--background-modal);
     }
   }
 
@@ -40,7 +116,7 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
 
     > .inner {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
 
       > .identicon {
         flex-shrink: 1;
@@ -87,8 +163,32 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
           display: flex;
           padding-left: 1.5rem;
 
+          .input-wrapper {
+            position: relative;
+            display: flex;
+            flex: 1;
+
+            .chain-icon {
+              position: absolute;
+              top: 5px;
+              left: 10px;
+              width: 1.5rem;
+              height: 1.5rem;
+              margin-top: 4px;
+
+              ellipse {
+                fill: #953254;
+              }
+            }
+
+            input {
+              padding-left: 38px;
+            }
+          }
+
           &.row {
             align-items: center;
+            column-gap: 1rem;
 
             .edit {
               margin-left: 0.75rem;
@@ -120,15 +220,15 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
           white-space: nowrap;
           overflow: hidden;
           width: 100%;
-          max-width: 175px;
+          max-width: 300px;
           transition:
             background-color 0.2s,
             max-width 0.2s,
             padding 0.2s;
 
           &:focus {
-            background: var(--background-menu);
-            max-width: 300px;
+            background: var(--background-modal);
+            max-width: 350px;
           }
 
           &:disabled {

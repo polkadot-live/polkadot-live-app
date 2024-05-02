@@ -16,7 +16,9 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
+import { useAccountStatuses } from '../contexts/import/AccountStatuses';
 import { useChains } from '@app/contexts/Chains';
+import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
@@ -24,6 +26,7 @@ import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useMessagePorts = () => {
+  /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
@@ -31,7 +34,11 @@ export const useMessagePorts = () => {
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
 
-  // Action window specific.
+  /// Import renderer contexts.
+  const { setIsConnected } = useConnections();
+  const { setStatusForAccount } = useAccountStatuses();
+
+  /// Action window specific.
   const {
     setActionMeta,
     setEstimatedFee,
@@ -81,6 +88,16 @@ export const useMessagePorts = () => {
           AccountsController.accounts
         )
       );
+
+      // Send message back to import window to reset account's processing flag.
+      ConfigRenderer.portToImport.postMessage({
+        task: 'import:account:processing',
+        data: {
+          address,
+          source,
+          status: false,
+        },
+      });
     };
 
     /**
@@ -270,7 +287,21 @@ export const useMessagePorts = () => {
 
           ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
-            console.log(ev.data);
+            switch (ev.data.task) {
+              case 'import:account:processing': {
+                const { address, source, status } = ev.data.data;
+                setStatusForAccount(address, source, status);
+                break;
+              }
+              case 'import:connection:status': {
+                const { status } = ev.data.data;
+                setIsConnected(status);
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
           };
 
           ConfigImport.portImport.start();

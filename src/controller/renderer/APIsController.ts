@@ -18,9 +18,9 @@ export class APIsController {
    * @name initialize
    * @summary Instantiates a disconnected API instance for each supported chain.
    */
-  static initialize = async (chainIds: ChainID[]) => {
+  static initialize = (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
-      await this.new(chainId);
+      this.new(chainId);
     }
   };
 
@@ -29,7 +29,7 @@ export class APIsController {
    * @summary Instantiates a new disconnected API instance and adds it to the `instances` property.
    * @param {string} endpoint - the api endpoint.
    */
-  static new = async (chainId: ChainID) => {
+  static new = (chainId: ChainID) => {
     const endpoint = ChainList.get(chainId)?.endpoints.rpc;
 
     if (!endpoint) {
@@ -81,6 +81,15 @@ export class APIsController {
     this.set(instance);
 
     return instance;
+  };
+
+  static connectInstance = async (chainId: ChainID) => {
+    const instance = this.get(chainId);
+    if (!instance) {
+      throw new Error(`connectInstance: API for ${chainId} not found`);
+    }
+    await instance?.connect();
+    this.set(instance);
   };
 
   /**

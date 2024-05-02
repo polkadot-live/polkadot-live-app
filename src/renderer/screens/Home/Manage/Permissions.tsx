@@ -15,13 +15,17 @@ import {
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
-import { faAngleLeft, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faCaretDown,
+  faCaretRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
 import { useEffect, useState } from 'react';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useManage } from './provider';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
@@ -36,7 +40,7 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { online: isOnline } = useOnlineStatus();
+  const { online: isOnline, isConnecting } = useBootstrapping();
   const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -45,6 +49,10 @@ export const Permissions = ({
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >([0, 1, 2]);
+
+  // Active accordion indices for chain subscription tasks categories.
+  const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
+    useState<number[]>([0]);
 
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -69,7 +77,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline) {
+    if (!isOnline || isConnecting) {
       return true;
     }
 
@@ -199,12 +207,16 @@ export const Permissions = ({
   /// Get dynamic accordion indices state for account categories or
   /// static accordion indices for chain categories.
   const getAccordionIndices = () =>
-    typeClicked === 'account' ? accordionActiveIndices : [0];
+    typeClicked === 'account'
+      ? accordionActiveIndices
+      : accordionActiveChainIndices;
 
   /// Provide the external indices setter if we are about to render
   /// account subscription tasks in the accordion.
   const getAccordionIndicesSetter = () =>
-    typeClicked === 'account' ? setAccordionActiveIndices : undefined;
+    typeClicked === 'account'
+      ? setAccordionActiveIndices
+      : setAccordionActiveChainIndices;
 
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
@@ -218,29 +230,39 @@ export const Permissions = ({
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
-                <div>
-                  <div className="left">
-                    <h5>
-                      <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
-                      <span>{category}</span>
-                    </h5>
+                <div className="left">
+                  <div className="icon-wrapper">
+                    {getAccordionIndices().includes(j) ? (
+                      <FontAwesomeIcon
+                        icon={faCaretDown}
+                        transform={'shrink-1'}
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faCaretRight}
+                        transform={'shrink-1'}
+                      />
+                    )}
                   </div>
-                  <div className="right">
-                    <Switch
-                      size="sm"
-                      type="secondary"
-                      isOn={getCategoryToggles().get(category) || false}
-                      disabled={getDisabled(tasks[0])}
-                      handleToggle={async () =>
-                        await toggleCategoryTasks(
-                          category,
-                          getCategoryToggles().get(category) || false,
-                          renderedSubscriptions,
-                          updateRenderedSubscriptions
-                        )
-                      }
-                    />
-                  </div>
+                  <h5>
+                    <span>{category}</span>
+                  </h5>
+                </div>
+                <div className="right">
+                  <Switch
+                    size="sm"
+                    type="secondary"
+                    isOn={getCategoryToggles().get(category) || false}
+                    disabled={getDisabled(tasks[0])}
+                    handleToggle={async () =>
+                      await toggleCategoryTasks(
+                        category,
+                        getCategoryToggles().get(category) || false,
+                        renderedSubscriptions,
+                        updateRenderedSubscriptions
+                      )
+                    }
+                  />
                 </div>
               </div>
             </AccordionHeader>

@@ -10,15 +10,17 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
+import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import { HeaderWrapper } from '../../Wrappers';
 import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
 import { Identicon } from '@/renderer/library/Identicon';
 import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
-import { HeaderWrapper } from '../../Wrappers';
 
 export const Manage = ({
   setSection,
@@ -27,6 +29,7 @@ export const Manage = ({
   setAddresses,
 }: ManageReadOnlyProps) => {
   const [editName, setEditName] = useState<string>('');
+  const { insertAccountStatus } = useAccountStatuses();
 
   // Cancel button clicked for address field.
   const onCancel = () => {
@@ -120,6 +123,9 @@ export const Manage = ({
     setAddresses(newAddresses);
     setEditName('');
 
+    // Add account status entry.
+    insertAccountStatus(trimmed, 'read-only');
+
     // Render success alert.
     toast.success('Address addred successfully.', {
       position: 'top-center',
@@ -176,20 +182,20 @@ export const Manage = ({
                     value={editName}
                     onChange={(e) => onChange(e)}
                   />
-                  &nbsp;
-                  <button
-                    className="btn-mono lg"
-                    onPointerDown={() => onImport()}
-                  >
-                    Import
-                  </button>
-                  &nbsp;
-                  <button
-                    className="btn-mono-invert lg"
-                    onPointerDown={() => onCancel()}
-                  >
-                    Clear
-                  </button>
+                  <div className="flex-inner-row">
+                    <button
+                      className="btn-mono lg"
+                      onPointerDown={() => onImport()}
+                    >
+                      Add
+                    </button>
+                    <button
+                      className="btn-mono-invert lg"
+                      onPointerDown={() => onCancel()}
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </section>
               </div>
             </div>
@@ -201,11 +207,12 @@ export const Manage = ({
             <div className="items">
               {addresses.length ? (
                 <>
-                  {addresses.map(
+                  {getSortedLocalAddresses(addresses).map(
                     ({ address, index, isImported, name }: LocalAddress) => (
                       <Address
                         key={address}
                         accountName={name}
+                        source={'read-only'}
                         setAddresses={setAddresses}
                         address={address}
                         index={index}

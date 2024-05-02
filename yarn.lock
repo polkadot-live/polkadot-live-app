@@ -1042,6 +1042,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/pro-solid-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/pro-solid-svg-icons@npm:6.5.2::__archiveUrl=https%3A%2F%2Fnpm.fontawesome.com%2F%40fortawesome%2Fpro-solid-svg-icons%2F-%2F6.5.2%2Fpro-solid-svg-icons-6.5.2.tgz"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": "npm:6.5.2"
+  checksum: 811c06b8bc856e5378c1fdeb464a9cca69ebf7f4c0ffbed4e6d3bcf58b3b3ac96f35d8a21a3f89f5a70bf16fb9a6cfb4d13e487ca5d0ef149ad750496abb588b
+  languageName: node
+  linkType: hard
+
 "@fortawesome/react-fontawesome@npm:^0.2.0":
   version: 0.2.0
   resolution: "@fortawesome/react-fontawesome@npm:0.2.0"
@@ -9706,6 +9715,7 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.0"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.0"
     "@fortawesome/pro-light-svg-icons": "npm:^6.5.2"
+    "@fortawesome/pro-solid-svg-icons": "npm:^6.5.2"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
     "@ledgerhq/hw-transport-node-hid": "npm:^6.28.4"
     "@ledgerhq/logs": "npm:^6.10.1"

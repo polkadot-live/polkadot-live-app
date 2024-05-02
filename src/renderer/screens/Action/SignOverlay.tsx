@@ -53,7 +53,7 @@ export const SignOverlay = ({ from }: { from: string }) => {
     }
   };
 
-  const containerStyle = useMemo(() => createImgSize(279), []);
+  const containerStyle = useMemo(() => createImgSize(300), []);
 
   return (
     <QRViewerWrapper>
@@ -67,7 +67,7 @@ export const SignOverlay = ({ from }: { from: string }) => {
         <span className={stage === 2 ? 'active' : undefined}>Sign</span>
       </div>
       {stage === 1 && (
-        <div className="viewer withBorder">
+        <div className="viewer withBorder payload-wrapper">
           <QrDisplayPayload
             address={from || ''}
             cmd={2}
@@ -79,7 +79,7 @@ export const SignOverlay = ({ from }: { from: string }) => {
       )}
       {stage === 2 && (
         <div className="viewer">
-          <ScanWrapper className={''} style={containerStyle}>
+          <ScanWrapper style={containerStyle}>
             <Html5QrCodePlugin
               fps={10}
               qrCodeSuccessCallback={onScan}

@@ -30,4 +30,91 @@ export const HelpConfig: HelpItems = [
       'This means that you can turn on any subscription task in Polkadot Live for a read-only account, but you cannot perform any actions.',
     ],
   },
+  {
+    key: 'help:subscription:balances:transfers',
+    title: 'Balances: Transfers Subscription',
+    definition: [
+      'Get notified when any part of your balance changes.',
+      'A Polkadot balance is comprised of a free, reserved, and frozen balance. Regular transfers to and from other addresses will change your free balance, whilst staking and voting activities may change your reserved and frozen balances, respectively.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominationPools:commission',
+    title: 'Nomination Pools: Commission Subscription',
+    definition: [
+      "Get notified when your nomination pool's commission setting has changed.",
+      'A larger commission percentage may indicate that you will receive less rewards, as the nomination pool will take a bigger cut of rewards at the end of each era.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominationPools:name',
+    title: 'Nomination Pools: Name Subscription',
+    definition: [
+      "Get notified when your nomination pool's name has changed when a new era starts.",
+    ],
+  },
+  {
+    key: 'help:subscription:nominationPools:state',
+    title: 'Nomination Pools: State Subscription',
+    definition: [
+      'Get notified when your nomination pool has changed its state setting when a new era starts.',
+      'The "Open" state means anyone can join the pool and no members can be permissionlessly removed.',
+      'The "Blocked" state means that no members can join the pool, and some admin roles can permissionlessly kick (unbond) members.',
+      'The "Destroying" state means that no members can join the pool, and all members can be permissionlessly removed',
+    ],
+  },
+  {
+    key: 'help:subscription:nominationPools:roles',
+    title: 'Nomination Pools: Roles Subscription',
+    definition: [
+      'Get notified when your nomination pool has changed its roles setting when a new era starts.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominationPools:rewards',
+    title: 'Nomination Pools: Unclaimed Rewards Subscription',
+    definition: [
+      'Get notified when you have unclaimed nomination pool rewards, when a new era starts.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominating:commission',
+    title: 'Nominating: Commission Subscription',
+    definition: [
+      'Get notified when any of your nominated validators have changed their commission setting, when a new era starts.',
+      'You will be notified when you are nominating new validators in the new era, and when any validators that you nominated in the previous era have changed their commision setting.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominating:exposure',
+    title: 'Nominating: Exposure Subscription',
+    definition: [
+      'Get notified when your nominating exposure changes when a new era starts.',
+      'Your address is "exposed" in the current era when at least one of your nominated validators are selected to actively participate in consensus, and have a chance of receiving rewards.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominating:payouts',
+    title: 'Nominating: Pending Payouts Subscription',
+    definition: [
+      'Get notified when you have pending payouts from your nomiated validators.',
+      'Polkadot Live will process the last 7 eras in order to calculate any pending payouts. This calculation may take a minute, depending on your network connection speed.',
+    ],
+  },
+  {
+    key: 'help:subscription:chain:timestamp',
+    title: 'Timestamp Subscription',
+    definition: [
+      "Get notified when the chain's current timestamp changes.",
+      'Use this subscription as a debugging tool or to observe live data being received from the respective blockchain network.',
+    ],
+  },
+  {
+    key: 'help:subscription:chain:currentSlot',
+    title: 'Current Slot Subscription',
+    definition: [
+      "Get notified when the chain's current slot changes.",
+      'Use this subscription as a debugging tool or to observe live data being received from the respective blockchain network.',
+    ],
+  },
 ];

@@ -79,6 +79,10 @@ export const EventItem = styled(motion.div)`
     position: absolute;
     top: 1.5rem;
     right: 15px;
+    transition: color 0.2s ease-out;
+    &:hover {
+      color: #953254;
+    }
   }
 
   > div {

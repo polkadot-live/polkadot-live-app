@@ -62,6 +62,10 @@ export class AccountsController {
    * @summary Fetched persisted tasks from the store and re-subscribe to them.
    */
   static async subscribeAccounts() {
+    if (!this.accounts) {
+      return;
+    }
+
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
         const stored = await window.myAPI.getPersistedAccountTasks(

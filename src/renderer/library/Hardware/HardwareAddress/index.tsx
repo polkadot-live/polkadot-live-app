@@ -3,11 +3,13 @@
 
 import {
   faCheck,
+  faMinus,
   faPlus,
   faTimes,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { ButtonText } from '../../../kits/Buttons/ButtonText';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,12 +19,16 @@ import { validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
+import { getAddressChainId } from '@/renderer/Utils';
+import { useConnections } from '@/renderer/contexts/import/Connections';
+import { useTooltip } from '@/renderer/contexts/Tooltip';
 
 export const HardwareAddress = ({
   address,
   index,
   isImported,
   isLast,
+  isProcessing,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -34,6 +40,12 @@ export const HardwareAddress = ({
 
   // Store the currently edited name and validation errors flag.
   const [editName, setEditName] = useState<string>(accountName);
+
+  // Get app connection status.
+  const { isConnected } = useConnections();
+
+  // Use tool tip.
+  const { setTooltipTextAndOpen } = useTooltip();
 
   // Cancel button clicked for edit input.
   const cancelEditing = () => {
@@ -101,6 +113,13 @@ export const HardwareAddress = ({
     setEditName(val);
   };
 
+  // Function to render a chain icon.
+  const renderChainIcon = () => {
+    const chainId = getAddressChainId(address);
+    const ChainIcon = chainIcon(chainId);
+    return <ChainIcon className="chain-icon" />;
+  };
+
   // Function to render wrapper JSX.
   const renderContent = () => (
     <>
@@ -112,44 +131,47 @@ export const HardwareAddress = ({
           </div>
           <div>
             <section className="row">
-              <input
-                type="text"
-                value={editing ? editName : accountName}
-                onChange={(e) => handleChange(e)}
-                onFocus={() => setEditing(true)}
-                onKeyUp={(e) => {
-                  if (e.key === 'Enter') {
-                    commitEdit();
-                    e.currentTarget.blur();
-                  }
-                }}
-              />
+              <div className="input-wrapper">
+                {renderChainIcon()}
+                <input
+                  type="text"
+                  value={editing ? editName : accountName}
+                  onChange={(e) => handleChange(e)}
+                  onFocus={() => setEditing(true)}
+                  onKeyUp={(e) => {
+                    if (e.key === 'Enter') {
+                      commitEdit();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                />
 
-              {editing && (
-                <div style={{ display: 'flex' }}>
-                  &nbsp;
-                  <button
-                    id="commit-btn"
-                    type="button"
-                    className="edit"
-                    onPointerDown={() => commitEdit()}
-                  >
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      transform="grow-1"
-                      className="icon"
-                    />
-                  </button>
-                  &nbsp;
-                  <button
-                    type="button"
-                    className="edit"
-                    onPointerDown={() => cancelEditing()}
-                  >
-                    <FontAwesomeIcon icon={faXmark} transform="grow-1" />
-                  </button>
-                </div>
-              )}
+                {editing && (
+                  <div style={{ display: 'flex' }}>
+                    &nbsp;
+                    <button
+                      id="commit-btn"
+                      type="button"
+                      className="edit"
+                      onPointerDown={() => commitEdit()}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        transform="grow-1"
+                        className="icon"
+                      />
+                    </button>
+                    &nbsp;
+                    <button
+                      type="button"
+                      className="edit"
+                      onPointerDown={() => cancelEditing()}
+                    >
+                      <FontAwesomeIcon icon={faXmark} transform="grow-1" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </section>
             <h5 className="full">
               <span>{address}</span>
@@ -158,20 +180,42 @@ export const HardwareAddress = ({
         </div>
       </div>
       <div className="action">
-        {isImported ? (
-          <ButtonText
-            iconLeft={faTimes}
+        {isImported && !isProcessing ? (
+          <ButtonMonoInvert
+            iconLeft={faMinus}
             text={'Remove'}
             onClick={() => openRemoveHandler()}
           />
         ) : (
-          <ButtonText
-            iconLeft={faPlus}
-            text={'Import'}
-            onClick={() => openConfirmHandler()}
-          />
+          <div
+            style={{ position: 'relative' }}
+            className="tooltip-trigger-element"
+            data-tooltip-text={'Offline Mode'}
+            onMouseMove={() => {
+              !isConnected && setTooltipTextAndOpen('Offline Mode');
+            }}
+          >
+            <ButtonMonoInvert
+              disabled={!isConnected}
+              iconLeft={faPlus}
+              text={'Import'}
+              onClick={() => openConfirmHandler()}
+              className={isProcessing ? 'processing' : ''}
+            />
+            {isProcessing && (
+              <div
+                style={{ position: 'absolute', left: '15px', top: '10px' }}
+                className="lds-ellipsis"
+              >
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
+          </div>
         )}
-        <ButtonText
+        <ButtonMonoInvert
           iconLeft={faTimes}
           text={'Delete'}
           onClick={() => openDeleteHandler()}

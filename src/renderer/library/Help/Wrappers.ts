@@ -48,6 +48,11 @@ export const DefinitionWrapper = styled(motion.div)`
   padding: 1.75rem;
   width: 100%;
 
+  @media (min-width: 0px) and (max-width: 425px) {
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+  }
+
   button {
     padding: 0;
     h2 {
@@ -81,6 +86,10 @@ export const DefinitionWrapper = styled(motion.div)`
       font-family: InterSemiBold, sans-serif;
       font-size: 1.2rem;
       line-height: 2.2rem;
+
+      @media (min-width: 0px) and (max-width: 425px) {
+        font-size: 1.15rem;
+      }
     }
     p {
       color: var(--text-color-primary);
