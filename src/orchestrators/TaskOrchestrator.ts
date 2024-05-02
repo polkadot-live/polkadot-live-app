@@ -26,13 +26,47 @@ const debug = MainDebug.extend('TaskOrchestrator');
 export class TaskOrchestrator {
   /**
    * @name subscribeTask
-   * @summary Public wrapper around calling subject's next method.
+   * @summary Cache the task in its respective wrapper and build (subscribe) if app is online.
    */
   static async subscribeTask(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
+    const isOnline = await window.myAPI.getOnlineStatus();
     await this.next(task, wrapper);
+    isOnline && (await wrapper.build(task.chainId));
+  }
+
+  /**
+   * @name subscribeTasks
+   * @summary Same as `subscribeTask` but for an array of subscription tasks.
+   */
+  static async subscribeTasks(
+    tasks: SubscriptionTask[],
+    wrapper: QueryMultiWrapper
+  ) {
+    // Return early if no tasks received.
+    if (tasks.length === 0) {
+      return;
+    }
+
+    // Cache task in its owner account's query multi wrapper.
+    for (const task of tasks) {
+      await this.next(task, wrapper);
+    }
+
+    // Build the tasks if the app is in online mode.
+    const isOnline = await window.myAPI.getOnlineStatus();
+    const chainIds = new Set(tasks.map((t) => t.chainId));
+
+    console.log('chain IDs in tasks array:');
+    console.log(chainIds);
+
+    if (isOnline) {
+      for (const chainId of chainIds) {
+        isOnline && (await wrapper.build(chainId));
+      }
+    }
   }
 
   /**
@@ -148,20 +182,15 @@ export class TaskOrchestrator {
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
-    // Build tasks if app is online, otherwise just cache them.
-    const isOnline = await window.myAPI.getOnlineStatus();
-
     switch (task.status) {
       // Add this action to the chain's subscriptions.
       case 'enable': {
         wrapper.insert(task);
-        isOnline && (await wrapper.build(task.chainId));
         break;
       }
       // Remove this action from the chain's subscriptions.
       case 'disable': {
         wrapper.remove(task.chainId, task.action);
-        isOnline && (await wrapper.build(task.chainId));
         break;
       }
     }
