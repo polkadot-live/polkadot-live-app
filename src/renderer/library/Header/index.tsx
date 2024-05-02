@@ -75,7 +75,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         await handleInitializeAppOnline();
         setIsConnecting(false);
       } else {
-        console.log('render error');
         // Render error alert.
         toast.error('You are offline.', {
           position: 'bottom-center',

@@ -18,6 +18,7 @@ import { SubscriptionsController } from '@/controller/renderer/SubscriptionsCont
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { useChains } from '../Chains';
 import { APIsController } from '@/controller/renderer/APIsController';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =
   createContext<SubscriptionsContextInterface>(
@@ -134,24 +135,77 @@ export const SubscriptionsProvider = ({
     rendererdSubscriptions: WrappedSubscriptionTasks,
     updateRenderedSubscriptions: AnyFunction
   ) => {
+    // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
 
-    // Get all rendered tasks in the category that have the target status.
+    // Get rendered tasks in the category with target status and invert it.
     const tasks = rendererdSubscriptions.tasks
       .filter((t) => t.category === category && t.status === targetStatus)
+      .map((t) => {
+        t.status = t.status === 'enable' ? 'disable' : 'enable';
+        t.enableOsNotifications = false;
+        return t;
+      })
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    // Toggle on or off the subscriptions.
-    // NOTE: Using subscription queue won't work in this loop.
-    for (const task of tasks) {
-      await toggleSubscription(
-        { type: getTaskType(task), tasks: [task] } as WrappedSubscriptionTasks,
-        null
-      );
+    // Return early if there are no tasks to toggle.
+    if (tasks.length === 0) {
+      return;
+    }
 
-      // Invert task status and update rendered subscription tasks state.
-      task.status = targetStatus === 'enable' ? 'disable' : 'enable';
-      updateRenderedSubscriptions(task);
+    // Switch subscription type.
+    switch (getTaskType(tasks[0])) {
+      case 'chain': {
+        // Update persisted state and React state for tasks.
+        for (const task of tasks) {
+          await window.myAPI.updatePersistedChainTask(task);
+          updateTask('chain', task);
+          updateRenderedSubscriptions(task);
+        }
+
+        // Subscribe to tasks.
+        SubscriptionsController.subscribeChainTasks(tasks);
+        break;
+      }
+      case 'account': {
+        // Get associated account.
+        const account = AccountsController.get(
+          tasks[0].chainId,
+          tasks[0].account?.address
+        );
+
+        // Return early if account not found.
+        if (!account) {
+          return;
+        }
+
+        // Update persisted state and React state for tasks.
+        for (const task of tasks) {
+          await window.myAPI.updatePersistedAccountTask(
+            JSON.stringify(task),
+            JSON.stringify(account.flatten())
+          );
+          updateTask('account', task, task.account?.address);
+          updateRenderedSubscriptions(task);
+        }
+
+        // Subscribe to tasks.
+        account.queryMulti &&
+          (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
+
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+
+    // Disconnect from API instance if there are no tasks that require it.
+    await ApiUtils.handleApiDisconnects();
+
+    // Update chain state.
+    for (const apiData of APIsController.getAllFlattenedAPIData()) {
+      addChain(apiData);
     }
   };
 
