@@ -2,27 +2,48 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEvents } from '@app/contexts/Events';
-import React from 'react';
+import React, { useState } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { Wrapper } from './Wrappers';
+import { Accordion } from '@/renderer/library/Accordion';
 
 export const Events = () => {
   const { events, sortAllEvents } = useEvents();
 
+  const sortedEvents = sortAllEvents();
+
+  // Active accordion indices for event categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(
+    Array.from(
+      { length: Array.from(sortedEvents.keys()).length },
+      (_, index) => index
+    )
+  );
+
   return (
-    <Wrapper>
+    <Wrapper style={{ marginTop: '2rem' }}>
       {events.size === 0 && <NoEvents />}
 
-      {Array.from(sortAllEvents().entries()).map(
-        ([category, categoryEvents]) => (
-          <Category
-            key={`${category}_events`}
-            category={category}
-            events={categoryEvents}
-          />
-        )
-      )}
+      <Accordion
+        multiple
+        defaultIndex={accordionActiveIndices}
+        setExternalIndices={setAccordionActiveIndices}
+      >
+        {Array.from(sortedEvents.entries()).map(
+          ([category, categoryEvents], i) => (
+            <Category
+              key={`${category}_events`}
+              accordionActiveIndices={accordionActiveIndices}
+              accordionIndex={i}
+              category={category}
+              events={categoryEvents}
+            />
+          )
+        )}
+      </Accordion>
     </Wrapper>
   );
 };

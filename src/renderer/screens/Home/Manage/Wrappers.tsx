@@ -54,6 +54,7 @@ export const HeadingWrapper = styled.div`
   opacity: 0.75;
   user-select: none;
   cursor: pointer;
+  //margin-bottom: -0.5rem;
 
   .flex {
     display: flex;

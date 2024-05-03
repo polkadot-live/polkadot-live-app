@@ -1,16 +1,31 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 import { HeadingWrapper } from '../Wrappers';
 import { Item } from './Item';
 import { EventGroup } from './Wrappers';
 import { getEventChainId } from '@/utils/EventUtils';
 import type { EventCategoryProps } from './types';
 import type { EventCallback } from '@/types/reporter';
-import { faBlock } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faBlock,
+  faCaretDown,
+  faCaretRight,
+} from '@fortawesome/pro-solid-svg-icons';
 import { getCategory } from '@/config/chains';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export const Category = ({ category, events }: EventCategoryProps) => {
+export const Category = ({
+  category,
+  events,
+  accordionActiveIndices,
+  accordionIndex,
+}: EventCategoryProps) => {
   /// Return a unique key for event item.
   const getKey = (event: EventCallback): string =>
     `${getEventChainId(event)}_${event.uid}`;
@@ -21,20 +36,37 @@ export const Category = ({ category, events }: EventCategoryProps) => {
 
   return (
     <EventGroup>
-      <HeadingWrapper>
-        <div className="flex">
-          <div>
-            <div className="left">
-              <h5>{getCategoryName(category)}</h5>
+      <AccordionItem>
+        <HeadingWrapper>
+          <AccordionHeader>
+            <div className="flex">
+              <div className="left">
+                <div className="icon-wrapper">
+                  {accordionActiveIndices.includes(accordionIndex) ? (
+                    <FontAwesomeIcon
+                      icon={faCaretDown}
+                      transform={'shrink-1'}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faCaretRight}
+                      transform={'shrink-1'}
+                    />
+                  )}
+                </div>
+                <h5>{getCategoryName(category)}</h5>
+              </div>
             </div>
+          </AccordionHeader>
+        </HeadingWrapper>
+        <AccordionPanel>
+          <div className="items-wrapper">
+            {events?.map((event) => (
+              <Item key={getKey(event)} faIcon={faBlock} event={event} />
+            ))}
           </div>
-        </div>
-      </HeadingWrapper>
-      <div className="items-wrapper">
-        {events?.map((event) => (
-          <Item key={getKey(event)} faIcon={faBlock} event={event} />
-        ))}
-      </div>
+        </AccordionPanel>
+      </AccordionItem>
     </EventGroup>
   );
 };

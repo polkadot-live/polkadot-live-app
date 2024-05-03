@@ -9,6 +9,7 @@ export const Wrapper = styled.div`
   display: flex;
   flex-flow: column wrap;
   align-items: center;
+  row-gap: 0.5rem;
   padding: 0 1rem;
 `;
 
@@ -48,12 +49,12 @@ export const EventGroup = styled.div`
   border-radius: 0.9rem;
   z-index: 2;
   padding: 0 0.5rem;
-  margin: 1rem 0;
 
   .items-wrapper {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
+    padding: 0 0.25rem;
   }
 `;
 

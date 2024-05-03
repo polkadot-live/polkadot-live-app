@@ -68,7 +68,7 @@ export function Accordion({
 }
 
 export function AccordionItem({ children }: { children: ReactNode }) {
-  return <div style={{ overflow: 'hidden' }}>{children}</div>;
+  return <div style={{ overflow: 'hidden', width: '100%' }}>{children}</div>;
 }
 
 export function AccordionHeader({ children }: { children: ReactNode }) {
