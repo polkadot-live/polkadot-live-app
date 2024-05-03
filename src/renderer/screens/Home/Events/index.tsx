@@ -25,7 +25,6 @@ export const Events = () => {
               ([category, categoryEvents]) => (
                 <Category
                   key={`${chainId}_${category}_events`}
-                  chain={chainId as ChainID}
                   category={category}
                   events={categoryEvents}
                 />

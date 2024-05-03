@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 
 export interface EventCategoryProps {
-  chain: ChainID;
   category: string;
   events: EventCallback[];
 }

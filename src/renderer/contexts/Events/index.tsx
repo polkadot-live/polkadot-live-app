@@ -23,10 +23,10 @@ export const EventsContext = createContext<EventsContextInterface>(
 export const useEvents = () => useContext(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
-  // Store the currently imported events
+  /// Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
 
-  // Removes an event item on a specified chain; compares event uid.
+  /// Removes an event item on a specified chain; compares event uid.
   const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
     setEventsState((prev) => {
       const cloned: EventsState = new Map(prev);
@@ -41,7 +41,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Remove any outdated events in the state.
+  /// Remove any outdated events in the state.
   const removeOutdatedEvents = (event: EventCallback) => {
     const { taskAction } = event;
     const { address } = event.who.data as EventAccountData;
@@ -85,7 +85,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Adds an event to the events state.
+  /// Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
     setEventsState((prev) => {
       const cloned = new Map(prev);
@@ -104,7 +104,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Mark an event as stale.
+  /// Mark an event as stale.
   const markStaleEvent = (uid: string, chainId: ChainID) => {
     setEventsState((prev) => {
       const cloned = new Map(prev);
@@ -124,7 +124,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Order chain events by category and sorts them via timestamp.
+  /// Order chain events by category and sort them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!events.has(chain)) {
       return new Map();
@@ -158,7 +158,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     return sortedMap;
   };
 
-  // Update events with a new cached account name.
+  /// Update events with a new cached account name.
   const updateEventsOnAccountRename = (
     updated: EventCallback[],
     chainId: ChainID
