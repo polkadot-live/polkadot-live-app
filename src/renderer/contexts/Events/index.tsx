@@ -124,6 +124,32 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  /// Sort all events into categories in timestamp descending order.
+  const sortAllEvents = (): SortedChainEvents => {
+    const sortedMap = new Map<string, EventCallback[]>();
+
+    // Categorize events.
+    for (const chainEvents of events.values()) {
+      for (const event of chainEvents) {
+        const { category } = event;
+
+        sortedMap.has(category)
+          ? sortedMap.set(category, [...sortedMap.get(category)!, event])
+          : sortedMap.set(category, [event]);
+      }
+    }
+
+    // Sort events by timestamp descending in each category.
+    for (const [category, categoryEvents] of sortedMap.entries()) {
+      sortedMap.set(
+        category,
+        categoryEvents.sort((x, y) => y.timestamp - x.timestamp)
+      );
+    }
+
+    return sortedMap;
+  };
+
   /// Order chain events by category and sort them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!events.has(chain)) {
@@ -185,6 +211,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         events,
         addEvent,
         dismissEvent,
+        sortAllEvents,
         sortChainEvents,
         updateEventsOnAccountRename,
         markStaleEvent,

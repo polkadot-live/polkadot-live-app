@@ -8,6 +8,7 @@ export interface EventsContextInterface {
   events: EventsState;
   addEvent: (e: EventCallback) => void;
   dismissEvent: (e: DismissEvent) => void;
+  sortAllEvents: () => SortedChainEvents;
   sortChainEvents: (c: ChainID) => SortedChainEvents;
   updateEventsOnAccountRename: (e: EventCallback[], c: ChainID) => void;
   markStaleEvent: (u: string, c: ChainID) => void;
