@@ -8,7 +8,7 @@ import { NoEvents } from './NoEvents';
 import { SortControlsWrapper, Wrapper } from './Wrappers';
 import { Accordion } from '@/renderer/library/Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLayerGroup, faTimer } from '@fortawesome/pro-light-svg-icons';
+import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
 
 export const Events = () => {
   const { events, sortAllEvents } = useEvents();
@@ -30,18 +30,16 @@ export const Events = () => {
       <SortControlsWrapper>
         <div className="controls-wrapper">
           <div className="icon-wrapper">
-            <FontAwesomeIcon
-              icon={faTimer}
-              transform={'grow-2'}
-              className="icon"
-            />
+            <div className="icon">
+              <FontAwesomeIcon icon={faTimer} />
+            </div>
+            <span>Date</span>
           </div>
           <div className="icon-wrapper">
-            <FontAwesomeIcon
-              icon={faLayerGroup}
-              transform={'grow-2'}
-              className="icon"
-            />
+            <div className="icon">
+              <FontAwesomeIcon icon={faLayerGroup} transform={'grow-1'} />
+            </div>
+            <span>Grouped</span>
           </div>
         </div>
       </SortControlsWrapper>

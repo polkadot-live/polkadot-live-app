@@ -5,45 +5,51 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const SortControlsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0.75rem 0.75rem 0;
-
   .controls-wrapper {
     width: 100%;
     background-color: var(--background-primary);
     border-radius: 0.25rem;
-    border: 1px solid #1c1c1c;
-    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid var(--border-primary-color);
+    padding: 1.5rem 0.5rem 1.25rem;
     flex: 1;
+
     display: flex;
     justify-content: center;
     align-items: center;
     column-gap: 1rem;
 
     .icon-wrapper {
+      display: flex;
+      column-gap: 0.75rem;
+      align-items: center;
+
       position: relative;
-      width: 2.5rem;
-      height: 2.5rem;
-      padding: 0.25rem;
       border: 1px solid #582b3b;
-      border-radius: 0.5rem;
+      border-radius: 1.25rem;
+
+      margin: 0;
+      padding: 0.4rem 0.75rem;
       cursor: pointer;
       transition: border 0.1s ease-out;
 
+      span {
+        display: inline-block;
+        padding-right: 1rem;
+        color: #743248;
+        font-size: 0.9rem;
+      }
+      .icon {
+        color: #743248;
+        margin-left: 0.9rem;
+      }
       &:hover {
         border: 1px solid #743248;
         .icon {
           color: #ad4266 !important;
         }
-      }
-
-      .icon {
-        color: #743248;
-        position: absolute;
-        top: 7px;
-        left: 7px;
+        span {
+          color: #ad4266;
+        }
       }
     }
   }
