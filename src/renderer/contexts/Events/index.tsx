@@ -124,8 +124,23 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  /// Sort all events into categories in timestamp descending order.
-  const sortAllEvents = (newestFirst: boolean): SortedChainEvents => {
+  /// Sort all events timestamp order.
+  const sortAllEvents = (newestFirst: boolean): EventCallback[] => {
+    const allEvents: EventCallback[] = [];
+
+    // Populare all events array.
+    for (const chainEvents of events.values()) {
+      chainEvents.forEach((e) => allEvents.push({ ...e }));
+    }
+
+    // Sort the events based on `newestFirst` argument.
+    return newestFirst
+      ? allEvents.sort((x, y) => y.timestamp - x.timestamp)
+      : allEvents.sort((x, y) => x.timestamp - y.timestamp);
+  };
+
+  /// Sort all events into categories in timestamp order.
+  const sortAllGroupedEvents = (newestFirst: boolean): SortedChainEvents => {
     const sortedMap = new Map<string, EventCallback[]>();
 
     // Get all categories and sort alphabetically.
@@ -225,6 +240,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         addEvent,
         dismissEvent,
         sortAllEvents,
+        sortAllGroupedEvents,
         sortChainEvents,
         updateEventsOnAccountRename,
         markStaleEvent,

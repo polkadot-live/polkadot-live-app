@@ -10,7 +10,6 @@ import { HeadingWrapper } from '../Wrappers';
 import { EventGroup } from './Wrappers';
 import { getEventChainId } from '@/utils/EventUtils';
 import type { EventCategoryProps } from './types';
-import type { EventCallback } from '@/types/reporter';
 import {
   faBlock,
   faCaretDown,
@@ -26,10 +25,6 @@ export const Category = ({
   accordionActiveIndices,
   accordionIndex,
 }: EventCategoryProps) => {
-  /// Return a unique key for event item.
-  const getKey = (event: EventCallback): string =>
-    `${getEventChainId(event)}_${event.uid}`;
-
   /// Get category's readable name.
   const getCategoryName = (key: string): string =>
     getCategory(key)?.name || 'Unknown Category';
@@ -62,7 +57,11 @@ export const Category = ({
         <AccordionPanel>
           <div className="items-wrapper">
             {events?.map((event) => (
-              <EventItem key={getKey(event)} faIcon={faBlock} event={event} />
+              <EventItem
+                key={`${getEventChainId(event)}_${event.uid}`}
+                faIcon={faBlock}
+                event={event}
+              />
             ))}
           </div>
         </AccordionPanel>

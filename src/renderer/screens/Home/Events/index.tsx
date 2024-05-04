@@ -5,20 +5,34 @@ import { useEvents } from '@app/contexts/Events';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
-import { SortControlsWrapper, Wrapper } from './Wrappers';
+import { EventGroup, SortControlsWrapper, Wrapper } from './Wrappers';
 import { Accordion } from '@/renderer/library/Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faTimer,
+  faLayerGroup,
+  faBlock,
+} from '@fortawesome/pro-solid-svg-icons';
+import { EventItem } from './EventItem';
+import { getEventChainId } from '@/utils/EventUtils';
 
 export const Events = () => {
   /// State for sorting controls.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(true);
 
-  const { events, sortAllEvents } = useEvents();
+  /// Get events state.
+  const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
+
+  /// Memoize sorted event data.
+  const sortedGroupedEvents = useMemo(
+    () => sortAllGroupedEvents(newestFirst),
+    [events, newestFirst]
+  );
+
   const sortedEvents = useMemo(
     () => sortAllEvents(newestFirst),
-    [events, newestFirst, groupingOn]
+    [events, newestFirst]
   );
 
   /// Active accordion indices for event categories.
@@ -26,7 +40,7 @@ export const Events = () => {
     number[]
   >(
     Array.from(
-      { length: Array.from(sortedEvents.keys()).length },
+      { length: Array.from(sortedGroupedEvents.keys()).length },
       (_, index) => index
     )
   );
@@ -61,23 +75,38 @@ export const Events = () => {
       <Wrapper style={{ margin: '1rem 0' }}>
         {events.size === 0 && <NoEvents />}
 
-        <Accordion
-          multiple
-          defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
-        >
-          {Array.from(sortedEvents.entries()).map(
-            ([category, categoryEvents], i) => (
-              <Category
-                key={`${category}_events`}
-                accordionActiveIndices={accordionActiveIndices}
-                accordionIndex={i}
-                category={category}
-                events={categoryEvents}
-              />
-            )
-          )}
-        </Accordion>
+        <div style={groupingOn ? { display: 'none' } : { display: 'block' }}>
+          <Accordion
+            multiple
+            defaultIndex={accordionActiveIndices}
+            setExternalIndices={setAccordionActiveIndices}
+          >
+            {Array.from(sortedGroupedEvents.entries()).map(
+              ([category, categoryEvents], i) => (
+                <Category
+                  key={`${category}_events`}
+                  accordionActiveIndices={accordionActiveIndices}
+                  accordionIndex={i}
+                  category={category}
+                  events={categoryEvents}
+                />
+              )
+            )}
+          </Accordion>
+        </div>
+        <div style={groupingOn ? { display: 'block' } : { display: 'none' }}>
+          <EventGroup>
+            <div className="items-wrapper">
+              {sortedEvents.map((event) => (
+                <EventItem
+                  key={`${getEventChainId(event)}_${event.uid}`}
+                  faIcon={faBlock}
+                  event={event}
+                />
+              ))}
+            </div>
+          </EventGroup>
+        </div>
       </Wrapper>
     </>
   );
