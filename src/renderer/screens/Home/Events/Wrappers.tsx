@@ -19,52 +19,47 @@ export const SortControlsWrapper = styled.div`
     column-gap: 1rem;
 
     .icon-wrapper {
-      opacity: 0.7;
+      opacity: 0.75;
       display: flex;
       column-gap: 0.75rem;
       align-items: center;
       min-width: 120px;
 
       position: relative;
-      border: 1px solid #582b3b;
+      border: 1px solid #535353;
       border-radius: 1.25rem;
 
       margin: 0;
       padding: 0.3rem 0.5rem;
-      cursor: pointer;
       transition: border 0.1s ease-out;
       user-select: none;
+      cursor: pointer;
+      transition: opacity 0.1s ease-out;
 
       span {
         display: inline-block;
         padding-right: 0.7rem;
-        color: #ad4266;
+        color: #666666;
         font-size: 0.9rem;
       }
       .icon {
-        color: #ad4266;
+        color: #5f5f5f;
         margin-left: 0.7rem;
       }
       &:hover {
-        border: 1px solid #743248;
         opacity: 0.9;
-        .icon {
-          color: #ad4266;
-        }
-        span {
-          color: #ad4266;
-        }
       }
       // Button is active.
       &.active {
-        background-color: #742a44;
-        transition: background-color 0.1s ease-out;
+        border-color: #454545;
+        background-color: #3a3a3a;
+        transition: opacity 0.1s ease-out;
         .icon,
         span {
           color: #ededed;
         }
         &:hover {
-          background-color: #953254;
+          background-color: #3a3a3a;
         }
       }
     }
