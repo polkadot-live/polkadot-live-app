@@ -12,6 +12,10 @@ export interface EventCategoryProps {
 }
 
 export interface EventItemProps {
+  event: EventCallback;
+  faIcon: IconProp;
+}
+export interface ItemProps {
   faIcon: IconProp;
   event: EventCallback;
 }

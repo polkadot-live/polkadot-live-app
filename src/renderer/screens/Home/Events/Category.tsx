@@ -7,7 +7,6 @@ import {
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { HeadingWrapper } from '../Wrappers';
-import { Item } from './Item';
 import { EventGroup } from './Wrappers';
 import { getEventChainId } from '@/utils/EventUtils';
 import type { EventCategoryProps } from './types';
@@ -19,6 +18,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { getCategory } from '@/config/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { EventItem } from './EventItem';
 
 export const Category = ({
   category,
@@ -62,7 +62,7 @@ export const Category = ({
         <AccordionPanel>
           <div className="items-wrapper">
             {events?.map((event) => (
-              <Item key={getKey(event)} faIcon={faBlock} event={event} />
+              <EventItem key={getKey(event)} faIcon={faBlock} event={event} />
             ))}
           </div>
         </AccordionPanel>

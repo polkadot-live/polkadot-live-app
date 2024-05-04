@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEvents } from '@app/contexts/Events';
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { Wrapper } from './Wrappers';
@@ -11,7 +11,7 @@ import { Accordion } from '@/renderer/library/Accordion';
 export const Events = () => {
   const { events, sortAllEvents } = useEvents();
 
-  const sortedEvents = sortAllEvents();
+  const sortedEvents = useMemo(() => sortAllEvents(), [events]);
 
   // Active accordion indices for event categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<

@@ -12,17 +12,17 @@ import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
 import { isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/Events';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useTooltip } from '@app/contexts/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
-import type { EventItemProps } from './types';
+import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
 
 const FADE_TRANSITION = 200;
 
-export const Item = ({ faIcon, event }: EventItemProps) => {
+export const Item = memo(function Item({ faIcon, event }: ItemProps) {
   const { dismissEvent } = useEvents();
   const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -186,4 +186,4 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
       )}
     </AnimatePresence>
   );
-};
+});
