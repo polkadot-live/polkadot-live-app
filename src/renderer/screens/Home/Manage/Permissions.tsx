@@ -268,7 +268,12 @@ export const Permissions = ({
             </AccordionHeader>
           </HeadingWrapper>
           <AccordionPanel>
-            <div style={{ padding: '0 0.75rem' }}>
+            <div
+              className="flex-column"
+              style={{
+                padding: '0 0.75rem',
+              }}
+            >
               {tasks
                 .sort((a, b) => a.label.localeCompare(b.label))
                 .map((task: SubscriptionTask, i: number) => (
