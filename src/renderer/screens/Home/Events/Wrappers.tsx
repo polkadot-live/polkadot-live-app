@@ -4,6 +4,50 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+export const SortControlsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 1rem 0;
+
+  .controls-wrapper {
+    width: 100%;
+    background-color: var(--background-primary);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 1rem;
+
+    .icon-wrapper {
+      position: relative;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0.25rem;
+      border: 1px solid #582b3b;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: border 0.1s ease-out;
+
+      &:hover {
+        border: 1px solid #743248;
+        .icon {
+          color: #ad4266 !important;
+        }
+      }
+
+      .icon {
+        color: #743248;
+        position: absolute;
+        top: 7px;
+        left: 7px;
+      }
+    }
+  }
+`;
+
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
