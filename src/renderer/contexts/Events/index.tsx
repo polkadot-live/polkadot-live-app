@@ -128,6 +128,17 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   const sortAllEvents = (): SortedChainEvents => {
     const sortedMap = new Map<string, EventCallback[]>();
 
+    // Get all categories and sort alphabetically.
+    const categories = new Set<string>();
+    for (const chainEvents of events.values()) {
+      chainEvents.forEach((e) => categories.add(e.category));
+    }
+
+    // Initialize sorted map with ordered categories.
+    Array.from(categories)
+      .sort((x, y) => x.localeCompare(y))
+      .forEach((c) => sortedMap.set(c, []));
+
     // Categorize events.
     for (const chainEvents of events.values()) {
       for (const event of chainEvents) {
