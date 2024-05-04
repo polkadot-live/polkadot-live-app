@@ -8,13 +8,14 @@ export const SortControlsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem 1rem 0;
+  margin: 0.75rem 0.75rem 0;
 
   .controls-wrapper {
     width: 100%;
     background-color: var(--background-primary);
     border-radius: 0.25rem;
-    padding: 0.75rem;
+    border: 1px solid #1c1c1c;
+    padding: 0.6rem 0.5rem;
     flex: 1;
     display: flex;
     justify-content: center;

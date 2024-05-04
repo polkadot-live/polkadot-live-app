@@ -32,14 +32,14 @@ export const Events = () => {
           <div className="icon-wrapper">
             <FontAwesomeIcon
               icon={faTimer}
-              transform={'grow-3'}
+              transform={'grow-2'}
               className="icon"
             />
           </div>
           <div className="icon-wrapper">
             <FontAwesomeIcon
               icon={faLayerGroup}
-              transform={'grow-3'}
+              transform={'grow-2'}
               className="icon"
             />
           </div>
