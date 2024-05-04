@@ -51,7 +51,7 @@ export const Events = () => {
         <div className="controls-wrapper">
           {/* Date Sort Button */}
           <div
-            className="icon-wrapper"
+            className={newestFirst ? 'icon-wrapper active' : 'icon-wrapper'}
             onClick={() => setNewestFirst(!newestFirst)}
           >
             <div className="icon">
@@ -61,7 +61,7 @@ export const Events = () => {
           </div>
           {/* Grouping Button */}
           <div
-            className="icon-wrapper"
+            className={groupingOn ? 'icon-wrapper active' : 'icon-wrapper'}
             onClick={() => setGroupingOn(!groupingOn)}
           >
             <div className="icon">
@@ -75,7 +75,7 @@ export const Events = () => {
       <Wrapper style={{ margin: '1rem 0' }}>
         {events.size === 0 && <NoEvents />}
 
-        <div style={groupingOn ? { display: 'none' } : { display: 'block' }}>
+        <div style={groupingOn ? { display: 'block' } : { display: 'none' }}>
           <Accordion
             multiple
             defaultIndex={accordionActiveIndices}
@@ -94,7 +94,7 @@ export const Events = () => {
             )}
           </Accordion>
         </div>
-        <div style={groupingOn ? { display: 'block' } : { display: 'none' }}>
+        <div style={groupingOn ? { display: 'none' } : { display: 'block' }}>
           <EventGroup>
             <div className="items-wrapper">
               {sortedEvents.map((event) => (

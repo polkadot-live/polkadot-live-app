@@ -10,47 +10,61 @@ export const SortControlsWrapper = styled.div`
     background-color: var(--background-primary);
     border-radius: 0.25rem;
     border-bottom: 1px solid var(--border-primary-color);
-    padding: 1.5rem 0.5rem 1.25rem;
+    padding: 1.5rem 1.5rem 1.25rem;
     flex: 1;
 
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     column-gap: 1rem;
 
     .icon-wrapper {
+      opacity: 0.7;
       display: flex;
       column-gap: 0.75rem;
       align-items: center;
-      min-width: 130px;
+      min-width: 120px;
 
       position: relative;
       border: 1px solid #582b3b;
       border-radius: 1.25rem;
 
       margin: 0;
-      padding: 0.4rem 0.75rem;
+      padding: 0.3rem 0.5rem;
       cursor: pointer;
       transition: border 0.1s ease-out;
       user-select: none;
 
       span {
         display: inline-block;
-        padding-right: 1rem;
-        color: #743248;
+        padding-right: 0.7rem;
+        color: #ad4266;
         font-size: 0.9rem;
       }
       .icon {
-        color: #743248;
-        margin-left: 0.9rem;
+        color: #ad4266;
+        margin-left: 0.7rem;
       }
       &:hover {
         border: 1px solid #743248;
+        opacity: 0.9;
         .icon {
-          color: #ad4266 !important;
+          color: #ad4266;
         }
         span {
           color: #ad4266;
+        }
+      }
+      // Button is active.
+      &.active {
+        background-color: #742a44;
+        transition: background-color 0.1s ease-out;
+        .icon,
+        span {
+          color: #ededed;
+        }
+        &:hover {
+          background-color: #953254;
         }
       }
     }
@@ -102,6 +116,7 @@ export const EventGroup = styled.div`
   border-radius: 0.9rem;
   z-index: 2;
   padding: 0 0.5rem;
+  margin-bottom: 1rem;
 
   .items-wrapper {
     display: flex;
