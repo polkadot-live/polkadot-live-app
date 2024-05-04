@@ -22,6 +22,7 @@ export const SortControlsWrapper = styled.div`
       display: flex;
       column-gap: 0.75rem;
       align-items: center;
+      min-width: 130px;
 
       position: relative;
       border: 1px solid #582b3b;
@@ -31,6 +32,7 @@ export const SortControlsWrapper = styled.div`
       padding: 0.4rem 0.75rem;
       cursor: pointer;
       transition: border 0.1s ease-out;
+      user-select: none;
 
       span {
         display: inline-block;

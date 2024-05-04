@@ -11,11 +11,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
 
 export const Events = () => {
+  /// State for sorting controls.
+  const [newestFirst, setNewestFirst] = useState(true);
+  const [groupingOn, setGroupingOn] = useState(true);
+
   const { events, sortAllEvents } = useEvents();
+  const sortedEvents = useMemo(
+    () => sortAllEvents(newestFirst),
+    [events, newestFirst, groupingOn]
+  );
 
-  const sortedEvents = useMemo(() => sortAllEvents(), [events]);
-
-  // Active accordion indices for event categories.
+  /// Active accordion indices for event categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
@@ -29,17 +35,25 @@ export const Events = () => {
     <>
       <SortControlsWrapper>
         <div className="controls-wrapper">
-          <div className="icon-wrapper">
+          {/* Date Sort Button */}
+          <div
+            className="icon-wrapper"
+            onClick={() => setNewestFirst(!newestFirst)}
+          >
             <div className="icon">
               <FontAwesomeIcon icon={faTimer} />
             </div>
-            <span>Date</span>
+            <span>{newestFirst ? 'Newest First' : 'Oldest First'}</span>
           </div>
-          <div className="icon-wrapper">
+          {/* Grouping Button */}
+          <div
+            className="icon-wrapper"
+            onClick={() => setGroupingOn(!groupingOn)}
+          >
             <div className="icon">
               <FontAwesomeIcon icon={faLayerGroup} transform={'grow-1'} />
             </div>
-            <span>Grouped</span>
+            <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
           </div>
         </div>
       </SortControlsWrapper>

@@ -125,7 +125,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /// Sort all events into categories in timestamp descending order.
-  const sortAllEvents = (): SortedChainEvents => {
+  const sortAllEvents = (newestFirst: boolean): SortedChainEvents => {
     const sortedMap = new Map<string, EventCallback[]>();
 
     // Get all categories and sort alphabetically.
@@ -150,11 +150,13 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    // Sort events by timestamp descending in each category.
+    // Sort events by timestamp descending or ascending in each category.
     for (const [category, categoryEvents] of sortedMap.entries()) {
       sortedMap.set(
         category,
-        categoryEvents.sort((x, y) => y.timestamp - x.timestamp)
+        categoryEvents.sort((x, y) =>
+          newestFirst ? y.timestamp - x.timestamp : x.timestamp - y.timestamp
+        )
       );
     }
 

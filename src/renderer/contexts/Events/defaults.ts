@@ -8,7 +8,7 @@ export const defaultEventsContext: EventsContextInterface = {
   events: new Map(),
   addEvent: (e) => {},
   dismissEvent: (e) => {},
-  sortAllEvents: () => new Map(),
+  sortAllEvents: (newestFirst) => new Map(),
   sortChainEvents: (c) => new Map(),
   updateEventsOnAccountRename: (es, c) => {},
   markStaleEvent: (u, c) => {},
