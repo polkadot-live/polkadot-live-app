@@ -57,8 +57,8 @@ export const SplashWrapper = styled.div`
 `;
 
 export const HeadingWrapper = styled.div`
+  margin-bottom: 1rem;
   width: 100%;
-  padding: 0.5rem 1rem;
   z-index: 3;
   opacity: 0.75;
   user-select: none;
@@ -68,7 +68,7 @@ export const HeadingWrapper = styled.div`
     display: flex;
     column-gap: 0.5rem;
     align-items: center;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0;
     transition: background-color 0.15s ease-in-out;
     border-bottom: 1px solid var(--border-secondary-color);
 
@@ -94,6 +94,7 @@ export const HeadingWrapper = styled.div`
         opacity: 0.4;
       }
       h5 {
+        font-size: 0.95rem;
         > span {
           color: var(--text-color-primary);
         }

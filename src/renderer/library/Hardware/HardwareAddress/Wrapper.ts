@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div<{ $noBorder?: boolean }>`
   border-bottom: ${(props) =>
-    String(props.$noBorder) === 'true'
+    props.$noBorder === true
       ? 'none'
       : '1px solid var(--border-primary-color)'};
   display: flex;

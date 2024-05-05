@@ -224,7 +224,7 @@ export const Manage = ({
         </Wrapper>
 
         <AddressWrapper>
-          <div className="items-wrapper" style={{ paddingTop: '1rem' }}>
+          <div className="outer-wrapper" style={{ paddingTop: '1rem' }}>
             <Accordion
               multiple
               defaultIndex={accordionActiveIndices}
@@ -257,33 +257,38 @@ export const Manage = ({
                         </AccordionHeader>
                       </HeadingWrapper>
                       <AccordionPanel>
-                        <div className="items">
-                          {addresses.length ? (
-                            <>
-                              {chainAddresses.map(
-                                ({
-                                  address,
-                                  index,
-                                  isImported,
-                                  name,
-                                }: LocalAddress) => (
-                                  <Address
-                                    key={address}
-                                    accountName={name}
-                                    source={'read-only'}
-                                    setAddresses={setAddresses}
-                                    address={address}
-                                    index={index}
-                                    isImported={isImported || false}
-                                    isLast={index === addresses.length - 1}
-                                    setSection={setSection}
-                                  />
-                                )
-                              )}
-                            </>
-                          ) : (
-                            <p>No read only addresses imported.</p>
-                          )}
+                        <div className="items-wrapper">
+                          <div className="items">
+                            {addresses.length ? (
+                              <>
+                                {chainAddresses.map(
+                                  (
+                                    {
+                                      address,
+                                      index,
+                                      isImported,
+                                      name,
+                                    }: LocalAddress,
+                                    i
+                                  ) => (
+                                    <Address
+                                      key={address}
+                                      accountName={name}
+                                      source={'read-only'}
+                                      setAddresses={setAddresses}
+                                      address={address}
+                                      index={index}
+                                      isImported={isImported || false}
+                                      isLast={i === chainAddresses.length - 1}
+                                      setSection={setSection}
+                                    />
+                                  )
+                                )}
+                              </>
+                            ) : (
+                              <p>No read only addresses imported.</p>
+                            )}
+                          </div>
                         </div>
                       </AccordionPanel>
                     </AccordionItem>

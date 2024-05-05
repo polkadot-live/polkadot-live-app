@@ -67,7 +67,7 @@ export const Manage = ({
       <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
-            <div className="items-wrapper">
+            <div className="outer-wrapper">
               <div className="more">
                 <ButtonText
                   iconLeft={faArrowDown}
@@ -114,27 +114,32 @@ export const Manage = ({
                         </AccordionHeader>
                       </HeadingWrapper>
                       <AccordionPanel>
-                        <div className="items">
-                          {chainAddresses.map(
-                            ({
-                              address,
-                              index,
-                              isImported,
-                              name,
-                            }: LedgerLocalAddress) => (
-                              <Address
-                                key={address}
-                                address={address}
-                                source={'ledger'}
-                                accountName={name}
-                                setAddresses={setAddresses}
-                                index={index}
-                                isImported={isImported}
-                                isLast={index === addresses.length - 1}
-                                setSection={setSection}
-                              />
-                            )
-                          )}
+                        <div className="items-wrapper">
+                          <div className="items">
+                            {chainAddresses.map(
+                              (
+                                {
+                                  address,
+                                  index,
+                                  isImported,
+                                  name,
+                                }: LedgerLocalAddress,
+                                i
+                              ) => (
+                                <Address
+                                  key={address}
+                                  address={address}
+                                  source={'ledger'}
+                                  accountName={name}
+                                  setAddresses={setAddresses}
+                                  index={index}
+                                  isImported={isImported}
+                                  isLast={i === chainAddresses.length - 1}
+                                  setSection={setSection}
+                                />
+                              )
+                            )}
+                          </div>
                         </div>
                       </AccordionPanel>
                     </AccordionItem>

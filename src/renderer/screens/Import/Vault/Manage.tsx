@@ -65,7 +65,7 @@ export const Manage = ({
       <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
-            <div className="items-wrapper">
+            <div className="outer-wrapper">
               <div className="more">
                 <ButtonText
                   iconLeft={faQrcode}
@@ -119,22 +119,24 @@ export const Manage = ({
                           </AccordionHeader>
                         </HeadingWrapper>
                         <AccordionPanel>
-                          <div className="items">
-                            {chainAddresses.map(
-                              ({ address, index, isImported, name }) => (
-                                <Address
-                                  key={address}
-                                  accountName={name}
-                                  source={'vault'}
-                                  setAddresses={setAddresses}
-                                  address={address}
-                                  index={index}
-                                  isImported={isImported || false}
-                                  isLast={index === addresses.length - 1}
-                                  setSection={setSection}
-                                />
-                              )
-                            )}
+                          <div className="items-wrapper">
+                            <div className="items">
+                              {chainAddresses.map(
+                                ({ address, index, isImported, name }, i) => (
+                                  <Address
+                                    key={address}
+                                    accountName={name}
+                                    source={'vault'}
+                                    setAddresses={setAddresses}
+                                    address={address}
+                                    index={index}
+                                    isImported={isImported || false}
+                                    isLast={i === chainAddresses.length - 1}
+                                    setSection={setSection}
+                                  />
+                                )
+                              )}
+                            </div>
                           </div>
                         </AccordionPanel>
                       </AccordionItem>
