@@ -47,7 +47,7 @@ export const AddressWrapper = styled.div`
     height: calc(100% - 5.5rem);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 1.25rem;
+    padding: 1.5rem;
     padding-top: 2.25rem;
 
     &::-webkit-scrollbar {
@@ -67,7 +67,7 @@ export const AddressWrapper = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: center;
-        margin: 0 1rem;
+        margin: 0 0.25rem;
         border: 1px solid var(--border-primary-color);
         border-radius: 1.25rem;
       }

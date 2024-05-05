@@ -76,8 +76,9 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
     }
   }
 
+  transition: background-color 0.1s ease-out;
   &:hover {
-    background-color: var(--background-menu);
+    background-color: var(--background-primary);
     cursor: default;
   }
 
