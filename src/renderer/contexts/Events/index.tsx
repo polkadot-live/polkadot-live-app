@@ -23,10 +23,10 @@ export const EventsContext = createContext<EventsContextInterface>(
 export const useEvents = () => useContext(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
-  // Store the currently imported events
+  /// Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
 
-  // Removes an event item on a specified chain; compares event uid.
+  /// Removes an event item on a specified chain; compares event uid.
   const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
     setEventsState((prev) => {
       const cloned: EventsState = new Map(prev);
@@ -41,7 +41,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Remove any outdated events in the state.
+  /// Remove any outdated events in the state.
   const removeOutdatedEvents = (event: EventCallback) => {
     const { taskAction } = event;
     const { address } = event.who.data as EventAccountData;
@@ -85,7 +85,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Adds an event to the events state.
+  /// Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
     setEventsState((prev) => {
       const cloned = new Map(prev);
@@ -104,7 +104,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Mark an event as stale.
+  /// Mark an event as stale.
   const markStaleEvent = (uid: string, chainId: ChainID) => {
     setEventsState((prev) => {
       const cloned = new Map(prev);
@@ -124,7 +124,61 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Order chain events by category and sorts them via timestamp.
+  /// Sort all events timestamp order.
+  const sortAllEvents = (newestFirst: boolean): EventCallback[] => {
+    const allEvents: EventCallback[] = [];
+
+    // Populare all events array.
+    for (const chainEvents of events.values()) {
+      chainEvents.forEach((e) => allEvents.push({ ...e }));
+    }
+
+    // Sort the events based on `newestFirst` argument.
+    return newestFirst
+      ? allEvents.sort((x, y) => y.timestamp - x.timestamp)
+      : allEvents.sort((x, y) => x.timestamp - y.timestamp);
+  };
+
+  /// Sort all events into categories in timestamp order.
+  const sortAllGroupedEvents = (newestFirst: boolean): SortedChainEvents => {
+    const sortedMap = new Map<string, EventCallback[]>();
+
+    // Get all categories and sort alphabetically.
+    const categories = new Set<string>();
+    for (const chainEvents of events.values()) {
+      chainEvents.forEach((e) => categories.add(e.category));
+    }
+
+    // Initialize sorted map with ordered categories.
+    Array.from(categories)
+      .sort((x, y) => x.localeCompare(y))
+      .forEach((c) => sortedMap.set(c, []));
+
+    // Categorize events.
+    for (const chainEvents of events.values()) {
+      for (const event of chainEvents) {
+        const { category } = event;
+
+        sortedMap.has(category)
+          ? sortedMap.set(category, [...sortedMap.get(category)!, event])
+          : sortedMap.set(category, [event]);
+      }
+    }
+
+    // Sort events by timestamp descending or ascending in each category.
+    for (const [category, categoryEvents] of sortedMap.entries()) {
+      sortedMap.set(
+        category,
+        categoryEvents.sort((x, y) =>
+          newestFirst ? y.timestamp - x.timestamp : x.timestamp - y.timestamp
+        )
+      );
+    }
+
+    return sortedMap;
+  };
+
+  /// Order chain events by category and sort them via timestamp.
   const sortChainEvents = (chain: ChainID): SortedChainEvents => {
     if (!events.has(chain)) {
       return new Map();
@@ -158,7 +212,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     return sortedMap;
   };
 
-  // Update events with a new cached account name.
+  /// Update events with a new cached account name.
   const updateEventsOnAccountRename = (
     updated: EventCallback[],
     chainId: ChainID
@@ -185,6 +239,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         events,
         addEvent,
         dismissEvent,
+        sortAllEvents,
+        sortAllGroupedEvents,
         sortChainEvents,
         updateEventsOnAccountRename,
         markStaleEvent,

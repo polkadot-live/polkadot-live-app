@@ -54,6 +54,7 @@ export const HeadingWrapper = styled.div`
   opacity: 0.75;
   user-select: none;
   cursor: pointer;
+  //margin-bottom: -0.5rem;
 
   .flex {
     display: flex;
@@ -103,6 +104,13 @@ export const AccountsWrapper = styled.div`
   margin-top: 1.25rem;
   margin-bottom: 2rem;
   padding: 0 0.5rem;
+
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    margin: 0.5rem 0;
+  }
 `;
 
 export const AccountWrapper = styled(motion.div)`
@@ -112,7 +120,6 @@ export const AccountWrapper = styled(motion.div)`
   position: relative;
   border-radius: 1.25rem;
   padding: 0.6rem 1.25rem;
-  margin: 1rem 0;
 
   /* Native icon */
   .native-wrapper {

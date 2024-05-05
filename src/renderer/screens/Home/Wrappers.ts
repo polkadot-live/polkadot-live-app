@@ -117,16 +117,20 @@ export const NoAccountsWrapper = styled.div`
 
 export const HeadingWrapper = styled.div`
   width: 100%;
-  margin-top: 0rem;
   margin-bottom: 1rem;
   opacity: 0.75;
   user-select: none;
+  cursor: pointer;
 
   .flex {
     padding: 0.25rem 0;
     transition: background-color 0.15s ease-in-out;
     border-bottom: 1px solid var(--border-secondary-color);
+    transition: background-color 0.15s ease-in-out;
 
+    &:hover {
+      background-color: #141414;
+    }
     > div {
       display: flex;
       flex-direction: row;
