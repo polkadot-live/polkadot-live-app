@@ -27,7 +27,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { HeadingWrapper } from '../../Home/Manage/Wrappers';
+import { HeadingWrapper } from '../Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
