@@ -43,6 +43,11 @@ export const Accounts = ({
   const getSortedAddresses = () => {
     const sorted = new Map<ChainID, FlattenedAccountData[]>();
 
+    // Insert map keys in a certain order.
+    for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
+      sorted.set(chainId, []);
+    }
+
     // Map addresses to their chain ID.
     for (const address of addresses) {
       const chainId = address.chain;
