@@ -63,10 +63,10 @@ export const AddressWrapper = styled.div`
     .items {
       display: flex;
       flex-direction: column;
-      width: 100%;
+      justify-content: center;
+      margin: 1rem;
       border: 1px solid var(--border-primary-color);
       border-radius: 1.25rem;
-      justify-content: center;
     }
     .edit {
       margin-left: 0.75rem;

@@ -15,6 +15,16 @@ import { HeaderWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import type { ImportLedgerManageProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
+import { useState } from 'react';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
+import { HeadingWrapper } from '../../Home/Manage/Wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   addresses,
@@ -25,74 +35,133 @@ export const Manage = ({
   cancelImport,
   setSection,
   section,
-}: ImportLedgerManageProps) => (
-  <>
-    {/* Header */}
-    <HeaderWrapper>
-      <div className="content">
-        <DragClose windowName="import" />
-        <h4>
-          <AppSVG />
-          Ledger Accounts
-        </h4>
-      </div>
-    </HeaderWrapper>
+}: ImportLedgerManageProps) => {
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(
+    Array.from(
+      {
+        length:
+          Array.from(getSortedLocalLedgerAddresses(addresses).keys()).length +
+          1,
+      },
+      (_, index) => index
+    )
+  );
 
-    <DragClose windowName="import" />
-    <BodyInterfaceWrapper $maxHeight>
-      {addresses.length ? (
-        <AddressWrapper>
-          <div className="items-wrapper">
-            <div className="more">
-              <ButtonText
-                iconLeft={faArrowDown}
-                text={
-                  isImporting
-                    ? ' Getting Account'
-                    : 'Get Another Account (Coming Soon)'
-                }
-                disabled={isImporting || true}
-                onClick={() => toggleImport(true)}
-              />
+  return (
+    <>
+      {/* Header */}
+      <HeaderWrapper>
+        <div className="content">
+          <DragClose windowName="import" />
+          <h4>
+            <AppSVG />
+            Ledger Accounts
+          </h4>
+        </div>
+      </HeaderWrapper>
+
+      <DragClose windowName="import" />
+      <BodyInterfaceWrapper $maxHeight>
+        {addresses.length ? (
+          <AddressWrapper>
+            <div className="items-wrapper">
+              <div className="more">
+                <ButtonText
+                  iconLeft={faArrowDown}
+                  text={
+                    isImporting
+                      ? ' Getting Account'
+                      : 'Get Another Account (Coming Soon)'
+                  }
+                  disabled={isImporting || true}
+                  onClick={() => toggleImport(true)}
+                />
+              </div>
+
+              <Accordion
+                multiple
+                defaultIndex={accordionActiveIndices}
+                setExternalIndices={setAccordionActiveIndices}
+              >
+                {Array.from(
+                  getSortedLocalLedgerAddresses(addresses).entries()
+                ).map(([chainId, chainAddresses]) => (
+                  <div key={`${chainId}_ledger_addresses`}>
+                    <AccordionItem>
+                      <HeadingWrapper>
+                        <AccordionHeader>
+                          <div className="flex">
+                            <div className="left">
+                              <div className="icon-wrapper">
+                                {accordionActiveIndices.includes(0) ? (
+                                  <FontAwesomeIcon
+                                    icon={faCaretDown}
+                                    transform={'shrink-1'}
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faCaretRight}
+                                    transform={'shrink-1'}
+                                  />
+                                )}
+                              </div>
+                              <h5>{chainId} Accounts</h5>
+                            </div>
+                          </div>
+                        </AccordionHeader>
+                      </HeadingWrapper>
+                      <AccordionPanel>
+                        <div className="items">
+                          {chainAddresses.map(
+                            ({
+                              address,
+                              index,
+                              isImported,
+                              name,
+                            }: LedgerLocalAddress) => (
+                              <Address
+                                key={address}
+                                address={address}
+                                source={'ledger'}
+                                accountName={name}
+                                setAddresses={setAddresses}
+                                index={index}
+                                isImported={isImported}
+                                isLast={index === addresses.length - 1}
+                                setSection={setSection}
+                              />
+                            )
+                          )}
+                        </div>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </div>
+                ))}
+              </Accordion>
             </div>
+          </AddressWrapper>
+        ) : null}
 
-            <div className="items">
-              {getSortedLocalLedgerAddresses(addresses).map(
-                ({ address, index, isImported, name }: LedgerLocalAddress) => (
-                  <Address
-                    key={address}
-                    address={address}
-                    source={'ledger'}
-                    accountName={name}
-                    setAddresses={setAddresses}
-                    index={index}
-                    isImported={isImported}
-                    isLast={index === addresses.length - 1}
-                    setSection={setSection}
-                  />
-                )
-              )}
-            </div>
-          </div>
-        </AddressWrapper>
-      ) : null}
-
-      <HardwareStatusBar
-        show={section === 1}
-        Icon={LedgerLogoSVG}
-        text={
-          !isImporting
-            ? `Displaying ${addresses.length} Ledger Account${
-                addresses.length === 1 ? '' : 's'
-              }`
-            : !statusCodes.length
-              ? 'Connecting...'
-              : determineStatusFromCodes(statusCodes, true).title
-        }
-        inProgress={false}
-        handleCancel={() => cancelImport()}
-        handleDone={() => setSection(0)}
-      />
-    </BodyInterfaceWrapper>
-  </>
-);
+        <HardwareStatusBar
+          show={section === 1}
+          Icon={LedgerLogoSVG}
+          text={
+            !isImporting
+              ? `Displaying ${addresses.length} Ledger Account${
+                  addresses.length === 1 ? '' : 's'
+                }`
+              : !statusCodes.length
+                ? 'Connecting...'
+                : determineStatusFromCodes(statusCodes, true).title
+          }
+          inProgress={false}
+          handleCancel={() => cancelImport()}
+          handleDone={() => setSection(0)}
+        />
+      </BodyInterfaceWrapper>
+    </>
+  );
+};
