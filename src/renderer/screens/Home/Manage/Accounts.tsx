@@ -39,10 +39,41 @@ export const Accounts = ({
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
 
+  // Categorise addresses by their chain ID, sort by name.
+  const getSortedAddresses = () => {
+    const sorted = new Map<ChainID, FlattenedAccountData[]>();
+
+    // Map addresses to their chain ID.
+    for (const address of addresses) {
+      const chainId = address.chain;
+
+      if (sorted.has(chainId)) {
+        sorted.set(chainId, [...sorted.get(chainId)!, { ...address }]);
+      } else {
+        sorted.set(chainId, [{ ...address }]);
+      }
+    }
+
+    // Sort addresses by their name.
+    for (const [chainId, chainAddresses] of sorted.entries()) {
+      sorted.set(
+        chainId,
+        chainAddresses.sort((x, y) => x.name.localeCompare(y.name))
+      );
+    }
+
+    return sorted;
+  };
+
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
-  >([0, 1]);
+  >(
+    Array.from(
+      { length: Array.from(getSortedAddresses().keys()).length + 1 },
+      (_, index) => index
+    )
+  );
 
   // Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
@@ -89,73 +120,80 @@ export const Accounts = ({
         setExternalIndices={setAccordionActiveIndices}
       >
         {/* Manage Accounts */}
-        <AccordionItem>
-          <HeadingWrapper>
-            <AccordionHeader>
-              <div className="flex">
-                <div className="left">
-                  <div className="icon-wrapper">
-                    {accordionActiveIndices.includes(0) ? (
-                      <FontAwesomeIcon
-                        icon={faCaretDown}
-                        transform={'shrink-1'}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faCaretRight}
-                        transform={'shrink-1'}
-                      />
-                    )}
+        {Array.from(getSortedAddresses().entries()).map(
+          ([chainId, chainAddresses]) => (
+            <AccordionItem key={`${chainId}_accounts`}>
+              <HeadingWrapper>
+                <AccordionHeader>
+                  <div className="flex">
+                    <div className="left">
+                      <div className="icon-wrapper">
+                        {accordionActiveIndices.includes(0) ? (
+                          <FontAwesomeIcon
+                            icon={faCaretDown}
+                            transform={'shrink-1'}
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faCaretRight}
+                            transform={'shrink-1'}
+                          />
+                        )}
+                      </div>
+                      <h5>{chainId} Accounts</h5>
+                    </div>
                   </div>
-                  <h5>Accounts</h5>
-                </div>
-              </div>
-            </AccordionHeader>
-          </HeadingWrapper>
-          <AccordionPanel>
-            <div style={{ padding: '0 0.75rem' }}>
-              {addresses.length ? (
-                <div className="flex-column">
-                  {addresses.map(
-                    ({ address, name }: FlattenedAccountData, i: number) => (
-                      <AccountWrapper
-                        whileHover={{ scale: 1.01 }}
-                        key={`manage_account_${i}`}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleClickAccount(name, address)}
-                        ></button>
-                        <div className="inner">
-                          <div>
-                            <span className="icon">
-                              <Identicon value={address} size={26} />
-                            </span>
-                            <div className="content">
-                              <h3>{name}</h3>
+                </AccordionHeader>
+              </HeadingWrapper>
+              <AccordionPanel>
+                <div style={{ padding: '0 0.75rem' }}>
+                  {addresses.length ? (
+                    <div className="flex-column">
+                      {chainAddresses.map(
+                        (
+                          { address, name }: FlattenedAccountData,
+                          i: number
+                        ) => (
+                          <AccountWrapper
+                            whileHover={{ scale: 1.01 }}
+                            key={`manage_account_${i}`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleClickAccount(name, address)}
+                            ></button>
+                            <div className="inner">
+                              <div>
+                                <span className="icon">
+                                  <Identicon value={address} size={26} />
+                                </span>
+                                <div className="content">
+                                  <h3>{name}</h3>
+                                </div>
+                              </div>
+                              <div>
+                                <ButtonText
+                                  text=""
+                                  iconRight={faChevronRight}
+                                  iconTransform="shrink-3"
+                                />
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <ButtonText
-                              text=""
-                              iconRight={faChevronRight}
-                              iconTransform="shrink-3"
-                            />
-                          </div>
-                        </div>
-                      </AccountWrapper>
-                    )
+                          </AccountWrapper>
+                        )
+                      )}
+                    </div>
+                  ) : (
+                    <NoAccounts />
                   )}
                 </div>
-              ) : (
-                <NoAccounts />
-              )}
-            </div>
-          </AccordionPanel>
-        </AccordionItem>
+              </AccordionPanel>
+            </AccordionItem>
+          )
+        )}
 
         {/* Manage Chains */}
-        <AccordionItem key={1}>
+        <AccordionItem key={'chain_accounts'}>
           <HeadingWrapper>
             <AccordionHeader>
               <div className="flex">
