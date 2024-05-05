@@ -126,14 +126,14 @@ export const Accounts = ({
       >
         {/* Manage Accounts */}
         {Array.from(getSortedAddresses().entries()).map(
-          ([chainId, chainAddresses]) => (
+          ([chainId, chainAddresses], i) => (
             <AccordionItem key={`${chainId}_accounts`}>
               <HeadingWrapper>
                 <AccordionHeader>
                   <div className="flex">
                     <div className="left">
                       <div className="icon-wrapper">
-                        {accordionActiveIndices.includes(0) ? (
+                        {accordionActiveIndices.includes(i) ? (
                           <FontAwesomeIcon
                             icon={faCaretDown}
                             transform={'shrink-1'}
@@ -157,11 +157,11 @@ export const Accounts = ({
                       {chainAddresses.map(
                         (
                           { address, name }: FlattenedAccountData,
-                          i: number
+                          j: number
                         ) => (
                           <AccountWrapper
                             whileHover={{ scale: 1.01 }}
-                            key={`manage_account_${i}`}
+                            key={`manage_account_${j}`}
                           >
                             <button
                               type="button"
@@ -204,7 +204,7 @@ export const Accounts = ({
               <div className="flex">
                 <div className="left">
                   <div className="icon-wrapper">
-                    {accordionActiveIndices.includes(1) ? (
+                    {accordionActiveIndices.includes(3) ? (
                       <FontAwesomeIcon
                         icon={faCaretDown}
                         transform={'shrink-1'}
