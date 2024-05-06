@@ -133,6 +133,10 @@ export const Wrapper = styled.div<{
     column-gap: 1rem;
     padding-left: 1rem;
 
+    .account-action-btn {
+      min-width: 60px;
+    }
+
     button {
       flex-basis: 50%;
       flex-grow: 1;

@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  faCheck,
-  faMinus,
-  faPlus,
-  faTimes,
-  faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+  faDownFromDottedLine,
+  faEraser,
+  faTrash,
+} from '@fortawesome/pro-light-svg-icons';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
@@ -181,30 +180,44 @@ export const HardwareAddress = ({
       </div>
       <div className="action">
         {isImported && !isProcessing ? (
-          <ButtonMonoInvert
-            iconLeft={faMinus}
-            text={'Remove'}
-            onClick={() => openRemoveHandler()}
-          />
+          <div
+            style={{ position: 'relative' }}
+            className="tooltip-trigger-element"
+            data-tooltip-text={'Remove'}
+            onMouseMove={() => setTooltipTextAndOpen('Remove')}
+          >
+            <ButtonMonoInvert
+              className="account-action-btn"
+              iconLeft={faEraser}
+              text={''}
+              onClick={() => openRemoveHandler()}
+            />
+          </div>
         ) : (
           <div
             style={{ position: 'relative' }}
             className="tooltip-trigger-element"
-            data-tooltip-text={'Offline Mode'}
-            onMouseMove={() => {
-              !isConnected && setTooltipTextAndOpen('Offline Mode');
-            }}
+            data-tooltip-text={isConnected ? 'Import' : 'Offline Mode'}
+            onMouseMove={() =>
+              isConnected
+                ? setTooltipTextAndOpen('Import')
+                : setTooltipTextAndOpen('Offline Mode')
+            }
           >
             <ButtonMonoInvert
               disabled={!isConnected}
-              iconLeft={faPlus}
-              text={'Import'}
+              iconLeft={faDownFromDottedLine}
+              text={''}
               onClick={() => openConfirmHandler()}
-              className={isProcessing ? 'processing' : ''}
+              className={
+                isProcessing
+                  ? 'account-action-btn processing'
+                  : 'account-action-btn'
+              }
             />
             {isProcessing && (
               <div
-                style={{ position: 'absolute', left: '15px', top: '10px' }}
+                style={{ position: 'absolute', left: '3px', top: '8px' }}
                 className="lds-ellipsis"
               >
                 <div></div>
@@ -215,11 +228,18 @@ export const HardwareAddress = ({
             )}
           </div>
         )}
-        <ButtonMonoInvert
-          iconLeft={faTimes}
-          text={'Delete'}
-          onClick={() => openDeleteHandler()}
-        />
+        <div
+          className="tooltip-trigger-element"
+          data-tooltip-text={'Delete'}
+          onMouseMove={() => setTooltipTextAndOpen('Delete')}
+        >
+          <ButtonMonoInvert
+            className="account-action-btn"
+            iconLeft={faTrash}
+            text={''}
+            onClick={() => openDeleteHandler()}
+          />
+        </div>
       </div>
     </>
   );
