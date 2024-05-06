@@ -12,7 +12,10 @@ export interface AddressProps {
   isImported: boolean;
   setAddresses: AnyFunction;
   setSection: AnyFunction;
-  isLast: boolean;
+  orderData: {
+    curIndex: number;
+    lastIndex: number;
+  };
 }
 
 export interface ConfirmProps {

@@ -27,7 +27,7 @@ export const HardwareAddress = ({
   address,
   index,
   isImported,
-  isLast,
+  orderData,
   isProcessing,
   accountName,
   renameHandler,
@@ -225,9 +225,5 @@ export const HardwareAddress = ({
   );
 
   // Don't render bottom border on the address if it's the last one.
-  if (isLast) {
-    return <Wrapper $noBorder>{renderContent()}</Wrapper>;
-  } else {
-    return <Wrapper>{renderContent()}</Wrapper>;
-  }
+  return <Wrapper $orderData={orderData}>{renderContent()}</Wrapper>;
 };

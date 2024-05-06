@@ -134,7 +134,10 @@ export const Manage = ({
                                   setAddresses={setAddresses}
                                   index={index}
                                   isImported={isImported}
-                                  isLast={i === chainAddresses.length - 1}
+                                  orderData={{
+                                    curIndex: i,
+                                    lastIndex: chainAddresses.length - 1,
+                                  }}
                                   setSection={setSection}
                                 />
                               )

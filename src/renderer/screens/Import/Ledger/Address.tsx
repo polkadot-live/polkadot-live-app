@@ -21,7 +21,7 @@ export const Address = ({
   setAddresses,
   index,
   isImported,
-  isLast,
+  orderData,
   setSection,
 }: LedgerAddressProps) => {
   // State for account name.
@@ -48,7 +48,7 @@ export const Address = ({
       accountName={accountNameState}
       renameHandler={renameHandler}
       isImported={isImported}
-      isLast={isLast}
+      orderData={orderData}
       isProcessing={getStatusForAccount(address, source) || false}
       openRemoveHandler={() =>
         openOverlayWith(
