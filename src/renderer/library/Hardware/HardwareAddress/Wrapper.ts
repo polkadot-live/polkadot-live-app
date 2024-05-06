@@ -204,6 +204,10 @@ export const Wrapper = styled.div<{
             display: flex;
             flex: 1;
 
+            .fade {
+              opacity: 0.5;
+            }
+
             .chain-icon {
               position: absolute;
               top: 5px;
@@ -211,6 +215,7 @@ export const Wrapper = styled.div<{
               width: 1.5rem;
               height: 1.5rem;
               margin-top: 4px;
+              transition: opacity 0.1s ease-out;
 
               ellipse {
                 fill: #953254;

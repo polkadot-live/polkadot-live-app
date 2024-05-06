@@ -117,7 +117,7 @@ export const HardwareAddress = ({
   const renderChainIcon = () => {
     const chainId = getAddressChainId(address);
     const ChainIcon = chainIcon(chainId);
-    return <ChainIcon className="chain-icon" />;
+    return <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />;
   };
 
   // Function to render wrapper JSX.
