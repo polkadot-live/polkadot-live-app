@@ -10,8 +10,8 @@ export type HardwareAddressProps = ComponentBase & {
   index: number;
   // Whether this address is imported in main window.
   isImported: boolean;
-  // Whether the address is the last in the list (used for styling).
-  isLast: boolean;
+  // Index data for the current address.
+  orderData: { curIndex: number; lastIndex: number };
   // The account's processing flag.
   isProcessing: boolean;
   // current name of the account.

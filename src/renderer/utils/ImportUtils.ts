@@ -9,6 +9,7 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
+import type { ChainID } from '@/types/chains';
 
 /**
  * @name renameLocalAccount
@@ -118,14 +119,17 @@ export const getLocalAccountName = (
  * @summary Function to get addresses categorized by chain ID and sorted by name.
  */
 export const getSortedLocalAddresses = (addresses: LocalAddress[]) => {
-  let sorted: LocalAddress[] = [];
+  const sorted = new Map<ChainID, LocalAddress[]>();
 
-  for (const chainId of ['Polkadot', 'Kusama', 'Westend']) {
-    sorted = sorted.concat(
-      addresses
-        .filter((a) => getAddressChainId(a.address) === chainId)
-        .sort((a, b) => a.name.localeCompare(b.name))
-    );
+  // Insert keys in a preferred order.
+  for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
+    const filtered = addresses
+      .filter((a) => getAddressChainId(a.address) === chainId)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (filtered.length !== 0) {
+      sorted.set(chainId, filtered);
+    }
   }
 
   return sorted;
@@ -138,14 +142,17 @@ export const getSortedLocalAddresses = (addresses: LocalAddress[]) => {
 export const getSortedLocalLedgerAddresses = (
   addresses: LedgerLocalAddress[]
 ) => {
-  let sorted: LedgerLocalAddress[] = [];
+  const sorted = new Map<ChainID, LedgerLocalAddress[]>();
 
-  for (const chainId of ['Polkadot', 'Kusama', 'Westend']) {
-    sorted = sorted.concat(
-      addresses
-        .filter((a) => getAddressChainId(a.address) === chainId)
-        .sort((a, b) => a.name.localeCompare(b.name))
-    );
+  // Insert keys in preferred order.
+  for (const chainId of ['Polkadot', 'Kusama'] as ChainID[]) {
+    const filtered = addresses
+      .filter((a) => getAddressChainId(a.address) === chainId)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (filtered.length !== 0) {
+      sorted.set(chainId, filtered);
+    }
   }
 
   return sorted;

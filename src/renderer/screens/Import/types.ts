@@ -56,7 +56,10 @@ export interface LedgerAddressProps {
   source: AccountSource;
   index: number;
   isImported: boolean;
-  isLast: boolean;
+  orderData: {
+    curIndex: number;
+    lastIndex: number;
+  };
   setAddresses: AnyFunction;
   setSection: AnyFunction;
 }

@@ -21,6 +21,15 @@ import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
+import { HeadingWrapper } from '../Wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   setSection,
@@ -31,6 +40,18 @@ export const Manage = ({
   const [editName, setEditName] = useState<string>('');
   const { insertAccountStatus } = useAccountStatuses();
 
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(
+    Array.from(
+      {
+        length:
+          Array.from(getSortedLocalAddresses(addresses).keys()).length + 1,
+      },
+      (_, index) => index
+    )
+  );
   // Cancel button clicked for address field.
   const onCancel = () => {
     setEditName('');
@@ -203,30 +224,81 @@ export const Manage = ({
         </Wrapper>
 
         <AddressWrapper>
-          <div className="items-wrapper">
-            <div className="items">
-              {addresses.length ? (
-                <>
-                  {getSortedLocalAddresses(addresses).map(
-                    ({ address, index, isImported, name }: LocalAddress) => (
-                      <Address
-                        key={address}
-                        accountName={name}
-                        source={'read-only'}
-                        setAddresses={setAddresses}
-                        address={address}
-                        index={index}
-                        isImported={isImported || false}
-                        isLast={index === addresses.length - 1}
-                        setSection={setSection}
-                      />
-                    )
-                  )}
-                </>
-              ) : (
-                <p>No read only addresses imported.</p>
+          <div className="outer-wrapper" style={{ paddingTop: '1rem' }}>
+            <Accordion
+              multiple
+              defaultIndex={accordionActiveIndices}
+              setExternalIndices={setAccordionActiveIndices}
+            >
+              {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                ([chainId, chainAddresses]) => (
+                  <div key={`${chainId}_read_only_addresses`}>
+                    <AccordionItem>
+                      <HeadingWrapper>
+                        <AccordionHeader>
+                          <div className="flex">
+                            <div className="left">
+                              <div className="icon-wrapper">
+                                {accordionActiveIndices.includes(0) ? (
+                                  <FontAwesomeIcon
+                                    icon={faCaretDown}
+                                    transform={'shrink-1'}
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faCaretRight}
+                                    transform={'shrink-1'}
+                                  />
+                                )}
+                              </div>
+                              <h5>{chainId} Accounts</h5>
+                            </div>
+                          </div>
+                        </AccordionHeader>
+                      </HeadingWrapper>
+                      <AccordionPanel>
+                        <div className="items-wrapper">
+                          <div className="items">
+                            {addresses.length ? (
+                              <>
+                                {chainAddresses.map(
+                                  (
+                                    {
+                                      address,
+                                      index,
+                                      isImported,
+                                      name,
+                                    }: LocalAddress,
+                                    i
+                                  ) => (
+                                    <Address
+                                      key={address}
+                                      accountName={name}
+                                      source={'read-only'}
+                                      setAddresses={setAddresses}
+                                      address={address}
+                                      index={index}
+                                      isImported={isImported || false}
+                                      orderData={{
+                                        curIndex: i,
+                                        lastIndex: chainAddresses.length - 1,
+                                      }}
+                                      setSection={setSection}
+                                    />
+                                  )
+                                )}
+                              </>
+                            ) : (
+                              <p>No read only addresses imported.</p>
+                            )}
+                          </div>
+                        </div>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </div>
+                )
               )}
-            </div>
+            </Accordion>
           </div>
         </AddressWrapper>
 

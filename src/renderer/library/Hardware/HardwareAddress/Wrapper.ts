@@ -3,11 +3,17 @@
 
 import styled from 'styled-components';
 
-export const Wrapper = styled.div<{ $noBorder?: boolean }>`
+export const Wrapper = styled.div<{
+  $orderData?: { curIndex: number; lastIndex: number };
+}>`
+  // No border bottom if last item in list.
   border-bottom: ${(props) =>
-    String(props.$noBorder) === 'true'
+    !props.$orderData
       ? 'none'
-      : '1px solid var(--border-primary-color)'};
+      : props.$orderData.curIndex === props.$orderData.lastIndex
+        ? 'none'
+        : '1px solid var(--border-primary-color)'};
+
   display: flex;
   align-items: center;
   padding: 1rem;
@@ -76,8 +82,38 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
     }
   }
 
+  transition: background-color 0.1s ease-out;
   &:hover {
-    background-color: var(--background-menu);
+    // Specify border radius on first and last items in list.
+    border-top-right-radius: ${(props) =>
+      props.$orderData
+        ? props.$orderData.curIndex === 0
+          ? '1.25rem'
+          : '0'
+        : '0'};
+
+    border-top-left-radius: ${(props) =>
+      props.$orderData
+        ? props.$orderData.curIndex === 0
+          ? '1.25rem'
+          : '0'
+        : '0'};
+
+    border-bottom-left-radius: ${(props) =>
+      props.$orderData
+        ? props.$orderData.curIndex === props.$orderData.lastIndex
+          ? '1.25rem'
+          : '0'
+        : '0'};
+
+    border-bottom-right-radius: ${(props) =>
+      props.$orderData
+        ? props.$orderData.curIndex === props.$orderData.lastIndex
+          ? '1.25rem'
+          : '0'
+        : '0'};
+
+    background-color: var(--background-primary);
     cursor: default;
   }
 
@@ -96,6 +132,10 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
     flex-direction: row;
     column-gap: 1rem;
     padding-left: 1rem;
+
+    .account-action-btn {
+      min-width: 60px;
+    }
 
     button {
       flex-basis: 50%;
@@ -168,6 +208,10 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
             display: flex;
             flex: 1;
 
+            .fade {
+              opacity: 0.5;
+            }
+
             .chain-icon {
               position: absolute;
               top: 5px;
@@ -175,6 +219,7 @@ export const Wrapper = styled.div<{ $noBorder?: boolean }>`
               width: 1.5rem;
               height: 1.5rem;
               margin-top: 4px;
+              transition: opacity 0.1s ease-out;
 
               ellipse {
                 fill: #953254;

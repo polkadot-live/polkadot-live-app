@@ -22,7 +22,7 @@ export const Address = ({
   setAddresses,
   isImported,
   setSection,
-  isLast,
+  orderData,
 }: AddressProps) => {
   // State for account name.
   const [accountNameState, setAccountNameState] = useState<string>(accountName);
@@ -45,7 +45,7 @@ export const Address = ({
       key={index}
       address={address}
       isImported={isImported}
-      isLast={isLast}
+      orderData={orderData}
       isProcessing={getStatusForAccount(address, source) || false}
       index={index}
       accountName={accountNameState}
