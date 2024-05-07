@@ -39,6 +39,10 @@ export const API: PreloadAPI = {
    * New handlers
    */
 
+  getDockedFlag: async () => await ipcRenderer.invoke('app:docked:get'),
+
+  setDockedFlag: (flag: boolean) => ipcRenderer.send('app:docked:set', flag),
+
   initializeApp: (callback) =>
     ipcRenderer.on('renderer:app:initialize', callback),
 

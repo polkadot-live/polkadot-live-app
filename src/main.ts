@@ -117,8 +117,8 @@ app.whenReady().then(async () => {
   // ------------------------------
 
   // Create menu bar and tray.
-  WindowUtils.createMainWindow(isTest);
   WindowUtils.createTray();
+  WindowUtils.createMainWindow(isTest);
 
   // Handle Ledger account import.
   WindowUtils.handleWindowOnIPC('import', isTest);
@@ -340,6 +340,14 @@ app.whenReady().then(async () => {
   // Closes a window by its key.
   ipcMain.on('app:window:close', (_, id) => {
     WindowsController.close(id);
+  });
+
+  // Get applicated docked flag.
+  ipcMain.handle('app:docked:get', async () => ConfigMain.appDocked);
+
+  // Set application docked flag.
+  ipcMain.on('app:docked:set', (_, flag) => {
+    WindowUtils.handleNewDockFlag(flag);
   });
 
   /**

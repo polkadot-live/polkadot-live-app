@@ -3,11 +3,20 @@
 
 import { MessageChannelMain } from 'electron';
 import type { PortPair, PortPairID } from '@/types/communication';
+import type { Rectangle, Tray } from 'electron';
 
 export class Config {
+  // Main window's docked width and height.
+  private static _appDocked = true;
+  private static _dockedWidth = 420;
+  private static _dockedHeight = 575;
+
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;
   private static _main_action_ports: PortPair;
+
+  // Cache Electron objects.
+  private static _appTray: Tray | null = null;
 
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
 
@@ -71,5 +80,43 @@ export class Config {
         throw new Error('Port pair id not recognized');
       }
     }
+  }
+
+  // Accessors for app's docked window size.
+  static get appDocked(): boolean {
+    return Config._appDocked;
+  }
+
+  static set appDocked(flag: boolean) {
+    Config._appDocked = flag;
+  }
+
+  static get dockedWidth(): number {
+    return Config._dockedWidth;
+  }
+
+  static set dockedWidth(width: number) {
+    Config._dockedWidth = width;
+  }
+
+  static get dockedHeight(): number {
+    return Config._dockedHeight;
+  }
+
+  static set dockedHeight(height: number) {
+    Config._dockedHeight = height;
+  }
+
+  // Setter for app's tray object.
+  static set appTray(tray: Tray) {
+    Config._appTray = tray;
+  }
+
+  // Get app tray's bounds.
+  static getAppTrayBounds(): Rectangle {
+    if (!Config._appTray) {
+      throw new Error('App tray is null');
+    }
+    return Config._appTray.getBounds();
   }
 }
