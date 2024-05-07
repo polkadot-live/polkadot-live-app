@@ -347,7 +347,7 @@ app.whenReady().then(async () => {
 
   // Set application docked flag.
   ipcMain.on('app:docked:set', (_, flag) => {
-    console.log(`new flag: ${flag}`);
+    WindowUtils.handleNewDockFlag(flag);
   });
 
   /**

@@ -329,3 +329,20 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
     mainWindow.setMovable(false);
   }
 };
+/*----------------------------------------------------------------------
+ Handle docking or un-docking the main window.
+ ----------------------------------------------------------------------*/
+export const handleNewDockFlag = (isDocked: boolean) => {
+  const mainWindow = WindowsController.get('menu');
+
+  if (!mainWindow) {
+    throw new Error('Main window not found.');
+  }
+
+  // Update storage.
+  if (isDocked) {
+    setMainWindowPosition(mainWindow);
+  } else {
+    mainWindow.setMovable(true);
+  }
+};

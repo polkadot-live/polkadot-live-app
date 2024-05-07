@@ -15,7 +15,7 @@ export class Config {
   private static _main_import_ports: PortPair;
   private static _main_action_ports: PortPair;
 
-  // Cache the app's tray object.
+  // Cache Electron objects.
   private static _appTray: Tray | null = null;
 
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
