@@ -36,7 +36,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   useEffect(() => {
     const initDockedFlag = async () => {
       const isDocked = await window.myAPI.getDockedFlag();
-      console.log(isDocked);
       setDockToggled(isDocked);
     };
 
