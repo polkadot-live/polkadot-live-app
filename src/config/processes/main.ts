@@ -7,6 +7,7 @@ import type { Rectangle, Tray } from 'electron';
 
 export class Config {
   // Main window's docked width and height.
+  private static _appDocked = true;
   private static _dockedWidth = 420;
   private static _dockedHeight = 575;
 
@@ -82,6 +83,14 @@ export class Config {
   }
 
   // Accessors for app's docked window size.
+  static get appDocked(): boolean {
+    return Config._appDocked;
+  }
+
+  static set appDocked(flag: boolean) {
+    Config._appDocked = flag;
+  }
+
   static get dockedWidth(): number {
     return Config._dockedWidth;
   }

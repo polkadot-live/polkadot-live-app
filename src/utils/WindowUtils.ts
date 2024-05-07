@@ -324,6 +324,8 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
   // Set window position and size:
   mainWindow.setBounds(windowBounds);
 
-  // TODO: Make window moveable or not.
-  //mainWindow.setMovable(false);
+  // Make window un-moveable if docked.
+  if (ConfigMain.appDocked) {
+    mainWindow.setMovable(false);
+  }
 };
