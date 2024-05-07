@@ -178,12 +178,26 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
                           }}
                         />
                       );
+                    } else if (source === 'ledger') {
+                      return (
+                        <div
+                          key={`action_${uid}_${i}`}
+                          className="tooltip tooltip-trigger-element"
+                          data-tooltip-text={'Ledger Signing Unsupported'}
+                          onMouseMove={() =>
+                            setTooltipTextAndOpen(
+                              'Ledger Signing Not Supported'
+                            )
+                          }
+                        >
+                          <ButtonMono disabled={true} text={text || ''} />
+                        </div>
+                      );
                     } else if (source !== 'read-only') {
                       return (
                         <ButtonMono
                           disabled={
                             event.stale ||
-                            source === 'ledger' ||
                             !isOnline ||
                             (isOnline && isConnecting)
                           }
