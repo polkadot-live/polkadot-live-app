@@ -25,13 +25,14 @@ import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('WindowUtils');
 
-/*----------------------------------------------------------------------
- Set up the tray:
- - Load Polkadot Live icon and instantiate an Electron Tray
- - Set tooltip for the tray icon
- - Add `mouse-up` listener in order to toggle the main window
- ----------------------------------------------------------------------*/
-
+/**
+ * @name createTray
+ * @summary Set up the tray:
+ *
+ * - Load Polkadot Live icon and instantiate an Electron Tray
+ * - Set tooltip for the tray icon
+ * - Add `mouse-up` listener in order to toggle the main window
+ */
 export const createTray = () => {
   const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
   const icon = nativeImage.createFromPath(iconPath);
@@ -51,15 +52,17 @@ export const createTray = () => {
   ConfigMain.appTray = tray;
 };
 
-/*----------------------------------------------------------------------
- Set up the main window:
- - Instantiates its browser window
- - Loads the correct URL and HTML file
- - Defines event listeners for the window
- - Adds the browser window to WindowsController
- ----------------------------------------------------------------------*/
-
-// TODO: replace AnyJson with concrete type.
+/**
+ * @name createMainWindow
+ * @summary Set up the main window:
+ *
+ * - Instantiates its browser window
+ * - Loads the correct URL and HTML file
+ * - Defines event listeners for the window
+ * - Adds the browser window to WindowsController
+ *
+ * TODO: replace AnyJson with concrete type.
+ */
 export const createMainWindow = (isTest: boolean) => {
   const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
     'menu_bounds'
@@ -152,15 +155,17 @@ export const createMainWindow = (isTest: boolean) => {
   }
 };
 
-/*----------------------------------------------------------------------
- Prepares a window to be setup when main receives a given IPC message
- - Instantiates or loads an existing browser window
- - Loads the correct URL and HTML file
- - Defines event listeners for the window
- - Adds the browser window to WindowsController
- ----------------------------------------------------------------------*/
-
-// TODO: replace AnyJson with currently used options.
+/**
+ * @name handleWindowOnIPC
+ * @summary Prepares a window to be setup when main receives a given IPC message
+ *
+ * - Instantiates or loads an existing browser window
+ * - Loads the correct URL and HTML file
+ * - Defines event listeners for the window
+ * - Adds the browser window to WindowsController
+ *
+ * TODO: replace AnyJson with currently used options.
+ */
 export const handleWindowOnIPC = (
   name: string,
   isTest: boolean,
@@ -263,10 +268,10 @@ export const handleWindowOnIPC = (
   });
 };
 
-/*----------------------------------------------------------------------
- Contructs a window's route and loads its HTML file.
- ----------------------------------------------------------------------*/
-
+/**
+ * @name loadUrlWithRoute
+ * @summary Contructs a window's route and loads its HTML file.
+ */
 const loadUrlWithRoute = (
   window: BrowserWindow,
   options: { uri?: string; args?: Record<string, string> }
@@ -292,10 +297,10 @@ const loadUrlWithRoute = (
   }
 };
 
-/*----------------------------------------------------------------------
- Calculate main window bounds (screen position and dimensions).
- ----------------------------------------------------------------------*/
-
+/**
+ * @name setMainWindowPosition
+ * @summary Calculate main window bounds (screen position and dimensions).
+ */
 const setMainWindowPosition = (mainWindow: BrowserWindow) => {
   // Get docked flag from state or set to `true`.
   const isDocked: boolean = (store as Record<string, AnyJson>).get(
@@ -340,9 +345,10 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
   mainWindow.setMovable(false);
 };
 
-/*----------------------------------------------------------------------
- Handle docking or un-docking the main window.
- ----------------------------------------------------------------------*/
+/**
+ * @name handleNewDockFlag
+ * @summary Handle docking or un-docking the main window.
+ */
 export const handleNewDockFlag = (isDocked: boolean) => {
   const mainWindow = WindowsController.get('menu');
 
