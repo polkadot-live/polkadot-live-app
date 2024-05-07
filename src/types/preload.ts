@@ -10,6 +10,9 @@ import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
 
 export interface PreloadAPI {
+  getDockedFlag: ApiGetDockedFlag;
+  setDockedFlag: ApiSetDockedFlag;
+
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
   initializeAppOffline: ApiInitializeAppOffline;
@@ -103,6 +106,10 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
+
+type ApiGetDockedFlag = () => Promise<boolean>;
+
+type ApiSetDockedFlag = (flag: boolean) => void;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 

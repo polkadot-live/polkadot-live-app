@@ -36,7 +36,7 @@ export const HeaderWrapper = styled.div`
       padding-top: 0.5rem;
       column-gap: 0.5rem;
 
-      .switch-wrapper {
+      .controls-wrapper {
         display: flex;
         column-gap: 1rem;
         z-index: 5;
@@ -46,17 +46,34 @@ export const HeaderWrapper = styled.div`
         .hide-text {
           color: rgba(0, 0, 0, 0);
         }
-        .abort-x {
-          position: absolute;
-          user-select: none;
-          left: 45px;
-          bottom: 3px;
-          cursor: pointer;
+        .connect-wrapper {
+          position: relative;
 
-          .icon-sm {
-            width: 0.75rem;
-            height: 0.75rem;
-            z-index: 10;
+          .abort-x {
+            position: absolute;
+            user-select: none;
+            left: 45px;
+            bottom: 3px;
+            cursor: pointer;
+
+            .icon-sm {
+              width: 0.75rem;
+              height: 0.75rem;
+              z-index: 10;
+            }
+          }
+        }
+        .dock-btn {
+          border: 1px solid var(--border-mid-color);
+          min-width: 96px;
+          font-size: 0.85rem;
+          max-height: 18px;
+          user-select: none;
+          transition: background-color 0.2s ease-out;
+
+          &:hover {
+            background-color: inherit;
+            border: 1px solid var(--border-secondary-color) !important;
           }
         }
         .connect-btn {

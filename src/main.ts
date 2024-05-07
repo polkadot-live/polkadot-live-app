@@ -342,6 +342,14 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
+  // Get applicated docked flag.
+  ipcMain.handle('app:docked:get', async () => ConfigMain.appDocked);
+
+  // Set application docked flag.
+  ipcMain.on('app:docked:set', (_, flag) => {
+    console.log(`new flag: ${flag}`);
+  });
+
   /**
    * Ledger
    */

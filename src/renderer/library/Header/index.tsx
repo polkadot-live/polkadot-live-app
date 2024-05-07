@@ -9,11 +9,12 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
 import type { HeaderProps } from './types';
+import { faLock, faUnlock } from '@fortawesome/pro-solid-svg-icons';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -26,9 +27,21 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     handleInitializeAppOffline,
     handleInitializeAppOnline,
   } = useBootstrapping();
+
+  const [dockToggled, setDockToggled] = useState<boolean>(true);
   const [silenceToggle, setSilenceToggle] = useState(
     RendererConfig.silenceNotifications
   );
+
+  useEffect(() => {
+    const initDockedFlag = async () => {
+      const isDocked = await window.myAPI.getDockedFlag();
+      console.log(isDocked);
+      setDockToggled(isDocked);
+    };
+
+    initDockedFlag();
+  }, []);
 
   // Determine active window by pathname.
   let activeWindow: string;
@@ -105,31 +118,57 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="grab" />
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
-            <div className="switch-wrapper">
-              <ButtonSecondary
-                className={
-                  (isConnecting && !isAborting) || (appLoading && !isAborting)
-                    ? 'connect-btn do-pulse hide-text'
-                    : isAborting || isConnecting || appLoading
-                      ? 'connect-btn do-pulse'
-                      : 'connect-btn'
-                }
-                text={
-                  isAborting
-                    ? 'Canceling..'
-                    : isConnecting || appLoading
-                      ? 'Abort'
-                      : getConnectionButtonText()
-                }
-                disabled={isAborting}
-                onClick={async () => await handleConnectButtonClick()}
-              />
-              {((isConnecting && !isAborting) ||
-                (appLoading && !isAborting)) && (
-                <div className="abort-x do-pulse">
-                  <FontAwesomeIcon icon={faX} className="icon-sm" />
-                </div>
-              )}
+            <div className="controls-wrapper">
+              {/* Docked button */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '1rem',
+                }}
+              >
+                <ButtonSecondary
+                  className="dock-btn"
+                  text={dockToggled ? 'Detach' : 'Dock'}
+                  iconLeft={dockToggled ? faUnlock : faLock}
+                  iconTransform="shrink-2"
+                  onClick={() => {
+                    const docked = !dockToggled;
+                    setDockToggled(docked);
+                    window.myAPI.setDockedFlag(docked);
+                  }}
+                />
+              </div>
+
+              {/* Connection button */}
+              <div className="connect-wrapper">
+                <ButtonSecondary
+                  className={
+                    (isConnecting && !isAborting) || (appLoading && !isAborting)
+                      ? 'connect-btn do-pulse hide-text'
+                      : isAborting || isConnecting || appLoading
+                        ? 'connect-btn do-pulse'
+                        : 'connect-btn'
+                  }
+                  text={
+                    isAborting
+                      ? 'Canceling..'
+                      : isConnecting || appLoading
+                        ? 'Abort'
+                        : getConnectionButtonText()
+                  }
+                  disabled={isAborting}
+                  onClick={async () => await handleConnectButtonClick()}
+                />
+                {((isConnecting && !isAborting) ||
+                  (appLoading && !isAborting)) && (
+                  <div className="abort-x do-pulse">
+                    <FontAwesomeIcon icon={faX} className="icon-sm" />
+                  </div>
+                )}
+              </div>
+
+              {/* Silence OS notifications switch */}
               <a
                 data-tooltip-id="silence-notifications-tooltip"
                 data-tooltip-content="Silence OS Notifications"
@@ -143,6 +182,8 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                   handleToggle={() => handleSilenceNotifications()}
                 />
               </a>
+
+              {/* Cog menu*/}
               <Menu />
             </div>
           ) : (
