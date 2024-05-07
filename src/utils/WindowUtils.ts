@@ -1,7 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BrowserWindow, Tray, nativeImage, ipcMain, shell } from 'electron';
+import type { Rectangle } from 'electron';
+import {
+  BrowserWindow,
+  Tray,
+  nativeImage,
+  ipcMain,
+  shell,
+  screen,
+} from 'electron';
 import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
@@ -38,6 +46,9 @@ export const createTray = () => {
       console.error(e);
     }
   });
+
+  // Cache tray in main process config.
+  ConfigMain.appTray = tray;
 };
 
 /*----------------------------------------------------------------------
@@ -59,8 +70,8 @@ export const createMainWindow = (isTest: boolean) => {
     frame: false,
     x: initialMenuBounds?.x || undefined,
     y: initialMenuBounds?.y || undefined,
-    width: initialMenuBounds?.height || 420,
-    height: initialMenuBounds?.height || 475,
+    width: initialMenuBounds?.height || ConfigMain.dockedWidth,
+    height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: 420,
     maxWidth: 420,
     minHeight: 475,
@@ -92,6 +103,9 @@ export const createMainWindow = (isTest: boolean) => {
     mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
       ConfigMain.getPortPair('main-action').port1,
     ]);
+
+    // Set window bounds.
+    setMainWindowPosition(mainWindow);
 
     // Send IPC message to renderer for app Initialization.
     WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
@@ -276,4 +290,40 @@ const loadUrlWithRoute = (
       )}`
     );
   }
+};
+
+/*----------------------------------------------------------------------
+ Calculate main window bounds (screen position and dimensions).
+ ----------------------------------------------------------------------*/
+
+const setMainWindowPosition = (mainWindow: BrowserWindow) => {
+  // Get tray bounds.
+  const { x: trayX, width: trayWidth } = ConfigMain.getAppTrayBounds();
+
+  // Get screen width.
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth } = primaryDisplay.workAreaSize;
+
+  // Calculate window's X position.
+  const halfWindowWidth = ConfigMain.dockedWidth / 2;
+  const halfTrayWidth = trayWidth / 2;
+  let windowX = trayX - halfWindowWidth + halfTrayWidth;
+
+  // Dock window to right side of screen if its calculated position goes off the screen.
+  if (windowX + halfWindowWidth > screenWidth) {
+    windowX = screenWidth - halfWindowWidth;
+  }
+
+  const windowBounds: Rectangle = {
+    x: windowX,
+    y: 0,
+    width: ConfigMain.dockedWidth,
+    height: ConfigMain.dockedHeight,
+  };
+
+  // Set window position and size:
+  mainWindow.setBounds(windowBounds);
+
+  // TODO: Make window moveable or not.
+  //mainWindow.setMovable(false);
 };

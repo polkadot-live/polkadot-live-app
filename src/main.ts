@@ -117,8 +117,8 @@ app.whenReady().then(async () => {
   // ------------------------------
 
   // Create menu bar and tray.
-  WindowUtils.createMainWindow(isTest);
   WindowUtils.createTray();
+  WindowUtils.createMainWindow(isTest);
 
   // Handle Ledger account import.
   WindowUtils.handleWindowOnIPC('import', isTest);
