@@ -19,6 +19,7 @@ import { useTooltip } from '@app/contexts/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
+import { faAngleDown } from '@fortawesome/pro-solid-svg-icons';
 
 const FADE_TRANSITION = 200;
 
@@ -99,12 +100,20 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
         >
           <span>{renderTimeAgo(event.timestamp)}</span>
           {/* Dismiss button */}
-          <button
-            type="button"
-            onClick={async () => await handleDismissEvent()}
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+          <div className="dismiss-btn">
+            <FontAwesomeIcon
+              icon={faTimes}
+              onClick={async () => await handleDismissEvent()}
+            />
+          </div>
+
+          {/* Expand actions button */}
+
+          {actions.length > 0 && (
+            <div className="show-actions-btn">
+              <FontAwesomeIcon icon={faAngleDown} transform={'shrink-2'} />
+            </div>
+          )}
 
           {/* Main content */}
           <div>

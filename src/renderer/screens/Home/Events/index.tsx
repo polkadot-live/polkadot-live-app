@@ -75,7 +75,13 @@ export const Events = () => {
       <Wrapper style={{ margin: '1rem 0' }}>
         {events.size === 0 && <NoEvents />}
 
-        <div style={groupingOn ? { display: 'block' } : { display: 'none' }}>
+        <div
+          style={
+            groupingOn
+              ? { display: 'block', width: '100%' }
+              : { display: 'none', width: '100%' }
+          }
+        >
           <Accordion
             multiple
             defaultIndex={accordionActiveIndices}
@@ -94,7 +100,13 @@ export const Events = () => {
             )}
           </Accordion>
         </div>
-        <div style={groupingOn ? { display: 'none' } : { display: 'block' }}>
+        <div
+          style={
+            groupingOn
+              ? { display: 'none', width: '100%' }
+              : { display: 'block', width: '100%' }
+          }
+        >
           <EventGroup>
             <div className="items-wrapper">
               {sortedEvents.map((event) => (
