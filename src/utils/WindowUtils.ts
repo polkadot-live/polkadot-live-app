@@ -297,6 +297,18 @@ const loadUrlWithRoute = (
  ----------------------------------------------------------------------*/
 
 const setMainWindowPosition = (mainWindow: BrowserWindow) => {
+  // Get docked flag from state or set to `true`.
+  const isDocked: boolean = (store as Record<string, AnyJson>).get(
+    'app_docked'
+  );
+
+  // Cache docked flag in config.
+  ConfigMain.appDocked = isDocked ? true : false;
+
+  if (!isDocked) {
+    return;
+  }
+
   // Get tray bounds.
   const { x: trayX, width: trayWidth } = ConfigMain.getAppTrayBounds();
 
@@ -325,10 +337,9 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
   mainWindow.setBounds(windowBounds);
 
   // Make window un-moveable if docked.
-  if (ConfigMain.appDocked) {
-    mainWindow.setMovable(false);
-  }
+  mainWindow.setMovable(false);
 };
+
 /*----------------------------------------------------------------------
  Handle docking or un-docking the main window.
  ----------------------------------------------------------------------*/
@@ -338,6 +349,9 @@ export const handleNewDockFlag = (isDocked: boolean) => {
   if (!mainWindow) {
     throw new Error('Main window not found.');
   }
+
+  // Cache new flag in store.
+  (store as Record<string, AnyJson>).set('app_docked', isDocked);
 
   // Update storage.
   if (isDocked) {
