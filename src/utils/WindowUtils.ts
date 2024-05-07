@@ -343,6 +343,9 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
 
   // Make window un-moveable if docked.
   mainWindow.setMovable(false);
+
+  // Make window not resizable if docked.
+  mainWindow.setResizable(false);
 };
 
 /**
@@ -364,5 +367,6 @@ export const handleNewDockFlag = (isDocked: boolean) => {
     setMainWindowPosition(mainWindow);
   } else {
     mainWindow.setMovable(true);
+    mainWindow.setResizable(true);
   }
 };
