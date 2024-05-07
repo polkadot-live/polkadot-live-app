@@ -126,10 +126,11 @@ export const EventItem = styled(motion.div)`
 
   position: relative;
 
+  // Time ago
   > span:first-child {
     text-align: right;
     position: absolute;
-    top: 1.5rem;
+    top: 1.25rem;
     right: 44px;
     color: #4d4c4c;
     transition: color ease-out 0.1s;
@@ -139,6 +140,7 @@ export const EventItem = styled(motion.div)`
     color: var(--text-color-secondary);
   }
 
+  // Dismiss button
   > .dismiss-btn {
     position: absolute;
     width: 2.2rem;
@@ -162,6 +164,7 @@ export const EventItem = styled(motion.div)`
     }
   }
 
+  // Show actions buttons
   .show-actions-btn {
     background-color: #953254;
     position: absolute;
@@ -200,21 +203,7 @@ export const EventItem = styled(motion.div)`
       justify-content: center;
       column-gap: 1rem;
 
-      &.actions {
-        margin-top: 0.5rem;
-        padding: 1rem 0 0.5rem;
-
-        .btn-mono {
-          background-color: #953254;
-          border: 1px solid #953254;
-          color: #ededed;
-        }
-        .btn-mono-invert {
-          border: 1px solid #a23b5e;
-          color: #a23b5e;
-        }
-      }
-
+      // All direct divs
       > div {
         display: flex;
         flex-direction: column;
@@ -281,6 +270,26 @@ export const EventItem = styled(motion.div)`
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
         }
+      }
+    }
+  }
+  // Actions container
+  .actions-wrapper {
+    .actions {
+      display: flex;
+      flex-direction: row;
+      column-gap: 1rem;
+      margin: 1.5rem 0 0;
+      overflow: hidden;
+
+      .btn-mono {
+        background-color: #953254;
+        border: 1px solid #953254;
+        color: #ededed;
+      }
+      .btn-mono-invert {
+        border: 1px solid #a23b5e;
+        color: #a23b5e;
       }
     }
   }

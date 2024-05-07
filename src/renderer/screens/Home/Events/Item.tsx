@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
@@ -19,11 +19,17 @@ import { useTooltip } from '@app/contexts/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
-import { faAngleDown } from '@fortawesome/pro-solid-svg-icons';
+import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 
 const FADE_TRANSITION = 200;
 
 export const Item = memo(function Item({ faIcon, event }: ItemProps) {
+  // The state of the event item display.
+  const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
+
+  // Flag indicating if action buttons are showing.
+  const [showActions, setShowActions] = useState(false);
+
   const { dismissEvent } = useEvents();
   const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -51,9 +57,6 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
       ? (event.who.data as EventAccountData).accountName
       : chainId;
 
-  // The state of the event item display.
-  const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
-
   // Allow the fade-out transition to happen before the event is dismissed from the UI.
   const handleDismissEvent = async () => {
     setDisplay('fade');
@@ -71,6 +74,12 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
       dismissEvent({ uid, who: event.who });
     }
   }, [display]);
+
+  // Variants for actions section.
+  const actionsVariants = {
+    open: { height: 'auto' },
+    closed: { height: 0 },
+  };
 
   return (
     <AnimatePresence>
@@ -108,16 +117,21 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
           </div>
 
           {/* Expand actions button */}
-
           {actions.length > 0 && (
-            <div className="show-actions-btn">
-              <FontAwesomeIcon icon={faAngleDown} transform={'shrink-2'} />
+            <div
+              className="show-actions-btn"
+              onClick={() => setShowActions(!showActions)}
+            >
+              <FontAwesomeIcon
+                icon={showActions ? faAngleUp : faAngleDown}
+                transform={'shrink-2'}
+              />
             </div>
           )}
 
           {/* Main content */}
           <div>
-            <section>
+            <section className="item-main">
               <div>
                 <div className="icon ">
                   <span
@@ -140,55 +154,63 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
 
             {/* Render actions */}
             {actions.length > 0 && (
-              <section className="actions">
-                {actions.map((action, i) => {
-                  const { uri, text } = action;
-                  action.txMeta && (action.txMeta.eventUid = event.uid);
+              <motion.section
+                className="actions-wrapper"
+                initial={{ height: 0 }}
+                animate={showActions ? 'open' : 'closed'}
+                variants={actionsVariants}
+                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+              >
+                <div className="actions">
+                  {actions.map((action, i) => {
+                    const { uri, text } = action;
+                    action.txMeta && (action.txMeta.eventUid = event.uid);
 
-                  const isUrl = isValidHttpUrl(uri);
-                  if (isUrl) {
-                    return (
-                      <ButtonMonoInvert
-                        key={`action_${uid}_${i}`}
-                        text={text || ''}
-                        iconRight={faExternalLinkAlt}
-                        onClick={() => {
-                          window.myAPI.openBrowserURL(uri);
-                        }}
-                      />
-                    );
-                  } else if (source !== 'read-only') {
-                    return (
-                      <ButtonMono
-                        disabled={
-                          event.stale ||
-                          source === 'ledger' ||
-                          !isOnline ||
-                          (isOnline && isConnecting)
-                        }
-                        key={`action_${uid}_${i}`}
-                        text={text || ''}
-                        onClick={async () => {
-                          window.myAPI.openWindow('action');
-
-                          // Set nonce.
-                          if (action.txMeta) {
-                            action.txMeta.nonce = await getAddressNonce(
-                              address,
-                              chainId
-                            );
+                    const isUrl = isValidHttpUrl(uri);
+                    if (isUrl) {
+                      return (
+                        <ButtonMonoInvert
+                          key={`action_${uid}_${i}`}
+                          text={text || ''}
+                          iconRight={faExternalLinkAlt}
+                          onClick={() => {
+                            window.myAPI.openBrowserURL(uri);
+                          }}
+                        />
+                      );
+                    } else if (source !== 'read-only') {
+                      return (
+                        <ButtonMono
+                          disabled={
+                            event.stale ||
+                            source === 'ledger' ||
+                            !isOnline ||
+                            (isOnline && isConnecting)
                           }
+                          key={`action_${uid}_${i}`}
+                          text={text || ''}
+                          onClick={async () => {
+                            window.myAPI.openWindow('action');
 
-                          ConfigRenderer.portToAction.postMessage({
-                            task: 'action:init',
-                            data: JSON.stringify(action.txMeta),
-                          });
-                        }}
-                      />
-                    );
-                  }
-                })}
-              </section>
+                            // Set nonce.
+                            if (action.txMeta) {
+                              action.txMeta.nonce = await getAddressNonce(
+                                address,
+                                chainId
+                              );
+                            }
+
+                            ConfigRenderer.portToAction.postMessage({
+                              task: 'action:init',
+                              data: JSON.stringify(action.txMeta),
+                            });
+                          }}
+                        />
+                      );
+                    }
+                  })}
+                </div>
+              </motion.section>
             )}
           </div>
         </EventItem>
