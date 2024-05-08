@@ -188,9 +188,9 @@ export const handleWindowOnIPC = (
       height: options?.height || 475,
       minHeight: options?.minHeight || 475,
       maxHeight: options?.maxHeight || 900,
-      width: 800,
-      minWidth: 800,
-      maxWidth: 800,
+      width: ConfigMain.childWidth,
+      minWidth: ConfigMain.childWidth,
+      maxWidth: ConfigMain.childWidth,
       minimizable: false,
       maximizable: false,
       alwaysOnTop: true,
@@ -303,9 +303,8 @@ const loadUrlWithRoute = (
  */
 const setMainWindowPosition = (mainWindow: BrowserWindow) => {
   // Get docked flag from state or set to `true`.
-  const isDocked: boolean = (store as Record<string, AnyJson>).get(
-    'app_docked'
-  );
+  const key = ConfigMain.dockedStorageKey;
+  const isDocked: boolean = (store as Record<string, AnyJson>).get(key);
 
   // Cache docked flag in config.
   ConfigMain.appDocked = isDocked ? true : false;
@@ -360,7 +359,8 @@ export const handleNewDockFlag = (isDocked: boolean) => {
   }
 
   // Cache new flag in store.
-  (store as Record<string, AnyJson>).set('app_docked', isDocked);
+  const key = ConfigMain.dockedStorageKey;
+  (store as Record<string, AnyJson>).set(key, isDocked);
 
   // Update storage.
   if (isDocked) {

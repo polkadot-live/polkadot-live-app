@@ -6,10 +6,17 @@ import type { PortPair, PortPairID } from '@/types/communication';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {
-  // Main window's docked width and height.
+  // Storage keys.
+  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
+  private static _dockedStorageKey = 'app_docked';
+
+  // Main window's docked properties.
   private static _appDocked = true;
   private static _dockedWidth = 420;
   private static _dockedHeight = 575;
+
+  // Child window properties.
+  private static _childWidth = 700;
 
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;
@@ -17,8 +24,6 @@ export class Config {
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
-
-  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
 
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.
@@ -82,7 +87,11 @@ export class Config {
     }
   }
 
-  // Accessors for app's docked window size.
+  // Accessors for app's docked properties
+  static get dockedStorageKey(): string {
+    return Config._dockedStorageKey;
+  }
+
   static get appDocked(): boolean {
     return Config._appDocked;
   }
@@ -105,6 +114,14 @@ export class Config {
 
   static set dockedHeight(height: number) {
     Config._dockedHeight = height;
+  }
+
+  static get childWidth(): number {
+    return Config._childWidth;
+  }
+
+  static set childWidth(width: number) {
+    Config._childWidth = width;
   }
 
   // Setter for app's tray object.
