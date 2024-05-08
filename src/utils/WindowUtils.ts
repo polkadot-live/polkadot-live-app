@@ -97,8 +97,8 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   //mainWindow.hide();
 
-  // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
+    // Send ports to main window to facilitate communication with other windows.
     mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
       ConfigMain.getPortPair('main-import').port1,
     ]);
@@ -106,6 +106,12 @@ export const createMainWindow = (isTest: boolean) => {
     mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
       ConfigMain.getPortPair('main-action').port1,
     ]);
+
+    mainWindow.webContents.postMessage(
+      'port',
+      { target: 'main-settings:main' },
+      [ConfigMain.getPortPair('main-settings').port1]
+    );
 
     // Set window bounds.
     setMainWindowPosition(mainWindow);
@@ -236,6 +242,17 @@ export const handleWindowOnIPC = (
           'port',
           { target: 'main-action:action' },
           [ConfigMain.getPortPair('main-action').port2]
+        );
+      });
+    } else if (name === 'settings') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to settings window');
+
+        // Send setting's port for main-settings communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-settings:settings' },
+          [ConfigMain.getPortPair('main-settings').port2]
         );
       });
     }

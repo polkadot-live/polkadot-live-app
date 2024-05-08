@@ -6,6 +6,7 @@ import { APIsController } from '@/controller/renderer/APIsController';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
+import { Config as ConfigSettings } from '@/config/processes/settings';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -365,6 +366,28 @@ export const useMessagePorts = () => {
           };
 
           ConfigAction.portAction.start();
+          break;
+        }
+        case 'main-settings:main': {
+          ConfigRenderer.portToSettings = e.ports[0];
+
+          ConfigRenderer.portToSettings.onmessage = async (
+            ev: MessageEvent
+          ) => {
+            // Message received from `action`.
+            console.log(ev);
+          };
+          break;
+        }
+        case 'main-settings:settings': {
+          ConfigSettings.portSettings = e.ports[0];
+
+          ConfigSettings.portSettings.onmessage = (ev: MessageEvent) => {
+            // Message received from `main`.
+            console.log(ev);
+          };
+
+          ConfigSettings.portSettings.start();
           break;
         }
         default: {

@@ -21,6 +21,7 @@ export class Config {
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;
   private static _main_action_ports: PortPair;
+  private static _main_settings_ports: PortPair;
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
@@ -52,6 +53,13 @@ export class Config {
 
         return Config._main_action_ports;
       }
+      case 'main-settings': {
+        if (!Config._main_settings_ports) {
+          Config.initPorts('main-settings');
+        }
+
+        return Config._main_settings_ports;
+      }
       default: {
         throw new Error('Port pair id not recognized');
       }
@@ -79,6 +87,11 @@ export class Config {
       case 'main-action': {
         const { port1, port2 } = new MessageChannelMain();
         Config._main_action_ports = { port1, port2 };
+        break;
+      }
+      case 'main-settings': {
+        const { port1, port2 } = new MessageChannelMain();
+        Config._main_settings_ports = { port1, port2 };
         break;
       }
       default: {

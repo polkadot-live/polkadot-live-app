@@ -6,11 +6,10 @@
  * @summary Configuration class for the `main` window. Accessed in the main renderer.
  */
 export class Config {
-  // Cache the main window's message port to communicate with `import` window.
+  // Cache the main window's message ports to communicate with child windows.
   private static _portToImport: MessagePort;
-
-  // Cache the main window's message port to communicate with `action` window.
   private static _portToAction: MessagePort;
+  private static _portToSettings: MessagePort;
 
   // Flag to silence all native OS notifications.
   private static _silenceNotifications = false;
@@ -21,7 +20,7 @@ export class Config {
   // Flag set to `true` when app wants to abort connection processing.
   private static _abortConnecting = false;
 
-  // Return the main window's message port.
+  // Accessors for `import` port.
   static get portToImport(): MessagePort {
     if (!Config._portToImport) {
       throw new Error('_portMain still undefined.');
@@ -30,12 +29,11 @@ export class Config {
     return Config._portToImport;
   }
 
-  // Set the `main` window's message port for `import` window.
   static set portToImport(port: MessagePort) {
     Config._portToImport = port;
   }
 
-  // Return `main` window's message port for `action` window.
+  // Accessors for `action` port.
   static get portToAction(): MessagePort {
     if (!Config._portToAction) {
       throw new Error('_portMainB still undefined');
@@ -44,9 +42,21 @@ export class Config {
     return Config._portToAction;
   }
 
-  // Set the `main` window's message port for `action` window.
   static set portToAction(port: MessagePort) {
     Config._portToAction = port;
+  }
+
+  // Accessors for `settings` port.
+  static get portToSettings(): MessagePort {
+    if (!Config._portToSettings) {
+      throw new Error('_portToSettings still undefined');
+    }
+
+    return Config._portToSettings;
+  }
+
+  static set portToSettings(port: MessagePort) {
+    Config._portToSettings = port;
   }
 
   // Accessors for `_silenceNotifications` flag.
