@@ -120,7 +120,7 @@ app.whenReady().then(async () => {
   WindowUtils.createTray();
   WindowUtils.createMainWindow(isTest);
 
-  // Handle Ledger account import.
+  // Handle import window.
   WindowUtils.handleWindowOnIPC('import', isTest);
 
   // Handle action window.
@@ -129,6 +129,9 @@ app.whenReady().then(async () => {
     minHeight: 375,
     maxHeight: 375,
   });
+
+  // Handle settings window.
+  WindowUtils.handleWindowOnIPC('settings', isTest);
 
   // ------------------------------
   // WDIO Custom Electron API

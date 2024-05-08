@@ -42,12 +42,21 @@ export const Menu = () => {
         <MenuWrapper ref={alerterRf}>
           <button
             type="button"
-            onClick={async () => {
-              await window.myAPI.openWindow('import');
+            onClick={() => {
+              window.myAPI.openWindow('import');
               toggleMenu(false);
             }}
           >
             Manage Accounts
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              window.myAPI.openWindow('settings');
+              toggleMenu(false);
+            }}
+          >
+            Settings
           </button>
           <button
             type="button"

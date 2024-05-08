@@ -9,6 +9,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
 import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
+import { Settings } from './screens/Settings';
 import { Help } from './library/Help';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useMessagePorts } from '@app/hooks/useMessagePorts';
@@ -38,6 +39,8 @@ export const RouterInner = () => {
       <Tooltip />
       <ToastContainer />
       <Routes>
+        <Route path={'settings'} element={<Settings />} />
+        <Route path={'action'} element={<Action />} />
         <Route path={'import'} element={<Import />} />
         <Route path={'action'} element={<Action />} />
         <Route path={'/'} element={<Home />} />
