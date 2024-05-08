@@ -2,10 +2,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DragClose } from '@/renderer/library/DragClose';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
+import { HeaderWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper } from './Wrappers';
+import { Setting } from './Setting';
 
 export const Settings: React.FC = () => {
   console.log('Settings opened...');
+
+  const SettingsList = [
+    {
+      title: 'Docked window',
+      enabled: true,
+    },
+    {
+      title: 'Show Polkadot Live on all workspaces',
+      enabled: false,
+    },
+    {
+      title: 'Silence OS notifications',
+      enabled: false,
+    },
+  ];
 
   return (
     <>
@@ -17,7 +34,11 @@ export const Settings: React.FC = () => {
         </div>
       </HeaderWrapper>
       <ContentWrapper>
-        <p>Put settings here...</p>
+        <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+          {SettingsList.map(({ title, enabled }, i) => (
+            <Setting key={i} title={title} enabled={enabled} />
+          ))}
+        </div>
       </ContentWrapper>
     </>
   );
