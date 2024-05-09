@@ -6,32 +6,37 @@ import { faFileExport, faFileImport } from '@fortawesome/pro-solid-svg-icons';
 
 export const SettingsList: SettingItem[] = [
   {
+    category: 'General',
+    enabled: true,
+    settingType: 'switch',
     title: 'Docked window',
-    enabled: true,
-    settingType: 'switch',
   },
   {
+    category: 'General',
+    enabled: false,
+    settingType: 'switch',
     title: 'Show on all workspaces',
-    enabled: false,
-    settingType: 'switch',
   },
   {
+    category: 'General',
+    enabled: false,
+    settingType: 'switch',
     title: 'Silence OS notifications',
-    enabled: false,
-    settingType: 'switch',
   },
   {
-    title: 'Import data',
-    enabled: true,
-    settingType: 'button',
-    buttonText: 'Import',
+    category: 'Backup',
     buttonIcon: faFileImport,
-  },
-  {
-    title: 'Export data',
+    buttonText: 'Import',
     enabled: true,
     settingType: 'button',
-    buttonText: 'Export',
+    title: 'Import data',
+  },
+  {
+    category: 'Backup',
     buttonIcon: faFileExport,
+    buttonText: 'Export',
+    enabled: true,
+    settingType: 'button',
+    title: 'Export data',
   },
 ];

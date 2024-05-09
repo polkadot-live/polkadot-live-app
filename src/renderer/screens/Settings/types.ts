@@ -4,6 +4,7 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export interface SettingItem {
+  category: string;
   title: string;
   enabled: boolean;
   settingType: string;
