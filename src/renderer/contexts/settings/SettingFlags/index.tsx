@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { SettingFlagsContextInterface } from './types';
 import type { SettingItem } from '@/renderer/screens/Settings/types';
 
@@ -19,6 +19,15 @@ export const SettingFlagsProvider = ({
 }) => {
   /// Store state of window docked setting.
   const [windowDocked, setWindowDocked] = useState(true);
+
+  useEffect(() => {
+    const initSettings = async () => {
+      const isDocked = await window.myAPI.getDockedFlag();
+      setWindowDocked(isDocked);
+    };
+
+    initSettings();
+  }, []);
 
   /// Determine if a swtich is on or off.
   const getSwitchState = (setting: SettingItem) => {
