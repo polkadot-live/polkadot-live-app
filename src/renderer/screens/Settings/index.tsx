@@ -90,7 +90,14 @@ export const Settings: React.FC = () => {
                   <div className="flex-column" style={{ padding: '0 0.75rem' }}>
                     {settings.map(
                       (
-                        { title, enabled, settingType, buttonText, buttonIcon },
+                        {
+                          title,
+                          enabled,
+                          settingType,
+                          buttonText,
+                          buttonIcon,
+                          helpKey,
+                        },
                         j
                       ) => (
                         <Setting
@@ -100,6 +107,7 @@ export const Settings: React.FC = () => {
                           settingType={settingType}
                           buttonText={buttonText}
                           buttonIcon={buttonIcon}
+                          helpKey={helpKey}
                         />
                       )
                     )}

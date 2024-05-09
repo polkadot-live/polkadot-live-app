@@ -5,18 +5,21 @@ import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
+import { useHelp } from '@/renderer/contexts/Help';
 import { useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import type { SettingProps } from './types';
 
 export const Setting = (setting: SettingProps) => {
-  const { title, enabled, settingType } = setting;
+  const { title, enabled, settingType, helpKey } = setting;
   const [isToggled, setIsToggled] = useState(enabled);
+
+  const { openHelp } = useHelp();
 
   return (
     <SettingWrapper>
       <div className="left">
-        <div className="icon-wrapper">
+        <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
           <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
         </div>
         <span>{title}</span>
