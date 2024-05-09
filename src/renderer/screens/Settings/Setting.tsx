@@ -6,19 +6,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
 import { useHelp } from '@/renderer/contexts/Help';
-import { useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import type { SettingProps } from './types';
+import { useSettingFlags } from '@/renderer/contexts/settings/SettingFlags';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
-  const { title, enabled, settingType, helpKey } = setting;
-  const [isToggled, setIsToggled] = useState(enabled);
+  const { title, settingType, helpKey } = setting;
 
   const { openHelp } = useHelp();
+  const { getSwitchState, handleSwitchToggle } = useSettingFlags();
 
   /// Handle a setting switch toggle.
-  const handleSwitchToggle = () => {
-    setIsToggled(!isToggled);
+  const handleSwitchToggleOuter = () => {
+    handleSwitchToggle(setting);
     handleSetting(setting);
   };
 
@@ -40,8 +40,8 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
           <Switch
             size="sm"
             type="primary"
-            isOn={isToggled}
-            handleToggle={() => handleSwitchToggle()}
+            isOn={getSwitchState(setting)}
+            handleToggle={() => handleSwitchToggleOuter()}
           />
         ) : (
           <ButtonMonoInvert

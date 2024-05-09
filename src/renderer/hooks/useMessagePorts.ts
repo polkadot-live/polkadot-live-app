@@ -23,6 +23,7 @@ import { useChains } from '@app/contexts/Chains';
 import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
+import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
@@ -40,6 +41,9 @@ export const useMessagePorts = () => {
   /// Import renderer contexts.
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
+
+  // Settings renderer contexts.
+  const { setWindowDocked } = useSettingFlags();
 
   /// Action window specific.
   const {
@@ -380,7 +384,6 @@ export const useMessagePorts = () => {
             switch (ev.data.task) {
               case 'settings:execute:dockedWindow': {
                 handleDockedToggle();
-                console.log('handled docked setting...');
                 break;
               }
               case 'settings:execute:showOnAllWorkspaces': {
@@ -399,6 +402,9 @@ export const useMessagePorts = () => {
                 console.log('todo: handle exportData');
                 break;
               }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
             }
           };
 
@@ -410,7 +416,16 @@ export const useMessagePorts = () => {
 
           ConfigSettings.portSettings.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
-            console.log(ev);
+            switch (ev.data.task) {
+              case 'settings:set:dockedWindow': {
+                const { docked } = ev.data.data;
+                setWindowDocked(docked);
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
           };
 
           ConfigSettings.portSettings.start();

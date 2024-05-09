@@ -108,7 +108,14 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   /// Handle clicking the docked button.
   const handleDocked = () => {
     handleDockedToggle();
-    // TODO: Post message to settings window to update setting switch.
+
+    // Post message to settings window to update docked switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
   };
 
   return (
