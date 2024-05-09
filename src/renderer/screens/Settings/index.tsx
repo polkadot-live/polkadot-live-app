@@ -63,7 +63,10 @@ export const Settings: React.FC = () => {
               <AccordionItem key={`${category}_settings`}>
                 <HeadingWrapper>
                   <AccordionHeader>
-                    <div className="flex">
+                    <div
+                      className="flex"
+                      style={i !== 0 ? { marginTop: '0.5rem' } : {}}
+                    >
                       <div className="left">
                         <div className="icon-wrapper">
                           {accordionActiveIndices.includes(i) ? (
