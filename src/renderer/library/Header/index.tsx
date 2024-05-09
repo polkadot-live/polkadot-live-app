@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
@@ -28,21 +28,15 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     handleInitializeAppOnline,
   } = useBootstrapping();
 
-  const [dockToggled, setDockToggled] = useState<boolean>(true);
+  /// Silence OS notifications state.
   const [silenceToggle, setSilenceToggle] = useState(
     RendererConfig.silenceNotifications
   );
 
-  useEffect(() => {
-    const initDockedFlag = async () => {
-      const isDocked = await window.myAPI.getDockedFlag();
-      setDockToggled(isDocked);
-    };
+  /// Dock toggled state.
+  const { dockToggled, handleDockedToggle } = useBootstrapping();
 
-    initDockedFlag();
-  }, []);
-
-  // Determine active window by pathname.
+  /// Determine active window by pathname.
   let activeWindow: string;
   switch (pathname) {
     case '/import':
@@ -52,14 +46,14 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  // Handle toggle to silence all notifications.
+  /// Handle toggle to silence all notifications.
   const handleSilenceNotifications = () => {
     const newFlag = !silenceToggle;
     RendererConfig.silenceNotifications = newFlag;
     setSilenceToggle(newFlag);
   };
 
-  // Get text for connection button.
+  /// Get text for connection button.
   const getConnectionButtonText = () => {
     if (isConnecting || appLoading) {
       return 'Abort';
@@ -70,7 +64,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for connection button.
+  /// Handler for connection button.
   const handleConnectButtonClick = async () => {
     if (isConnecting || appLoading) {
       // Handle abort.
@@ -105,10 +99,16 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for aborting connection processing.
+  /// Handler for aborting connection processing.
   const handleAbortConnecting = () => {
     setIsAborting(true);
     RendererConfig.abortConnecting = true;
+  };
+
+  /// Handle clicking the docked button.
+  const handleDocked = () => {
+    handleDockedToggle();
+    // TODO: Post message to settings window to update setting switch.
   };
 
   return (
@@ -131,11 +131,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                   text={dockToggled ? 'Detach' : 'Dock'}
                   iconLeft={dockToggled ? faUnlock : faLock}
                   iconTransform="shrink-2"
-                  onClick={() => {
-                    const docked = !dockToggled;
-                    setDockToggled(docked);
-                    window.myAPI.setDockedFlag(docked);
-                  }}
+                  onClick={() => handleDocked()}
                 />
               </div>
 

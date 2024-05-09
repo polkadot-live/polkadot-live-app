@@ -9,6 +9,8 @@ export const defaultBootstrappingContext: BootstrappingInterface = {
   online: false,
   isAborting: false,
   isConnecting: false,
+  dockToggled: true,
+  handleDockedToggle: () => {},
   setAppLoading: (b) => {},
   setIsAborting: (b) => {},
   setIsConnecting: (b) => {},

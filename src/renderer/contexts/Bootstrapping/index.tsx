@@ -42,6 +42,9 @@ export const BootstrappingProvider = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
 
+  // Window docked state.
+  const [dockToggled, setDockToggled] = useState<boolean>(true);
+
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
@@ -67,6 +70,16 @@ export const BootstrappingProvider = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
+  }, []);
+
+  /// Get docked flag from storage and set state.
+  useEffect(() => {
+    const initDockedFlag = async () => {
+      const isDocked = await window.myAPI.getDockedFlag();
+      setDockToggled(isDocked);
+    };
+
+    initDockedFlag();
   }, []);
 
   /// Handle app initialization.
@@ -288,6 +301,15 @@ export const BootstrappingProvider = ({
     });
   };
 
+  /// Handle toggling the docked window state.
+  const handleDockedToggle = () => {
+    setDockToggled((prev) => {
+      const docked = !prev;
+      window.myAPI.setDockedFlag(docked);
+      return docked;
+    });
+  };
+
   return (
     <BootstrappingContext.Provider
       value={{
@@ -295,6 +317,8 @@ export const BootstrappingProvider = ({
         isAborting,
         isConnecting,
         online,
+        dockToggled,
+        handleDockedToggle,
         setAppLoading,
         setIsAborting,
         setIsConnecting,

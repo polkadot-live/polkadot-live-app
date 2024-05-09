@@ -18,6 +18,7 @@ import { SubscriptionsController } from '@/controller/renderer/SubscriptionsCont
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useAccountStatuses } from '../contexts/import/AccountStatuses';
+import { useBootstrapping } from '../contexts/Bootstrapping';
 import { useChains } from '@app/contexts/Chains';
 import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
@@ -29,6 +30,7 @@ import type { ActionMeta } from '@/types/tx';
 export const useMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
+  const { handleDockedToggle } = useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
@@ -377,7 +379,8 @@ export const useMessagePorts = () => {
             // Message received from `settings`.
             switch (ev.data.task) {
               case 'settings:execute:dockedWindow': {
-                console.log('todo: handle dockedWindow');
+                handleDockedToggle();
+                console.log('handled docked setting...');
                 break;
               }
               case 'settings:execute:showOnAllWorkspaces': {
