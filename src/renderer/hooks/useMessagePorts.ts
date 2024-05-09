@@ -374,9 +374,32 @@ export const useMessagePorts = () => {
           ConfigRenderer.portToSettings.onmessage = async (
             ev: MessageEvent
           ) => {
-            // Message received from `action`.
-            console.log(ev);
+            // Message received from `settings`.
+            switch (ev.data.task) {
+              case 'settings:execute:dockedWindow': {
+                console.log('todo: handle dockedWindow');
+                break;
+              }
+              case 'settings:execute:showOnAllWorkspaces': {
+                console.log('todo: handle showOnAllWorkspaces');
+                break;
+              }
+              case 'settings:execute:silenceOsNotifications': {
+                console.log('todo: handle silenceOsNotifications');
+                break;
+              }
+              case 'settings:execute:importData': {
+                console.log('todo: handle importData');
+                break;
+              }
+              case 'settings:execute:exportData': {
+                console.log('todo: handle exportData');
+                break;
+              }
+            }
           };
+
+          ConfigRenderer.portToSettings.start();
           break;
         }
         case 'main-settings:settings': {

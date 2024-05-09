@@ -10,11 +10,22 @@ import { useState } from 'react';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import type { SettingProps } from './types';
 
-export const Setting = (setting: SettingProps) => {
+export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { title, enabled, settingType, helpKey } = setting;
   const [isToggled, setIsToggled] = useState(enabled);
 
   const { openHelp } = useHelp();
+
+  /// Handle a setting switch toggle.
+  const handleSwitchToggle = () => {
+    setIsToggled(!isToggled);
+    handleSetting(setting);
+  };
+
+  /// Handle a setting button click.
+  const handleButtonClick = () => {
+    handleSetting(setting);
+  };
 
   return (
     <SettingWrapper>
@@ -30,15 +41,14 @@ export const Setting = (setting: SettingProps) => {
             size="sm"
             type="primary"
             isOn={isToggled}
-            handleToggle={() => {
-              setIsToggled(!isToggled);
-            }}
+            handleToggle={() => handleSwitchToggle()}
           />
         ) : (
           <ButtonMonoInvert
             iconLeft={setting.buttonIcon}
             text={setting.buttonText || ''}
             iconTransform="shrink-2"
+            onClick={() => handleButtonClick()}
           />
         )}
       </div>

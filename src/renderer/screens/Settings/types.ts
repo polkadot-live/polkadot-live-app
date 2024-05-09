@@ -4,7 +4,15 @@
 import type { HelpItemKey } from '@/renderer/contexts/Help/types';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+export type SettingAction =
+  | 'settings:execute:dockedWindow'
+  | 'settings:execute:showOnAllWorkspaces'
+  | 'settings:execute:silenceOsNotifications'
+  | 'settings:execute:importData'
+  | 'settings:execute:exportData';
+
 export interface SettingItem {
+  action: SettingAction;
   category: string;
   title: string;
   enabled: boolean;
@@ -15,10 +23,6 @@ export interface SettingItem {
 }
 
 export interface SettingProps {
-  title: string;
-  enabled: boolean;
-  helpKey: HelpItemKey;
-  settingType: string;
-  buttonText?: string;
-  buttonIcon?: IconProp;
+  setting: SettingItem;
+  handleSetting: (setting: SettingItem) => void;
 }

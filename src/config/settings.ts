@@ -6,6 +6,7 @@ import { faFileExport, faFileImport } from '@fortawesome/pro-solid-svg-icons';
 
 export const SettingsList: SettingItem[] = [
   {
+    action: 'settings:execute:dockedWindow',
     category: 'General',
     enabled: true,
     helpKey: 'help:settings:dockedWindow',
@@ -13,6 +14,7 @@ export const SettingsList: SettingItem[] = [
     title: 'Docked window',
   },
   {
+    action: 'settings:execute:showOnAllWorkspaces',
     category: 'General',
     enabled: false,
     helpKey: 'help:settings:showOnAllWorkspaces',
@@ -20,6 +22,7 @@ export const SettingsList: SettingItem[] = [
     title: 'Show on all workspaces',
   },
   {
+    action: 'settings:execute:silenceOsNotifications',
     category: 'General',
     enabled: false,
     helpKey: 'help:settings:silenceOsNotifications',
@@ -27,6 +30,7 @@ export const SettingsList: SettingItem[] = [
     title: 'Silence OS notifications',
   },
   {
+    action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,
     buttonText: 'Import',
@@ -36,6 +40,7 @@ export const SettingsList: SettingItem[] = [
     title: 'Import data',
   },
   {
+    action: 'settings:execute:exportData',
     category: 'Backup',
     buttonIcon: faFileExport,
     buttonText: 'Export',

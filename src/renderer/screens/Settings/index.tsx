@@ -16,6 +16,7 @@ import {
 } from '@/renderer/library/Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
+import { Config as ConfigSettings } from '@/config/processes/settings';
 
 export const Settings: React.FC = () => {
   /// Active accordion indices for settings panels.
@@ -41,6 +42,17 @@ export const Settings: React.FC = () => {
     }
 
     return map;
+  };
+
+  /// Handle a setting action.
+  const handleSetting = (setting: SettingItem) => {
+    // Send port message to main renderer.
+    ConfigSettings.portSettings.postMessage({
+      task: String(setting.action),
+      data: {
+        setting,
+      },
+    });
   };
 
   return (
@@ -88,29 +100,13 @@ export const Settings: React.FC = () => {
                 </HeadingWrapper>
                 <AccordionPanel>
                   <div className="flex-column" style={{ padding: '0 0.75rem' }}>
-                    {settings.map(
-                      (
-                        {
-                          title,
-                          enabled,
-                          settingType,
-                          buttonText,
-                          buttonIcon,
-                          helpKey,
-                        },
-                        j
-                      ) => (
-                        <Setting
-                          key={j}
-                          title={title}
-                          enabled={enabled}
-                          settingType={settingType}
-                          buttonText={buttonText}
-                          buttonIcon={buttonIcon}
-                          helpKey={helpKey}
-                        />
-                      )
-                    )}
+                    {settings.map((setting, j) => (
+                      <Setting
+                        key={j}
+                        setting={setting}
+                        handleSetting={handleSetting}
+                      />
+                    ))}
                   </div>
                 </AccordionPanel>
               </AccordionItem>
