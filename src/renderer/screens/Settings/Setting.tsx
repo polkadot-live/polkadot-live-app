@@ -6,13 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
 import { useState } from 'react';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import type { SettingProps } from './types';
 
-interface SettingProps {
-  title: string;
-  enabled: boolean;
-}
-
-export const Setting = ({ title, enabled }: SettingProps) => {
+export const Setting = (setting: SettingProps) => {
+  const { title, enabled, settingType } = setting;
   const [isToggled, setIsToggled] = useState(enabled);
 
   return (
@@ -24,14 +22,22 @@ export const Setting = ({ title, enabled }: SettingProps) => {
         <span>{title}</span>
       </div>
       <div className="right">
-        <Switch
-          size="sm"
-          type="primary"
-          isOn={isToggled}
-          handleToggle={() => {
-            setIsToggled(!isToggled);
-          }}
-        />
+        {settingType === 'switch' ? (
+          <Switch
+            size="sm"
+            type="primary"
+            isOn={isToggled}
+            handleToggle={() => {
+              setIsToggled(!isToggled);
+            }}
+          />
+        ) : (
+          <ButtonMonoInvert
+            iconLeft={setting.buttonIcon}
+            text={setting.buttonText || ''}
+            iconTransform="shrink-2"
+          />
+        )}
       </div>
     </SettingWrapper>
   );

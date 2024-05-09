@@ -5,24 +5,10 @@ import { DragClose } from '@/renderer/library/DragClose';
 import { HeaderWrapper } from '@app/screens/Wrappers';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
+import { SettingsList } from '@/config/settings';
 
 export const Settings: React.FC = () => {
   console.log('Settings opened...');
-
-  const SettingsList = [
-    {
-      title: 'Docked window',
-      enabled: true,
-    },
-    {
-      title: 'Show Polkadot Live on all workspaces',
-      enabled: false,
-    },
-    {
-      title: 'Silence OS notifications',
-      enabled: false,
-    },
-  ];
 
   return (
     <>
@@ -35,9 +21,18 @@ export const Settings: React.FC = () => {
       </HeaderWrapper>
       <ContentWrapper>
         <div className="flex-column" style={{ padding: '0 0.75rem' }}>
-          {SettingsList.map(({ title, enabled }, i) => (
-            <Setting key={i} title={title} enabled={enabled} />
-          ))}
+          {SettingsList.map(
+            ({ title, enabled, settingType, buttonText, buttonIcon }, i) => (
+              <Setting
+                key={i}
+                title={title}
+                enabled={enabled}
+                settingType={settingType}
+                buttonText={buttonText}
+                buttonIcon={buttonIcon}
+              />
+            )
+          )}
         </div>
       </ContentWrapper>
     </>
