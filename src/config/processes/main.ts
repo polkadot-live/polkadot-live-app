@@ -49,6 +49,7 @@ export class Config {
       const settings: PersistedSettings = {
         appDocked: true,
         appSilenceOsNotifications: false,
+        appShowOnAllWorkspaces: true,
       };
 
       // Persist default settings to store and return them.

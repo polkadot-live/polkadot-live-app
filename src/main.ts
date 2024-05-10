@@ -359,6 +359,20 @@ app.whenReady().then(async () => {
   // Get app settings.
   ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
 
+  ipcMain.on('app:set:workspaceVisibility', () => {
+    // Get new flag.
+    const settings = ConfigMain.getAppSettings();
+    const flag = !settings.appShowOnAllWorkspaces;
+
+    // Update windows.
+    settings.appShowOnAllWorkspaces = flag;
+    WindowsController.setVisibleOnAllWorkspaces(flag);
+
+    // Update storage.
+    const key = ConfigMain.settingsStorageKey;
+    (store as Record<string, AnyData>).set(key, settings);
+  });
+
   /**
    * Ledger
    */

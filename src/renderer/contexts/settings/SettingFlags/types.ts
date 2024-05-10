@@ -8,4 +8,5 @@ export interface SettingFlagsContextInterface {
   handleSwitchToggle: (setting: SettingItem) => void;
   setWindowDocked: (flag: boolean) => void;
   setSilenceOsNotifications: (flag: boolean) => void;
+  setShowOnAllWorkspaces: (flag: boolean) => void;
 }

@@ -14,6 +14,7 @@ export interface PreloadAPI {
   getAppSettings: ApiGetAppSettings;
   getDockedFlag: ApiGetDockedFlag;
   setDockedFlag: ApiSetDockedFlag;
+  toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
@@ -108,6 +109,8 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
+
+type ApiToggleWorkspaceVisibility = () => void;
 
 type ApiGetAppSettings = () => Promise<PersistedSettings>;
 

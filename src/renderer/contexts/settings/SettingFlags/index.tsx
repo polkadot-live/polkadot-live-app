@@ -20,15 +20,17 @@ export const SettingFlagsProvider = ({
   /// Store state of window docked setting.
   const [windowDocked, setWindowDocked] = useState(true);
   const [silenceOsNotifications, setSilenceOsNotifications] = useState(true);
+  const [showOnAllWorkspaces, setShowOnAllWorkspaces] = useState(false);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
     const initSettings = async () => {
-      const { appDocked, appSilenceOsNotifications } =
+      const { appDocked, appSilenceOsNotifications, appShowOnAllWorkspaces } =
         await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
+      setShowOnAllWorkspaces(appShowOnAllWorkspaces);
     };
 
     initSettings();
@@ -44,6 +46,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:silenceOsNotifications': {
         return silenceOsNotifications;
+      }
+      case 'settings:execute:showOnAllWorkspaces': {
+        return showOnAllWorkspaces;
       }
       default: {
         return true;
@@ -64,6 +69,10 @@ export const SettingFlagsProvider = ({
         setSilenceOsNotifications(!silenceOsNotifications);
         break;
       }
+      case 'settings:execute:showOnAllWorkspaces': {
+        setShowOnAllWorkspaces(!showOnAllWorkspaces);
+        break;
+      }
       default: {
         break;
       }
@@ -75,6 +84,7 @@ export const SettingFlagsProvider = ({
       value={{
         setWindowDocked,
         setSilenceOsNotifications,
+        setShowOnAllWorkspaces,
         getSwitchState,
         handleSwitchToggle,
       }}
