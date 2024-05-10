@@ -9,7 +9,6 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
-import { useState } from 'react';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
@@ -28,13 +27,13 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     handleInitializeAppOnline,
   } = useBootstrapping();
 
-  /// Silence OS notifications state.
-  const [silenceToggle, setSilenceToggle] = useState(
-    RendererConfig.silenceNotifications
-  );
-
-  /// Dock toggled state.
-  const { dockToggled, handleDockedToggle } = useBootstrapping();
+  /// App settings.
+  const {
+    dockToggled,
+    silenceOsNotifications,
+    handleDockedToggle,
+    handleToggleSilenceOsNotifications,
+  } = useBootstrapping();
 
   /// Determine active window by pathname.
   let activeWindow: string;
@@ -45,13 +44,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     default:
       activeWindow = 'menu';
   }
-
-  /// Handle toggle to silence all notifications.
-  const handleSilenceNotifications = () => {
-    const newFlag = !silenceToggle;
-    RendererConfig.silenceNotifications = newFlag;
-    setSilenceToggle(newFlag);
-  };
 
   /// Get text for connection button.
   const getConnectionButtonText = () => {
@@ -109,11 +101,24 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const handleDocked = () => {
     handleDockedToggle();
 
-    // Post message to settings window to update docked switch.
+    // Post message to settings window to update switch.
     RendererConfig.portToSettings.postMessage({
       task: 'settings:set:dockedWindow',
       data: {
         docked: !dockToggled,
+      },
+    });
+  };
+
+  /// Handle clicking the silence OS notifications button.
+  const handleSilenceOsNotifications = () => {
+    handleToggleSilenceOsNotifications();
+
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:silenceOsNotifications',
+      data: {
+        silenced: !silenceOsNotifications,
       },
     });
   };
@@ -179,9 +184,9 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 <Switch
                   size="sm"
                   type="mono"
-                  isOn={silenceToggle}
+                  isOn={silenceOsNotifications}
                   disabled={appLoading}
-                  handleToggle={() => handleSilenceNotifications()}
+                  handleToggle={() => handleSilenceOsNotifications()}
                 />
               </a>
 

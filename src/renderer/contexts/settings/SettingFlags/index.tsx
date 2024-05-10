@@ -19,11 +19,16 @@ export const SettingFlagsProvider = ({
 }) => {
   /// Store state of window docked setting.
   const [windowDocked, setWindowDocked] = useState(true);
+  const [silenceOsNotifications, setSilenceOsNotifications] = useState(true);
 
+  /// Fetch settings from store and set state.
   useEffect(() => {
     const initSettings = async () => {
-      const isDocked = await window.myAPI.getDockedFlag();
-      setWindowDocked(isDocked);
+      const { appDocked, appSilenceOsNotifications } =
+        await window.myAPI.getAppSettings();
+
+      setWindowDocked(appDocked);
+      setSilenceOsNotifications(appSilenceOsNotifications);
     };
 
     initSettings();
@@ -36,6 +41,9 @@ export const SettingFlagsProvider = ({
     switch (action) {
       case 'settings:execute:dockedWindow': {
         return windowDocked;
+      }
+      case 'settings:execute:silenceOsNotifications': {
+        return silenceOsNotifications;
       }
       default: {
         return true;
@@ -52,6 +60,10 @@ export const SettingFlagsProvider = ({
         setWindowDocked(!windowDocked);
         break;
       }
+      case 'settings:execute:silenceOsNotifications': {
+        setSilenceOsNotifications(!silenceOsNotifications);
+        break;
+      }
       default: {
         break;
       }
@@ -61,8 +73,8 @@ export const SettingFlagsProvider = ({
   return (
     <SettingFlagsContext.Provider
       value={{
-        windowDocked,
         setWindowDocked,
+        setSilenceOsNotifications,
         getSwitchState,
         handleSwitchToggle,
       }}

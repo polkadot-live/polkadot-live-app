@@ -42,14 +42,33 @@ export const BootstrappingProvider = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
 
-  // Window docked state.
+  // App settings.
   const [dockToggled, setDockToggled] = useState<boolean>(true);
+  const [silenceOsNotifications, setSilenceOsNotifications] =
+    useState<boolean>(false);
 
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
 
   const refAppInitialized = useRef(false);
+
+  // Get settings from main and initialise state.
+  useEffect(() => {
+    const initSettings = async () => {
+      const { appDocked, appSilenceOsNotifications } =
+        await window.myAPI.getAppSettings();
+
+      // Set cached notifications flag in renderer config.
+      RendererConfig.silenceNotifications = appSilenceOsNotifications;
+
+      // Set settings state.
+      setDockToggled(appDocked);
+      setSilenceOsNotifications(appSilenceOsNotifications);
+    };
+
+    initSettings();
+  }, []);
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
@@ -310,6 +329,15 @@ export const BootstrappingProvider = ({
     });
   };
 
+  /// Handle toggling native OS notifications.
+  const handleToggleSilenceOsNotifications = () => {
+    setSilenceOsNotifications((prev) => {
+      const newFlag = !prev;
+      RendererConfig.silenceNotifications = newFlag;
+      return newFlag;
+    });
+  };
+
   return (
     <BootstrappingContext.Provider
       value={{
@@ -318,7 +346,10 @@ export const BootstrappingProvider = ({
         isConnecting,
         online,
         dockToggled,
+        silenceOsNotifications,
         handleDockedToggle,
+        handleToggleSilenceOsNotifications,
+        setSilenceOsNotifications,
         setAppLoading,
         setIsAborting,
         setIsConnecting,

@@ -31,7 +31,8 @@ import type { ActionMeta } from '@/types/tx';
 export const useMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { handleDockedToggle } = useBootstrapping();
+  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
+    useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
@@ -43,7 +44,7 @@ export const useMessagePorts = () => {
   const { setStatusForAccount } = useAccountStatuses();
 
   // Settings renderer contexts.
-  const { setWindowDocked } = useSettingFlags();
+  const { setWindowDocked, setSilenceOsNotifications } = useSettingFlags();
 
   /// Action window specific.
   const {
@@ -391,7 +392,7 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'settings:execute:silenceOsNotifications': {
-                console.log('todo: handle silenceOsNotifications');
+                handleToggleSilenceOsNotifications();
                 break;
               }
               case 'settings:execute:importData': {
@@ -420,6 +421,11 @@ export const useMessagePorts = () => {
               case 'settings:set:dockedWindow': {
                 const { docked } = ev.data.data;
                 setWindowDocked(docked);
+                break;
+              }
+              case 'settings:set:silenceOsNotifications': {
+                const { silenced } = ev.data.data;
+                setSilenceOsNotifications(silenced);
                 break;
               }
               default: {

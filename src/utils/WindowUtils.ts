@@ -22,7 +22,6 @@ import { WindowsController } from '@/controller/main/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
-import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 
 const debug = MainDebug.extend('WindowUtils');
 
@@ -320,18 +319,8 @@ const loadUrlWithRoute = (
  * @summary Calculate main window bounds (screen position and dimensions).
  */
 const setMainWindowPosition = (mainWindow: BrowserWindow) => {
-  // Get docked flag from state or set to `true`.
-  const key = ConfigMain.settingsStorageKey;
-
-  let appDocked = true;
-  if (store.has(key)) {
-    type Settings = PersistedSettings;
-    const settings: Settings = (store as Record<string, AnyJson>).get(key);
-    appDocked = settings.appDocked;
-  }
-
-  // Cache docked flag in config.
-  ConfigMain.appDocked = appDocked;
+  // Get docked setting from storage.
+  const { appDocked } = ConfigMain.getAppSettings();
 
   if (!appDocked) {
     return;
@@ -382,14 +371,14 @@ export const handleNewDockFlag = (isDocked: boolean) => {
     throw new Error('Main window not found.');
   }
 
-  // Cache new flag in store.
-  type Settings = PersistedSettings;
-  const key = ConfigMain.settingsStorageKey;
-  const settings: Settings = (store as Record<string, AnyJson>).get(key);
+  // Update storage.
+  const settings = ConfigMain.getAppSettings();
   settings.appDocked = isDocked;
+
+  const key = ConfigMain.settingsStorageKey;
   (store as Record<string, AnyJson>).set(key, settings);
 
-  // Update storage.
+  // Update window.
   if (isDocked) {
     setMainWindowPosition(mainWindow);
   } else {

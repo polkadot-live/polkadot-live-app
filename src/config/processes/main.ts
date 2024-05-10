@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MessageChannelMain } from 'electron';
+import { store } from '@/main';
 import type { PortPair, PortPairID } from '@/types/communication';
 import type { Rectangle, Tray } from 'electron';
+import type { PersistedSettings } from '@/renderer/screens/Settings/types';
+import type { AnyData } from '@/types/misc';
 
 export class Config {
   // Storage keys.
@@ -11,7 +14,6 @@ export class Config {
   private static _settingsStorageKey = 'app_settings';
 
   // Main window's docked properties.
-  private static _appDocked = true;
   private static _dockedWidth = 420;
   private static _dockedHeight = 575;
 
@@ -33,6 +35,25 @@ export class Config {
 
     for (const id of ids) {
       Config.initPorts(id);
+    }
+  };
+
+  // Initialise default settings.
+  static getAppSettings = (): PersistedSettings => {
+    const key = Config._settingsStorageKey;
+
+    if (store.has(key)) {
+      // Return persisted settings.
+      return (store as Record<string, AnyData>).get(key);
+    } else {
+      const settings: PersistedSettings = {
+        appDocked: true,
+        appSilenceOsNotifications: false,
+      };
+
+      // Persist default settings to store and return them.
+      (store as Record<string, AnyData>).set(key, settings);
+      return settings;
     }
   };
 
@@ -103,14 +124,6 @@ export class Config {
   // Accessors.
   static get settingsStorageKey(): string {
     return Config._settingsStorageKey;
-  }
-
-  static get appDocked(): boolean {
-    return Config._appDocked;
-  }
-
-  static set appDocked(flag: boolean) {
-    Config._appDocked = flag;
   }
 
   static get dockedWidth(): number {

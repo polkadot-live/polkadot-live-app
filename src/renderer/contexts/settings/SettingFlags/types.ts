@@ -4,8 +4,8 @@
 import type { SettingItem } from '@/renderer/screens/Settings/types';
 
 export interface SettingFlagsContextInterface {
-  windowDocked: boolean;
   getSwitchState: (setting: SettingItem) => boolean;
   handleSwitchToggle: (setting: SettingItem) => void;
   setWindowDocked: (flag: boolean) => void;
+  setSilenceOsNotifications: (flag: boolean) => void;
 }

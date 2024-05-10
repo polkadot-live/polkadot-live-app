@@ -6,6 +6,7 @@ import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export interface PersistedSettings {
   appDocked: boolean;
+  appSilenceOsNotifications: boolean;
 }
 
 export type SettingAction =

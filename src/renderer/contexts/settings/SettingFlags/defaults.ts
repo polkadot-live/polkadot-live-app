@@ -5,8 +5,8 @@
 import type { SettingFlagsContextInterface } from './types';
 
 export const defaultSettingFlagsContext: SettingFlagsContextInterface = {
-  windowDocked: false,
   getSwitchState: (s) => true,
   handleSwitchToggle: (s) => {},
   setWindowDocked: (b) => {},
+  setSilenceOsNotifications: (b) => {},
 };

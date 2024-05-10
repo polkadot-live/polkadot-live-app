@@ -346,12 +346,18 @@ app.whenReady().then(async () => {
   });
 
   // Get applicated docked flag.
-  ipcMain.handle('app:docked:get', async () => ConfigMain.appDocked);
+  ipcMain.handle(
+    'app:docked:get',
+    async () => ConfigMain.getAppSettings().appDocked
+  );
 
   // Set application docked flag.
   ipcMain.on('app:docked:set', (_, flag) => {
     WindowUtils.handleNewDockFlag(flag);
   });
+
+  // Get app settings.
+  ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
 
   /**
    * Ledger
