@@ -8,10 +8,13 @@ import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
+import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
+  getAppSettings: ApiGetAppSettings;
   getDockedFlag: ApiGetDockedFlag;
   setDockedFlag: ApiSetDockedFlag;
+  toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
@@ -106,6 +109,10 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
+
+type ApiToggleWorkspaceVisibility = () => void;
+
+type ApiGetAppSettings = () => Promise<PersistedSettings>;
 
 type ApiGetDockedFlag = () => Promise<boolean>;
 

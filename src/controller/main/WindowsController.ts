@@ -162,4 +162,11 @@ export class WindowsController {
       mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
     }
   };
+
+  // Set workspaces flag on all active windows.
+  static setVisibleOnAllWorkspaces = (flag: boolean) => {
+    for (const { window } of this.active) {
+      window.setVisibleOnAllWorkspaces(flag);
+    }
+  };
 }

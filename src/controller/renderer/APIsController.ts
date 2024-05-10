@@ -76,11 +76,38 @@ export class APIsController {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
 
-    await instance.connect();
+    // Wait until the requested API instance is connected if it is currently connecting.
+    if (instance.status === 'connecting') {
+      console.log(`${chainId} is connecting. Entering while loop...`);
 
-    this.set(instance);
+      // Lambda to wait for 1 second.
+      const waitOneSecond = (): Promise<void> =>
+        new Promise<void>((resolve) => {
+          setTimeout(resolve, 1000);
+        });
 
-    return instance;
+      // Enter loop to check for the connected instance every second.
+      let secondsWaited = 0;
+      while (instance.status === 'connecting') {
+        await waitOneSecond();
+        ++secondsWaited;
+
+        // Re-fetch the API instance and check if it's now connected.
+        const newInstance = this.get(chainId);
+        if (newInstance?.status === 'connected' && newInstance.api !== null) {
+          console.log(`${chainId} connected, waited ${secondsWaited} seconds.`);
+          return newInstance;
+        } else if (secondsWaited > 16) {
+          // If we have waited for more than 16 seconds, return null.
+          console.log('Waited over 16 seconds to connect, return null.');
+          return null;
+        }
+      }
+    } else {
+      await instance.connect();
+      this.set(instance);
+      return instance;
+    }
   };
 
   static connectInstance = async (chainId: ChainID) => {

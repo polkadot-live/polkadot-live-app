@@ -39,7 +39,7 @@ export const Accounts = ({
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
 
-  // Categorise addresses by their chain ID, sort by name.
+  /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
     const sorted = new Map<ChainID, FlattenedAccountData[]>();
 
@@ -67,10 +67,20 @@ export const Accounts = ({
       );
     }
 
+    // Remove any empty entries.
+    const redundantEntries: ChainID[] = [];
+    for (const [chainId, chainAddresses] of sorted.entries()) {
+      chainAddresses.length === 0 && redundantEntries.push(chainId);
+    }
+
+    redundantEntries.forEach((chainId) => {
+      sorted.delete(chainId);
+    });
+
     return sorted;
   };
 
-  // Active accordion indices for account subscription tasks categories.
+  /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
@@ -80,14 +90,14 @@ export const Accounts = ({
     )
   );
 
-  // Utility to copy tasks.
+  /// Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
     tasks.map((t) => ({
       ...t,
       actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
     }));
 
-  // Set parent subscription tasks state when a chain is clicked.
+  /// Set parent subscription tasks state when a chain is clicked.
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
     const copy = copyTasks(tasks);
@@ -101,7 +111,7 @@ export const Accounts = ({
     setSection(1);
   };
 
-  // Set account subscription tasks state when an account is clicked.
+  /// Set account subscription tasks state when an account is clicked.
   const handleClickAccount = (accountName: string, address: string) => {
     const tasks = getAccountSubscriptions(address);
     const copy = copyTasks(tasks);
@@ -125,76 +135,82 @@ export const Accounts = ({
         setExternalIndices={setAccordionActiveIndices}
       >
         {/* Manage Accounts */}
-        {Array.from(getSortedAddresses().entries()).map(
-          ([chainId, chainAddresses], i) => (
-            <AccordionItem key={`${chainId}_accounts`}>
-              <HeadingWrapper>
-                <AccordionHeader>
-                  <div className="flex">
-                    <div className="left">
-                      <div className="icon-wrapper">
-                        {accordionActiveIndices.includes(i) ? (
-                          <FontAwesomeIcon
-                            icon={faCaretDown}
-                            transform={'shrink-1'}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faCaretRight}
-                            transform={'shrink-1'}
-                          />
-                        )}
+        {addresses.length === 0 ? (
+          <div style={{ padding: '0 0.5rem' }}>
+            <NoAccounts />
+          </div>
+        ) : (
+          <>
+            {Array.from(getSortedAddresses().entries()).map(
+              ([chainId, chainAddresses], i) => (
+                <AccordionItem key={`${chainId}_accounts`}>
+                  <HeadingWrapper>
+                    <AccordionHeader>
+                      <div className="flex">
+                        <div className="left">
+                          <div className="icon-wrapper">
+                            {accordionActiveIndices.includes(i) ? (
+                              <FontAwesomeIcon
+                                icon={faCaretDown}
+                                transform={'shrink-1'}
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faCaretRight}
+                                transform={'shrink-1'}
+                              />
+                            )}
+                          </div>
+                          <h5>{chainId} Accounts</h5>
+                        </div>
                       </div>
-                      <h5>{chainId} Accounts</h5>
-                    </div>
-                  </div>
-                </AccordionHeader>
-              </HeadingWrapper>
-              <AccordionPanel>
-                <div style={{ padding: '0 0.75rem' }}>
-                  {addresses.length ? (
-                    <div className="flex-column">
-                      {chainAddresses.map(
-                        (
-                          { address, name }: FlattenedAccountData,
-                          j: number
-                        ) => (
-                          <AccountWrapper
-                            whileHover={{ scale: 1.01 }}
-                            key={`manage_account_${j}`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleClickAccount(name, address)}
-                            ></button>
-                            <div className="inner">
-                              <div>
-                                <span className="icon">
-                                  <Identicon value={address} size={26} />
-                                </span>
-                                <div className="content">
-                                  <h3>{name}</h3>
+                    </AccordionHeader>
+                  </HeadingWrapper>
+                  <AccordionPanel>
+                    <div style={{ padding: '0 0.75rem' }}>
+                      <div className="flex-column">
+                        {chainAddresses.map(
+                          (
+                            { address, name }: FlattenedAccountData,
+                            j: number
+                          ) => (
+                            <AccountWrapper
+                              whileHover={{ scale: 1.01 }}
+                              key={`manage_account_${j}`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleClickAccount(name, address)
+                                }
+                              ></button>
+                              <div className="inner">
+                                <div>
+                                  <span className="icon">
+                                    <Identicon value={address} size={26} />
+                                  </span>
+                                  <div className="content">
+                                    <h3>{name}</h3>
+                                  </div>
+                                </div>
+                                <div>
+                                  <ButtonText
+                                    text=""
+                                    iconRight={faChevronRight}
+                                    iconTransform="shrink-3"
+                                  />
                                 </div>
                               </div>
-                              <div>
-                                <ButtonText
-                                  text=""
-                                  iconRight={faChevronRight}
-                                  iconTransform="shrink-3"
-                                />
-                              </div>
-                            </div>
-                          </AccountWrapper>
-                        )
-                      )}
+                            </AccountWrapper>
+                          )
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <NoAccounts />
-                  )}
-                </div>
-              </AccordionPanel>
-            </AccordionItem>
-          )
+                  </AccordionPanel>
+                </AccordionItem>
+              )
+            )}
+          </>
         )}
 
         {/* Manage Chains */}

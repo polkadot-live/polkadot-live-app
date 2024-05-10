@@ -117,4 +117,29 @@ export const HelpConfig: HelpItems = [
       'Use this subscription as a debugging tool or to observe live data being received from the respective blockchain network.',
     ],
   },
+  {
+    key: 'help:settings:dockedWindow',
+    title: 'Docked Window',
+    definition: ['Help text for docked window.'],
+  },
+  {
+    key: 'help:settings:showOnAllWorkspaces',
+    title: 'Show on All Workspaces',
+    definition: ['Help text for workspaces setting.'],
+  },
+  {
+    key: 'help:settings:silenceOsNotifications',
+    title: 'Silence OS Notifications',
+    definition: ['Help text for silencing OS notifications.'],
+  },
+  {
+    key: 'help:settings:importData',
+    title: 'Import Data',
+    definition: ['Help text for importing data.'],
+  },
+  {
+    key: 'help:settings:exportData',
+    title: 'Export Data',
+    definition: ['Help text for exporting data.'],
+  },
 ];

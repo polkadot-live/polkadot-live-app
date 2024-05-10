@@ -15,6 +15,8 @@ import { withProviders } from '@app/library/Hooks/withProviders';
 // Import window contexts
 import { AccountStatusesProvider } from './contexts/import/AccountStatuses';
 import { ConnectionsProvider } from './contexts/import/Connections';
+// Settings window contexts
+import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 import { Theme } from './Theme';
 
 export const Providers = withProviders(
@@ -30,5 +32,7 @@ export const Providers = withProviders(
   AccountStatusesProvider,
   ConnectionsProvider,
   // Online status provider relies on other contexts being initialized.
-  BootstrappingProvider
+  BootstrappingProvider,
+  // Settings window
+  SettingFlagsProvider
 )(Theme);

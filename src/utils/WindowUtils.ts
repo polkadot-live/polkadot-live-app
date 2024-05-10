@@ -97,8 +97,8 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   //mainWindow.hide();
 
-  // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
+    // Send ports to main window to facilitate communication with other windows.
     mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
       ConfigMain.getPortPair('main-import').port1,
     ]);
@@ -107,8 +107,17 @@ export const createMainWindow = (isTest: boolean) => {
       ConfigMain.getPortPair('main-action').port1,
     ]);
 
+    mainWindow.webContents.postMessage(
+      'port',
+      { target: 'main-settings:main' },
+      [ConfigMain.getPortPair('main-settings').port1]
+    );
+
     // Set window bounds.
     setMainWindowPosition(mainWindow);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow('menu');
 
     // Send IPC message to renderer for app Initialization.
     WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
@@ -188,9 +197,9 @@ export const handleWindowOnIPC = (
       height: options?.height || 475,
       minHeight: options?.minHeight || 475,
       maxHeight: options?.maxHeight || 900,
-      width: 800,
-      minWidth: 800,
-      maxWidth: 800,
+      width: ConfigMain.childWidth,
+      minWidth: ConfigMain.childWidth,
+      maxWidth: ConfigMain.childWidth,
       minimizable: false,
       maximizable: false,
       alwaysOnTop: true,
@@ -238,6 +247,17 @@ export const handleWindowOnIPC = (
           [ConfigMain.getPortPair('main-action').port2]
         );
       });
+    } else if (name === 'settings') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to settings window');
+
+        // Send setting's port for main-settings communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-settings:settings' },
+          [ConfigMain.getPortPair('main-settings').port2]
+        );
+      });
     }
 
     window.on('focus', () => {
@@ -265,6 +285,9 @@ export const handleWindowOnIPC = (
     // Have windows controller handle window.
     WindowsController.add(window, name);
     WindowsController.show(name);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow(name);
   });
 };
 
@@ -302,15 +325,10 @@ const loadUrlWithRoute = (
  * @summary Calculate main window bounds (screen position and dimensions).
  */
 const setMainWindowPosition = (mainWindow: BrowserWindow) => {
-  // Get docked flag from state or set to `true`.
-  const isDocked: boolean = (store as Record<string, AnyJson>).get(
-    'app_docked'
-  );
+  // Get docked setting from storage.
+  const { appDocked } = ConfigMain.getAppSettings();
 
-  // Cache docked flag in config.
-  ConfigMain.appDocked = isDocked ? true : false;
-
-  if (!isDocked) {
+  if (!appDocked) {
     return;
   }
 
@@ -359,14 +377,28 @@ export const handleNewDockFlag = (isDocked: boolean) => {
     throw new Error('Main window not found.');
   }
 
-  // Cache new flag in store.
-  (store as Record<string, AnyJson>).set('app_docked', isDocked);
-
   // Update storage.
+  const settings = ConfigMain.getAppSettings();
+  settings.appDocked = isDocked;
+
+  const key = ConfigMain.settingsStorageKey;
+  (store as Record<string, AnyJson>).set(key, settings);
+
+  // Update window.
   if (isDocked) {
     setMainWindowPosition(mainWindow);
   } else {
     mainWindow.setMovable(true);
     mainWindow.setResizable(true);
   }
+};
+
+/**
+ * @name setAllWorkspaceVisibility
+ * @summary Sets windows all workspace visibiltiy flag.
+ */
+export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
+  const window = WindowsController.get(windowId);
+  const { appShowOnAllWorkspaces } = ConfigMain.getAppSettings();
+  window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };

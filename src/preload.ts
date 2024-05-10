@@ -39,6 +39,11 @@ export const API: PreloadAPI = {
    * New handlers
    */
 
+  toggleWindowWorkspaceVisibility: () =>
+    ipcRenderer.send('app:set:workspaceVisibility'),
+
+  getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
+
   getDockedFlag: async () => await ipcRenderer.invoke('app:docked:get'),
 
   setDockedFlag: (flag: boolean) => ipcRenderer.send('app:docked:set', flag),

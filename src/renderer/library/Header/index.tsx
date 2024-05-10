@@ -9,7 +9,6 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
-import { useEffect, useState } from 'react';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
@@ -28,21 +27,15 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     handleInitializeAppOnline,
   } = useBootstrapping();
 
-  const [dockToggled, setDockToggled] = useState<boolean>(true);
-  const [silenceToggle, setSilenceToggle] = useState(
-    RendererConfig.silenceNotifications
-  );
+  /// App settings.
+  const {
+    dockToggled,
+    silenceOsNotifications,
+    handleDockedToggle,
+    handleToggleSilenceOsNotifications,
+  } = useBootstrapping();
 
-  useEffect(() => {
-    const initDockedFlag = async () => {
-      const isDocked = await window.myAPI.getDockedFlag();
-      setDockToggled(isDocked);
-    };
-
-    initDockedFlag();
-  }, []);
-
-  // Determine active window by pathname.
+  /// Determine active window by pathname.
   let activeWindow: string;
   switch (pathname) {
     case '/import':
@@ -52,14 +45,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  // Handle toggle to silence all notifications.
-  const handleSilenceNotifications = () => {
-    const newFlag = !silenceToggle;
-    RendererConfig.silenceNotifications = newFlag;
-    setSilenceToggle(newFlag);
-  };
-
-  // Get text for connection button.
+  /// Get text for connection button.
   const getConnectionButtonText = () => {
     if (isConnecting || appLoading) {
       return 'Abort';
@@ -70,7 +56,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for connection button.
+  /// Handler for connection button.
   const handleConnectButtonClick = async () => {
     if (isConnecting || appLoading) {
       // Handle abort.
@@ -105,10 +91,36 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for aborting connection processing.
+  /// Handler for aborting connection processing.
   const handleAbortConnecting = () => {
     setIsAborting(true);
     RendererConfig.abortConnecting = true;
+  };
+
+  /// Handle clicking the docked button.
+  const handleDocked = () => {
+    handleDockedToggle();
+
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
+  };
+
+  /// Handle clicking the silence OS notifications button.
+  const handleSilenceOsNotifications = () => {
+    handleToggleSilenceOsNotifications();
+
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:silenceOsNotifications',
+      data: {
+        silenced: !silenceOsNotifications,
+      },
+    });
   };
 
   return (
@@ -131,11 +143,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                   text={dockToggled ? 'Detach' : 'Dock'}
                   iconLeft={dockToggled ? faUnlock : faLock}
                   iconTransform="shrink-2"
-                  onClick={() => {
-                    const docked = !dockToggled;
-                    setDockToggled(docked);
-                    window.myAPI.setDockedFlag(docked);
-                  }}
+                  onClick={() => handleDocked()}
                 />
               </div>
 
@@ -176,9 +184,9 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 <Switch
                   size="sm"
                   type="mono"
-                  isOn={silenceToggle}
+                  isOn={silenceOsNotifications}
                   disabled={appLoading}
-                  handleToggle={() => handleSilenceNotifications()}
+                  handleToggle={() => handleSilenceOsNotifications()}
                 />
               </a>
 

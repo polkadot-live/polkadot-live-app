@@ -2,23 +2,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MessageChannelMain } from 'electron';
+import { store } from '@/main';
 import type { PortPair, PortPairID } from '@/types/communication';
 import type { Rectangle, Tray } from 'electron';
+import type { PersistedSettings } from '@/renderer/screens/Settings/types';
+import type { AnyData } from '@/types/misc';
 
 export class Config {
-  // Main window's docked width and height.
-  private static _appDocked = true;
+  // Storage keys.
+  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
+  private static _settingsStorageKey = 'app_settings';
+
+  // Main window's docked properties.
   private static _dockedWidth = 420;
   private static _dockedHeight = 575;
+
+  // Child window properties.
+  private static _childWidth = 700;
 
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;
   private static _main_action_ports: PortPair;
+  private static _main_settings_ports: PortPair;
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
-
-  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
 
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.
@@ -27,6 +35,26 @@ export class Config {
 
     for (const id of ids) {
       Config.initPorts(id);
+    }
+  };
+
+  // Initialise default settings.
+  static getAppSettings = (): PersistedSettings => {
+    const key = Config._settingsStorageKey;
+
+    if (store.has(key)) {
+      // Return persisted settings.
+      return (store as Record<string, AnyData>).get(key);
+    } else {
+      const settings: PersistedSettings = {
+        appDocked: true,
+        appSilenceOsNotifications: false,
+        appShowOnAllWorkspaces: true,
+      };
+
+      // Persist default settings to store and return them.
+      (store as Record<string, AnyData>).set(key, settings);
+      return settings;
     }
   };
 
@@ -46,6 +74,13 @@ export class Config {
         }
 
         return Config._main_action_ports;
+      }
+      case 'main-settings': {
+        if (!Config._main_settings_ports) {
+          Config.initPorts('main-settings');
+        }
+
+        return Config._main_settings_ports;
       }
       default: {
         throw new Error('Port pair id not recognized');
@@ -76,19 +111,20 @@ export class Config {
         Config._main_action_ports = { port1, port2 };
         break;
       }
+      case 'main-settings': {
+        const { port1, port2 } = new MessageChannelMain();
+        Config._main_settings_ports = { port1, port2 };
+        break;
+      }
       default: {
         throw new Error('Port pair id not recognized');
       }
     }
   }
 
-  // Accessors for app's docked window size.
-  static get appDocked(): boolean {
-    return Config._appDocked;
-  }
-
-  static set appDocked(flag: boolean) {
-    Config._appDocked = flag;
+  // Accessors.
+  static get settingsStorageKey(): string {
+    return Config._settingsStorageKey;
   }
 
   static get dockedWidth(): number {
@@ -105,6 +141,14 @@ export class Config {
 
   static set dockedHeight(height: number) {
     Config._dockedHeight = height;
+  }
+
+  static get childWidth(): number {
+    return Config._childWidth;
+  }
+
+  static set childWidth(width: number) {
+    Config._childWidth = width;
   }
 
   // Setter for app's tray object.
