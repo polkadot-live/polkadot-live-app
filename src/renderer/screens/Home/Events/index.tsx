@@ -24,7 +24,6 @@ export const Events = () => {
   /// Get events state.
   const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
 
-  /// Memoize sorted event data.
   const sortedGroupedEvents = useMemo(
     () => sortAllGroupedEvents(newestFirst),
     [events, newestFirst]

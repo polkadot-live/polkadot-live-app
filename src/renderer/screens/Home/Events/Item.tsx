@@ -109,11 +109,11 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
         >
           <span>{renderTimeAgo(event.timestamp)}</span>
           {/* Dismiss button */}
-          <div className="dismiss-btn">
-            <FontAwesomeIcon
-              icon={faTimes}
-              onClick={async () => await handleDismissEvent()}
-            />
+          <div
+            className="dismiss-btn"
+            onClick={async () => await handleDismissEvent()}
+          >
+            <FontAwesomeIcon icon={faTimes} />
           </div>
 
           {/* Expand actions button */}
