@@ -11,6 +11,7 @@ import type {
   StoredAccount,
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -75,27 +76,9 @@ export class AccountsController {
         const tasks: SubscriptionTask[] =
           stored !== '' ? JSON.parse(stored) : [];
 
-        for (const task of tasks) {
-          if (task.status === 'enable') {
-            await account.subscribeToTask(task);
-          }
+        if (account.queryMulti !== null) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
-      }
-    }
-  }
-
-  /**
-   * @name unsubscribeAccounts
-   * @summary Calls `unsub` for each account's queryMulti entries, but keeps the
-   * subscription data. This method is called when the app goes into offline mode.
-   *
-   * @deprecated Since API instances re-connect automatically, we don't need to
-   * manually unsubscribe and re-build the query multi.
-   */
-  static unsubscribeAccounts() {
-    for (const accounts of this.accounts.values()) {
-      for (const account of accounts) {
-        account.unsubQueryMulti();
       }
     }
   }

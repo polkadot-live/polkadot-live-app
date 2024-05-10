@@ -54,7 +54,12 @@ export type HelpItemKey =
   | 'help:subscription:nominating:exposure'
   | 'help:subscription:nominating:payouts'
   | 'help:subscription:chain:timestamp'
-  | 'help:subscription:chain:currentSlot';
+  | 'help:subscription:chain:currentSlot'
+  | 'help:settings:dockedWindow'
+  | 'help:settings:showOnAllWorkspaces'
+  | 'help:settings:silenceOsNotifications'
+  | 'help:settings:importData'
+  | 'help:settings:exportData';
 
 export interface HelpItem {
   key: HelpItemKey;

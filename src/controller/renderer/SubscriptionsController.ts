@@ -48,21 +48,7 @@ export class SubscriptionsController {
       serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
-  }
-
-  /**
-   * @name unsubscribeChains
-   * @summary Calls `unsub` for each chain's queryMulti entry, but keeps the
-   * subscription data. This method is called when the app goes into offline mode.
-   *
-   * @deprecated Since API instances re-connect automatically, we don't need to
-   * manually unsubscribe and re-build the query multi.
-   */
-  static unsubscribeChains() {
-    this.chainSubscriptions?.unsubOnly();
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -70,14 +56,14 @@ export class SubscriptionsController {
    * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
    */
-  static async resubscribeAccounts() {
+  static async resubscribeChains() {
     if (!this.chainSubscriptions) {
       return;
     }
 
-    for (const task of this.chainSubscriptions?.getSubscriptionTasks() || []) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
+    // Get subscription task array and subscribe to batched tasks.
+    const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -87,6 +73,20 @@ export class SubscriptionsController {
   static async subscribeChainTask(task: SubscriptionTask) {
     if (this.chainSubscriptions) {
       await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    } else {
+      throw new Error(
+        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
+      );
+    }
+  }
+
+  /**
+   * @name subscribeChainTasks
+   * @summary Subscribe to a batch of chain tasks.
+   */
+  static async subscribeChainTasks(tasks: SubscriptionTask[]) {
+    if (this.chainSubscriptions) {
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
     } else {
       throw new Error(
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'

@@ -1,7 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BrowserWindow, Tray, nativeImage, ipcMain, shell } from 'electron';
+import type { Rectangle } from 'electron';
+import {
+  BrowserWindow,
+  Tray,
+  nativeImage,
+  ipcMain,
+  shell,
+  screen,
+} from 'electron';
 import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
@@ -17,13 +25,14 @@ import type { AnyJson } from '@/types/misc';
 
 const debug = MainDebug.extend('WindowUtils');
 
-/*----------------------------------------------------------------------
- Set up the tray:
- - Load Polkadot Live icon and instantiate an Electron Tray
- - Set tooltip for the tray icon
- - Add `mouse-up` listener in order to toggle the main window
- ----------------------------------------------------------------------*/
-
+/**
+ * @name createTray
+ * @summary Set up the tray:
+ *
+ * - Load Polkadot Live icon and instantiate an Electron Tray
+ * - Set tooltip for the tray icon
+ * - Add `mouse-up` listener in order to toggle the main window
+ */
 export const createTray = () => {
   const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
   const icon = nativeImage.createFromPath(iconPath);
@@ -38,17 +47,22 @@ export const createTray = () => {
       console.error(e);
     }
   });
+
+  // Cache tray in main process config.
+  ConfigMain.appTray = tray;
 };
 
-/*----------------------------------------------------------------------
- Set up the main window:
- - Instantiates its browser window
- - Loads the correct URL and HTML file
- - Defines event listeners for the window
- - Adds the browser window to WindowsController
- ----------------------------------------------------------------------*/
-
-// TODO: replace AnyJson with concrete type.
+/**
+ * @name createMainWindow
+ * @summary Set up the main window:
+ *
+ * - Instantiates its browser window
+ * - Loads the correct URL and HTML file
+ * - Defines event listeners for the window
+ * - Adds the browser window to WindowsController
+ *
+ * TODO: replace AnyJson with concrete type.
+ */
 export const createMainWindow = (isTest: boolean) => {
   const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
     'menu_bounds'
@@ -59,8 +73,8 @@ export const createMainWindow = (isTest: boolean) => {
     frame: false,
     x: initialMenuBounds?.x || undefined,
     y: initialMenuBounds?.y || undefined,
-    width: initialMenuBounds?.height || 420,
-    height: initialMenuBounds?.height || 475,
+    width: initialMenuBounds?.height || ConfigMain.dockedWidth,
+    height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: 420,
     maxWidth: 420,
     minHeight: 475,
@@ -83,8 +97,8 @@ export const createMainWindow = (isTest: boolean) => {
   // Initially hide the menu bar.
   //mainWindow.hide();
 
-  // Send ports to main window to facilitate communication with other windows.
   mainWindow.once('ready-to-show', () => {
+    // Send ports to main window to facilitate communication with other windows.
     mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
       ConfigMain.getPortPair('main-import').port1,
     ]);
@@ -92,6 +106,18 @@ export const createMainWindow = (isTest: boolean) => {
     mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
       ConfigMain.getPortPair('main-action').port1,
     ]);
+
+    mainWindow.webContents.postMessage(
+      'port',
+      { target: 'main-settings:main' },
+      [ConfigMain.getPortPair('main-settings').port1]
+    );
+
+    // Set window bounds.
+    setMainWindowPosition(mainWindow);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow('menu');
 
     // Send IPC message to renderer for app Initialization.
     WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
@@ -138,15 +164,17 @@ export const createMainWindow = (isTest: boolean) => {
   }
 };
 
-/*----------------------------------------------------------------------
- Prepares a window to be setup when main receives a given IPC message
- - Instantiates or loads an existing browser window
- - Loads the correct URL and HTML file
- - Defines event listeners for the window
- - Adds the browser window to WindowsController
- ----------------------------------------------------------------------*/
-
-// TODO: replace AnyJson with currently used options.
+/**
+ * @name handleWindowOnIPC
+ * @summary Prepares a window to be setup when main receives a given IPC message
+ *
+ * - Instantiates or loads an existing browser window
+ * - Loads the correct URL and HTML file
+ * - Defines event listeners for the window
+ * - Adds the browser window to WindowsController
+ *
+ * TODO: replace AnyJson with currently used options.
+ */
 export const handleWindowOnIPC = (
   name: string,
   isTest: boolean,
@@ -169,9 +197,9 @@ export const handleWindowOnIPC = (
       height: options?.height || 475,
       minHeight: options?.minHeight || 475,
       maxHeight: options?.maxHeight || 900,
-      width: 800,
-      minWidth: 800,
-      maxWidth: 800,
+      width: ConfigMain.childWidth,
+      minWidth: ConfigMain.childWidth,
+      maxWidth: ConfigMain.childWidth,
       minimizable: false,
       maximizable: false,
       alwaysOnTop: true,
@@ -219,6 +247,17 @@ export const handleWindowOnIPC = (
           [ConfigMain.getPortPair('main-action').port2]
         );
       });
+    } else if (name === 'settings') {
+      window.once('ready-to-show', () => {
+        debug('🔷 Send port to settings window');
+
+        // Send setting's port for main-settings communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-settings:settings' },
+          [ConfigMain.getPortPair('main-settings').port2]
+        );
+      });
     }
 
     window.on('focus', () => {
@@ -246,13 +285,16 @@ export const handleWindowOnIPC = (
     // Have windows controller handle window.
     WindowsController.add(window, name);
     WindowsController.show(name);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow(name);
   });
 };
 
-/*----------------------------------------------------------------------
- Contructs a window's route and loads its HTML file.
- ----------------------------------------------------------------------*/
-
+/**
+ * @name loadUrlWithRoute
+ * @summary Contructs a window's route and loads its HTML file.
+ */
 const loadUrlWithRoute = (
   window: BrowserWindow,
   options: { uri?: string; args?: Record<string, string> }
@@ -276,4 +318,87 @@ const loadUrlWithRoute = (
       )}`
     );
   }
+};
+
+/**
+ * @name setMainWindowPosition
+ * @summary Calculate main window bounds (screen position and dimensions).
+ */
+const setMainWindowPosition = (mainWindow: BrowserWindow) => {
+  // Get docked setting from storage.
+  const { appDocked } = ConfigMain.getAppSettings();
+
+  if (!appDocked) {
+    return;
+  }
+
+  // Get tray bounds.
+  const { x: trayX, width: trayWidth } = ConfigMain.getAppTrayBounds();
+
+  // Get screen width.
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth } = primaryDisplay.workAreaSize;
+
+  // Calculate window's X position.
+  const halfWindowWidth = ConfigMain.dockedWidth / 2;
+  const halfTrayWidth = trayWidth / 2;
+  let windowX = trayX - halfWindowWidth + halfTrayWidth;
+
+  // Dock window to right side of screen if its calculated position goes off the screen.
+  if (windowX + halfWindowWidth > screenWidth) {
+    windowX = screenWidth - halfWindowWidth;
+  }
+
+  const windowBounds: Rectangle = {
+    x: windowX,
+    y: 0,
+    width: ConfigMain.dockedWidth,
+    height: ConfigMain.dockedHeight,
+  };
+
+  // Set window position and size:
+  mainWindow.setBounds(windowBounds);
+
+  // Make window un-moveable if docked.
+  mainWindow.setMovable(false);
+
+  // Make window not resizable if docked.
+  mainWindow.setResizable(false);
+};
+
+/**
+ * @name handleNewDockFlag
+ * @summary Handle docking or un-docking the main window.
+ */
+export const handleNewDockFlag = (isDocked: boolean) => {
+  const mainWindow = WindowsController.get('menu');
+
+  if (!mainWindow) {
+    throw new Error('Main window not found.');
+  }
+
+  // Update storage.
+  const settings = ConfigMain.getAppSettings();
+  settings.appDocked = isDocked;
+
+  const key = ConfigMain.settingsStorageKey;
+  (store as Record<string, AnyJson>).set(key, settings);
+
+  // Update window.
+  if (isDocked) {
+    setMainWindowPosition(mainWindow);
+  } else {
+    mainWindow.setMovable(true);
+    mainWindow.setResizable(true);
+  }
+};
+
+/**
+ * @name setAllWorkspaceVisibility
+ * @summary Sets windows all workspace visibiltiy flag.
+ */
+export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
+  const window = WindowsController.get(windowId);
+  const { appShowOnAllWorkspaces } = ConfigMain.getAppSettings();
+  window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };

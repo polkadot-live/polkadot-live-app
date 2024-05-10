@@ -117,10 +117,10 @@ app.whenReady().then(async () => {
   // ------------------------------
 
   // Create menu bar and tray.
-  WindowUtils.createMainWindow(isTest);
   WindowUtils.createTray();
+  WindowUtils.createMainWindow(isTest);
 
-  // Handle Ledger account import.
+  // Handle import window.
   WindowUtils.handleWindowOnIPC('import', isTest);
 
   // Handle action window.
@@ -129,6 +129,9 @@ app.whenReady().then(async () => {
     minHeight: 375,
     maxHeight: 375,
   });
+
+  // Handle settings window.
+  WindowUtils.handleWindowOnIPC('settings', isTest);
 
   // ------------------------------
   // WDIO Custom Electron API
@@ -340,6 +343,34 @@ app.whenReady().then(async () => {
   // Closes a window by its key.
   ipcMain.on('app:window:close', (_, id) => {
     WindowsController.close(id);
+  });
+
+  // Get applicated docked flag.
+  ipcMain.handle(
+    'app:docked:get',
+    async () => ConfigMain.getAppSettings().appDocked
+  );
+
+  // Set application docked flag.
+  ipcMain.on('app:docked:set', (_, flag) => {
+    WindowUtils.handleNewDockFlag(flag);
+  });
+
+  // Get app settings.
+  ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
+
+  ipcMain.on('app:set:workspaceVisibility', () => {
+    // Get new flag.
+    const settings = ConfigMain.getAppSettings();
+    const flag = !settings.appShowOnAllWorkspaces;
+
+    // Update windows.
+    settings.appShowOnAllWorkspaces = flag;
+    WindowsController.setVisibleOnAllWorkspaces(flag);
+
+    // Update storage.
+    const key = ConfigMain.settingsStorageKey;
+    (store as Record<string, AnyData>).set(key, settings);
   });
 
   /**

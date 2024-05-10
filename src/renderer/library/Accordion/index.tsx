@@ -1,8 +1,14 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useState, Children } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import {
+  createContext,
+  useContext,
+  useState,
+  Children,
+  useEffect,
+} from 'react';
+import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import type { AccordionProps } from './types';
 
@@ -68,7 +74,7 @@ export function Accordion({
 }
 
 export function AccordionItem({ children }: { children: ReactNode }) {
-  return <div style={{ overflow: 'hidden' }}>{children}</div>;
+  return <div style={{ overflow: 'hidden', width: '100%' }}>{children}</div>;
 }
 
 export function AccordionHeader({ children }: { children: ReactNode }) {
@@ -94,20 +100,25 @@ export function AccordionHeader({ children }: { children: ReactNode }) {
 
 export function AccordionPanel({ children }: { children: ReactNode }) {
   const { isActive } = useAccordion();
+  const [isOpen, setIsOpen] = useState(isActive);
+
+  useEffect(() => {
+    setIsOpen(isActive);
+  }, [isActive]);
+
+  const variants = {
+    open: { height: 'auto' },
+    closed: { height: 0 },
+  };
 
   return (
-    <AnimatePresence initial={false}>
-      {isActive && (
-        <motion.div
-          initial={{ height: 0 }}
-          animate={{ height: 'auto' }}
-          exit={{ height: 0 }}
-          transition={{ type: 'spring', duration: 0.2, bounce: 0 }}
-          style={{ userSelect: 'none' }}
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <motion.div
+      initial={{ height: 0 }}
+      animate={isOpen ? 'open' : 'closed'}
+      variants={variants}
+      transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+    >
+      {children}
+    </motion.div>
   );
 }

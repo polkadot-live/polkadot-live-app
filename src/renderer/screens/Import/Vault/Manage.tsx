@@ -15,8 +15,17 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { HeaderWrapper } from '../../Wrappers';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
-import type { LocalAddress } from '@/types/accounts';
 import type { ManageVaultProps } from '../types';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
+import { HeadingWrapper } from '../Wrappers';
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   setSection,
@@ -25,6 +34,19 @@ export const Manage = ({
   setAddresses,
 }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
+
+  // Active accordion indices for account subscription tasks categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(
+    Array.from(
+      {
+        length:
+          Array.from(getSortedLocalAddresses(addresses).keys()).length + 1,
+      },
+      (_, index) => index
+    )
+  );
 
   return (
     <>
@@ -43,7 +65,7 @@ export const Manage = ({
       <BodyInterfaceWrapper $maxHeight>
         {addresses.length ? (
           <AddressWrapper>
-            <div className="items-wrapper">
+            <div className="outer-wrapper">
               <div className="more">
                 <ButtonText
                   iconLeft={faQrcode}
@@ -65,23 +87,66 @@ export const Manage = ({
                 />
               </div>
 
-              <div className="items">
-                {getSortedLocalAddresses(addresses).map(
-                  ({ address, index, isImported, name }: LocalAddress) => (
-                    <Address
-                      key={address}
-                      accountName={name}
-                      source={'vault'}
-                      setAddresses={setAddresses}
-                      address={address}
-                      index={index}
-                      isImported={isImported || false}
-                      isLast={index === addresses.length - 1}
-                      setSection={setSection}
-                    />
+              <Accordion
+                multiple
+                defaultIndex={accordionActiveIndices}
+                setExternalIndices={setAccordionActiveIndices}
+              >
+                {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                  ([chainId, chainAddresses]) => (
+                    <div key={`${chainId}_vault_addresses`}>
+                      <AccordionItem>
+                        <HeadingWrapper>
+                          <AccordionHeader>
+                            <div className="flex">
+                              <div className="left">
+                                <div className="icon-wrapper">
+                                  {accordionActiveIndices.includes(0) ? (
+                                    <FontAwesomeIcon
+                                      icon={faCaretDown}
+                                      transform={'shrink-1'}
+                                    />
+                                  ) : (
+                                    <FontAwesomeIcon
+                                      icon={faCaretRight}
+                                      transform={'shrink-1'}
+                                    />
+                                  )}
+                                </div>
+                                <h5>{chainId} Accounts</h5>
+                              </div>
+                            </div>
+                          </AccordionHeader>
+                        </HeadingWrapper>
+                        <AccordionPanel>
+                          <div className="items-wrapper">
+                            <div className="items">
+                              {chainAddresses.map(
+                                ({ address, index, isImported, name }, i) => (
+                                  <Address
+                                    key={address}
+                                    accountName={name}
+                                    source={'vault'}
+                                    setAddresses={setAddresses}
+                                    address={address}
+                                    index={index}
+                                    isImported={isImported || false}
+                                    setSection={setSection}
+                                    orderData={{
+                                      curIndex: i,
+                                      lastIndex: chainAddresses.length - 1,
+                                    }}
+                                  />
+                                )
+                              )}
+                            </div>
+                          </div>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </div>
                   )
                 )}
-              </div>
+              </Accordion>
             </div>
           </AddressWrapper>
         ) : null}

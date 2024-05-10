@@ -355,21 +355,6 @@ export class QueryMultiWrapper {
   }
 
   /**
-   * @name unsubOnly
-   * @summary Unsubscribe from the wrapped queryMulti but keep the cached call entries.
-   * This method is called when the app goes into offline mode.
-   *
-   * @deprecated APIs will automatically re-connect to queries. Manually unsubscribing
-   * is not required.
-   */
-  unsubOnly() {
-    for (const { unsub } of this.subscriptions.values()) {
-      // TODO: Might be clearer if the entry's `unsub` field is also set to `null`.
-      unsub();
-    }
-  }
-
-  /**
    * @name setOsNotificationsFlag
    * @summary Set the enableOsNotifications for a task.
    */

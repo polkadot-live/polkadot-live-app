@@ -2,38 +2,123 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEvents } from '@app/contexts/Events';
-import React from 'react';
+import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
-import { Wrapper } from './Wrappers';
-import type { ChainID } from '@/types/chains';
+import { EventGroup, SortControlsWrapper, Wrapper } from './Wrappers';
+import { Accordion } from '@/renderer/library/Accordion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faTimer,
+  faLayerGroup,
+  faBlock,
+} from '@fortawesome/pro-solid-svg-icons';
+import { EventItem } from './EventItem';
+import { getEventChainId } from '@/utils/EventUtils';
 
 export const Events = () => {
-  const { events, sortChainEvents } = useEvents();
+  /// State for sorting controls.
+  const [newestFirst, setNewestFirst] = useState(true);
+  const [groupingOn, setGroupingOn] = useState(true);
+
+  /// Get events state.
+  const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
+
+  const sortedGroupedEvents = useMemo(
+    () => sortAllGroupedEvents(newestFirst),
+    [events, newestFirst]
+  );
+
+  const sortedEvents = useMemo(
+    () => sortAllEvents(newestFirst),
+    [events, newestFirst]
+  );
+
+  /// Active accordion indices for event categories.
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(
+    Array.from(
+      { length: Array.from(sortedGroupedEvents.keys()).length },
+      (_, index) => index
+    )
+  );
 
   return (
-    <Wrapper>
-      {events.size === 0 && <NoEvents />}
+    <>
+      <SortControlsWrapper>
+        <div className="controls-wrapper">
+          {/* Date Sort Button */}
+          <div
+            className={newestFirst ? 'icon-wrapper active' : 'icon-wrapper'}
+            onClick={() => setNewestFirst(!newestFirst)}
+          >
+            <div className="icon">
+              <FontAwesomeIcon icon={faTimer} />
+            </div>
+            <span>{newestFirst ? 'Newest First' : 'Oldest First'}</span>
+          </div>
+          {/* Grouping Button */}
+          <div
+            className={groupingOn ? 'icon-wrapper active' : 'icon-wrapper'}
+            onClick={() => setGroupingOn(!groupingOn)}
+          >
+            <div className="icon">
+              <FontAwesomeIcon icon={faLayerGroup} transform={'grow-1'} />
+            </div>
+            <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
+          </div>
+        </div>
+      </SortControlsWrapper>
 
-      {Array.from(events.keys()).map((chainId) => {
-        // Sort chain events by category and order by timestamp DESC.
-        const sortedEvents = sortChainEvents(chainId as ChainID);
+      <Wrapper style={{ margin: '1rem 0' }}>
+        {events.size === 0 && <NoEvents />}
 
-        return (
-          <React.Fragment key={`${chainId}_events`}>
-            {Array.from(sortedEvents.entries()).map(
-              ([category, categoryEvents]) => (
+        <div
+          style={
+            groupingOn
+              ? { display: 'block', width: '100%' }
+              : { display: 'none', width: '100%' }
+          }
+        >
+          <Accordion
+            multiple
+            defaultIndex={accordionActiveIndices}
+            setExternalIndices={setAccordionActiveIndices}
+          >
+            {Array.from(sortedGroupedEvents.entries()).map(
+              ([category, categoryEvents], i) => (
                 <Category
-                  key={`${chainId}_${category}_events`}
-                  chain={chainId as ChainID}
+                  key={`${category}_events`}
+                  accordionActiveIndices={accordionActiveIndices}
+                  accordionIndex={i}
                   category={category}
                   events={categoryEvents}
                 />
               )
             )}
-          </React.Fragment>
-        );
-      })}
-    </Wrapper>
+          </Accordion>
+        </div>
+        <div
+          style={
+            groupingOn
+              ? { display: 'none', width: '100%' }
+              : { display: 'block', width: '100%' }
+          }
+        >
+          <EventGroup>
+            <div className="items-wrapper">
+              {sortedEvents.map((event) => (
+                <EventItem
+                  key={`${getEventChainId(event)}_${event.uid}`}
+                  faIcon={faBlock}
+                  event={event}
+                />
+              ))}
+            </div>
+          </EventGroup>
+        </div>
+      </Wrapper>
+    </>
   );
 };

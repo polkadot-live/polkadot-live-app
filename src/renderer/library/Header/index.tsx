@@ -9,11 +9,11 @@ import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
-import { useState } from 'react';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
 import type { HeaderProps } from './types';
+import { faLock, faUnlock } from '@fortawesome/pro-solid-svg-icons';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -26,11 +26,16 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     handleInitializeAppOffline,
     handleInitializeAppOnline,
   } = useBootstrapping();
-  const [silenceToggle, setSilenceToggle] = useState(
-    RendererConfig.silenceNotifications
-  );
 
-  // Determine active window by pathname.
+  /// App settings.
+  const {
+    dockToggled,
+    silenceOsNotifications,
+    handleDockedToggle,
+    handleToggleSilenceOsNotifications,
+  } = useBootstrapping();
+
+  /// Determine active window by pathname.
   let activeWindow: string;
   switch (pathname) {
     case '/import':
@@ -40,14 +45,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  // Handle toggle to silence all notifications.
-  const handleSilenceNotifications = () => {
-    const newFlag = !silenceToggle;
-    RendererConfig.silenceNotifications = newFlag;
-    setSilenceToggle(newFlag);
-  };
-
-  // Get text for connection button.
+  /// Get text for connection button.
   const getConnectionButtonText = () => {
     if (isConnecting || appLoading) {
       return 'Abort';
@@ -58,7 +56,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for connection button.
+  /// Handler for connection button.
   const handleConnectButtonClick = async () => {
     if (isConnecting || appLoading) {
       // Handle abort.
@@ -75,7 +73,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         await handleInitializeAppOnline();
         setIsConnecting(false);
       } else {
-        console.log('render error');
         // Render error alert.
         toast.error('You are offline.', {
           position: 'bottom-center',
@@ -94,10 +91,36 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     }
   };
 
-  // Handler for aborting connection processing.
+  /// Handler for aborting connection processing.
   const handleAbortConnecting = () => {
     setIsAborting(true);
     RendererConfig.abortConnecting = true;
+  };
+
+  /// Handle clicking the docked button.
+  const handleDocked = () => {
+    handleDockedToggle();
+
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
+  };
+
+  /// Handle clicking the silence OS notifications button.
+  const handleSilenceOsNotifications = () => {
+    handleToggleSilenceOsNotifications();
+
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:silenceOsNotifications',
+      data: {
+        silenced: !silenceOsNotifications,
+      },
+    });
   };
 
   return (
@@ -106,31 +129,53 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="grab" />
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
-            <div className="switch-wrapper">
-              <ButtonSecondary
-                className={
-                  (isConnecting && !isAborting) || (appLoading && !isAborting)
-                    ? 'connect-btn do-pulse hide-text'
-                    : isAborting || isConnecting || appLoading
-                      ? 'connect-btn do-pulse'
-                      : 'connect-btn'
-                }
-                text={
-                  isAborting
-                    ? 'Canceling..'
-                    : isConnecting || appLoading
-                      ? 'Abort'
-                      : getConnectionButtonText()
-                }
-                disabled={isAborting}
-                onClick={async () => await handleConnectButtonClick()}
-              />
-              {((isConnecting && !isAborting) ||
-                (appLoading && !isAborting)) && (
-                <div className="abort-x do-pulse">
-                  <FontAwesomeIcon icon={faX} className="icon-sm" />
-                </div>
-              )}
+            <div className="controls-wrapper">
+              {/* Docked button */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '1rem',
+                }}
+              >
+                <ButtonSecondary
+                  className="dock-btn"
+                  text={dockToggled ? 'Detach' : 'Dock'}
+                  iconLeft={dockToggled ? faUnlock : faLock}
+                  iconTransform="shrink-2"
+                  onClick={() => handleDocked()}
+                />
+              </div>
+
+              {/* Connection button */}
+              <div className="connect-wrapper">
+                <ButtonSecondary
+                  className={
+                    (isConnecting && !isAborting) || (appLoading && !isAborting)
+                      ? 'connect-btn do-pulse hide-text'
+                      : isAborting || isConnecting || appLoading
+                        ? 'connect-btn do-pulse'
+                        : 'connect-btn'
+                  }
+                  text={
+                    isAborting
+                      ? 'Canceling..'
+                      : isConnecting || appLoading
+                        ? 'Abort'
+                        : getConnectionButtonText()
+                  }
+                  disabled={isAborting}
+                  onClick={async () => await handleConnectButtonClick()}
+                />
+                {((isConnecting && !isAborting) ||
+                  (appLoading && !isAborting)) && (
+                  <div className="abort-x do-pulse">
+                    <FontAwesomeIcon icon={faX} className="icon-sm" />
+                  </div>
+                )}
+              </div>
+
+              {/* Silence OS notifications switch */}
               <a
                 data-tooltip-id="silence-notifications-tooltip"
                 data-tooltip-content="Silence OS Notifications"
@@ -139,11 +184,13 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 <Switch
                   size="sm"
                   type="mono"
-                  isOn={silenceToggle}
+                  isOn={silenceOsNotifications}
                   disabled={appLoading}
-                  handleToggle={() => handleSilenceNotifications()}
+                  handleToggle={() => handleSilenceOsNotifications()}
                 />
               </a>
+
+              {/* Cog menu*/}
               <Menu />
             </div>
           ) : (

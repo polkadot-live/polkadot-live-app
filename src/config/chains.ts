@@ -9,7 +9,6 @@ import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
 import type { ChainID } from '@/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
-import type { AnyData } from '@/types/misc';
 
 interface Chain {
   icon: FunctionComponent<
@@ -27,8 +26,14 @@ interface Chain {
   units: number;
   unit: string;
   prefix: number;
-  categories: AnyData;
 }
+
+const CategoryList = new Map([
+  ['balances', { name: 'Balances', icon: faUserGroup }],
+  ['debugging', { name: 'Debugging', icon: faUserGroup }],
+  ['nominationPools', { name: 'Nomination Pools', icon: faUserGroup }],
+  ['nominating', { name: 'Nominating', icon: faUserGroup }],
+]);
 
 export const ChainList = new Map<ChainID, Chain>([
   [
@@ -45,24 +50,6 @@ export const ChainList = new Map<ChainID, Chain>([
       units: 10,
       unit: 'DOT',
       prefix: 0,
-      categories: {
-        balances: {
-          name: 'Balances',
-          icon: faUserGroup,
-        },
-        debugging: {
-          name: 'Debugging',
-          icon: faUserGroup,
-        },
-        nominationPools: {
-          name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        nominating: {
-          name: 'Nominating',
-          icon: faUserGroup,
-        },
-      },
     },
   ],
   [
@@ -79,24 +66,6 @@ export const ChainList = new Map<ChainID, Chain>([
       units: 12,
       unit: 'WND',
       prefix: 42,
-      categories: {
-        balances: {
-          name: 'Balances',
-          icon: faUserGroup,
-        },
-        debugging: {
-          name: 'Debugging',
-          icon: faUserGroup,
-        },
-        nominationPools: {
-          name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        nominating: {
-          name: 'Nominating',
-          icon: faUserGroup,
-        },
-      },
     },
   ],
   [
@@ -113,24 +82,6 @@ export const ChainList = new Map<ChainID, Chain>([
       units: 12,
       unit: 'KSM',
       prefix: 2,
-      categories: {
-        balances: {
-          name: 'Balances',
-          icon: faUserGroup,
-        },
-        debugging: {
-          name: 'Debugging',
-          icon: faUserGroup,
-        },
-        nominationPools: {
-          name: 'Nomination Pools',
-          icon: faUserGroup,
-        },
-        nominating: {
-          name: 'Nominating',
-          icon: faUserGroup,
-        },
-      },
     },
   ],
 ]);
@@ -144,5 +95,4 @@ export const chainCurrency = (chain: ChainID) =>
 export const chainUnits = (chain: ChainID) =>
   (ChainList.get(chain) as Chain).units;
 
-export const chainCategory = (chain: ChainID, category: string) =>
-  (ChainList.get(chain) as Chain).categories[category];
+export const getCategory = (category: string) => CategoryList.get(category);

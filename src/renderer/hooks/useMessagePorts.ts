@@ -6,6 +6,7 @@ import { APIsController } from '@/controller/renderer/APIsController';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { Config as ConfigImport } from '@/config/processes/import';
+import { Config as ConfigSettings } from '@/config/processes/settings';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -17,10 +18,12 @@ import { SubscriptionsController } from '@/controller/renderer/SubscriptionsCont
 import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/Addresses';
 import { useAccountStatuses } from '../contexts/import/AccountStatuses';
+import { useBootstrapping } from '../contexts/Bootstrapping';
 import { useChains } from '@app/contexts/Chains';
 import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
+import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
@@ -28,6 +31,8 @@ import type { ActionMeta } from '@/types/tx';
 export const useMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
+  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
+    useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
@@ -37,6 +42,9 @@ export const useMessagePorts = () => {
   /// Import renderer contexts.
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
+
+  // Settings renderer contexts.
+  const { setWindowDocked, setSilenceOsNotifications } = useSettingFlags();
 
   /// Action window specific.
   const {
@@ -365,6 +373,68 @@ export const useMessagePorts = () => {
           };
 
           ConfigAction.portAction.start();
+          break;
+        }
+        case 'main-settings:main': {
+          ConfigRenderer.portToSettings = e.ports[0];
+
+          ConfigRenderer.portToSettings.onmessage = async (
+            ev: MessageEvent
+          ) => {
+            // Message received from `settings`.
+            switch (ev.data.task) {
+              case 'settings:execute:dockedWindow': {
+                handleDockedToggle();
+                break;
+              }
+              case 'settings:execute:showOnAllWorkspaces': {
+                window.myAPI.toggleWindowWorkspaceVisibility();
+                break;
+              }
+              case 'settings:execute:silenceOsNotifications': {
+                handleToggleSilenceOsNotifications();
+                break;
+              }
+              case 'settings:execute:importData': {
+                console.log('todo: handle importData');
+                break;
+              }
+              case 'settings:execute:exportData': {
+                console.log('todo: handle exportData');
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
+          };
+
+          ConfigRenderer.portToSettings.start();
+          break;
+        }
+        case 'main-settings:settings': {
+          ConfigSettings.portSettings = e.ports[0];
+
+          ConfigSettings.portSettings.onmessage = (ev: MessageEvent) => {
+            // Message received from `main`.
+            switch (ev.data.task) {
+              case 'settings:set:dockedWindow': {
+                const { docked } = ev.data.data;
+                setWindowDocked(docked);
+                break;
+              }
+              case 'settings:set:silenceOsNotifications': {
+                const { silenced } = ev.data.data;
+                setSilenceOsNotifications(silenced);
+                break;
+              }
+              default: {
+                throw new Error(`Port task not recognized (${ev.data.task})`);
+              }
+            }
+          };
+
+          ConfigSettings.portSettings.start();
           break;
         }
         default: {

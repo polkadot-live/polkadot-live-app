@@ -42,8 +42,8 @@ export const Menu = () => {
         <MenuWrapper ref={alerterRf}>
           <button
             type="button"
-            onClick={async () => {
-              await window.myAPI.openWindow('import');
+            onClick={() => {
+              window.myAPI.openWindow('import');
               toggleMenu(false);
             }}
           >
@@ -51,21 +51,12 @@ export const Menu = () => {
           </button>
           <button
             type="button"
-            disabled
             onClick={() => {
-              console.log('TODO: Open import data.');
+              window.myAPI.openWindow('settings');
+              toggleMenu(false);
             }}
           >
-            Import Data
-          </button>
-          <button
-            type="button"
-            disabled
-            onClick={() => {
-              console.log('TODO: Open export data.');
-            }}
-          >
-            Export Data
+            Settings
           </button>
           <Separator />
           <button

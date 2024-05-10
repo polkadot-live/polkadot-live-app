@@ -43,7 +43,7 @@ export const AddressWrapper = styled.div`
     }
   }
 
-  .items-wrapper {
+  .outer-wrapper {
     height: calc(100% - 5.5rem);
     overflow-y: auto;
     overflow-x: hidden;
@@ -60,13 +60,17 @@ export const AddressWrapper = styled.div`
       background-color: #212121;
     }
 
-    .items {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      border: 1px solid var(--border-primary-color);
-      border-radius: 1.25rem;
-      justify-content: center;
+    .items-wrapper {
+      padding-bottom: 1rem;
+
+      .items {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0 0.25rem;
+        border: 1px solid var(--border-primary-color);
+        border-radius: 1.25rem;
+      }
     }
     .edit {
       margin-left: 0.75rem;

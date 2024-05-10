@@ -4,11 +4,74 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+export const SortControlsWrapper = styled.div`
+  .controls-wrapper {
+    width: 100%;
+    background-color: var(--background-primary);
+    border-radius: 0.25rem;
+    border-bottom: 1px solid var(--border-primary-color);
+    padding: 1.5rem 1.5rem 1.25rem;
+    flex: 1;
+
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    column-gap: 1rem;
+
+    .icon-wrapper {
+      opacity: 0.75;
+      display: flex;
+      column-gap: 0.75rem;
+      align-items: center;
+      min-width: 120px;
+
+      position: relative;
+      border: 1px solid #535353;
+      border-radius: 1.25rem;
+
+      margin: 0;
+      padding: 0.3rem 0.5rem;
+      transition: border 0.1s ease-out;
+      user-select: none;
+      cursor: pointer;
+      transition: opacity 0.1s ease-out;
+
+      span {
+        display: inline-block;
+        padding-right: 0.7rem;
+        color: #666666;
+        font-size: 0.9rem;
+      }
+      .icon {
+        color: #5f5f5f;
+        margin-left: 0.7rem;
+      }
+      &:hover {
+        opacity: 0.9;
+      }
+      // Button is active.
+      &.active {
+        border-color: #454545;
+        background-color: #3a3a3a;
+        transition: opacity 0.1s ease-out;
+        .icon,
+        span {
+          color: #ededed;
+        }
+        &:hover {
+          background-color: #3a3a3a;
+        }
+      }
+    }
+  }
+`;
+
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-flow: column wrap;
   align-items: center;
+  row-gap: 0.5rem;
   padding: 0 1rem;
 `;
 
@@ -48,12 +111,13 @@ export const EventGroup = styled.div`
   border-radius: 0.9rem;
   z-index: 2;
   padding: 0 0.5rem;
-  margin: 1rem 0;
+  margin-bottom: 1rem;
 
   .items-wrapper {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
+    padding: 0 0.25rem;
   }
 `;
 
@@ -62,11 +126,12 @@ export const EventItem = styled(motion.div)`
 
   position: relative;
 
+  // Time ago
   > span:first-child {
     text-align: right;
     position: absolute;
-    top: 18px;
-    right: 40px;
+    top: 1.25rem;
+    right: 44px;
     color: #4d4c4c;
     transition: color ease-out 0.1s;
     cursor: pointer;
@@ -75,13 +140,49 @@ export const EventItem = styled(motion.div)`
     color: var(--text-color-secondary);
   }
 
-  > button {
+  // Dismiss button
+  > .dismiss-btn {
     position: absolute;
-    top: 1.5rem;
-    right: 15px;
+    width: 2.2rem;
+    height: 2.2rem;
+    top: 1rem;
+    right: 10px;
     transition: color 0.2s ease-out;
+    padding: 0;
+    border-radius: 0.65rem;
+    border: 1px solid var(--border-mid-color);
+    cursor: pointer;
+
+    svg {
+      color: var(--border-mid-color);
+    }
     &:hover {
-      color: #953254;
+      border-color: #7e3333;
+      svg {
+        color: #7e3333;
+      }
+    }
+  }
+
+  // Show actions buttons
+  .show-actions-btn {
+    background-color: #953254;
+    position: absolute;
+    top: 4rem;
+    right: 10px;
+    width: 2.2rem;
+    height: 2.2rem;
+    opacity: 0.3;
+    border-radius: 0.65rem;
+    padding: 0;
+    cursor: pointer;
+
+    transition: opacity 0.1s ease-out;
+    &:hover {
+      opacity: 0.75;
+    }
+    svg {
+      color: #f1f1f1;
     }
   }
 
@@ -99,24 +200,10 @@ export const EventItem = styled(motion.div)`
 
     > section {
       display: flex;
+      justify-content: center;
+      column-gap: 1rem;
 
-      &.actions {
-        margin: 0.7rem 0 0rem 0;
-        padding-left: 3.75rem;
-        button {
-          margin-right: 0.9rem;
-        }
-        .btn-mono {
-          background-color: #953254;
-          border: 1px solid #953254;
-          color: #ededed;
-        }
-        .btn-mono-invert {
-          border: 1px solid #a23b5e;
-          color: #a23b5e;
-        }
-      }
-
+      // All direct divs
       > div {
         display: flex;
         flex-direction: column;
@@ -183,6 +270,26 @@ export const EventItem = styled(motion.div)`
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
         }
+      }
+    }
+  }
+  // Actions container
+  .actions-wrapper {
+    .actions {
+      display: flex;
+      flex-direction: row;
+      column-gap: 1rem;
+      margin: 1.5rem 0 0;
+      overflow: hidden;
+
+      .btn-mono {
+        background-color: #953254;
+        border: 1px solid #953254;
+        color: #ededed;
+      }
+      .btn-mono-invert {
+        border: 1px solid #a23b5e;
+        color: #a23b5e;
       }
     }
   }
