@@ -9,4 +9,5 @@ export const defaultSettingFlagsContext: SettingFlagsContextInterface = {
   handleSwitchToggle: (s) => {},
   setWindowDocked: (b) => {},
   setSilenceOsNotifications: (b) => {},
+  setShowOnAllWorkspaces: (b) => {},
 };
