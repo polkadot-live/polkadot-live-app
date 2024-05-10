@@ -76,6 +76,7 @@ export class Api {
 
     this.setApi(api, chainId as ChainID);
     await this.getConsts();
+    this.status = 'connected';
   };
 
   get endpoint() {
@@ -152,7 +153,6 @@ export class Api {
   initEvents = () => {
     this.provider?.on('connected', () => {
       console.log('⭕ %o', this.endpoint, ' CONNECTED');
-      this.status = 'connected';
     });
 
     this.provider?.on('disconnected', async () => {
