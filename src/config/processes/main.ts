@@ -8,7 +8,7 @@ import type { Rectangle, Tray } from 'electron';
 export class Config {
   // Storage keys.
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
-  private static _dockedStorageKey = 'app_docked';
+  private static _settingsStorageKey = 'app_settings';
 
   // Main window's docked properties.
   private static _appDocked = true;
@@ -100,9 +100,9 @@ export class Config {
     }
   }
 
-  // Accessors for app's docked properties
-  static get dockedStorageKey(): string {
-    return Config._dockedStorageKey;
+  // Accessors.
+  static get settingsStorageKey(): string {
+    return Config._settingsStorageKey;
   }
 
   static get appDocked(): boolean {

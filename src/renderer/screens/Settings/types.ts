@@ -4,6 +4,10 @@
 import type { HelpItemKey } from '@/renderer/contexts/Help/types';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+export interface PersistedSettings {
+  appDocked: boolean;
+}
+
 export type SettingAction =
   | 'settings:execute:dockedWindow'
   | 'settings:execute:showOnAllWorkspaces'
