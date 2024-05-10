@@ -388,7 +388,7 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'settings:execute:showOnAllWorkspaces': {
-                console.log('todo: handle showOnAllWorkspaces');
+                window.myAPI.toggleWindowWorkspaceVisibility();
                 break;
               }
               case 'settings:execute:silenceOsNotifications': {
