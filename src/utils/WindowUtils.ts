@@ -116,6 +116,9 @@ export const createMainWindow = (isTest: boolean) => {
     // Set window bounds.
     setMainWindowPosition(mainWindow);
 
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow('menu');
+
     // Send IPC message to renderer for app Initialization.
     WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
 
@@ -282,6 +285,9 @@ export const handleWindowOnIPC = (
     // Have windows controller handle window.
     WindowsController.add(window, name);
     WindowsController.show(name);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow(name);
   });
 };
 
@@ -385,4 +391,14 @@ export const handleNewDockFlag = (isDocked: boolean) => {
     mainWindow.setMovable(true);
     mainWindow.setResizable(true);
   }
+};
+
+/**
+ * @name setAllWorkspaceVisibility
+ * @summary Sets windows all workspace visibiltiy flag.
+ */
+export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
+  const window = WindowsController.get(windowId);
+  const { appShowOnAllWorkspaces } = ConfigMain.getAppSettings();
+  window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };
