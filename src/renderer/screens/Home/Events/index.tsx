@@ -24,12 +24,6 @@ export const Events = () => {
   /// Get events state.
   const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
 
-  /// Memoize sorted event data.
-  const sortedGroupedEvents = useMemo(
-    () => sortAllGroupedEvents(newestFirst),
-    [events, newestFirst]
-  );
-
   const sortedEvents = useMemo(
     () => sortAllEvents(newestFirst),
     [events, newestFirst]
@@ -40,7 +34,7 @@ export const Events = () => {
     number[]
   >(
     Array.from(
-      { length: Array.from(sortedGroupedEvents.keys()).length },
+      { length: Array.from(sortAllGroupedEvents(newestFirst).keys()).length },
       (_, index) => index
     )
   );
@@ -87,7 +81,7 @@ export const Events = () => {
             defaultIndex={accordionActiveIndices}
             setExternalIndices={setAccordionActiveIndices}
           >
-            {Array.from(sortedGroupedEvents.entries()).map(
+            {Array.from(sortAllGroupedEvents(newestFirst).entries()).map(
               ([category, categoryEvents], i) => (
                 <Category
                   key={`${category}_events`}
