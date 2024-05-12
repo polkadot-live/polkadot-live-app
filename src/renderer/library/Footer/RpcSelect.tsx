@@ -21,6 +21,11 @@ export const SelectRpc = ({ apiData }: SelectRpcProps) => {
   ) => {
     const newEndpoint = event.target.value;
 
+    // Exit early if endpoint hasn't changed.
+    if (newEndpoint === selectedRpc) {
+      return;
+    }
+
     // Update React state.
     setSelectedRpc(newEndpoint);
 

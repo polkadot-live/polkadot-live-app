@@ -69,12 +69,24 @@ export class APIsController {
   };
 
   /**
+   * @name getStatus
+   * @summary Get status of an API instance.
+   */
+  static getStatus = (chainId: ChainID) => {
+    const instance = this.get(chainId);
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    return instance.status;
+  };
+
+  /**
    * @name setEndpointForApi
    * @summary Set the default endpoint for an API instance.
    */
   static setEndpointForApi = (chainId: ChainID, newEndpoint: string) => {
     const instance = this.get(chainId);
-
     if (!instance) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
