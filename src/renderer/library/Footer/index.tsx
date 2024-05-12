@@ -30,9 +30,7 @@ export const Footer = () => {
   /// Get header text.
   const getHeadingText = () =>
     isOnline
-      ? chains.size
-        ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
-        : 'Disconnected'
+      ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
       : 'Offline';
 
   return (
