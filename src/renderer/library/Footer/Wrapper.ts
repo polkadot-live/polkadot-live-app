@@ -49,8 +49,9 @@ export const FooterWrapper = styled.div`
   }
 
   &.expanded {
-    height: 100%;
+    height: calc(100% - 35px); // minus height of header
     border-top: none;
+    z-index: 2;
 
     .status {
       height: 4rem;
@@ -114,7 +115,7 @@ export const SelectRpcWrapper = styled.div`
     position: relative;
 
     .icon-wrapper {
-      z-index: 10;
+      z-index: 8;
       position: relative;
 
       .success {
