@@ -84,9 +84,35 @@ export class AccountsController {
   }
 
   /**
+   * @name subscribeAccountsForChain
+   * @summary Same as `subscribeAccounts` but for a specific chain.
+   */
+  static async subscribeAccountsForChain(chainId: ChainID) {
+    // Get accounts for provided chain ID.
+    const chainAccounts = this.accounts.get(chainId);
+    if (!chainAccounts) {
+      return;
+    }
+
+    // Resubscribe to the each account's persisted tasks.
+    for (const account of chainAccounts) {
+      const stored = await window.myAPI.getPersistedAccountTasks(
+        account.flatten()
+      );
+
+      const tasks: SubscriptionTask[] = stored !== '' ? JSON.parse(stored) : [];
+      if (account.queryMulti !== null) {
+        await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+      }
+    }
+  }
+
+  /**
    * @name resubscribeAccounts
    * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
+   *
+   * @deprecated Currently not being called.
    */
   static async resubscribeAccounts() {
     for (const accounts of this.accounts.values()) {

@@ -294,6 +294,31 @@ export const BootstrappingProvider = ({
     }
   };
 
+  /// Re-subscribe to tasks when switching to a different endpoint.
+  const handleNewEndpointForChain = async (
+    chainId: ChainID,
+    newEndpoint: string
+  ) => {
+    // Disconnect from chain and set new endpoint.
+    await APIsController.close(chainId);
+    APIsController.setEndpointForApi(chainId, newEndpoint);
+
+    // Connect to new endpoint.
+    await APIsController.connectInstance(chainId);
+
+    // Re-subscribe account and chain tasks.
+    await Promise.all([
+      AccountsController.subscribeAccountsForChain(chainId),
+      SubscriptionsController.resubscribeChain(chainId),
+    ]);
+
+    // Disconnect from API instance if it's not currently needed.
+    await handleApiDisconnects();
+
+    // Set application state.
+    setSubscriptionsAndChainConnections();
+  };
+
   /// Utility.
   const setSubscriptionsAndChainConnections = () => {
     // Set chain subscriptions data for rendering.
@@ -357,6 +382,7 @@ export const BootstrappingProvider = ({
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
+        handleNewEndpointForChain,
       }}
     >
       {children}

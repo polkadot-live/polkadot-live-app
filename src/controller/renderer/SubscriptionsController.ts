@@ -67,6 +67,24 @@ export class SubscriptionsController {
   }
 
   /**
+   * @name resubscribeChain
+   * @summary Re-subscribe to tasks for a particular chain.
+   */
+  static async resubscribeChain(chainId: ChainID) {
+    if (!this.chainSubscriptions) {
+      return;
+    }
+
+    // Fetch task to re-subscribe to.
+    const tasks = this.chainSubscriptions
+      .getSubscriptionTasks()
+      .filter((task) => task.chainId === chainId);
+
+    tasks.length > 0 &&
+      (await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions));
+  }
+
+  /**
    * @name subscribeChainTask
    * @summary Subscribe to a chain task.
    */

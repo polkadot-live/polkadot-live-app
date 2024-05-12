@@ -23,6 +23,7 @@ const debug = MainDebug.extend('Api');
  * @property {ApiPromise | null} api - the API instance of the chain.
  * @property {string | null} chain - the chain name.
  * @property {APIConstants | null} consts - the constants of the chain.
+ * @property {string[]} rpcs - rpc endpoints for connecting to the chain network.
  */
 export class Api {
   private _endpoint: string;

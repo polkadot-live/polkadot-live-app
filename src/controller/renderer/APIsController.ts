@@ -69,6 +69,21 @@ export class APIsController {
   };
 
   /**
+   * @name setEndpointForApi
+   * @summary Set the default endpoint for an API instance.
+   */
+  static setEndpointForApi = (chainId: ChainID, newEndpoint: string) => {
+    const instance = this.get(chainId);
+
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    instance.endpoint = newEndpoint;
+    this.set(instance);
+  };
+
+  /**
    * @name fetchConnectedInstance
    * @summary Returns the connected API instance for a specific chain ID.
    */

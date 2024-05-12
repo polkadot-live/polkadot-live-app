@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import type { FlattenedAPIData } from '@/types/apis';
 import { SelectRpcWrapper } from './Wrapper';
+import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import type { FlattenedAPIData } from '@/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;
@@ -12,10 +13,19 @@ interface SelectRpcProps {
 export const SelectRpc = ({ apiData }: SelectRpcProps) => {
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
+  const { handleNewEndpointForChain } = useBootstrapping();
 
   /// Handle RPC change.
-  const handleRpcChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedRpc(event.target.value);
+  const handleRpcChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newEndpoint = event.target.value;
+
+    // Update React state.
+    setSelectedRpc(newEndpoint);
+
+    // Re-connect and subscribe to active tasks.
+    await handleNewEndpointForChain(chainId, newEndpoint);
   };
 
   /// Get class name for connected status icon.
