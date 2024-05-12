@@ -20,10 +20,19 @@ export const Footer = () => {
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  /// Calculate total active connections.
   const totalActiveConnections = () =>
     Array.from(chains.values()).filter(
       (apiData) => apiData.status === 'connected'
     ).length;
+
+  /// Get header text.
+  const getHeadingText = () =>
+    isOnline
+      ? chains.size
+        ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
+        : 'Disconnected'
+      : 'Offline';
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
@@ -35,15 +44,7 @@ export const Footer = () => {
         )}
 
         <div>
-          <h5>
-            {isOnline
-              ? chains.size
-                ? `Connected to ${totalActiveConnections()} network${
-                    chains.size === 1 ? '' : 's'
-                  }`
-                : 'Disconnected'
-              : 'Offline'}{' '}
-          </h5>
+          <h5>{getHeadingText()}</h5>
         </div>
         <button type="button" onClick={() => setExpanded(!expanded)}>
           <FontAwesomeIcon
@@ -52,17 +53,26 @@ export const Footer = () => {
           />
         </button>
       </section>
-      {expanded &&
-        [...chains.entries()].map(([key, apiData]) => (
-          <NetworkItem key={key}>
-            {getIcon(apiData.chainId, 'icon')}
-            <h4>{apiData.chainId}</h4>
-            <div
-              className={apiData.status === 'connected' ? 'success' : 'danger'}
-            ></div>
-            <label>{apiData.endpoint}</label>
-          </NetworkItem>
-        ))}
+      {/* Networks list */}
+      <section className="network-list-wrapper">
+        {expanded &&
+          [...chains.entries()].map(([key, apiData]) => (
+            <NetworkItem key={key}>
+              <div className="left">
+                {getIcon(apiData.chainId, 'icon')}
+                <h4>{apiData.chainId}</h4>
+              </div>
+              <div className="right">
+                <div
+                  className={
+                    apiData.status === 'connected' ? 'success' : 'danger'
+                  }
+                ></div>
+                <label>{apiData.endpoint}</label>
+              </div>
+            </NetworkItem>
+          ))}
+      </section>
     </FooterWrapper>
   );
 };

@@ -55,40 +55,64 @@ export const FooterWrapper = styled.div`
       height: 4rem;
     }
   }
+
+  .network-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.6rem;
+    padding: 0.5rem 1rem;
+  }
 `;
 
 export const NetworkItem = styled.div`
   width: 100%;
   display: flex;
-  border-bottom: 1px solid var(--border-primary-color);
+  column-gap: 0.55rem;
   padding: 1rem;
   align-items: center;
+  border: 1px solid var(--border-primary-color);
+  border-radius: 1.25rem;
+  background-color: var(--background-modal);
 
-  > h4 {
-    min-width: 75px;
+  .left {
+    display: flex;
+    align-items: center;
+    column-gap: 0.55rem;
+    padding: 0 0.5rem;
+
+    > h4 {
+      min-width: 75px;
+      font-size: 1rem;
+    }
+    > .icon {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-right: 0.5rem;
+    }
   }
-  > .icon {
-    width: 1.75rem;
-    height: 1.75rem;
-    fill: var(--text-color-primary);
-    margin-right: 0.75rem;
-  }
-  > .success {
-    margin: 0 10px;
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 100%;
-    background-color: green;
-  }
-  > .danger {
-    margin: 0 10px;
-    width: 0.7rem;
-    height: 0.7rem;
-    border-radius: 100%;
-    background-color: red;
-  }
-  label {
-    font-size: 0.9rem;
-    color: #848484;
+  .right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    column-gap: 0.55rem;
+
+    > .success {
+      width: 0.6rem;
+      height: 0.6rem;
+      margin-right: 0.25rem;
+      border-radius: 100%;
+      background-color: green;
+    }
+    > .danger {
+      margin-right: 0.25rem;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 100%;
+      background-color: red;
+    }
+    label {
+      font-size: 0.9rem;
+      color: #848484;
+    }
   }
 `;
