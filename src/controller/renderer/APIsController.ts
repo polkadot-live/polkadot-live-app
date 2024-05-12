@@ -30,7 +30,7 @@ export class APIsController {
    * @param {string} endpoint - the api endpoint.
    */
   static new = (chainId: ChainID) => {
-    const endpoint = ChainList.get(chainId)?.endpoints.rpc;
+    const endpoint = ChainList.get(chainId)?.endpoints.rpcs[0];
 
     if (!endpoint) {
       throw new Error(
