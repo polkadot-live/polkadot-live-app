@@ -17,6 +17,7 @@ export const FooterWrapper = styled.div`
   height: 3rem;
   z-index: 5;
   overflow: hidden;
+  padding-top: 0.5rem;
 
   section {
     width: 100%;
@@ -59,18 +60,18 @@ export const FooterWrapper = styled.div`
   .network-list-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 0.6rem;
+    row-gap: 0.75rem;
     padding: 0.5rem 1rem;
   }
 `;
 
 export const NetworkItem = styled.div`
-  width: 100%;
   display: flex;
-  column-gap: 0.55rem;
-  padding: 1rem;
   align-items: center;
-  border: 1px solid var(--border-primary-color);
+  column-gap: 0.55rem;
+
+  width: 100%;
+  padding: 1rem;
   border-radius: 1.25rem;
   background-color: var(--background-modal);
 
@@ -96,23 +97,57 @@ export const NetworkItem = styled.div`
     align-items: center;
     column-gap: 0.55rem;
 
-    > .success {
-      width: 0.6rem;
-      height: 0.6rem;
-      margin-right: 0.25rem;
-      border-radius: 100%;
-      background-color: green;
-    }
-    > .danger {
-      margin-right: 0.25rem;
-      width: 0.6rem;
-      height: 0.6rem;
-      border-radius: 100%;
-      background-color: red;
-    }
     label {
       font-size: 0.9rem;
       color: #848484;
+    }
+  }
+`;
+
+export const SelectRpcWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
+  .select-wrapper {
+    position: relative;
+
+    .icon-wrapper {
+      z-index: 10;
+      position: relative;
+
+      .success {
+        position: absolute;
+        top: 11px;
+        left: 12px;
+        width: 0.5rem;
+        height: 0.5rem;
+        margin-right: 0.25rem;
+        border-radius: 100%;
+        background-color: green;
+      }
+      .danger {
+        position: absolute;
+        top: 11px;
+        left: 12px;
+        margin-right: 0.25rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 100%;
+        background-color: red;
+      }
+    }
+    select {
+      width: 225px;
+      appearance: none;
+      padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-primary-color);
+      background-color: inherit;
+      color: #afafaf;
+      font-size: 1rem;
+      position: relative;
     }
   }
 `;

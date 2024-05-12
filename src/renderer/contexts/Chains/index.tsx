@@ -21,9 +21,10 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Adds a chain instance.
   const addChain = (apiData: FlattenedAPIData) => {
-    chains.set(apiData.chainId, apiData);
-    // TODO: Check if this line is necessary:
-    setChains(chains);
+    setChains((prev) => {
+      prev.set(apiData.chainId, apiData);
+      return prev;
+    });
   };
 
   // Removes a chain instance.

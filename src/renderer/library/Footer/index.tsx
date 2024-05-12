@@ -13,6 +13,7 @@ import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@/renderer/Utils';
+import { SelectRpc } from './RpcSelect';
 
 export const Footer = () => {
   const { chains } = useChains();
@@ -56,19 +57,15 @@ export const Footer = () => {
       {/* Networks list */}
       <section className="network-list-wrapper">
         {expanded &&
-          [...chains.entries()].map(([key, apiData]) => (
-            <NetworkItem key={key}>
+          [...chains.entries()].map(([chainId, apiData]) => (
+            <NetworkItem key={`${chainId}_network`}>
               <div className="left">
                 {getIcon(apiData.chainId, 'icon')}
                 <h4>{apiData.chainId}</h4>
               </div>
               <div className="right">
-                <div
-                  className={
-                    apiData.status === 'connected' ? 'success' : 'danger'
-                  }
-                ></div>
-                <label>{apiData.endpoint}</label>
+                {/* RPC select box */}
+                <SelectRpc apiData={apiData} />
               </div>
             </NetworkItem>
           ))}

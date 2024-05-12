@@ -30,18 +30,21 @@ export class APIsController {
    * @param {string} endpoint - the api endpoint.
    */
   static new = (chainId: ChainID) => {
-    const endpoint = ChainList.get(chainId)?.endpoints.rpcs[0];
+    const chainMetaData = ChainList.get(chainId);
 
-    if (!endpoint) {
+    if (!chainMetaData) {
       throw new Error(
-        `APIsController::new: Endpoint not found for chain ID ${chainId}`
+        `APIsController::new: Chain metadata not found for chain ID ${chainId}`
       );
     }
+
+    const endpoint = chainMetaData.endpoints.rpcs[0];
+    const rpcs = chainMetaData.endpoints.rpcs;
 
     console.log('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
-    const instance = new Api(endpoint, chainId);
+    const instance = new Api(endpoint, chainId, rpcs);
 
     // Set remaining instance properties and add to instances.
     this.instances.push(instance);

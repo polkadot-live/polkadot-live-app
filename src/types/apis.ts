@@ -10,4 +10,5 @@ export interface FlattenedAPIData {
   endpoint: string;
   chainId: ChainID;
   status: ChainStatus;
+  rpcs: string[];
 }
