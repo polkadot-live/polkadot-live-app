@@ -1,7 +1,14 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
+import {
+  app,
+  ipcMain,
+  powerMonitor,
+  protocol,
+  shell,
+  systemPreferences,
+} from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
@@ -111,6 +118,22 @@ app.whenReady().then(async () => {
       })
       .catch((err) => console.error(err));
   }
+
+  // ------------------------------
+  // Handle Power Changes
+  // ------------------------------
+
+  // Emitted when the system is suspending.
+  powerMonitor.on('suspend', async () => {
+    console.log('Suspending...');
+    //await OnlineStatusController.handleSuspend();
+  });
+
+  // Emitted when system is resuming.
+  powerMonitor.on('resume', async () => {
+    console.log('Resuming...');
+    //await OnlineStatusController.handleResume();
+  });
 
   // ------------------------------
   // Create windows

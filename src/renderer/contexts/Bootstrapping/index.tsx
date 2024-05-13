@@ -37,7 +37,7 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [appLoading, setAppLoading] = useState(true);
+  const [appLoading, setAppLoading] = useState(false);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
@@ -104,6 +104,8 @@ export const BootstrappingProvider = ({
   /// Handle app initialization.
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
+      setAppLoading(true);
+
       let aborted = false;
       let intervalRunning = true;
 

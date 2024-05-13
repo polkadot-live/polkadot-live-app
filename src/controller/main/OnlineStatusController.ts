@@ -73,4 +73,37 @@ export class OnlineStatusController {
    */
   private static isConnected = async () =>
     !!(await dns.promises.resolve('google.com').catch(() => false));
+
+  /**
+   * @name handleSuspend
+   * @summary Called when the system is suspended. Stops the poll loop and
+   * sets the app to offline mode.
+   */
+  static handleSuspend = async () => {
+    this.stopPollLoop();
+    this.onlineStatus = false;
+
+    await AppOrchestrator.next({
+      task: 'app:initialize:offline',
+    });
+  };
+
+  /**
+   * @name handleResume
+   * @summary Called when the system is resumed from being suspended.
+   * Starts the poll and initializes the app based on its online status.
+   */
+  static handleResume = async () => {
+    const status = await this.isConnected();
+    this.onlineStatus = status;
+
+    // Initialize app in the correct mode.
+    await AppOrchestrator.next({
+      task: `app:initialize:${status ? 'online' : 'offline'}`,
+    });
+
+    // Start a new polling interval.
+    this.stopPollLoop();
+    await this.initialize();
+  };
 }
