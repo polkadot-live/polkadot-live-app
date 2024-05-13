@@ -32,7 +32,7 @@ export const FooterWrapper = styled.div`
     padding: 0 1rem;
     transition: height 0.2s;
 
-    > div {
+    > div:first-of-type {
       flex-grow: 1;
     }
 
