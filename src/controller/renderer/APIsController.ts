@@ -3,6 +3,7 @@
 
 import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
 
@@ -127,9 +128,10 @@ export class APIsController {
         if (newInstance?.status === 'connected' && newInstance.api !== null) {
           console.log(`${chainId} connected, waited ${secondsWaited} seconds.`);
           return newInstance;
-        } else if (secondsWaited > 16) {
-          // If we have waited for more than 16 seconds, return null.
-          console.log('Waited over 16 seconds to connect, return null.');
+        } else if (secondsWaited > ConfigRenderer.processingTimeout) {
+          // If we have waited for more than 10 seconds, return null.
+          const seconds = ConfigRenderer.processingTimeout;
+          console.log(`Waited ${seconds} seconds to connect, return null.`);
           return null;
         }
       }

@@ -243,7 +243,8 @@ export class QueryMultiWrapper {
 
     // Construct the argument for new queryMulti call.
     const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
-    const instance = await ApiUtils.getApiInstance(chainId);
+    const origin = 'QueryMultiWrapper.build';
+    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(

@@ -168,7 +168,8 @@ export class TaskOrchestrator {
 
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
-    const instance = await ApiUtils.getApiInstance(chainId);
+    const origin = 'TaskOrchestrator.getApiCall';
+    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
 
     switch (action) {
       case 'subscribe:chain:timestamp':

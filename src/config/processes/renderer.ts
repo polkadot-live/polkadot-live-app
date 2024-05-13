@@ -20,6 +20,9 @@ export class Config {
   // Flag set to `true` when app wants to abort connection processing.
   private static _abortConnecting = false;
 
+  // Time in seconds app should wait for processing a one-shot and API connection.
+  private static _processingTimeout = 10;
+
   // Accessors for `import` port.
   static get portToImport(): MessagePort {
     if (!Config._portToImport) {
@@ -84,5 +87,9 @@ export class Config {
 
   static set abortConnecting(flag: boolean) {
     Config._abortConnecting = flag;
+  }
+
+  static get processingTimeout(): number {
+    return Config._processingTimeout;
   }
 }
