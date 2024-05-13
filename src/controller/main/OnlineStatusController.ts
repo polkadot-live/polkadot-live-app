@@ -35,12 +35,18 @@ export class OnlineStatusController {
 
     if (status !== this.onlineStatus) {
       this.onlineStatus = status;
-
       console.log(`Online status changed to ${status}`);
 
       await AppOrchestrator.next({
         task: `app:initialize:${status ? 'online' : 'offline'}`,
       });
+
+      // Re-initialize class if app goes offline to prevent stalling
+      // upon calling `isConnected`.
+      if (!status && this.intervalId) {
+        this.stopPollLoop();
+        await this.initialize();
+      }
     }
   };
 

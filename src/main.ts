@@ -278,8 +278,8 @@ app.whenReady().then(async () => {
   });
 
   // Handle switching between online and offline.
-  ipcMain.on('app:connection:status', () => {
-    OnlineStatusController.handleStatusChange();
+  ipcMain.on('app:connection:status', async () => {
+    await OnlineStatusController.handleStatusChange();
   });
 
   // Send connection status to frontend.
