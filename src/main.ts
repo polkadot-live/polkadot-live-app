@@ -120,22 +120,6 @@ app.whenReady().then(async () => {
   }
 
   // ------------------------------
-  // Handle Power Changes
-  // ------------------------------
-
-  // Emitted when the system is suspending.
-  powerMonitor.on('suspend', async () => {
-    console.log('Suspending...');
-    //await OnlineStatusController.handleSuspend();
-  });
-
-  // Emitted when system is resuming.
-  powerMonitor.on('resume', async () => {
-    console.log('Resuming...');
-    //await OnlineStatusController.handleResume();
-  });
-
-  // ------------------------------
   // Create windows
   // ------------------------------
 
@@ -155,6 +139,21 @@ app.whenReady().then(async () => {
 
   // Handle settings window.
   WindowUtils.handleWindowOnIPC('settings', isTest);
+
+  // ------------------------------
+  // Handle Power Changes
+  // ------------------------------
+
+  // Emitted when the system is suspending.
+  powerMonitor.on('suspend', async () => {
+    await OnlineStatusController.handleSuspend();
+  });
+
+  // Emitted when system is resuming.
+  powerMonitor.on('resume', async () => {
+    console.log('Resuming...');
+    await OnlineStatusController.handleResume();
+  });
 
   // ------------------------------
   // WDIO Custom Electron API
