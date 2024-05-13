@@ -149,6 +149,12 @@ export const SelectRpcWrapper = styled.div`
       color: #afafaf;
       font-size: 1rem;
       position: relative;
+      cursor: pointer;
+      transition: background-color 0.1s ease-out;
+
+      &:hover {
+        background-color: var(--background-default);
+      }
     }
   }
 `;
