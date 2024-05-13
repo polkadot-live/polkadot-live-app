@@ -63,7 +63,10 @@ export class SubscriptionsController {
 
     // Get subscription task array and subscribe to batched tasks.
     const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+
+    if (tasks.length) {
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    }
   }
 
   /**
@@ -80,7 +83,7 @@ export class SubscriptionsController {
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
 
-    tasks.length > 0 &&
+    tasks.length &&
       (await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions));
   }
 
