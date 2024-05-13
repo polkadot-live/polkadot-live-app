@@ -118,8 +118,8 @@ export class AccountsController {
       for (const account of accounts) {
         const tasks = account.getSubscriptionTasks() || [];
 
-        for (const task of tasks) {
-          await account.subscribeToTask(task);
+        if (tasks.length && account.queryMulti) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }
