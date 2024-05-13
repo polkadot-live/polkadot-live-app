@@ -113,8 +113,8 @@ export const createMainWindow = (isTest: boolean) => {
   const mainWindow = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
-    x: initialMenuBounds?.x || undefined,
-    y: initialMenuBounds?.y || undefined,
+    x: initialMenuBounds?.x || ConfigMain.dockedWidth,
+    y: initialMenuBounds?.y || 0,
     width: initialMenuBounds?.height || ConfigMain.dockedWidth,
     height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: 420,
