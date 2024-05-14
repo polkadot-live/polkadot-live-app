@@ -44,7 +44,7 @@ export const AddressWrapper = styled.div`
   }
 
   .outer-wrapper {
-    height: calc(100% - 5.5rem);
+    height: calc(100% - 4.5rem);
     overflow-y: auto;
     overflow-x: hidden;
     padding: 1.5rem;

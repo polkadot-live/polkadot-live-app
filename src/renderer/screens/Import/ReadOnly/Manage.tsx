@@ -306,9 +306,9 @@ export const Manage = ({
         <HardwareStatusBar
           show={section === 1}
           Icon={ReadmeSVG}
-          text={`${addresses.length} Account${
+          text={`${addresses.length} Read Only Account${
             addresses.length == 1 ? '' : 's'
-          } Imported`}
+          }`}
           inProgress={false}
           handleDone={() => setSection(0)}
         />

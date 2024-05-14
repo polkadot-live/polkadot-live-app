@@ -51,7 +51,8 @@ export const Wrapper = styled(motion.div)`
 
     h3,
     h5 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      color: #a5a5a5;
       display: flex;
       align-items: center;
       flex: 1;
