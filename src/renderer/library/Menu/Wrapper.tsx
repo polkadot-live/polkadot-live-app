@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 export const MenuWrapper = styled.div`
   position: absolute;
-  right: 0.75rem;
-  top: 2.75rem;
+  right: 0;
+  top: 2.25rem;
   z-index: 10;
 
   display: flex;

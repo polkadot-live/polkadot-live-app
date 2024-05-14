@@ -19,7 +19,7 @@ import { Config as RendererConfig } from '@/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 
 export const Menu = () => {
-  const [menuOpen, setMenuOpen] = useState<boolean>(true);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const menuOpenRef = useRef(menuOpen);
 
   /// App settings.
