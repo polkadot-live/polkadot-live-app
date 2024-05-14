@@ -1,29 +1,20 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as RendererConfig } from '@/config/processes/renderer';
-import { faTimes, faX } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import { Tooltip } from 'react-tooltip';
+import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
-import { Flip, toast } from 'react-toastify';
-import type { HeaderProps } from './types';
+import { Config as RendererConfig } from '@/config/processes/renderer';
+import { faLock, faUnlock } from '@fortawesome/pro-solid-svg-icons';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
-  const {
-    online: isOnline,
-    isAborting,
-    isConnecting,
-    setIsAborting,
-    setIsConnecting,
-    handleInitializeAppOffline,
-    handleInitializeAppOnline,
-  } = useBootstrapping();
 
   /// Determine active window by pathname.
   let activeWindow: string;
@@ -35,56 +26,19 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  /// Get text for connection button.
-  const getConnectionButtonText = () => {
-    if (isConnecting || appLoading) {
-      return 'Abort';
-    } else if (isOnline) {
-      return 'Disconnect';
-    } else {
-      return 'Connect';
-    }
-  };
+  const { dockToggled, handleDockedToggle } = useBootstrapping();
 
-  /// Handler for connection button.
-  const handleConnectButtonClick = async () => {
-    if (isConnecting || appLoading) {
-      // Handle abort.
-      handleAbortConnecting();
-    } else if (isOnline) {
-      // Handle going offline.
-      await handleInitializeAppOffline();
-    } else {
-      // Confirm online connection.
-      const status = await window.myAPI.getOnlineStatus();
-      if (status) {
-        // Handle going online.
-        setIsConnecting(true);
-        await handleInitializeAppOnline();
-        setIsConnecting(false);
-      } else {
-        // Render error alert.
-        toast.error('You are offline.', {
-          position: 'bottom-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          closeButton: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Flip,
-          toastId: 'toast-connection', // prevent duplicate alerts
-        });
-      }
-    }
-  };
+  /// Handle clicking the docked button.
+  const handleDocked = () => {
+    handleDockedToggle();
 
-  /// Handler for aborting connection processing.
-  const handleAbortConnecting = () => {
-    setIsAborting(true);
-    RendererConfig.abortConnecting = true;
+    // Post message to settings window to update switch.
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
   };
 
   return (
@@ -94,33 +48,14 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
             <div className="controls-wrapper">
-              {/* Connection button */}
-              <div className="connect-wrapper">
-                <ButtonSecondary
-                  className={
-                    (isConnecting && !isAborting) || (appLoading && !isAborting)
-                      ? 'connect-btn do-pulse hide-text'
-                      : isAborting || isConnecting || appLoading
-                        ? 'connect-btn do-pulse'
-                        : 'connect-btn'
-                  }
-                  text={
-                    isAborting
-                      ? 'Canceling..'
-                      : isConnecting || appLoading
-                        ? 'Abort'
-                        : getConnectionButtonText()
-                  }
-                  disabled={isAborting}
-                  onClick={async () => await handleConnectButtonClick()}
-                />
-                {((isConnecting && !isAborting) ||
-                  (appLoading && !isAborting)) && (
-                  <div className="abort-x do-pulse">
-                    <FontAwesomeIcon icon={faX} className="icon-sm" />
-                  </div>
-                )}
-              </div>
+              {/* Dock window */}
+              <ButtonSecondary
+                className="dock-btn"
+                text={dockToggled ? 'Detach' : 'Dock'}
+                iconLeft={dockToggled ? faUnlock : faLock}
+                iconTransform="shrink-5"
+                onClick={() => handleDocked()}
+              />
 
               {/* Cog menu*/}
               <Menu />

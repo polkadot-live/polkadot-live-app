@@ -61,7 +61,7 @@ export const MenuWrapper = styled.div`
       row-gap: 1rem;
       width: 100%;
 
-      .dock-btn {
+      .menu-btn {
         background-color: var(--background-menu);
         border: 1px solid var(--border-mid-color);
         font-size: 1rem;
@@ -74,6 +74,27 @@ export const MenuWrapper = styled.div`
         &:hover {
           background-color: inherit;
           border: 1px solid var(--border-secondary-color) !important;
+        }
+      }
+
+      // Connect button
+      .connect-wrapper {
+        position: relative;
+        width: 100%;
+
+        .do-pulse {
+          animation: pulse 3s infinite ease-in-out;
+        }
+        @keyframes pulse {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+          100% {
+            opacity: 1;
+          }
         }
       }
     }

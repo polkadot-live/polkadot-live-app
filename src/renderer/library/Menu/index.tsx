@@ -12,21 +12,28 @@ import {
   faBell,
   faBellSlash,
   faCog,
-  faLock,
-  faUnlock,
+  faWifi,
+  faWifiSlash,
 } from '@fortawesome/pro-solid-svg-icons';
 import { Config as RendererConfig } from '@/config/processes/renderer';
+import { Flip, toast } from 'react-toastify';
 
 export const Menu = () => {
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(true);
   const menuOpenRef = useRef(menuOpen);
 
   /// App settings.
   const {
-    dockToggled,
-    handleDockedToggle,
+    online: isOnline,
+    appLoading,
+    isAborting,
+    isConnecting,
     silenceOsNotifications,
     handleToggleSilenceOsNotifications,
+    handleInitializeAppOnline,
+    handleInitializeAppOffline,
+    setIsAborting,
+    setIsConnecting,
   } = useBootstrapping();
 
   const toggleMenu = (val: boolean) => {
@@ -43,19 +50,6 @@ export const Menu = () => {
     ['dropdown-toggle']
   );
 
-  /// Handle clicking the docked button.
-  const handleDocked = () => {
-    handleDockedToggle();
-
-    // Post message to settings window to update switch.
-    RendererConfig.portToSettings.postMessage({
-      task: 'settings:set:dockedWindow',
-      data: {
-        docked: !dockToggled,
-      },
-    });
-  };
-
   /// Handle clicking the silence OS notifications button.
   const handleSilenceOsNotifications = () => {
     handleToggleSilenceOsNotifications();
@@ -67,6 +61,58 @@ export const Menu = () => {
         silenced: !silenceOsNotifications,
       },
     });
+  };
+
+  /// Get text for connection button.
+  const getConnectionButtonText = () => {
+    if (isConnecting || appLoading) {
+      return 'Abort';
+    } else if (isOnline) {
+      return 'Disconnect';
+    } else {
+      return 'Connect';
+    }
+  };
+
+  /// Handler for connection button.
+  const handleConnectButtonClick = async () => {
+    if (isConnecting || appLoading) {
+      // Handle abort.
+      handleAbortConnecting();
+    } else if (isOnline) {
+      // Handle going offline.
+      await handleInitializeAppOffline();
+    } else {
+      // Confirm online connection.
+      const status = await window.myAPI.getOnlineStatus();
+      if (status) {
+        // Handle going online.
+        setIsConnecting(true);
+        await handleInitializeAppOnline();
+        setIsConnecting(false);
+      } else {
+        // Render error alert.
+        toast.error('You are offline.', {
+          position: 'bottom-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          closeButton: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: 'dark',
+          transition: Flip,
+          toastId: 'toast-connection', // prevent duplicate alerts
+        });
+      }
+    }
+  };
+
+  /// Handler for aborting connection processing.
+  const handleAbortConnecting = () => {
+    setIsAborting(true);
+    RendererConfig.abortConnecting = true;
   };
 
   return (
@@ -114,18 +160,33 @@ export const Menu = () => {
           {/* Controls */}
           <section className="controls" style={{ width: '100%' }}>
             <div className="controls-wrapper">
-              {/* Dock window */}
-              <ButtonSecondary
-                className="dock-btn"
-                text={dockToggled ? 'Detach' : 'Dock'}
-                iconLeft={dockToggled ? faUnlock : faLock}
-                iconTransform="shrink-5"
-                onClick={() => handleDocked()}
-              />
+              {/* Connection button */}
+              <div className="connect-wrapper">
+                <ButtonSecondary
+                  className={
+                    (isConnecting && !isAborting) || (appLoading && !isAborting)
+                      ? 'menu-btn do-pulse'
+                      : isAborting || isConnecting || appLoading
+                        ? 'menu-btn do-pulse'
+                        : 'menu-btn'
+                  }
+                  text={
+                    isAborting
+                      ? 'Aborting...'
+                      : isConnecting || appLoading
+                        ? 'Abort'
+                        : getConnectionButtonText()
+                  }
+                  iconLeft={isOnline ? faWifiSlash : faWifi}
+                  iconTransform="shrink-4"
+                  disabled={isAborting}
+                  onClick={async () => await handleConnectButtonClick()}
+                />
+              </div>
 
               {/* Silence notifications */}
               <ButtonSecondary
-                className="dock-btn"
+                className="menu-btn"
                 text={silenceOsNotifications ? 'Unsilence' : 'Silence'}
                 iconLeft={silenceOsNotifications ? faBellSlash : faBell}
                 iconTransform="shrink-3"

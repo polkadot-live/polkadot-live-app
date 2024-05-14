@@ -63,6 +63,19 @@ export const HeaderWrapper = styled.div`
             }
           }
         }
+        .dock-btn {
+          border: 1px solid var(--border-mid-color);
+          min-width: 96px;
+          font-size: 0.85rem;
+          max-height: 18px;
+          user-select: none;
+          transition: background-color 0.2s ease-out;
+
+          &:hover {
+            background-color: inherit;
+            border: 1px solid var(--border-secondary-color) !important;
+          }
+        }
         .connect-btn {
           border: 1px solid var(--border-mid-color);
           min-width: 96px;
