@@ -7,13 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
-import { Switch } from '../Switch';
 import { Tooltip } from 'react-tooltip';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
 import type { HeaderProps } from './types';
-import { faLock, faUnlock } from '@fortawesome/pro-solid-svg-icons';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -25,14 +23,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     setIsConnecting,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
-  } = useBootstrapping();
-
-  /// App settings.
-  const {
-    dockToggled,
-    silenceOsNotifications,
-    handleDockedToggle,
-    handleToggleSilenceOsNotifications,
   } = useBootstrapping();
 
   /// Determine active window by pathname.
@@ -97,32 +87,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     RendererConfig.abortConnecting = true;
   };
 
-  /// Handle clicking the docked button.
-  const handleDocked = () => {
-    handleDockedToggle();
-
-    // Post message to settings window to update switch.
-    RendererConfig.portToSettings.postMessage({
-      task: 'settings:set:dockedWindow',
-      data: {
-        docked: !dockToggled,
-      },
-    });
-  };
-
-  /// Handle clicking the silence OS notifications button.
-  const handleSilenceOsNotifications = () => {
-    handleToggleSilenceOsNotifications();
-
-    // Post message to settings window to update switch.
-    RendererConfig.portToSettings.postMessage({
-      task: 'settings:set:silenceOsNotifications',
-      data: {
-        silenced: !silenceOsNotifications,
-      },
-    });
-  };
-
   return (
     <HeaderWrapper>
       <div className="content-wrapper">
@@ -130,23 +94,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
             <div className="controls-wrapper">
-              {/* Docked button */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  columnGap: '1rem',
-                }}
-              >
-                <ButtonSecondary
-                  className="dock-btn"
-                  text={dockToggled ? 'Detach' : 'Dock'}
-                  iconLeft={dockToggled ? faUnlock : faLock}
-                  iconTransform="shrink-2"
-                  onClick={() => handleDocked()}
-                />
-              </div>
-
               {/* Connection button */}
               <div className="connect-wrapper">
                 <ButtonSecondary
@@ -174,21 +121,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                   </div>
                 )}
               </div>
-
-              {/* Silence OS notifications switch */}
-              <a
-                data-tooltip-id="silence-notifications-tooltip"
-                data-tooltip-content="Silence OS Notifications"
-                data-tooltip-place="left"
-              >
-                <Switch
-                  size="sm"
-                  type="mono"
-                  isOn={silenceOsNotifications}
-                  disabled={appLoading}
-                  handleToggle={() => handleSilenceOsNotifications()}
-                />
-              </a>
 
               {/* Cog menu*/}
               <Menu />
