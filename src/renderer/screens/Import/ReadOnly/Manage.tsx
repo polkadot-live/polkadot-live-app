@@ -187,13 +187,14 @@ export const Manage = ({
         <Wrapper
           style={{
             backgroundColor: 'var(--background-primary)',
-            padding: '2.0rem 3rem 1.5rem',
+            padding: '1.25rem 2rem 1rem',
+            borderBottom: '1px solid var(--border-primary-color)',
           }}
         >
           <div className="content">
             <div className="inner">
               <div className="identicon">
-                <Identicon value={editName} size={35} />
+                <Identicon value={editName} size={30} />
               </div>
               <div>
                 <section className="row">

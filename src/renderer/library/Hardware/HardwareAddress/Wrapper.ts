@@ -12,7 +12,7 @@ export const Wrapper = styled.div<{
       ? 'none'
       : props.$orderData.curIndex === props.$orderData.lastIndex
         ? 'none'
-        : '1px solid var(--border-primary-color)'};
+        : '2px solid var(--background-default)'};
 
   display: flex;
   align-items: center;
@@ -82,40 +82,38 @@ export const Wrapper = styled.div<{
     }
   }
 
+  // Specify border radius on first and last items in list.
+  border-top-right-radius: ${(props) =>
+    props.$orderData
+      ? props.$orderData.curIndex === 0
+        ? '1.25rem'
+        : '0'
+      : '0'};
+
+  border-top-left-radius: ${(props) =>
+    props.$orderData
+      ? props.$orderData.curIndex === 0
+        ? '1.25rem'
+        : '0'
+      : '0'};
+
+  border-bottom-left-radius: ${(props) =>
+    props.$orderData
+      ? props.$orderData.curIndex === props.$orderData.lastIndex
+        ? '1.25rem'
+        : '0'
+      : '0'};
+
+  border-bottom-right-radius: ${(props) =>
+    props.$orderData
+      ? props.$orderData.curIndex === props.$orderData.lastIndex
+        ? '1.25rem'
+        : '0'
+      : '0'};
+
+  background-color: var(--background-primary);
   transition: background-color 0.1s ease-out;
-  &:hover {
-    // Specify border radius on first and last items in list.
-    border-top-right-radius: ${(props) =>
-      props.$orderData
-        ? props.$orderData.curIndex === 0
-          ? '1.25rem'
-          : '0'
-        : '0'};
-
-    border-top-left-radius: ${(props) =>
-      props.$orderData
-        ? props.$orderData.curIndex === 0
-          ? '1.25rem'
-          : '0'
-        : '0'};
-
-    border-bottom-left-radius: ${(props) =>
-      props.$orderData
-        ? props.$orderData.curIndex === props.$orderData.lastIndex
-          ? '1.25rem'
-          : '0'
-        : '0'};
-
-    border-bottom-right-radius: ${(props) =>
-      props.$orderData
-        ? props.$orderData.curIndex === props.$orderData.lastIndex
-          ? '1.25rem'
-          : '0'
-        : '0'};
-
-    background-color: var(--background-primary);
-    cursor: default;
-  }
+  cursor: default;
 
   // Utility Classes
   .flex-inner-row {
@@ -140,7 +138,7 @@ export const Wrapper = styled.div<{
     button {
       flex-basis: 50%;
       flex-grow: 1;
-      background-color: rgb(20 20 20);
+      background-color: rgb(17 17 17);
       border-color: rgb(68, 68, 68);
       color: rgb(101 101 101);
       transition: color 0.2 ease-out;
@@ -223,6 +221,21 @@ export const Wrapper = styled.div<{
               opacity: 0.5;
             }
 
+            .full {
+              position: absolute;
+              opacity: 0.5;
+              width: 100%;
+              top: 26px;
+              left: 20px;
+
+              > span {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width: 100%;
+                max-width: 100%;
+              }
+            }
             .chain-icon {
               position: absolute;
               top: 5px;
@@ -239,6 +252,7 @@ export const Wrapper = styled.div<{
 
             input {
               padding-left: 38px;
+              padding-bottom: 2.5rem;
             }
           }
 
@@ -276,7 +290,7 @@ export const Wrapper = styled.div<{
           white-space: nowrap;
           overflow: hidden;
           width: 100%;
-          max-width: 300px;
+          max-width: 380px;
           transition:
             background-color 0.2s,
             max-width 0.2s,
@@ -284,7 +298,7 @@ export const Wrapper = styled.div<{
 
           &:focus {
             background: var(--background-modal);
-            max-width: 350px;
+            max-width: 380px;
           }
 
           &:disabled {

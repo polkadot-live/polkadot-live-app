@@ -125,13 +125,17 @@ export const HardwareAddress = ({
       <div className="content">
         <div className="inner">
           <div className="identicon">
-            <Identicon value={address} size={40} />
+            <Identicon value={address} size={36} />
             <div className="index-icon ">{index + 1}</div>
           </div>
           <div>
             <section className="row">
               <div className="input-wrapper">
                 {renderChainIcon()}
+
+                <h5 className="full">
+                  <span>{address}</span>
+                </h5>
                 <input
                   type="text"
                   value={editing ? editName : accountName}
@@ -172,9 +176,6 @@ export const HardwareAddress = ({
                 )}
               </div>
             </section>
-            <h5 className="full">
-              <span>{address}</span>
-            </h5>
           </div>
         </div>
       </div>
