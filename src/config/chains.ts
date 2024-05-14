@@ -20,7 +20,7 @@ interface Chain {
     >;
   };
   endpoints: {
-    rpc: string;
+    rpcs: string[];
     lightClient: string;
   };
   units: number;
@@ -44,28 +44,25 @@ export const ChainList = new Map<ChainID, Chain>([
         icon: PolkadotAppIcon,
       },
       endpoints: {
-        rpc: 'wss://rpc.polkadot.io',
+        rpcs: [
+          'wss://rpc.polkadot.io',
+          'wss://apps-rpc.polkadot.io',
+          'wss://polkadot-rpc.dwellir.com',
+          'wss://polkadot-rpc-tn.dwellir.com',
+          'wss://rpc.ibp.network/polkadot',
+          'wss://rpc.dotters.network/polkadot',
+          'wss://1rpc.io/dot',
+          'wss://polkadot-public-rpc.blockops.network/ws',
+          'wss://rpc-polkadot.luckyfriday.io',
+          'wss://polkadot.public.curie.radiumblock.co/ws',
+          'wss://rockx-dot.w3node.com/polka-public-dot/ws',
+          'wss://dot-rpc.stakeworld.io',
+        ],
         lightClient: Sc.WellKnownChain.polkadot,
       },
       units: 10,
       unit: 'DOT',
       prefix: 0,
-    },
-  ],
-  [
-    'Westend',
-    {
-      icon: WestendIcon,
-      ledger: {
-        icon: WestendIcon,
-      },
-      endpoints: {
-        rpc: 'wss://westend-rpc.polkadot.io',
-        lightClient: Sc.WellKnownChain.westend2,
-      },
-      units: 12,
-      unit: 'WND',
-      prefix: 42,
     },
   ],
   [
@@ -76,12 +73,49 @@ export const ChainList = new Map<ChainID, Chain>([
         icon: KusamaIcon,
       },
       endpoints: {
-        rpc: 'wss://kusama-rpc.polkadot.io',
+        rpcs: [
+          'wss://kusama-rpc.polkadot.io',
+          'wss://kusama-rpc.dwellir.com',
+          'wss://kusama-rpc-tn.dwellir.com',
+          'wss://rpc.ibp.network/kusama',
+          'wss://rpc.dotters.network/kusama',
+          'wss://1rpc.io/ksm',
+          'wss://kusama-public-rpc.blockops.network/ws',
+          'wss://rpc-kusama.luckyfriday.io',
+          'wss://kusama.public.curie.radiumblock.co/ws',
+          'wss://rockx-ksm.w3node.com/polka-public-ksm/ws',
+          'wss://ksm-rpc.stakeworld.io',
+        ],
         lightClient: Sc.WellKnownChain.ksmcc3,
       },
       units: 12,
       unit: 'KSM',
       prefix: 2,
+    },
+  ],
+  [
+    'Westend',
+    {
+      icon: WestendIcon,
+      ledger: {
+        icon: WestendIcon,
+      },
+      endpoints: {
+        rpcs: [
+          'wss://westend-rpc.polkadot.io',
+          'wss://westend-rpc.dwellir.com',
+          'wss://westend-rpc-tn.dwellir.com',
+          'wss://rpc.ibp.network/westend',
+          'wss://rpc.dotters.network/westend',
+          'wss://westend-rpc.blockops.network/ws',
+          'wss://rpc-westend.luckyfriday.io',
+          'wss://westend.public.curie.radiumblock.co/ws',
+        ],
+        lightClient: Sc.WellKnownChain.westend2,
+      },
+      units: 12,
+      unit: 'WND',
+      prefix: 42,
     },
   ],
 ]);

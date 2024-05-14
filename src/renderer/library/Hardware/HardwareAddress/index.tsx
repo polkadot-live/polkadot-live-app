@@ -5,9 +5,8 @@ import {
   faDownFromDottedLine,
   faEraser,
   faTrash,
-} from '@fortawesome/pro-light-svg-icons';
+} from '@fortawesome/pro-solid-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
@@ -21,6 +20,7 @@ import type { HardwareAddressProps } from './types';
 import { getAddressChainId } from '@/renderer/Utils';
 import { useConnections } from '@/renderer/contexts/import/Connections';
 import { useTooltip } from '@/renderer/contexts/Tooltip';
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
 export const HardwareAddress = ({
   address,
@@ -125,13 +125,17 @@ export const HardwareAddress = ({
       <div className="content">
         <div className="inner">
           <div className="identicon">
-            <Identicon value={address} size={40} />
+            <Identicon value={address} size={36} />
             <div className="index-icon ">{index + 1}</div>
           </div>
           <div>
             <section className="row">
               <div className="input-wrapper">
                 {renderChainIcon()}
+
+                <h5 className="full">
+                  <span>{address}</span>
+                </h5>
                 <input
                   type="text"
                   value={editing ? editName : accountName}
@@ -172,12 +176,11 @@ export const HardwareAddress = ({
                 )}
               </div>
             </section>
-            <h5 className="full">
-              <span>{address}</span>
-            </h5>
           </div>
         </div>
       </div>
+
+      {/* Account buttons */}
       <div className="action">
         {isImported && !isProcessing ? (
           <div
@@ -186,8 +189,8 @@ export const HardwareAddress = ({
             data-tooltip-text={'Remove'}
             onMouseMove={() => setTooltipTextAndOpen('Remove')}
           >
-            <ButtonMonoInvert
-              className="account-action-btn"
+            <ButtonMono
+              className="account-action-btn orange-hover"
               iconLeft={faEraser}
               text={''}
               onClick={() => openRemoveHandler()}
@@ -204,15 +207,16 @@ export const HardwareAddress = ({
                 : setTooltipTextAndOpen('Offline Mode')
             }
           >
-            <ButtonMonoInvert
+            <ButtonMono
               disabled={!isConnected}
               iconLeft={faDownFromDottedLine}
+              iconTransform="grow-2"
               text={''}
               onClick={() => openConfirmHandler()}
               className={
                 isProcessing
                   ? 'account-action-btn processing'
-                  : 'account-action-btn'
+                  : 'account-action-btn green-hover'
               }
             />
             {isProcessing && (
@@ -233,9 +237,10 @@ export const HardwareAddress = ({
           data-tooltip-text={'Delete'}
           onMouseMove={() => setTooltipTextAndOpen('Delete')}
         >
-          <ButtonMonoInvert
-            className="account-action-btn"
+          <ButtonMono
+            className="account-action-btn red-hover"
             iconLeft={faTrash}
+            iconTransform="shrink-2"
             text={''}
             onClick={() => openDeleteHandler()}
           />

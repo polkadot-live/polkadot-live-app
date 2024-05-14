@@ -20,14 +20,21 @@ const debug = MainDebug.extend('ApiUtils');
  */
 export const getApiInstance = async (chainId: ChainID) => {
   const instance = await APIsController.fetchConnectedInstance(chainId);
+  return instance ? instance : null;
+};
 
+/**
+ * @name getApiInstanceOrThrow
+ * @summary Same as `getApiInstance` but throws an error if the endpoint fails to connect.
+ */
+export const getApiInstanceOrThrow = async (
+  chainId: ChainID,
+  error: string
+) => {
+  const instance = await getApiInstance(chainId);
   if (!instance) {
-    throw new Error(
-      `ensureApiConnected: ${chainId} API instance couldn't be fetched.`
-    );
+    throw new Error(`${error} - Could not get API instance.`);
   }
-
-  debug('🔷 Fetched API instance for chain: %o', chainId);
   return instance;
 };
 

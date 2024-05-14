@@ -129,148 +129,148 @@ export const Accounts = ({
 
   return (
     <AccountsWrapper>
-      <Accordion
-        multiple
-        defaultIndex={accordionActiveIndices}
-        setExternalIndices={setAccordionActiveIndices}
+      <div
+        style={{
+          display: addresses.length === 0 ? 'inherit' : 'none',
+          padding: '0 0.5rem',
+        }}
       >
-        {/* Manage Accounts */}
-        {addresses.length === 0 ? (
-          <div style={{ padding: '0 0.5rem' }}>
-            <NoAccounts />
-          </div>
-        ) : (
-          <>
-            {Array.from(getSortedAddresses().entries()).map(
-              ([chainId, chainAddresses], i) => (
-                <AccordionItem key={`${chainId}_accounts`}>
-                  <HeadingWrapper>
-                    <AccordionHeader>
-                      <div className="flex">
-                        <div className="left">
-                          <div className="icon-wrapper">
-                            {accordionActiveIndices.includes(i) ? (
-                              <FontAwesomeIcon
-                                icon={faCaretDown}
-                                transform={'shrink-1'}
-                              />
-                            ) : (
-                              <FontAwesomeIcon
-                                icon={faCaretRight}
-                                transform={'shrink-1'}
-                              />
-                            )}
-                          </div>
-                          <h5>{chainId} Accounts</h5>
+        <NoAccounts />
+      </div>
+      <div style={{ display: addresses.length > 0 ? 'inherit' : 'none' }}>
+        <Accordion
+          multiple
+          defaultIndex={accordionActiveIndices}
+          setExternalIndices={setAccordionActiveIndices}
+        >
+          {/* Manage Accounts */}
+          {Array.from(getSortedAddresses().entries()).map(
+            ([chainId, chainAddresses], k) => (
+              <AccordionItem key={`${chainId}_accounts`}>
+                <HeadingWrapper>
+                  <AccordionHeader>
+                    <div className="flex">
+                      <div className="left">
+                        <div className="icon-wrapper">
+                          {accordionActiveIndices.includes(k) ? (
+                            <FontAwesomeIcon
+                              icon={faCaretDown}
+                              transform={'shrink-1'}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faCaretRight}
+                              transform={'shrink-1'}
+                            />
+                          )}
                         </div>
+                        <h5>{chainId} Accounts</h5>
                       </div>
-                    </AccordionHeader>
-                  </HeadingWrapper>
-                  <AccordionPanel>
-                    <div style={{ padding: '0 0.75rem' }}>
-                      <div className="flex-column">
-                        {chainAddresses.map(
-                          (
-                            { address, name }: FlattenedAccountData,
-                            j: number
-                          ) => (
-                            <AccountWrapper
-                              whileHover={{ scale: 1.01 }}
-                              key={`manage_account_${j}`}
-                            >
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleClickAccount(name, address)
-                                }
-                              ></button>
-                              <div className="inner">
-                                <div>
-                                  <span className="icon">
-                                    <Identicon value={address} size={26} />
-                                  </span>
-                                  <div className="content">
-                                    <h3>{name}</h3>
-                                  </div>
-                                </div>
-                                <div>
-                                  <ButtonText
-                                    text=""
-                                    iconRight={faChevronRight}
-                                    iconTransform="shrink-3"
-                                  />
+                    </div>
+                  </AccordionHeader>
+                </HeadingWrapper>
+                <AccordionPanel>
+                  <div style={{ padding: '0 0.75rem' }}>
+                    <div className="flex-column">
+                      {chainAddresses.map(
+                        (
+                          { address, name }: FlattenedAccountData,
+                          j: number
+                        ) => (
+                          <AccountWrapper
+                            whileHover={{ scale: 1.01 }}
+                            key={`manage_account_${j}`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleClickAccount(name, address)}
+                            ></button>
+                            <div className="inner">
+                              <div>
+                                <span className="icon">
+                                  <Identicon value={address} size={26} />
+                                </span>
+                                <div className="content">
+                                  <h3>{name}</h3>
                                 </div>
                               </div>
-                            </AccountWrapper>
-                          )
-                        )}
-                      </div>
+                              <div>
+                                <ButtonText
+                                  text=""
+                                  iconRight={faChevronRight}
+                                  iconTransform="shrink-3"
+                                />
+                              </div>
+                            </div>
+                          </AccountWrapper>
+                        )
+                      )}
                     </div>
-                  </AccordionPanel>
-                </AccordionItem>
-              )
-            )}
-          </>
-        )}
-
-        {/* Manage Chains */}
-        <AccordionItem key={'chain_accounts'}>
-          <HeadingWrapper>
-            <AccordionHeader>
-              <div className="flex">
-                <div className="left">
-                  <div className="icon-wrapper">
-                    {accordionActiveIndices.includes(3) ? (
-                      <FontAwesomeIcon
-                        icon={faCaretDown}
-                        transform={'shrink-1'}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faCaretRight}
-                        transform={'shrink-1'}
-                      />
-                    )}
                   </div>
-                  <h5>Chains</h5>
+                </AccordionPanel>
+              </AccordionItem>
+            )
+          )}
+
+          {/* Manage Chains */}
+          <AccordionItem key={'chain_accounts'}>
+            <HeadingWrapper>
+              <AccordionHeader>
+                <div className="flex">
+                  <div className="left">
+                    <div className="icon-wrapper">
+                      {accordionActiveIndices.includes(3) ? (
+                        <FontAwesomeIcon
+                          icon={faCaretDown}
+                          transform={'shrink-1'}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faCaretRight}
+                          transform={'shrink-1'}
+                        />
+                      )}
+                    </div>
+                    <h5>Chains</h5>
+                  </div>
                 </div>
-              </div>
-            </AccordionHeader>
-          </HeadingWrapper>
-          <AccordionPanel>
-            <div style={{ padding: '0 0.75rem' }}>
-              <div className="flex-column">
-                {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                  <AccountWrapper
-                    whileHover={{ scale: 1.01 }}
-                    key={`manage_chain_${i}`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleClickChain(chain)}
-                    ></button>
-                    <div className="inner">
-                      <div>
-                        <span>{getIcon(chain, 'chain-icon')}</span>
-                        <div className="content">
-                          <h3>{chain}</h3>
+              </AccordionHeader>
+            </HeadingWrapper>
+            <AccordionPanel>
+              <div style={{ padding: '0 0.75rem' }}>
+                <div className="flex-column">
+                  {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                    <AccountWrapper
+                      whileHover={{ scale: 1.01 }}
+                      key={`manage_chain_${i}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleClickChain(chain)}
+                      ></button>
+                      <div className="inner">
+                        <div>
+                          <span>{getIcon(chain, 'chain-icon')}</span>
+                          <div className="content">
+                            <h3>{chain}</h3>
+                          </div>
+                        </div>
+                        <div>
+                          <ButtonText
+                            text=""
+                            iconRight={faChevronRight}
+                            iconTransform="shrink-3"
+                          />
                         </div>
                       </div>
-                      <div>
-                        <ButtonText
-                          text=""
-                          iconRight={faChevronRight}
-                          iconTransform="shrink-3"
-                        />
-                      </div>
-                    </div>
-                  </AccountWrapper>
-                ))}
+                    </AccountWrapper>
+                  ))}
+                </div>
               </div>
-            </div>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </div>
     </AccountsWrapper>
   );
 };

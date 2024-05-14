@@ -49,7 +49,8 @@ export const fetchBalanceForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await ApiUtils.getApiInstance(account.chain);
+  const origin = 'fetchBalanceForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
@@ -91,7 +92,8 @@ export const setNominatingDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await ApiUtils.getApiInstance(account.chain);
+  const origin = 'setNominatingDataForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
 
   // Check if account is currently nominating.
   const nominatorData: AnyData = await api.query.staking.nominators(
@@ -170,8 +172,8 @@ const setNominationPoolDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await ApiUtils.getApiInstance(account.chain);
-
+  const origin = 'setNominationPoolDataForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
   const result: AnyJson = (
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
@@ -258,7 +260,8 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  * @summary Get the live nonce for an address.
  */
 export const getAddressNonce = async (address: string, chainId: ChainID) => {
-  const instance = await ApiUtils.getApiInstance(chainId);
+  const origin = 'getAddressNonce';
+  const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
   const result: AnyData = await instance.api.query.system.account(address);
   return new BigNumber(result.nonce);
 };

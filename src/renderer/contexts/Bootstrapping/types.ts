@@ -1,6 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ChainID } from '@/types/chains';
+
 export interface BootstrappingInterface {
   appLoading: boolean;
   isAborting: boolean;
@@ -18,4 +20,8 @@ export interface BootstrappingInterface {
   handleInitializeApp: () => Promise<void>;
   handleInitializeAppOffline: () => Promise<void>;
   handleInitializeAppOnline: () => Promise<void>;
+  handleNewEndpointForChain: (
+    chainId: ChainID,
+    newEndpoint: string
+  ) => Promise<void>;
 }

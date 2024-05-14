@@ -23,6 +23,7 @@ const debug = MainDebug.extend('Api');
  * @property {ApiPromise | null} api - the API instance of the chain.
  * @property {string | null} chain - the chain name.
  * @property {APIConstants | null} consts - the constants of the chain.
+ * @property {string[]} rpcs - rpc endpoints for connecting to the chain network.
  */
 export class Api {
   private _endpoint: string;
@@ -37,12 +38,15 @@ export class Api {
 
   private _consts: APIConstants | null = null;
 
-  constructor(endpoint: string, chainId: ChainID) {
+  private _rpcs: string[] = [];
+
+  constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
     this._chain = chainId;
     this._endpoint = endpoint;
     this._status = 'disconnected';
     this._provider = null;
     this._api = null;
+    this._rpcs = rpcs;
   }
 
   /**
@@ -242,5 +246,6 @@ export class Api {
       endpoint: this.endpoint,
       chainId: this.chain,
       status: this.status,
+      rpcs: this._rpcs,
     }) as FlattenedAPIData;
 }

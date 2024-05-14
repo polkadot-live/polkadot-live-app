@@ -154,9 +154,9 @@ export const Manage = ({
         <HardwareStatusBar
           show={section === 1}
           Icon={PolkadotVaultSVG}
-          text={`${addresses.length} Account${
+          text={`${addresses.length} Vault Account${
             addresses.length == 1 ? '' : 's'
-          } Imported`}
+          }`}
           inProgress={false}
           handleDone={() => setSection(0)}
         />

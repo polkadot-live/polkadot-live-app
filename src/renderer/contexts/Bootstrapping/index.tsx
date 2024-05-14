@@ -37,7 +37,7 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [appLoading, setAppLoading] = useState(true);
+  const [appLoading, setAppLoading] = useState(false);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
@@ -104,6 +104,8 @@ export const BootstrappingProvider = ({
   /// Handle app initialization.
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
+      setAppLoading(true);
+
       let aborted = false;
       let intervalRunning = true;
 
@@ -294,6 +296,35 @@ export const BootstrappingProvider = ({
     }
   };
 
+  /// Re-subscribe to tasks when switching to a different endpoint.
+  const handleNewEndpointForChain = async (
+    chainId: ChainID,
+    newEndpoint: string
+  ) => {
+    const currentStatus = APIsController.getStatus(chainId);
+
+    if (currentStatus === 'disconnected') {
+      // Set new endpoint.
+      APIsController.setEndpointForApi(chainId, newEndpoint);
+    } else {
+      // Disconnect from chain and set new endpoint.
+      await APIsController.close(chainId);
+      APIsController.setEndpointForApi(chainId, newEndpoint);
+
+      // Connect to new endpoint.
+      await APIsController.connectInstance(chainId);
+
+      // Re-subscribe account and chain tasks.
+      await Promise.all([
+        AccountsController.subscribeAccountsForChain(chainId),
+        SubscriptionsController.resubscribeChain(chainId),
+      ]);
+    }
+
+    // Set application state.
+    setSubscriptionsAndChainConnections();
+  };
+
   /// Utility.
   const setSubscriptionsAndChainConnections = () => {
     // Set chain subscriptions data for rendering.
@@ -357,6 +388,7 @@ export const BootstrappingProvider = ({
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
+        handleNewEndpointForChain,
       }}
     >
       {children}

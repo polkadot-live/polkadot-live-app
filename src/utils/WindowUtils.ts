@@ -22,6 +22,7 @@ import { WindowsController } from '@/controller/main/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
+import type { PortPairID } from '@/types/communication';
 
 const debug = MainDebug.extend('WindowUtils');
 
@@ -53,6 +54,47 @@ export const createTray = () => {
 };
 
 /**
+ * @name sendMainWindowPorts
+ * @summary Send ports to main window to facilitate communication with other windows.
+ */
+export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
+    ConfigMain.getPortPair('main-import').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
+    ConfigMain.getPortPair('main-action').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
+    ConfigMain.getPortPair('main-settings').port1,
+  ]);
+};
+
+/**
+ * @name sendMainWindowPorts
+ * @summary Send ports to child windows to facilitate communication with the main window.
+ *
+ * Currently unused.
+ */
+export const sendChildWindowPorts = () => {
+  const childWindowIds = ['import', 'action', 'main'];
+
+  for (const windowId of childWindowIds) {
+    const childWindow = WindowsController.get(windowId);
+
+    if (childWindow) {
+      const target = `main-${windowId}:${windowId}`;
+      const portId = `main-${windowId}` as PortPairID;
+
+      childWindow.webContents.postMessage('port', { target }, [
+        ConfigMain.getPortPair(portId).port2,
+      ]);
+    }
+  }
+};
+
+/**
  * @name createMainWindow
  * @summary Set up the main window:
  *
@@ -71,8 +113,8 @@ export const createMainWindow = (isTest: boolean) => {
   const mainWindow = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
-    x: initialMenuBounds?.x || undefined,
-    y: initialMenuBounds?.y || undefined,
+    x: initialMenuBounds?.x || ConfigMain.dockedWidth,
+    y: initialMenuBounds?.y || 0,
     width: initialMenuBounds?.height || ConfigMain.dockedWidth,
     height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: 420,
@@ -99,19 +141,7 @@ export const createMainWindow = (isTest: boolean) => {
 
   mainWindow.once('ready-to-show', () => {
     // Send ports to main window to facilitate communication with other windows.
-    mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
-      ConfigMain.getPortPair('main-import').port1,
-    ]);
-
-    mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
-      ConfigMain.getPortPair('main-action').port1,
-    ]);
-
-    mainWindow.webContents.postMessage(
-      'port',
-      { target: 'main-settings:main' },
-      [ConfigMain.getPortPair('main-settings').port1]
-    );
+    sendMainWindowPorts(mainWindow);
 
     // Set window bounds.
     setMainWindowPosition(mainWindow);

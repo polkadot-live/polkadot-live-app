@@ -63,7 +63,28 @@ export class SubscriptionsController {
 
     // Get subscription task array and subscribe to batched tasks.
     const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+
+    if (tasks.length) {
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    }
+  }
+
+  /**
+   * @name resubscribeChain
+   * @summary Re-subscribe to tasks for a particular chain.
+   */
+  static async resubscribeChain(chainId: ChainID) {
+    if (!this.chainSubscriptions) {
+      return;
+    }
+
+    // Fetch task to re-subscribe to.
+    const tasks = this.chainSubscriptions
+      .getSubscriptionTasks()
+      .filter((task) => task.chainId === chainId);
+
+    tasks.length &&
+      (await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions));
   }
 
   /**

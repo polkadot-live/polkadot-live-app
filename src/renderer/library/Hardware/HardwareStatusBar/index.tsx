@@ -39,7 +39,7 @@ export const HardwareStatusBar = ({
     >
       <div className="inner">
         <section>
-          <div style={{ width: '3rem', height: '3rem' }} className="icon">
+          <div style={{ width: '2rem', height: '2rem' }} className="icon">
             <Icon />
           </div>
           <div className="text">

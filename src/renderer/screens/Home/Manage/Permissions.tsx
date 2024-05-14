@@ -20,6 +20,7 @@ import {
   faCaretDown,
   faCaretRight,
 } from '@fortawesome/free-solid-svg-icons';
+import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
 import { Switch } from '@/renderer/library/Switch';
@@ -159,14 +160,32 @@ export const Permissions = ({
     nativeChecked: boolean
   ) => {
     setOneShotProcessing(true);
-
     task.enableOsNotifications = nativeChecked;
-    await executeOneShot(task);
+    const result = await executeOneShot(task);
 
-    // Wait some time to avoid the spinner snapping.
-    setTimeout(() => {
+    if (!result) {
       setOneShotProcessing(false);
-    }, 550);
+
+      // Render error alert.
+      toast.error('API timed out.', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-connection',
+      });
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+    }
   };
 
   /// Handle clicking the native checkbox.

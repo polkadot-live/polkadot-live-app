@@ -3,6 +3,7 @@
 
 import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAPIData } from '@/types/apis';
 
@@ -30,18 +31,21 @@ export class APIsController {
    * @param {string} endpoint - the api endpoint.
    */
   static new = (chainId: ChainID) => {
-    const endpoint = ChainList.get(chainId)?.endpoints.rpc;
+    const chainMetaData = ChainList.get(chainId);
 
-    if (!endpoint) {
+    if (!chainMetaData) {
       throw new Error(
-        `APIsController::new: Endpoint not found for chain ID ${chainId}`
+        `APIsController::new: Chain metadata not found for chain ID ${chainId}`
       );
     }
+
+    const endpoint = chainMetaData.endpoints.rpcs[0];
+    const rpcs = chainMetaData.endpoints.rpcs;
 
     console.log('🤖 Creating new api interface: %o', endpoint);
 
     // Create API instance.
-    const instance = new Api(endpoint, chainId);
+    const instance = new Api(endpoint, chainId, rpcs);
 
     // Set remaining instance properties and add to instances.
     this.instances.push(instance);
@@ -63,6 +67,33 @@ export class APIsController {
       console.log('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
     }
+  };
+
+  /**
+   * @name getStatus
+   * @summary Get status of an API instance.
+   */
+  static getStatus = (chainId: ChainID) => {
+    const instance = this.get(chainId);
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    return instance.status;
+  };
+
+  /**
+   * @name setEndpointForApi
+   * @summary Set the default endpoint for an API instance.
+   */
+  static setEndpointForApi = (chainId: ChainID, newEndpoint: string) => {
+    const instance = this.get(chainId);
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    instance.endpoint = newEndpoint;
+    this.set(instance);
   };
 
   /**
@@ -97,9 +128,10 @@ export class APIsController {
         if (newInstance?.status === 'connected' && newInstance.api !== null) {
           console.log(`${chainId} connected, waited ${secondsWaited} seconds.`);
           return newInstance;
-        } else if (secondsWaited > 16) {
-          // If we have waited for more than 16 seconds, return null.
-          console.log('Waited over 16 seconds to connect, return null.');
+        } else if (secondsWaited > ConfigRenderer.processingTimeout) {
+          // If we have waited for more than 10 seconds, return null.
+          const seconds = ConfigRenderer.processingTimeout;
+          console.log(`Waited ${seconds} seconds to connect, return null.`);
           return null;
         }
       }

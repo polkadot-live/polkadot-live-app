@@ -158,7 +158,7 @@ export const Manage = ({
           Icon={LedgerLogoSVG}
           text={
             !isImporting
-              ? `Displaying ${addresses.length} Ledger Account${
+              ? `${addresses.length} Ledger Account${
                   addresses.length === 1 ? '' : 's'
                 }`
               : !statusCodes.length
