@@ -238,7 +238,7 @@ export const Wrapper = styled.div<{
             }
             .chain-icon {
               position: absolute;
-              top: 5px;
+              top: 7px;
               left: 10px;
               width: 1.5rem;
               height: 1.5rem;
