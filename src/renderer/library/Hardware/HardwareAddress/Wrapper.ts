@@ -140,7 +140,19 @@ export const Wrapper = styled.div<{
     button {
       flex-basis: 50%;
       flex-grow: 1;
-      border: 1px solid var(--border-mid-color);
+      background-color: rgb(20 20 20);
+      border-color: rgb(68, 68, 68);
+      color: rgb(101 101 101);
+      transition: color 0.2 ease-out;
+    }
+    .red-hover:hover {
+      color: rgb(165 63 63);
+    }
+    .green-hover:hover {
+      color: #5c9d5c;
+    }
+    .orange-hover:hover {
+      color: #9e632d;
     }
     .processing {
       background-color: var(--background-modal);
@@ -152,7 +164,6 @@ export const Wrapper = styled.div<{
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: 100%;
 
     > .inner {
       display: flex;
