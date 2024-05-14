@@ -120,26 +120,41 @@ export const HelpConfig: HelpItems = [
   {
     key: 'help:settings:dockedWindow',
     title: 'Docked Window',
-    definition: ['Help text for docked window.'],
+    definition: [
+      "Enabling this setting will display the main window below the app's tray icon with a fixed size and position.",
+      'Turn off this setting to position and size the main window freely.',
+    ],
   },
   {
     key: 'help:settings:showOnAllWorkspaces',
     title: 'Show on All Workspaces',
-    definition: ['Help text for workspaces setting.'],
+    definition: [
+      'Displays Polkadot Live windows on all workspaces. Switching to a different workspace will still show your Polkadot Live windows.',
+      'Turn off this setting to display Polkadot Live on a single workspace.',
+    ],
   },
   {
     key: 'help:settings:silenceOsNotifications',
     title: 'Silence OS Notifications',
-    definition: ['Help text for silencing OS notifications.'],
+    definition: [
+      'Enable to silence (not display) native OS notifications application wide.',
+      'This setting is global and will override OS notification settings for individual subscriptions.',
+    ],
   },
   {
     key: 'help:settings:importData',
     title: 'Import Data',
-    definition: ['Help text for importing data.'],
+    definition: [
+      'Coming soon.',
+      'Import data from another Polkadot Live installation to restore your accounts, events and subscription.',
+    ],
   },
   {
     key: 'help:settings:exportData',
     title: 'Export Data',
-    definition: ['Help text for exporting data.'],
+    definition: [
+      'Coming soon.',
+      'Export your Polkadot Live data to a file, allowing you to restore your accounts, events and subscriptions on another computer.',
+    ],
   },
 ];

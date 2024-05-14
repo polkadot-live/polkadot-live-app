@@ -31,7 +31,7 @@ export class Config {
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.
   static initialize = (): void => {
-    const ids: PortPairID[] = ['main-import', 'main-action'];
+    const ids: PortPairID[] = ['main-import', 'main-action', 'main-settings'];
 
     for (const id of ids) {
       Config.initPorts(id);

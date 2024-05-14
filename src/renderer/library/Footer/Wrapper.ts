@@ -32,7 +32,7 @@ export const FooterWrapper = styled.div`
     padding: 0 1rem;
     transition: height 0.2s;
 
-    > div {
+    > div:first-of-type {
       flex-grow: 1;
     }
 
@@ -149,6 +149,12 @@ export const SelectRpcWrapper = styled.div`
       color: #afafaf;
       font-size: 1rem;
       position: relative;
+      cursor: pointer;
+      transition: background-color 0.1s ease-out;
+
+      &:hover {
+        background-color: var(--background-default);
+      }
     }
   }
 `;

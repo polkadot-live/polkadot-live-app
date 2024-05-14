@@ -193,7 +193,8 @@ export class Callbacks {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
       const chainId = account.chain;
-      const { api } = await ApiUtils.getApiInstance(chainId);
+      const origin = 'callback_nomination_pool_rewards';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
 
       // Fetch pending rewards for the account.
       const pendingRewardsPlanck: BigNumber =
@@ -470,7 +471,11 @@ export class Callbacks {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const origin = 'callback_nomination_pending_payouts';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
 
       // Map<era: string, Map<validator: string, payout: [number, string]>>
       const unclaimed = await getUnclaimedPayouts(
@@ -544,7 +549,11 @@ export class Callbacks {
       }
 
       // Otherwise get exposure.
-      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const origin = 'callback_nominating_exposure';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
       const exposed = await getAccountExposed(api, era, account);
 
       // Update account data.
@@ -595,7 +604,11 @@ export class Callbacks {
         return;
       }
 
-      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const origin = 'callback_nominating_exposure_westend';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
       const vs = account.nominatingData!.validators;
       const exposed = await getAccountExposedWestend(api, era, account, vs);
 
@@ -651,7 +664,12 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const origin = 'callback_nominating_commission';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
       const nominatorData: AnyData = (
         await api.query.staking.nominators(account.address)
       ).toHuman();

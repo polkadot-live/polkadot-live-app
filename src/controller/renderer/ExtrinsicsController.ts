@@ -5,7 +5,7 @@ import { planckToUnit } from '@w3ux/utils';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@/config/chains';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { getApiInstance } from '@/utils/ApiUtils';
+import { getApiInstanceOrThrow } from '@/utils/ApiUtils';
 import type { AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { TxStatus } from '@/types/tx';
@@ -39,7 +39,8 @@ export class ExtrinsicsController {
     eventUid: string
   ) => {
     try {
-      const { api } = await getApiInstance(chainId);
+      const origin = 'ExtrinsicsController.new';
+      const { api } = await getApiInstanceOrThrow(chainId, origin);
 
       console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
@@ -89,7 +90,8 @@ export class ExtrinsicsController {
     accountNonce: number
   ) => {
     // build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = await getApiInstance(chainId);
+    const origin = 'ExtrinsicsController.buildPayload';
+    const { api } = await getApiInstanceOrThrow(chainId, origin);
 
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(

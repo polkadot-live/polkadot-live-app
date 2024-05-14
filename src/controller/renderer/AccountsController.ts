@@ -96,12 +96,11 @@ export class AccountsController {
 
     // Resubscribe to the each account's persisted tasks.
     for (const account of chainAccounts) {
-      const stored = await window.myAPI.getPersistedAccountTasks(
-        account.flatten()
+      const tasks = (account.getSubscriptionTasks() || []).filter(
+        (t) => t.chainId === chainId
       );
 
-      const tasks: SubscriptionTask[] = stored !== '' ? JSON.parse(stored) : [];
-      if (account.queryMulti !== null) {
+      if (tasks.length && account.queryMulti) {
         await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
       }
     }
@@ -119,8 +118,8 @@ export class AccountsController {
       for (const account of accounts) {
         const tasks = account.getSubscriptionTasks() || [];
 
-        for (const task of tasks) {
-          await account.subscribeToTask(task);
+        if (tasks.length && account.queryMulti) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }

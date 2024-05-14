@@ -14,8 +14,8 @@ const MaxSupportedPayoutEras = 7;
 const NetworksWithPagedRewards: ChainID[] = ['Westend'];
 
 const PagedRewardsStartEra = new Map<ChainID, BigNumber | null>([
-  ['Polkadot', null],
-  ['Kusama', null],
+  ['Polkadot', new BigNumber(1420)],
+  ['Kusama', new BigNumber(6514)],
   ['Westend', new BigNumber(7167)],
 ]);
 
@@ -57,7 +57,7 @@ const getErasInterval = (era: BigNumber) => {
  * @name getEraValidators
  * @summary Get list of validators that an account nominated during an era.
  */
-const getEraValidators = async (
+const getEraValidatorsLegacy = async (
   api: ApiPromise,
   era: BigNumber,
   accountAddress: string
@@ -92,7 +92,7 @@ const getEraValidators = async (
  * @name getEraValidatorsWestend
  * @summary Get list of validators that an account nominated during an era using new paged API.
  */
-const getEraValidatorsWestend = async (
+const getEraValidatorsPaged = async (
   api: ApiPromise,
   era: BigNumber,
   accountAddress: string
@@ -242,8 +242,8 @@ export const getUnclaimedPayouts = async (
 
   while (currentEra.isGreaterThanOrEqualTo(endEra)) {
     const validators = pagedRewardsActive
-      ? await getEraValidatorsWestend(api, currentEra, address)
-      : await getEraValidators(api, currentEra, address);
+      ? await getEraValidatorsPaged(api, currentEra, address)
+      : await getEraValidatorsLegacy(api, currentEra, address);
 
     erasValidators.push(...validators);
     erasToCheck.push(currentEra.toString());

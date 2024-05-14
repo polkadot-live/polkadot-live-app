@@ -1,7 +1,14 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
+import {
+  app,
+  ipcMain,
+  powerMonitor,
+  protocol,
+  shell,
+  systemPreferences,
+} from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
@@ -132,6 +139,21 @@ app.whenReady().then(async () => {
 
   // Handle settings window.
   WindowUtils.handleWindowOnIPC('settings', isTest);
+
+  // ------------------------------
+  // Handle Power Changes
+  // ------------------------------
+
+  // Emitted when the system is suspending.
+  powerMonitor.on('suspend', async () => {
+    await OnlineStatusController.handleSuspend();
+  });
+
+  // Emitted when system is resuming.
+  powerMonitor.on('resume', async () => {
+    console.log('Resuming...');
+    await OnlineStatusController.handleResume();
+  });
 
   // ------------------------------
   // WDIO Custom Electron API
@@ -278,8 +300,8 @@ app.whenReady().then(async () => {
   });
 
   // Handle switching between online and offline.
-  ipcMain.on('app:connection:status', () => {
-    OnlineStatusController.handleStatusChange();
+  ipcMain.on('app:connection:status', async () => {
+    await OnlineStatusController.handleStatusChange();
   });
 
   // Send connection status to frontend.
