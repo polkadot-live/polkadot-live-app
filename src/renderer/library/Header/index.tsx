@@ -6,13 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
-import { Tooltip } from 'react-tooltip';
 import type { HeaderProps } from './types';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Config as RendererConfig } from '@/config/processes/renderer';
-import { faLock, faUnlock } from '@fortawesome/pro-solid-svg-icons';
-
+import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
 
@@ -69,7 +67,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
               <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
             </button>
           )}
-          <Tooltip id="silence-notifications-tooltip" />
         </div>
       </div>
     </HeaderWrapper>
