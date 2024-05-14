@@ -17,7 +17,7 @@ import { SelectRpc } from './RpcSelect';
 
 export const Footer = () => {
   const { chains } = useChains();
-  const { online: isOnline } = useBootstrapping();
+  const { online: isOnline, isConnecting, isAborting } = useBootstrapping();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -29,7 +29,7 @@ export const Footer = () => {
 
   /// Get header text.
   const getHeadingText = () =>
-    isOnline
+    isOnline && !isConnecting && !isAborting
       ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
       : 'Offline';
 

@@ -46,23 +46,6 @@ export const HeaderWrapper = styled.div`
         .hide-text {
           color: rgba(0, 0, 0, 0);
         }
-        .connect-wrapper {
-          position: relative;
-
-          .abort-x {
-            position: absolute;
-            user-select: none;
-            left: 45px;
-            bottom: 3px;
-            cursor: pointer;
-
-            .icon-sm {
-              width: 0.75rem;
-              height: 0.75rem;
-              z-index: 10;
-            }
-          }
-        }
         .dock-btn {
           border: 1px solid var(--border-mid-color);
           min-width: 96px;
@@ -70,43 +53,14 @@ export const HeaderWrapper = styled.div`
           max-height: 18px;
           user-select: none;
           transition: background-color 0.2s ease-out;
+          transition: opacity 0.2s ease-out;
+          opacity: 0.4;
 
           &:hover {
             background-color: inherit;
             border: 1px solid var(--border-secondary-color) !important;
+            opacity: 0.8;
           }
-        }
-        .connect-btn {
-          border: 1px solid var(--border-mid-color);
-          min-width: 96px;
-          font-size: 0.85rem;
-          max-height: 18px;
-          user-select: none;
-          transition: background-color 0.2s ease-out;
-
-          &:hover {
-            background-color: inherit;
-            border: 1px solid var(--border-secondary-color) !important;
-          }
-        }
-        .do-pulse {
-          animation: pulse 3s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-          0% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-
-        .doPulse {
-          animation: 'pulse 3s infinite ease-in-out';
         }
       }
       > button {
