@@ -112,7 +112,7 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiExportAppData = () => Promise<void>;
+type ApiExportAppData = (serialized: string) => Promise<void>;
 type ApiImportAppData = () => Promise<void>;
 
 type ApiToggleWorkspaceVisibility = () => void;

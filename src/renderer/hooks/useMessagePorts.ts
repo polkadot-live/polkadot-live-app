@@ -27,6 +27,7 @@ import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
 import type { ActionMeta } from '@/types/tx';
+import type { AnyJson } from '@w3ux/utils/types';
 
 export const useMessagePorts = () => {
   /// Main renderer contexts.
@@ -251,6 +252,18 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleDataExport
+     * @summary Write Polkadot Live data to a file.
+     */
+    const handleDataExport = async () => {
+      const accountsJson: AnyJson[] = [];
+      for (const chainAccounts of AccountsController.accounts.values()) {
+        chainAccounts.forEach((a) => accountsJson.push(a.toJSON()));
+      }
+      await window.myAPI.exportAppData(JSON.stringify(accountsJson));
+    };
+
+    /**
      * @name handleReceivedPort
      * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
@@ -396,7 +409,7 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'settings:execute:exportData': {
-                await window.myAPI.exportAppData();
+                await handleDataExport();
                 break;
               }
               case 'settings:execute:importData': {

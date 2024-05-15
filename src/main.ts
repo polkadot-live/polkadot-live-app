@@ -418,7 +418,7 @@ app.whenReady().then(async () => {
    * Data
    */
 
-  ipcMain.handle('app:data:export', async () => {
+  ipcMain.handle('app:data:export', async (_, serialized) => {
     // TODO: Receive data to write to file.
 
     if (!ConfigMain.exportingData) {
@@ -438,14 +438,13 @@ app.whenReady().then(async () => {
       });
 
       // Handle save or cancel.
-      // TODO: Handle empty filepath.
+      // TODO: Handle empty filepath (error messages).
       if (!canceled && filePath) {
-        const data = 'some temp data...';
-
-        fs.writeFile(filePath, data, { encoding: 'utf8' }, (err) => {
+        fs.writeFile(filePath, serialized, { encoding: 'utf8' }, (err) => {
           if (err) {
             console.log(err);
           } else {
+            // TODO: Return true and render success message in settings window.
             console.log('File written successfully.');
             console.log(fs.readFileSync(filePath, 'utf8'));
           }

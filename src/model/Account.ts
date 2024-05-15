@@ -80,10 +80,10 @@ export class Account {
     }) as FlattenedAccountData;
 
   toJSON = () => ({
-    _source: this._source,
     _address: this._address,
-    _name: this._name,
     _chain: this._chain,
+    _name: this._name,
+    _source: this._source,
   });
 
   get chain() {
