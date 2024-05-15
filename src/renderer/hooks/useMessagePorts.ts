@@ -256,13 +256,46 @@ export const useMessagePorts = () => {
      * @summary Write Polkadot Live data to a file.
      */
     const handleDataExport = async () => {
+      // Get data to export.
       const accountsJson: AnyJson[] = [];
       for (const chainAccounts of AccountsController.accounts.values()) {
         chainAccounts.forEach((a) => accountsJson.push(a.toJSON()));
       }
+
+      // Serialize and export data in main process.
       const serialized = JSON.stringify(accountsJson);
-      const result = await window.myAPI.exportAppData(serialized);
-      console.log(result);
+      const { result, msg } = await window.myAPI.exportAppData(serialized);
+
+      // Utility lambda to post message to settings window.
+      const postToSettings = (res: boolean, text: string) => {
+        ConfigRenderer.portToSettings.postMessage({
+          task: 'settings:render:toast',
+          data: { success: res, text },
+        });
+      };
+
+      // Render toastify message in settings window.
+      switch (msg) {
+        case 'success': {
+          postToSettings(result, 'Data exported successfully.');
+          break;
+        }
+        case 'error': {
+          postToSettings(result, 'Data export error.');
+          break;
+        }
+        case 'canceled': {
+          postToSettings(result, 'Data export was canceled.');
+          break;
+        }
+        case 'executing': {
+          postToSettings(result, 'Export dialog is already open.');
+          break;
+        }
+        default: {
+          throw new Error('Message not recognized');
+        }
+      }
     };
 
     /**
@@ -441,6 +474,12 @@ export const useMessagePorts = () => {
               case 'settings:set:silenceOsNotifications': {
                 const { silenced } = ev.data.data;
                 setSilenceOsNotifications(silenced);
+                break;
+              }
+              case 'settings:render:toast': {
+                // TODO: Render toastify message.
+                const { success, text } = ev.data.data;
+                console.log(`Render message: ${success} - ${text}`);
                 break;
               }
               default: {
