@@ -411,4 +411,16 @@ app.whenReady().then(async () => {
       });
     }
   });
+
+  /**
+   * Data
+   */
+
+  ipcMain.handle('app:data:export', async () => {
+    console.log('TODO: Export data.');
+  });
+
+  ipcMain.handle('app:data:import', async () => {
+    console.log('TODO: Import data.');
+  });
 });

@@ -36,6 +36,14 @@ ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
 
 export const API: PreloadAPI = {
   /**
+   * File import and export
+   */
+
+  exportAppData: async () => await ipcRenderer.invoke('app:data:export'),
+
+  importAppData: async () => await ipcRenderer.invoke('app:data:import'),
+
+  /**
    * New handlers
    */
 

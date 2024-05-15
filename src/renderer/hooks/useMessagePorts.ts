@@ -395,12 +395,12 @@ export const useMessagePorts = () => {
                 handleToggleSilenceOsNotifications();
                 break;
               }
-              case 'settings:execute:importData': {
-                console.log('todo: handle importData');
+              case 'settings:execute:exportData': {
+                await window.myAPI.exportAppData();
                 break;
               }
-              case 'settings:execute:exportData': {
-                console.log('todo: handle exportData');
+              case 'settings:execute:importData': {
+                await window.myAPI.importAppData();
                 break;
               }
               default: {
