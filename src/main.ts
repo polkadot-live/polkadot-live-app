@@ -3,6 +3,7 @@
 
 import {
   app,
+  dialog,
   ipcMain,
   powerMonitor,
   protocol,
@@ -14,6 +15,7 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import fs from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
@@ -417,7 +419,43 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('app:data:export', async () => {
-    console.log('TODO: Export data.');
+    // TODO: Receive data to write to file.
+
+    if (!ConfigMain.exportingData) {
+      ConfigMain.exportingData = true;
+
+      // Get response from dialog.
+      const { canceled, filePath } = await dialog.showSaveDialog({
+        title: 'Export Data',
+        defaultPath: 'polkadot-live-data.txt',
+        filters: [
+          {
+            name: 'Text File',
+            extensions: ['txt'],
+          },
+        ],
+        properties: [],
+      });
+
+      // Handle save or cancel.
+      // TODO: Handle empty filepath.
+      if (!canceled && filePath) {
+        const data = 'some temp data...';
+
+        fs.writeFile(filePath, data, { encoding: 'utf8' }, (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('File written successfully.');
+            console.log(fs.readFileSync(filePath, 'utf8'));
+          }
+
+          ConfigMain.exportingData = false;
+        });
+      } else {
+        ConfigMain.exportingData = false;
+      }
+    }
   });
 
   ipcMain.handle('app:data:import', async () => {
