@@ -116,7 +116,11 @@ type ApiExportAppData = (
   serialized: string
 ) => Promise<{ result: boolean; msg: string }>;
 
-type ApiImportAppData = () => Promise<void>;
+type ApiImportAppData = () => Promise<{
+  result: boolean;
+  msg: string;
+  data?: AnyJson;
+}>;
 
 type ApiToggleWorkspaceVisibility = () => void;
 

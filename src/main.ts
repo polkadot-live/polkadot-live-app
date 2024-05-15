@@ -466,8 +466,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:data:import', async () => {
     const window = WindowsController.get('settings');
     if (!window) {
-      // TODO: Send error response and handle in main renderer.
-      return;
+      return { result: false, msg: 'error' };
     }
 
     const { canceled, filePaths } = await dialog.showOpenDialog(window, {
@@ -486,15 +485,12 @@ app.whenReady().then(async () => {
         const serialized = await fsPromises.readFile(filePaths[0], {
           encoding: 'utf-8',
         });
-
-        // TODO: Send serialized text to main rendere for parsing.
-        console.log(serialized);
+        return { result: true, msg: 'success', data: { serialized } };
       } catch (err) {
-        // TODO: Send error response and handle in main renderer.
-        console.log(err);
+        return { result: false, msg: 'error' };
       }
     } else {
-      // TODO: Dialog was canceled.
+      return { result: false, msg: 'canceled' };
     }
   });
 });

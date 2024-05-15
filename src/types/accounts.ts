@@ -80,6 +80,16 @@ export interface StoredAccount {
   _name: string;
 }
 
+/**
+ * Account JSON representation.
+ */
+export interface AccountJson {
+  _address: string;
+  _chain: ChainID;
+  _name: string;
+  _source: AccountSource;
+}
+
 /*
  * Type storing essential data for an account.
  */

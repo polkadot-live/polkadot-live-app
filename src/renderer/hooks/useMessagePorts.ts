@@ -26,6 +26,7 @@ import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
+import type { AccountJson } from '@/types/accounts';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyJson } from '@w3ux/utils/types';
 
@@ -300,6 +301,47 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleDataImport
+     * @summary Import and process Polkadot Live data.
+     */
+    const handleDataImport = async () => {
+      const response = await window.myAPI.importAppData();
+
+      // Utility lambda to post message to settings window.
+      const postToSettings = (res: boolean, text: string) => {
+        ConfigRenderer.portToSettings.postMessage({
+          task: 'settings:render:toast',
+          data: { success: res, text },
+        });
+      };
+
+      switch (response.msg) {
+        case 'success': {
+          try {
+            const parsed: AccountJson[] = JSON.parse(response.data.serialized);
+            parsed.forEach((a) => console.log(a._address));
+            postToSettings(response.result, 'Data imported successfully.');
+          } catch (err) {
+            postToSettings(false, 'Error parsing JSON.');
+          }
+
+          break;
+        }
+        case 'canceld': {
+          // Don't do anything on cancel.
+          break;
+        }
+        case 'error': {
+          postToSettings(response.result, 'Data import error.');
+          break;
+        }
+        default: {
+          throw new Error('Message not recognized');
+        }
+      }
+    };
+
+    /**
      * @name handleReceivedPort
      * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
@@ -449,7 +491,7 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'settings:execute:importData': {
-                await window.myAPI.importAppData();
+                await handleDataImport();
                 break;
               }
               default: {
