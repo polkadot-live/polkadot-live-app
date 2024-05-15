@@ -26,7 +26,11 @@ import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
-import type { AccountJson } from '@/types/accounts';
+import type {
+  AccountJson,
+  AccountSource,
+  LocalAddress,
+} from '@/types/accounts';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyJson } from '@w3ux/utils/types';
 
@@ -60,6 +64,18 @@ export const useMessagePorts = () => {
   } = useTxMeta();
 
   useEffect(() => {
+    // Utility for account import handling.
+    const getStorageKey = (accountSource: AccountSource) => {
+      switch (accountSource) {
+        case 'read-only':
+          return 'read_only_addresses';
+        case 'vault':
+          return 'vault_addresses';
+        default:
+          throw new Error('Invalid account source.');
+      }
+    };
+
     /**
      * @name handleImportAddress
      * @summary Imports a new account when a message is received from import window.
@@ -318,8 +334,37 @@ export const useMessagePorts = () => {
       switch (response.msg) {
         case 'success': {
           try {
-            const parsed: AccountJson[] = JSON.parse(response.data.serialized);
-            parsed.forEach((a) => console.log(a._address));
+            const json: AccountJson[] = JSON.parse(response.data.serialized);
+
+            for (const account of json) {
+              console.log(account);
+
+              // TODO: Support importing ledger addresses.
+              if (account._source === 'ledger') {
+                continue;
+              }
+
+              // TODO: Put in util function.
+              // Add account data to local storage for import window.
+              const { _address, _name, _source } = account;
+              const key = getStorageKey(_source);
+              const fetched: string | null = localStorage.getItem(key);
+              const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
+
+              const newAddresses = parsed
+                .filter((a: LocalAddress) => a.address !== _address)
+                .concat({
+                  index: !parsed.length
+                    ? 0
+                    : parsed[parsed.length - 1].index + 1,
+                  address: account._address,
+                  isImported: true,
+                  name: _name,
+                });
+
+              // TODO: Post message to import window to update its state.
+              localStorage.setItem(key, JSON.stringify(newAddresses));
+            }
             postToSettings(response.result, 'Data imported successfully.');
           } catch (err) {
             postToSettings(false, 'Error parsing JSON.');
