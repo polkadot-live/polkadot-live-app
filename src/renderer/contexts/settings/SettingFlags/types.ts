@@ -9,4 +9,5 @@ export interface SettingFlagsContextInterface {
   setWindowDocked: (flag: boolean) => void;
   setSilenceOsNotifications: (flag: boolean) => void;
   setShowOnAllWorkspaces: (flag: boolean) => void;
+  renderToastify: (success: boolean, text: string) => void;
 }

@@ -10,4 +10,5 @@ export const defaultSettingFlagsContext: SettingFlagsContextInterface = {
   setWindowDocked: (b) => {},
   setSilenceOsNotifications: (b) => {},
   setShowOnAllWorkspaces: (b) => {},
+  renderToastify: (s, t) => {},
 };

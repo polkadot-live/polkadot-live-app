@@ -3,6 +3,7 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { Flip, toast } from 'react-toastify';
 import type { SettingFlagsContextInterface } from './types';
 import type { SettingItem } from '@/renderer/screens/Settings/types';
 
@@ -79,6 +80,43 @@ export const SettingFlagsProvider = ({
     }
   };
 
+  /// Render a toastify message.
+  const renderToastify = (success: boolean, text: string) => {
+    const toastId = `toast-export-data-${success}`;
+    const position = 'top-center';
+    const autoClose = 3000;
+
+    if (success) {
+      toast.success(text, {
+        position,
+        autoClose,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId,
+      });
+    } else {
+      toast.error(text, {
+        position,
+        autoClose,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId,
+      });
+    }
+  };
+
   return (
     <SettingFlagsContext.Provider
       value={{
@@ -87,6 +125,7 @@ export const SettingFlagsProvider = ({
         setShowOnAllWorkspaces,
         getSwitchState,
         handleSwitchToggle,
+        renderToastify,
       }}
     >
       {children}

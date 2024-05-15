@@ -45,7 +45,8 @@ export const useMessagePorts = () => {
   const { setStatusForAccount } = useAccountStatuses();
 
   // Settings renderer contexts.
-  const { setWindowDocked, setSilenceOsNotifications } = useSettingFlags();
+  const { setWindowDocked, setSilenceOsNotifications, renderToastify } =
+    useSettingFlags();
 
   /// Action window specific.
   const {
@@ -477,9 +478,8 @@ export const useMessagePorts = () => {
                 break;
               }
               case 'settings:render:toast': {
-                // TODO: Render toastify message.
                 const { success, text } = ev.data.data;
-                console.log(`Render message: ${success} - ${text}`);
+                renderToastify(success, text);
                 break;
               }
               default: {
