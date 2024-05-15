@@ -286,7 +286,7 @@ export const useMessagePorts = () => {
           break;
         }
         case 'canceled': {
-          postToSettings(result, 'Data export was canceled.');
+          // Don't do anything on cancel.
           break;
         }
         case 'executing': {

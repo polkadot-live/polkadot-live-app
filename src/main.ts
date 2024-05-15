@@ -423,7 +423,12 @@ app.whenReady().then(async () => {
       ConfigMain.exportingData = true;
 
       // Get response from dialog.
-      const { canceled, filePath } = await dialog.showSaveDialog({
+      const window = WindowsController.get('settings');
+      if (!window) {
+        return { result: false, msg: 'error' };
+      }
+
+      const { canceled, filePath } = await dialog.showSaveDialog(window, {
         title: 'Export Data',
         defaultPath: 'polkadot-live-data.txt',
         filters: [
