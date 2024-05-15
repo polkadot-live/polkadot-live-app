@@ -433,7 +433,7 @@ app.whenReady().then(async () => {
         defaultPath: 'polkadot-live-data.txt',
         filters: [
           {
-            name: 'Text File',
+            name: 'Text Files',
             extensions: ['txt'],
           },
         ],
@@ -464,6 +464,37 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.handle('app:data:import', async () => {
-    console.log('TODO: Import data.');
+    const window = WindowsController.get('settings');
+    if (!window) {
+      // TODO: Send error response and handle in main renderer.
+      return;
+    }
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+      title: 'Import Data',
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['txt'],
+        },
+      ],
+      properties: ['openFile'],
+    });
+
+    if (!canceled && filePaths.length) {
+      try {
+        const serialized = await fsPromises.readFile(filePaths[0], {
+          encoding: 'utf-8',
+        });
+
+        // TODO: Send serialized text to main rendere for parsing.
+        console.log(serialized);
+      } catch (err) {
+        // TODO: Send error response and handle in main renderer.
+        console.log(err);
+      }
+    } else {
+      // TODO: Dialog was canceled.
+    }
   });
 });

@@ -49,7 +49,6 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
             text={setting.buttonText || ''}
             iconTransform="shrink-2"
             onClick={() => handleButtonClick()}
-            disabled={setting.action === 'settings:execute:importData'}
           />
         )}
       </div>
