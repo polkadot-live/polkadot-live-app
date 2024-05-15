@@ -260,7 +260,9 @@ export const useMessagePorts = () => {
       for (const chainAccounts of AccountsController.accounts.values()) {
         chainAccounts.forEach((a) => accountsJson.push(a.toJSON()));
       }
-      await window.myAPI.exportAppData(JSON.stringify(accountsJson));
+      const serialized = JSON.stringify(accountsJson);
+      const result = await window.myAPI.exportAppData(serialized);
+      console.log(result);
     };
 
     /**

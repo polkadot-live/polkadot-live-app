@@ -15,7 +15,7 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
@@ -419,8 +419,6 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('app:data:export', async (_, serialized) => {
-    // TODO: Receive data to write to file.
-
     if (!ConfigMain.exportingData) {
       ConfigMain.exportingData = true;
 
@@ -438,23 +436,26 @@ app.whenReady().then(async () => {
       });
 
       // Handle save or cancel.
-      // TODO: Handle empty filepath (error messages).
       if (!canceled && filePath) {
-        fs.writeFile(filePath, serialized, { encoding: 'utf8' }, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            // TODO: Return true and render success message in settings window.
-            console.log('File written successfully.');
-            console.log(fs.readFileSync(filePath, 'utf8'));
-          }
+        try {
+          await fsPromises.writeFile(filePath, serialized, {
+            encoding: 'utf8',
+          });
 
           ConfigMain.exportingData = false;
-        });
+          return { result: true, msg: 'success' };
+        } catch (err) {
+          ConfigMain.exportingData = false;
+          return { result: false, msg: 'error' };
+        }
       } else {
         ConfigMain.exportingData = false;
+        return { result: false, msg: 'canceled' };
       }
     }
+
+    // Export dialog is already open.
+    return { result: false, msg: 'executing' };
   });
 
   ipcMain.handle('app:data:import', async () => {
