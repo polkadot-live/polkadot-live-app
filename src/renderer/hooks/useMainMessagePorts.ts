@@ -40,8 +40,7 @@ export const useMainMessagePorts = () => {
 
   /**
    * @name handleImportAddress
-   * @summary Imports a new account when a message is received from import window.
-   * Handled in the main window.
+   * @summary Imports a new account when a message is received from `import` window.
    */
   const handleImportAddress = async (ev: MessageEvent) => {
     const { chainId, source, address, name } = ev.data.data;
@@ -91,8 +90,7 @@ export const useMainMessagePorts = () => {
 
   /**
    * @name handleRemoveAddress
-   * @summary Removes an account a message is received from import window.
-   * Handled in the main window.
+   * @summary Removes an account a message is received from `import` window.
    */
   const handleRemoveAddress = async (ev: MessageEvent) => {
     const { address, chainId } = ev.data.data;
@@ -168,6 +166,22 @@ export const useMainMessagePorts = () => {
     }
   };
 
+  /// Utility to post message to settings window.
+  const postToSettings = (res: boolean, text: string) => {
+    ConfigRenderer.portToSettings.postMessage({
+      task: 'settings:render:toast',
+      data: { success: res, text },
+    });
+  };
+
+  /// Utility to post message to import window.
+  const postToImport = (json: AccountJson) => {
+    ConfigRenderer.portToImport.postMessage({
+      task: 'import:account:add',
+      data: { json },
+    });
+  };
+
   /**
    * @name handleDataExport
    * @summary Write Polkadot Live data to a file.
@@ -182,14 +196,6 @@ export const useMainMessagePorts = () => {
     // Serialize and export data in main process.
     const serialized = JSON.stringify(accountsJson);
     const { result, msg } = await window.myAPI.exportAppData(serialized);
-
-    // Utility lambda to post message to settings window.
-    const postToSettings = (res: boolean, text: string) => {
-      ConfigRenderer.portToSettings.postMessage({
-        task: 'settings:render:toast',
-        data: { success: res, text },
-      });
-    };
 
     // Render toastify message in settings window.
     switch (msg) {
@@ -221,22 +227,6 @@ export const useMainMessagePorts = () => {
    */
   const handleDataImport = async () => {
     const response = await window.myAPI.importAppData();
-
-    // Utility lambda to post message to settings window.
-    const postToSettings = (res: boolean, text: string) => {
-      ConfigRenderer.portToSettings.postMessage({
-        task: 'settings:render:toast',
-        data: { success: res, text },
-      });
-    };
-
-    // Utility lambda to post message to import window.
-    const postToImport = (json: AccountJson) => {
-      ConfigRenderer.portToImport.postMessage({
-        task: 'import:account:add',
-        data: { json },
-      });
-    };
 
     switch (response.msg) {
       case 'success': {

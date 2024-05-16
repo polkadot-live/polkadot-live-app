@@ -13,9 +13,9 @@ import { Settings } from './screens/Settings';
 import { Help } from './library/Help';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { useTheme } from 'styled-components';
+import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
-import { ToastContainer } from 'react-toastify';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
