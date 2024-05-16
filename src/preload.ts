@@ -16,6 +16,8 @@ import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
 
+console.log(global.location.search);
+
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
 if (isTest) {
@@ -35,6 +37,27 @@ ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
 });
 
 export const API: PreloadAPI = {
+  /**
+   * Extract window ID from browser window's location to enable dynamic rendering.
+   */
+  getWindowId: () => {
+    const urlString = global.location.href;
+
+    // Regular expression to match URL parameters
+    const regex = /[?&]([^=#]+)=([^&#]*)/g;
+
+    let match;
+    while ((match = regex.exec(urlString)) !== null) {
+      const paramName = match[1];
+      const paramValue = match[2];
+
+      if (paramName === 'windowId') {
+        return paramValue;
+      }
+    }
+    return '';
+  },
+
   /**
    * File import and export
    */

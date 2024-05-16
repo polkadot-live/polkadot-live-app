@@ -21,4 +21,7 @@ if (!rootElement) {
 }
 const root = createRoot(rootElement);
 
+console.log('Window ID:');
+console.log(window.myAPI.getWindowId());
+
 root.render(<Providers />);

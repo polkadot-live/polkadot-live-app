@@ -134,7 +134,7 @@ export const createMainWindow = (isTest: boolean) => {
   });
 
   // Load correct URL and HTML file.
-  loadUrlWithRoute(mainWindow, {});
+  loadUrlWithRoute(mainWindow, { args: { windowId: 'main' } });
 
   // Initially hide the menu bar.
   //mainWindow.hide();
@@ -252,7 +252,7 @@ export const handleWindowOnIPC = (
     );
 
     // Load correct URL and HTML file.
-    loadUrlWithRoute(window, { uri: name });
+    loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
 
     // Send port to renderer if this is the import window.
     if (name === 'import') {

@@ -11,6 +11,8 @@ import type { SubscriptionTask } from './subscriptions';
 import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
+  getWindowId: () => AnyJson;
+
   exportAppData: ApiExportAppData;
   importAppData: ApiImportAppData;
 
