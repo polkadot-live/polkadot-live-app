@@ -19,9 +19,6 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Failed to find the root element');
 }
+
 const root = createRoot(rootElement);
-
-console.log('Window ID:');
-console.log(window.myAPI.getWindowId());
-
 root.render(<Providers />);

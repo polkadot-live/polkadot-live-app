@@ -19,20 +19,22 @@ import { useEffect } from 'react';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/Addresses';
-import { useBootstrapping } from '../contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/Bootstrapping';
 import { useChains } from '@app/contexts/Chains';
-import { useEvents } from '../contexts/Events';
+import { useEvents } from '@app/contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
-import { useTxMeta } from '../contexts/TxMeta';
 
 /// Import window contexts.
-import { useAddresses as useImportAddresses } from '../contexts/import/Addresses';
-import { useAccountStatuses } from '../contexts/import/AccountStatuses';
-import { useConnections } from '../contexts/import/Connections';
+import { useAddresses as useImportAddresses } from '@app/contexts/import/Addresses';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useConnections } from '@app/contexts/import/Connections';
 
 /// Settings window contexts.
-import { useSettingFlags } from '../contexts/settings/SettingFlags';
+import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
+
+/// Action window contexts.
+import { useTxMeta } from '@app/contexts/TxMeta';
 
 /// Type imports.
 import type { AccountJson } from '@/types/accounts';
