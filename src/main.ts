@@ -418,6 +418,7 @@ app.whenReady().then(async () => {
    * Data
    */
 
+  // Export a data-file.
   ipcMain.handle('app:data:export', async (_, serialized) => {
     if (!ConfigMain.exportingData) {
       ConfigMain.exportingData = true;
@@ -463,6 +464,7 @@ app.whenReady().then(async () => {
     return { result: false, msg: 'executing' };
   });
 
+  // Import a data-file.
   ipcMain.handle('app:data:import', async () => {
     const window = WindowsController.get('settings');
     if (!window) {
