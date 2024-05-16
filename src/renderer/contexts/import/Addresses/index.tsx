@@ -5,7 +5,11 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { createContext, useContext, useState } from 'react';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountJson,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -52,6 +56,51 @@ export const AddressesProvider = ({
     return parsed;
   });
 
+  /// Add account from received AccountJson data.
+  const importAccountJson = (json: AccountJson) => {
+    const { _address, _name, _source } = json;
+    const key = ConfigImport.getStorageKey(_source);
+    const fetched: string | null = localStorage.getItem(key);
+    const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
+
+    // Don't import address if it already exists.
+    const isNewAddress = parsed.every((a) => a.address !== _address);
+    if (!isNewAddress) {
+      return;
+    }
+
+    // Calculate new addresses.
+    const newAddresses = [
+      ...parsed,
+      {
+        index: !parsed.length ? 0 : parsed[parsed.length - 1].index + 1,
+        address: _address,
+        isImported: false,
+        name: _name,
+      } as LocalAddress,
+    ];
+
+    // Update local storage.
+    localStorage.setItem(key, JSON.stringify(newAddresses));
+
+    // Update context state.
+    switch (_source) {
+      case 'read-only': {
+        setReadOnlyAddresses(newAddresses);
+        break;
+      }
+      case 'vault': {
+        setVaultAddresses(newAddresses);
+        break;
+      }
+      default: {
+        throw new Error(
+          `Importing account via JSON with source ${_source} not supported.`
+        );
+      }
+    }
+  };
+
   return (
     <AddressesContext.Provider
       value={{
@@ -61,6 +110,7 @@ export const AddressesProvider = ({
         setLedgerAddresses,
         setReadOnlyAddresses,
         setVaultAddresses,
+        importAccountJson,
       }}
     >
       {children}

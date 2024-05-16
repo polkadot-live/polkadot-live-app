@@ -16,21 +16,26 @@ import {
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
+
+/// Main window contexts.
 import { useAddresses } from '@app/contexts/Addresses';
-import { useAccountStatuses } from '../contexts/import/AccountStatuses';
 import { useBootstrapping } from '../contexts/Bootstrapping';
 import { useChains } from '@app/contexts/Chains';
-import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
-import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
-import type {
-  AccountJson,
-  AccountSource,
-  LocalAddress,
-} from '@/types/accounts';
+
+/// Import window contexts.
+import { useAddresses as useImportAddresses } from '../contexts/import/Addresses';
+import { useAccountStatuses } from '../contexts/import/AccountStatuses';
+import { useConnections } from '../contexts/import/Connections';
+
+/// Settings window contexts.
+import { useSettingFlags } from '../contexts/settings/SettingFlags';
+
+/// Type imports.
+import type { AccountJson } from '@/types/accounts';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyJson } from '@w3ux/utils/types';
 
@@ -46,6 +51,7 @@ export const useMessagePorts = () => {
     useSubscriptions();
 
   /// Import renderer contexts.
+  const { importAccountJson } = useImportAddresses();
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
 
@@ -64,18 +70,6 @@ export const useMessagePorts = () => {
   } = useTxMeta();
 
   useEffect(() => {
-    // Utility for account import handling.
-    const getStorageKey = (accountSource: AccountSource) => {
-      switch (accountSource) {
-        case 'read-only':
-          return 'read_only_addresses';
-        case 'vault':
-          return 'vault_addresses';
-        default:
-          throw new Error('Invalid account source.');
-      }
-    };
-
     /**
      * @name handleImportAddress
      * @summary Imports a new account when a message is received from import window.
@@ -331,39 +325,24 @@ export const useMessagePorts = () => {
         });
       };
 
+      // Utility lambda to post message to import window.
+      const postToImport = (json: AccountJson) => {
+        ConfigRenderer.portToImport.postMessage({
+          task: 'import:account:add',
+          data: { json },
+        });
+      };
+
       switch (response.msg) {
         case 'success': {
           try {
             const json: AccountJson[] = JSON.parse(response.data.serialized);
-
-            for (const account of json) {
-              console.log(account);
-
+            for (const accountJson of json) {
               // TODO: Support importing ledger addresses.
-              if (account._source === 'ledger') {
+              if (accountJson._source === 'ledger') {
                 continue;
               }
-
-              // TODO: Put in util function.
-              // Add account data to local storage for import window.
-              const { _address, _name, _source } = account;
-              const key = getStorageKey(_source);
-              const fetched: string | null = localStorage.getItem(key);
-              const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
-
-              const newAddresses = parsed
-                .filter((a: LocalAddress) => a.address !== _address)
-                .concat({
-                  index: !parsed.length
-                    ? 0
-                    : parsed[parsed.length - 1].index + 1,
-                  address: account._address,
-                  isImported: true,
-                  name: _name,
-                });
-
-              // TODO: Post message to import window to update its state.
-              localStorage.setItem(key, JSON.stringify(newAddresses));
+              postToImport(accountJson);
             }
             postToSettings(response.result, 'Data imported successfully.');
           } catch (err) {
@@ -432,6 +411,10 @@ export const useMessagePorts = () => {
           ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
             switch (ev.data.task) {
+              case 'import:account:add': {
+                importAccountJson(ev.data.data.json);
+                break;
+              }
               case 'import:account:processing': {
                 const { address, source, status } = ev.data.data;
                 setStatusForAccount(address, source, status);
