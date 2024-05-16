@@ -16,8 +16,12 @@ import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
+import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 
 export const Home = () => {
+  // Set up port communication for the `main` renderer.
+  useMainMessagePorts();
+
   const { getAddresses } = useAddresses();
   const { addEvent, dismissEvent, markStaleEvent, removeOutdatedEvents } =
     useEvents();

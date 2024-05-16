@@ -17,8 +17,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 import { Config as ConfigSettings } from '@/config/processes/settings';
+import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 
 export const Settings: React.FC = () => {
+  // Set up port communication for `settings` window.
+  useSettingsMessagePorts();
+
   /// Active accordion indices for settings panels.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]

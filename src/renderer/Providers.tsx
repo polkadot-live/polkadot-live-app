@@ -35,8 +35,8 @@ const getProvidersForWindow = () => {
   switch (windowId) {
     case 'main': {
       return withProviders(
-        OverlayProvider,
         HelpProvider,
+        OverlayProvider,
         TooltipProvider,
         AddressesProvider,
         ChainsProvider,
@@ -47,13 +47,6 @@ const getProvidersForWindow = () => {
         BootstrappingProvider
       )(Theme);
     }
-    case 'settings': {
-      return withProviders(
-        HelpProvider,
-        TooltipProvider,
-        SettingFlagsProvider
-      )(Theme);
-    }
     case 'import': {
       return withProviders(
         HelpProvider,
@@ -62,6 +55,14 @@ const getProvidersForWindow = () => {
         ImportAddressesProvider,
         ImportAccountStatusesProvider,
         ImportConnectionsProvider
+      )(Theme);
+    }
+    case 'settings': {
+      return withProviders(
+        HelpProvider,
+        OverlayProvider,
+        TooltipProvider,
+        SettingFlagsProvider
       )(Theme);
     }
     case 'action': {

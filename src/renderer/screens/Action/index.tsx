@@ -16,8 +16,12 @@ import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/TxMeta';
 import BigNumber from 'bignumber.js';
+import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
 
 export const Action = () => {
+  // Set up port communication for `action` window.
+  useActionMessagePorts();
+
   // Get state and setters from TxMeta context.
   const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
     useTxMeta();
