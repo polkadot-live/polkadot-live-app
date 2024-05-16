@@ -16,6 +16,15 @@ export const AccountStatusesContext =
     defaults.defaultAccountStatusesContext
   );
 
+/**
+ * @name useAccountStatuses
+ * @summary An account status of `true` means it is processing, while `false` means
+ * it's not processing.
+ *
+ * When an account is being imported, it may take several seconds to initialize
+ * and sync its data with the state on its blockchain network. During this processing
+ * time, its status is set to `true`.
+ */
 export const useAccountStatuses = () => useContext(AccountStatusesContext);
 
 export const AccountStatusesProvider = ({

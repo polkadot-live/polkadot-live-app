@@ -372,7 +372,7 @@ export const useMessagePorts = () => {
 
           break;
         }
-        case 'canceld': {
+        case 'canceled': {
           // Don't do anything on cancel.
           break;
         }

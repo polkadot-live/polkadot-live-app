@@ -13,8 +13,9 @@ import { TooltipProvider } from '@app/contexts/Tooltip';
 import { TxMetaProvider } from '@app/contexts/TxMeta';
 import { withProviders } from '@app/library/Hooks/withProviders';
 // Import window contexts
-import { AccountStatusesProvider } from './contexts/import/AccountStatuses';
-import { ConnectionsProvider } from './contexts/import/Connections';
+import { AccountStatusesProvider as ImportAccountStatusesProvider } from './contexts/import/AccountStatuses';
+import { ConnectionsProvider as ImportConnectionsProvider } from './contexts/import/Connections';
+import { AddressesProvider as ImportAddressesProvider } from './contexts/import/Addresses';
 // Settings window contexts
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 import { Theme } from './Theme';
@@ -29,8 +30,10 @@ export const Providers = withProviders(
   EventsProvider,
   TxMetaProvider,
   TooltipProvider,
-  AccountStatusesProvider,
-  ConnectionsProvider,
+  // Settings window
+  ImportAddressesProvider,
+  ImportAccountStatusesProvider,
+  ImportConnectionsProvider,
   // Online status provider relies on other contexts being initialized.
   BootstrappingProvider,
   // Settings window

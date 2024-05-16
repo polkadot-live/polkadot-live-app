@@ -15,6 +15,7 @@ import type {
 } from '@/types/ledger';
 import type { LedgerLocalAddress } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
@@ -31,17 +32,8 @@ export const ImportLedger = ({
 
   // Status entry is added for a newly imported account.
   const { insertAccountStatus } = useAccountStatuses();
-
-  // Store addresses retreived from Ledger device. Defaults to addresses saved in local storage.
-  const [addresses, setAddresses] = useState<LedgerLocalAddress[]>(() => {
-    const key = ConfigImport.getStorageKey('ledger');
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LedgerLocalAddress[] =
-      fetched !== null ? JSON.parse(fetched) : [];
-    return parsed;
-  });
-
-  //const addressesRef = useRef(addresses);
+  const { ledgerAddresses: addresses, setLedgerAddresses: setAddresses } =
+    useAddresses();
 
   // Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
@@ -114,7 +106,6 @@ export const ImportLedger = ({
       localStorage.setItem(storageKey, JSON.stringify(newAddresses));
       setStateWithRef(false, setIsImporting, isImportingRef);
       setAddresses(newAddresses);
-      //setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
 
       // Insert account status entry.
