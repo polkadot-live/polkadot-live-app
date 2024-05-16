@@ -3,6 +3,7 @@
 
 import {
   app,
+  dialog,
   ipcMain,
   powerMonitor,
   protocol,
@@ -14,6 +15,7 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
@@ -409,6 +411,88 @@ app.whenReady().then(async () => {
       await executeLedgerLoop(importWindow, appName, tasks, {
         accountIndex,
       });
+    }
+  });
+
+  /**
+   * Data
+   */
+
+  // Export a data-file.
+  ipcMain.handle('app:data:export', async (_, serialized) => {
+    if (!ConfigMain.exportingData) {
+      ConfigMain.exportingData = true;
+
+      // Get response from dialog.
+      const window = WindowsController.get('settings');
+      if (!window) {
+        return { result: false, msg: 'error' };
+      }
+
+      const { canceled, filePath } = await dialog.showSaveDialog(window, {
+        title: 'Export Data',
+        defaultPath: 'polkadot-live-data.txt',
+        filters: [
+          {
+            name: 'Text Files',
+            extensions: ['txt'],
+          },
+        ],
+        properties: [],
+      });
+
+      // Handle save or cancel.
+      if (!canceled && filePath) {
+        try {
+          await fsPromises.writeFile(filePath, serialized, {
+            encoding: 'utf8',
+          });
+
+          ConfigMain.exportingData = false;
+          return { result: true, msg: 'success' };
+        } catch (err) {
+          ConfigMain.exportingData = false;
+          return { result: false, msg: 'error' };
+        }
+      } else {
+        ConfigMain.exportingData = false;
+        return { result: false, msg: 'canceled' };
+      }
+    }
+
+    // Export dialog is already open.
+    return { result: false, msg: 'executing' };
+  });
+
+  // Import a data-file.
+  ipcMain.handle('app:data:import', async () => {
+    const window = WindowsController.get('settings');
+    if (!window) {
+      return { result: false, msg: 'error' };
+    }
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+      title: 'Import Data',
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['txt'],
+        },
+      ],
+      properties: ['openFile'],
+    });
+
+    if (!canceled && filePaths.length) {
+      try {
+        const serialized = await fsPromises.readFile(filePaths[0], {
+          encoding: 'utf-8',
+        });
+        return { result: true, msg: 'success', data: { serialized } };
+      } catch (err) {
+        return { result: false, msg: 'error' };
+      }
+    } else {
+      return { result: false, msg: 'canceled' };
     }
   });
 });

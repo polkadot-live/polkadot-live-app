@@ -16,17 +16,28 @@ import {
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { useEffect } from 'react';
+
+/// Main window contexts.
 import { useAddresses } from '@app/contexts/Addresses';
-import { useAccountStatuses } from '../contexts/import/AccountStatuses';
 import { useBootstrapping } from '../contexts/Bootstrapping';
 import { useChains } from '@app/contexts/Chains';
-import { useConnections } from '../contexts/import/Connections';
 import { useEvents } from '../contexts/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
-import { useSettingFlags } from '../contexts/settings/SettingFlags';
 import { useSubscriptions } from '@app/contexts/Subscriptions';
 import { useTxMeta } from '../contexts/TxMeta';
+
+/// Import window contexts.
+import { useAddresses as useImportAddresses } from '../contexts/import/Addresses';
+import { useAccountStatuses } from '../contexts/import/AccountStatuses';
+import { useConnections } from '../contexts/import/Connections';
+
+/// Settings window contexts.
+import { useSettingFlags } from '../contexts/settings/SettingFlags';
+
+/// Type imports.
+import type { AccountJson } from '@/types/accounts';
 import type { ActionMeta } from '@/types/tx';
+import type { AnyJson } from '@w3ux/utils/types';
 
 export const useMessagePorts = () => {
   /// Main renderer contexts.
@@ -40,11 +51,13 @@ export const useMessagePorts = () => {
     useSubscriptions();
 
   /// Import renderer contexts.
+  const { importAccountJson } = useImportAddresses();
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
 
   // Settings renderer contexts.
-  const { setWindowDocked, setSilenceOsNotifications } = useSettingFlags();
+  const { setWindowDocked, setSilenceOsNotifications, renderToastify } =
+    useSettingFlags();
 
   /// Action window specific.
   const {
@@ -251,6 +264,108 @@ export const useMessagePorts = () => {
     };
 
     /**
+     * @name handleDataExport
+     * @summary Write Polkadot Live data to a file.
+     */
+    const handleDataExport = async () => {
+      // Get data to export.
+      const accountsJson: AnyJson[] = [];
+      for (const chainAccounts of AccountsController.accounts.values()) {
+        chainAccounts.forEach((a) => accountsJson.push(a.toJSON()));
+      }
+
+      // Serialize and export data in main process.
+      const serialized = JSON.stringify(accountsJson);
+      const { result, msg } = await window.myAPI.exportAppData(serialized);
+
+      // Utility lambda to post message to settings window.
+      const postToSettings = (res: boolean, text: string) => {
+        ConfigRenderer.portToSettings.postMessage({
+          task: 'settings:render:toast',
+          data: { success: res, text },
+        });
+      };
+
+      // Render toastify message in settings window.
+      switch (msg) {
+        case 'success': {
+          postToSettings(result, 'Data exported successfully.');
+          break;
+        }
+        case 'error': {
+          postToSettings(result, 'Data export error.');
+          break;
+        }
+        case 'canceled': {
+          // Don't do anything on cancel.
+          break;
+        }
+        case 'executing': {
+          postToSettings(result, 'Export dialog is already open.');
+          break;
+        }
+        default: {
+          throw new Error('Message not recognized');
+        }
+      }
+    };
+
+    /**
+     * @name handleDataImport
+     * @summary Import and process Polkadot Live data.
+     */
+    const handleDataImport = async () => {
+      const response = await window.myAPI.importAppData();
+
+      // Utility lambda to post message to settings window.
+      const postToSettings = (res: boolean, text: string) => {
+        ConfigRenderer.portToSettings.postMessage({
+          task: 'settings:render:toast',
+          data: { success: res, text },
+        });
+      };
+
+      // Utility lambda to post message to import window.
+      const postToImport = (json: AccountJson) => {
+        ConfigRenderer.portToImport.postMessage({
+          task: 'import:account:add',
+          data: { json },
+        });
+      };
+
+      switch (response.msg) {
+        case 'success': {
+          try {
+            const json: AccountJson[] = JSON.parse(response.data.serialized);
+            for (const accountJson of json) {
+              // TODO: Support importing ledger addresses.
+              if (accountJson._source === 'ledger') {
+                continue;
+              }
+              postToImport(accountJson);
+            }
+            postToSettings(response.result, 'Data imported successfully.');
+          } catch (err) {
+            postToSettings(false, 'Error parsing JSON.');
+          }
+
+          break;
+        }
+        case 'canceled': {
+          // Don't do anything on cancel.
+          break;
+        }
+        case 'error': {
+          postToSettings(response.result, 'Data import error.');
+          break;
+        }
+        default: {
+          throw new Error('Message not recognized');
+        }
+      }
+    };
+
+    /**
      * @name handleReceivedPort
      * @summary Determines whether the received port is for the `main` or `import` window and
      * sets up message handlers accordingly.
@@ -296,6 +411,10 @@ export const useMessagePorts = () => {
           ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
             // Message received from `main`.
             switch (ev.data.task) {
+              case 'import:account:add': {
+                importAccountJson(ev.data.data.json);
+                break;
+              }
               case 'import:account:processing': {
                 const { address, source, status } = ev.data.data;
                 setStatusForAccount(address, source, status);
@@ -395,12 +514,12 @@ export const useMessagePorts = () => {
                 handleToggleSilenceOsNotifications();
                 break;
               }
-              case 'settings:execute:importData': {
-                console.log('todo: handle importData');
+              case 'settings:execute:exportData': {
+                await handleDataExport();
                 break;
               }
-              case 'settings:execute:exportData': {
-                console.log('todo: handle exportData');
+              case 'settings:execute:importData': {
+                await handleDataImport();
                 break;
               }
               default: {
@@ -426,6 +545,11 @@ export const useMessagePorts = () => {
               case 'settings:set:silenceOsNotifications': {
                 const { silenced } = ev.data.data;
                 setSilenceOsNotifications(silenced);
+                break;
+              }
+              case 'settings:render:toast': {
+                const { success, text } = ev.data.data;
+                renderToastify(success, text);
                 break;
               }
               default: {

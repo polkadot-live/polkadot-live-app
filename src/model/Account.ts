@@ -11,6 +11,7 @@ import type {
   FlattenedAccountData,
   AccountNominationPoolData,
   AccountNominatingData,
+  AccountJson,
 } from '@/types/accounts';
 
 /**
@@ -79,12 +80,13 @@ export class Account {
       source: this.source,
     }) as FlattenedAccountData;
 
-  toJSON = () => ({
-    _source: this._source,
-    _address: this._address,
-    _name: this._name,
-    _chain: this._chain,
-  });
+  toJSON = () =>
+    ({
+      _address: this._address,
+      _chain: this._chain,
+      _name: this._name,
+      _source: this._source,
+    }) as AccountJson;
 
   get chain() {
     return this._chain;

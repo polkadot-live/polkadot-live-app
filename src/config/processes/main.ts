@@ -28,6 +28,9 @@ export class Config {
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
 
+  // Flags to handle data processes.
+  private static _exportingData = false;
+
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.
   static initialize = (): void => {
@@ -149,6 +152,14 @@ export class Config {
 
   static set childWidth(width: number) {
     Config._childWidth = width;
+  }
+
+  static get exportingData(): boolean {
+    return Config._exportingData;
+  }
+
+  static set exportingData(flag: boolean) {
+    Config._exportingData = flag;
   }
 
   // Setter for app's tray object.

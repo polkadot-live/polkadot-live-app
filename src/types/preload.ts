@@ -11,6 +11,9 @@ import type { SubscriptionTask } from './subscriptions';
 import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
+  exportAppData: ApiExportAppData;
+  importAppData: ApiImportAppData;
+
   getAppSettings: ApiGetAppSettings;
   getDockedFlag: ApiGetDockedFlag;
   setDockedFlag: ApiSetDockedFlag;
@@ -109,6 +112,15 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
+type ApiExportAppData = (
+  serialized: string
+) => Promise<{ result: boolean; msg: string }>;
+
+type ApiImportAppData = () => Promise<{
+  result: boolean;
+  msg: string;
+  data?: AnyJson;
+}>;
 
 type ApiToggleWorkspaceVisibility = () => void;
 

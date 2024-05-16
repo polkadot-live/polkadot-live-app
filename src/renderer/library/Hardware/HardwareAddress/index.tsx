@@ -212,7 +212,7 @@ export const HardwareAddress = ({
               iconLeft={faDownFromDottedLine}
               iconTransform="grow-2"
               text={''}
-              onClick={() => openConfirmHandler()}
+              onClick={() => !isProcessing && openConfirmHandler()}
               className={
                 isProcessing
                   ? 'account-action-btn processing'
