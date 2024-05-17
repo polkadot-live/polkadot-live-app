@@ -11,6 +11,7 @@ import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
+
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
 

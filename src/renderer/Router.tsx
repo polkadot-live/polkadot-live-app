@@ -12,25 +12,39 @@ import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
 import { Help } from './library/Help';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
-import { useMessagePorts } from '@app/hooks/useMessagePorts';
 import { useTheme } from 'styled-components';
+import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
-import { ToastContainer } from 'react-toastify';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setOnline } = useBootstrapping();
 
-  // Set up message ports communication between windows.
-  useMessagePorts();
-
+  /// Listen for online status change.
   useEffect(() => {
-    // Listen for online status change.
     window.myAPI.reportOnlineStatus((_: IpcRendererEvent, status: boolean) => {
       setOnline(status);
     });
   }, []);
+
+  /// Return routes for the window being rendered.
+  const addRoutesForWindow = () => {
+    const windowId = window.myAPI.getWindowId();
+
+    switch (windowId) {
+      case 'main':
+        return <Route path={'/'} element={<Home />} />;
+      case 'import':
+        return <Route path={'import'} element={<Import />} />;
+      case 'settings':
+        return <Route path={'settings'} element={<Settings />} />;
+      case 'action':
+        return <Route path={'action'} element={<Action />} />;
+      default:
+        throw new Error('Window ID not recognized.');
+    }
+  };
 
   return (
     <MainInterfaceWrapper className={`theme-polkadot theme-${mode}`}>
@@ -38,13 +52,7 @@ export const RouterInner = () => {
       <Overlay />
       <Tooltip />
       <ToastContainer />
-      <Routes>
-        <Route path={'settings'} element={<Settings />} />
-        <Route path={'action'} element={<Action />} />
-        <Route path={'import'} element={<Import />} />
-        <Route path={'action'} element={<Action />} />
-        <Route path={'/'} element={<Home />} />
-      </Routes>
+      <Routes>{addRoutesForWindow()}</Routes>
     </MainInterfaceWrapper>
   );
 };
