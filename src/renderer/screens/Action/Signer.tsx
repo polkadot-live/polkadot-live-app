@@ -6,7 +6,7 @@ import { chainCurrency } from '@/config/chains';
 import { EstimatedFee } from './Wrappers';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import { SignOverlay } from './SignOverlay';
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { SubmitProps } from './types';
 
 export const Signer = ({

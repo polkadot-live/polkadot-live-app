@@ -10,7 +10,7 @@ import {
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';
 

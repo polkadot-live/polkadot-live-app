@@ -15,7 +15,7 @@ import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/Events';
 import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
-import { useTooltip } from '@app/contexts/Tooltip';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';

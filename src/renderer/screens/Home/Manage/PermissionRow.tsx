@@ -11,8 +11,8 @@ import {
   faListRadio,
 } from '@fortawesome/pro-light-svg-icons';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
-import { useHelp } from '@/renderer/contexts/Help';
-import { useTooltip } from '@/renderer/contexts/Tooltip';
+import { useHelp } from '@/renderer/contexts/common/Help';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 
 export const PermissionRow = ({
   task,

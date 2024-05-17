@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { HelpProvider } from '@app/contexts/Help';
-import { OverlayProvider } from '@app/contexts/Overlay';
-import { TooltipProvider } from '@app/contexts/Tooltip';
+import { HelpProvider } from '@/renderer/contexts/common/Help';
+import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
+import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
 
 // Main window contexts.
 import { AddressesProvider } from '@app/contexts/Addresses';

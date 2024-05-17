@@ -9,7 +9,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ModalContent } from '@/renderer/kits/Overlay/structure/ModalContent';
 import { useAnimation } from 'framer-motion';
 import { useCallback, useEffect } from 'react';
-import { useHelp } from '@/renderer/contexts/Help';
+import { useHelp } from '@/renderer/contexts/common/Help';
 
 export const Help = () => {
   const controls = useAnimation();

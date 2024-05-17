@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';

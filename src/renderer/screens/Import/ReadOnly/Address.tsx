@@ -10,7 +10,7 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@/renderer/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';
 

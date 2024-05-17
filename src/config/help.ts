@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { HelpItems } from '@/renderer/contexts/Help/types';
+import type { HelpItems } from '@/renderer/contexts/common/Help/types';
 
 export const HelpConfig: HelpItems = [
   {

@@ -5,7 +5,7 @@ import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
-import { useHelp } from '@/renderer/contexts/Help';
+import { useHelp } from '@/renderer/contexts/common/Help';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import type { SettingProps } from './types';
 import { useSettingFlags } from '@/renderer/contexts/settings/SettingFlags';
