@@ -11,7 +11,7 @@ import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';

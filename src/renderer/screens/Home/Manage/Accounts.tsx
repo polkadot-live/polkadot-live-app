@@ -19,7 +19,7 @@ import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
 import { NoAccounts } from '../NoAccounts';
 import { useManage } from './provider';
-import { useSubscriptions } from '@/renderer/contexts/Subscriptions';
+import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
 import { useState } from 'react';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';

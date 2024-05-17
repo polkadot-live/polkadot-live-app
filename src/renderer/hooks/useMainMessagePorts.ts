@@ -15,13 +15,13 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 /// Main window contexts.
-import { useAddresses } from '../contexts/main/Addresses';
-import { useBootstrapping } from '../contexts/Bootstrapping';
-import { useChains } from '../contexts/main/Chains';
+import { useAddresses } from '@app/contexts/main/Addresses';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
-import { useEvents } from '../contexts/main/Events';
-import { useManage } from '../screens/Home/Manage/provider';
-import { useSubscriptions } from '../contexts/Subscriptions';
+import { useEvents } from '@app/contexts/main/Events';
+import { useManage } from '@app/screens/Home/Manage/provider';
+import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';

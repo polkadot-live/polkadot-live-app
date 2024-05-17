@@ -7,8 +7,8 @@ import { Menu } from '@app/library/Menu';
 import { useLocation } from 'react-router-dom';
 import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
-import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
 

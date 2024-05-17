@@ -14,7 +14,7 @@ import { isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/main/Events';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';

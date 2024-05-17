@@ -6,8 +6,8 @@ import { setStateWithRef } from '@w3ux/utils';
 import { useOutsideAlerter } from '@app/library/Hooks/useOutsideAlerter';
 import { useRef, useState } from 'react';
 import { MenuWrapper } from './Wrapper';
-import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import {
   faBell,
   faBellSlash,

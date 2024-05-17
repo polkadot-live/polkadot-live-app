@@ -8,11 +8,11 @@ import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
 
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
-import { BootstrappingProvider } from '@/renderer/contexts/Bootstrapping';
+import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
 import { ChainsProvider } from '@/renderer/contexts/main/Chains';
 import { EventsProvider } from '@/renderer/contexts/main/Events';
 import { ManageProvider } from './screens/Home/Manage/provider';
-import { SubscriptionsProvider } from '@app/contexts/Subscriptions';
+import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
