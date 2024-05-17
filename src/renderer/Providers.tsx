@@ -23,7 +23,7 @@ import { ConnectionsProvider as ImportConnectionsProvider } from '@app/contexts/
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 
 // Actions window contexts.
-import { TxMetaProvider } from '@app/contexts/TxMeta';
+import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 
 // Other imports.
 import { Theme } from './Theme';

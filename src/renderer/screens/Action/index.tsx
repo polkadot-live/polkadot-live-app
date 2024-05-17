@@ -14,7 +14,7 @@ import { Signer } from './Signer';
 import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
-import { useTxMeta } from '@app/contexts/TxMeta';
+import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import BigNumber from 'bignumber.js';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
 
