@@ -207,7 +207,12 @@ export const useMainMessagePorts = () => {
     // Get data to export.
     let accountsJson: LocalAddress[] = [];
     for (const source of ['vault', 'read-only'] as AccountSource[]) {
-      accountsJson = accountsJson.concat(getLocalAddresses(source));
+      accountsJson = accountsJson.concat(
+        getLocalAddresses(source).map((a) => ({
+          ...a,
+          isImported: false,
+        }))
+      );
     }
 
     // Serialize and export data in main process.
