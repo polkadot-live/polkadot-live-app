@@ -137,7 +137,7 @@ export const Accounts = ({
       >
         <NoAccounts />
       </div>
-      <div style={{ display: addresses.length > 0 ? 'inherit' : 'none' }}>
+      <div>
         <Accordion
           multiple
           defaultIndex={accordionActiveIndices}
