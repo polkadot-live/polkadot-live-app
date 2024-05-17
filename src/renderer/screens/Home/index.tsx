@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { useAddresses } from '@app/contexts/Addresses';
-import { useEvents } from '@app/contexts/Events';
+import { useAddresses } from '@/renderer/contexts/main/Addresses';
+import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';

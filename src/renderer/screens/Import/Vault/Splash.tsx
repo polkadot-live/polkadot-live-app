@@ -4,7 +4,7 @@
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { Header } from '@app/library/Header';
 import { ErrorBoundary } from 'react-error-boundary';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';

@@ -12,7 +12,7 @@ import {
   fetchAccountNominationPoolData,
 } from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { useAddresses } from '../Addresses';
+import { useAddresses } from '@app/contexts/main/Addresses';
 import React, {
   createContext,
   useContext,

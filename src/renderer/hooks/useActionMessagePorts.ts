@@ -3,7 +3,7 @@
 
 import { Config as ConfigAction } from '@/config/processes/action';
 import { useEffect } from 'react';
-import { useTxMeta } from '@app/contexts/TxMeta';
+import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import type { ActionMeta } from '@/types/tx';
 
 export const useActionMessagePorts = () => {

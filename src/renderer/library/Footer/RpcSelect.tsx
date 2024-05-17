@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import type { FlattenedAPIData } from '@/types/apis';
 
 interface SelectRpcProps {

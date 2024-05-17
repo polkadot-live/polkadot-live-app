@@ -4,7 +4,7 @@
 import type { ChainID } from './chains';
 import type { AnyFunction, AnyData } from './misc';
 import type { FlattenedAccountData } from './accounts';
-import type { HelpItemKey } from '@/renderer/contexts/Help/types';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export type SubscriptionNextStatus = 'enable' | 'disable';
 

@@ -11,7 +11,7 @@ import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
 import { Help } from './library/Help';
-import { useBootstrapping } from '@/renderer/contexts/Bootstrapping';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@/types/misc';

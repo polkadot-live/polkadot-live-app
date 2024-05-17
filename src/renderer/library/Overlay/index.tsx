@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { ContentWrapper, HeightWrapper, OverlayWrapper } from './Wrappers';
 
 export const Overlay = () => {

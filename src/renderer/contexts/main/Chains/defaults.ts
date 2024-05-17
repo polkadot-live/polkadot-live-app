@@ -5,9 +5,9 @@
 import type { ChainsContextInterface } from './types';
 
 export const defaultChainsContext: ChainsContextInterface = {
-  chains: [],
-  addChain: (c, s) => {},
+  chains: new Map(),
+  addChain: (d) => {},
   removeChain: (c) => {},
-  getChain: (c) => {},
+  getChain: (c) => undefined,
   setChain: (c) => {},
 };

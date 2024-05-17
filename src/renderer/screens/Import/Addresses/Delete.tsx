@@ -8,7 +8,7 @@ import { ConfirmWrapper } from './Wrappers';
 import { getAddressChainId } from '@/renderer/Utils';
 import { Identicon } from '@/renderer/library/Identicon';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@/renderer/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { DeleteProps } from './types';
 import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 

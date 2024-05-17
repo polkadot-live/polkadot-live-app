@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { HelpProvider } from '@app/contexts/Help';
-import { OverlayProvider } from '@app/contexts/Overlay';
-import { TooltipProvider } from '@app/contexts/Tooltip';
+import { HelpProvider } from '@/renderer/contexts/common/Help';
+import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
+import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
 
 // Main window contexts.
-import { AddressesProvider } from '@app/contexts/Addresses';
-import { BootstrappingProvider } from '@/renderer/contexts/Bootstrapping';
-import { ChainsProvider } from '@app/contexts/Chains';
-import { EventsProvider } from '@app/contexts/Events';
+import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
+import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
+import { ChainsProvider } from '@/renderer/contexts/main/Chains';
+import { EventsProvider } from '@/renderer/contexts/main/Events';
 import { ManageProvider } from './screens/Home/Manage/provider';
-import { SubscriptionsProvider } from '@app/contexts/Subscriptions';
+import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
@@ -23,7 +23,7 @@ import { ConnectionsProvider as ImportConnectionsProvider } from '@app/contexts/
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 
 // Actions window contexts.
-import { TxMetaProvider } from '@app/contexts/TxMeta';
+import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 
 // Other imports.
 import { Theme } from './Theme';

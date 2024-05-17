@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { Item } from './Item';
-import { useEvents } from '@/renderer/contexts/Events';
+import { useEvents } from '@/renderer/contexts/main/Events';
 import type { EventItemProps } from './types';
 
 export const EventItem = function EventItem({ event, faIcon }: EventItemProps) {

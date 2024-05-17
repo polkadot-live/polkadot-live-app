@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { HelpItemKey } from '@/renderer/contexts/Help/types';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export interface PersistedSettings {

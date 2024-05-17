@@ -16,7 +16,7 @@ import type {
 } from '@/types/subscriptions';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { useChains } from '../Chains';
+import { useChains } from '@app/contexts/main/Chains';
 import { APIsController } from '@/controller/renderer/APIsController';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 

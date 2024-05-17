@@ -6,8 +6,8 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useOverlay } from '@app/contexts/Overlay';
-import { useTxMeta } from '@app/contexts/TxMeta';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
 import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
