@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { useAddresses } from '@app/contexts/Addresses';
-import { useEvents } from '@app/contexts/Events';
+import { useAddresses } from '@/renderer/contexts/main/Addresses';
+import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
 import { useEffect, useState } from 'react';

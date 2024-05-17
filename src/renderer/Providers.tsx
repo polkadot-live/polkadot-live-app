@@ -7,10 +7,10 @@ import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
 import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
 
 // Main window contexts.
-import { AddressesProvider } from '@app/contexts/Addresses';
+import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
 import { BootstrappingProvider } from '@/renderer/contexts/Bootstrapping';
-import { ChainsProvider } from '@app/contexts/Chains';
-import { EventsProvider } from '@app/contexts/Events';
+import { ChainsProvider } from '@/renderer/contexts/main/Chains';
+import { EventsProvider } from '@/renderer/contexts/main/Events';
 import { ManageProvider } from './screens/Home/Manage/provider';
 import { SubscriptionsProvider } from '@app/contexts/Subscriptions';
 

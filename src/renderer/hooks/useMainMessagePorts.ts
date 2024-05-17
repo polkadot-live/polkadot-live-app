@@ -15,11 +15,11 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 /// Main window contexts.
-import { useAddresses } from '../contexts/Addresses';
+import { useAddresses } from '../contexts/main/Addresses';
 import { useBootstrapping } from '../contexts/Bootstrapping';
-import { useChains } from '../contexts/Chains';
+import { useChains } from '../contexts/main/Chains';
 import { useEffect } from 'react';
-import { useEvents } from '../contexts/Events';
+import { useEvents } from '../contexts/main/Events';
 import { useManage } from '../screens/Home/Manage/provider';
 import { useSubscriptions } from '../contexts/Subscriptions';
 
