@@ -110,6 +110,7 @@ export interface LocalAddress {
   isImported: boolean;
   index: number;
   name: string;
+  source: AccountSource;
 }
 
 /**

@@ -137,6 +137,7 @@ export const Manage = ({
         address: trimmed,
         isImported: false,
         name: ellipsisFn(trimmed),
+        source: 'read-only',
       });
 
     const storageKey = ConfigImport.getStorageKey('read-only');

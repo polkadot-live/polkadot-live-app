@@ -24,8 +24,7 @@ import { useManage } from '../screens/Home/Manage/provider';
 import { useSubscriptions } from '../contexts/Subscriptions';
 
 /// Type imports.
-import type { AnyJson } from '@w3ux/utils/types';
-import type { AccountJson } from '@/types/accounts';
+import type { AccountSource, LocalAddress } from '@/types/accounts';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -175,11 +174,29 @@ export const useMainMessagePorts = () => {
   };
 
   /// Utility to post message to import window.
-  const postToImport = (json: AccountJson) => {
+  const postToImport = (json: LocalAddress) => {
     ConfigRenderer.portToImport.postMessage({
       task: 'import:account:add',
       data: { json },
     });
+  };
+
+  /**
+   * @name getLocalAddresses
+   * @summary Utility to fetch local addresses from local storage.
+   */
+  const getLocalAddresses = (source: AccountSource) => {
+    const key =
+      source === 'vault'
+        ? 'vault_addresses'
+        : source === 'read-only'
+          ? 'read_only_addresses'
+          : '';
+
+    const fetched: string | null = localStorage.getItem(key);
+    return key === '' || !fetched
+      ? []
+      : (JSON.parse(fetched) as LocalAddress[]);
   };
 
   /**
@@ -188,9 +205,9 @@ export const useMainMessagePorts = () => {
    */
   const handleDataExport = async () => {
     // Get data to export.
-    const accountsJson: AnyJson[] = [];
-    for (const chainAccounts of AccountsController.accounts.values()) {
-      chainAccounts.forEach((a) => accountsJson.push(a.toJSON()));
+    let accountsJson: LocalAddress[] = [];
+    for (const source of ['vault', 'read-only'] as AccountSource[]) {
+      accountsJson = accountsJson.concat(getLocalAddresses(source));
     }
 
     // Serialize and export data in main process.
@@ -231,10 +248,10 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         try {
-          const json: AccountJson[] = JSON.parse(response.data.serialized);
+          const json: LocalAddress[] = JSON.parse(response.data.serialized);
           for (const accountJson of json) {
             // TODO: Support importing ledger addresses.
-            if (accountJson._source === 'ledger') {
+            if (accountJson.source === 'ledger') {
               continue;
             }
             postToImport(accountJson);
