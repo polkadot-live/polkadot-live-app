@@ -5,11 +5,7 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { createContext, useContext, useState } from 'react';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
-import type {
-  AccountJson,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -57,34 +53,26 @@ export const AddressesProvider = ({
   });
 
   /// Add account from received AccountJson data.
-  const importAccountJson = (json: AccountJson) => {
-    const { _address, _name, _source } = json;
-    const key = ConfigImport.getStorageKey(_source);
+  const importAccountJson = (json: LocalAddress) => {
+    const { address, source } = json;
+    const key = ConfigImport.getStorageKey(source);
     const fetched: string | null = localStorage.getItem(key);
     const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
 
     // Don't import address if it already exists.
-    const isNewAddress = parsed.every((a) => a.address !== _address);
+    const isNewAddress = parsed.every((a) => a.address !== address);
     if (!isNewAddress) {
       return;
     }
 
-    // Calculate new addresses.
-    const newAddresses = [
-      ...parsed,
-      {
-        index: !parsed.length ? 0 : parsed[parsed.length - 1].index + 1,
-        address: _address,
-        isImported: false,
-        name: _name,
-      } as LocalAddress,
-    ];
+    // Calculate new address state.
+    const newAddresses = [...parsed, json];
 
     // Update local storage.
     localStorage.setItem(key, JSON.stringify(newAddresses));
 
     // Update context state.
-    switch (_source) {
+    switch (source) {
       case 'read-only': {
         setReadOnlyAddresses(newAddresses);
         break;
@@ -95,7 +83,7 @@ export const AddressesProvider = ({
       }
       default: {
         throw new Error(
-          `Importing account via JSON with source ${_source} not supported.`
+          `Importing account via JSON with source ${source} not supported.`
         );
       }
     }

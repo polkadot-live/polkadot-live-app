@@ -85,6 +85,7 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
         address,
         isImported: false,
         name: ellipsisFn(address),
+        source: 'vault',
       });
 
     const storageKey = ConfigImport.getStorageKey('vault');

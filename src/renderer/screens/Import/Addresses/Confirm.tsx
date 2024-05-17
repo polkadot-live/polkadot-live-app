@@ -42,7 +42,7 @@ export const Confirm = ({
   const handleLedgerImport = () => {
     // Update import window's managed address state and local storage.
     setAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
+      const newAddresses = prevState.map((a: LedgerLocalAddress) =>
         a.address === address ? { ...a, isImported: true } : a
       );
 
