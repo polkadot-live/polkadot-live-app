@@ -6,10 +6,8 @@ import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 
 export const OpenGov: React.FC = () => {
-  // TODO: Set up port communication for `openGov` window.
+  // Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
-
-  console.log(`window id: ${'todo'}`);
 
   return (
     <>

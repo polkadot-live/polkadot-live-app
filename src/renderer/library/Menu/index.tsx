@@ -150,7 +150,7 @@ export const Menu = () => {
           <button
             type="button"
             onClick={() => {
-              window.myAPI.openWindow('');
+              window.myAPI.openWindow('settings');
               toggleMenu(false);
             }}
           >

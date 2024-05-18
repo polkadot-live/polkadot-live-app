@@ -258,52 +258,16 @@ export const handleWindowOnIPC = (
     // Load correct URL with window ID and HTML file.
     loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
 
-    // Send port to renderer.
-    if (name === 'import') {
-      window.once('ready-to-show', () => {
-        debug('🔷 Send port to import window');
+    // Send port to respective renderer using its name.
+    window.once('ready-to-show', () => {
+      debug(`🔷 Send port to ${name} window`);
 
-        // Send import's port for main-import communication.
-        window.webContents.postMessage(
-          'port',
-          { target: 'main-import:import' },
-          [ConfigMain.getPortPair('main-import').port2]
-        );
-      });
-    } else if (name === 'action') {
-      window.once('ready-to-show', () => {
-        debug('🔷 Send port to action window');
-
-        // Send action's port for main-action communication.
-        window.webContents.postMessage(
-          'port',
-          { target: 'main-action:action' },
-          [ConfigMain.getPortPair('main-action').port2]
-        );
-      });
-    } else if (name === 'settings') {
-      window.once('ready-to-show', () => {
-        debug('🔷 Send port to settings window');
-
-        // Send setting's port for main-settings communication.
-        window.webContents.postMessage(
-          'port',
-          { target: 'main-settings:settings' },
-          [ConfigMain.getPortPair('main-settings').port2]
-        );
-      });
-    } else if (name === 'openGov') {
-      window.once('ready-to-show', () => {
-        debug(`🔷 Send port to ${name} window`);
-
-        // Send setting's port for main-settings communication.
-        window.webContents.postMessage(
-          'port',
-          { target: 'main-openGov:openGov' },
-          [ConfigMain.getPortPair('main-openGov').port2]
-        );
-      });
-    }
+      window.webContents.postMessage(
+        'port',
+        { target: `main-${name}:${name}` },
+        [ConfigMain.getPortPair(`main-${name}` as PortPairID).port2]
+      );
+    });
 
     window.on('focus', () => {
       WindowsController.focus(name);
