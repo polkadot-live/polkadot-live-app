@@ -3,11 +3,7 @@
 
 import { useState } from 'react';
 import { TrackItem } from './Wrappers';
-import type { Track } from '@/model/Track';
-
-interface TrackRowProps {
-  track: Track;
-}
+import type { TrackRowProps } from './types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);
