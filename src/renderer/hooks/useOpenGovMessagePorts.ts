@@ -3,6 +3,7 @@
 
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
+import { getTracks } from '@/model/Track';
 
 export const useOpenGovMessagePorts = () => {
   /**
@@ -19,6 +20,11 @@ export const useOpenGovMessagePorts = () => {
         ConfigOpenGov.portOpenGov.onmessage = (ev: MessageEvent) => {
           // Message received from `main`.
           switch (ev.data.task) {
+            case 'openGov:tracks:receive': {
+              const tracks = getTracks(ev.data.data.result);
+              console.log(tracks);
+              break;
+            }
             default: {
               throw new Error(`Port task not recognized (${ev.data.task})`);
             }
