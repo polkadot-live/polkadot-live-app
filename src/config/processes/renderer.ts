@@ -10,6 +10,7 @@ export class Config {
   private static _portToImport: MessagePort;
   private static _portToAction: MessagePort;
   private static _portToSettings: MessagePort;
+  private static _portToOpenGov: MessagePort;
 
   // Flag to silence all native OS notifications.
   private static _silenceNotifications = false;
@@ -60,6 +61,19 @@ export class Config {
 
   static set portToSettings(port: MessagePort) {
     Config._portToSettings = port;
+  }
+
+  // Accessors for `openGov` port.
+  static get portToOpenGov(): MessagePort {
+    if (!Config._portToOpenGov) {
+      throw new Error('_portToOpenGov still undefined');
+    }
+
+    return Config._portToOpenGov;
+  }
+
+  static set portToOpenGov(port: MessagePort) {
+    Config._portToOpenGov = port;
   }
 
   // Accessors for `_silenceNotifications` flag.

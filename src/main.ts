@@ -142,6 +142,9 @@ app.whenReady().then(async () => {
   // Handle settings window.
   WindowUtils.handleWindowOnIPC('settings', isTest);
 
+  // Handle open gov window.
+  WindowUtils.handleWindowOnIPC('openGov', isTest);
+
   // ------------------------------
   // Handle Power Changes
   // ------------------------------

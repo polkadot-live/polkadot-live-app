@@ -69,6 +69,10 @@ export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
   mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
     ConfigMain.getPortPair('main-settings').port1,
   ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
+    ConfigMain.getPortPair('main-openGov').port1,
+  ]);
 };
 
 /**
@@ -251,10 +255,10 @@ export const handleWindowOnIPC = (
       WindowsController.close(name)
     );
 
-    // Load correct URL and HTML file.
+    // Load correct URL with window ID and HTML file.
     loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
 
-    // Send port to renderer if this is the import window.
+    // Send port to renderer.
     if (name === 'import') {
       window.once('ready-to-show', () => {
         debug('🔷 Send port to import window');
@@ -286,6 +290,17 @@ export const handleWindowOnIPC = (
           'port',
           { target: 'main-settings:settings' },
           [ConfigMain.getPortPair('main-settings').port2]
+        );
+      });
+    } else if (name === 'openGov') {
+      window.once('ready-to-show', () => {
+        debug(`🔷 Send port to ${name} window`);
+
+        // Send setting's port for main-settings communication.
+        window.webContents.postMessage(
+          'port',
+          { target: 'main-openGov:openGov' },
+          [ConfigMain.getPortPair('main-openGov').port2]
         );
       });
     }

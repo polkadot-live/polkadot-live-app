@@ -417,6 +417,21 @@ export const useMainMessagePorts = () => {
         ConfigRenderer.portToSettings.start();
         break;
       }
+      case 'main-openGov:main': {
+        ConfigRenderer.portToOpenGov = e.ports[0];
+
+        ConfigRenderer.portToOpenGov.onmessage = async (ev: MessageEvent) => {
+          // Message received from `openGov`.
+          switch (ev.data.task) {
+            default: {
+              throw new Error(`Port task not recognized (${ev.data.task})`);
+            }
+          }
+        };
+
+        ConfigRenderer.portToOpenGov.start();
+        break;
+      }
       default: {
         console.error('Something went wrong.');
         break;

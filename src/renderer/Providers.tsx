@@ -73,6 +73,13 @@ const getProvidersForWindow = () => {
         TxMetaProvider
       )(Theme);
     }
+    case 'openGov': {
+      return withProviders(
+        HelpProvider,
+        OverlayProvider,
+        TooltipProvider
+      )(Theme);
+    }
     default: {
       throw new Error('Window ID not recognized.');
     }

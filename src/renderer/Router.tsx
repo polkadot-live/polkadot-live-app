@@ -10,6 +10,7 @@ import { Action } from '@app/screens/Action';
 import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
+import { OpenGov } from './screens/OpenGov';
 import { Help } from './library/Help';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTheme } from 'styled-components';
@@ -41,6 +42,8 @@ export const RouterInner = () => {
         return <Route path={'settings'} element={<Settings />} />;
       case 'action':
         return <Route path={'action'} element={<Action />} />;
+      case 'openGov':
+        return <Route path={'openGov'} element={<OpenGov />} />;
       default:
         throw new Error('Window ID not recognized.');
     }
