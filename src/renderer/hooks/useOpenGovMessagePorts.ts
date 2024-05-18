@@ -4,8 +4,11 @@
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
 import { getTracks } from '@/model/Track';
+import { useTracks } from '@app/contexts/openGov/Tracks';
 
 export const useOpenGovMessagePorts = () => {
+  const { setTracks } = useTracks();
+
   /**
    * @name handleReceivedPort
    * @summary Handle messages sent to the settings window.
@@ -21,8 +24,7 @@ export const useOpenGovMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
-              const tracks = getTracks(ev.data.data.result);
-              console.log(tracks);
+              setTracks(getTracks(ev.data.data.result));
               break;
             }
             default: {

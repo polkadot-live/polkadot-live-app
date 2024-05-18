@@ -5,10 +5,14 @@ import { DragClose } from '@/renderer/library/DragClose';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 
 export const OpenGov: React.FC = () => {
   // Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
+
+  // Context data.
+  const { tracks } = useTracks();
 
   const handleTestClick = () => {
     console.log('TODO: Get Polkadot origins + tracks listings');
@@ -34,6 +38,15 @@ export const OpenGov: React.FC = () => {
         <p>
           <button onClick={() => handleTestClick()}>Get Tracks</button>
         </p>
+        <ul>
+          {tracks.map((track) => (
+            <li key={track.trackId}>
+              <span>
+                {track.trackId} {track.label} {track.maxDeciding}
+              </span>
+            </li>
+          ))}
+        </ul>
       </ContentWrapper>
     </>
   );
