@@ -6,6 +6,8 @@ import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { TrackRow } from './TrackRow';
+import { Scrollable, TrackGroup } from './Wrappers';
 
 export const OpenGov: React.FC = () => {
   // Set up port communication for `openGov` window.
@@ -15,8 +17,6 @@ export const OpenGov: React.FC = () => {
   const { tracks } = useTracks();
 
   const handleTestClick = () => {
-    console.log('TODO: Get Polkadot origins + tracks listings');
-
     // Request tracks data from main renderer.
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:tracks:get',
@@ -27,7 +27,7 @@ export const OpenGov: React.FC = () => {
   };
 
   return (
-    <>
+    <Scrollable>
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="openGov" />
@@ -38,16 +38,12 @@ export const OpenGov: React.FC = () => {
         <p>
           <button onClick={() => handleTestClick()}>Get Tracks</button>
         </p>
-        <ul>
+        <TrackGroup>
           {tracks.map((track) => (
-            <li key={track.trackId}>
-              <span>
-                {track.trackId} {track.label} {track.maxDeciding}
-              </span>
-            </li>
+            <TrackRow key={track.trackId} track={track} />
           ))}
-        </ul>
+        </TrackGroup>
       </ContentWrapper>
-    </>
+    </Scrollable>
   );
 };
