@@ -13,6 +13,7 @@ export const getTracks = (data: AnyData[]) =>
       trackDataArr[1].decisionDeposit,
       trackDataArr[1].decisionPeriod,
       trackDataArr[1].maxDeciding,
+      trackDataArr[1].minEnactmentPeriod,
       trackDataArr[1].name,
       trackDataArr[1].preparePeriod,
       trackId
@@ -25,6 +26,7 @@ export class Track {
   private _decisionDeposit: string;
   private _decisionPeriod: string;
   private _maxDeciding: string;
+  private _minEnactmentPeriod: string;
   private _trackName: string;
   private _preparePeriod: string;
   private _trackId: number;
@@ -37,6 +39,7 @@ export class Track {
     decisionDeposit: string,
     decisionPeriod: string,
     maxDeciding: string,
+    minEnactmentPeriod: string,
     trackName: string,
     preparePeriod: string,
     trackId: string
@@ -45,6 +48,7 @@ export class Track {
     this._decisionDeposit = decisionDeposit;
     this._decisionPeriod = decisionPeriod;
     this._maxDeciding = maxDeciding;
+    this._minEnactmentPeriod = minEnactmentPeriod;
     this._preparePeriod = preparePeriod;
     this._trackName = trackName;
     this._trackId = parseInt(trackId);
@@ -101,6 +105,9 @@ export class Track {
   }
   get maxDeciding() {
     return this._maxDeciding;
+  }
+  get minEnactmentPeriod() {
+    return this._minEnactmentPeriod;
   }
   get preparePeriod() {
     return this._preparePeriod;
