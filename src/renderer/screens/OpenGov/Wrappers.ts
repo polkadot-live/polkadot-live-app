@@ -8,6 +8,17 @@ export const Scrollable = styled.div`
   width: 100%;
   max-height: 100vh;
   overflow-y: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #101010;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #212121;
+  }
 `;
 
 export const TrackGroup = styled.div`
