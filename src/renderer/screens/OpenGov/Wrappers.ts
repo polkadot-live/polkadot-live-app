@@ -61,6 +61,11 @@ export const TrackItem = styled(motion.div)`
     align-items: center;
     min-width: 90px;
 
+    // Utility.
+    .mw-45 {
+      min-width: 45px;
+    }
+
     // Stat text.
     h4 {
       flex: 1;
@@ -105,6 +110,38 @@ export const TrackItem = styled(motion.div)`
       column-gap: 1rem;
       margin-top: 1rem;
       padding: 1rem 0 0.25rem;
+    }
+  }
+
+  /* Expand button */
+  .expand-btn-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #953254;
+    border-radius: 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.1s ease-out;
+    cursor: pointer;
+    padding-left: 0.75rem;
+
+    h4 {
+      font-size: 0.9rem;
+    }
+
+    &:hover {
+      opacity: 0.75;
+    }
+    .expand-btn {
+      position: relative;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+
+      svg {
+        position: absolute;
+        top: 5px;
+        left: 6px;
+      }
     }
   }
 `;

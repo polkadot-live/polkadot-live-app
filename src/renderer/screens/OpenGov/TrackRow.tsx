@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { TrackItem } from './Wrappers';
 import { motion } from 'framer-motion';
 import type { TrackRowProps } from './types';
+import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   const expandVariants = {
     open: { height: 'auto' },
@@ -30,9 +32,20 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         <div className="right">
           <div className="stat-wrapper">
             <span>Max Deciding</span>
-            <h4>{track.maxDeciding}</h4>
+            <h4 className="mw-45">{track.maxDeciding}</h4>
           </div>
-          <button onClick={() => setExpanded(!expanded)}>Expand</button>
+          <div
+            className="expand-btn-wrapper"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <h4>Periods</h4>
+            <div className="expand-btn">
+              <FontAwesomeIcon
+                icon={expanded ? faAngleUp : faAngleDown}
+                transform={'shrink-3'}
+              />
+            </div>
+          </div>
         </div>
       </div>
       <motion.section
