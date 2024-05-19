@@ -7,7 +7,7 @@ import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts'
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { TrackRow } from './TrackRow';
-import { Scrollable, TrackGroup } from './Wrappers';
+import { OpenGovFooter, Scrollable, TrackGroup } from './Wrappers';
 
 export const OpenGov: React.FC = () => {
   // Set up port communication for `openGov` window.
@@ -15,6 +15,7 @@ export const OpenGov: React.FC = () => {
 
   // Context data.
   const { tracks } = useTracks();
+  const chainId = 'Polkadot';
 
   const handleTestClick = () => {
     // Request tracks data from main renderer.
@@ -27,23 +28,37 @@ export const OpenGov: React.FC = () => {
   };
 
   return (
-    <Scrollable>
+    <>
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="openGov" />
           <h3>Explore Open Gov</h3>
         </div>
       </HeaderWrapper>
-      <ContentWrapper>
-        <p>
-          <button onClick={() => handleTestClick()}>Get Tracks</button>
-        </p>
-        <TrackGroup>
-          {tracks.map((track) => (
-            <TrackRow key={track.trackId} track={track} />
-          ))}
-        </TrackGroup>
-      </ContentWrapper>
-    </Scrollable>
+      <Scrollable>
+        <ContentWrapper>
+          <p>
+            <button onClick={() => handleTestClick()}>Get Tracks</button>
+          </p>
+          <TrackGroup>
+            {tracks.map((track) => (
+              <TrackRow key={track.trackId} track={track} />
+            ))}
+          </TrackGroup>
+        </ContentWrapper>
+      </Scrollable>
+      <OpenGovFooter>
+        <div>
+          <div className="footer-stat">
+            <h2>Chain ID:</h2>
+            <span>{chainId}</span>
+          </div>
+          <div className="footer-stat">
+            <h2>Total Tracks:</h2>
+            <span>{tracks.length}</span>
+          </div>
+        </div>
+      </OpenGovFooter>
+    </>
   );
 };

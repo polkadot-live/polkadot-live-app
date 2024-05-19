@@ -174,3 +174,33 @@ export const TrackItem = styled(motion.div)`
     }
   }
 `;
+
+export const OpenGovFooter = styled.section`
+  position: sticky;
+  bottom: 0;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  border-top: 1px solid var(--border-primary-color);
+  background-color: var(--background-default);
+
+  > div:first-of-type {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+  }
+  .footer-stat {
+    display: flex;
+    column-gap: 0.75rem;
+    align-items: center;
+
+    h2 {
+      font-size: 0.95rem;
+      opacity: 0.5;
+    }
+    span {
+      color: #8571b1;
+      font-weight: 400;
+      font-size: 0.95rem;
+    }
+  }
+`;

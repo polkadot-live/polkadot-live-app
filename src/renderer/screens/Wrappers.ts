@@ -9,7 +9,6 @@ export const HeaderWrapper = styled.div`
   position: -webkit-sticky;
   top: 0;
   z-index: 5;
-  height: 4rem;
   width: 100%;
 
   background-color: var(--background-menu);
@@ -18,12 +17,12 @@ export const HeaderWrapper = styled.div`
   .content {
     display: flex;
     align-items: center;
-    padding: 1.25rem;
+    padding: 1rem 1.5rem 0.75rem;
 
     h3,
     h4 {
       font-weight: 600;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       user-select: none;
     }
     h4 {
