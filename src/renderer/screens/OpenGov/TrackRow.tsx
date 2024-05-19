@@ -4,20 +4,34 @@
 import { useState } from 'react';
 import { TrackItem } from './Wrappers';
 import { motion } from 'framer-motion';
-import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faAngleDown,
+  faAngleUp,
+  faInfo,
+} from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@/model/Track';
+import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TrackRowProps } from './types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);
   const chainId: ChainID = 'Polkadot';
 
+  const { openHelp } = useHelp();
+
   const expandVariants = {
     open: { height: 'auto' },
     closed: { height: 0 },
   };
+
+  const renderHelpIcon = (key: HelpItemKey) => (
+    <div className="icon-wrapper" onClick={() => openHelp(key)}>
+      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+    </div>
+  );
 
   return (
     <TrackItem>
@@ -25,11 +39,13 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         <div className="left">
           <div className="stat-wrapper">
             <span>Track ID</span>
-            <h4>{track.trackId}</h4>
+            <h4 className="mw-20">{track.trackId}</h4>
           </div>
           <div className="stat-wrapper">
             <span>Origin</span>
-            <h4>{track.label}</h4>
+            <h4>
+              {renderHelpIcon(track.helpHey)} {track.label}
+            </h4>
           </div>
         </div>
         <div className="right">
@@ -60,22 +76,30 @@ export const TrackRow = ({ track }: TrackRowProps) => {
       >
         <div className="periods-wrapper">
           <div className="period-stat-wrapper">
-            <span>Prepare Period</span>
+            <span>
+              {renderHelpIcon('help:openGov:preparePeriod')} Prepare Period
+            </span>
             <h4>{formatBlocksToTime(chainId, track.preparePeriod)}</h4>
             <span>{track.preparePeriod} blocks</span>
           </div>
           <div className="period-stat-wrapper">
-            <span>Decision Period</span>
+            <span>
+              {renderHelpIcon('help:openGov:decisionPeriod')} Decision Period
+            </span>
             <h4>{formatBlocksToTime(chainId, track.decisionPeriod)}</h4>
             <span>{track.decisionPeriod} blocks</span>
           </div>
           <div className="period-stat-wrapper">
-            <span>Confirm Period</span>
+            <span>
+              {renderHelpIcon('help:openGov:confirmPeriod')} Confirm Period
+            </span>
             <h4>{formatBlocksToTime(chainId, track.confirmPeriod)}</h4>
             <span>{track.confirmPeriod} blocks</span>
           </div>
           <div className="period-stat-wrapper">
-            <span>Enactment Period</span>
+            <span>
+              {renderHelpIcon('help:openGov:enactmentPeriod')} Enactment Period
+            </span>
             <h4>{formatBlocksToTime(chainId, track.minEnactmentPeriod)}</h4>
             <span>{track.minEnactmentPeriod} blocks</span>
           </div>

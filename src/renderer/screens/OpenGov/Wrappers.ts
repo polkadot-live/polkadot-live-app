@@ -54,6 +54,9 @@ export const TrackItem = styled(motion.div)`
   .mw-45 {
     min-width: 45px;
   }
+  .mw-20 {
+    min-width: 18px;
+  }
 
   &:hover {
     background-color: #121212;
@@ -63,17 +66,33 @@ export const TrackItem = styled(motion.div)`
   .stat-wrapper {
     display: flex;
     column-gap: 1rem;
-    align-items: center;
     min-width: 90px;
+    display: flex;
+    align-items: center;
+
+    .icon-wrapper {
+      font-size: 0.8rem;
+      padding-right: 0.8rem;
+      padding-left: 0.4rem;
+      cursor: pointer;
+      opacity: 0.4;
+      &:hover {
+        color: #953254;
+        opacity: 1;
+      }
+    }
 
     // Stat text.
     h4 {
+      display: flex;
       flex: 1;
       font-size: 1.05rem;
     }
     // Stat label.
     span {
-      padding: 0.5rem;
+      display: flex;
+      align-items: baseline;
+      padding: 0.5rem 1rem 0.5rem;
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
       font-size: 0.8rem;
@@ -121,12 +140,27 @@ export const TrackItem = styled(motion.div)`
     /* Period stat */
     .period-stat-wrapper {
       display: flex;
-      align-items: center;
       column-gap: 1rem;
+      align-items: center;
 
       > span:first-of-type {
+        display: flex;
+        align-items: center;
+        column-gap: 0.5rem;
         min-width: 100px;
         opacity: 0.8;
+
+        .icon-wrapper {
+          padding-right: 0.3rem;
+          padding-left: 0.25rem;
+          font-size: 0.8rem;
+          cursor: pointer;
+          opacity: 0.4;
+          &:hover {
+            color: #953254;
+            opacity: 1;
+          }
+        }
       }
       h4 {
         font-weight: 400;
@@ -186,8 +220,51 @@ export const OpenGovFooter = styled.section`
   > div:first-of-type {
     display: flex;
     column-gap: 1rem;
-    align-items: center;
+    align-items: baseline;
   }
+
+  // Left and right.
+  .right,
+  .left {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+  }
+  .left {
+    flex: 1;
+  }
+
+  .stat-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    display: flex;
+    align-items: center;
+
+    // Help icon.
+    .icon-wrapper {
+      font-size: 0.8rem;
+      padding-right: 0.75rem;
+      padding-left: 0.4rem;
+      cursor: pointer;
+      opacity: 0.4;
+      &:hover {
+        color: #953254;
+        opacity: 1;
+      }
+    }
+
+    // Stat label.
+    span {
+      display: flex;
+      align-items: baseline;
+      padding: 0.5rem;
+      padding-right: 1rem;
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+
   .footer-stat {
     display: flex;
     column-gap: 0.75rem;

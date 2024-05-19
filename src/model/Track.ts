@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { formatDuration } from 'date-fns';
+import { rmCommas } from '@w3ux/utils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import { rmCommas } from '@w3ux/utils';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 /// Utility to initialise tracks from data returned from Polkadot JS API.
 /// TODO: Move to utils file.
@@ -47,6 +48,7 @@ export class Track {
   private _confirmPeriod: string;
   private _decisionDeposit: string;
   private _decisionPeriod: string;
+  private _helpKey: HelpItemKey;
   private _maxDeciding: string;
   private _minEnactmentPeriod: string;
   private _trackName: string;
@@ -75,7 +77,47 @@ export class Track {
     this._trackName = trackName;
     this._trackId = parseInt(trackId);
     this._label = Track.getReadableTrackName(this._trackId);
+    this._helpKey = Track.getHelpKeyWithTrackId(this._trackId);
   }
+
+  static getHelpKeyWithTrackId = (trackId: number): HelpItemKey => {
+    switch (trackId) {
+      case 0:
+        return 'help:openGov:origin:root';
+      case 1:
+        return 'help:openGov:origin:whitelistedCaller';
+      case 2:
+        return 'help:openGov:origin:wishForChange';
+      case 10:
+        return 'help:openGov:origin:stakingAdmin';
+      case 11:
+        return 'help:openGov:origin:treasurer';
+      case 12:
+        return 'help:openGov:origin:leaseAdmin';
+      case 13:
+        return 'help:openGov:origin:fellowshipAdmin';
+      case 14:
+        return 'help:openGov:origin:generalAdmin';
+      case 15:
+        return 'help:openGov:origin:auctionAdmin';
+      case 20:
+        return 'help:openGov:origin:referendumCanceller';
+      case 21:
+        return 'help:openGov:origin:referendumKiller';
+      case 30:
+        return 'help:openGov:origin:smallTipper';
+      case 31:
+        return 'help:openGov:origin:bigTipper';
+      case 32:
+        return 'help:openGov:origin:smallSpender';
+      case 33:
+        return 'help:openGov:origin:mediumSpender';
+      case 34:
+        return 'help:openGov:origin:bigSpender';
+      default:
+        throw new Error('Unrecognized track ID');
+    }
+  };
 
   static getReadableTrackName = (trackId: number) => {
     switch (trackId) {
@@ -124,6 +166,9 @@ export class Track {
   }
   get decisionPeriod() {
     return this._decisionPeriod;
+  }
+  get helpHey() {
+    return this._helpKey;
   }
   get maxDeciding() {
     return this._maxDeciding;
