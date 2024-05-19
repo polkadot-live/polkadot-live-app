@@ -69,7 +69,7 @@ export const TrackItem = styled(motion.div)`
     // Stat text.
     h4 {
       flex: 1;
-      font-size: 1.1em;
+      font-size: 1.05rem;
     }
     // Stat label.
     span {
