@@ -1,7 +1,10 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { formatDuration } from 'date-fns';
 import type { AnyData } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
+import { rmCommas } from '@w3ux/utils';
 
 /// Utility to initialise tracks from data returned from Polkadot JS API.
 /// TODO: Move to utils file.
@@ -19,6 +22,25 @@ export const getTracks = (data: AnyData[]) =>
       trackId
     );
   });
+
+export const formatBlocksToTime = (chainId: ChainID, blocks: string) => {
+  const secondsPerBlock =
+    chainId === 'Polkadot' || chainId === 'Kusama' ? 6 : 0;
+
+  const seconds = parseInt(rmCommas(blocks)) * secondsPerBlock;
+
+  const days = Math.floor(seconds / (60 * 60 * 24));
+  const hours = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((seconds % (60 * 60)) / 60);
+
+  const duration = {
+    days,
+    hours,
+    minutes,
+  };
+
+  return formatDuration(duration);
+};
 
 /// Class to represent an Open Gov track.
 export class Track {

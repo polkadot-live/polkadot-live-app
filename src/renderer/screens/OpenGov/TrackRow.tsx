@@ -4,12 +4,15 @@
 import { useState } from 'react';
 import { TrackItem } from './Wrappers';
 import { motion } from 'framer-motion';
-import type { TrackRowProps } from './types';
 import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { formatBlocksToTime } from '@/model/Track';
+import type { ChainID } from '@/types/chains';
+import type { TrackRowProps } from './types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);
+  const chainId: ChainID = 'Polkadot';
 
   const expandVariants = {
     open: { height: 'auto' },
@@ -56,21 +59,25 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
       >
         <div className="periods-wrapper">
-          <div className="stat-wrapper">
+          <div className="period-stat-wrapper">
             <span>Prepare Period</span>
-            <h4>{track.preparePeriod}</h4>
+            <h4>{formatBlocksToTime(chainId, track.preparePeriod)}</h4>
+            <span>{track.preparePeriod} blocks</span>
           </div>
-          <div className="stat-wrapper">
+          <div className="period-stat-wrapper">
             <span>Decision Period</span>
-            <h4>{track.decisionPeriod}</h4>
+            <h4>{formatBlocksToTime(chainId, track.decisionPeriod)}</h4>
+            <span>{track.decisionPeriod} blocks</span>
           </div>
-          <div className="stat-wrapper">
+          <div className="period-stat-wrapper">
             <span>Confirm Period</span>
-            <h4>{track.confirmPeriod}</h4>
+            <h4>{formatBlocksToTime(chainId, track.confirmPeriod)}</h4>
+            <span>{track.confirmPeriod} blocks</span>
           </div>
-          <div className="stat-wrapper">
+          <div className="period-stat-wrapper">
             <span>Enactment Period</span>
-            <h4>{track.minEnactmentPeriod}</h4>
+            <h4>{formatBlocksToTime(chainId, track.minEnactmentPeriod)}</h4>
+            <span>{track.minEnactmentPeriod} blocks</span>
           </div>
         </div>
       </motion.section>

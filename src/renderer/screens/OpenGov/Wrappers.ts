@@ -50,6 +50,11 @@ export const TrackItem = styled(motion.div)`
   background-color: var(--background-primary);
   transition: background-color 0.2s ease-out;
 
+  // Utility.
+  .mw-45 {
+    min-width: 45px;
+  }
+
   &:hover {
     background-color: #121212;
   }
@@ -60,11 +65,6 @@ export const TrackItem = styled(motion.div)`
     column-gap: 1rem;
     align-items: center;
     min-width: 90px;
-
-    // Utility.
-    .mw-45 {
-      min-width: 45px;
-    }
 
     // Stat text.
     h4 {
@@ -79,6 +79,7 @@ export const TrackItem = styled(motion.div)`
       font-size: 0.8rem;
     }
   }
+
   .content-wrapper {
     display: flex;
     align-items: center;
@@ -103,13 +104,41 @@ export const TrackItem = styled(motion.div)`
     overflow: hidden;
 
     .periods-wrapper {
+      --border-top-bottom: 1px solid #1f1f1f;
+
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 5rem;
+      row-gap: 1rem;
       width: 100%;
+      margin-top: 1rem;
+      padding: 1.25rem 0 1.25rem;
+      border-top: var(--border-top-bottom);
+      border-bottom: var(--border-top-bottom);
+      background-color: #111;
+    }
+
+    /* Period stat */
+    .period-stat-wrapper {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       column-gap: 1rem;
-      margin-top: 1rem;
-      padding: 1rem 0 0.25rem;
+
+      > span:first-of-type {
+        min-width: 100px;
+        opacity: 0.8;
+      }
+      h4 {
+        font-weight: 400;
+        font-size: 1rem;
+      }
+      > span:last-of-type {
+        flex: 1;
+        color: var(--text-color-secondary);
+        opacity: 0.6;
+        font-weight: 400;
+        font-size: 0.9rem;
+      }
     }
   }
 
