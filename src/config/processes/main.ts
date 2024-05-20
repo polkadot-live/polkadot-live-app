@@ -24,6 +24,7 @@ export class Config {
   private static _main_import_ports: PortPair;
   private static _main_action_ports: PortPair;
   private static _main_settings_ports: PortPair;
+  private static _main_openGov_ports: PortPair;
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
@@ -34,7 +35,12 @@ export class Config {
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.
   static initialize = (): void => {
-    const ids: PortPairID[] = ['main-import', 'main-action', 'main-settings'];
+    const ids: PortPairID[] = [
+      'main-import',
+      'main-action',
+      'main-settings',
+      'main-openGov',
+    ];
 
     for (const id of ids) {
       Config.initPorts(id);
@@ -85,6 +91,13 @@ export class Config {
 
         return Config._main_settings_ports;
       }
+      case 'main-openGov': {
+        if (!Config._main_openGov_ports) {
+          Config.initPorts('main-openGov');
+        }
+
+        return Config._main_openGov_ports;
+      }
       default: {
         throw new Error('Port pair id not recognized');
       }
@@ -117,6 +130,11 @@ export class Config {
       case 'main-settings': {
         const { port1, port2 } = new MessageChannelMain();
         Config._main_settings_ports = { port1, port2 };
+        break;
+      }
+      case 'main-openGov': {
+        const { port1, port2 } = new MessageChannelMain();
+        Config._main_openGov_ports = { port1, port2 };
         break;
       }
       default: {

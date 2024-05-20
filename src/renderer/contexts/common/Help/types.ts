@@ -59,7 +59,30 @@ export type HelpItemKey =
   | 'help:settings:showOnAllWorkspaces'
   | 'help:settings:silenceOsNotifications'
   | 'help:settings:importData'
-  | 'help:settings:exportData';
+  | 'help:settings:exportData'
+  | 'help:openGov:trackId'
+  | 'help:openGov:origin'
+  | 'help:openGov:maxDeciding'
+  | 'help:openGov:preparePeriod'
+  | 'help:openGov:decisionPeriod'
+  | 'help:openGov:confirmPeriod'
+  | 'help:openGov:enactmentPeriod'
+  | 'help:openGov:origin:root'
+  | 'help:openGov:origin:whitelistedCaller'
+  | 'help:openGov:origin:wishForChange'
+  | 'help:openGov:origin:stakingAdmin'
+  | 'help:openGov:origin:treasurer'
+  | 'help:openGov:origin:leaseAdmin'
+  | 'help:openGov:origin:fellowshipAdmin'
+  | 'help:openGov:origin:generalAdmin'
+  | 'help:openGov:origin:auctionAdmin'
+  | 'help:openGov:origin:referendumCanceller'
+  | 'help:openGov:origin:referendumKiller'
+  | 'help:openGov:origin:smallTipper'
+  | 'help:openGov:origin:bigTipper'
+  | 'help:openGov:origin:smallSpender'
+  | 'help:openGov:origin:mediumSpender'
+  | 'help:openGov:origin:bigSpender';
 
 export interface HelpItem {
   key: HelpItemKey;

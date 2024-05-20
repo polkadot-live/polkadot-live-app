@@ -11,7 +11,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { handleApiDisconnects } from '@/utils/ApiUtils';
+import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 /// Main window contexts.
@@ -415,6 +415,32 @@ export const useMainMessagePorts = () => {
         };
 
         ConfigRenderer.portToSettings.start();
+        break;
+      }
+      case 'main-openGov:main': {
+        ConfigRenderer.portToOpenGov = e.ports[0];
+
+        ConfigRenderer.portToOpenGov.onmessage = async (ev: MessageEvent) => {
+          // Message received from `openGov`.
+          switch (ev.data.task) {
+            case 'openGov:tracks:get': {
+              const { chainId } = ev.data.data;
+              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+              const result = api.consts.referenda.tracks.toHuman();
+
+              ConfigRenderer.portToOpenGov.postMessage({
+                task: 'openGov:tracks:receive',
+                data: { result },
+              });
+              break;
+            }
+            default: {
+              throw new Error(`Port task not recognized (${ev.data.task})`);
+            }
+          }
+        };
+
+        ConfigRenderer.portToOpenGov.start();
         break;
       }
       default: {

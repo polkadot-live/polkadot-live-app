@@ -159,4 +159,119 @@ export const HelpConfig: HelpItems = [
       'This feature currently supports Vault and Read-Only accounts.',
     ],
   },
+  {
+    key: 'help:openGov:trackId',
+    title: 'Track ID',
+    definition: ['TODO: Track ID.'],
+  },
+  {
+    key: 'help:openGov:origin',
+    title: 'Origin',
+    definition: ['TODO: Origin.'],
+  },
+  {
+    key: 'help:openGov:maxDeciding',
+    title: 'Max Deciding',
+    definition: ['TODO: Max Deciding.'],
+  },
+  {
+    key: 'help:openGov:preparePeriod',
+    title: 'Prepare Period',
+    definition: ['TODO: Prepare Period.'],
+  },
+  {
+    key: 'help:openGov:decisionPeriod',
+    title: 'Decision Period',
+    definition: ['TODO: Decision Period.'],
+  },
+  {
+    key: 'help:openGov:confirmPeriod',
+    title: 'Confirm Period',
+    definition: ['TODO: Confirm Period.'],
+  },
+  {
+    key: 'help:openGov:enactmentPeriod',
+    title: 'Enactment Period',
+    definition: ['TODO: Enactment Period.'],
+  },
+  {
+    key: 'help:openGov:origin:root',
+    title: 'Root Origin',
+    definition: ['TODO: Root origin.'],
+  },
+  {
+    key: 'help:openGov:origin:whitelistedCaller',
+    title: 'Whitelisted Caller Origin',
+    definition: ['TODO: Whitelisted Caller Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:wishForChange',
+    title: 'Wish For Change Origin',
+    definition: ['TODO: Wish For Change Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:stakingAdmin',
+    title: 'Staking Admin Origin',
+    definition: ['TODO: Staking Admin Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:treasurer',
+    title: 'Treasurer Origin',
+    definition: ['TODO: Treasurer Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:leaseAdmin',
+    title: 'Lease Admin Origin',
+    definition: ['TODO: Lease Admin Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:fellowshipAdmin',
+    title: 'Fellowship Admin Origin',
+    definition: ['TODO: Fellowship Admin Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:generalAdmin',
+    title: 'General Admin Origin',
+    definition: ['TODO: General Admin Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:auctionAdmin',
+    title: 'Auction Admin Origin',
+    definition: ['TODO: Auction Admin Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:referendumCanceller',
+    title: 'Referendum Canceller Origin',
+    definition: ['TODO: Referendum Canceller Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:referendumKiller',
+    title: 'Referendum Killer Origin',
+    definition: ['TODO: Referendum Killer Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:smallTipper',
+    title: 'Small Tipper Origin',
+    definition: ['TODO: Small Tipper Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:bigTipper',
+    title: 'Big Tipper Origin',
+    definition: ['TODO: Big Tipper Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:smallSpender',
+    title: 'Small Spender Origin',
+    definition: ['TODO: Small Spender Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:mediumSpender',
+    title: 'Medium Spender Origin',
+    definition: ['TODO: Medium Spender Origin.'],
+  },
+  {
+    key: 'help:openGov:origin:bigSpender',
+    title: 'Big Spender Origin',
+    definition: ['TODO: Big Spender Origin.'],
+  },
 ];

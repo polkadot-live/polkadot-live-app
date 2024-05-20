@@ -25,6 +25,9 @@ import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 // Actions window contexts.
 import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 
+// OpenGov window contexts.
+import { TracksProvider } from './contexts/openGov/Tracks';
+
 // Other imports.
 import { Theme } from './Theme';
 import { withProviders } from '@app/library/Hooks/withProviders';
@@ -71,6 +74,14 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         TooltipProvider,
         TxMetaProvider
+      )(Theme);
+    }
+    case 'openGov': {
+      return withProviders(
+        HelpProvider,
+        OverlayProvider,
+        TooltipProvider,
+        TracksProvider
       )(Theme);
     }
     default: {

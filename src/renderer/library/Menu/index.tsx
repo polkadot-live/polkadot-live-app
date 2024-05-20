@@ -136,7 +136,16 @@ export const Menu = () => {
               toggleMenu(false);
             }}
           >
-            Manage Accounts
+            Accounts
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              window.myAPI.openWindow('openGov');
+              toggleMenu(false);
+            }}
+          >
+            OpenGov
           </button>
           <button
             type="button"
