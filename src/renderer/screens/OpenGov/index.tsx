@@ -16,6 +16,7 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { chainIcon } from '@/config/chains';
 import type { ChainID } from '@/types/chains';
 
@@ -25,17 +26,23 @@ export const OpenGov: React.FC = () => {
 
   /// Help overlay.
   const { openHelp } = useHelp();
+  const { setFetchingTracks } = useTracks();
 
   /// Active section.
   const [section, setSection] = useState<number>(0);
+  const [tracksChainId, setTracksChainId] = useState<ChainID | null>(null);
 
   /// Open origins and tracks information.
-  const handleOpenTracks = () => {
+  const handleOpenTracks = (chainId: ChainID) => {
+    // TODO: Refactor as method in tracks context.
+    setTracksChainId(chainId);
+    setFetchingTracks(true);
+
     // Request tracks data from main renderer.
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:tracks:get',
       data: {
-        chainId: 'Polkadot',
+        chainId,
       },
     });
     setSection(1);
@@ -121,7 +128,7 @@ export const OpenGov: React.FC = () => {
                       <ButtonMonoInvert
                         iconLeft={faCaretRight}
                         text={'Tracks on Polkadot'}
-                        onClick={() => handleOpenTracks()}
+                        onClick={() => handleOpenTracks('Polkadot')}
                         style={{
                           color: 'rgb(169 74 117)',
                           borderColor: 'rgb(169 74 117)',
@@ -164,7 +171,7 @@ export const OpenGov: React.FC = () => {
                       <ButtonMonoInvert
                         iconLeft={faCaretRight}
                         text={'Tracks on Kusama'}
-                        onClick={() => handleOpenTracks()}
+                        onClick={() => handleOpenTracks('Kusama')}
                         style={{
                           color: '#8571b1',
                           borderColor: '#8571b1',
@@ -180,7 +187,10 @@ export const OpenGov: React.FC = () => {
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          <Tracks setSection={setSection} />
+          <Tracks
+            setSection={setSection}
+            chainId={tracksChainId || 'Polkadot'}
+          />
         </section>
       </ModalMotionTwoSection>
     </ModalSection>

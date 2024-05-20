@@ -6,5 +6,7 @@ import type { TracksContextInterface } from './types';
 
 export const defaultTracksContext: TracksContextInterface = {
   tracks: [],
+  fetchingTracks: false,
   setTracks: (t) => {},
+  setFetchingTracks: (f) => {},
 };

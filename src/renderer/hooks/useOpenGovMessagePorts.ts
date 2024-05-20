@@ -7,7 +7,7 @@ import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 
 export const useOpenGovMessagePorts = () => {
-  const { setTracks } = useTracks();
+  const { setTracks, setFetchingTracks } = useTracks();
 
   /**
    * @name handleReceivedPort
@@ -25,6 +25,7 @@ export const useOpenGovMessagePorts = () => {
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
               setTracks(getTracks(ev.data.data.result));
+              setFetchingTracks(false);
               break;
             }
             default: {

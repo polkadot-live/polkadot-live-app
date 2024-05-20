@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import type { ChainID } from '@/types/chains';
 
 export const Scrollable = styled.div`
   --footer-height: 44px;
@@ -213,7 +214,7 @@ export const TrackItem = styled(motion.div)`
   }
 `;
 
-export const OpenGovFooter = styled.section`
+export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
   position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;
@@ -279,7 +280,8 @@ export const OpenGovFooter = styled.section`
       opacity: 0.5;
     }
     span {
-      color: #8571b1;
+      color: ${(props) =>
+        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
       font-weight: 400;
       font-size: 0.95rem;
     }

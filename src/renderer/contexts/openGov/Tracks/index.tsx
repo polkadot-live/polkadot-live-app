@@ -14,12 +14,15 @@ export const useTracks = () => useContext(TracksContext);
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [fetchingTracks, setFetchingTracks] = useState<boolean>(false);
 
   return (
     <TracksContext.Provider
       value={{
         tracks,
+        fetchingTracks,
         setTracks,
+        setFetchingTracks,
       }}
     >
       {children}

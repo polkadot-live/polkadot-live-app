@@ -13,11 +13,10 @@ import { TrackRow } from './TrackRow';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from './types';
 
-export const Tracks = ({ setSection }: TracksProps) => {
+export const Tracks = ({ setSection, chainId }: TracksProps) => {
   /// Context data.
-  const { tracks } = useTracks();
+  const { tracks, fetchingTracks } = useTracks();
   const { openHelp } = useHelp();
-  const chainId = 'Polkadot';
 
   /// Utility to render help icon.
   const renderHelpIcon = (key: HelpItemKey) => (
@@ -31,25 +30,23 @@ export const Tracks = ({ setSection }: TracksProps) => {
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="openGov" />
-          <h3>Origins and Tracks</h3>
+          <h3>{chainId} Origins and Tracks</h3>
         </div>
       </HeaderWrapper>
       <Scrollable>
         <ContentWrapper>
-          <TrackGroup>
-            {tracks.length ? (
-              <>
-                {tracks.map((track) => (
-                  <TrackRow key={track.trackId} track={track} />
-                ))}
-              </>
-            ) : (
-              <p>Loading tracks...</p>
-            )}
-          </TrackGroup>
+          {fetchingTracks ? (
+            <p>Fetching tracks...</p>
+          ) : (
+            <TrackGroup>
+              {tracks.map((track) => (
+                <TrackRow key={track.trackId} track={track} />
+              ))}
+            </TrackGroup>
+          )}
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter>
+      <OpenGovFooter $chainId={chainId}>
         <div className="footer-wrapper">
           <section className="left">
             <div className="footer-stat">
@@ -79,7 +76,17 @@ export const Tracks = ({ setSection }: TracksProps) => {
             <ButtonPrimaryInvert
               text={'Back'}
               iconLeft={faCaretLeft}
-              style={{ padding: '0.3rem 1.25rem' }}
+              style={{
+                padding: '0.3rem 1.25rem',
+                color:
+                  chainId === 'Kusama'
+                    ? 'rgb(133, 113, 177)'
+                    : 'rgb(169, 74, 117)',
+                borderColor:
+                  chainId === 'Kusama'
+                    ? 'rgb(133, 113, 177)'
+                    : 'rgb(169, 74, 117)',
+              }}
               onClick={() => setSection(0)}
             />
           </section>
