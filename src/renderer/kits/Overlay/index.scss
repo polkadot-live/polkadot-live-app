@@ -38,6 +38,13 @@ SPDX-License-Identifier: GPL-3.0-only */
   }
 }
 
+.carousel-section-wrapper {
+  flex-basis: 50%;
+  min-width: 50%;
+  height: auto;
+  flex-grow: 1;
+}
+
 /* Component styles */
 
 .modal-motion-two-sections {

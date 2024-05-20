@@ -3,6 +3,10 @@
 
 import type { Track } from '@/model/Track';
 
+export interface TracksProps {
+  setSection: (section: number) => void;
+}
+
 export interface TrackRowProps {
   track: Track;
 }
