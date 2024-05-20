@@ -160,118 +160,174 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
-    key: 'help:openGov:trackId',
-    title: 'Track ID',
-    definition: ['TODO: Track ID.'],
+    key: 'help:openGov:track',
+    title: 'Track',
+    definition: [
+      'Each track has its own dispatch origin and a preset configuration that governs the voting process and parameters.',
+    ],
   },
   {
     key: 'help:openGov:origin',
     title: 'Origin',
-    definition: ['TODO: Origin.'],
+    definition: [
+      'Each origin has a fixed set of privileges. When making a proposal, it is important to choose the origin that has the privilege to execute the referenda.',
+    ],
   },
   {
     key: 'help:openGov:maxDeciding',
     title: 'Max Deciding',
-    definition: ['TODO: Max Deciding.'],
+    definition: [
+      'The maximum number of referenda that can be in the decision period of a track all at once.',
+    ],
   },
   {
     key: 'help:openGov:preparePeriod',
     title: 'Prepare Period',
-    definition: ['TODO: Prepare Period.'],
+    definition: [
+      'The minimum time the referendum needs to wait before it can progress to the next phase after submission.',
+      'Voting is enabled, but the votes do not count toward the outcome of the referendum yet.',
+    ],
   },
   {
     key: 'help:openGov:decisionPeriod',
     title: 'Decision Period',
-    definition: ['TODO: Decision Period.'],
+    definition: [
+      'Amount of time a decision may take to be approved to move to the confirming period.',
+      'If the proposal is not approved by the end of the decision period, it gets rejected.',
+    ],
   },
   {
     key: 'help:openGov:confirmPeriod',
-    title: 'Confirm Period',
-    definition: ['TODO: Confirm Period.'],
+    title: 'Confirmation Period',
+    definition: [
+      'The total time the referenda must meet both the min approval and support criteria during the decision period in order to pass and enter the enactment period.',
+    ],
   },
   {
     key: 'help:openGov:enactmentPeriod',
     title: 'Enactment Period',
-    definition: ['TODO: Enactment Period.'],
+    definition: [
+      'Minimum time that an approved proposal must be in the dispatch queue after approval.',
+      'The proposer has the option to set the enactment period to be of any value greater than the min enactment period.',
+    ],
   },
   {
     key: 'help:openGov:origin:root',
     title: 'Root Origin',
-    definition: ['TODO: Root origin.'],
+    definition: [
+      'The origin with the highest level of privileges. This track requires extremely high levels of approval and support for early passing. The prepare and enactment periods are also large.',
+      'For instance, a referendum proposed in this track needs to amass 48.2% support (total network issuance) by the end of the first day with over 93.5% approval to be considered to be part of the confirm period.',
+      'The support curve drops linearly to 25% by the end of day 14 and almost to 0% by the end of day 28. This ensures that the token holders receive ample time to vote on the proposal during the decision period.',
+    ],
   },
   {
     key: 'help:openGov:origin:whitelistedCaller',
     title: 'Whitelisted Caller Origin',
-    definition: ['TODO: Whitelisted Caller Origin.'],
+    definition: [
+      'Origin commanded by the Fellowship whitelist some hash of a call and allow the call to be dispatched with the root origin (after the referendum passes). This track allows for a shorter voting turnaround, safe in the knowledge through an open and transparent process for time-critical proposals.',
+      'For instance, a referendum proposed in this track needs to amass 20% support (much less than the root) by the end of the first day with over 93.5% approval to be considered to be part of the confirm period.',
+      'Note how no referendum on the Whitelisted track can ever pass with less than 5% support.',
+    ],
   },
   {
     key: 'help:openGov:origin:wishForChange',
     title: 'Wish For Change Origin',
-    definition: ['TODO: Wish For Change Origin.'],
+    definition: [
+      'The Wish For Change track serves as a medium for gathering consensus through OpenGov on a proposed change to the network through an on-chain remark.',
+      'This track was added to ensure the Root track, which is typically utilized for handling one referendum at a time due to the sensitive nature of Root calls, is not employed to convey network desires to various bodies within the network.',
+      'These remark statements could be voted on simultaneously because they lack stateful logic impacting the network. They should not delay voting on proposals requiring Root or be obligated to its queue.',
+      'The approval/support criteria resemble Root, and passing items on this track serves as a signal for a change without conferring privileges.',
+    ],
   },
   {
     key: 'help:openGov:origin:stakingAdmin',
     title: 'Staking Admin Origin',
-    definition: ['TODO: Staking Admin Origin.'],
+    definition: [
+      'The origin for canceling slashes. This origin has the privilege to execute calls from the staking pallet and the Election Provider Multiphase Pallet.',
+    ],
   },
   {
     key: 'help:openGov:origin:treasurer',
     title: 'Treasurer Origin',
-    definition: ['TODO: Treasurer Origin.'],
+    definition: [
+      'The origin for spending funds from the treasury (up to 10M DOT). This origin has the privilege to execute calls from the Treasury pallet.',
+    ],
   },
   {
     key: 'help:openGov:origin:leaseAdmin',
     title: 'Lease Admin Origin',
-    definition: ['TODO: Lease Admin Origin.'],
+    definition: [
+      'Origin can force slot leases. This origin has the privilege to execute calls from the Slots pallet.',
+    ],
   },
   {
     key: 'help:openGov:origin:fellowshipAdmin',
     title: 'Fellowship Admin Origin',
-    definition: ['TODO: Fellowship Admin Origin.'],
+    definition: ['The origin for managing the composition of the fellowship.'],
   },
   {
     key: 'help:openGov:origin:generalAdmin',
     title: 'General Admin Origin',
-    definition: ['TODO: General Admin Origin.'],
+    definition: [
+      'The origin managing the registrar and permissioned HRMP channel operations.',
+    ],
   },
   {
     key: 'help:openGov:origin:auctionAdmin',
     title: 'Auction Admin Origin',
-    definition: ['TODO: Auction Admin Origin.'],
+    definition: [
+      'The origin for starting auctions. This origin can execute calls from the Auctions pallet and the Scheduler Pallet.',
+    ],
   },
   {
     key: 'help:openGov:origin:referendumCanceller',
     title: 'Referendum Canceller Origin',
-    definition: ['TODO: Referendum Canceller Origin.'],
+    definition: [
+      'The origin can cancel referenda.',
+      'This track has a low lead time and approval/support curves with slightly sharper reductions in their thresholds for passing.',
+    ],
   },
   {
     key: 'help:openGov:origin:referendumKiller',
     title: 'Referendum Killer Origin',
-    definition: ['TODO: Referendum Killer Origin.'],
+    definition: [
+      'The origin can cancel an ongoing referendum and slash the deposits.',
+      'This track also has a low lead-time and approval/support curves with slightly sharper reductions in their thresholds for passing.',
+    ],
   },
   {
     key: 'help:openGov:origin:smallTipper',
     title: 'Small Tipper Origin',
-    definition: ['TODO: Small Tipper Origin.'],
+    definition: [
+      'Origin able to spend up to 250 DOT from the treasury at once.',
+    ],
   },
   {
     key: 'help:openGov:origin:bigTipper',
     title: 'Big Tipper Origin',
-    definition: ['TODO: Big Tipper Origin.'],
+    definition: [
+      'Origin able to spend up to 1,000 DOT from the treasury at once.',
+    ],
   },
   {
     key: 'help:openGov:origin:smallSpender',
     title: 'Small Spender Origin',
-    definition: ['TODO: Small Spender Origin.'],
+    definition: [
+      'Origin able to spend up to 10,000 DOT from the treasury at once.',
+    ],
   },
   {
     key: 'help:openGov:origin:mediumSpender',
     title: 'Medium Spender Origin',
-    definition: ['TODO: Medium Spender Origin.'],
+    definition: [
+      'Origin able to spend up to 100,000 DOT from the treasury at once.',
+    ],
   },
   {
     key: 'help:openGov:origin:bigSpender',
     title: 'Big Spender Origin',
-    definition: ['TODO: Big Spender Origin.'],
+    definition: [
+      'Origin able to spend up to 1,000,000 DOT from the treasury at once.',
+    ],
   },
 ];

@@ -60,7 +60,7 @@ export type HelpItemKey =
   | 'help:settings:silenceOsNotifications'
   | 'help:settings:importData'
   | 'help:settings:exportData'
-  | 'help:openGov:trackId'
+  | 'help:openGov:track'
   | 'help:openGov:origin'
   | 'help:openGov:maxDeciding'
   | 'help:openGov:preparePeriod'
