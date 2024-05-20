@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const Scrollable = styled.div`
+  --footer-height: 44px;
+
   width: 100%;
-  max-height: 100vh;
+  max-height: calc(100vh - var(--footer-height)); // minus footer height
+  padding-bottom: var(--footer-height); // pad height of footer
   overflow-y: auto;
   -ms-overflow-style: none;
 
@@ -210,7 +213,7 @@ export const TrackItem = styled(motion.div)`
 `;
 
 export const OpenGovFooter = styled.section`
-  position: sticky;
+  position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;
   width: 100%;
