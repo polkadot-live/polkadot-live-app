@@ -2,27 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DragClose } from '@/renderer/library/DragClose';
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { useHelp } from '@/renderer/contexts/common/Help';
-import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { TrackRow } from './TrackRow';
-import { OpenGovFooter, Scrollable, TrackGroup } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+import { useState } from 'react';
+import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
+import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
+import { Tracks } from './Tracks';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const OpenGov: React.FC = () => {
-  // Set up port communication for `openGov` window.
+  /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
 
-  // Context data.
-  const { tracks } = useTracks();
-  const { openHelp } = useHelp();
-  const chainId = 'Polkadot';
+  /// Active section.
+  const [section, setSection] = useState<number>(0);
 
-  const handleTestClick = () => {
+  /// Open origins and tracks information.
+  const handleOpenTracks = () => {
     // Request tracks data from main renderer.
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:tracks:get',
@@ -30,64 +28,51 @@ export const OpenGov: React.FC = () => {
         chainId: 'Polkadot',
       },
     });
+
+    setSection(1);
   };
 
-  const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
-      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-    </div>
-  );
-
   return (
-    <>
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="openGov" />
-          <h3>Explore Open Gov</h3>
-        </div>
-      </HeaderWrapper>
-      <Scrollable>
-        <ContentWrapper>
-          <p>
-            <button onClick={() => handleTestClick()}>Get Tracks</button>
-          </p>
-          <TrackGroup>
-            {tracks.map((track) => (
-              <TrackRow key={track.trackId} track={track} />
-            ))}
-          </TrackGroup>
-        </ContentWrapper>
-      </Scrollable>
-      <OpenGovFooter>
-        <div className="footer-wrapper">
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Chain ID:</h2>
-              <span>{chainId}</span>
+    <ModalSection type="carousel">
+      <ModalMotionTwoSection
+        animate={section === 0 ? 'home' : 'next'}
+        transition={{
+          duration: 0.5,
+          type: 'spring',
+          bounce: 0.1,
+        }}
+        variants={{
+          home: {
+            left: 0,
+          },
+          next: {
+            left: '-100%',
+          },
+        }}
+      >
+        {/* Section 1 */}
+        <section className="carousel-section-wrapper">
+          <HeaderWrapper>
+            <div className="content">
+              <DragClose windowName="openGov" />
+              <h3>Explore Open Gov</h3>
             </div>
-            <div className="footer-stat">
-              <h2>Total Tracks:</h2>
-              <span>{tracks.length}</span>
-            </div>
-          </section>
-          <section className="right">
-            <div className="footer-stat">
-              <h2>Help:</h2>
-            </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:trackId')} Track ID</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:origin')} Origin</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>
-                {renderHelpIcon('help:openGov:maxDeciding')} Max Deciding
-              </span>
-            </div>
-          </section>
-        </div>
-      </OpenGovFooter>
-    </>
+          </HeaderWrapper>
+          <ContentWrapper style={{ paddingTop: '1.75rem' }}>
+            <ButtonPrimaryInvert
+              text={'Origins and Tracks'}
+              iconLeft={faCaretRight}
+              style={{ padding: '0.3rem 1.25rem' }}
+              onClick={() => handleOpenTracks()}
+            />
+          </ContentWrapper>
+        </section>
+
+        {/* Section 2 */}
+        <section className="carousel-section-wrapper">
+          <Tracks setSection={setSection} />
+        </section>
+      </ModalMotionTwoSection>
+    </ModalSection>
   );
 };

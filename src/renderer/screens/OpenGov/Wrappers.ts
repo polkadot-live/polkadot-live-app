@@ -9,6 +9,7 @@ export const Scrollable = styled.div`
 
   width: 100%;
   max-height: calc(100vh - var(--footer-height)); // minus footer height
+  padding: 1.75rem 0;
   padding-bottom: var(--footer-height); // pad height of footer
   overflow-y: auto;
   -ms-overflow-style: none;

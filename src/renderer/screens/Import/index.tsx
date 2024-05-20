@@ -17,7 +17,7 @@ export const Import: React.FC = () => {
 
   const [source, setSource] = useState<AccountSource | undefined>('ledger');
 
-  // active section
+  // Active section
   const [section, setSection] = useState<number>(0);
 
   useEffect(() => {
