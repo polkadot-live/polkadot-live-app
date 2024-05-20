@@ -26,16 +26,14 @@ export const OpenGov: React.FC = () => {
 
   /// Help overlay.
   const { openHelp } = useHelp();
-  const { setFetchingTracks } = useTracks();
+  const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
 
   /// Active section.
   const [section, setSection] = useState<number>(0);
-  const [tracksChainId, setTracksChainId] = useState<ChainID | null>(null);
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
-    // TODO: Refactor as method in tracks context.
-    setTracksChainId(chainId);
+    setActiveChainId(chainId);
     setFetchingTracks(true);
 
     // Request tracks data from main renderer.
@@ -187,10 +185,7 @@ export const OpenGov: React.FC = () => {
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          <Tracks
-            setSection={setSection}
-            chainId={tracksChainId || 'Polkadot'}
-          />
+          <Tracks setSection={setSection} chainId={activeChainId} />
         </section>
       </ModalMotionTwoSection>
     </ModalSection>
