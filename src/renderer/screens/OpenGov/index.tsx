@@ -28,7 +28,6 @@ export const OpenGov: React.FC = () => {
         chainId: 'Polkadot',
       },
     });
-
     setSection(1);
   };
 
