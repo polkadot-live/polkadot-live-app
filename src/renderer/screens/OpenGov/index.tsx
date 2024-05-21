@@ -25,7 +25,11 @@ export const OpenGov: React.FC = () => {
   useOpenGovMessagePorts();
   /// Help overlay.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
-  const { activeReferendaChainId } = useReferenda();
+  const {
+    setFetchingReferenda,
+    setActiveReferendaChainId,
+    activeReferendaChainId,
+  } = useReferenda();
 
   /// Active section.
   const [section, setSection] = useState<number>(0);
@@ -52,6 +56,8 @@ export const OpenGov: React.FC = () => {
   /// Open proposals.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
+    setFetchingReferenda(true);
+    setActiveReferendaChainId(chainId);
 
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:referenda:get',

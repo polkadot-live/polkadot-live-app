@@ -442,7 +442,7 @@ export const useMainMessagePorts = () => {
               const results =
                 await api.query.referenda.referendumInfoFor.entries();
 
-              const activeReferenda = new Map<string, AnyData>();
+              const activeReferenda = new Map<string, AnyData[]>();
               for (const [storageKey, storage] of results) {
                 const referenda = storage.toHuman();
 

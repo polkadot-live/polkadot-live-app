@@ -3,9 +3,9 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
-import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
+import type { ActiveReferenda } from '@/types/openGov';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
@@ -19,7 +19,11 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   /// Referenda data received from API.
-  const [referenda, setReferenda] = useState<Map<string, AnyData[]>>(new Map());
+  const [referenda, setReferenda] = useState<Map<string, ActiveReferenda[]>>(
+    new Map()
+  );
+  /// Flag to indicate that referenda is being fetched.
+  const [fetchingReferenda, setFetchingReferenda] = useState(false);
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
@@ -28,8 +32,10 @@ export const ReferendaProvider = ({
     <ReferendaContext.Provider
       value={{
         referenda,
+        fetchingReferenda,
         activeReferendaChainId,
         setReferenda,
+        setFetchingReferenda,
         setActiveReferendaChainId,
       }}
     >

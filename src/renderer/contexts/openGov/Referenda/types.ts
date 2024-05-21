@@ -8,7 +8,9 @@ type Origin = string;
 
 export interface ReferendaContextInterface {
   referenda: Map<Origin, AnyData[]>;
+  fetchingReferenda: boolean;
   activeReferendaChainId: ChainID;
   setReferenda: (referenda: Map<Origin, AnyData[]>) => void;
   setActiveReferendaChainId: (chainId: ChainID) => void;
+  setFetchingReferenda: (flag: boolean) => void;
 }

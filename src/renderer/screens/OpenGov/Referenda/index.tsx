@@ -7,9 +7,10 @@ import type { ReferendaProps } from '../types';
 import { OpenGovFooter } from '../Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
-  console.log(`List referenda for ${chainId}`);
+  const { fetchingReferenda } = useReferenda();
 
   return (
     <>
@@ -20,7 +21,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         </div>
       </HeaderWrapper>
       <ContentWrapper>
-        <p>List referenda.</p>
+        {fetchingReferenda ? (
+          <p>Loading referenda...</p>
+        ) : (
+          <p>Referenda loaded.</p>
+        )}
       </ContentWrapper>
       <OpenGovFooter $chainId={chainId}>
         <div>
