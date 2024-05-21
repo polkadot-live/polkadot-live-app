@@ -25,6 +25,8 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';
+import type { AnyData } from '@/types/misc';
+import { isObject } from '@polkadot/util';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -435,7 +437,33 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'openGov:referenda:get': {
-              console.log('TODO: Get active referenda');
+              const { chainId } = ev.data.data;
+              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+              const results =
+                await api.query.referenda.referendumInfoFor.entries();
+
+              const activeReferenda = new Map<string, AnyData>();
+              for (const [storageKey, storage] of results) {
+                const referenda = storage.toHuman();
+
+                if (isObject(referenda) && 'Ongoing' in referenda) {
+                  const obj = (referenda as AnyData).Ongoing.origin;
+                  const origin =
+                    'system' in obj ? String(obj.system) : String(obj.Origins);
+
+                  const updated: AnyData[] = activeReferenda.get(origin) || [];
+                  updated.push([storageKey.toHuman(), referenda]);
+                  activeReferenda.set(origin, updated);
+                }
+              }
+
+              const obj = Object.fromEntries(activeReferenda);
+              const json = JSON.stringify(obj);
+
+              ConfigRenderer.portToOpenGov.postMessage({
+                task: 'openGov:referenda:receive',
+                data: { json },
+              });
               break;
             }
             default: {

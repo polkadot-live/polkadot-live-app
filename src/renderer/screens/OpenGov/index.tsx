@@ -50,7 +50,7 @@ export const OpenGov: React.FC = () => {
   };
 
   /// Open proposals.
-  const handleOpenProposals = (chainId: ChainID) => {
+  const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
 
     ConfigOpenGov.portOpenGov.postMessage({
@@ -109,7 +109,7 @@ export const OpenGov: React.FC = () => {
           break;
         }
         case 'open-proposals': {
-          handleOpenProposals(chainId);
+          handleOpenReferenda(chainId);
           break;
         }
         default: {

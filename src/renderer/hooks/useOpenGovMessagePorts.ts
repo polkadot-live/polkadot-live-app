@@ -5,6 +5,7 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
 import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
+import type { AnyData } from '@/types/misc';
 
 export const useOpenGovMessagePorts = () => {
   const { setTracks, setFetchingTracks } = useTracks();
@@ -26,6 +27,12 @@ export const useOpenGovMessagePorts = () => {
             case 'openGov:tracks:receive': {
               setTracks(getTracks(ev.data.data.result));
               setFetchingTracks(false);
+              break;
+            }
+            case 'openGov:referenda:receive': {
+              const { json } = ev.data.data;
+              const map: Map<string, AnyData[]> = JSON.parse(json);
+              console.log(map);
               break;
             }
             default: {
