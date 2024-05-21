@@ -434,6 +434,10 @@ export const useMainMessagePorts = () => {
               });
               break;
             }
+            case 'openGov:referenda:get': {
+              console.log('TODO: Get active referenda');
+              break;
+            }
             default: {
               throw new Error(`Port task not recognized (${ev.data.task})`);
             }

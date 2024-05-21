@@ -39,7 +39,21 @@ export const OpenGov: React.FC = () => {
         chainId,
       },
     });
+
     setSection(1);
+  };
+
+  /// Open proposals.
+  const handleOpenProposals = (chainId: ChainID) => {
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: {
+        chainId,
+      },
+    });
+
+    // TODO
+    //setSection(1);
   };
 
   /// Temporary function to render a chain icon.
@@ -87,9 +101,12 @@ export const OpenGov: React.FC = () => {
           handleOpenTracks(chainId);
           break;
         }
-        default: {
-          console.log('TODO');
+        case 'open-proposals': {
+          handleOpenProposals(chainId);
           break;
+        }
+        default: {
+          throw new Error('Task unknown.');
         }
       }
     };
