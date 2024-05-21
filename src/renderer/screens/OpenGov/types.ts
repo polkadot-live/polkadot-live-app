@@ -12,3 +12,8 @@ export interface TracksProps {
 export interface TrackRowProps {
   track: Track;
 }
+
+export interface ReferendaProps {
+  setSection: (section: number) => void;
+  chainId: ChainID;
+}
