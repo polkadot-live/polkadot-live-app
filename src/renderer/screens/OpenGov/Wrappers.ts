@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import type { ChainID } from '@/types/chains';
 
 export const Scrollable = styled.div`
   --footer-height: 44px;
@@ -48,6 +49,7 @@ export const TrackGroup = styled.div`
   }
 `;
 
+// export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
 export const TrackItem = styled(motion.div)`
   position: relative;
   padding: 1rem 1.25rem;
@@ -100,6 +102,7 @@ export const TrackItem = styled(motion.div)`
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
       font-size: 0.8rem;
+      background-color: rgb(17 17 17);
     }
   }
 
@@ -181,10 +184,15 @@ export const TrackItem = styled(motion.div)`
   }
 
   /* Expand button */
+  .polkadot-bg {
+    background-color: #953254;
+  }
+  .kusama-bg {
+    background-color: rgb(73 55 112);
+  }
   .expand-btn-wrapper {
     display: flex;
     align-items: center;
-    background-color: #953254;
     border-radius: 0.5rem;
     opacity: 0.5;
     transition: opacity 0.1s ease-out;
@@ -194,7 +202,6 @@ export const TrackItem = styled(motion.div)`
     h4 {
       font-size: 0.9rem;
     }
-
     &:hover {
       opacity: 0.75;
     }
@@ -213,13 +220,13 @@ export const TrackItem = styled(motion.div)`
   }
 `;
 
-export const OpenGovFooter = styled.section`
+export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
   position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;
   width: 100%;
   border-top: 1px solid var(--border-primary-color);
-  background-color: var(--background-default);
+  background-color: var(--background-primary);
 
   > div:first-of-type {
     display: flex;
@@ -279,7 +286,8 @@ export const OpenGovFooter = styled.section`
       opacity: 0.5;
     }
     span {
-      color: #8571b1;
+      color: ${(props) =>
+        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
       font-weight: 400;
       font-size: 0.95rem;
     }

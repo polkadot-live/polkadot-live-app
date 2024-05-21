@@ -9,26 +9,120 @@ import { useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretRight } from '@fortawesome/pro-solid-svg-icons';
+import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
+import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ActionItem } from '@/renderer/library/ActionItem';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { chainIcon } from '@/config/chains';
+import type { ChainID } from '@/types/chains';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
+  /// Help overlay.
+  const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
 
   /// Active section.
   const [section, setSection] = useState<number>(0);
 
   /// Open origins and tracks information.
-  const handleOpenTracks = () => {
+  const handleOpenTracks = (chainId: ChainID) => {
+    setActiveChainId(chainId);
+    setFetchingTracks(true);
+
     // Request tracks data from main renderer.
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:tracks:get',
       data: {
-        chainId: 'Polkadot',
+        chainId,
       },
     });
     setSection(1);
+  };
+
+  /// Temporary function to render a chain icon.
+  const renderChainIcon = (chainId: ChainID) => {
+    const ChainIcon = chainIcon(chainId);
+    switch (chainId) {
+      case 'Kusama': {
+        return <ChainIcon className="chain-icon" style={{ opacity: '0.75' }} />;
+      }
+      case 'Polkadot': {
+        return (
+          <ChainIcon
+            className="chain-icon"
+            style={{ width: '2.5rem', height: '2.5rem', opacity: '0.75' }}
+          />
+        );
+      }
+    }
+  };
+
+  /// Temporary function to render a grid card.
+  const renderGridCard = (chainId: ChainID, title: string, handler: string) => {
+    // Style for navigation button.
+    const buttonStyle =
+      chainId === 'Polkadot'
+        ? {
+            color: 'rgb(169 74 117)',
+            borderColor: 'rgb(169 74 117)',
+          }
+        : {
+            color: '#8571b1',
+            borderColor: '#8571b1',
+          };
+
+    // Style for icon container.
+    const iconContainerStyle = {
+      width: '3rem',
+      height: '3rem',
+      minHeight: '3rem',
+    };
+
+    const handleClick = () => {
+      switch (handler) {
+        case 'open-tracks': {
+          handleOpenTracks(chainId);
+          break;
+        }
+        default: {
+          console.log('TODO');
+          break;
+        }
+      }
+    };
+
+    return (
+      <ModalConnectItem>
+        <ModalHardwareItem>
+          <div
+            className="body"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              rowGap: '1.5rem',
+              padding: '1.75rem',
+            }}
+          >
+            <div className="row">
+              <div style={{ ...iconContainerStyle }}>
+                {renderChainIcon(chainId)}
+              </div>
+            </div>
+            <div className="row">
+              <ButtonMonoInvert
+                iconLeft={faCaretRight}
+                text={title}
+                onClick={() => handleClick()}
+                style={{ ...buttonStyle }}
+              />
+            </div>
+          </div>
+        </ModalHardwareItem>
+      </ModalConnectItem>
+    );
   };
 
   return (
@@ -54,22 +148,30 @@ export const OpenGov: React.FC = () => {
           <HeaderWrapper>
             <div className="content">
               <DragClose windowName="openGov" />
-              <h3>Explore Open Gov</h3>
+              <h3>OpenGov</h3>
             </div>
           </HeaderWrapper>
-          <ContentWrapper style={{ paddingTop: '1.75rem' }}>
-            <ButtonPrimaryInvert
-              text={'Origins and Tracks'}
-              iconLeft={faCaretRight}
-              style={{ padding: '0.3rem 1.25rem' }}
-              onClick={() => handleOpenTracks()}
-            />
+
+          <ContentWrapper style={{ paddingTop: '1rem' }}>
+            {/* Origins and Tracks */}
+            <ActionItem text={'Explore Origins and Tracks'} />
+            <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
+              {renderGridCard('Polkadot', 'On Polkadot', 'open-tracks')}
+              {renderGridCard('Kusama', 'On Kusama', 'open-tracks')}
+            </div>
+
+            {/* Proposals */}
+            <ActionItem text={'Explore Proposals'} />
+            <div className="grid-wrapper">
+              {renderGridCard('Polkadot', 'On Polkadot', 'open-proposals')}
+              {renderGridCard('Kusama', 'On Kusama', 'open-proposals')}
+            </div>
           </ContentWrapper>
         </section>
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          <Tracks setSection={setSection} />
+          <Tracks setSection={setSection} chainId={activeChainId} />
         </section>
       </ModalMotionTwoSection>
     </ModalSection>

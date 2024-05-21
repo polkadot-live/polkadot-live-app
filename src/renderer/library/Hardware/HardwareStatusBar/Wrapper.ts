@@ -18,7 +18,7 @@ export const Wrapper = styled(motion.div)`
     border-radius: 1rem;
     display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 0;
 
     > section {
       display: flex;

@@ -13,11 +13,10 @@ import { TrackRow } from './TrackRow';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from './types';
 
-export const Tracks = ({ setSection }: TracksProps) => {
+export const Tracks = ({ setSection, chainId }: TracksProps) => {
   /// Context data.
-  const { tracks } = useTracks();
+  const { tracks, fetchingTracks } = useTracks();
   const { openHelp } = useHelp();
-  const chainId = 'Polkadot';
 
   /// Utility to render help icon.
   const renderHelpIcon = (key: HelpItemKey) => (
@@ -31,26 +30,24 @@ export const Tracks = ({ setSection }: TracksProps) => {
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="openGov" />
-          <h3>Origins and Tracks</h3>
+          <h3>{chainId} Origins and Tracks</h3>
         </div>
       </HeaderWrapper>
       <Scrollable>
         <ContentWrapper>
-          <TrackGroup>
-            {tracks.length ? (
-              <>
-                {tracks.map((track) => (
-                  <TrackRow key={track.trackId} track={track} />
-                ))}
-              </>
-            ) : (
-              <p>Loading tracks...</p>
-            )}
-          </TrackGroup>
+          {fetchingTracks ? (
+            <p>Fetching tracks...</p>
+          ) : (
+            <TrackGroup>
+              {tracks.map((track) => (
+                <TrackRow key={track.trackId} track={track} />
+              ))}
+            </TrackGroup>
+          )}
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter>
-        <div className="footer-wrapper">
+      <OpenGovFooter $chainId={chainId}>
+        <div>
           <section className="left">
             <div className="footer-stat">
               <h2>Chain ID:</h2>
@@ -66,10 +63,10 @@ export const Tracks = ({ setSection }: TracksProps) => {
               <h2>Help:</h2>
             </div>
             <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:trackId')} Track ID</span>
+              <span>{renderHelpIcon('help:openGov:origin')} Origin</span>
             </div>
             <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:origin')} Origin</span>
+              <span>{renderHelpIcon('help:openGov:track')} Track</span>
             </div>
             <div className="stat-wrapper">
               <span>
@@ -79,7 +76,17 @@ export const Tracks = ({ setSection }: TracksProps) => {
             <ButtonPrimaryInvert
               text={'Back'}
               iconLeft={faCaretLeft}
-              style={{ padding: '0.3rem 1.25rem' }}
+              style={{
+                padding: '0.3rem 1.25rem',
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
               onClick={() => setSection(0)}
             />
           </section>

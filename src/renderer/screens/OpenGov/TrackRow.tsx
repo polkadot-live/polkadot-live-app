@@ -12,15 +12,15 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@/model/Track';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import type { ChainID } from '@/types/chains';
+import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TrackRowProps } from './types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);
-  const chainId: ChainID = 'Polkadot';
 
   const { openHelp } = useHelp();
+  const { activeChainId: chainId } = useTracks();
 
   const expandVariants = {
     open: { height: 'auto' },
@@ -54,7 +54,7 @@ export const TrackRow = ({ track }: TrackRowProps) => {
             <h4 className="mw-45">{track.maxDeciding}</h4>
           </div>
           <div
-            className="expand-btn-wrapper"
+            className={`expand-btn-wrapper ${chainId === 'Polkadot' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
           >
             <h4>Periods</h4>
