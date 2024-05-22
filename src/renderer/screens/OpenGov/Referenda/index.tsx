@@ -61,7 +61,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               <p>Loading referenda...</p>
             ) : (
               <ReferendaGroup>
-                {getSortedActiveReferenda().map((referendum, i) => (
+                {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
                   <ReferendumRow key={i} referendum={referendum} />
                 ))}
               </ReferendaGroup>

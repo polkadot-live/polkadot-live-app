@@ -28,8 +28,10 @@ export const ReferendaProvider = ({
     useState<ChainID>('Polkadot');
 
   /// Get all referenda sorted by most-recent id.
-  const getSortedActiveReferenda = () =>
-    referenda.sort((a, b) => b.referendaId - a.referendaId);
+  const getSortedActiveReferenda = (desc: boolean) =>
+    referenda.sort((a, b) =>
+      desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
+    );
 
   return (
     <ReferendaContext.Provider

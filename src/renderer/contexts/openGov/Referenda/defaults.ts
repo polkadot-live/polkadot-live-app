@@ -11,5 +11,5 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   setReferenda: (r) => {},
   setFetchingReferenda: (f) => {},
   setActiveReferendaChainId: (c) => {},
-  getSortedActiveReferenda: () => [],
+  getSortedActiveReferenda: (d) => [],
 };
