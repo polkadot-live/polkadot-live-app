@@ -3,6 +3,26 @@
 
 import type { ActiveReferendaInfo } from '@/types/openGov';
 
+/// Get referedum origins in the desired order.
+export const getOrderedOrigins = () => [
+  'Root',
+  'WhitelistedCaller',
+  'WishForChange',
+  'StakingAdmin',
+  'Treasurer',
+  'LeaseAdmin',
+  'FellowshipAdmin',
+  'GeneralAdmin',
+  'AuctionAdmin',
+  'ReferendumCanceller',
+  'ReferendumKiller',
+  'SmallTipper',
+  'BigTipper',
+  'SmallSpender',
+  'MediumSpender',
+  'BigSpender',
+];
+
 /// Get referendum origin as string.
 export const renderOrigin = (referendum: ActiveReferendaInfo) => {
   const originData = referendum.Ongoing.origin;
@@ -12,6 +32,10 @@ export const renderOrigin = (referendum: ActiveReferendaInfo) => {
       ? String(originData.system)
       : String(originData.Origins);
 
+  return getSpacedOrigin(origin);
+};
+
+export const getSpacedOrigin = (origin: string) => {
   switch (origin) {
     case 'Root':
       return 'Root';

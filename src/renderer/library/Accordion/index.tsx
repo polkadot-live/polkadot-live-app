@@ -59,6 +59,12 @@ export function Accordion({
     });
   }
 
+  /// When the outer state of indices changes update inner state.
+  /// NOTE: EXPERIMENTAL
+  useEffect(() => {
+    setActiveIndex(defaultIndex);
+  }, [defaultIndex]);
+
   return Children.map(children, (child, index) => {
     const isActive =
       multiple && Array.isArray(activeIndex)
