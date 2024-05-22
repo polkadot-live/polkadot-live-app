@@ -32,6 +32,10 @@ export const renderOrigin = (referendum: ActiveReferendaInfo) => {
       ? String(originData.system)
       : String(originData.Origins);
 
+  return getSpacedOrigin(origin);
+};
+
+export const getSpacedOrigin = (origin: string) => {
   switch (origin) {
     case 'Root':
       return 'Root';
