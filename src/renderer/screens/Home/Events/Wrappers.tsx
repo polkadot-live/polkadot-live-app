@@ -18,6 +18,7 @@ export const SortControlsWrapper = styled.div`
     align-items: center;
     column-gap: 1rem;
 
+    // Button is disabled.
     .icon-wrapper {
       opacity: 0.75;
       display: flex;
@@ -61,6 +62,10 @@ export const SortControlsWrapper = styled.div`
         &:hover {
           background-color: #3a3a3a;
         }
+      }
+
+      &.disable {
+        border-color: red;
       }
     }
   }

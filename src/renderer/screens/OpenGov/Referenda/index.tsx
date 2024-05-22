@@ -26,18 +26,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
+import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
+    referenda,
     fetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
-    referenda,
   } = useReferenda();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(false);
+  const [expandAll, setExpandAll] = useState(false);
 
   /// Accordion state.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -62,9 +64,8 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         (_, index) => index
       )
     );
+    setExpandAll(true);
   }, [referenda]);
-
-  console.log(accordionActiveIndices);
 
   /// Render categorized referenda.
   const renderCategorised = () => (
@@ -124,6 +125,29 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     </ReferendaGroup>
   );
 
+  /// Handle expanding or collapsing all accordion panels.
+  const handleExpandAll = () => {
+    if (!groupingOn) {
+      return;
+    }
+
+    if (expandAll) {
+      setExpandAll(false);
+      setAccordionActiveIndices([]);
+    } else {
+      setExpandAll(true);
+      setAccordionActiveIndices(
+        Array.from(
+          {
+            length: Array.from(getCategorisedReferenda(newestFirst).keys())
+              .length,
+          },
+          (_, index) => index
+        )
+      );
+    }
+  };
+
   return (
     <>
       <HeaderWrapper>
@@ -153,6 +177,16 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
                 <FontAwesomeIcon icon={faLayerGroup} />
               </div>
               <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
+            </div>
+            <div
+              className={expandAll ? 'icon-wrapper active' : 'icon-wrapper'}
+              style={{ opacity: groupingOn ? 'inherit' : '0.25' }}
+              onClick={() => handleExpandAll()}
+            >
+              <div className="icon">
+                <FontAwesomeIcon icon={expandAll ? faCaretDown : faCaretUp} />
+              </div>
+              <span>{expandAll ? 'All Expanded' : 'All Collapsed'}</span>
             </div>
           </ControlsWrapper>
           {/* List referenda */}
