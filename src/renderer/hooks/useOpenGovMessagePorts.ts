@@ -5,7 +5,7 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
 import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import type { ActiveReferenda } from '@/types/openGov';
+import type { ActiveReferendaInfo } from '@/types/openGov';
 import { useReferenda } from '../contexts/openGov/Referenda';
 
 export const useOpenGovMessagePorts = () => {
@@ -33,11 +33,10 @@ export const useOpenGovMessagePorts = () => {
             }
             case 'openGov:referenda:receive': {
               const { json } = ev.data.data;
-              const map: Map<string, ActiveReferenda[]> = JSON.parse(json);
-              setReferenda(map);
-              setFetchingReferenda(false);
+              const parsed: ActiveReferendaInfo[] = JSON.parse(json);
 
-              console.log(map);
+              setReferenda(parsed);
+              setFetchingReferenda(false);
               break;
             }
             default: {

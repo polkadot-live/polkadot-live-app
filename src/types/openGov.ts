@@ -2,14 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /**
- * Type of referenda received from API.
- */
-export type ActiveReferenda = [[string], [ActiveReferendaInfo]];
-
-/**
  * Information received from API for active (ongoing) referenda.
  */
 export interface ActiveReferendaInfo {
+  referendaId: number;
   Ongoing: {
     alarm: [string, [string, string]];
     deciding: {
@@ -19,7 +15,7 @@ export interface ActiveReferendaInfo {
     decisionDeposit: {
       amount: string;
       who: string;
-    };
+    } | null;
     enactment: {
       After: string;
     };

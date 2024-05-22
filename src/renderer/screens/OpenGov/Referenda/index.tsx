@@ -10,7 +10,7 @@ import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
-  const { fetchingReferenda } = useReferenda();
+  const { fetchingReferenda, getSortedActiveReferenda } = useReferenda();
 
   return (
     <>
@@ -24,7 +24,19 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         {fetchingReferenda ? (
           <p>Loading referenda...</p>
         ) : (
-          <p>Referenda loaded.</p>
+          <>
+            {getSortedActiveReferenda().map((referenda, i) => (
+              <span
+                key={i}
+                style={{
+                  width: '40px',
+                  display: 'inline-block',
+                }}
+              >
+                <span>{referenda.referendaId}</span>
+              </span>
+            ))}
+          </>
         )}
       </ContentWrapper>
       <OpenGovFooter $chainId={chainId}>
