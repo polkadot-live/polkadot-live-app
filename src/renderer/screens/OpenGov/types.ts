@@ -3,6 +3,7 @@
 
 import type { Track } from '@/model/Track';
 import type { ChainID } from '@/types/chains';
+import type { ActiveReferendaInfo } from '@/types/openGov';
 
 export interface TracksProps {
   setSection: (section: number) => void;
@@ -16,4 +17,8 @@ export interface TrackRowProps {
 export interface ReferendaProps {
   setSection: (section: number) => void;
   chainId: ChainID;
+}
+
+export interface ReferendumRowProps {
+  referendum: ActiveReferendaInfo;
 }

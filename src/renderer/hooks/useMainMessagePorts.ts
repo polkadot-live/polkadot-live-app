@@ -451,13 +451,6 @@ export const useMainMessagePorts = () => {
                 const info: AnyData = storage.toHuman();
 
                 if (isObject(info) && 'Ongoing' in info) {
-                  // Get origin string.
-                  //const originData = info.Ongoing.origin;
-                  //const origin =
-                  //  'system' in originData
-                  //    ? String(originData.system)
-                  //    : String(originData.Origins);
-
                   // Instantiate and push next referenda to state.
                   const next: ActiveReferendaInfo = {
                     referendaId: parseInt(

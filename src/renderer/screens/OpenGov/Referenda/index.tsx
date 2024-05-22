@@ -4,10 +4,12 @@
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import type { ReferendaProps } from '../types';
-import { OpenGovFooter } from '../Wrappers';
+import { OpenGovFooter, Scrollable } from '../Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { ReferendumRow } from './ReferendumRow';
+import { ReferendaGroup } from './Wrappers';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const { fetchingReferenda, getSortedActiveReferenda } = useReferenda();
@@ -20,25 +22,19 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           <h3>{chainId} Referenda</h3>
         </div>
       </HeaderWrapper>
-      <ContentWrapper>
-        {fetchingReferenda ? (
-          <p>Loading referenda...</p>
-        ) : (
-          <>
-            {getSortedActiveReferenda().map((referenda, i) => (
-              <span
-                key={i}
-                style={{
-                  width: '40px',
-                  display: 'inline-block',
-                }}
-              >
-                <span>{referenda.referendaId}</span>
-              </span>
-            ))}
-          </>
-        )}
-      </ContentWrapper>
+      <Scrollable>
+        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+          {fetchingReferenda ? (
+            <p>Loading referenda...</p>
+          ) : (
+            <ReferendaGroup>
+              {getSortedActiveReferenda().map((referendum, i) => (
+                <ReferendumRow key={i} referendum={referendum} />
+              ))}
+            </ReferendaGroup>
+          )}
+        </ContentWrapper>
+      </Scrollable>
       <OpenGovFooter $chainId={chainId}>
         <div>
           <section className="left"></section>

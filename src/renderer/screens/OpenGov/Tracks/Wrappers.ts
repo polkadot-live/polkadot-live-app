@@ -51,7 +51,27 @@ export const TrackItem = styled(motion.div)`
     background-color: #121212;
   }
 
-  /* Top section */
+  /* Content */
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+    }
+    .right {
+      justify-content: start;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+    }
+  }
+
+  /* Stats */
   .stat-wrapper {
     display: flex;
     column-gap: 1rem;
@@ -86,25 +106,6 @@ export const TrackItem = styled(motion.div)`
       border-radius: 0.5rem;
       font-size: 0.8rem;
       background-color: rgb(17 17 17);
-    }
-  }
-
-  .content-wrapper {
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-    }
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
     }
   }
 
