@@ -63,10 +63,6 @@ export const SortControlsWrapper = styled.div`
           background-color: #3a3a3a;
         }
       }
-
-      &.disable {
-        border-color: red;
-      }
     }
   }
 `;

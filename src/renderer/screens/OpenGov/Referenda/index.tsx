@@ -125,6 +125,23 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     </ReferendaGroup>
   );
 
+  /// Utility for creating an array of `n` length.
+  const createArrayWithLength = (n: number): number[] =>
+    [...Array(n + 1)].map((_, i) => i);
+
+  /// Render placeholder loaders
+  const renderPlaceholders = (length: number) => {
+    const arr = createArrayWithLength(length);
+
+    return (
+      <div className="placeholder-content-wrapper">
+        {arr.map((_, i) => (
+          <div key={i} className="placeholder-content"></div>
+        ))}
+      </div>
+    );
+  };
+
   /// Handle expanding or collapsing all accordion panels.
   const handleExpandAll = () => {
     if (!groupingOn) {
@@ -192,7 +209,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           {/* List referenda */}
           <section>
             {fetchingReferenda ? (
-              <p>Loading referenda...</p>
+              <div>{renderPlaceholders(4)}</div>
             ) : (
               <>
                 <div>{renderCategorised()}</div>
