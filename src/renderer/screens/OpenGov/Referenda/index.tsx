@@ -23,7 +23,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
 import { ControlsWrapper, ReferendaGroup } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
 
@@ -32,6 +32,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     fetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    referenda,
   } = useReferenda();
 
   /// Sorting controls state.
@@ -49,6 +50,19 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
       (_, index) => index
     )
   );
+
+  /// Open all accordion items when new referenda is loaded.
+  useEffect(() => {
+    setAccordionActiveIndices(
+      Array.from(
+        {
+          length: Array.from(getCategorisedReferenda(newestFirst).keys())
+            .length,
+        },
+        (_, index) => index
+      )
+    );
+  }, [referenda]);
 
   console.log(accordionActiveIndices);
 
