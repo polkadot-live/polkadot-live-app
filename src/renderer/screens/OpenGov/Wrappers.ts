@@ -51,7 +51,7 @@ export const Scrollable = styled.div`
       border-radius: 1.25rem;
 
       // Animation
-      animation-duration: 3s;
+      animation-duration: 5s;
       animation-fill-mode: forwards;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
@@ -59,11 +59,11 @@ export const Scrollable = styled.div`
       background: #101010; // Fallback
       background: linear-gradient(
         to right,
-        #101010 2%,
-        #202020 18%,
-        #101010 33%
+        #101010 20%,
+        #202020 36%,
+        #101010 51%
       );
-      background-size: 1200px; // Animation Area
+      background-size: 200%; // Animation Area
     }
   }
 `;
