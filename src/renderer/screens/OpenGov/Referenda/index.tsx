@@ -17,16 +17,21 @@ import {
   faCaretLeft,
   faCaretRight,
   faLayerGroup,
+  faLineHeight,
   faTimer,
 } from '@fortawesome/pro-solid-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
-import { ControlsWrapper, ReferendaGroup } from './Wrappers';
+import { ReferendaGroup } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
-import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import {
+  ControlsWrapper,
+  SortControlButton,
+  renderPlaceholders,
+} from '@/renderer/utils/common';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
@@ -41,17 +46,15 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
 
+  /// Calculate number of accordion panels needed.
+  const indicesLength = Array.from(
+    getCategorisedReferenda(newestFirst).keys()
+  ).length;
+
   /// Accordion state.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
-  >(
-    Array.from(
-      {
-        length: Array.from(getCategorisedReferenda(newestFirst).keys()).length,
-      },
-      (_, index) => index
-    )
-  );
+  >(Array.from({ length: indicesLength }, (_, index) => index));
 
   /// Open all accordion items when new referenda is loaded.
   useEffect(() => {
@@ -66,6 +69,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     );
     setExpandAll(true);
   }, [referenda]);
+
+  /// Utility for making expand button dynamic.
+  const isExpandActive = () =>
+    accordionActiveIndices.length ===
+    Array.from(getCategorisedReferenda(newestFirst)).length;
 
   /// Render categorized referenda.
   const renderCategorised = () => (
@@ -125,23 +133,6 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     </ReferendaGroup>
   );
 
-  /// Utility for creating an array of `n` length.
-  const createArrayWithLength = (n: number): number[] =>
-    [...Array(n + 1)].map((_, i) => i);
-
-  /// Render placeholder loaders
-  const renderPlaceholders = (length: number) => {
-    const arr = createArrayWithLength(length);
-
-    return (
-      <div className="placeholder-content-wrapper">
-        {arr.map((_, i) => (
-          <div key={i} className="placeholder-content"></div>
-        ))}
-      </div>
-    );
-  };
-
   /// Handle expanding or collapsing all accordion panels.
   const handleExpandAll = () => {
     if (!groupingOn) {
@@ -149,10 +140,9 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     }
 
     if (expandAll) {
-      setExpandAll(false);
       setAccordionActiveIndices([]);
+      setExpandAll(false);
     } else {
-      setExpandAll(true);
       setAccordionActiveIndices(
         Array.from(
           {
@@ -162,6 +152,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           (_, index) => index
         )
       );
+      setExpandAll(true);
     }
   };
 
@@ -177,43 +168,39 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
           <ControlsWrapper>
-            <div
-              className={newestFirst ? 'icon-wrapper active' : 'icon-wrapper'}
+            <SortControlButton
+              isActive={newestFirst}
+              isDisabled={fetchingReferenda}
+              faIcon={faTimer}
               onClick={() => setNewestFirst(!newestFirst)}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={faTimer} />
-              </div>
-              <span>{newestFirst ? 'Newest First' : 'Oldest First'}</span>
-            </div>
-            <div
-              className={groupingOn ? 'icon-wrapper active' : 'icon-wrapper'}
+              onLabel="Newest First"
+              offLabel="Oldest First"
+            />
+            <SortControlButton
+              isActive={groupingOn}
+              isDisabled={fetchingReferenda}
+              faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={faLayerGroup} />
-              </div>
-              <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
-            </div>
-            <div
-              className={expandAll ? 'icon-wrapper active' : 'icon-wrapper'}
-              style={{ opacity: groupingOn ? 'inherit' : '0.25' }}
+              onLabel="Grouping On"
+              offLabel="Grouping Off"
+            />
+            <SortControlButton
+              isActive={isExpandActive()}
+              isDisabled={fetchingReferenda || !groupingOn}
+              faIcon={faLineHeight}
               onClick={() => handleExpandAll()}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={expandAll ? faCaretDown : faCaretUp} />
-              </div>
-              <span>{expandAll ? 'All Expanded' : 'All Collapsed'}</span>
-            </div>
+              onLabel="All Expanded"
+              offLabel="Collapsed"
+            />
           </ControlsWrapper>
           {/* List referenda */}
           <section>
             {fetchingReferenda ? (
-              <div>{renderPlaceholders(4)}</div>
+              <>{renderPlaceholders(4)}</>
             ) : (
               <>
-                <div>{renderCategorised()}</div>
-                <div>{renderListed()}</div>
+                {renderCategorised()}
+                {renderListed()}
               </>
             )}
           </section>
