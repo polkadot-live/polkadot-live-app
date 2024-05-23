@@ -17,6 +17,7 @@ import {
   faCaretLeft,
   faCaretRight,
   faLayerGroup,
+  faLineHeight,
   faTimer,
 } from '@fortawesome/pro-solid-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
@@ -26,7 +27,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
-import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import {
   ControlsWrapper,
   SortControlButton,
@@ -46,17 +46,15 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
 
+  /// Calculate number of accordion panels needed.
+  const indicesLength = Array.from(
+    getCategorisedReferenda(newestFirst).keys()
+  ).length;
+
   /// Accordion state.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
-  >(
-    Array.from(
-      {
-        length: Array.from(getCategorisedReferenda(newestFirst).keys()).length,
-      },
-      (_, index) => index
-    )
-  );
+  >(Array.from({ length: indicesLength }, (_, index) => index));
 
   /// Open all accordion items when new referenda is loaded.
   useEffect(() => {
@@ -71,6 +69,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     );
     setExpandAll(true);
   }, [referenda]);
+
+  /// Utility for making expand button dynamic.
+  const isExpandActive = () =>
+    accordionActiveIndices.length ===
+    Array.from(getCategorisedReferenda(newestFirst)).length;
 
   /// Render categorized referenda.
   const renderCategorised = () => (
@@ -137,10 +140,9 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     }
 
     if (expandAll) {
-      setExpandAll(false);
       setAccordionActiveIndices([]);
+      setExpandAll(false);
     } else {
-      setExpandAll(true);
       setAccordionActiveIndices(
         Array.from(
           {
@@ -150,6 +152,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           (_, index) => index
         )
       );
+      setExpandAll(true);
     }
   };
 
@@ -182,12 +185,12 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               offLabel="Grouping Off"
             />
             <SortControlButton
-              isActive={expandAll}
+              isActive={isExpandActive()}
               isDisabled={fetchingReferenda || !groupingOn}
-              faIcon={expandAll ? faCaretDown : faCaretUp}
+              faIcon={faLineHeight}
               onClick={() => handleExpandAll()}
               onLabel="All Expanded"
-              offLabel="All Collapsed"
+              offLabel="Collapsed"
             />
           </ControlsWrapper>
           {/* List referenda */}

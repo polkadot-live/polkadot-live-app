@@ -3,7 +3,6 @@
 
 import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
@@ -96,23 +95,18 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   onLabel,
   offLabel,
 }: SortControlsButtonProps) => {
-  const [active, setActive] = useState(isActive);
-
   /// Utility to calculate button classes.
   const getButtonClass = () => {
     const classes = ['icon-wrapper'];
-    active && classes.push('active');
+    isActive && classes.push('active');
     isDisabled && classes.push('disable');
     return classes.join(' ');
   };
 
   /// Click handler that executes if the button is not disabled.
   const handleClick = () => {
-    if (!isDisabled) {
-      if (onClick) {
-        onClick();
-      }
-      setActive(!active);
+    if (onClick) {
+      onClick();
     }
   };
 
@@ -121,7 +115,7 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
       <div className="icon">
         <FontAwesomeIcon icon={faIcon} />
       </div>
-      <span>{active ? onLabel : offLabel}</span>
+      <span>{isActive ? onLabel : offLabel}</span>
     </div>
   );
 };
