@@ -193,11 +193,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           {/* List referenda */}
           <section>
             {fetchingReferenda ? (
-              <div>{renderPlaceholders(4)}</div>
+              <>{renderPlaceholders(4)}</>
             ) : (
               <>
-                <div>{renderCategorised()}</div>
-                <div>{renderListed()}</div>
+                {renderCategorised()}
+                {renderListed()}
               </>
             )}
           </section>
