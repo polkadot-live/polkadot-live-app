@@ -4,7 +4,10 @@
 /// Required imports.
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
+import BigNumber from 'bignumber.js';
+import { chainUnits } from '@/config/chains';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { encodeAddress } from '@polkadot/util-crypto';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -12,6 +15,8 @@ import {
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
+import { isObject, u8aConcat } from '@polkadot/util';
+import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 /// Main window contexts.
@@ -27,7 +32,6 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
-import { isObject, u8aConcat } from '@polkadot/util';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -373,12 +377,12 @@ export const useMainMessagePorts = () => {
    * @summary Use API to get treasury data for OpenGov window.
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
-    // Get raw treasury public key.
     const { chainId } = ev.data.data;
     const { api } = await getApiInstanceOrThrow(chainId, 'Error');
 
+    // Get raw treasury public key.
     const EMPTY_U8A_32 = new Uint8Array(32);
-    const pk = u8aConcat(
+    const publicKey = u8aConcat(
       'modl',
       api.consts.treasury.palletId
         ? api.consts.treasury.palletId.toU8a(true)
@@ -386,9 +390,19 @@ export const useMainMessagePorts = () => {
       EMPTY_U8A_32
     ).subarray(0, 32);
 
+    // Get free balance.
+    // TODO: Dynamic SS58 prefix.
+    const encoded = encodeAddress(publicKey, 0);
+    const result: AnyData = (await api.query.system.account(encoded)).toHuman();
+    const { free } = result.data;
+    const freeBalance: string = planckToUnit(
+      new BigNumber(rmCommas(String(free))),
+      chainUnits(chainId)
+    ).toString();
+
     ConfigRenderer.portToOpenGov.postMessage({
       task: 'openGov:treasury:set',
-      data: { pk },
+      data: { publicKey, freeBalance },
     });
   };
 

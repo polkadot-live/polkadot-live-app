@@ -4,8 +4,10 @@
 import * as defaults from './default';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useState } from 'react';
-import type { TreasuryContextInterface } from './types';
 import { encodeAddress } from '@polkadot/util-crypto';
+import BigNumber from 'bignumber.js';
+import type { AnyData } from '@/types/misc';
+import type { TreasuryContextInterface } from './types';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -22,6 +24,11 @@ export const TreasuryProvider = ({
   const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
   const [fetchingTreasuryPk, setFetchingTreasuryPk] = useState(false);
 
+  // Treasury free balance.
+  const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
+    new BigNumber(0)
+  );
+
   /// Initialize context when OpenGov window loads.
   const initTreasury = () => {
     setFetchingTreasuryPk(true);
@@ -36,8 +43,10 @@ export const TreasuryProvider = ({
   };
 
   /// Setter for treasury public key.
-  const setTreasuryPk = (pk: Uint8Array) => {
-    setTreasuryU8Pk(pk);
+  const setTreasuryData = (data: AnyData) => {
+    const { publicKey, freeBalance } = data;
+    setTreasuryU8Pk(publicKey);
+    setTreasuryFreeBalance(new BigNumber(freeBalance));
     setFetchingTreasuryPk(false);
   };
 
@@ -47,6 +56,17 @@ export const TreasuryProvider = ({
     return treasuryU8Pk ? encodeAddress(treasuryU8Pk, prefix) : null;
   };
 
+  /// Get readable free balance to render.
+  const getFormattedFreeBalance = (): string => {
+    const formatted = treasuryFreeBalance
+      .dividedBy(1_000_000)
+      .decimalPlaces(1)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `${formatted}M ${'DOT'}`;
+  };
+
   return (
     <TreasuryContext.Provider
       value={{
@@ -54,8 +74,9 @@ export const TreasuryProvider = ({
         treasuryU8Pk,
         fetchingTreasuryPk,
         setFetchingTreasuryPk,
-        setTreasuryPk,
+        setTreasuryData,
         getTreasuryEncodedAddress,
+        getFormattedFreeBalance,
       }}
     >
       {children}

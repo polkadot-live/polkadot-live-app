@@ -12,7 +12,7 @@ import { useTreasury } from '../contexts/openGov/Treasury';
 export const useOpenGovMessagePorts = () => {
   const { setTracks, setFetchingTracks } = useTracks();
   const { setReferenda, setFetchingReferenda } = useReferenda();
-  const { setTreasuryPk } = useTreasury();
+  const { setTreasuryData } = useTreasury();
 
   /**
    * @name handleReceivedPort
@@ -42,8 +42,7 @@ export const useOpenGovMessagePorts = () => {
               break;
             }
             case 'openGov:treasury:set': {
-              const { pk } = ev.data.data;
-              setTreasuryPk(pk);
+              setTreasuryData(ev.data.data);
               break;
             }
             default: {

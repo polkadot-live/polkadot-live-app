@@ -26,7 +26,7 @@ export const OpenGov: React.FC = () => {
   useOpenGovMessagePorts();
 
   /// Treasury context.
-  const { initTreasury } = useTreasury();
+  const { initTreasury, getFormattedFreeBalance } = useTreasury();
 
   /// Help overlay.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
@@ -201,6 +201,10 @@ export const OpenGov: React.FC = () => {
               <h3>OpenGov</h3>
             </div>
           </HeaderWrapper>
+
+          <section>
+            <span>Free Balance: {getFormattedFreeBalance()}</span>
+          </section>
 
           <ContentWrapper style={{ paddingTop: '1rem' }}>
             {/* Origins and Tracks */}

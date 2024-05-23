@@ -9,6 +9,7 @@ export const defaultTreasuryContext: TreasuryContextInterface = {
   treasuryU8Pk: null,
   fetchingTreasuryPk: false,
   setFetchingTreasuryPk: (fetching) => {},
-  setTreasuryPk: (pk) => {},
+  setTreasuryData: (d) => {},
   getTreasuryEncodedAddress: () => null,
+  getFormattedFreeBalance: () => '',
 };
