@@ -20,6 +20,7 @@ import type { ChainID } from '@/types/chains';
 import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
+import { TreasuryStats } from './Wrappers';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -100,7 +101,7 @@ export const OpenGov: React.FC = () => {
         return (
           <ChainIcon
             className="chain-icon"
-            style={{ width: '2.5rem', height: '2.5rem', opacity: '0.75' }}
+            style={{ width: '1.5rem', height: '1.5rem', opacity: '0.75' }}
           />
         );
       }
@@ -123,9 +124,9 @@ export const OpenGov: React.FC = () => {
 
     // Style for icon container.
     const iconContainerStyle = {
-      width: '3rem',
-      height: '3rem',
-      minHeight: '3rem',
+      width: '1.5rem',
+      height: '1.5rem',
+      minHeight: '1.5rem',
     };
 
     const handleClick = () => {
@@ -146,28 +147,33 @@ export const OpenGov: React.FC = () => {
 
     return (
       <ModalConnectItem>
-        <ModalHardwareItem>
+        <ModalHardwareItem style={{ backgroundColor: '#141414' }}>
           <div
             className="body"
             style={{
               display: 'flex',
               flexDirection: 'column',
-              rowGap: '1.5rem',
-              padding: '1.75rem',
+              padding: '1rem',
             }}
           >
             <div className="row">
-              <div style={{ ...iconContainerStyle }}>
-                {renderChainIcon(chainId)}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '1.5rem',
+                }}
+              >
+                <div style={{ ...iconContainerStyle }}>
+                  {renderChainIcon(chainId)}
+                </div>
+                <ButtonMonoInvert
+                  iconLeft={faCaretRight}
+                  text={title}
+                  onClick={() => handleClick()}
+                  style={{ ...buttonStyle }}
+                />
               </div>
-            </div>
-            <div className="row">
-              <ButtonMonoInvert
-                iconLeft={faCaretRight}
-                text={title}
-                onClick={() => handleClick()}
-                style={{ ...buttonStyle }}
-              />
             </div>
           </div>
         </ModalHardwareItem>
@@ -202,9 +208,22 @@ export const OpenGov: React.FC = () => {
             </div>
           </HeaderWrapper>
 
-          <section>
-            <span>Free Balance: {getFormattedFreeBalance()}</span>
-          </section>
+          <TreasuryStats>
+            <section className="content-wrapper">
+              <div className="stat-wrapper">
+                <span>Treasury Balance</span>
+                <h4>{getFormattedFreeBalance()}</h4>
+              </div>
+              <div className="stat-wrapper">
+                <span>Treasury Balance</span>
+                <h4>{getFormattedFreeBalance()}</h4>
+              </div>
+              <div className="stat-wrapper">
+                <span>Treasury Balance</span>
+                <h4>{getFormattedFreeBalance()}</h4>
+              </div>
+            </section>
+          </TreasuryStats>
 
           <ContentWrapper style={{ paddingTop: '1rem' }}>
             {/* Origins and Tracks */}

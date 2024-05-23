@@ -8,6 +8,7 @@ import type { ChainID } from '@/types/chains';
  * Provides the following styled components:
  *   Scrollable
  *   OpenGovFooter
+ *   TreasuryStats
  */
 
 export const Scrollable = styled.div`
@@ -140,6 +141,64 @@ export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
         props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
       font-weight: 400;
       font-size: 0.95rem;
+    }
+  }
+`;
+
+export const TreasuryStats = styled.div`
+  width: 100%;
+  position: relative;
+  padding: 1.75rem 1.5rem 1rem;
+
+  .content-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+    justify-content: space-around;
+
+    // Stats.
+    .stat-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-items: center;
+      row-gap: 0.5rem;
+      background-color: rgb(17 17 17);
+      border: 1px solid var(--border-primary-color); //#2c2c2c;
+      border-radius: 0.5rem;
+      padding: 1rem 2.5rem;
+      transition: background-color 0.2s ease-out;
+
+      &:hover {
+        background-color: var(--background-primary);
+      }
+
+      .icon-wrapper {
+        font-size: 0.8rem;
+        padding-right: 0.8rem;
+        padding-left: 0.4rem;
+        cursor: pointer;
+        opacity: 0.4;
+        &:hover {
+          color: #953254;
+          opacity: 1;
+        }
+      }
+
+      // Stat label.
+      span {
+        justify-content: center;
+        display: flex;
+        align-items: baseline;
+        font-size: 1.05rem;
+        color: var(--accent-color-primary);
+      }
+      // Stat text.
+      h4 {
+        justify-content: center;
+        display: flex;
+        flex: 1;
+        font-size: 1.1rem;
+      }
     }
   }
 `;
