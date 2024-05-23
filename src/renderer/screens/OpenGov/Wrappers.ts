@@ -11,10 +11,12 @@ import type { ChainID } from '@/types/chains';
  */
 
 export const Scrollable = styled.div`
-  --footer-height: 44px;
+  --footer-height: 42.06px;
+  --header-height: 38.6px;
 
+  // height = window height - (header height + footer height)
+  height: calc(100vh - var(--footer-height) - var(--header-height));
   width: 100%;
-  height: calc(92vh - var(--footer-height)); // minus footer height
   padding: 1.5rem 0 1rem;
   overflow-y: auto;
   -ms-overflow-style: none;
