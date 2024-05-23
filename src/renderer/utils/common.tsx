@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { styled } from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
+import type { AnyFunction } from '@w3ux/utils/types';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 /**
  * @name createArrayWithLength
@@ -24,6 +28,10 @@ export const renderPlaceholders = (length: number) => (
   </LoadingPlaceholderWrapper>
 );
 
+/**
+ * @name LoadingPlaceholderWrapper
+ * @summary Wrapper styles for the placeholder loader.
+ */
 const LoadingPlaceholderWrapper = styled.div`
   width: 100%;
 
@@ -63,6 +71,117 @@ const LoadingPlaceholderWrapper = styled.div`
     }
     100% {
       background-position: -100% 0;
+    }
+  }
+`;
+
+/**
+ * @name SortControlButton
+ * @summary Component that renders a sorting control button.
+ */
+interface SortControlsButtonProps {
+  isActive: boolean;
+  isDisabled: boolean;
+  faIcon: IconDefinition;
+  onLabel: string;
+  offLabel: string;
+  onClick?: AnyFunction;
+}
+
+export const SortControlButton: React.FC<SortControlsButtonProps> = ({
+  isActive,
+  isDisabled,
+  onClick,
+  faIcon,
+  onLabel,
+  offLabel,
+}: SortControlsButtonProps) => {
+  const [active, setActive] = useState(isActive);
+
+  /// Utility to calculate button classes.
+  const getButtonClass = () => {
+    const classes = ['icon-wrapper'];
+    active && classes.push('active');
+    isDisabled && classes.push('disable');
+    return classes.join(' ');
+  };
+
+  /// Click handler that executes if the button is not disabled.
+  const handleClick = () => {
+    if (!isDisabled) {
+      if (onClick) {
+        onClick();
+      }
+      setActive(!active);
+    }
+  };
+
+  return (
+    <div className={getButtonClass()} onClick={() => handleClick()}>
+      <div className="icon">
+        <FontAwesomeIcon icon={faIcon} />
+      </div>
+      <span>{active ? onLabel : offLabel}</span>
+    </div>
+  );
+};
+
+/**
+ * @name ControlsWrapper
+ * @summary Wrapper styles for sorting control components.
+ */
+
+export const ControlsWrapper = styled.div`
+  display: flex;
+  column-gap: 1rem;
+  margin-bottom: 1rem;
+
+  .icon-wrapper {
+    opacity: 0.75;
+    display: flex;
+    column-gap: 0.75rem;
+    align-items: center;
+    min-width: 120px;
+
+    position: relative;
+    border: 1px solid #535353;
+    border-radius: 1.25rem;
+
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+    transition: border 0.1s ease-out;
+    user-select: none;
+    cursor: pointer;
+    transition: opacity 0.1s ease-out;
+
+    span {
+      display: inline-block;
+      padding-right: 0.7rem;
+      color: #666666;
+      font-size: 0.9rem;
+    }
+    .icon {
+      color: #5f5f5f;
+      margin-left: 0.7rem;
+    }
+    &:hover {
+      opacity: 0.9;
+    }
+    // Button is active.
+    &.active {
+      border-color: #454545;
+      background-color: #3a3a3a;
+      transition: opacity 0.1s ease-out;
+      .icon,
+      span {
+        color: #ededed;
+      }
+      &:hover {
+        background-color: #3a3a3a;
+      }
+    }
+    &.disable {
+      opacity: 0.25;
     }
   }
 `;

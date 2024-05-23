@@ -21,13 +21,17 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
-import { ControlsWrapper, ReferendaGroup } from './Wrappers';
+import { ReferendaGroup } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import { renderPlaceholders } from '@/renderer/utils/common';
+import {
+  ControlsWrapper,
+  SortControlButton,
+  renderPlaceholders,
+} from '@/renderer/utils/common';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
@@ -161,34 +165,30 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
           <ControlsWrapper>
-            <div
-              className={newestFirst ? 'icon-wrapper active' : 'icon-wrapper'}
+            <SortControlButton
+              isActive={newestFirst}
+              isDisabled={fetchingReferenda}
+              faIcon={faTimer}
               onClick={() => setNewestFirst(!newestFirst)}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={faTimer} />
-              </div>
-              <span>{newestFirst ? 'Newest First' : 'Oldest First'}</span>
-            </div>
-            <div
-              className={groupingOn ? 'icon-wrapper active' : 'icon-wrapper'}
+              onLabel="Newest First"
+              offLabel="Oldest First"
+            />
+            <SortControlButton
+              isActive={groupingOn}
+              isDisabled={fetchingReferenda}
+              faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={faLayerGroup} />
-              </div>
-              <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
-            </div>
-            <div
-              className={expandAll ? 'icon-wrapper active' : 'icon-wrapper'}
-              style={{ opacity: groupingOn ? 'inherit' : '0.25' }}
+              onLabel="Grouping On"
+              offLabel="Grouping Off"
+            />
+            <SortControlButton
+              isActive={expandAll}
+              isDisabled={fetchingReferenda || !groupingOn}
+              faIcon={expandAll ? faCaretDown : faCaretUp}
               onClick={() => handleExpandAll()}
-            >
-              <div className="icon">
-                <FontAwesomeIcon icon={expandAll ? faCaretDown : faCaretUp} />
-              </div>
-              <span>{expandAll ? 'All Expanded' : 'All Collapsed'}</span>
-            </div>
+              onLabel="All Expanded"
+              offLabel="All Collapsed"
+            />
           </ControlsWrapper>
           {/* List referenda */}
           <section>
