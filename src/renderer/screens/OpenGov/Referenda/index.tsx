@@ -130,17 +130,13 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     [...Array(n + 1)].map((_, i) => i);
 
   /// Render placeholder loaders
-  const renderPlaceholders = (length: number) => {
-    const arr = createArrayWithLength(length);
-
-    return (
-      <div className="placeholder-content-wrapper">
-        {arr.map((_, i) => (
-          <div key={i} className="placeholder-content"></div>
-        ))}
-      </div>
-    );
-  };
+  const renderPlaceholders = (length: number) => (
+    <div className="placeholder-content-wrapper">
+      {createArrayWithLength(length).map((_, i) => (
+        <div key={i} className="placeholder-content"></div>
+      ))}
+    </div>
+  );
 
   /// Handle expanding or collapsing all accordion panels.
   const handleExpandAll = () => {
