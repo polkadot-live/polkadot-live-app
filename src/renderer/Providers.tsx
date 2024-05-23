@@ -27,6 +27,7 @@ import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 
 // OpenGov window contexts.
 import { TracksProvider } from './contexts/openGov/Tracks';
+import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
 
 // Other imports.
@@ -83,6 +84,7 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         TooltipProvider,
         TracksProvider,
+        TreasuryProvider,
         ReferendaProvider
       )(Theme);
     }
