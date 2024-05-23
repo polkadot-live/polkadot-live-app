@@ -5,9 +5,12 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
 import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import { useReferenda } from '../contexts/openGov/Referenda';
 
 export const useOpenGovMessagePorts = () => {
   const { setTracks, setFetchingTracks } = useTracks();
+  const { setReferenda, setFetchingReferenda } = useReferenda();
 
   /**
    * @name handleReceivedPort
@@ -26,6 +29,14 @@ export const useOpenGovMessagePorts = () => {
             case 'openGov:tracks:receive': {
               setTracks(getTracks(ev.data.data.result));
               setFetchingTracks(false);
+              break;
+            }
+            case 'openGov:referenda:receive': {
+              const { json } = ev.data.data;
+              const parsed: ActiveReferendaInfo[] = JSON.parse(json);
+
+              setReferenda(parsed);
+              setFetchingReferenda(false);
               break;
             }
             default: {

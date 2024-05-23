@@ -17,18 +17,28 @@ import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { chainIcon } from '@/config/chains';
 import type { ChainID } from '@/types/chains';
+import { Referenda } from './Referenda';
+import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
   /// Help overlay.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
+  const {
+    setFetchingReferenda,
+    setActiveReferendaChainId,
+    activeReferendaChainId,
+  } = useReferenda();
 
   /// Active section.
   const [section, setSection] = useState<number>(0);
+  /// Section 2 page.
+  const [sectionContent, setSectionContent] = useState('');
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
+    setSectionContent('tracks');
     setActiveChainId(chainId);
     setFetchingTracks(true);
 
@@ -39,6 +49,23 @@ export const OpenGov: React.FC = () => {
         chainId,
       },
     });
+
+    setSection(1);
+  };
+
+  /// Open proposals.
+  const handleOpenReferenda = (chainId: ChainID) => {
+    setSectionContent('referenda');
+    setFetchingReferenda(true);
+    setActiveReferendaChainId(chainId);
+
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: {
+        chainId,
+      },
+    });
+
     setSection(1);
   };
 
@@ -87,9 +114,12 @@ export const OpenGov: React.FC = () => {
           handleOpenTracks(chainId);
           break;
         }
-        default: {
-          console.log('TODO');
+        case 'open-proposals': {
+          handleOpenReferenda(chainId);
           break;
+        }
+        default: {
+          throw new Error('Task unknown.');
         }
       }
     };
@@ -154,14 +184,14 @@ export const OpenGov: React.FC = () => {
 
           <ContentWrapper style={{ paddingTop: '1rem' }}>
             {/* Origins and Tracks */}
-            <ActionItem text={'Explore Origins and Tracks'} />
+            <ActionItem text={'Origins and Tracks'} />
             <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
               {renderGridCard('Polkadot', 'On Polkadot', 'open-tracks')}
               {renderGridCard('Kusama', 'On Kusama', 'open-tracks')}
             </div>
 
             {/* Proposals */}
-            <ActionItem text={'Explore Proposals'} />
+            <ActionItem text={'Referenda'} />
             <div className="grid-wrapper">
               {renderGridCard('Polkadot', 'On Polkadot', 'open-proposals')}
               {renderGridCard('Kusama', 'On Kusama', 'open-proposals')}
@@ -171,7 +201,15 @@ export const OpenGov: React.FC = () => {
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          <Tracks setSection={setSection} chainId={activeChainId} />
+          {sectionContent === 'tracks' && (
+            <Tracks setSection={setSection} chainId={activeChainId} />
+          )}
+          {sectionContent === 'referenda' && (
+            <Referenda
+              setSection={setSection}
+              chainId={activeReferendaChainId}
+            />
+          )}
         </section>
       </ModalMotionTwoSection>
     </ModalSection>

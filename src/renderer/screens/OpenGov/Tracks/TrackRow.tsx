@@ -14,7 +14,7 @@ import { formatBlocksToTime } from '@/model/Track';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { TrackRowProps } from './types';
+import type { TrackRowProps } from '../types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);

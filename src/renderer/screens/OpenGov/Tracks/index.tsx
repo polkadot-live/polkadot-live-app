@@ -7,11 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretLeft, faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import { OpenGovFooter, Scrollable, TrackGroup } from './Wrappers';
+import { OpenGovFooter, Scrollable } from '../Wrappers';
+import { TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
+import { renderPlaceholders } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { TracksProps } from './types';
+import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection, chainId }: TracksProps) => {
   /// Context data.
@@ -36,7 +38,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       <Scrollable>
         <ContentWrapper>
           {fetchingTracks ? (
-            <p>Fetching tracks...</p>
+            <>{renderPlaceholders(4)}</>
           ) : (
             <TrackGroup>
               {tracks.map((track) => (

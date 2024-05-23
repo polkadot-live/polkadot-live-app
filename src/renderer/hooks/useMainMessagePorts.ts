@@ -25,6 +25,9 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { AnyData } from '@/types/misc';
+import { isObject } from '@polkadot/util';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -431,6 +434,43 @@ export const useMainMessagePorts = () => {
               ConfigRenderer.portToOpenGov.postMessage({
                 task: 'openGov:tracks:receive',
                 data: { result },
+              });
+              break;
+            }
+            case 'openGov:referenda:get': {
+              // Make API call to fetch referenda entries.
+              const { chainId } = ev.data.data;
+              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+              const results =
+                await api.query.referenda.referendumInfoFor.entries();
+
+              // Populate referenda map.
+              const activeReferenda: ActiveReferendaInfo[] = [];
+
+              for (const [storageKey, storage] of results) {
+                const info: AnyData = storage.toHuman();
+
+                if (isObject(info) && 'Ongoing' in info) {
+                  // Instantiate and push next referenda to state.
+                  const next: ActiveReferendaInfo = {
+                    referendaId: parseInt(
+                      (storageKey.toHuman() as string[])[0]
+                    ),
+                    Ongoing: {
+                      ...info.Ongoing,
+                    },
+                  };
+
+                  activeReferenda.push(next);
+                }
+              }
+
+              // Serialize data before sending to open gov window.
+              const json = JSON.stringify(activeReferenda);
+
+              ConfigRenderer.portToOpenGov.postMessage({
+                task: 'openGov:referenda:receive',
+                data: { json },
               });
               break;
             }
