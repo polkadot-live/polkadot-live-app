@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export interface TreasuryContextInterface {
+  initTreasury: () => void;
   treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryPk: boolean;
-  setTreasuryU8Pk: (pk: Uint8Array | null) => void;
   setFetchingTreasuryPk: (fetching: boolean) => void;
+  setTreasuryPk: (pk: Uint8Array) => void;
+  getTreasuryEncodedAddress: () => string | null;
 }

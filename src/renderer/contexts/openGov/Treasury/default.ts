@@ -5,8 +5,10 @@
 import type { TreasuryContextInterface } from './types';
 
 export const defaultTreasuryContext: TreasuryContextInterface = {
+  initTreasury: () => {},
   treasuryU8Pk: null,
   fetchingTreasuryPk: false,
-  setTreasuryU8Pk: (pk) => {},
   setFetchingTreasuryPk: (fetching) => {},
+  setTreasuryPk: (pk) => {},
+  getTreasuryEncodedAddress: () => null,
 };

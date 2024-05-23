@@ -5,7 +5,7 @@ import { DragClose } from '@/renderer/library/DragClose';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
@@ -19,10 +19,15 @@ import { chainIcon } from '@/config/chains';
 import type { ChainID } from '@/types/chains';
 import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
+
+  /// Treasury context.
+  const { initTreasury } = useTreasury();
+
   /// Help overlay.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
   const {
@@ -31,10 +36,25 @@ export const OpenGov: React.FC = () => {
     activeReferendaChainId,
   } = useReferenda();
 
-  /// Active section.
+  /// Section state.
   const [section, setSection] = useState<number>(0);
-  /// Section 2 page.
   const [sectionContent, setSectionContent] = useState('');
+
+  /// Initialize treasury data when window opens.
+  useEffect(() => {
+    // Wait until the port has been initialized before attempting
+    // to send the initialization message to the main renderer.
+    if (!ConfigOpenGov.portExists()) {
+      const intervalId = setInterval(() => {
+        if (ConfigOpenGov.portExists()) {
+          clearInterval(intervalId);
+          initTreasury();
+        }
+      }, 1_000);
+    } else {
+      initTreasury();
+    }
+  }, []);
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {

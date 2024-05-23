@@ -27,7 +27,7 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
-import { isObject } from '@polkadot/util';
+import { isObject, u8aConcat } from '@polkadot/util';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -316,6 +316,83 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleGetTracks
+   * @summary Use API to get a network's OpenGov tracks.
+   */
+  const handleGetTracks = async (ev: MessageEvent) => {
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const result = api.consts.referenda.tracks.toHuman();
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:tracks:receive',
+      data: { result },
+    });
+  };
+
+  /**
+   * @name handleGetReferenda
+   * @summary Use API to get a network's OpenGov referenda.
+   */
+  const handleGetReferenda = async (ev: MessageEvent) => {
+    // Make API call to fetch referenda entries.
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const results = await api.query.referenda.referendumInfoFor.entries();
+
+    // Populate referenda map.
+    const activeReferenda: ActiveReferendaInfo[] = [];
+
+    for (const [storageKey, storage] of results) {
+      const info: AnyData = storage.toHuman();
+
+      if (isObject(info) && 'Ongoing' in info) {
+        // Instantiate and push next referenda to state.
+        const next: ActiveReferendaInfo = {
+          referendaId: parseInt((storageKey.toHuman() as string[])[0]),
+          Ongoing: {
+            ...info.Ongoing,
+          },
+        };
+
+        activeReferenda.push(next);
+      }
+    }
+
+    // Serialize data before sending to open gov window.
+    const json = JSON.stringify(activeReferenda);
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:referenda:receive',
+      data: { json },
+    });
+  };
+
+  /**
+   * @name handleInitTreasury
+   * @summary Use API to get treasury data for OpenGov window.
+   */
+  const handleInitTreasury = async (ev: MessageEvent) => {
+    // Get raw treasury public key.
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+
+    const EMPTY_U8A_32 = new Uint8Array(32);
+    const pk = u8aConcat(
+      'modl',
+      api.consts.treasury.palletId
+        ? api.consts.treasury.palletId.toU8a(true)
+        : 'py/trsry',
+      EMPTY_U8A_32
+    ).subarray(0, 32);
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:treasury:set',
+      data: { pk },
+    });
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -427,51 +504,15 @@ export const useMainMessagePorts = () => {
           // Message received from `openGov`.
           switch (ev.data.task) {
             case 'openGov:tracks:get': {
-              const { chainId } = ev.data.data;
-              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-              const result = api.consts.referenda.tracks.toHuman();
-
-              ConfigRenderer.portToOpenGov.postMessage({
-                task: 'openGov:tracks:receive',
-                data: { result },
-              });
+              await handleGetTracks(ev);
               break;
             }
             case 'openGov:referenda:get': {
-              // Make API call to fetch referenda entries.
-              const { chainId } = ev.data.data;
-              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-              const results =
-                await api.query.referenda.referendumInfoFor.entries();
-
-              // Populate referenda map.
-              const activeReferenda: ActiveReferendaInfo[] = [];
-
-              for (const [storageKey, storage] of results) {
-                const info: AnyData = storage.toHuman();
-
-                if (isObject(info) && 'Ongoing' in info) {
-                  // Instantiate and push next referenda to state.
-                  const next: ActiveReferendaInfo = {
-                    referendaId: parseInt(
-                      (storageKey.toHuman() as string[])[0]
-                    ),
-                    Ongoing: {
-                      ...info.Ongoing,
-                    },
-                  };
-
-                  activeReferenda.push(next);
-                }
-              }
-
-              // Serialize data before sending to open gov window.
-              const json = JSON.stringify(activeReferenda);
-
-              ConfigRenderer.portToOpenGov.postMessage({
-                task: 'openGov:referenda:receive',
-                data: { json },
-              });
+              await handleGetReferenda(ev);
+              break;
+            }
+            case 'openGov:treasury:init': {
+              await handleInitTreasury(ev);
               break;
             }
             default: {

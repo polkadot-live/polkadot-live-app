@@ -7,10 +7,12 @@ import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import { useReferenda } from '../contexts/openGov/Referenda';
+import { useTreasury } from '../contexts/openGov/Treasury';
 
 export const useOpenGovMessagePorts = () => {
   const { setTracks, setFetchingTracks } = useTracks();
   const { setReferenda, setFetchingReferenda } = useReferenda();
+  const { setTreasuryPk } = useTreasury();
 
   /**
    * @name handleReceivedPort
@@ -37,6 +39,11 @@ export const useOpenGovMessagePorts = () => {
 
               setReferenda(parsed);
               setFetchingReferenda(false);
+              break;
+            }
+            case 'openGov:treasury:set': {
+              const { pk } = ev.data.data;
+              setTreasuryPk(pk);
               break;
             }
             default: {
