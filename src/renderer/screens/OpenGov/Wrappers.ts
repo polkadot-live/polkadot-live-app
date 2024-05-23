@@ -28,44 +28,6 @@ export const Scrollable = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: #212121;
   }
-
-  // Placeholder loader.
-  @keyframes placeholderAnimate {
-    0% {
-      background-position: -650px 0;
-    }
-    100% {
-      background-position: 650px 0;
-    }
-  }
-
-  .placeholder-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 2rem;
-    margin-top: 2rem;
-
-    .placeholder-content {
-      height: 3rem;
-      background: #000;
-      border-radius: 1.25rem;
-
-      // Animation
-      animation-duration: 5s;
-      animation-fill-mode: forwards;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-      animation-name: placeholderAnimate;
-      background: #101010; // Fallback
-      background: linear-gradient(
-        to right,
-        #101010 20%,
-        #202020 36%,
-        #101010 51%
-      );
-      background-size: 200%; // Animation Area
-    }
-  }
 `;
 
 export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
