@@ -27,6 +27,7 @@ import { useEffect, useState } from 'react';
 import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { renderPlaceholders } from '@/renderer/utils/common';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
@@ -123,19 +124,6 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         <ReferendumRow key={i} referendum={referendum} />
       ))}
     </ReferendaGroup>
-  );
-
-  /// Utility for creating an array of `n` length.
-  const createArrayWithLength = (n: number): number[] =>
-    [...Array(n + 1)].map((_, i) => i);
-
-  /// Render placeholder loaders
-  const renderPlaceholders = (length: number) => (
-    <div className="placeholder-content-wrapper">
-      {createArrayWithLength(length).map((_, i) => (
-        <div key={i} className="placeholder-content"></div>
-      ))}
-    </div>
   );
 
   /// Handle expanding or collapsing all accordion panels.
