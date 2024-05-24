@@ -431,9 +431,26 @@ export const useMainMessagePorts = () => {
       chainUnits(chainId)
     ).toString();
 
+    // Spend period + elapsed spend period.
+    const lastHeader = await api.rpc.chain.getHeader();
+    const blockHeight = lastHeader.number.toNumber();
+
+    const spendPeriodAsStr = String(api.consts.treasury.spendPeriod.toHuman());
+    const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
+    const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
+      .mod(spendPeriodBn)
+      .toString();
+
     ConfigRenderer.portToOpenGov.postMessage({
       task: 'openGov:treasury:set',
-      data: { publicKey, freeBalance, nextBurn, toBeAwardedAsStr },
+      data: {
+        publicKey,
+        freeBalance,
+        nextBurn,
+        toBeAwardedAsStr,
+        spendPeriodAsStr,
+        spendPeriodElapsedBlocksAsStr,
+      },
     });
   };
 

@@ -32,6 +32,7 @@ export const OpenGov: React.FC = () => {
     getFormattedFreeBalance,
     getFormattedNextBurn,
     getFormattedToBeAwarded,
+    getSpendPeriodProgress,
   } = useTreasury();
 
   /// Help overlay.
@@ -229,7 +230,7 @@ export const OpenGov: React.FC = () => {
               </div>
               <div className="stat-wrapper">
                 <span>Spend Period</span>
-                <h4>{getFormattedToBeAwarded()}</h4>
+                <h4>{getSpendPeriodProgress()}</h4>
               </div>
             </section>
           </TreasuryStats>

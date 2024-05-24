@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 import type { AnyData } from '@/types/misc';
 import type { TreasuryContextInterface } from './types';
 import { rmCommas } from '@w3ux/utils';
+import { formatBlocksToTime } from '@/model/Track';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -36,6 +37,12 @@ export const TreasuryProvider = ({
   /// To be awarded at the end of the spend period.
   const [toBeAwarded, setToBeAwarded] = useState(new BigNumber(0));
 
+  /// Spend period.
+  const [spendPeriod, setSpendPeriod] = useState(new BigNumber(0));
+  const [elapsedSpendPeriod, setElapsedSpendPeriod] = useState(
+    new BigNumber(0)
+  );
+
   /// Initialize context when OpenGov window loads.
   const initTreasury = () => {
     setFetchingTreasuryPk(true);
@@ -51,12 +58,24 @@ export const TreasuryProvider = ({
 
   /// Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
-    const { publicKey, freeBalance, nextBurn, toBeAwardedAsStr } = data;
+    const {
+      publicKey,
+      freeBalance,
+      nextBurn,
+      toBeAwardedAsStr,
+      spendPeriodAsStr,
+      spendPeriodElapsedBlocksAsStr,
+    } = data;
 
     setTreasuryU8Pk(publicKey);
     setTreasuryFreeBalance(new BigNumber(rmCommas(freeBalance)));
     setTreasuryNextBurn(new BigNumber(rmCommas(nextBurn)));
     setToBeAwarded(new BigNumber(rmCommas(toBeAwardedAsStr)));
+    setSpendPeriod(new BigNumber(rmCommas(spendPeriodAsStr)));
+    setElapsedSpendPeriod(
+      new BigNumber(rmCommas(spendPeriodElapsedBlocksAsStr))
+    );
+
     setFetchingTreasuryPk(false);
   };
 
@@ -99,6 +118,31 @@ export const TreasuryProvider = ({
     return `${formatted}M DOT`;
   };
 
+  /// Get readable elapsed spend period.
+  const getFormattedElapsedSpendPeriod = (): string =>
+    formatBlocksToTime('Polkadot', elapsedSpendPeriod.toString());
+
+  /// Get readable remaining spend period.
+  const getFormattedRemainingSpendPeriod = (): string =>
+    formatBlocksToTime(
+      'Polkadot',
+      spendPeriod.minus(elapsedSpendPeriod).toString()
+    );
+
+  /// Get readable spend period.
+  const getFormattedSpendPeriod = (): string =>
+    formatBlocksToTime('Polkadot', spendPeriod.toString());
+
+  /// Get spend period progress as percentage.
+  const getSpendPeriodProgress = (): string => {
+    const progress = elapsedSpendPeriod
+      .div(spendPeriod)
+      .multipliedBy(100)
+      .decimalPlaces(0);
+
+    return `${progress.isNaN() ? '0' : progress.toString()}%`;
+  };
+
   return (
     <TreasuryContext.Provider
       value={{
@@ -111,6 +155,10 @@ export const TreasuryProvider = ({
         getFormattedFreeBalance,
         getFormattedNextBurn,
         getFormattedToBeAwarded,
+        getFormattedElapsedSpendPeriod,
+        getFormattedSpendPeriod,
+        getSpendPeriodProgress,
+        getFormattedRemainingSpendPeriod,
       }}
     >
       {children}

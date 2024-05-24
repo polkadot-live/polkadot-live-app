@@ -13,4 +13,8 @@ export interface TreasuryContextInterface {
   getTreasuryEncodedAddress: () => string | null;
   getFormattedFreeBalance: () => string;
   getFormattedToBeAwarded: () => string;
+  getFormattedElapsedSpendPeriod: () => string;
+  getFormattedSpendPeriod: () => string;
+  getSpendPeriodProgress: () => string;
+  getFormattedRemainingSpendPeriod: () => string;
 }
