@@ -8,6 +8,7 @@ import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
 import type { AnyData } from '@/types/misc';
 import type { TreasuryContextInterface } from './types';
+import { rmCommas } from '@w3ux/utils';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -32,6 +33,9 @@ export const TreasuryProvider = ({
   /// Next burn amount.
   const [treasuryNextBurn, setTreasuryNextBurn] = useState(new BigNumber(0));
 
+  /// To be awarded at the end of the spend period.
+  const [toBeAwarded, setToBeAwarded] = useState(new BigNumber(0));
+
   /// Initialize context when OpenGov window loads.
   const initTreasury = () => {
     setFetchingTreasuryPk(true);
@@ -47,10 +51,12 @@ export const TreasuryProvider = ({
 
   /// Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
-    const { publicKey, freeBalance, nextBurn } = data;
+    const { publicKey, freeBalance, nextBurn, toBeAwardedAsStr } = data;
+
     setTreasuryU8Pk(publicKey);
-    setTreasuryFreeBalance(new BigNumber(freeBalance));
-    setTreasuryNextBurn(new BigNumber(nextBurn));
+    setTreasuryFreeBalance(new BigNumber(rmCommas(freeBalance)));
+    setTreasuryNextBurn(new BigNumber(rmCommas(nextBurn)));
+    setToBeAwarded(new BigNumber(rmCommas(toBeAwardedAsStr)));
     setFetchingTreasuryPk(false);
   };
 
@@ -82,6 +88,17 @@ export const TreasuryProvider = ({
     return `${formatted}K ${'DOT'}`;
   };
 
+  /// Get readable to be awarded.
+  const getFormattedToBeAwarded = (): string => {
+    const formatted = toBeAwarded
+      .dividedBy(1_000_000)
+      .decimalPlaces(2)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `${formatted}M DOT`;
+  };
+
   return (
     <TreasuryContext.Provider
       value={{
@@ -93,6 +110,7 @@ export const TreasuryProvider = ({
         getTreasuryEncodedAddress,
         getFormattedFreeBalance,
         getFormattedNextBurn,
+        getFormattedToBeAwarded,
       }}
     >
       {children}

@@ -27,8 +27,12 @@ export const OpenGov: React.FC = () => {
   useOpenGovMessagePorts();
 
   /// Treasury context.
-  const { initTreasury, getFormattedFreeBalance, getFormattedNextBurn } =
-    useTreasury();
+  const {
+    initTreasury,
+    getFormattedFreeBalance,
+    getFormattedNextBurn,
+    getFormattedToBeAwarded,
+  } = useTreasury();
 
   /// Help overlay.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
@@ -220,8 +224,12 @@ export const OpenGov: React.FC = () => {
                 <h4>{getFormattedNextBurn()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>Treasury Balance</span>
-                <h4>{getFormattedNextBurn()}</h4>
+                <span>To Be Awarded</span>
+                <h4>{getFormattedToBeAwarded()}</h4>
+              </div>
+              <div className="stat-wrapper">
+                <span>Spend Period</span>
+                <h4>{getFormattedToBeAwarded()}</h4>
               </div>
             </section>
           </TreasuryStats>

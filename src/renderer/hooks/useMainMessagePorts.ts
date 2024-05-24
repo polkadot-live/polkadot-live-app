@@ -407,9 +407,33 @@ export const useMainMessagePorts = () => {
       .multipliedBy(new BigNumber(rmCommas(String(free))));
     const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
 
+    // Get to be awarded.
+    const [approvals, proposals] = await Promise.all([
+      api.query.treasury.approvals(),
+      api.query.treasury.proposals.entries(),
+    ]);
+
+    let toBeAwarded = new BigNumber(0);
+    const toBeAwardedProposalIds = approvals.toHuman() as string[];
+
+    for (const [rawProposalId, rawProposalData] of proposals) {
+      const proposalId: string = (rawProposalId.toHuman() as [string])[0];
+      if (toBeAwardedProposalIds.includes(proposalId)) {
+        const proposal: AnyData = rawProposalData.toHuman();
+        toBeAwarded = toBeAwarded.plus(
+          new BigNumber(rmCommas(String(proposal.value)))
+        );
+      }
+    }
+
+    const toBeAwardedAsStr = planckToUnit(
+      toBeAwarded,
+      chainUnits(chainId)
+    ).toString();
+
     ConfigRenderer.portToOpenGov.postMessage({
       task: 'openGov:treasury:set',
-      data: { publicKey, freeBalance, nextBurn },
+      data: { publicKey, freeBalance, nextBurn, toBeAwardedAsStr },
     });
   };
 

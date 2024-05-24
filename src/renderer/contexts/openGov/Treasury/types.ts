@@ -12,4 +12,5 @@ export interface TreasuryContextInterface {
   setTreasuryData: (data: AnyData) => void;
   getTreasuryEncodedAddress: () => string | null;
   getFormattedFreeBalance: () => string;
+  getFormattedToBeAwarded: () => string;
 }
