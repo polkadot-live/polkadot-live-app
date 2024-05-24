@@ -400,9 +400,16 @@ export const useMainMessagePorts = () => {
       chainUnits(chainId)
     ).toString();
 
+    // Get next burn.
+    const burn = api.consts.treasury.burn;
+    const toBurn = new BigNumber(burn.toString())
+      .dividedBy(Math.pow(10, 6))
+      .multipliedBy(new BigNumber(rmCommas(String(free))));
+    const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
+
     ConfigRenderer.portToOpenGov.postMessage({
       task: 'openGov:treasury:set',
-      data: { publicKey, freeBalance },
+      data: { publicKey, freeBalance, nextBurn },
     });
   };
 

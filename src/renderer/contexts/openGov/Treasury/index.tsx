@@ -24,10 +24,13 @@ export const TreasuryProvider = ({
   const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
   const [fetchingTreasuryPk, setFetchingTreasuryPk] = useState(false);
 
-  // Treasury free balance.
+  /// Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
     new BigNumber(0)
   );
+
+  /// Next burn amount.
+  const [treasuryNextBurn, setTreasuryNextBurn] = useState(new BigNumber(0));
 
   /// Initialize context when OpenGov window loads.
   const initTreasury = () => {
@@ -44,9 +47,10 @@ export const TreasuryProvider = ({
 
   /// Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
-    const { publicKey, freeBalance } = data;
+    const { publicKey, freeBalance, nextBurn } = data;
     setTreasuryU8Pk(publicKey);
     setTreasuryFreeBalance(new BigNumber(freeBalance));
+    setTreasuryNextBurn(new BigNumber(nextBurn));
     setFetchingTreasuryPk(false);
   };
 
@@ -67,6 +71,17 @@ export const TreasuryProvider = ({
     return `${formatted}M ${'DOT'}`;
   };
 
+  /// Get readable next burn amount to render.
+  const getFormattedNextBurn = (): string => {
+    const formatted = treasuryNextBurn
+      .dividedBy(1_000)
+      .decimalPlaces(2)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `${formatted}K ${'DOT'}`;
+  };
+
   return (
     <TreasuryContext.Provider
       value={{
@@ -77,6 +92,7 @@ export const TreasuryProvider = ({
         setTreasuryData,
         getTreasuryEncodedAddress,
         getFormattedFreeBalance,
+        getFormattedNextBurn,
       }}
     >
       {children}

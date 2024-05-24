@@ -7,6 +7,7 @@ export interface TreasuryContextInterface {
   initTreasury: () => void;
   treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryPk: boolean;
+  getFormattedNextBurn: () => string;
   setFetchingTreasuryPk: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;
   getTreasuryEncodedAddress: () => string | null;
