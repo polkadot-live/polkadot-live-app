@@ -9,26 +9,19 @@ import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
-import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
-import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ActionItem } from '@/renderer/library/ActionItem';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { chainIcon } from '@/config/chains';
 import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { TreasuryStats } from './Wrappers';
+import { OpenGovCard, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import {
-  createArrayWithLength,
-  renderPlaceholders,
-} from '@/renderer/utils/common';
+import { renderPlaceholders } from '@/renderer/utils/common';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -108,97 +101,6 @@ export const OpenGov: React.FC = () => {
     setSection(1);
   };
 
-  /// Temporary function to render a chain icon.
-  const renderChainIcon = (chainId: ChainID) => {
-    const ChainIcon = chainIcon(chainId);
-    switch (chainId) {
-      case 'Kusama': {
-        return <ChainIcon className="chain-icon" style={{ opacity: '0.75' }} />;
-      }
-      case 'Polkadot': {
-        return (
-          <ChainIcon
-            className="chain-icon"
-            style={{ width: '1.5rem', height: '1.5rem', opacity: '0.75' }}
-          />
-        );
-      }
-    }
-  };
-
-  /// Temporary function to render a grid card.
-  const renderGridCard = (chainId: ChainID, title: string, handler: string) => {
-    // Style for navigation button.
-    const buttonStyle =
-      chainId === 'Polkadot'
-        ? {
-            color: 'rgb(169 74 117)',
-            borderColor: 'rgb(169 74 117)',
-          }
-        : {
-            color: '#8571b1',
-            borderColor: '#8571b1',
-          };
-
-    // Style for icon container.
-    const iconContainerStyle = {
-      width: '1.5rem',
-      height: '1.5rem',
-      minHeight: '1.5rem',
-    };
-
-    const handleClick = () => {
-      switch (handler) {
-        case 'open-tracks': {
-          handleOpenTracks(chainId);
-          break;
-        }
-        case 'open-proposals': {
-          handleOpenReferenda(chainId);
-          break;
-        }
-        default: {
-          throw new Error('Task unknown.');
-        }
-      }
-    };
-
-    return (
-      <ModalConnectItem>
-        <ModalHardwareItem style={{ backgroundColor: '#141414' }}>
-          <div
-            className="body"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '1rem',
-            }}
-          >
-            <div className="row">
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  columnGap: '1.5rem',
-                }}
-              >
-                <div style={{ ...iconContainerStyle }}>
-                  {renderChainIcon(chainId)}
-                </div>
-                <ButtonMonoInvert
-                  iconLeft={faCaretRight}
-                  text={title}
-                  onClick={() => handleClick()}
-                  style={{ ...buttonStyle }}
-                />
-              </div>
-            </div>
-          </div>
-        </ModalHardwareItem>
-      </ModalConnectItem>
-    );
-  };
-
   /// Helper to render a help info icon.
   const renderInfoIcon = (label: string, helpKey: HelpItemKey) => (
     <span>
@@ -239,9 +141,7 @@ export const OpenGov: React.FC = () => {
           <TreasuryStats>
             {fetchingTreasuryData ? (
               <div className="loading-wrapper">
-                {createArrayWithLength(3).map(() =>
-                  renderPlaceholders(0, '68.47px', '0.5rem')
-                )}
+                {renderPlaceholders(0, '68.47px', '0.5rem')}
               </div>
             ) : (
               <section className="content-wrapper">
@@ -268,19 +168,55 @@ export const OpenGov: React.FC = () => {
             )}
           </TreasuryStats>
 
-          <ContentWrapper style={{ paddingTop: '1rem' }}>
+          <ContentWrapper>
             {/* Origins and Tracks */}
             <ActionItem text={'Origins and Tracks'} />
             <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
-              {renderGridCard('Polkadot', 'On Polkadot', 'open-tracks')}
-              {renderGridCard('Kusama', 'On Kusama', 'open-tracks')}
+              <OpenGovCard onClick={() => handleOpenTracks('Polkadot')}>
+                <div className="content-wrapper">
+                  <h4 className="btn-polkadot">
+                    <span>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </span>
+                    On Polkadot
+                  </h4>
+                </div>
+              </OpenGovCard>
+              <OpenGovCard onClick={() => handleOpenTracks('Kusama')}>
+                <div className="content-wrapper">
+                  <h4 className="btn-kusama">
+                    <span>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </span>
+                    On Kusama
+                  </h4>
+                </div>
+              </OpenGovCard>
             </div>
 
             {/* Proposals */}
             <ActionItem text={'Referenda'} />
             <div className="grid-wrapper">
-              {renderGridCard('Polkadot', 'On Polkadot', 'open-proposals')}
-              {renderGridCard('Kusama', 'On Kusama', 'open-proposals')}
+              <OpenGovCard onClick={() => handleOpenReferenda('Polkadot')}>
+                <div className="content-wrapper">
+                  <h4 className="btn-polkadot">
+                    <span>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </span>
+                    On Polkadot
+                  </h4>
+                </div>
+              </OpenGovCard>
+              <OpenGovCard onClick={() => handleOpenReferenda('Kusama')}>
+                <div className="content-wrapper">
+                  <h4 className="btn-kusama">
+                    <span>
+                      <FontAwesomeIcon icon={faCaretRight} />
+                    </span>
+                    On Kusama
+                  </h4>
+                </div>
+              </OpenGovCard>
             </div>
           </ContentWrapper>
         </section>

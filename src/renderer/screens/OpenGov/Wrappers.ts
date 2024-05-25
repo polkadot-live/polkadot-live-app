@@ -7,6 +7,7 @@ import type { ChainID } from '@/types/chains';
 /**
  * Provides the following styled components:
  *   Scrollable
+ *   OpenGovCard
  *   OpenGovFooter
  *   TreasuryStats
  */
@@ -67,6 +68,49 @@ export const Scrollable = styled.div`
         #101010 33%
       );
       background-size: 1200px; // Animation Area
+    }
+  }
+`;
+
+export const OpenGovCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+
+  padding: 1rem;
+  border: 1px solid var(--border-primary-color);
+  border-radius: 0.5rem;
+
+  background-color: var(--background-primary);
+  transition: background-color 0.2s ease-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--background-modal);
+  }
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+
+    .btn-polkadot {
+      color: rgb(169 74 117);
+    }
+    .btn-kusama {
+      color: #8571b1;
+    }
+    .btn-polkadot,
+    .btn-kusama {
+      display: flex;
+      column-gap: 0.5rem;
+      font-size: 1.1rem;
+
+      > span {
+        padding-right: 0.25rem;
+      }
     }
   }
 `;
@@ -148,12 +192,12 @@ export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
 export const TreasuryStats = styled.div`
   width: 100%;
   position: relative;
-  padding: 1.75rem 1.5rem 1rem;
+  padding: 1.75rem 1.5rem;
 
   .loading-wrapper {
     display: flex;
     column-gap: 1rem;
-    justify-content: space-around;
+    justify-content: space-between;
   }
 
   .content-wrapper {
@@ -175,7 +219,7 @@ export const TreasuryStats = styled.div`
       transition: background-color 0.2s ease-out;
 
       &:hover {
-        background-color: var(--background-primary);
+        background-color: var(--background-default);
       }
 
       .icon-wrapper {
