@@ -21,6 +21,9 @@ import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
+import { faInfo } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHelp } from '@/renderer/contexts/common/Help';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -36,6 +39,9 @@ export const OpenGov: React.FC = () => {
   } = useTreasury();
 
   /// Help overlay.
+  const { openHelp } = useHelp();
+
+  /// Tracks context.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
   const {
     setFetchingReferenda,
@@ -217,19 +223,51 @@ export const OpenGov: React.FC = () => {
           <TreasuryStats>
             <section className="content-wrapper">
               <div className="stat-wrapper">
-                <span>Treasury Balance</span>
+                <span>
+                  Treasury Balance
+                  <div
+                    className="icon-wrapper"
+                    onClick={() => openHelp('help:openGov:treasuryBalance')}
+                  >
+                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                  </div>
+                </span>
                 <h4>{getFormattedFreeBalance()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>Next Burn</span>
+                <span>
+                  Next Burn
+                  <div
+                    className="icon-wrapper"
+                    onClick={() => openHelp('help:openGov:nextBurn')}
+                  >
+                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                  </div>
+                </span>
                 <h4>{getFormattedNextBurn()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>To Be Awarded</span>
+                <span>
+                  To Be Awarded
+                  <div
+                    className="icon-wrapper"
+                    onClick={() => openHelp('help:openGov:toBeAwarded')}
+                  >
+                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                  </div>
+                </span>
                 <h4>{getFormattedToBeAwarded()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>Spend Period</span>
+                <span>
+                  Spend Period
+                  <div
+                    className="icon-wrapper"
+                    onClick={() => openHelp('help:openGov:spendPeriod')}
+                  >
+                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                  </div>
+                </span>
                 <h4>{getSpendPeriodProgress()}</h4>
               </div>
             </section>

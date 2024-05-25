@@ -152,16 +152,16 @@ export const TreasuryStats = styled.div`
 
   .content-wrapper {
     display: flex;
-    column-gap: 1rem;
     align-items: center;
     justify-content: space-around;
+    column-gap: 0.5rem;
 
     // Stats.
     .stat-wrapper {
       display: flex;
       flex-direction: column;
       justify-items: center;
-      row-gap: 0.5rem;
+      row-gap: 0.75rem;
       background-color: rgb(17 17 17);
       border: 1px solid var(--border-primary-color); //#2c2c2c;
       border-radius: 0.5rem;
@@ -174,10 +174,10 @@ export const TreasuryStats = styled.div`
 
       .icon-wrapper {
         font-size: 0.8rem;
-        padding-right: 0.8rem;
-        padding-left: 0.4rem;
+        padding-left: 0.65rem;
+        padding-right: 0.2rem;
         cursor: pointer;
-        opacity: 0.4;
+        opacity: 0.6;
         &:hover {
           color: #953254;
           opacity: 1;
@@ -188,7 +188,7 @@ export const TreasuryStats = styled.div`
       span {
         justify-content: center;
         display: flex;
-        align-items: baseline;
+        align-items: center;
         font-size: 1.05rem;
         color: var(--accent-color-primary);
       }
