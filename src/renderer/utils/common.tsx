@@ -88,10 +88,10 @@ const LoadingPlaceholderWrapper = styled.div<{
 interface SortControlsButtonProps {
   isActive: boolean;
   isDisabled: boolean;
-  faIcon: IconDefinition;
   onLabel: string;
   offLabel: string;
   onClick?: AnyFunction;
+  faIcon?: IconDefinition;
 }
 
 export const SortControlButton: React.FC<SortControlsButtonProps> = ({
@@ -112,17 +112,21 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
 
   /// Click handler that executes if the button is not disabled.
   const handleClick = () => {
-    if (onClick) {
+    if (onClick && !isDisabled) {
       onClick();
     }
   };
 
   return (
     <div className={getButtonClass()} onClick={() => handleClick()}>
-      <div className="icon">
-        <FontAwesomeIcon icon={faIcon} />
-      </div>
-      <span>{isActive ? onLabel : offLabel}</span>
+      {faIcon && (
+        <div className="icon">
+          <FontAwesomeIcon icon={faIcon} />
+        </div>
+      )}
+      <span style={{ width: '100%', textAlign: faIcon ? 'left' : 'center' }}>
+        {isActive ? onLabel : offLabel}
+      </span>
     </div>
   );
 };

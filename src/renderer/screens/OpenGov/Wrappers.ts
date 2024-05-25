@@ -189,10 +189,10 @@ export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
   }
 `;
 
-export const TreasuryStats = styled.div`
+export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
   width: 100%;
   position: relative;
-  padding: 1.75rem 1.5rem;
+  padding: 1.75rem 1.5rem 1rem;
 
   .loading-wrapper {
     display: flex;
@@ -240,7 +240,10 @@ export const TreasuryStats = styled.div`
         display: flex;
         align-items: center;
         font-size: 1.05rem;
-        color: var(--accent-color-primary);
+        color: ${(props) =>
+          props.$chainId === 'Polkadot'
+            ? 'var(--accent-color-primary)'
+            : '#fbfbfb'};
       }
       // Stat text.
       h4 {

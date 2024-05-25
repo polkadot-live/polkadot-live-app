@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyData } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 
 export interface TreasuryContextInterface {
-  initTreasury: () => void;
+  initTreasury: (chainId: ChainID) => void;
+  treasuryChainId: ChainID;
   treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryData: boolean;
   getFormattedNextBurn: () => string;

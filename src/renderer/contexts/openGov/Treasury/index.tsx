@@ -6,10 +6,12 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useState } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
-import type { AnyData } from '@/types/misc';
-import type { TreasuryContextInterface } from './types';
 import { rmCommas } from '@w3ux/utils';
 import { formatBlocksToTime } from '@/model/Track';
+import { chainCurrency } from '@/config/chains';
+import type { AnyData } from '@/types/misc';
+import type { TreasuryContextInterface } from './types';
+import type { ChainID } from '@/types/chains';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -22,6 +24,9 @@ export const TreasuryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  /// Active treasury chain ID.
+  const [treasuryChainId, setTreasuryChainId] = useState<ChainID>('Polkadot');
+
   /// Flag to determine whether treasury data is being fetched.
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(true);
 
@@ -46,15 +51,14 @@ export const TreasuryProvider = ({
   );
 
   /// Initialize context when OpenGov window loads.
-  const initTreasury = () => {
+  const initTreasury = (chainId: ChainID) => {
     setFetchingTreasuryData(true);
+    setTreasuryChainId(chainId);
 
     // Send task to main renderer to fetch data using API.
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:treasury:init',
-      data: {
-        chainId: 'Polkadot',
-      },
+      data: { chainId },
     });
   };
 
@@ -95,7 +99,7 @@ export const TreasuryProvider = ({
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}M ${'DOT'}`;
+    return `${formatted}M ${chainCurrency(treasuryChainId)}`;
   };
 
   /// Get readable next burn amount to render.
@@ -106,7 +110,7 @@ export const TreasuryProvider = ({
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}K ${'DOT'}`;
+    return `${formatted}K ${chainCurrency(treasuryChainId)}`;
   };
 
   /// Get readable to be awarded.
@@ -117,23 +121,23 @@ export const TreasuryProvider = ({
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}M DOT`;
+    return `${formatted}M ${chainCurrency(treasuryChainId)}`;
   };
 
   /// Get readable elapsed spend period.
   const getFormattedElapsedSpendPeriod = (): string =>
-    formatBlocksToTime('Polkadot', elapsedSpendPeriod.toString());
+    formatBlocksToTime(treasuryChainId, elapsedSpendPeriod.toString());
 
   /// Get readable remaining spend period.
   const getFormattedRemainingSpendPeriod = (): string =>
     formatBlocksToTime(
-      'Polkadot',
+      treasuryChainId,
       spendPeriod.minus(elapsedSpendPeriod).toString()
     );
 
   /// Get readable spend period.
   const getFormattedSpendPeriod = (): string =>
-    formatBlocksToTime('Polkadot', spendPeriod.toString());
+    formatBlocksToTime(treasuryChainId, spendPeriod.toString());
 
   /// Get spend period progress as percentage.
   const getSpendPeriodProgress = (): string => {
@@ -149,6 +153,7 @@ export const TreasuryProvider = ({
     <TreasuryContext.Provider
       value={{
         initTreasury,
+        treasuryChainId,
         treasuryU8Pk,
         fetchingTreasuryData,
         setFetchingTreasuryData,
