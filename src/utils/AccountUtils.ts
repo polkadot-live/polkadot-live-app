@@ -15,6 +15,7 @@ import {
   getAccountExposed,
   getAccountExposedWestend,
 } from '@/renderer/callbacks/nominating';
+import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
   FlattenedAccountData,
@@ -54,10 +55,10 @@ export const fetchBalanceForAccount = async (account: Account) => {
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
-    nonce: new BigNumber(result.nonce),
-    free: new BigNumber(result.data.free),
-    reserved: new BigNumber(result.data.reserved),
-    frozen: new BigNumber(result.data.frozen),
+    nonce: new BigNumber(rmCommas(String(result.nonce))),
+    free: new BigNumber(rmCommas(String(result.data.free))),
+    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
+    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
   } as AccountBalance;
 
   await AccountsController.set(account.chain, account);
@@ -189,7 +190,9 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   // Get pending rewards for the account.
   const pendingRewardsResult: AnyJson =
     await api.call.nominationPoolsApi.pendingRewards(account.address);
-  const poolPendingRewards = new BigNumber(pendingRewardsResult);
+  const poolPendingRewards = new BigNumber(
+    rmCommas(String(pendingRewardsResult))
+  );
 
   // Get nomination pool data.
   const npResult: AnyData = (
@@ -263,7 +266,7 @@ export const getAddressNonce = async (address: string, chainId: ChainID) => {
   const origin = 'getAddressNonce';
   const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
   const result: AnyData = await instance.api.query.system.account(address);
-  return new BigNumber(result.nonce);
+  return new BigNumber(rmCommas(String(result.nonce)));
 };
 
 /**
