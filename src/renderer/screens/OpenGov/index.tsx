@@ -16,7 +16,6 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { chainIcon } from '@/config/chains';
-import type { ChainID } from '@/types/chains';
 import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
@@ -24,6 +23,8 @@ import { TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import type { ChainID } from '@/types/chains';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -193,6 +194,16 @@ export const OpenGov: React.FC = () => {
     );
   };
 
+  /// Helper to render a help info icon.
+  const renderInfoIcon = (label: string, helpKey: HelpItemKey) => (
+    <span>
+      {label}
+      <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
+        <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+      </div>
+    </span>
+  );
+
   return (
     <ModalSection type="carousel">
       <ModalMotionTwoSection
@@ -223,51 +234,22 @@ export const OpenGov: React.FC = () => {
           <TreasuryStats>
             <section className="content-wrapper">
               <div className="stat-wrapper">
-                <span>
-                  Treasury Balance
-                  <div
-                    className="icon-wrapper"
-                    onClick={() => openHelp('help:openGov:treasuryBalance')}
-                  >
-                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-                  </div>
-                </span>
+                {renderInfoIcon(
+                  'Treasury Balance',
+                  'help:openGov:treasuryBalance'
+                )}
                 <h4>{getFormattedFreeBalance()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>
-                  Next Burn
-                  <div
-                    className="icon-wrapper"
-                    onClick={() => openHelp('help:openGov:nextBurn')}
-                  >
-                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-                  </div>
-                </span>
+                {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
                 <h4>{getFormattedNextBurn()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>
-                  To Be Awarded
-                  <div
-                    className="icon-wrapper"
-                    onClick={() => openHelp('help:openGov:toBeAwarded')}
-                  >
-                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-                  </div>
-                </span>
+                {renderInfoIcon('To Be Awarded', 'help:openGov:toBeAwarded')}
                 <h4>{getFormattedToBeAwarded()}</h4>
               </div>
               <div className="stat-wrapper">
-                <span>
-                  Spend Period
-                  <div
-                    className="icon-wrapper"
-                    onClick={() => openHelp('help:openGov:spendPeriod')}
-                  >
-                    <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-                  </div>
-                </span>
+                {renderInfoIcon('Spend Period', 'help:openGov:spendPeriod')}
                 <h4>{getSpendPeriodProgress()}</h4>
               </div>
             </section>

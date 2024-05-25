@@ -22,9 +22,11 @@ export const TreasuryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  /// Flag to determine whether treasury data is being fetched.
+  const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
+
   /// Treasury raw public key.
   const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
-  const [fetchingTreasuryPk, setFetchingTreasuryPk] = useState(false);
 
   /// Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
@@ -45,7 +47,7 @@ export const TreasuryProvider = ({
 
   /// Initialize context when OpenGov window loads.
   const initTreasury = () => {
-    setFetchingTreasuryPk(true);
+    setFetchingTreasuryData(true);
 
     // Send task to main renderer to fetch data using API.
     ConfigOpenGov.portOpenGov.postMessage({
@@ -76,7 +78,7 @@ export const TreasuryProvider = ({
       new BigNumber(rmCommas(spendPeriodElapsedBlocksAsStr))
     );
 
-    setFetchingTreasuryPk(false);
+    setFetchingTreasuryData(false);
   };
 
   /// Getter for the encoded treasury address.
@@ -148,8 +150,8 @@ export const TreasuryProvider = ({
       value={{
         initTreasury,
         treasuryU8Pk,
-        fetchingTreasuryPk,
-        setFetchingTreasuryPk,
+        fetchingTreasuryData,
+        setFetchingTreasuryData,
         setTreasuryData,
         getTreasuryEncodedAddress,
         getFormattedFreeBalance,

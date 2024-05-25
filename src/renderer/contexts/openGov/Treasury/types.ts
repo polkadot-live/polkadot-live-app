@@ -6,9 +6,9 @@ import type { AnyData } from '@/types/misc';
 export interface TreasuryContextInterface {
   initTreasury: () => void;
   treasuryU8Pk: Uint8Array | null;
-  fetchingTreasuryPk: boolean;
+  fetchingTreasuryData: boolean;
   getFormattedNextBurn: () => string;
-  setFetchingTreasuryPk: (fetching: boolean) => void;
+  setFetchingTreasuryData: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;
   getTreasuryEncodedAddress: () => string | null;
   getFormattedFreeBalance: () => string;
