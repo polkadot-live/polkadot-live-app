@@ -91,7 +91,7 @@ export const TreasuryProvider = ({
   const getFormattedFreeBalance = (): string => {
     const formatted = treasuryFreeBalance
       .dividedBy(1_000_000)
-      .decimalPlaces(1)
+      .decimalPlaces(2)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
