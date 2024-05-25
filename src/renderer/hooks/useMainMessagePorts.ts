@@ -391,8 +391,8 @@ export const useMainMessagePorts = () => {
     ).subarray(0, 32);
 
     // Get free balance.
-    // TODO: Dynamic SS58 prefix.
-    const encoded = encodeAddress(publicKey, 0);
+    const prefix: number = chainId === 'Polkadot' ? 0 : 2; // Kusama prefix 2
+    const encoded = encodeAddress(publicKey, prefix);
     const result: AnyData = (await api.query.system.account(encoded)).toHuman();
     const { free } = result.data;
     const freeBalance: string = planckToUnit(

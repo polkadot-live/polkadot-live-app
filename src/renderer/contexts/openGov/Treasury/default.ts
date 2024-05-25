@@ -5,7 +5,8 @@
 import type { TreasuryContextInterface } from './types';
 
 export const defaultTreasuryContext: TreasuryContextInterface = {
-  initTreasury: () => {},
+  initTreasury: (c) => {},
+  treasuryChainId: 'Polkadot',
   treasuryU8Pk: null,
   fetchingTreasuryData: false,
   getFormattedNextBurn: () => '',

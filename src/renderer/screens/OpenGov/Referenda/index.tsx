@@ -208,7 +208,16 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
       </Scrollable>
       <OpenGovFooter $chainId={chainId}>
         <div>
-          <section className="left"></section>
+          <section className="left">
+            <div className="footer-stat">
+              <h2>Chain ID:</h2>
+              <span>{chainId}</span>
+            </div>
+            <div className="footer-stat">
+              <h2>Active Referenda:</h2>
+              <span>{fetchingReferenda ? '-' : referenda.length}</span>
+            </div>
+          </section>
           <section className="right">
             <ButtonPrimaryInvert
               text={'Back'}

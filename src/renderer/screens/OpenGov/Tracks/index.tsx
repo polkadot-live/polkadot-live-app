@@ -3,15 +3,24 @@
 
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretLeft, faInfo } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faArrowDownShortWide,
+  faCaretLeft,
+  faInfo,
+} from '@fortawesome/pro-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import { OpenGovFooter, Scrollable } from '../Wrappers';
 import { TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
-import { renderPlaceholders } from '@/renderer/utils/common';
+import {
+  ControlsWrapper,
+  SortControlButton,
+  renderPlaceholders,
+} from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
 
@@ -19,6 +28,9 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
   /// Context data.
   const { tracks, fetchingTracks } = useTracks();
   const { openHelp } = useHelp();
+
+  /// Controls state.
+  const [sortIdAscending, setSortIdAscending] = useState(true);
 
   /// Utility to render help icon.
   const renderHelpIcon = (key: HelpItemKey) => (
@@ -37,13 +49,30 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       </HeaderWrapper>
       <Scrollable>
         <ContentWrapper>
+          {/* Sorting controls */}
+          <ControlsWrapper>
+            <SortControlButton
+              isActive={sortIdAscending}
+              isDisabled={fetchingTracks}
+              faIcon={faArrowDownShortWide}
+              onClick={() => setSortIdAscending(!sortIdAscending)}
+              onLabel="ID Ascend"
+              offLabel="ID Descend"
+            />
+          </ControlsWrapper>
           {fetchingTracks ? (
             <>{renderPlaceholders(4)}</>
           ) : (
             <TrackGroup>
-              {tracks.map((track) => (
-                <TrackRow key={track.trackId} track={track} />
-              ))}
+              {tracks
+                .sort((a, b) =>
+                  sortIdAscending
+                    ? a.trackId - b.trackId
+                    : b.trackId - a.trackId
+                )
+                .map((track) => (
+                  <TrackRow key={track.trackId} track={track} />
+                ))}
             </TrackGroup>
           )}
         </ContentWrapper>

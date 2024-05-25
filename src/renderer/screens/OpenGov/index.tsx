@@ -15,13 +15,17 @@ import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { OpenGovCard, TreasuryStats } from './Wrappers';
+import { OpenGovCard, OpenGovFooter, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import { renderPlaceholders } from '@/renderer/utils/common';
+import {
+  ControlsWrapper,
+  SortControlButton,
+  renderPlaceholders,
+} from '@/renderer/utils/common';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -30,6 +34,7 @@ export const OpenGov: React.FC = () => {
   /// Treasury context.
   const {
     fetchingTreasuryData,
+    treasuryChainId,
     initTreasury,
     getFormattedFreeBalance,
     getFormattedNextBurn,
@@ -60,11 +65,11 @@ export const OpenGov: React.FC = () => {
       const intervalId = setInterval(() => {
         if (ConfigOpenGov.portExists()) {
           clearInterval(intervalId);
-          initTreasury();
+          initTreasury(treasuryChainId);
         }
       }, 1_000);
     } else {
-      initTreasury();
+      initTreasury(treasuryChainId);
     }
   }, []);
 
@@ -111,6 +116,12 @@ export const OpenGov: React.FC = () => {
     </span>
   );
 
+  /// Handle changing treasury stats.
+  const handleChangeStats = () => {
+    const target = treasuryChainId === 'Polkadot' ? 'Kusama' : 'Polkadot';
+    initTreasury(target);
+  };
+
   return (
     <ModalSection type="carousel">
       <ModalMotionTwoSection
@@ -138,7 +149,7 @@ export const OpenGov: React.FC = () => {
             </div>
           </HeaderWrapper>
 
-          <TreasuryStats>
+          <TreasuryStats $chainId={treasuryChainId}>
             {fetchingTreasuryData ? (
               <div className="loading-wrapper">
                 {renderPlaceholders(0, '68.47px', '0.5rem')}
@@ -219,6 +230,34 @@ export const OpenGov: React.FC = () => {
               </OpenGovCard>
             </div>
           </ContentWrapper>
+
+          <OpenGovFooter $chainId={'Polkadot'}>
+            <div>
+              <section className="left">
+                <div className="footer-stat">
+                  <h2>Treasury Stats:</h2>
+                  <span style={{ marginLeft: '1rem' }}>
+                    <ControlsWrapper style={{ marginBottom: '0' }}>
+                      <SortControlButton
+                        isActive={treasuryChainId === 'Polkadot'}
+                        isDisabled={treasuryChainId === 'Polkadot'}
+                        onClick={() => handleChangeStats()}
+                        onLabel="Polkadot"
+                        offLabel="Polkadot"
+                      />
+                      <SortControlButton
+                        isActive={treasuryChainId === 'Kusama'}
+                        isDisabled={treasuryChainId === 'Kusama'}
+                        onClick={() => handleChangeStats()}
+                        onLabel="Kusama"
+                        offLabel="Kusama"
+                      />
+                    </ControlsWrapper>
+                  </span>
+                </div>
+              </section>
+            </div>
+          </OpenGovFooter>
         </section>
 
         {/* Section 2 */}

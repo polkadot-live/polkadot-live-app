@@ -19,6 +19,7 @@ import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { AccountBalance, ValidatorData } from '@/types/accounts';
+import { rmCommas } from '@w3ux/utils';
 
 export class Callbacks {
   /**
@@ -128,10 +129,10 @@ export class Callbacks {
 
       // Get the received balance.
       const received: AccountBalance = {
-        free: new BigNumber(data.data.free),
-        reserved: new BigNumber(data.data.reserved),
-        frozen: new BigNumber(data.data.frozen),
-        nonce: new BigNumber(data.nonce),
+        free: new BigNumber(rmCommas(String(data.data.free))),
+        reserved: new BigNumber(rmCommas(String(data.data.reserved))),
+        frozen: new BigNumber(rmCommas(String(data.data.frozen))),
+        nonce: new BigNumber(rmCommas(String(data.nonce))),
       };
 
       let isSame = false;
