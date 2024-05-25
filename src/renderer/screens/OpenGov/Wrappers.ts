@@ -126,7 +126,7 @@ export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
   > div:first-of-type {
     display: flex;
     column-gap: 1rem;
-    align-items: baseline;
+    align-items: center;
   }
 
   // Left and right.
