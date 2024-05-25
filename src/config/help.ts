@@ -330,4 +330,32 @@ export const HelpConfig: HelpItems = [
       'Origin able to spend up to 1,000,000 DOT from the treasury at once.',
     ],
   },
+  {
+    key: 'help:openGov:treasuryBalance',
+    title: 'Treasury Balance',
+    definition: [
+      'Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.',
+    ],
+  },
+  {
+    key: 'help:openGov:nextBurn',
+    title: 'Next Burn',
+    definition: [
+      'If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.',
+    ],
+  },
+  {
+    key: 'help:openGov:toBeAwarded',
+    title: 'To Be Awarded',
+    definition: [
+      'The amount of funds in the treasury to be spent on proposals at the end of the current spend period.',
+    ],
+  },
+  {
+    key: 'help:openGov:spendPeriod',
+    title: 'Spend Period',
+    definition: [
+      'Funds requested from the treasury are periodically distributed at the end of the spend period.',
+    ],
+  },
 ];

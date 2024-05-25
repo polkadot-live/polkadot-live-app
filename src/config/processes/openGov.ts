@@ -21,4 +21,8 @@ export class Config {
   static set portOpenGov(port: MessagePort) {
     Config._portOpenGov = port;
   }
+
+  static portExists() {
+    return this._portOpenGov !== undefined;
+  }
 }

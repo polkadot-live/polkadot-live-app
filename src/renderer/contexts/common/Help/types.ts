@@ -82,7 +82,11 @@ export type HelpItemKey =
   | 'help:openGov:origin:bigTipper'
   | 'help:openGov:origin:smallSpender'
   | 'help:openGov:origin:mediumSpender'
-  | 'help:openGov:origin:bigSpender';
+  | 'help:openGov:origin:bigSpender'
+  | 'help:openGov:treasuryBalance'
+  | 'help:openGov:nextBurn'
+  | 'help:openGov:toBeAwarded'
+  | 'help:openGov:spendPeriod';
 
 export interface HelpItem {
   key: HelpItemKey;

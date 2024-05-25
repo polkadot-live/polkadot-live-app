@@ -4,7 +4,10 @@
 /// Required imports.
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
+import BigNumber from 'bignumber.js';
+import { chainUnits } from '@/config/chains';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { encodeAddress } from '@polkadot/util-crypto';
 import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -12,6 +15,8 @@ import {
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
+import { isObject, u8aConcat } from '@polkadot/util';
+import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 /// Main window contexts.
@@ -27,7 +32,6 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
-import { isObject } from '@polkadot/util';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -316,6 +320,141 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleGetTracks
+   * @summary Use API to get a network's OpenGov tracks.
+   */
+  const handleGetTracks = async (ev: MessageEvent) => {
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const result = api.consts.referenda.tracks.toHuman();
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:tracks:receive',
+      data: { result },
+    });
+  };
+
+  /**
+   * @name handleGetReferenda
+   * @summary Use API to get a network's OpenGov referenda.
+   */
+  const handleGetReferenda = async (ev: MessageEvent) => {
+    // Make API call to fetch referenda entries.
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const results = await api.query.referenda.referendumInfoFor.entries();
+
+    // Populate referenda map.
+    const activeReferenda: ActiveReferendaInfo[] = [];
+
+    for (const [storageKey, storage] of results) {
+      const info: AnyData = storage.toHuman();
+
+      if (isObject(info) && 'Ongoing' in info) {
+        // Instantiate and push next referenda to state.
+        const next: ActiveReferendaInfo = {
+          referendaId: parseInt((storageKey.toHuman() as string[])[0]),
+          Ongoing: {
+            ...info.Ongoing,
+          },
+        };
+
+        activeReferenda.push(next);
+      }
+    }
+
+    // Serialize data before sending to open gov window.
+    const json = JSON.stringify(activeReferenda);
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:referenda:receive',
+      data: { json },
+    });
+  };
+
+  /**
+   * @name handleInitTreasury
+   * @summary Use API to get treasury data for OpenGov window.
+   */
+  const handleInitTreasury = async (ev: MessageEvent) => {
+    const { chainId } = ev.data.data;
+    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+
+    // Get raw treasury public key.
+    const EMPTY_U8A_32 = new Uint8Array(32);
+    const publicKey = u8aConcat(
+      'modl',
+      api.consts.treasury.palletId
+        ? api.consts.treasury.palletId.toU8a(true)
+        : 'py/trsry',
+      EMPTY_U8A_32
+    ).subarray(0, 32);
+
+    // Get free balance.
+    // TODO: Dynamic SS58 prefix.
+    const encoded = encodeAddress(publicKey, 0);
+    const result: AnyData = (await api.query.system.account(encoded)).toHuman();
+    const { free } = result.data;
+    const freeBalance: string = planckToUnit(
+      new BigNumber(rmCommas(String(free))),
+      chainUnits(chainId)
+    ).toString();
+
+    // Get next burn.
+    const burn = api.consts.treasury.burn;
+    const toBurn = new BigNumber(burn.toString())
+      .dividedBy(Math.pow(10, 6))
+      .multipliedBy(new BigNumber(rmCommas(String(free))));
+    const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
+
+    // Get to be awarded.
+    const [approvals, proposals] = await Promise.all([
+      api.query.treasury.approvals(),
+      api.query.treasury.proposals.entries(),
+    ]);
+
+    let toBeAwarded = new BigNumber(0);
+    const toBeAwardedProposalIds = approvals.toHuman() as string[];
+
+    for (const [rawProposalId, rawProposalData] of proposals) {
+      const proposalId: string = (rawProposalId.toHuman() as [string])[0];
+      if (toBeAwardedProposalIds.includes(proposalId)) {
+        const proposal: AnyData = rawProposalData.toHuman();
+        toBeAwarded = toBeAwarded.plus(
+          new BigNumber(rmCommas(String(proposal.value)))
+        );
+      }
+    }
+
+    const toBeAwardedAsStr = planckToUnit(
+      toBeAwarded,
+      chainUnits(chainId)
+    ).toString();
+
+    // Spend period + elapsed spend period.
+    const lastHeader = await api.rpc.chain.getHeader();
+    const blockHeight = lastHeader.number.toNumber();
+
+    const spendPeriodAsStr = String(api.consts.treasury.spendPeriod.toHuman());
+    const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
+    const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
+      .mod(spendPeriodBn)
+      .toString();
+
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:treasury:set',
+      data: {
+        publicKey,
+        freeBalance,
+        nextBurn,
+        toBeAwardedAsStr,
+        spendPeriodAsStr,
+        spendPeriodElapsedBlocksAsStr,
+      },
+    });
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -427,51 +566,15 @@ export const useMainMessagePorts = () => {
           // Message received from `openGov`.
           switch (ev.data.task) {
             case 'openGov:tracks:get': {
-              const { chainId } = ev.data.data;
-              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-              const result = api.consts.referenda.tracks.toHuman();
-
-              ConfigRenderer.portToOpenGov.postMessage({
-                task: 'openGov:tracks:receive',
-                data: { result },
-              });
+              await handleGetTracks(ev);
               break;
             }
             case 'openGov:referenda:get': {
-              // Make API call to fetch referenda entries.
-              const { chainId } = ev.data.data;
-              const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-              const results =
-                await api.query.referenda.referendumInfoFor.entries();
-
-              // Populate referenda map.
-              const activeReferenda: ActiveReferendaInfo[] = [];
-
-              for (const [storageKey, storage] of results) {
-                const info: AnyData = storage.toHuman();
-
-                if (isObject(info) && 'Ongoing' in info) {
-                  // Instantiate and push next referenda to state.
-                  const next: ActiveReferendaInfo = {
-                    referendaId: parseInt(
-                      (storageKey.toHuman() as string[])[0]
-                    ),
-                    Ongoing: {
-                      ...info.Ongoing,
-                    },
-                  };
-
-                  activeReferenda.push(next);
-                }
-              }
-
-              // Serialize data before sending to open gov window.
-              const json = JSON.stringify(activeReferenda);
-
-              ConfigRenderer.portToOpenGov.postMessage({
-                task: 'openGov:referenda:receive',
-                data: { json },
-              });
+              await handleGetReferenda(ev);
+              break;
+            }
+            case 'openGov:treasury:init': {
+              await handleInitTreasury(ev);
               break;
             }
             default: {

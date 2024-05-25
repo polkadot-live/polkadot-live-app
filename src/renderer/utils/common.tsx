@@ -17,8 +17,12 @@ export const createArrayWithLength = (n: number): number[] =>
  * @name renderPlaceholders
  * @summary Render placeholder loaders.
  */
-export const renderPlaceholders = (length: number) => (
-  <LoadingPlaceholderWrapper>
+export const renderPlaceholders = (
+  length: number,
+  height = '3rem',
+  borderRadius = '1.25rem'
+) => (
+  <LoadingPlaceholderWrapper $height={height} $borderRadius={borderRadius}>
     <div className="placeholder-content-wrapper">
       {createArrayWithLength(length).map((_, i) => (
         <div key={i} className="placeholder-content"></div>
@@ -31,7 +35,10 @@ export const renderPlaceholders = (length: number) => (
  * @name LoadingPlaceholderWrapper
  * @summary Wrapper styles for the placeholder loader.
  */
-const LoadingPlaceholderWrapper = styled.div`
+const LoadingPlaceholderWrapper = styled.div<{
+  $height: string;
+  $borderRadius: string;
+}>`
   width: 100%;
 
   // Renderer container.
@@ -39,12 +46,12 @@ const LoadingPlaceholderWrapper = styled.div`
     display: flex;
     flex-direction: column;
     row-gap: 2rem;
-    margin-top: 2rem;
 
     .placeholder-content {
-      height: 3rem;
+      height: ${(props) => (props.$height ? props.$height : '3rem')};
       background: #000;
-      border-radius: 1.25rem;
+      border-radius: ${(props) =>
+        props.$borderRadius ? props.$borderRadius : '1.25rem'};
 
       // Animation
       animation-duration: 5s;
