@@ -150,6 +150,12 @@ export const TreasuryStats = styled.div`
   position: relative;
   padding: 1.75rem 1.5rem 1rem;
 
+  .loading-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    justify-content: space-around;
+  }
+
   .content-wrapper {
     display: flex;
     align-items: center;

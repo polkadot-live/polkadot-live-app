@@ -23,7 +23,7 @@ export const TreasuryProvider = ({
   children: React.ReactNode;
 }) => {
   /// Flag to determine whether treasury data is being fetched.
-  const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
+  const [fetchingTreasuryData, setFetchingTreasuryData] = useState(true);
 
   /// Treasury raw public key.
   const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);

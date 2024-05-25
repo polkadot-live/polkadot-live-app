@@ -25,6 +25,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+import {
+  createArrayWithLength,
+  renderPlaceholders,
+} from '@/renderer/utils/common';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -32,6 +36,7 @@ export const OpenGov: React.FC = () => {
 
   /// Treasury context.
   const {
+    fetchingTreasuryData,
     initTreasury,
     getFormattedFreeBalance,
     getFormattedNextBurn,
@@ -232,27 +237,35 @@ export const OpenGov: React.FC = () => {
           </HeaderWrapper>
 
           <TreasuryStats>
-            <section className="content-wrapper">
-              <div className="stat-wrapper">
-                {renderInfoIcon(
-                  'Treasury Balance',
-                  'help:openGov:treasuryBalance'
+            {fetchingTreasuryData ? (
+              <div className="loading-wrapper">
+                {createArrayWithLength(3).map(() =>
+                  renderPlaceholders(0, '68.47px', '0.5rem')
                 )}
-                <h4>{getFormattedFreeBalance()}</h4>
               </div>
-              <div className="stat-wrapper">
-                {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
-                <h4>{getFormattedNextBurn()}</h4>
-              </div>
-              <div className="stat-wrapper">
-                {renderInfoIcon('To Be Awarded', 'help:openGov:toBeAwarded')}
-                <h4>{getFormattedToBeAwarded()}</h4>
-              </div>
-              <div className="stat-wrapper">
-                {renderInfoIcon('Spend Period', 'help:openGov:spendPeriod')}
-                <h4>{getSpendPeriodProgress()}</h4>
-              </div>
-            </section>
+            ) : (
+              <section className="content-wrapper">
+                <div className="stat-wrapper">
+                  {renderInfoIcon(
+                    'Treasury Balance',
+                    'help:openGov:treasuryBalance'
+                  )}
+                  <h4>{getFormattedFreeBalance()}</h4>
+                </div>
+                <div className="stat-wrapper">
+                  {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
+                  <h4>{getFormattedNextBurn()}</h4>
+                </div>
+                <div className="stat-wrapper">
+                  {renderInfoIcon('To Be Awarded', 'help:openGov:toBeAwarded')}
+                  <h4>{getFormattedToBeAwarded()}</h4>
+                </div>
+                <div className="stat-wrapper">
+                  {renderInfoIcon('Spend Period', 'help:openGov:spendPeriod')}
+                  <h4>{getSpendPeriodProgress()}</h4>
+                </div>
+              </section>
+            )}
           </TreasuryStats>
 
           <ContentWrapper style={{ paddingTop: '1rem' }}>

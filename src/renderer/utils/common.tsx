@@ -46,7 +46,6 @@ const LoadingPlaceholderWrapper = styled.div<{
     display: flex;
     flex-direction: column;
     row-gap: 2rem;
-    margin-top: 2rem;
 
     .placeholder-content {
       height: ${(props) => (props.$height ? props.$height : '3rem')};
