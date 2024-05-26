@@ -6,7 +6,7 @@ import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { AnyData } from '@/types/misc';
 
-interface IntervalSubscription {
+export interface IntervalSubscription {
   // Unique id for the task.
   action: string;
   // Number of periods between each interval.
@@ -21,10 +21,12 @@ interface IntervalSubscription {
   status: 'enable' | 'disable';
   // Flag to enable or silence OS notifications.
   enableOsNotifications: boolean;
-  // Flag to determine if the subscription was just build (may not be needed)
-  justBuilt?: boolean;
   // Key to retrieve help information about the task.
   helpKey: HelpItemKey;
+  // Associated referendum id for task.
+  referendumId?: number;
+  // Flag to determine if the subscription was just build (may not be needed)
+  justBuilt?: boolean;
 }
 
 export class IntervalsController {

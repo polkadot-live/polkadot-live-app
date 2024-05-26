@@ -29,6 +29,7 @@ import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 import { TracksProvider } from './contexts/openGov/Tracks';
 import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
+import { ReferendaSubscriptionsProvider } from './contexts/openGov/ReferendaSubscriptions';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -85,7 +86,8 @@ const getProvidersForWindow = () => {
         TooltipProvider,
         TracksProvider,
         TreasuryProvider,
-        ReferendaProvider
+        ReferendaProvider,
+        ReferendaSubscriptionsProvider
       )(Theme);
     }
     default: {
