@@ -358,4 +358,9 @@ export const HelpConfig: HelpItems = [
       'Funds requested from the treasury are periodically distributed at the end of the spend period.',
     ],
   },
+  {
+    key: 'help:interval:openGov:referendumVotes',
+    title: 'Referendum Votes Subscription',
+    definition: ['TODO: Description of referendum votes subscription.'],
+  },
 ];

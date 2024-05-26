@@ -1,0 +1,81 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import type { ChainID } from '@/types/chains';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+import type { AnyData } from '@/types/misc';
+
+interface IntervalSubscription {
+  // Unique id for the task.
+  action: string;
+  // Number of periods between each interval.
+  waitPeriods: number;
+  // Task category.
+  category: string;
+  // Task's associated chain.
+  chainId: ChainID;
+  // Shown in renderer.
+  label: string;
+  // Enabled or disabled.
+  status: 'enable' | 'disable';
+  // Flag to enable or silence OS notifications.
+  enableOsNotifications: boolean;
+  // Flag to determine if the subscription was just build (may not be needed)
+  justBuilt?: boolean;
+  // Key to retrieve help information about the task.
+  helpKey: HelpItemKey;
+}
+
+export class IntervalsController {
+  static subscriptions = new Map<ChainID, IntervalSubscription[]>();
+
+  /// Interval ID.
+  static intervalId: AnyData = null;
+  /// Minimum clock period in minutes.
+  static periodDuration = 1;
+
+  /**
+   * @name initIntervals
+   * @summary Initialize intervals and the interval clock.
+   */
+  static initIntervals() {
+    // Set map data.
+    this.subscriptions = new Map();
+    this.insertInterval({
+      action: 'interval:openGov:referendumVotes',
+      category: 'Open Gov',
+      chainId: 'Polkadot',
+      label: 'Referendum Votes',
+      status: 'enable',
+      enableOsNotifications: true,
+      helpKey: 'help:interval:openGov:referendumVotes',
+      waitPeriods: 1,
+    });
+
+    // Start interval.
+    this.initClock();
+  }
+
+  /**
+   * @name insertInterval
+   * @summary Insert an intervaled subscription into this controller's map.
+   */
+  static insertInterval(subscription: IntervalSubscription) {
+    const { chainId } = subscription;
+    if (this.subscriptions.has(chainId)) {
+      const current = this.subscriptions.get(chainId)!;
+      this.subscriptions.set(chainId, [...current, { ...subscription }]);
+    } else {
+      this.subscriptions.set(chainId, [{ ...subscription }]);
+    }
+  }
+
+  private static initClock() {
+    // TMP: 2 second duration for testing.
+    const periodDurationInSeconds = this.periodDuration * 2 * 1000;
+
+    this.intervalId = setInterval(() => {
+      console.log('tick');
+    }, periodDurationInSeconds);
+  }
+}

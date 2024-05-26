@@ -12,6 +12,7 @@ import {
   fetchAccountNominationPoolData,
 } from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import React, {
   createContext,
@@ -160,6 +161,9 @@ export const BootstrappingProvider = ({
           SubscriptionsController.initChainSubscriptions(),
         ]);
       }
+
+      // Initialise intervals controller and interval subscriptions.
+      IntervalsController.initIntervals();
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
