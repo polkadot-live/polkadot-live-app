@@ -26,6 +26,26 @@ interface IntervalSubscription {
   helpKey: HelpItemKey;
 }
 
+function secondsUntilNextMinute(minute: number): number {
+  const now = new Date();
+  const currentMinutes = now.getMinutes();
+  const currentSeconds = now.getSeconds();
+
+  // Calculate minutes until next 15-minute mark
+  const minutesPastQuarter = currentMinutes % minute;
+  const minutesUntilNextQuarter = minute - minutesPastQuarter;
+
+  // If we are exactly at a quarter, the next quarter is in 15 minutes
+  const totalMinutesUntilNextQuarter =
+    minutesPastQuarter === 0 ? minute : minutesUntilNextQuarter;
+
+  // Calculate the total seconds until the next quarter
+  const secondsUntilNextQuarter =
+    totalMinutesUntilNextQuarter * 60 - currentSeconds;
+
+  return secondsUntilNextQuarter;
+}
+
 export class IntervalsController {
   static subscriptions = new Map<ChainID, IntervalSubscription[]>();
 
@@ -70,12 +90,37 @@ export class IntervalsController {
     }
   }
 
+  /**
+   * @name initClock
+   * @summary Start interval when period duration is synched to the system clock.
+   *
+   * For example, if the period duration is 15 minutes, the interval will start
+   * at the nearest 15 minute multiple of the actual clock.
+   */
   private static initClock() {
-    // TMP: 2 second duration for testing.
-    const periodDurationInSeconds = this.periodDuration * 2 * 1000;
+    // Seconds until next period synched with clock.
+    const seconds = secondsUntilNextMinute(1);
+    console.log(`seconds to wait: ${seconds}`);
 
+    if (seconds === 0) {
+      // Start the interval now clock is synched.
+      this.startInterval();
+    } else {
+      // Wait until clock is synched before starting interval.
+      const ms = seconds * 1000;
+      setTimeout(() => {
+        this.startInterval();
+      }, ms);
+    }
+  }
+
+  /**
+   * @name startInterval
+   * @summary Start the interval for processing interval subscriptions.
+   */
+  private static startInterval() {
     this.intervalId = setInterval(() => {
-      console.log('tick');
-    }, periodDurationInSeconds);
+      console.log(`interval tick`);
+    }, this.periodDuration * 1000);
   }
 }
