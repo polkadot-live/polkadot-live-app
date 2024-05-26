@@ -110,6 +110,8 @@ export class IntervalsController {
    * @summary Stops the interval.
    */
   static stopInterval() {
-    clearInterval(this.intervalId);
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }

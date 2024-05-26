@@ -163,8 +163,9 @@ export const BootstrappingProvider = ({
       }
 
       // Initialise intervals controller and interval subscriptions.
-      // TODO: Start if online, else don't start.
-      IntervalsController.initIntervals();
+      if (!aborted && isOnline) {
+        IntervalsController.initIntervals();
+      }
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
@@ -206,6 +207,9 @@ export const BootstrappingProvider = ({
     // Set config flag to false to re-start the online mode initialization
     // when connection status goes back online.
     RendererConfig.switchingToOnlineMode = false;
+
+    // Stop subscription intervals timer.
+    IntervalsController.stopInterval();
 
     // Report online status to renderer.
     setOnline(false);
@@ -275,6 +279,11 @@ export const BootstrappingProvider = ({
         AccountsController.subscribeAccounts(),
         SubscriptionsController.resubscribeChains(),
       ]);
+    }
+
+    // Initialise intervals controller and interval subscriptions.
+    if (!aborted) {
+      IntervalsController.initIntervals();
     }
 
     // Disconnect from any API instances that are not currently needed.
