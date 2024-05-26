@@ -9,4 +9,6 @@ export interface ReferendaSubscriptionsContextInterface {
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>
   ) => void;
+  activeTasksMap: Map<number, string[]>;
+  setActiveTasksMap: (activeTasks: Map<number, string[]>) => void;
 }

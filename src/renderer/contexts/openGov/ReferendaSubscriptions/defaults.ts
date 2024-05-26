@@ -8,4 +8,6 @@ export const defaultReferendaSubscriptionsContext: ReferendaSubscriptionsContext
   {
     subscriptions: new Map(),
     setSubscriptions: () => {},
+    activeTasksMap: new Map(),
+    setActiveTasksMap: () => {},
   };

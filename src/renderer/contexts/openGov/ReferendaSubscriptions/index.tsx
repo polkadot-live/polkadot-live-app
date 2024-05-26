@@ -25,9 +25,20 @@ export const ReferendaSubscriptionsProvider = ({
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
+  /// Map to identify active subscriptions for individual referenda.
+  /// Key is referendum ID, value is array of subscription tasks.
+  const [activeTasksMap, setActiveTasksMap] = useState<Map<number, string[]>>(
+    new Map()
+  );
+
   return (
     <ReferendaSubscriptionsContext.Provider
-      value={{ subscriptions, setSubscriptions }}
+      value={{
+        subscriptions,
+        setSubscriptions,
+        activeTasksMap,
+        setActiveTasksMap,
+      }}
     >
       {children}
     </ReferendaSubscriptionsContext.Provider>
