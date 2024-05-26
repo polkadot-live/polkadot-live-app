@@ -33,7 +33,7 @@ export class IntervalsController {
   /// Interval ID.
   static intervalId: AnyData = null;
   /// Minimum clock period in minutes.
-  static periodDuration = 1;
+  static periodDuration = 5;
 
   /**
    * @name initIntervals
@@ -80,7 +80,7 @@ export class IntervalsController {
    */
   private static initClock() {
     // Seconds until next period synched with clock.
-    const seconds = secondsUntilNextMinute(1);
+    const seconds = secondsUntilNextMinute(this.periodDuration);
     console.log(`seconds to wait: ${seconds}`);
 
     if (seconds === 0) {

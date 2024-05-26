@@ -155,4 +155,76 @@ export const ReferendumRowWrapper = styled.div`
       }
     }
   }
+
+  /* Collapsable Section */
+  .collapse {
+    overflow: hidden;
+    width: 100%;
+
+    .content-wrapper {
+      --border-top-bottom: 1px solid #1f1f1f;
+
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      row-gap: 0.25rem;
+      background-color: #111;
+      border-top: var(--border-top-bottom);
+      border-bottom: var(--border-top-bottom);
+
+      .subscription-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+        font-size: 0.95rem;
+
+        div:nth-child(2) {
+          justify-content: center;
+        }
+        div:nth-child(3) {
+          justify-content: end;
+        }
+
+        .subscription-row {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          column-gap: 1rem;
+          width: 100%;
+
+          p {
+            font-size: 0.95rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  /* Add Subscription Button */
+  .add-btn {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+
+    min-width: 60px;
+    background-color: rgb(19 19 19);
+    border: 1px solid rgb(68 68 68);
+    color: rgb(101 101 101);
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--button-border-radius-large);
+    transition: background-color 0.2s ease-out;
+    cursor: pointer;
+
+    svg,
+    span {
+      font-size: 0.9rem;
+    }
+    &:hover {
+      background-color: rgb(24 24 24);
+    }
+  }
 `;
