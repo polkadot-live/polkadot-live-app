@@ -163,6 +163,7 @@ export const BootstrappingProvider = ({
       }
 
       // Initialise intervals controller and interval subscriptions.
+      // TODO: Start if online, else don't start.
       IntervalsController.initIntervals();
 
       // Set accounts to render.

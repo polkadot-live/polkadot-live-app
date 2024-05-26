@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { AnyData } from '@/types/misc';
@@ -26,26 +27,6 @@ interface IntervalSubscription {
   helpKey: HelpItemKey;
 }
 
-function secondsUntilNextMinute(minute: number): number {
-  const now = new Date();
-  const currentMinutes = now.getMinutes();
-  const currentSeconds = now.getSeconds();
-
-  // Calculate minutes until next 15-minute mark
-  const minutesPastQuarter = currentMinutes % minute;
-  const minutesUntilNextQuarter = minute - minutesPastQuarter;
-
-  // If we are exactly at a quarter, the next quarter is in 15 minutes
-  const totalMinutesUntilNextQuarter =
-    minutesPastQuarter === 0 ? minute : minutesUntilNextQuarter;
-
-  // Calculate the total seconds until the next quarter
-  const secondsUntilNextQuarter =
-    totalMinutesUntilNextQuarter * 60 - currentSeconds;
-
-  return secondsUntilNextQuarter;
-}
-
 export class IntervalsController {
   static subscriptions = new Map<ChainID, IntervalSubscription[]>();
 
@@ -61,7 +42,7 @@ export class IntervalsController {
   static initIntervals() {
     // Set map data.
     this.subscriptions = new Map();
-    this.insertInterval({
+    this.insertSubscription({
       action: 'interval:openGov:referendumVotes',
       category: 'Open Gov',
       chainId: 'Polkadot',
@@ -80,7 +61,7 @@ export class IntervalsController {
    * @name insertInterval
    * @summary Insert an intervaled subscription into this controller's map.
    */
-  static insertInterval(subscription: IntervalSubscription) {
+  static insertSubscription(subscription: IntervalSubscription) {
     const { chainId } = subscription;
     if (this.subscriptions.has(chainId)) {
       const current = this.subscriptions.get(chainId)!;
@@ -122,5 +103,13 @@ export class IntervalsController {
     this.intervalId = setInterval(() => {
       console.log(`interval tick`);
     }, this.periodDuration * 1000);
+  }
+
+  /**
+   * @name stopInterval
+   * @summary Stops the interval.
+   */
+  static stopInterval() {
+    clearInterval(this.intervalId);
   }
 }
