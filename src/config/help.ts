@@ -363,4 +363,16 @@ export const HelpConfig: HelpItems = [
     title: 'Referendum Votes Subscription',
     definition: ['TODO: Description of referendum votes subscription.'],
   },
+  {
+    key: 'help:interval:openGov:decisionPeriod',
+    title: 'Decision Period Subscription',
+    definition: [
+      'TODO: Description of referendum decision period subscription.',
+    ],
+  },
+  {
+    key: 'help:interval:openGov:referendumThresholds',
+    title: 'Thresholds Subscription',
+    definition: ['TODO: Description of referendum thresholds subscription.'],
+  },
 ];

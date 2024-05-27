@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '../utils';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
@@ -9,8 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripDotsVertical } from '@fortawesome/pro-light-svg-icons';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import type { ReferendumRowProps } from '../types';
 import { faHexagonPlus } from '@fortawesome/pro-solid-svg-icons';
+import type { ChainID } from '@/types/chains';
+import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
   const { activeReferendaChainId: chainId } = useReferenda();
@@ -20,6 +22,9 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
   const { referendaId } = referendum;
   const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
   const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;
+
+  const getIntervalSubscriptions = (cid: ChainID) =>
+    allIntervalTasks.filter((t) => t.chainId === cid);
 
   return (
     <ReferendumRowWrapper>
@@ -74,27 +79,16 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
       >
         <div className="content-wrapper">
           <div className="subscription-grid">
-            <div className="subscription-row">
-              <p>Votes Tally:</p>
-              <button className="add-btn">
-                <FontAwesomeIcon icon={faHexagonPlus} />
-                <span>Add</span>
-              </button>
-            </div>
-            <div className="subscription-row">
-              <p>Decision Period:</p>
-              <button className="add-btn">
-                <FontAwesomeIcon icon={faHexagonPlus} />
-                <span>Add</span>
-              </button>
-            </div>
-            <div className="subscription-row">
-              <p>Thresholds:</p>
-              <button className="add-btn">
-                <FontAwesomeIcon icon={faHexagonPlus} />
-                <span>Add</span>
-              </button>
-            </div>
+            {/* Render interval tasks from config */}
+            {getIntervalSubscriptions(chainId).map((t) => (
+              <div key={`listing_${t.action}`} className="subscription-row">
+                <p>{t.label}:</p>
+                <button className="add-btn">
+                  <FontAwesomeIcon icon={faHexagonPlus} />
+                  <span>Add</span>
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </motion.section>
