@@ -7,8 +7,8 @@ export const intervalTasks: IntervalSubscription[] = [
   // Polkadot
   {
     action: 'subscribe:interval:openGov:referendaVotes',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot',
     label: 'Votes Tally',
@@ -18,8 +18,8 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:decisionPeriod',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot',
     label: 'Decision Period',
@@ -29,8 +29,8 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:referendumThresholds',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot',
     label: 'Thresholds',
@@ -41,8 +41,8 @@ export const intervalTasks: IntervalSubscription[] = [
   // Kusama
   {
     action: 'subscribe:interval:openGov:referendumVotes',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama',
     label: 'Votes Tally',
@@ -52,8 +52,8 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:decisionPeriod',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama',
     label: 'Decision Period',
@@ -63,8 +63,8 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:referendumThresholds',
-    waitPeriods: 1,
-    periodCounter: 0,
+    ticksToWait: 1,
+    tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama',
     label: 'Thresholds',

@@ -21,10 +21,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type { BootstrappingInterface } from './types';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import { useSubscriptions } from '../Subscriptions';
 import { useChains } from '../Chains';
+import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(

@@ -9,10 +9,10 @@ import type { AnyData } from '@/types/misc';
 export interface IntervalSubscription {
   // Unique id for the task.
   action: string;
-  // Number of periods between each interval.
-  waitPeriods: number;
+  // Number of ticks between each one-shot execution.
+  ticksToWait: number;
   // Used as a countdown.
-  periodCounter: number;
+  tickCounter: number;
   // Task category.
   category: string;
   // Task's associated chain.
@@ -39,8 +39,8 @@ export class IntervalsController {
   static intervalId: AnyData = null;
   /// Timeout ID.
   static timeoutId: AnyData = null;
-  /// Minimum clock period in minutes.
-  static periodDuration = 5;
+  /// Minimum clock period in seconds.
+  static tickDuration = 5;
   /// Maximum wait periods for an interval subscription.
   static maxPeriods = 5;
 
@@ -50,6 +50,7 @@ export class IntervalsController {
    */
   static initIntervals() {
     // TODO: Fetch persisted intervals and re-start the subscription.
+    // NOTE: This method is called when app switches to online mode.
 
     // Start interval.
     this.initClock();
@@ -87,42 +88,46 @@ export class IntervalsController {
 
   /**
    * @name initClock
-   * @summary Start interval when period duration is synched to the system clock.
+   * @summary Start interval when its tick duration is synched to the system clock.
    *
-   * For example, if the period duration is 15 minutes, the interval will start
+   * For example, if the tick duration is 15 minutes, the interval will start
    * at the nearest 15 minute multiple of the actual clock.
    */
   static initClock() {
     console.log(`Initialized:`);
     console.log(this.subscriptions);
 
+    // Exit early if no subscriptions are being managed.
+    if (this.subscriptions.size === 0) {
+      return;
+    }
+
     // Seconds until next period synched with clock.
     const seconds = secondsUntilNextMinute(1);
-    console.log(`seconds to wait: ${seconds / 10}`);
+    console.log(`seconds to wait: ${seconds}`);
 
     if (seconds === 0) {
       // Start the interval now clock is synched.
       this.startInterval();
     } else {
       // Wait until clock is synched before starting interval.
-      const ms = seconds * 100;
       this.timeoutId = setTimeout(() => {
         if (this.timeoutId !== null) {
           this.timeoutId = null;
           this.startInterval();
         }
-      }, ms);
+      }, seconds * 1000);
     }
   }
 
   /**
    * @name startInterval
-   * @summary Start the interval for processing interval subscriptions.
+   * @summary Start the interval for processing managed subscriptions.
    */
   private static startInterval() {
     this.intervalId = setInterval(async () => {
       await this.processTick();
-    }, this.periodDuration * 1000);
+    }, this.tickDuration * 1000);
   }
 
   /**
@@ -145,28 +150,27 @@ export class IntervalsController {
    * @summary Process an interval tick.
    */
   static async processTick() {
-    // Get all intervals from map and execute the ones whose period has synched.
+    // Iterate all subscriptions and execute the ones whose tick has synched.
     for (const [chainId, chainSubscriptions] of this.subscriptions.entries()) {
       console.log(`Processing interval subscriptions for chain: ${chainId}`);
 
-      for (const taskObj of chainSubscriptions) {
-        const { periodCounter, waitPeriods } = taskObj;
-        const curPeriod = periodCounter + 1;
-
-        if (curPeriod === waitPeriods) {
+      for (const task of chainSubscriptions) {
+        if (task.tickCounter + 1 === task.ticksToWait) {
           // TODO: Implement queuing system.
-          await this.executeAction(taskObj);
+          await this.executeAction(task);
         }
       }
 
-      // Increment period counter by one for all tasks or reset to zero.
+      // Increment tick counter by one or reset to zero for all tasks.
       this.subscriptions.set(
         chainId,
-        chainSubscriptions.map((t) => ({
-          ...t,
-          periodCounter:
-            t.periodCounter + 1 === t.waitPeriods ? 0 : t.periodCounter + 1,
-        }))
+        chainSubscriptions.map(
+          (t): IntervalSubscription => ({
+            ...t,
+            tickCounter:
+              t.tickCounter + 1 === t.ticksToWait ? 0 : t.tickCounter + 1,
+          })
+        )
       );
     }
   }
