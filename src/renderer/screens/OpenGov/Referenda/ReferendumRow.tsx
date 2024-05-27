@@ -5,18 +5,31 @@ import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interv
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '../utils';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripDotsVertical } from '@fortawesome/pro-light-svg-icons';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { faHexagonPlus } from '@fortawesome/pro-solid-svg-icons';
+import {
+  faHexagonMinus,
+  faHexagonPlus,
+} from '@fortawesome/pro-solid-svg-icons';
+import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { ChainID } from '@/types/chains';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
   const { activeReferendaChainId: chainId } = useReferenda();
+  const {
+    addReferendaSubscription,
+    removeReferendaSubscription,
+    isSubscribedToTask,
+  } = useReferendaSubscriptions();
   const { setTooltipTextAndOpen } = useTooltip();
+
+  /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
 
   const { referendaId } = referendum;
@@ -25,6 +38,42 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
 
   const getIntervalSubscriptions = (cid: ChainID) =>
     allIntervalTasks.filter((t) => t.chainId === cid);
+
+  /// Handles adding an interval subscription for a referendum.
+  const addIntervalSubscription = (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => {
+    console.log(
+      `add task: ${task.action} for referendum with ID: ${referendumInfo.referendaId}`
+    );
+
+    // Set referendum ID on task.
+    const { referendaId: referendumId } = referendumInfo;
+    task.referendumId = referendumId;
+
+    // Cache subscription in referenda subscriptions context.
+    addReferendaSubscription({ ...task });
+
+    // TODO: Communicate with main renderer to process subscription task.
+    // - Receive feedback from main renderer to update:
+    // - UI (toastify, subscription button)
+    // - Loading spinner if necessary.
+    // - Update `Manage` UI to add subscription task.
+  };
+
+  /// Handles removing an interval subscription for a referendum.
+  const removeIntervalSubscription = (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => {
+    // TODO: Communicate with main renderer to process subscription task.
+    // - Remove subscription in referenda subscriptions context.
+    // - Communicate with main renderer to remove subscription task from manager.
+    // - Receive feedback from main renderer to update UI:
+    //   * Toastify and subscription button.
+    removeReferendaSubscription(task, referendumInfo.referendaId);
+  };
 
   return (
     <ReferendumRowWrapper>
@@ -80,13 +129,26 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
         <div className="content-wrapper">
           <div className="subscription-grid">
             {/* Render interval tasks from config */}
-            {getIntervalSubscriptions(chainId).map((t) => (
-              <div key={`listing_${t.action}`} className="subscription-row">
+            {getIntervalSubscriptions(chainId).map((t, i) => (
+              <div key={`${t.action}_${i}`} className="subscription-row">
                 <p>{t.label}:</p>
-                <button className="add-btn">
-                  <FontAwesomeIcon icon={faHexagonPlus} />
-                  <span>Add</span>
-                </button>
+                {isSubscribedToTask(referendum, t) ? (
+                  <button
+                    className="add-btn"
+                    onClick={() => removeIntervalSubscription(t, referendum)}
+                  >
+                    <FontAwesomeIcon icon={faHexagonMinus} />
+                    <span>Remove</span>
+                  </button>
+                ) : (
+                  <button
+                    className="add-btn"
+                    onClick={() => addIntervalSubscription(t, referendum)}
+                  >
+                    <FontAwesomeIcon icon={faHexagonPlus} />
+                    <span>Add</span>
+                  </button>
+                )}
               </div>
             ))}
           </div>

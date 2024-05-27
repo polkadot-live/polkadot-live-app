@@ -208,9 +208,10 @@ export const ReferendumRowWrapper = styled.div`
   .add-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     column-gap: 0.5rem;
 
-    min-width: 60px;
+    min-width: 94px;
     background-color: rgb(19 19 19);
     border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);

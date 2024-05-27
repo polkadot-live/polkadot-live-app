@@ -3,6 +3,7 @@
 
 import type { ChainID } from '@/types/chains';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { ActiveReferendaInfo } from '@/types/openGov';
 
 export interface ReferendaSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;
@@ -11,4 +12,13 @@ export interface ReferendaSubscriptionsContextInterface {
   ) => void;
   activeTasksMap: Map<number, string[]>;
   setActiveTasksMap: (activeTasks: Map<number, string[]>) => void;
+  addReferendaSubscription: (task: IntervalSubscription) => void;
+  removeReferendaSubscription: (
+    task: IntervalSubscription,
+    referendumId: number
+  ) => void;
+  isSubscribedToTask: (
+    referendum: ActiveReferendaInfo,
+    task: IntervalSubscription
+  ) => boolean;
 }
