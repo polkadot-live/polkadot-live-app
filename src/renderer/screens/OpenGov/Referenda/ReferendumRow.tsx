@@ -9,14 +9,17 @@ import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/Referenda
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGripDotsVertical } from '@fortawesome/pro-light-svg-icons';
+import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   faHexagonMinus,
   faHexagonPlus,
+  faInfo,
 } from '@fortawesome/pro-solid-svg-icons';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { ChainID } from '@/types/chains';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { ReferendumRowProps } from '../types';
 
@@ -28,6 +31,7 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     isSubscribedToTask,
   } = useReferendaSubscriptions();
   const { setTooltipTextAndOpen } = useTooltip();
+  const { openHelp } = useHelp();
 
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -74,6 +78,12 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     //   * Toastify and subscription button.
     removeReferendaSubscription(task, referendumInfo.referendaId);
   };
+
+  const renderHelpIcon = (key: HelpItemKey) => (
+    <div className="icon-wrapper" onClick={() => openHelp(key)}>
+      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+    </div>
+  );
 
   return (
     <ReferendumRowWrapper>
@@ -131,6 +141,7 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
             {/* Render interval tasks from config */}
             {getIntervalSubscriptions(chainId).map((t, i) => (
               <div key={`${t.action}_${i}`} className="subscription-row">
+                <span>{renderHelpIcon(t.helpKey)}</span>
                 <p>{t.label}:</p>
                 {isSubscribedToTask(referendum, t) ? (
                   <button

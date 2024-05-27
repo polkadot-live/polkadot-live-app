@@ -360,8 +360,8 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:interval:openGov:referendumVotes',
-    title: 'Referendum Votes Subscription',
-    definition: ['TODO: Description of referendum votes subscription.'],
+    title: 'Votes Tally Subscription',
+    definition: ['TODO: Description of votes tally subscription.'],
   },
   {
     key: 'help:interval:openGov:decisionPeriod',

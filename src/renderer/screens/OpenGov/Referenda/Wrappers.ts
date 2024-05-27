@@ -166,7 +166,7 @@ export const ReferendumRowWrapper = styled.div`
 
       width: 100%;
       margin-top: 1.25rem;
-      padding: 0.75rem 1rem;
+      padding: 0.75rem 0.5rem;
       display: flex;
       flex-direction: column;
       row-gap: 0.25rem;
@@ -192,7 +192,7 @@ export const ReferendumRowWrapper = styled.div`
           width: 100%;
           display: flex;
           align-items: center;
-          column-gap: 1rem;
+          column-gap: 0.75rem;
           width: 100%;
 
           p {
@@ -204,18 +204,28 @@ export const ReferendumRowWrapper = styled.div`
     }
   }
 
+  .icon-wrapper {
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.4;
+    &:hover {
+      color: #953254;
+      opacity: 1;
+    }
+  }
   /* Add Subscription Button */
   .add-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     column-gap: 0.5rem;
+    margin-left: 0.25rem;
 
-    min-width: 94px;
+    min-width: 80px;
     background-color: rgb(19 19 19);
     border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 0.75rem;
     border-radius: var(--button-border-radius-large);
     transition: background-color 0.2s ease-out;
     cursor: pointer;
