@@ -469,6 +469,18 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleRemoveInterval
+   * @summary Remove an interval subscription from the intervals controller.
+   */
+  const handleRemoveInterval = (ev: MessageEvent) => {
+    const { task: serialized } = ev.data.data;
+    const task: IntervalSubscription = JSON.parse(serialized);
+    IntervalsController.stopInterval();
+    IntervalsController.removeSubscription(task);
+    IntervalsController.initClock();
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -593,6 +605,10 @@ export const useMainMessagePorts = () => {
             }
             case 'openGov:interval:add': {
               handleAddInterval(ev);
+              break;
+            }
+            case 'openGov:interval:remove': {
+              handleRemoveInterval(ev);
               break;
             }
             default: {

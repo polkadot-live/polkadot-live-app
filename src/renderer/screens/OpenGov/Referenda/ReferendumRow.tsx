@@ -79,12 +79,19 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     task: IntervalSubscription,
     referendumInfo: ActiveReferendaInfo
   ) => {
-    // TODO: Communicate with main renderer to process subscription task.
-    // - Remove subscription in referenda subscriptions context.
-    // - Communicate with main renderer to remove subscription task from manager.
-    // - Receive feedback from main renderer to update UI:
-    //   * Toastify and subscription button.
+    // Remove subscription in referenda subscriptions context.
     removeReferendaSubscription(task, referendumInfo.referendaId);
+
+    // Communicate with main renderer to remove subscription from controller.
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:interval:remove',
+      data: {
+        task: JSON.stringify(task),
+      },
+    });
+
+    // - Receive feedback from main renderer to update UI:
+    // - Toastify and subscription button.
   };
 
   const renderHelpIcon = (key: HelpItemKey) => (

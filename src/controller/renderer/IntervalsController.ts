@@ -70,6 +70,22 @@ export class IntervalsController {
   }
 
   /**
+   * @name removeSubscription
+   * @summary Remove an intervaled subscription from the controller's map.
+   */
+  static removeSubscription(subscription: IntervalSubscription) {
+    const { chainId, action, referendumId } = subscription;
+
+    const updated = this.subscriptions
+      .get(chainId)!
+      .filter((t) => !(t.action === action && t.referendumId === referendumId));
+
+    updated.length !== 0
+      ? this.subscriptions.set(chainId, updated)
+      : this.subscriptions.delete(chainId);
+  }
+
+  /**
    * @name initClock
    * @summary Start interval when period duration is synched to the system clock.
    *

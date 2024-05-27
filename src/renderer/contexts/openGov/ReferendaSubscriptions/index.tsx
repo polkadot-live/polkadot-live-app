@@ -71,7 +71,7 @@ export const ReferendaSubscriptionsProvider = ({
 
     // Update subscriptions map.
     setSubscriptions((prev) => {
-      const { chainId, action } = { ...task };
+      const { chainId, action, referendumId: refId } = { ...task };
       const cloned = new Map(prev);
 
       if (cloned.has(chainId)) {
@@ -81,7 +81,11 @@ export const ReferendaSubscriptionsProvider = ({
           ? cloned.delete(chainId)
           : cloned.set(
               chainId,
-              cloned.get(chainId)!.filter((t) => t.action !== action)
+              cloned
+                .get(chainId)!
+                .filter(
+                  (t) => !(t.action === action && t.referendumId === refId)
+                )
             );
       }
 
