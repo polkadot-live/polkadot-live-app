@@ -17,10 +17,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
-import { NoAccounts } from '../NoAccounts';
+import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useManage } from './provider';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
 import { useState } from 'react';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -38,6 +39,7 @@ export const Accounts = ({
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { setRenderedSubscriptions } = useManage();
+  const { subscriptions: intervalSubscriptions } = useIntervalSubscriptions();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -85,7 +87,7 @@ export const Accounts = ({
     number[]
   >(
     Array.from(
-      { length: Array.from(getSortedAddresses().keys()).length + 1 },
+      { length: Array.from(getSortedAddresses().keys()).length + 2 },
       (_, index) => index
     )
   );
@@ -212,6 +214,74 @@ export const Accounts = ({
             )
           )}
 
+          {/* Manage OpenGov Subscriptions*/}
+          <AccordionItem key={'openGov_accounts'}>
+            <HeadingWrapper>
+              <AccordionHeader>
+                <div className="flex">
+                  <div className="left">
+                    <div className="icon-wrapper">
+                      {accordionActiveIndices.includes(
+                        Array.from(getSortedAddresses().keys()).length + 1
+                      ) ? (
+                        <FontAwesomeIcon
+                          icon={faCaretDown}
+                          transform={'shrink-1'}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faCaretRight}
+                          transform={'shrink-1'}
+                        />
+                      )}
+                    </div>
+                    <h5>OpenGov</h5>
+                  </div>
+                </div>
+              </AccordionHeader>
+            </HeadingWrapper>
+            <AccordionPanel>
+              <div style={{ padding: '0 0.75rem' }}>
+                <div className="flex-column">
+                  {intervalSubscriptions.size === 0 ? (
+                    <NoOpenGov />
+                  ) : (
+                    <>
+                      {Array.from(intervalSubscriptions.keys()).map(
+                        (chain, i) => (
+                          <AccountWrapper
+                            whileHover={{ scale: 1.01 }}
+                            key={`manage_chain_${i}`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => console.log('TODO')}
+                            ></button>
+                            <div className="inner">
+                              <div>
+                                <span>{getIcon(chain, 'chain-icon')}</span>
+                                <div className="content">
+                                  <h3>{chain}</h3>
+                                </div>
+                              </div>
+                              <div>
+                                <ButtonText
+                                  text=""
+                                  iconRight={faChevronRight}
+                                  iconTransform="shrink-3"
+                                />
+                              </div>
+                            </div>
+                          </AccountWrapper>
+                        )
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+
           {/* Manage Chains */}
           <AccordionItem key={'chain_accounts'}>
             <HeadingWrapper>
@@ -219,7 +289,9 @@ export const Accounts = ({
                 <div className="flex">
                   <div className="left">
                     <div className="icon-wrapper">
-                      {accordionActiveIndices.includes(3) ? (
+                      {accordionActiveIndices.includes(
+                        Array.from(getSortedAddresses().keys()).length + 2
+                      ) ? (
                         <FontAwesomeIcon
                           icon={faCaretDown}
                           transform={'shrink-1'}
