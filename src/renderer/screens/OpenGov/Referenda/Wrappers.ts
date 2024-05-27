@@ -181,10 +181,10 @@ export const ReferendumRowWrapper = styled.div`
         gap: 0.5rem;
         font-size: 0.95rem;
 
-        div:nth-child(2) {
+        div:nth-child(3n + 2) {
           justify-content: center;
         }
-        div:nth-child(3) {
+        div:nth-child(3n + 3) {
           justify-content: end;
         }
 
