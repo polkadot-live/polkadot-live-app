@@ -8,4 +8,6 @@ export const defaultIntervalSubscriptionsContext: IntervalSubscriptionsContextIn
   {
     subscriptions: new Map(),
     setSubscriptions: () => {},
+    addIntervalSubscription: () => {},
+    removeIntervalSubscription: () => {},
   };

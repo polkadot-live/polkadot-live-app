@@ -9,4 +9,6 @@ export interface IntervalSubscriptionsContextInterface {
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>
   ) => void;
+  addIntervalSubscription: (task: IntervalSubscription) => void;
+  removeIntervalSubscription: (task: IntervalSubscription) => void;
 }

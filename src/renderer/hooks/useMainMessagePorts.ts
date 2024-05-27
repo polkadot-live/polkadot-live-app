@@ -28,6 +28,7 @@ import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/screens/Home/Manage/provider';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
+import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';
@@ -45,6 +46,8 @@ export const useMainMessagePorts = () => {
   const { setRenderedSubscriptions } = useManage();
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /**
    * @name handleImportAddress
@@ -463,9 +466,14 @@ export const useMainMessagePorts = () => {
   const handleAddInterval = (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Add task to interval controller.
     IntervalsController.stopInterval();
-    IntervalsController.insertSubscription(task);
+    IntervalsController.insertSubscription({ ...task });
     IntervalsController.initClock();
+
+    // Add task to React state for rendering.
+    addIntervalSubscription({ ...task });
   };
 
   /**
@@ -475,9 +483,14 @@ export const useMainMessagePorts = () => {
   const handleRemoveInterval = (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Remove task from interval controller.
     IntervalsController.stopInterval();
-    IntervalsController.removeSubscription(task);
+    IntervalsController.removeSubscription({ ...task });
     IntervalsController.initClock();
+
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
   };
 
   /**

@@ -25,9 +25,46 @@ export const IntervalSubscriptionsProvider = ({
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
+  /// Add an interval subscription to the context state.
+  const addIntervalSubscription = (task: IntervalSubscription) => {
+    setSubscriptions((prev) => {
+      const { chainId } = task;
+      const cloned = new Map(prev);
+
+      cloned.has(chainId)
+        ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
+        : cloned.set(chainId, [{ ...task }]);
+
+      return cloned;
+    });
+  };
+
+  /// Remove an interval subscription from the context state.
+  const removeIntervalSubscription = (task: IntervalSubscription) => {
+    setSubscriptions((prev) => {
+      // NOTE: Relies on referendum ID to filter task for now.
+      const { chainId, action, referendumId } = task;
+      const cloned = new Map(prev);
+
+      const updated = cloned
+        .get(chainId)!
+        .filter(
+          (t) => !(t.action === action && t.referendumId === referendumId)
+        );
+
+      updated.length ? cloned.set(chainId, updated) : cloned.delete(chainId);
+      return cloned;
+    });
+  };
+
   return (
     <IntervalSubscriptionsContext.Provider
-      value={{ subscriptions, setSubscriptions }}
+      value={{
+        subscriptions,
+        setSubscriptions,
+        addIntervalSubscription,
+        removeIntervalSubscription,
+      }}
     >
       {children}
     </IntervalSubscriptionsContext.Provider>
