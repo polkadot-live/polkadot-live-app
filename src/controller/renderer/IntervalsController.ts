@@ -11,6 +11,8 @@ export interface IntervalSubscription {
   action: string;
   // Number of periods between each interval.
   waitPeriods: number;
+  // Used as a countdown.
+  periodCounter: number;
   // Task category.
   category: string;
   // Task's associated chain.
@@ -30,30 +32,24 @@ export interface IntervalSubscription {
 }
 
 export class IntervalsController {
+  /// Active interval subscriptions keyed by chain ID.
   static subscriptions = new Map<ChainID, IntervalSubscription[]>();
 
   /// Interval ID.
   static intervalId: AnyData = null;
+  /// Timeout ID.
+  static timeoutId: AnyData = null;
   /// Minimum clock period in minutes.
   static periodDuration = 5;
+  /// Maximum wait periods for an interval subscription.
+  static maxPeriods = 5;
 
   /**
    * @name initIntervals
    * @summary Initialize intervals and the interval clock.
    */
   static initIntervals() {
-    // Set map data.
-    this.subscriptions = new Map();
-    this.insertSubscription({
-      action: 'interval:openGov:referendumVotes',
-      category: 'Open Gov',
-      chainId: 'Polkadot',
-      label: 'Referendum Votes',
-      status: 'enable',
-      enableOsNotifications: true,
-      helpKey: 'help:interval:openGov:referendumVotes',
-      waitPeriods: 1,
-    });
+    // TODO: Fetch persisted intervals and re-start the subscription.
 
     // Start interval.
     this.initClock();
@@ -80,19 +76,25 @@ export class IntervalsController {
    * For example, if the period duration is 15 minutes, the interval will start
    * at the nearest 15 minute multiple of the actual clock.
    */
-  private static initClock() {
+  static initClock() {
+    console.log(`Initialized:`);
+    console.log(this.subscriptions);
+
     // Seconds until next period synched with clock.
-    const seconds = secondsUntilNextMinute(this.periodDuration);
-    console.log(`seconds to wait: ${seconds}`);
+    const seconds = secondsUntilNextMinute(1);
+    console.log(`seconds to wait: ${seconds / 10}`);
 
     if (seconds === 0) {
       // Start the interval now clock is synched.
       this.startInterval();
     } else {
       // Wait until clock is synched before starting interval.
-      const ms = seconds * 1000;
-      setTimeout(() => {
-        this.startInterval();
+      const ms = seconds * 100;
+      this.timeoutId = setTimeout(() => {
+        if (this.timeoutId !== null) {
+          this.timeoutId = null;
+          this.startInterval();
+        }
       }, ms);
     }
   }
@@ -102,8 +104,8 @@ export class IntervalsController {
    * @summary Start the interval for processing interval subscriptions.
    */
   private static startInterval() {
-    this.intervalId = setInterval(() => {
-      console.log(`interval tick`);
+    this.intervalId = setInterval(async () => {
+      await this.processTick();
     }, this.periodDuration * 1000);
   }
 
@@ -112,8 +114,71 @@ export class IntervalsController {
    * @summary Stops the interval.
    */
   static stopInterval() {
-    if (this.intervalId) {
+    if (this.timeoutId !== null) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+    if (this.intervalId !== null) {
       clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
+  /**
+   * @name processTick
+   * @summary Process an interval tick.
+   */
+  static async processTick() {
+    // Get all intervals from map and execute the ones whose period has synched.
+    for (const [chainId, chainSubscriptions] of this.subscriptions.entries()) {
+      console.log(`Processing interval subscriptions for chain: ${chainId}`);
+
+      for (const taskObj of chainSubscriptions) {
+        const { periodCounter, waitPeriods } = taskObj;
+        const curPeriod = periodCounter + 1;
+
+        if (curPeriod === waitPeriods) {
+          // TODO: Implement queuing system.
+          await this.executeAction(taskObj);
+        }
+      }
+
+      // Increment period counter by one for all tasks or reset to zero.
+      this.subscriptions.set(
+        chainId,
+        chainSubscriptions.map((t) => ({
+          ...t,
+          periodCounter:
+            t.periodCounter + 1 === t.waitPeriods ? 0 : t.periodCounter + 1,
+        }))
+      );
+    }
+  }
+
+  /**
+   * @name executeAction
+   * @summary Extract an interval subscription's action and execute a one-shot.
+   */
+  private static async executeAction(task: IntervalSubscription) {
+    const { action } = task;
+    console.log(`Execute: ${action}`);
+
+    switch (action) {
+      case 'subscribe:interval:openGov:referendaVotes': {
+        // TODO: Call one-shot.
+        break;
+      }
+      case 'subscribe:interval:openGov:decisionPeriod': {
+        // TODO: Call one-shot.
+        break;
+      }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        // TODO: Call one-shot.
+        break;
+      }
+      default: {
+        throw new Error(`Interval task action ${action} not recognized`);
+      }
     }
   }
 }

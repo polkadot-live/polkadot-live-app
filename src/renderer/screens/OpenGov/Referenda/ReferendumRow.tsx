@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '../utils';
@@ -59,7 +60,14 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     // Cache subscription in referenda subscriptions context.
     addReferendaSubscription({ ...task });
 
-    // TODO: Communicate with main renderer to process subscription task.
+    // Communicate with main renderer to process subscription task.
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:interval:add',
+      data: {
+        task: JSON.stringify(task),
+      },
+    });
+
     // - Receive feedback from main renderer to update:
     // - UI (toastify, subscription button)
     // - Loading spinner if necessary.

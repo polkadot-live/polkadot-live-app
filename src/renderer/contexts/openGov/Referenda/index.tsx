@@ -24,6 +24,7 @@ export const ReferendaProvider = ({
 
   /// Flag to indicate that referenda is being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
+
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
