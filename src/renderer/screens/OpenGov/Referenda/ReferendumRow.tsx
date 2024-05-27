@@ -70,7 +70,6 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
 
     // - Receive feedback from main renderer to update:
     // - UI (toastify, subscription button)
-    // - Loading spinner if necessary.
     // - Update `Manage` UI to add subscription task.
   };
 
