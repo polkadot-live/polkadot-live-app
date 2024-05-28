@@ -29,6 +29,7 @@ import { useEffect, useState } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useManage } from './provider';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
@@ -42,9 +43,15 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { online: isOnline, isConnecting } = useBootstrapping();
-  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
+
+  const {
+    updateRenderedSubscriptions,
+    renderedSubscriptions,
+    intervalTasksState,
+  } = useManage();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -53,6 +60,10 @@ export const Permissions = ({
 
   /// Active accordion indices for chain subscription tasks categories.
   const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
+    useState<number[]>([0]);
+
+  /// Active accordion indices for interval subscription task categories.
+  const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
     useState<number[]>([0]);
 
   useEffect(() => {
@@ -308,6 +319,55 @@ export const Permissions = ({
     </Accordion>
   );
 
+  /// Render a list of interval subscription tasks that can be toggled.
+  const renderIntervalSubscriptionTasks = () => (
+    <Accordion
+      multiple
+      defaultIndex={accordionActiveIntervalIndices}
+      setExternalIndices={setAccordionActiveIntervalIndices}
+    >
+      <AccordionItem>
+        <HeadingWrapper>
+          <AccordionHeader>
+            <div className="flex">
+              <div className="left">
+                <div className="icon-wrapper">
+                  {accordionActiveIntervalIndices.includes(0) ? (
+                    <FontAwesomeIcon
+                      icon={faCaretDown}
+                      transform={'shrink-1'}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faCaretRight}
+                      transform={'shrink-1'}
+                    />
+                  )}
+                </div>
+                <h5>
+                  <span>OpenGov</span>
+                </h5>
+              </div>
+            </div>
+          </AccordionHeader>
+        </HeadingWrapper>
+        <AccordionPanel>
+          <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+            {intervalTasksState
+              .sort((a, b) => a.label.localeCompare(b.label))
+              .map((task: IntervalSubscription, i: number) => (
+                <div key={i} style={{ display: 'flex', columnGap: '1rem' }}>
+                  <span>{task.label}</span>
+                  <span>{task.chainId}</span>
+                  <span>{task.ticksToWait}</span>
+                </div>
+              ))}
+          </div>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
+  );
+
   return (
     <>
       <BreadcrumbsWrapper>
@@ -328,6 +388,7 @@ export const Permissions = ({
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
+        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );

@@ -57,6 +57,17 @@ export const IntervalSubscriptionsProvider = ({
     });
   };
 
+  /// Get interval subscriptions for a specific chain.
+  const getIntervalSubscriptionsForChain = (chainId: ChainID) => {
+    const tasks = subscriptions.get(chainId);
+
+    if (!tasks) {
+      throw new Error(`No interval subscription state for ${chainId}`);
+    }
+
+    return tasks;
+  };
+
   return (
     <IntervalSubscriptionsContext.Provider
       value={{
@@ -64,6 +75,7 @@ export const IntervalSubscriptionsProvider = ({
         setSubscriptions,
         addIntervalSubscription,
         removeIntervalSubscription,
+        getIntervalSubscriptionsForChain,
       }}
     >
       {children}

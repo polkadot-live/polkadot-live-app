@@ -38,8 +38,11 @@ export const Accounts = ({
 }: AccountsProps) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-  const { setRenderedSubscriptions } = useManage();
-  const { subscriptions: intervalSubscriptions } = useIntervalSubscriptions();
+  const { setRenderedSubscriptions, setIntervalTasks } = useManage();
+  const {
+    subscriptions: intervalSubscriptions,
+    getIntervalSubscriptionsForChain,
+  } = useIntervalSubscriptions();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -126,6 +129,16 @@ export const Accounts = ({
     } as WrappedSubscriptionTasks);
 
     setBreadcrumb(accountName);
+    setSection(1);
+  };
+
+  /// Set interval subscription tasks state when chain is clicked.
+  const handleClickOpenGovChain = (chainId: ChainID) => {
+    const tasks = getIntervalSubscriptionsForChain(chainId);
+
+    setTypeClicked('interval');
+    setIntervalTasks(tasks);
+    setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };
 
@@ -248,20 +261,20 @@ export const Accounts = ({
                   ) : (
                     <>
                       {Array.from(intervalSubscriptions.keys()).map(
-                        (chain, i) => (
+                        (chainId, i) => (
                           <AccountWrapper
                             whileHover={{ scale: 1.01 }}
                             key={`manage_chain_${i}`}
                           >
                             <button
                               type="button"
-                              onClick={() => console.log('TODO')}
+                              onClick={() => handleClickOpenGovChain(chainId)}
                             ></button>
                             <div className="inner">
                               <div>
-                                <span>{getIcon(chain, 'chain-icon')}</span>
+                                <span>{getIcon(chainId, 'chain-icon')}</span>
                                 <div className="content">
-                                  <h3>{chain}</h3>
+                                  <h3>{chainId}</h3>
                                 </div>
                               </div>
                               <div>
