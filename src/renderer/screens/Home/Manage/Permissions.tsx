@@ -66,7 +66,7 @@ export const Permissions = ({
 
   /// Active accordion indices for interval subscription task categories.
   const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
-    useState<number[]>([]);
+    useState<number[]>([0]);
 
   /// Ref to keep track of number of interval categories being rendered.
   const numIntervalCategoresRef = useRef(
