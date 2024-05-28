@@ -26,7 +26,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
     useState<WrappedSubscriptionTasks>({ type: '', tasks: [] });
 
-  const [intervalTasksState, setIntervalTasksState] = useState<
+  const [dynamicIntervalTasksState, setDynamicIntervalTasksState] = useState<
     IntervalSubscription[]
   >([]);
 
@@ -46,13 +46,13 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /// Set intervaled subscriptions with new tasks array.
-  const setIntervalTasks = (tasks: IntervalSubscription[]) => {
-    setIntervalTasksState([...tasks]);
+  const setDynamicIntervalTasks = (tasks: IntervalSubscription[]) => {
+    setDynamicIntervalTasksState([...tasks]);
   };
 
   /// Update a task in the interval subscriptions state.
-  const updateIntervalTask = (task: IntervalSubscription) => {
-    setIntervalTasksState((prev) =>
+  const updateDynamicIntervalTask = (task: IntervalSubscription) => {
+    setDynamicIntervalTasksState((prev) =>
       prev.map((t) =>
         t.action === task.action && t.referendumId === task.referendumId
           ? task
@@ -64,7 +64,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   /// Add an interval task to state if it should be rendered.
   const tryAddIntervalSubscription = (task: IntervalSubscription) => {
     if (activeChainId === task.chainId) {
-      setIntervalTasksState((prev) => [...prev, { ...task }]);
+      setDynamicIntervalTasksState((prev) => [...prev, { ...task }]);
     }
   };
 
@@ -73,7 +73,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     action: string,
     referendumId: number
   ) => {
-    setIntervalTasksState((prev) =>
+    setDynamicIntervalTasksState((prev) =>
       prev.filter(
         (t) => !(t.action === action && t.referendumId === referendumId)
       )
@@ -84,11 +84,11 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     <ManageContext.Provider
       value={{
         renderedSubscriptions: renderedSubscriptionsState,
-        intervalTasksState,
-        setIntervalTasks,
+        dynamicIntervalTasksState,
+        setDynamicIntervalTasks,
         setRenderedSubscriptions,
         updateRenderedSubscriptions,
-        updateIntervalTask,
+        updateDynamicIntervalTask,
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
         activeChainId,

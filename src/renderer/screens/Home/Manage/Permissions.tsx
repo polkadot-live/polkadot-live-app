@@ -51,7 +51,7 @@ export const Permissions = ({
   const {
     updateRenderedSubscriptions,
     renderedSubscriptions,
-    intervalTasksState,
+    dynamicIntervalTasksState,
   } = useManage();
 
   /// Active accordion indices for account subscription tasks categories.
@@ -75,10 +75,10 @@ export const Permissions = ({
 
   /// Go to section zero if all interval subscriptions have been removed.
   useEffect(() => {
-    if (typeClicked === 'interval' && intervalTasksState.length === 0) {
+    if (typeClicked === 'interval' && dynamicIntervalTasksState.length === 0) {
       setSection(0);
     }
-  }, [intervalTasksState]);
+  }, [dynamicIntervalTasksState]);
 
   /// Handle a toggle and update rendered subscription state.
   const handleToggle = async (
@@ -361,12 +361,14 @@ export const Permissions = ({
         </HeadingWrapper>
         <AccordionPanel>
           <div className="flex-column" style={{ padding: '0 0.75rem' }}>
-            {intervalTasksState.map((task: IntervalSubscription, i: number) => (
-              <IntervalRow
-                key={`${i}_${task.referendumId}_${task.action}`}
-                task={task}
-              />
-            ))}
+            {dynamicIntervalTasksState.map(
+              (task: IntervalSubscription, i: number) => (
+                <IntervalRow
+                  key={`${i}_${task.referendumId}_${task.action}`}
+                  task={task}
+                />
+              )
+            )}
           </div>
         </AccordionPanel>
       </AccordionItem>

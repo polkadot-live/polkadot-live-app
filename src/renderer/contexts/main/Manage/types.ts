@@ -11,11 +11,11 @@ import type {
 // Context interface.
 export interface ManageContextInterface {
   renderedSubscriptions: WrappedSubscriptionTasks;
-  intervalTasksState: IntervalSubscription[];
-  setIntervalTasks: (tasks: IntervalSubscription[]) => void;
+  dynamicIntervalTasksState: IntervalSubscription[];
+  setDynamicIntervalTasks: (tasks: IntervalSubscription[]) => void;
   setRenderedSubscriptions: (a: WrappedSubscriptionTasks) => void;
   updateRenderedSubscriptions: (a: SubscriptionTask) => void;
-  updateIntervalTask: (task: IntervalSubscription) => void;
+  updateDynamicIntervalTask: (task: IntervalSubscription) => void;
   tryAddIntervalSubscription: (task: IntervalSubscription) => void;
   tryRemoveIntervalSubscription: (action: string, referendumId: number) => void;
   activeChainId: ChainID;
