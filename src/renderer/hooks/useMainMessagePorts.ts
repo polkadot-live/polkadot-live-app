@@ -26,7 +26,7 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
-import { useManage } from '@app/screens/Home/Manage/provider';
+import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
@@ -39,13 +39,16 @@ import type { IntervalSubscription } from '@/controller/renderer/IntervalsContro
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
-    useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { setRenderedSubscriptions } = useManage();
+
+  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
+    useBootstrapping();
+
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
+
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 

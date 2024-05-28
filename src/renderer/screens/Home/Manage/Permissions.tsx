@@ -27,7 +27,7 @@ import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useManage } from './provider';
+import { useManage } from '@/renderer/contexts/main/Manage';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';

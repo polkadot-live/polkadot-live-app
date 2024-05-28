@@ -1,48 +1,23 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as defaults from './defaults';
 import { useState, createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
+import type { ManageContextInterface } from './types';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
-
-// Context interface.
-interface ManageContextInterface {
-  renderedSubscriptions: WrappedSubscriptionTasks;
-  intervalTasksState: IntervalSubscription[];
-  setIntervalTasks: (tasks: IntervalSubscription[]) => void;
-  setRenderedSubscriptions: (a: WrappedSubscriptionTasks) => void;
-  updateRenderedSubscriptions: (a: SubscriptionTask) => void;
-  updateIntervalTask: (task: IntervalSubscription) => void;
-}
-
-// Default context value.
-const defaultManageContext: ManageContextInterface = {
-  renderedSubscriptions: { type: '', tasks: [] },
-  intervalTasksState: [],
-  setIntervalTasks: () => {
-    // do nothing
-  },
-  setRenderedSubscriptions: () => {
-    // do nothing
-  },
-  updateRenderedSubscriptions: () => {
-    // do nothing
-  },
-  updateIntervalTask: () => {
-    // do nothing
-  },
-};
 
 // Hook to manage context.
 export const useManage = () => useContext(ManageContext);
 
 // Manage context.
-export const ManageContext =
-  createContext<ManageContextInterface>(defaultManageContext);
+export const ManageContext = createContext<ManageContextInterface>(
+  defaults.defaultManageContext
+);
 
 // Manage context provider.
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
