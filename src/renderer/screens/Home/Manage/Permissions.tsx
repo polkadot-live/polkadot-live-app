@@ -23,6 +23,7 @@ import {
 import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
+import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
@@ -356,11 +357,7 @@ export const Permissions = ({
             {intervalTasksState
               .sort((a, b) => a.label.localeCompare(b.label))
               .map((task: IntervalSubscription, i: number) => (
-                <div key={i} style={{ display: 'flex', columnGap: '1rem' }}>
-                  <span>{task.label}</span>
-                  <span>{task.chainId}</span>
-                  <span>{task.ticksToWait}</span>
-                </div>
+                <IntervalRow key={`${i}_${task.action}`} task={task} />
               ))}
           </div>
         </AccordionPanel>

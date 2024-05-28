@@ -57,6 +57,9 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     const { referendaId: referendumId } = referendumInfo;
     task.referendumId = referendumId;
 
+    // Invert task status.
+    task.status = task.status === 'enable' ? 'disable' : 'enable';
+
     // Cache subscription in referenda subscriptions context.
     addReferendaSubscription({ ...task });
 
