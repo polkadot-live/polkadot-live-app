@@ -16,4 +16,5 @@ export const defaultManageContext: ManageContextInterface = {
   setActiveChainId: () => {},
   tryAddIntervalSubscription: (t) => {},
   tryRemoveIntervalSubscription: (t) => {},
+  getCategorizedDynamicIntervals: () => new Map(),
 };

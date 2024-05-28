@@ -20,4 +20,5 @@ export interface ManageContextInterface {
   tryRemoveIntervalSubscription: (action: string, referendumId: number) => void;
   activeChainId: ChainID;
   setActiveChainId: (cid: ChainID) => void;
+  getCategorizedDynamicIntervals: () => Map<number, IntervalSubscription[]>;
 }

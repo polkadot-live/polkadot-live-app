@@ -49,9 +49,10 @@ export const Permissions = ({
     useSubscriptions();
 
   const {
-    updateRenderedSubscriptions,
     renderedSubscriptions,
     dynamicIntervalTasksState,
+    updateRenderedSubscriptions,
+    getCategorizedDynamicIntervals,
   } = useManage();
 
   /// Active accordion indices for account subscription tasks categories.
@@ -334,44 +335,46 @@ export const Permissions = ({
       defaultIndex={accordionActiveIntervalIndices}
       setExternalIndices={setAccordionActiveIntervalIndices}
     >
-      <AccordionItem>
-        <HeadingWrapper>
-          <AccordionHeader>
-            <div className="flex">
-              <div className="left">
-                <div className="icon-wrapper">
-                  {accordionActiveIntervalIndices.includes(0) ? (
-                    <FontAwesomeIcon
-                      icon={faCaretDown}
-                      transform={'shrink-1'}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      icon={faCaretRight}
-                      transform={'shrink-1'}
-                    />
-                  )}
+      {Array.from(getCategorizedDynamicIntervals().entries()).map(
+        ([referendumId, intervalTasks]) => (
+          <AccordionItem key={`${referendumId}_interval_subscriptions`}>
+            <HeadingWrapper>
+              <AccordionHeader>
+                <div className="flex">
+                  <div className="left">
+                    <div className="icon-wrapper">
+                      {accordionActiveIntervalIndices.includes(0) ? (
+                        <FontAwesomeIcon
+                          icon={faCaretDown}
+                          transform={'shrink-1'}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faCaretRight}
+                          transform={'shrink-1'}
+                        />
+                      )}
+                    </div>
+                    <h5>
+                      <span>Referendum {referendumId}</span>
+                    </h5>
+                  </div>
                 </div>
-                <h5>
-                  <span>OpenGov</span>
-                </h5>
+              </AccordionHeader>
+            </HeadingWrapper>
+            <AccordionPanel>
+              <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+                {intervalTasks.map((task: IntervalSubscription, i: number) => (
+                  <IntervalRow
+                    key={`${i}_${task.referendumId}_${task.action}`}
+                    task={task}
+                  />
+                ))}
               </div>
-            </div>
-          </AccordionHeader>
-        </HeadingWrapper>
-        <AccordionPanel>
-          <div className="flex-column" style={{ padding: '0 0.75rem' }}>
-            {dynamicIntervalTasksState.map(
-              (task: IntervalSubscription, i: number) => (
-                <IntervalRow
-                  key={`${i}_${task.referendumId}_${task.action}`}
-                  task={task}
-                />
-              )
-            )}
-          </div>
-        </AccordionPanel>
-      </AccordionItem>
+            </AccordionPanel>
+          </AccordionItem>
+        )
+      )}
     </Accordion>
   );
 

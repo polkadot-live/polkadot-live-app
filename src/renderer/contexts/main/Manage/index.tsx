@@ -80,6 +80,46 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  /// Get dynamic interval subscriptions categorized by referendum ID.
+  const getCategorizedDynamicIntervals = (): Map<
+    number,
+    IntervalSubscription[]
+  > => {
+    const map = new Map<number, IntervalSubscription[]>();
+
+    // Construct an array of sorted referendum IDs.
+    const referendumIds = new Set(
+      dynamicIntervalTasksState
+        .map(({ referendumId }) => referendumId || -1)
+        .sort()
+        .reverse()
+    );
+
+    // Insert IDs as map keys in order.
+    for (const rid of referendumIds) {
+      map.set(rid, []);
+    }
+
+    // Insert subscriptions into map.
+    for (const task of dynamicIntervalTasksState) {
+      if (!task.referendumId) {
+        continue;
+      }
+
+      const { referendumId: rid } = task;
+      map.has(rid)
+        ? map.set(rid, [...map.get(rid)!, { ...task }])
+        : map.set(rid, [{ ...task }]);
+    }
+
+    // Remove any empty keys in the map.
+    for (const [rid, tasks] of map.entries()) {
+      tasks.length === 0 && map.delete(rid);
+    }
+
+    return map;
+  };
+
   return (
     <ManageContext.Provider
       value={{
@@ -93,6 +133,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         tryRemoveIntervalSubscription,
         activeChainId,
         setActiveChainId,
+        getCategorizedDynamicIntervals,
       }}
     >
       {children}
