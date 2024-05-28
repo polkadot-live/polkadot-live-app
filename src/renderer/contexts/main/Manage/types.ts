@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ChainID } from '@/types/chains';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type {
   SubscriptionTask,
@@ -15,4 +16,8 @@ export interface ManageContextInterface {
   setRenderedSubscriptions: (a: WrappedSubscriptionTasks) => void;
   updateRenderedSubscriptions: (a: SubscriptionTask) => void;
   updateIntervalTask: (task: IntervalSubscription) => void;
+  tryAddIntervalSubscription: (task: IntervalSubscription) => void;
+  tryRemoveIntervalSubscription: (action: string, referendumId: number) => void;
+  activeChainId: ChainID;
+  setActiveChainId: (cid: ChainID) => void;
 }

@@ -38,7 +38,8 @@ export const Accounts = ({
 }: AccountsProps) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-  const { setRenderedSubscriptions, setIntervalTasks } = useManage();
+  const { setRenderedSubscriptions, setIntervalTasks, setActiveChainId } =
+    useManage();
   const {
     subscriptions: intervalSubscriptions,
     getIntervalSubscriptionsForChain,
@@ -138,6 +139,7 @@ export const Accounts = ({
 
     setTypeClicked('interval');
     setIntervalTasks(tasks);
+    setActiveChainId(chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };

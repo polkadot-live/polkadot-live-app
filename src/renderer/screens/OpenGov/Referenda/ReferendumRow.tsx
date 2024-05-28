@@ -19,12 +19,11 @@ import {
   faInfo,
 } from '@fortawesome/pro-solid-svg-icons';
 import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { ReferendumRowProps } from '../types';
 
-export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
+export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { activeReferendaChainId: chainId } = useReferenda();
   const {
     addReferendaSubscription,
@@ -41,24 +40,20 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
   const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
   const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;
 
-  const getIntervalSubscriptions = (cid: ChainID) =>
-    allIntervalTasks.filter((t) => t.chainId === cid);
+  const getIntervalSubscriptions = () =>
+    allIntervalTasks.filter((t) => t.chainId === chainId);
 
   /// Handles adding an interval subscription for a referendum.
   const addIntervalSubscription = (
     task: IntervalSubscription,
     referendumInfo: ActiveReferendaInfo
   ) => {
-    console.log(
-      `add task: ${task.action} for referendum with ID: ${referendumInfo.referendaId}`
-    );
-
     // Set referendum ID on task.
     const { referendaId: referendumId } = referendumInfo;
     task.referendumId = referendumId;
 
-    // Invert task status.
-    task.status = task.status === 'enable' ? 'disable' : 'enable';
+    // Enable the task since by default.
+    task.status = 'enable';
 
     // Cache subscription in referenda subscriptions context.
     addReferendaSubscription({ ...task });
@@ -70,10 +65,6 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
         task: JSON.stringify(task),
       },
     });
-
-    // - Receive feedback from main renderer to update:
-    // - UI (toastify, subscription button)
-    // - Update `Manage` UI to add subscription task.
   };
 
   /// Handles removing an interval subscription for a referendum.
@@ -81,8 +72,12 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
     task: IntervalSubscription,
     referendumInfo: ActiveReferendaInfo
   ) => {
+    // Set referendum ID on task.
+    const { referendaId: referendumId } = referendumInfo;
+    task.referendumId = referendumId;
+
     // Remove subscription in referenda subscriptions context.
-    removeReferendaSubscription(task, referendumInfo.referendaId);
+    removeReferendaSubscription(task);
 
     // Communicate with main renderer to remove subscription from controller.
     ConfigOpenGov.portOpenGov.postMessage({
@@ -91,9 +86,6 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
         task: JSON.stringify(task),
       },
     });
-
-    // - Receive feedback from main renderer to update UI:
-    // - Toastify and subscription button.
   };
 
   const renderHelpIcon = (key: HelpItemKey) => (
@@ -132,7 +124,7 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
               Subsquare
             </button>
           </div>
-          {/* TODO: Subsciption Menu */}
+          {/* Expand Menu */}
           <div
             className="menu-btn-wrapper tooltip-trigger-element"
             data-tooltip-text="Subscriptions"
@@ -156,8 +148,11 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
         <div className="content-wrapper">
           <div className="subscription-grid">
             {/* Render interval tasks from config */}
-            {getIntervalSubscriptions(chainId).map((t, i) => (
-              <div key={`${t.action}_${i}`} className="subscription-row">
+            {getIntervalSubscriptions().map((t) => (
+              <div
+                key={`${index}_${referendaId}_${t.action}`}
+                className="subscription-row"
+              >
                 <span>{renderHelpIcon(t.helpKey)}</span>
                 <p>{t.label}:</p>
                 {isSubscribedToTask(referendum, t) ? (

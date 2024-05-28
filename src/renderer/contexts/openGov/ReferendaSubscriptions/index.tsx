@@ -61,17 +61,10 @@ export const ReferendaSubscriptionsProvider = ({
   };
 
   /// Remove a task from the context.
-  const removeReferendaSubscription = (
-    task: IntervalSubscription,
-    referendumId: number
-  ) => {
-    console.log(
-      `Remove task ${task.action} for referendum with ID ${referendumId}`
-    );
-
+  const removeReferendaSubscription = (task: IntervalSubscription) => {
     // Update subscriptions map.
     setSubscriptions((prev) => {
-      const { chainId, action, referendumId: refId } = { ...task };
+      const { chainId, action, referendumId } = task;
       const cloned = new Map(prev);
 
       if (cloned.has(chainId)) {
@@ -84,7 +77,8 @@ export const ReferendaSubscriptionsProvider = ({
               cloned
                 .get(chainId)!
                 .filter(
-                  (t) => !(t.action === action && t.referendumId === refId)
+                  (t) =>
+                    !(t.action === action && t.referendumId === referendumId)
                 )
             );
       }
@@ -94,11 +88,10 @@ export const ReferendaSubscriptionsProvider = ({
 
     // Update active tasks map.
     setActiveTasksMap((prev) => {
-      const { action } = { ...task };
-      const key = referendumId;
+      const { action, referendumId: key } = task;
       const cloned = new Map(prev);
 
-      if (cloned.has(key)) {
+      if (key && cloned.has(key)) {
         const cached = cloned.get(key)!;
 
         cached.length === 1

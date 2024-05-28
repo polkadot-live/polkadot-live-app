@@ -41,7 +41,12 @@ export const useMainMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
-  const { setRenderedSubscriptions } = useManage();
+
+  const {
+    setRenderedSubscriptions,
+    tryAddIntervalSubscription,
+    tryRemoveIntervalSubscription,
+  } = useManage();
 
   const { handleDockedToggle, handleToggleSilenceOsNotifications } =
     useBootstrapping();
@@ -475,6 +480,9 @@ export const useMainMessagePorts = () => {
     IntervalsController.insertSubscription({ ...task });
     IntervalsController.initClock();
 
+    // Add task to dynamic manage state if necessary.
+    tryAddIntervalSubscription({ ...task });
+
     // Add task to React state for rendering.
     addIntervalSubscription({ ...task });
   };
@@ -491,6 +499,9 @@ export const useMainMessagePorts = () => {
     IntervalsController.stopInterval();
     IntervalsController.removeSubscription({ ...task });
     IntervalsController.initClock();
+
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription(task.action, task.referendumId!);
 
     // Remove task from React state for rendering.
     removeIntervalSubscription({ ...task });

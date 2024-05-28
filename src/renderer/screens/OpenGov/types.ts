@@ -21,4 +21,5 @@ export interface ReferendaProps {
 
 export interface ReferendumRowProps {
   referendum: ActiveReferendaInfo;
+  index: number;
 }

@@ -354,11 +354,12 @@ export const Permissions = ({
         </HeadingWrapper>
         <AccordionPanel>
           <div className="flex-column" style={{ padding: '0 0.75rem' }}>
-            {intervalTasksState
-              .sort((a, b) => a.label.localeCompare(b.label))
-              .map((task: IntervalSubscription, i: number) => (
-                <IntervalRow key={`${i}_${task.action}`} task={task} />
-              ))}
+            {intervalTasksState.map((task: IntervalSubscription, i: number) => (
+              <IntervalRow
+                key={`${i}_${task.referendumId}_${task.action}`}
+                task={task}
+              />
+            ))}
           </div>
         </AccordionPanel>
       </AccordionItem>

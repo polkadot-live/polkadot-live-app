@@ -8,8 +8,9 @@ import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import type { ManageContextInterface } from './types';
+import type { ChainID } from '@/types/chains';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { ManageContextInterface } from './types';
 
 // Hook to manage context.
 export const useManage = () => useContext(ManageContext);
@@ -28,6 +29,8 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   const [intervalTasksState, setIntervalTasksState] = useState<
     IntervalSubscription[]
   >([]);
+
+  const [activeChainId, setActiveChainId] = useState<ChainID>('Polkadot');
 
   /// Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
@@ -58,6 +61,25 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  /// Add an interval task to state if it should be rendered.
+  const tryAddIntervalSubscription = (task: IntervalSubscription) => {
+    if (activeChainId === task.chainId) {
+      setIntervalTasksState((prev) => [...prev, { ...task }]);
+    }
+  };
+
+  /// Remove an interval task from state if it should be removed.
+  const tryRemoveIntervalSubscription = (
+    action: string,
+    referendumId: number
+  ) => {
+    setIntervalTasksState((prev) =>
+      prev.filter(
+        (t) => !(t.action === action && t.referendumId === referendumId)
+      )
+    );
+  };
+
   return (
     <ManageContext.Provider
       value={{
@@ -67,6 +89,10 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         setRenderedSubscriptions,
         updateRenderedSubscriptions,
         updateIntervalTask,
+        tryAddIntervalSubscription,
+        tryRemoveIntervalSubscription,
+        activeChainId,
+        setActiveChainId,
       }}
     >
       {children}

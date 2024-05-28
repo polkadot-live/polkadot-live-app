@@ -28,11 +28,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     task.enableOsNotifications
   );
 
-  const { action } = task;
-  console.log(`task action: ${action}`);
-  console.log(openHelp);
-  console.log(setTooltipTextAndOpen);
-
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
