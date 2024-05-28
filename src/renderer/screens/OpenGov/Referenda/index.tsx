@@ -113,7 +113,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               <AccordionPanel>
                 <ReferendaGroup>
                   {infos.map((referendum, j) => (
-                    <ReferendumRow key={j} referendum={referendum} />
+                    <ReferendumRow
+                      key={`${j}_${referendum.referendaId}`}
+                      referendum={referendum}
+                      index={j}
+                    />
                   ))}
                 </ReferendaGroup>
               </AccordionPanel>
@@ -128,7 +132,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const renderListed = () => (
     <ReferendaGroup style={{ display: groupingOn ? 'none' : 'block' }}>
       {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
-        <ReferendumRow key={i} referendum={referendum} />
+        <ReferendumRow
+          key={`${i}_${referendum.referendaId}`}
+          referendum={referendum}
+          index={i}
+        />
       ))}
     </ReferendaGroup>
   );

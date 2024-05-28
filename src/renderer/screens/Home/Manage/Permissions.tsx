@@ -23,12 +23,14 @@ import {
 import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
+import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useManage } from './provider';
+import { useManage } from '@/renderer/contexts/main/Manage';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
@@ -42,9 +44,16 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { online: isOnline, isConnecting } = useBootstrapping();
-  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
+
+  const {
+    renderedSubscriptions,
+    dynamicIntervalTasksState,
+    updateRenderedSubscriptions,
+    getCategorizedDynamicIntervals,
+  } = useManage();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -55,11 +64,39 @@ export const Permissions = ({
   const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
     useState<number[]>([0]);
 
+  /// Active accordion indices for interval subscription task categories.
+  const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
+    useState<number[]>([]);
+
+  /// Ref to keep track of number of interval categories being rendered.
+  const numIntervalCategoresRef = useRef(
+    Array.from(getCategorizedDynamicIntervals().keys()).length
+  );
+
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
       setSection(0);
     }
   }, [renderedSubscriptions]);
+
+  /// Go to section zero if all interval subscriptions have been removed.
+  useEffect(() => {
+    if (typeClicked === 'interval' && dynamicIntervalTasksState.length === 0) {
+      setSection(0);
+    }
+
+    // Close all accordion panels if new category has been added.
+    if (typeClicked === 'interval') {
+      const newLength = Array.from(
+        getCategorizedDynamicIntervals().keys()
+      ).length;
+
+      if (newLength !== numIntervalCategoresRef.current) {
+        numIntervalCategoresRef.current = newLength;
+        setAccordionActiveIntervalIndices([]);
+      }
+    }
+  }, [dynamicIntervalTasksState]);
 
   /// Handle a toggle and update rendered subscription state.
   const handleToggle = async (
@@ -308,6 +345,56 @@ export const Permissions = ({
     </Accordion>
   );
 
+  /// Render a list of interval subscription tasks that can be toggled.
+  const renderIntervalSubscriptionTasks = () => (
+    <Accordion
+      multiple
+      defaultIndex={accordionActiveIntervalIndices}
+      setExternalIndices={setAccordionActiveIntervalIndices}
+    >
+      {Array.from(getCategorizedDynamicIntervals().entries()).map(
+        ([referendumId, intervalTasks], i) => (
+          <AccordionItem key={`${referendumId}_interval_subscriptions`}>
+            <HeadingWrapper>
+              <AccordionHeader>
+                <div className="flex">
+                  <div className="left">
+                    <div className="icon-wrapper">
+                      {accordionActiveIntervalIndices.includes(i) ? (
+                        <FontAwesomeIcon
+                          icon={faCaretDown}
+                          transform={'shrink-1'}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faCaretRight}
+                          transform={'shrink-1'}
+                        />
+                      )}
+                    </div>
+                    <h5>
+                      <span>Referendum {referendumId}</span>
+                    </h5>
+                  </div>
+                </div>
+              </AccordionHeader>
+            </HeadingWrapper>
+            <AccordionPanel>
+              <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+                {intervalTasks.map((task: IntervalSubscription, j: number) => (
+                  <IntervalRow
+                    key={`${j}_${task.referendumId}_${task.action}`}
+                    task={task}
+                  />
+                ))}
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+        )
+      )}
+    </Accordion>
+  );
+
   return (
     <>
       <BreadcrumbsWrapper>
@@ -328,6 +415,7 @@ export const Permissions = ({
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
+        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );

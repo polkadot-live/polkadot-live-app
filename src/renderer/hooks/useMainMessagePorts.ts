@@ -26,8 +26,9 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
-import { useManage } from '@app/screens/Home/Manage/provider';
+import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
+import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';
@@ -38,13 +39,23 @@ import type { IntervalSubscription } from '@/controller/renderer/IntervalsContro
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
-    useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
-  const { setRenderedSubscriptions } = useManage();
+
+  const {
+    setRenderedSubscriptions,
+    tryAddIntervalSubscription,
+    tryRemoveIntervalSubscription,
+  } = useManage();
+
+  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
+    useBootstrapping();
+
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
+
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /**
    * @name handleImportAddress
@@ -463,9 +474,17 @@ export const useMainMessagePorts = () => {
   const handleAddInterval = (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Add task to interval controller.
     IntervalsController.stopInterval();
-    IntervalsController.insertSubscription(task);
+    IntervalsController.insertSubscription({ ...task });
     IntervalsController.initClock();
+
+    // Add task to dynamic manage state if necessary.
+    tryAddIntervalSubscription({ ...task });
+
+    // Add task to React state for rendering.
+    addIntervalSubscription({ ...task });
   };
 
   /**
@@ -475,9 +494,17 @@ export const useMainMessagePorts = () => {
   const handleRemoveInterval = (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Remove task from interval controller.
     IntervalsController.stopInterval();
-    IntervalsController.removeSubscription(task);
+    IntervalsController.removeSubscription({ ...task });
     IntervalsController.initClock();
+
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription(task.action, task.referendumId!);
+
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
   };
 
   /**

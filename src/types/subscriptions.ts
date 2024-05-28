@@ -62,7 +62,7 @@ export interface QueryMultiEntry {
   unsub: AnyFunction | null;
 }
 
-export type SubscriptionTaskType = 'chain' | 'account' | '';
+export type SubscriptionTaskType = 'account' | 'chain' | 'interval' | '';
 
 // Wraps an array of subscription tasks along with their
 // associated type (chain or account) and possible account

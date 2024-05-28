@@ -184,7 +184,7 @@ export class IntervalsController {
     console.log(`Execute: ${action}`);
 
     switch (action) {
-      case 'subscribe:interval:openGov:referendaVotes': {
+      case 'subscribe:interval:openGov:referendumVotes': {
         // TODO: Call one-shot.
         break;
       }

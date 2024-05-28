@@ -11,8 +11,9 @@ import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
 import { ChainsProvider } from '@/renderer/contexts/main/Chains';
 import { EventsProvider } from '@/renderer/contexts/main/Events';
-import { ManageProvider } from './screens/Home/Manage/provider';
+import { ManageProvider } from '@/renderer/contexts/main/Manage';
 import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
+import { IntervalSubscriptionsProvider } from './contexts/main/IntervalSubscriptions';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
@@ -47,6 +48,7 @@ const getProvidersForWindow = () => {
         AddressesProvider,
         ChainsProvider,
         SubscriptionsProvider,
+        IntervalSubscriptionsProvider,
         ManageProvider,
         EventsProvider,
         // Online status relies on other contexts being initialized.
