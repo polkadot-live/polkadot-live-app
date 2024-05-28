@@ -6,7 +6,7 @@ import type { IntervalSubscription } from '@/controller/renderer/IntervalsContro
 export const intervalTasks: IntervalSubscription[] = [
   // Polkadot
   {
-    action: 'subscribe:interval:openGov:referendaVotes',
+    action: 'subscribe:interval:openGov:referendumVotes',
     ticksToWait: 1,
     tickCounter: 0,
     category: 'Open Gov',
