@@ -73,6 +73,13 @@ export const Permissions = ({
     }
   }, [renderedSubscriptions]);
 
+  /// Go to section zero if all interval subscriptions have been removed.
+  useEffect(() => {
+    if (typeClicked === 'interval' && intervalTasksState.length === 0) {
+      setSection(0);
+    }
+  }, [intervalTasksState]);
+
   /// Handle a toggle and update rendered subscription state.
   const handleToggle = async (
     cached: WrappedSubscriptionTasks,
