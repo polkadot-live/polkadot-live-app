@@ -74,6 +74,9 @@ export const API: PreloadAPI = {
   removeIntervalTask: async (serialized: string) =>
     await ipcRenderer.invoke('app:interval:task:remove', serialized),
 
+  updateIntervalTask: async (serialized: string) =>
+    await ipcRenderer.invoke('app:interval:task:update', serialized),
+
   /**
    * File import and export
    */

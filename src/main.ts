@@ -416,6 +416,29 @@ app.whenReady().then(async () => {
     storePointer.set(key, JSON.stringify(filtered));
   });
 
+  // Update an interval subscription in the store.
+  ipcMain.handle('app:interval:task:update', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const task: IntervalSubscription = JSON.parse(serialized);
+    const { action, chainId, referendumId } = task;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    const updated = stored.map((t) =>
+      t.action === action &&
+      t.chainId === chainId &&
+      t.referendumId === referendumId
+        ? task
+        : t
+    );
+
+    storePointer.set(key, JSON.stringify(updated));
+  });
+
   /**
    * Window management
    */
