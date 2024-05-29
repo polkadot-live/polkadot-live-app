@@ -11,6 +11,12 @@ import type { SubscriptionTask } from './subscriptions';
 import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
+  getPersistedIntervalTasks: () => Promise<string>;
+  clearPersistedIntervalTasks: () => Promise<string>;
+
+  persistIntervalTask: ApiPersistIntervalTask;
+  removeIntervalTask: ApiRemoveIntervalTask;
+
   getWindowId: () => string;
 
   exportAppData: ApiExportAppData;
@@ -181,3 +187,6 @@ type ApiReportStaleEvent = (
 ) => Electron.IpcRenderer;
 
 type ApiInitOnlineStatus = () => Promise<void>;
+
+type ApiPersistIntervalTask = (serialized: string) => Promise<void>;
+type ApiRemoveIntervalTask = (serialized: string) => Promise<void>;

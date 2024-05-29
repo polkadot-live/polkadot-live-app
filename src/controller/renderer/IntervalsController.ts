@@ -46,14 +46,13 @@ export class IntervalsController {
 
   /**
    * @name initIntervals
-   * @summary Initialize intervals and the interval clock.
+   * @summary Initialize the interval clock.
    */
-  static initIntervals() {
-    // TODO: Fetch persisted intervals and re-start the subscription.
-    // NOTE: This method is called when app switches to online mode.
+  static async initIntervals(isOnline: boolean) {
+    // NOTE: This method is called when app initializes and switches to online mode.
 
     // Start interval.
-    this.initClock();
+    isOnline && this.initClock();
   }
 
   /**
@@ -125,9 +124,12 @@ export class IntervalsController {
    * @summary Start the interval for processing managed subscriptions.
    */
   private static startInterval() {
-    this.intervalId = setInterval(async () => {
-      await this.processTick();
-    }, this.tickDuration * 1000);
+    this.intervalId = setInterval(
+      async () => {
+        await this.processTick();
+      },
+      this.tickDuration * 1000 * 12 // 1 minute
+    );
   }
 
   /**
