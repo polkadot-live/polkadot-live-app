@@ -1,27 +1,17 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  AccountsWrapper,
-  BreadcrumbsWrapper,
-  HeadingWrapper,
-} from './Wrappers';
+import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
-  AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faCaretRight,
-} from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
 import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
@@ -36,7 +26,10 @@ import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import { AccordionCaretHeader } from '../../../library/Accordion/AccordionCaretHeader';
+import {
+  AccordionCaretHeader,
+  AccordionCaretSwitchHeader,
+} from '@app/library/Accordion/AccordionCaretHeaders';
 
 export const Permissions = ({
   breadcrumb,
@@ -290,46 +283,26 @@ export const Permissions = ({
     >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
-          <HeadingWrapper>
-            <AccordionHeader>
-              <div className="flex">
-                <div className="left">
-                  <div className="icon-wrapper">
-                    {getAccordionIndices().includes(j) ? (
-                      <FontAwesomeIcon
-                        icon={faCaretDown}
-                        transform={'shrink-1'}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faCaretRight}
-                        transform={'shrink-1'}
-                      />
-                    )}
-                  </div>
-                  <h5>
-                    <span>{category}</span>
-                  </h5>
-                </div>
-                <div className="right">
-                  <Switch
-                    size="sm"
-                    type="secondary"
-                    isOn={getCategoryToggles().get(category) || false}
-                    disabled={getDisabled(tasks[0])}
-                    handleToggle={async () =>
-                      await toggleCategoryTasks(
-                        category,
-                        getCategoryToggles().get(category) || false,
-                        renderedSubscriptions,
-                        updateRenderedSubscriptions
-                      )
-                    }
-                  />
-                </div>
-              </div>
-            </AccordionHeader>
-          </HeadingWrapper>
+          <AccordionCaretSwitchHeader
+            title={category}
+            itemIndex={j}
+            SwitchComponent={
+              <Switch
+                size="sm"
+                type="secondary"
+                isOn={getCategoryToggles().get(category) || false}
+                disabled={getDisabled(tasks[0])}
+                handleToggle={async () =>
+                  await toggleCategoryTasks(
+                    category,
+                    getCategoryToggles().get(category) || false,
+                    renderedSubscriptions,
+                    updateRenderedSubscriptions
+                  )
+                }
+              />
+            }
+          />
           <AccordionPanel>
             <div className="flex-column" style={{ padding: '0 0.75rem' }}>
               {tasks
@@ -364,7 +337,7 @@ export const Permissions = ({
           <AccordionItem key={`${referendumId}_interval_subscriptions`}>
             <AccordionCaretHeader
               title={`Referendum ${referendumId}`}
-              index={i}
+              itemIndex={i}
             />
             <AccordionPanel>
               <div className="flex-column" style={{ padding: '0 0.75rem' }}>
