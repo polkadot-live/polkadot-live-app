@@ -8,7 +8,7 @@ import type { ManageContextInterface } from './types';
 export const defaultManageContext: ManageContextInterface = {
   renderedSubscriptions: { type: '', tasks: [] },
   dynamicIntervalTasksState: [],
-  activeChainId: 'Polkadot',
+  activeChainId: null,
   setDynamicIntervalTasks: () => {},
   setRenderedSubscriptions: () => {},
   updateRenderedSubscriptions: () => {},

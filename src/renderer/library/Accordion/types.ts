@@ -9,3 +9,15 @@ export interface AccordionProps {
   defaultIndex: number | number[];
   setExternalIndices?: AnyFunction;
 }
+
+export interface AccordionCaretHeaderProps {
+  title: string;
+  itemIndex: number;
+  wide?: boolean;
+}
+
+export interface AccordionCaretSwitchHeaderProps {
+  title: string;
+  itemIndex: number;
+  SwitchComponent: React.ReactNode;
+}

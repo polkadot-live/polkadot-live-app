@@ -3,7 +3,6 @@
 
 import {
   Accordion,
-  AccordionHeader,
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
@@ -13,9 +12,7 @@ import type { ReferendaProps } from '../types';
 import { OpenGovFooter, Scrollable } from '../Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
-  faCaretDown,
   faCaretLeft,
-  faCaretRight,
   faLayerGroup,
   faLineHeight,
   faTimer,
@@ -23,15 +20,14 @@ import {
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
 import { ReferendaGroup } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { HeadingWrapper } from '@app/screens/Home/Wrappers';
 import { getSpacedOrigin } from '../utils';
 import {
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,
 } from '@/renderer/utils/common';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 
 export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
@@ -86,30 +82,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
           ([origin, infos], i) => (
             <AccordionItem key={`${origin}_referenda_group`}>
-              <HeadingWrapper>
-                <AccordionHeader>
-                  <div className="flex">
-                    <div className="left">
-                      <div className="icon-wrapper">
-                        {accordionActiveIndices.includes(i) ? (
-                          <FontAwesomeIcon
-                            icon={faCaretDown}
-                            transform={'shrink-1'}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faCaretRight}
-                            transform={'shrink-1'}
-                          />
-                        )}
-                      </div>
-                      <h5 style={{ marginTop: '0' }}>
-                        {getSpacedOrigin(origin)}
-                      </h5>
-                    </div>
-                  </div>
-                </AccordionHeader>
-              </HeadingWrapper>
+              <AccordionCaretHeader
+                title={getSpacedOrigin(origin)}
+                itemIndex={i}
+                wide={true}
+              />
               <AccordionPanel>
                 <ReferendaGroup>
                   {infos.map((referendum, j) => (

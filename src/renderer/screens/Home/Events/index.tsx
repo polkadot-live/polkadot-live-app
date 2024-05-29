@@ -90,7 +90,6 @@ export const Events = () => {
               ([category, categoryEvents], i) => (
                 <Category
                   key={`${category}_events`}
-                  accordionActiveIndices={accordionActiveIndices}
                   accordionIndex={i}
                   category={category}
                   events={categoryEvents}

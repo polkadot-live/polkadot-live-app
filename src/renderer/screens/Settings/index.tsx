@@ -1,23 +1,21 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DragClose } from '@/renderer/library/DragClose';
-import { HeaderWrapper } from '@app/screens/Wrappers';
-import { ContentWrapper, HeadingWrapper } from './Wrappers';
-import { Setting } from './Setting';
-import { SettingsList } from '@/config/settings';
-import { useState } from 'react';
-import type { SettingItem } from './types';
 import {
   Accordion,
-  AccordionHeader,
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
+import { DragClose } from '@/renderer/library/DragClose';
+import { HeaderWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper } from './Wrappers';
+import { Setting } from './Setting';
+import { SettingsList } from '@/config/settings';
+import { useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import type { SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
@@ -77,33 +75,16 @@ export const Settings: React.FC = () => {
           {Array.from(getSortedSettings().entries()).map(
             ([category, settings], i) => (
               <AccordionItem key={`${category}_settings`}>
-                <HeadingWrapper>
-                  <AccordionHeader>
-                    <div
-                      className="flex"
-                      style={i !== 0 ? { marginTop: '0.5rem' } : {}}
-                    >
-                      <div className="left">
-                        <div className="icon-wrapper">
-                          {accordionActiveIndices.includes(i) ? (
-                            <FontAwesomeIcon
-                              icon={faCaretDown}
-                              transform={'shrink-1'}
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faCaretRight}
-                              transform={'shrink-1'}
-                            />
-                          )}
-                        </div>
-                        <h5>{category}</h5>
-                      </div>
-                    </div>
-                  </AccordionHeader>
-                </HeadingWrapper>
+                <AccordionCaretHeader
+                  title={category}
+                  itemIndex={i}
+                  wide={true}
+                />
                 <AccordionPanel>
-                  <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+                  <div
+                    className="flex-column"
+                    style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
+                  >
                     {settings.map((setting, j) => (
                       <Setting
                         key={j}

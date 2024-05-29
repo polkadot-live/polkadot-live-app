@@ -501,7 +501,7 @@ export const useMainMessagePorts = () => {
     IntervalsController.initClock();
 
     // Remove task from dynamic manage state if necessary.
-    tryRemoveIntervalSubscription(task.action, task.referendumId!);
+    tryRemoveIntervalSubscription({ ...task });
 
     // Remove task from React state for rendering.
     removeIntervalSubscription({ ...task });

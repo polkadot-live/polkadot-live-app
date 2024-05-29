@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type {
   SubscriptionTask,
@@ -30,7 +30,8 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     IntervalSubscription[]
   >([]);
 
-  const [activeChainId, setActiveChainId] = useState<ChainID>('Polkadot');
+  const [activeChainId, setActiveChainId] = useState<ChainID | null>(null);
+  const activeChainRef = useRef<ChainID | null>(null);
 
   /// Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
@@ -46,7 +47,12 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /// Set intervaled subscriptions with new tasks array.
-  const setDynamicIntervalTasks = (tasks: IntervalSubscription[]) => {
+  const setDynamicIntervalTasks = (
+    tasks: IntervalSubscription[],
+    chainId: ChainID
+  ) => {
+    activeChainRef.current = chainId;
+    setActiveChainId(chainId);
     setDynamicIntervalTasksState([...tasks]);
   };
 
@@ -63,21 +69,22 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
   /// Add an interval task to state if it should be rendered.
   const tryAddIntervalSubscription = (task: IntervalSubscription) => {
-    if (activeChainId === task.chainId) {
+    if (activeChainRef.current === task.chainId) {
       setDynamicIntervalTasksState((prev) => [...prev, { ...task }]);
     }
   };
 
   /// Remove an interval task from state if it should be removed.
-  const tryRemoveIntervalSubscription = (
-    action: string,
-    referendumId: number
-  ) => {
-    setDynamicIntervalTasksState((prev) =>
-      prev.filter(
-        (t) => !(t.action === action && t.referendumId === referendumId)
-      )
-    );
+  const tryRemoveIntervalSubscription = (task: IntervalSubscription) => {
+    if (activeChainRef.current === task.chainId) {
+      const { action, referendumId } = task;
+
+      setDynamicIntervalTasksState((prev) =>
+        prev.filter(
+          (t) => !(t.action === action && t.referendumId === referendumId)
+        )
+      );
+    }
   };
 
   /// Get dynamic interval subscriptions categorized by referendum ID.
