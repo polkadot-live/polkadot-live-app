@@ -5,14 +5,17 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useEffect } from 'react';
 import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import type { ActiveReferendaInfo } from '@/types/openGov';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
+import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 export const useOpenGovMessagePorts = () => {
   const { setTracks, setFetchingTracks } = useTracks();
   const { setReferenda, setFetchingReferenda } = useReferenda();
   const { setTreasuryData } = useTreasury();
+  const { addReferendaSubscription } = useReferendaSubscriptions();
 
   /**
    * @name handleReceivedPort
@@ -43,6 +46,12 @@ export const useOpenGovMessagePorts = () => {
             }
             case 'openGov:treasury:set': {
               setTreasuryData(ev.data.data);
+              break;
+            }
+            case 'openGov:task:add': {
+              const { serialized } = ev.data.data;
+              const task: IntervalSubscription = JSON.parse(serialized);
+              addReferendaSubscription(task);
               break;
             }
             default: {

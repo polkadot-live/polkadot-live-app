@@ -13,7 +13,6 @@ import {
 } from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
-import { useAddresses } from '@app/contexts/main/Addresses';
 import React, {
   createContext,
   useContext,
@@ -21,11 +20,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { handleApiDisconnects } from '@/utils/ApiUtils';
-import { useSubscriptions } from '../Subscriptions';
+import { useAddresses } from '@app/contexts/main/Addresses';
 import { useChains } from '../Chains';
+import { useSubscriptions } from '../Subscriptions';
+import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -51,6 +53,7 @@ export const BootstrappingProvider = ({
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
+  const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
 
@@ -163,9 +166,27 @@ export const BootstrappingProvider = ({
       }
 
       // Initialise intervals controller and interval subscriptions.
-      if (!aborted && isOnline) {
-        IntervalsController.initIntervals();
+      // TODO: Put in separate function in this file.
+      const serialized = await window.myAPI.getPersistedIntervalTasks();
+      const tasks: IntervalSubscription[] = JSON.parse(serialized);
+
+      for (const task of tasks) {
+        // Add task to interval subscription state.
+        addIntervalSubscription({ ...task });
+
+        // Have intervals controller manage the subscription.
+        IntervalsController.insertSubscription({ ...task });
+
+        // Post message to OpenGov window to cache tasks.
+        RendererConfig.portToOpenGov.postMessage({
+          task: 'openGov:task:add',
+          data: {
+            serialized: JSON.stringify({ ...task }),
+          },
+        });
       }
+
+      await IntervalsController.initIntervals(isOnline);
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
@@ -283,7 +304,7 @@ export const BootstrappingProvider = ({
 
     // Initialise intervals controller and interval subscriptions.
     if (!aborted) {
-      IntervalsController.initIntervals();
+      await IntervalsController.initIntervals(true);
     }
 
     // Disconnect from any API instances that are not currently needed.
