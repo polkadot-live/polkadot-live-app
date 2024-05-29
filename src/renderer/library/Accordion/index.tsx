@@ -16,6 +16,7 @@ import type { AccordionProps } from './types';
 const AccordionContext = createContext({
   isActive: false,
   index: 0,
+  activeIndex: [] as number[],
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   onChangeIndex: (i: number) => {},
 });
@@ -26,7 +27,6 @@ export function Accordion({
   children,
   multiple,
   defaultIndex,
-  setExternalIndices,
 }: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
@@ -49,17 +49,12 @@ export function Accordion({
         activeIndices = activeIndices.concat(index);
       }
 
-      // Set external indices state.
-      if (setExternalIndices !== undefined) {
-        setExternalIndices(activeIndices);
-      }
-
       // Update internal indices state.
       return activeIndices;
     });
   }
 
-  /// When the outer state of indices changes update inner state.
+  /// When the outer state of indices updates inner state.
   /// NOTE: EXPERIMENTAL
   useEffect(() => {
     setActiveIndex(defaultIndex);
@@ -71,8 +66,12 @@ export function Accordion({
         ? activeIndex.includes(index)
         : activeIndex === index;
 
+    const indices = Array.isArray(activeIndex) ? activeIndex : [activeIndex];
+
     return (
-      <AccordionContext.Provider value={{ isActive, index, onChangeIndex }}>
+      <AccordionContext.Provider
+        value={{ isActive, index, onChangeIndex, activeIndex: indices }}
+      >
         {child}
       </AccordionContext.Provider>
     );

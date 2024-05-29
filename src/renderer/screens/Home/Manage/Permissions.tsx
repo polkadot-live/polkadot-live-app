@@ -36,6 +36,7 @@ import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
+import { AccordionCaretHeader } from '../../../library/Accordion/AccordionCaretHeader';
 
 export const Permissions = ({
   breadcrumb,
@@ -49,6 +50,7 @@ export const Permissions = ({
     useSubscriptions();
 
   const {
+    activeChainId,
     renderedSubscriptions,
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
@@ -66,7 +68,7 @@ export const Permissions = ({
 
   /// Active accordion indices for interval subscription task categories.
   const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
-    useState<number[]>([0]);
+    useState<number[]>([]);
 
   /// Ref to keep track of number of interval categories being rendered.
   const numIntervalCategoresRef = useRef(
@@ -97,6 +99,11 @@ export const Permissions = ({
       }
     }
   }, [dynamicIntervalTasksState]);
+
+  /// Update accordion interval indices if active chain has changed.
+  useEffect(() => {
+    setAccordionActiveIntervalIndices([]);
+  }, [activeChainId]);
 
   /// Handle a toggle and update rendered subscription state.
   const handleToggle = async (
@@ -355,30 +362,10 @@ export const Permissions = ({
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
           <AccordionItem key={`${referendumId}_interval_subscriptions`}>
-            <HeadingWrapper>
-              <AccordionHeader>
-                <div className="flex">
-                  <div className="left">
-                    <div className="icon-wrapper">
-                      {accordionActiveIntervalIndices.includes(i) ? (
-                        <FontAwesomeIcon
-                          icon={faCaretDown}
-                          transform={'shrink-1'}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faCaretRight}
-                          transform={'shrink-1'}
-                        />
-                      )}
-                    </div>
-                    <h5>
-                      <span>Referendum {referendumId}</span>
-                    </h5>
-                  </div>
-                </div>
-              </AccordionHeader>
-            </HeadingWrapper>
+            <AccordionCaretHeader
+              title={`Referendum ${referendumId}`}
+              index={i}
+            />
             <AccordionPanel>
               <div className="flex-column" style={{ padding: '0 0.75rem' }}>
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (

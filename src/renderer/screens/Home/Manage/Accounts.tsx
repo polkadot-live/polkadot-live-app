@@ -39,14 +39,10 @@ export const Accounts = ({
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const {
-    setRenderedSubscriptions,
-    setDynamicIntervalTasks,
-    setActiveChainId,
-  } = useManage();
-  const {
     subscriptions: intervalSubscriptions,
     getIntervalSubscriptionsForChain,
   } = useIntervalSubscriptions();
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -141,8 +137,7 @@ export const Accounts = ({
     const tasks = getIntervalSubscriptionsForChain(chainId);
 
     setTypeClicked('interval');
-    setDynamicIntervalTasks(tasks);
-    setActiveChainId(chainId);
+    setDynamicIntervalTasks(tasks, chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };
