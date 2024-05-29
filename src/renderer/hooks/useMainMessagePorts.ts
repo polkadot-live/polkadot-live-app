@@ -471,7 +471,7 @@ export const useMainMessagePorts = () => {
    * @name handleAddInterval
    * @summary Add an interval subscription to the intervals controller.
    */
-  const handleAddInterval = (ev: MessageEvent) => {
+  const handleAddInterval = async (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
 
@@ -485,13 +485,16 @@ export const useMainMessagePorts = () => {
 
     // Add task to React state for rendering.
     addIntervalSubscription({ ...task });
+
+    // Persist task to store.
+    await window.myAPI.persistIntervalTask(JSON.stringify(task));
   };
 
   /**
    * @name handleRemoveInterval
    * @summary Remove an interval subscription from the intervals controller.
    */
-  const handleRemoveInterval = (ev: MessageEvent) => {
+  const handleRemoveInterval = async (ev: MessageEvent) => {
     const { task: serialized } = ev.data.data;
     const task: IntervalSubscription = JSON.parse(serialized);
 
@@ -505,6 +508,9 @@ export const useMainMessagePorts = () => {
 
     // Remove task from React state for rendering.
     removeIntervalSubscription({ ...task });
+
+    // Remove task from store.
+    window.myAPI.removeIntervalTask(JSON.stringify(task));
   };
 
   /**
@@ -631,11 +637,11 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'openGov:interval:add': {
-              handleAddInterval(ev);
+              await handleAddInterval(ev);
               break;
             }
             case 'openGov:interval:remove': {
-              handleRemoveInterval(ev);
+              await handleRemoveInterval(ev);
               break;
             }
             default: {
