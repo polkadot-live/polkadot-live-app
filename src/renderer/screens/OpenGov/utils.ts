@@ -53,7 +53,7 @@ export const getSpacedOrigin = (origin: string) => {
       return 'Fellowship Admin';
     case 'GeneralAdmin':
       return 'General Admin';
-    case 'Auction Admin':
+    case 'AuctionAdmin':
       return 'Auction Admin';
     case 'ReferendumCanceller':
       return 'Referendum Canceller';
@@ -61,7 +61,7 @@ export const getSpacedOrigin = (origin: string) => {
       return 'Referendum Killer';
     case 'SmallTipper':
       return 'Small Tipper';
-    case 'Big Tipper':
+    case 'BigTipper':
       return 'Big Tipper';
     case 'SmallSpender':
       return 'Small Spender';
