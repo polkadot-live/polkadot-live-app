@@ -1,6 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 import { Address } from './Address';
 import { AddressWrapper } from '../Addresses/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
@@ -18,18 +23,10 @@ import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-} from '@/renderer/library/Accordion';
-import { HeadingWrapper } from '../Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   setSection,
@@ -233,31 +230,14 @@ export const Manage = ({
               setExternalIndices={setAccordionActiveIndices}
             >
               {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                ([chainId, chainAddresses]) => (
+                ([chainId, chainAddresses], i) => (
                   <div key={`${chainId}_read_only_addresses`}>
                     <AccordionItem>
-                      <HeadingWrapper>
-                        <AccordionHeader>
-                          <div className="flex">
-                            <div className="left">
-                              <div className="icon-wrapper">
-                                {accordionActiveIndices.includes(0) ? (
-                                  <FontAwesomeIcon
-                                    icon={faCaretDown}
-                                    transform={'shrink-1'}
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faCaretRight}
-                                    transform={'shrink-1'}
-                                  />
-                                )}
-                              </div>
-                              <h5>{chainId} Accounts</h5>
-                            </div>
-                          </div>
-                        </AccordionHeader>
-                      </HeadingWrapper>
+                      <AccordionCaretHeader
+                        title={`${chainId} Accounts`}
+                        itemIndex={i}
+                        wide={true}
+                      />
                       <AccordionPanel>
                         <div className="items-wrapper">
                           <div className="items">
@@ -271,7 +251,7 @@ export const Manage = ({
                                       isImported,
                                       name,
                                     }: LocalAddress,
-                                    i
+                                    j
                                   ) => (
                                     <Address
                                       key={address}
@@ -282,7 +262,7 @@ export const Manage = ({
                                       index={index}
                                       isImported={isImported || false}
                                       orderData={{
-                                        curIndex: i,
+                                        curIndex: j,
                                         lastIndex: chainAddresses.length - 1,
                                       }}
                                       setSection={setSection}

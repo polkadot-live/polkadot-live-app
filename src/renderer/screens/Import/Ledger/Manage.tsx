@@ -1,6 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+} from '@/renderer/library/Accordion';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
@@ -13,18 +18,10 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
 import { HeaderWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
+import { useState } from 'react';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import type { ImportLedgerManageProps } from '../types';
 import type { LedgerLocalAddress } from '@/types/accounts';
-import { useState } from 'react';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-} from '@/renderer/library/Accordion';
-import { HeadingWrapper } from '../Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   addresses,
@@ -88,31 +85,14 @@ export const Manage = ({
               >
                 {Array.from(
                   getSortedLocalLedgerAddresses(addresses).entries()
-                ).map(([chainId, chainAddresses]) => (
+                ).map(([chainId, chainAddresses], i) => (
                   <div key={`${chainId}_ledger_addresses`}>
                     <AccordionItem>
-                      <HeadingWrapper>
-                        <AccordionHeader>
-                          <div className="flex">
-                            <div className="left">
-                              <div className="icon-wrapper">
-                                {accordionActiveIndices.includes(0) ? (
-                                  <FontAwesomeIcon
-                                    icon={faCaretDown}
-                                    transform={'shrink-1'}
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faCaretRight}
-                                    transform={'shrink-1'}
-                                  />
-                                )}
-                              </div>
-                              <h5>{chainId} Accounts</h5>
-                            </div>
-                          </div>
-                        </AccordionHeader>
-                      </HeadingWrapper>
+                      <AccordionCaretHeader
+                        title={`${chainId} Accounts`}
+                        itemIndex={i}
+                        wide={true}
+                      />
                       <AccordionPanel>
                         <div className="items-wrapper">
                           <div className="items">
@@ -124,7 +104,7 @@ export const Manage = ({
                                   isImported,
                                   name,
                                 }: LedgerLocalAddress,
-                                i
+                                j
                               ) => (
                                 <Address
                                   key={address}
@@ -135,7 +115,7 @@ export const Manage = ({
                                   index={index}
                                   isImported={isImported}
                                   orderData={{
-                                    curIndex: i,
+                                    curIndex: j,
                                     lastIndex: chainAddresses.length - 1,
                                   }}
                                   setSection={setSection}
