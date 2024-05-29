@@ -124,9 +124,12 @@ export class IntervalsController {
    * @summary Start the interval for processing managed subscriptions.
    */
   private static startInterval() {
-    this.intervalId = setInterval(async () => {
-      await this.processTick();
-    }, this.tickDuration * 1000);
+    this.intervalId = setInterval(
+      async () => {
+        await this.processTick();
+      },
+      this.tickDuration * 1000 * 12 // 1 minute
+    );
   }
 
   /**
