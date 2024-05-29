@@ -122,7 +122,12 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
       const { referendumId: rid } = task;
       map.has(rid)
-        ? map.set(rid, [...map.get(rid)!, { ...task }])
+        ? map.set(
+            rid,
+            [...map.get(rid)!, { ...task }].sort((a, b) =>
+              a.label.localeCompare(b.label)
+            )
+          )
         : map.set(rid, [{ ...task }]);
     }
 
