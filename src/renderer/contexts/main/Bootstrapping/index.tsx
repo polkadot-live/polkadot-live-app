@@ -174,8 +174,10 @@ export const BootstrappingProvider = ({
         // Add task to interval subscription state.
         addIntervalSubscription({ ...task });
 
-        // Have intervals controller manage the subscription.
-        IntervalsController.insertSubscription({ ...task });
+        // Have intervals controller manage enabled subscriptions.
+        if (task.status === 'enable') {
+          IntervalsController.insertSubscription({ ...task });
+        }
 
         // Post message to OpenGov window to cache tasks.
         RendererConfig.portToOpenGov.postMessage({

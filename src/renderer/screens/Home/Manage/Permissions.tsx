@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
 import {
   Accordion,
@@ -19,8 +20,12 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useManage } from '@/renderer/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import {
+  IntervalsController,
+  type IntervalSubscription,
+} from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
@@ -47,8 +52,11 @@ export const Permissions = ({
     renderedSubscriptions,
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
+    tryUpdateDynamicIntervalTask,
     getCategorizedDynamicIntervals,
   } = useManage();
+
+  const { updateIntervalSubscription } = useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -109,6 +117,40 @@ export const Permissions = ({
     const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
+  };
+
+  /// Handle toggling an interval subscription.
+  const handleIntervalToggle = async (task: IntervalSubscription) => {
+    // Invert task status.
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+
+    // Handle task in intervals controller.
+    switch (newStatus) {
+      case 'enable': {
+        IntervalsController.insertSubscription({ ...task });
+        break;
+      }
+      case 'disable': {
+        IntervalsController.removeSubscription({ ...task });
+        break;
+      }
+    }
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -344,6 +386,7 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
+                    handleIntervalToggle={handleIntervalToggle}
                     task={task}
                   />
                 ))}

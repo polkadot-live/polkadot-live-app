@@ -16,9 +16,13 @@ import { Switch } from '@app/library/Switch';
 
 interface IntervalRowProps {
   task: IntervalSubscription;
+  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
 }
 
-export const IntervalRow = ({ task }: IntervalRowProps) => {
+export const IntervalRow = ({
+  task,
+  handleIntervalToggle,
+}: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -27,6 +31,11 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+
+  const handleToggle = async () => {
+    await handleIntervalToggle(task);
+    setIsToggled(!isToggled);
+  };
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -113,10 +122,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
             size="sm"
             type="secondary"
             isOn={isToggled}
-            handleToggle={() => {
-              console.log('TODO: handle switch toggle');
-              setIsToggled(!isToggled);
-            }}
+            handleToggle={async () => await handleToggle()}
           />
         </div>
       </div>
