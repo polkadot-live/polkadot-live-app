@@ -6,19 +6,15 @@ import { HeadingWrapper } from '@/renderer/screens/Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
 import { HeadingWrapper as WideHeadingWrapper } from '@/renderer/screens/Home/Wrappers';
+import type {
+  AccordionCaretHeaderProps,
+  AccordionCaretSwitchHeaderProps,
+} from './types';
 
-interface AccordionCaretHeaderProps {
-  title: string;
-  itemIndex: number;
-  wide?: boolean;
-}
-
-interface AccordionCaretSwitchHeaderProps {
-  title: string;
-  itemIndex: number;
-  SwitchComponent: React.ReactNode;
-}
-
+/**
+ * @name AccordionCaretHeader
+ * @summary Header with dynamic caret that changes when accordion is expanded and collapsed.
+ */
 export const AccordionCaretHeader = ({
   title,
   itemIndex,
@@ -56,6 +52,12 @@ export const AccordionCaretHeader = ({
   }
 };
 
+/**
+ * @name AccordionCaretSwitchHeader
+ * @summary Header with dynamic caret that changes when accordion is expanded and collapsed.
+ *
+ * Takes a switch component that renders on the right side of the header.
+ */
 export const AccordionCaretSwitchHeader = ({
   title,
   itemIndex,
