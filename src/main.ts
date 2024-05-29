@@ -368,7 +368,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:interval:tasks:get', async () => {
     const key = 'interval_subscriptions';
     const storePointer: Record<string, AnyJson> = store;
-
     const stored: string = storePointer.get(key) || '[]';
     return stored;
   });
