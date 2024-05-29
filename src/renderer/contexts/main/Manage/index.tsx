@@ -87,7 +87,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
             !(
               t.action === action &&
               t.chainId === chainId &&
-              referendumId === referendumId
+              t.referendumId === referendumId
             )
         )
       );

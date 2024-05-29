@@ -302,6 +302,7 @@ export const Permissions = ({
     }
   };
 
+  /// Handle clicking native os notifications toggle for interval subscriptions.
   const handleIntervalNativeCheckbox = async (
     task: IntervalSubscription,
     flag: boolean

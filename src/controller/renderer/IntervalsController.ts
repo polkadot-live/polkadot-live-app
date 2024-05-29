@@ -89,6 +89,13 @@ export class IntervalsController {
 
     const { chainId, action, referendumId } = subscription;
 
+    // This task may not be enabled and thus not managed by this controller.
+    // Check if the subscriptions map as a chain ID key to avoid errors.
+    // Exit early if the key does not exist in the map.
+    if (!this.subscriptions.has(chainId)) {
+      return;
+    }
+
     const updated = this.subscriptions
       .get(chainId)!
       .filter((t) => !(t.action === action && t.referendumId === referendumId));
