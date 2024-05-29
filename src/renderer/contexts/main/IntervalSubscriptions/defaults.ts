@@ -10,5 +10,6 @@ export const defaultIntervalSubscriptionsContext: IntervalSubscriptionsContextIn
     setSubscriptions: () => {},
     addIntervalSubscription: () => {},
     removeIntervalSubscription: () => {},
+    updateIntervalSubscription: () => {},
     getIntervalSubscriptionsForChain: () => [],
   };
