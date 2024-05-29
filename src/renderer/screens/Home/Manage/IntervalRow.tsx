@@ -3,7 +3,6 @@
 
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
@@ -13,15 +12,21 @@ import {
   faListRadio,
 } from '@fortawesome/pro-light-svg-icons';
 import { Switch } from '@app/library/Switch';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 interface IntervalRowProps {
   task: IntervalSubscription;
   handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
+  handleIntervalNativeCheckbox: (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => Promise<void>;
 }
 
 export const IntervalRow = ({
   task,
   handleIntervalToggle,
+  handleIntervalNativeCheckbox,
 }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -35,6 +40,12 @@ export const IntervalRow = ({
   const handleToggle = async () => {
     await handleIntervalToggle(task);
     setIsToggled(!isToggled);
+  };
+
+  const handleNativeCheckbox = async () => {
+    const flag = !nativeChecked;
+    await handleIntervalNativeCheckbox(task, flag);
+    setNativeChecked(flag);
   };
 
   return (
@@ -100,10 +111,7 @@ export const IntervalRow = ({
                 className={nativeChecked ? 'checked' : 'unchecked'}
                 icon={faListRadio}
                 transform={'grow-8'}
-                onClick={() => {
-                  setNativeChecked(!nativeChecked);
-                  console.log('TODO: handle native checkbox');
-                }}
+                onClick={async () => await handleNativeCheckbox()}
               />
             )}
 

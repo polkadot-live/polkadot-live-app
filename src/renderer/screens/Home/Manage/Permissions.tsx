@@ -302,6 +302,32 @@ export const Permissions = ({
     }
   };
 
+  const handleIntervalNativeCheckbox = async (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => {
+    const checked: boolean = flag;
+    task.enableOsNotifications = checked;
+
+    // Update task data in intervals controller.
+    IntervalsController.updateSubscription({ ...task });
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+  };
+
   /// Get dynamic accordion indices state for account categories or
   /// static accordion indices for chain categories.
   const getAccordionIndices = () =>
@@ -387,6 +413,7 @@ export const Permissions = ({
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
                     handleIntervalToggle={handleIntervalToggle}
+                    handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
                     task={task}
                   />
                 ))}

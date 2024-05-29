@@ -104,6 +104,25 @@ export class IntervalsController {
   }
 
   /**
+   * @name updateSubscription
+   * @summary Updae data of a managed interval subscription task.
+   */
+  static updateSubscription(task: IntervalSubscription) {
+    console.log('UPDATE SUBSCRIPTION:');
+    console.log(task);
+
+    const { chainId, action, referendumId } = task;
+
+    const updated = this.subscriptions
+      .get(chainId)!
+      .map((t) =>
+        t.action === action && t.referendumId === referendumId ? task : t
+      );
+
+    this.subscriptions.set(chainId, updated);
+  }
+
+  /**
    * @name initClock
    * @summary Start interval when its tick duration is synched to the system clock.
    *
