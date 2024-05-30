@@ -9,7 +9,7 @@ import {
   faInfo,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
@@ -53,6 +53,11 @@ export const IntervalRow = ({
   );
   const [removeClicked, setRemoveClicked] = useState(false);
   const removeTimeoutRef = useRef<null | AnyData>(null);
+
+  useEffect(() => {
+    const newStatusToBoolean = task.status === 'enable';
+    newStatusToBoolean !== isToggled && setIsToggled(newStatusToBoolean);
+  }, [task.status]);
 
   const handleToggle = async () => {
     await handleIntervalToggle(task);
