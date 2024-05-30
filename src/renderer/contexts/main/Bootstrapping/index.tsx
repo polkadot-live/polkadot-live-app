@@ -166,29 +166,7 @@ export const BootstrappingProvider = ({
       }
 
       // Initialise intervals controller and interval subscriptions.
-      // TODO: Put in separate function in this file.
-      const serialized = await window.myAPI.getPersistedIntervalTasks();
-      const tasks: IntervalSubscription[] = JSON.parse(serialized);
-
-      for (const task of tasks) {
-        // Add task to interval subscription state.
-        addIntervalSubscription({ ...task });
-
-        // Have intervals controller manage enabled subscriptions.
-        if (task.status === 'enable') {
-          IntervalsController.insertSubscription({ ...task });
-        }
-
-        // Post message to OpenGov window to cache tasks.
-        RendererConfig.portToOpenGov.postMessage({
-          task: 'openGov:task:add',
-          data: {
-            serialized: JSON.stringify({ ...task }),
-          },
-        });
-      }
-
-      await IntervalsController.initIntervals(isOnline);
+      await initIntervalsController(isOnline);
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
@@ -363,6 +341,31 @@ export const BootstrappingProvider = ({
   };
 
   /// Utility.
+  const initIntervalsController = async (isOnline: boolean) => {
+    const serialized = await window.myAPI.getPersistedIntervalTasks();
+    const tasks: IntervalSubscription[] = JSON.parse(serialized);
+
+    for (const task of tasks) {
+      // Add task to interval subscription state.
+      addIntervalSubscription({ ...task });
+
+      // Have intervals controller manage enabled subscriptions.
+      if (task.status === 'enable') {
+        IntervalsController.insertSubscription({ ...task });
+      }
+
+      // Post message to OpenGov window to cache tasks.
+      RendererConfig.portToOpenGov.postMessage({
+        task: 'openGov:task:add',
+        data: {
+          serialized: JSON.stringify({ ...task }),
+        },
+      });
+    }
+
+    await IntervalsController.initIntervals(isOnline);
+  };
+
   const setSubscriptionsAndChainConnections = () => {
     // Set chain subscriptions data for rendering.
     setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
