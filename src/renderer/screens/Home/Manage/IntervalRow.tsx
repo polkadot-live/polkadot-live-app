@@ -5,13 +5,18 @@ import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
-import { useState } from 'react';
+import {
+  faInfo,
+  faTriangleExclamation,
+} from '@fortawesome/pro-solid-svg-icons';
+import { useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
+  faXmark,
 } from '@fortawesome/pro-light-svg-icons';
 import { Switch } from '@app/library/Switch';
+import type { AnyData } from '@/types/misc';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 interface IntervalRowProps {
@@ -42,6 +47,8 @@ export const IntervalRow = ({
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+  const [removeClicked, setRemoveClicked] = useState(false);
+  const removeTimeoutRef = useRef<null | AnyData>(null);
 
   const handleToggle = async () => {
     await handleIntervalToggle(task);
@@ -75,6 +82,43 @@ export const IntervalRow = ({
           </div>
         </div>
         <div>
+          {/* Remove Button */}
+          <div
+            className="remove-wrapper tooltip-trigger-element"
+            data-tooltip-text={'Click Twice to Remove'}
+            onMouseMove={() => setTooltipTextAndOpen('Click Twice to Remove')}
+          >
+            {!removeClicked ? (
+              <FontAwesomeIcon
+                className="enabled"
+                icon={faXmark}
+                transform={'grow-8'}
+                onClick={() => {
+                  removeTimeoutRef.current = setTimeout(() => {
+                    console.log('boom');
+                    removeTimeoutRef.current !== null &&
+                      setRemoveClicked(false);
+                  }, 5000);
+                  setRemoveClicked(true);
+                }}
+              />
+            ) : (
+              <FontAwesomeIcon
+                className="enabled"
+                icon={faTriangleExclamation}
+                transform={'grow-8'}
+                onClick={() => {
+                  if (removeTimeoutRef.current !== null) {
+                    clearTimeout(removeTimeoutRef.current);
+                    removeTimeoutRef.current = null;
+                  }
+                  // TODO: Remove subscription.
+                  setRemoveClicked(false);
+                }}
+              />
+            )}
+          </div>
+
           {/* One Shot Button */}
           <div
             className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
