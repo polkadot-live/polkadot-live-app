@@ -8,12 +8,18 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import {
+  AccordionCaretHeader,
+  AccordionCaretSwitchHeader,
+} from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
@@ -22,19 +28,12 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
-import {
-  IntervalsController,
-  type IntervalSubscription,
-} from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import {
-  AccordionCaretHeader,
-  AccordionCaretSwitchHeader,
-} from '@app/library/Accordion/AccordionCaretHeaders';
 
 export const Permissions = ({
   breadcrumb,
@@ -106,7 +105,7 @@ export const Permissions = ({
     setAccordionActiveIntervalIndices([]);
   }, [activeChainId]);
 
-  /// Handle a toggle and update rendered subscription state.
+  /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (
     cached: WrappedSubscriptionTasks,
     setNativeChecked: AnyFunction
@@ -232,7 +231,7 @@ export const Permissions = ({
     return map;
   };
 
-  /// Handle a one-shot event.
+  /// Handle a one-shot event for a subscription task.
   const handleOneShot = async (
     task: SubscriptionTask,
     setOneShotProcessing: AnyFunction,
@@ -241,6 +240,41 @@ export const Permissions = ({
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
     const result = await executeOneShot(task);
+
+    if (!result) {
+      setOneShotProcessing(false);
+
+      // Render error alert.
+      toast.error('API timed out.', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-connection',
+      });
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+    }
+  };
+
+  /// Handle a one-shot event for a subscription task.
+  const handleIntervalOneShot = async (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: AnyFunction
+  ) => {
+    setOneShotProcessing(true);
+    task.enableOsNotifications = nativeChecked;
+    const result = await executeIntervaledOneShot(task);
 
     if (!result) {
       setOneShotProcessing(false);
@@ -415,6 +449,7 @@ export const Permissions = ({
                     key={`${j}_${task.referendumId}_${task.action}`}
                     handleIntervalToggle={handleIntervalToggle}
                     handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
+                    handleIntervalOneShot={handleIntervalOneShot}
                     task={task}
                   />
                 ))}

@@ -7,20 +7,40 @@ import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { ChainID } from '@/types/chains';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
-// TODO: Provide IntervalSubscription data.
-export const executeIntervaledOneShot = async (task: string) => {
-  switch (task) {
+/// Debugging function.
+const logOneShot = (task: IntervalSubscription) => {
+  const { action, chainId, referendumId } = task;
+  console.log(
+    `---> Execute: ${action} for ref ${referendumId} on chain ${chainId}`
+  );
+};
+
+export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
+  const { action, referendumId } = task;
+
+  // Return early if referendum ID is undefined (should not happen).
+  if (!referendumId) {
+    return false;
+  }
+
+  switch (action) {
+    case 'subscribe:interval:openGov:referendumVotes': {
+      //const result = await oneShot_openGov_referendumVotes(task);
+      logOneShot(task);
+      return true;
+    }
+    case 'subscribe:interval:openGov:decisionPeriod': {
+      logOneShot(task);
+      return true;
+    }
+    case 'subscribe:interval:openGov:referendumThresholds': {
+      logOneShot(task);
+      return true;
+    }
     default: {
-      const chainId = 'Polkadot';
-      const referendumId = 801;
-      const result = await oneShot_openGov_referendumVotes(
-        chainId,
-        referendumId
-      );
-
-      return result;
+      return false;
     }
   }
 };
@@ -30,13 +50,14 @@ export const executeIntervaledOneShot = async (task: string) => {
  * @summary One-shot call to fetch a referendum's votes.
  */
 
-// TODO: Provide IntervalSubscription data.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const oneShot_openGov_referendumVotes = async (
-  chainId: ChainID,
-  referendumId: number
-) => {
+  task: IntervalSubscription
+): Promise<boolean> => {
+  const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
-  if (!instance) {
+
+  if (!instance || !referendumId) {
     return false;
   }
 
@@ -72,5 +93,7 @@ const oneShot_openGov_referendumVotes = async (
     console.log(`Support: ${support}`);
 
     return true;
+  } else {
+    return false;
   }
 };

@@ -21,12 +21,18 @@ interface IntervalRowProps {
     task: IntervalSubscription,
     flag: boolean
   ) => Promise<void>;
+  handleIntervalOneShot: (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: (processing: boolean) => void
+  ) => Promise<void>;
 }
 
 export const IntervalRow = ({
   task,
   handleIntervalToggle,
   handleIntervalNativeCheckbox,
+  handleIntervalOneShot,
 }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -81,10 +87,13 @@ export const IntervalRow = ({
                 className="enabled"
                 icon={faArrowDownFromDottedLine}
                 transform={'grow-8'}
-                onClick={() => {
-                  setOneShotProcessing(!oneShotProcessing);
-                  console.log('TODO: handle one-shot');
-                }}
+                onClick={async () =>
+                  await handleIntervalOneShot(
+                    task,
+                    nativeChecked,
+                    setOneShotProcessing
+                  )
+                }
               />
             )}
 
