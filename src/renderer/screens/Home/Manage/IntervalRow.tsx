@@ -108,7 +108,6 @@ export const IntervalRow = ({
                 transform={'grow-8'}
                 onClick={() => {
                   removeTimeoutRef.current = setTimeout(() => {
-                    console.log('boom');
                     removeTimeoutRef.current !== null &&
                       setRemoveClicked(false);
                   }, 5000);

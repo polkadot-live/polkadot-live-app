@@ -370,7 +370,10 @@ export const Permissions = ({
     task: IntervalSubscription
   ) => {
     // Remove task from interval controller.
-    IntervalsController.removeSubscription({ ...task });
+    task.status === 'enable' &&
+      IntervalsController.removeSubscription({ ...task });
+    // Set status to disable.
+    task.status = 'disable';
     // Remove task from dynamic manage state if necessary.
     tryRemoveIntervalSubscription({ ...task });
     // Remove task from React state for rendering.
