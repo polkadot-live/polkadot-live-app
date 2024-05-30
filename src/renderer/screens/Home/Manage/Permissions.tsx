@@ -8,10 +8,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import {
-  AccordionCaretHeader,
-  AccordionCaretSwitchHeader,
-} from '@app/library/Accordion/AccordionCaretHeaders';
+import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
@@ -228,6 +225,26 @@ export const Permissions = ({
       );
 
       map.set(category, allToggled);
+    }
+
+    return map;
+  };
+
+  /// Map referendum ID to its global toggle state.
+  const getOpenGovGlobalToggles = () => {
+    const map = new Map<number, boolean>();
+
+    // A "global" toggle is set if all of its tasks are enabled.
+    for (const [
+      referendumId,
+      intervalTasks,
+    ] of getCategorizedDynamicIntervals().entries()) {
+      const allToggled = intervalTasks.reduce(
+        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
+        true
+      );
+
+      map.set(referendumId, allToggled);
     }
 
     return map;
@@ -462,9 +479,17 @@ export const Permissions = ({
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
           <AccordionItem key={`${referendumId}_interval_subscriptions`}>
-            <AccordionCaretHeader
+            <AccordionCaretSwitchHeader
               title={`Referendum ${referendumId}`}
               itemIndex={i}
+              SwitchComponent={
+                <Switch
+                  size="sm"
+                  type="secondary"
+                  isOn={getOpenGovGlobalToggles().get(referendumId) || false}
+                  handleToggle={async () => console.log('TODO: Handle toggle')}
+                />
+              }
             />
             <AccordionPanel>
               <div className="flex-column" style={{ padding: '0 0.75rem' }}>
