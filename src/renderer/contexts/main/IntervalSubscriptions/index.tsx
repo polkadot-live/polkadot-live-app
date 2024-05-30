@@ -85,6 +85,18 @@ export const IntervalSubscriptionsProvider = ({
     return tasks;
   };
 
+  /// Get sorted keys to render chain IDs in a certain order.
+  const getSortedKeys = () => {
+    const order: ChainID[] = ['Polkadot', 'Kusama'];
+    const result: ChainID[] = [];
+
+    for (const chainId of order) {
+      subscriptions.has(chainId) && result.push(chainId);
+    }
+
+    return result;
+  };
+
   return (
     <IntervalSubscriptionsContext.Provider
       value={{
@@ -94,6 +106,7 @@ export const IntervalSubscriptionsProvider = ({
         removeIntervalSubscription,
         updateIntervalSubscription,
         getIntervalSubscriptionsForChain,
+        getSortedKeys,
       }}
     >
       {children}
