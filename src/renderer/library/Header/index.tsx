@@ -11,7 +11,6 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
 import type { HeaderProps } from './types';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
@@ -27,17 +26,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   }
 
   const { dockToggled, handleDockedToggle } = useBootstrapping();
-
-  const handleGet = async () => {
-    const serialized = await window.myAPI.getPersistedIntervalTasks();
-    const tasks: IntervalSubscription[] = JSON.parse(serialized);
-    tasks.forEach((t) => console.log(t));
-  };
-
-  const handleClear = async () => {
-    const result = await window.myAPI.clearPersistedIntervalTasks();
-    console.log(result);
-  };
 
   /// Handle clicking the docked button.
   const handleDocked = () => {
@@ -67,9 +55,6 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 iconTransform="shrink-5"
                 onClick={() => handleDocked()}
               />
-
-              <button onClick={async () => await handleGet()}>Get</button>
-              <button onClick={async () => await handleClear()}>Clear</button>
 
               {/* Cog menu*/}
               <Menu />
