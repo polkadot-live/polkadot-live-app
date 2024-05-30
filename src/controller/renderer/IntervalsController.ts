@@ -60,12 +60,22 @@ export class IntervalsController {
    * @summary Insert an intervaled subscription into this controller's map.
    */
   static insertSubscription(subscription: IntervalSubscription) {
+    console.log('INSERT SUBSCRIPTION:');
+    console.log(subscription);
+
+    const restartInterval = this.subscriptions.size === 0;
+
     const { chainId } = subscription;
     if (this.subscriptions.has(chainId)) {
       const current = this.subscriptions.get(chainId)!;
       this.subscriptions.set(chainId, [...current, { ...subscription }]);
     } else {
       this.subscriptions.set(chainId, [{ ...subscription }]);
+    }
+
+    // Start interval if it's not currently running.
+    if (restartInterval) {
+      this.initClock();
     }
   }
 
@@ -74,7 +84,17 @@ export class IntervalsController {
    * @summary Remove an intervaled subscription from the controller's map.
    */
   static removeSubscription(subscription: IntervalSubscription) {
+    console.log('REMOVE SUBSCRIPTION:');
+    console.log(subscription);
+
     const { chainId, action, referendumId } = subscription;
+
+    // This task may not be enabled and thus not managed by this controller.
+    // Check if the subscriptions map as a chain ID key to avoid errors.
+    // Exit early if the key does not exist in the map.
+    if (!this.subscriptions.has(chainId)) {
+      return;
+    }
 
     const updated = this.subscriptions
       .get(chainId)!
@@ -83,6 +103,30 @@ export class IntervalsController {
     updated.length !== 0
       ? this.subscriptions.set(chainId, updated)
       : this.subscriptions.delete(chainId);
+
+    // Stop interval if no tasks are being managed.
+    if (this.subscriptions.size === 0) {
+      this.stopInterval();
+    }
+  }
+
+  /**
+   * @name updateSubscription
+   * @summary Updae data of a managed interval subscription task.
+   */
+  static updateSubscription(task: IntervalSubscription) {
+    console.log('UPDATE SUBSCRIPTION:');
+    console.log(task);
+
+    const { chainId, action, referendumId } = task;
+
+    const updated = this.subscriptions
+      .get(chainId)!
+      .map((t) =>
+        t.action === action && t.referendumId === referendumId ? task : t
+      );
+
+    this.subscriptions.set(chainId, updated);
   }
 
   /**
@@ -102,7 +146,7 @@ export class IntervalsController {
     }
 
     // Seconds until next period synched with clock.
-    const seconds = secondsUntilNextMinute(1);
+    const seconds = secondsUntilNextMinute(this.tickDuration);
     console.log(`seconds to wait: ${seconds}`);
 
     if (seconds === 0) {
@@ -128,7 +172,7 @@ export class IntervalsController {
       async () => {
         await this.processTick();
       },
-      this.tickDuration * 1000 * 12 // 1 minute
+      this.tickDuration * 60 * 1000 // 5 minutes
     );
   }
 

@@ -1,35 +1,39 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import {
+  AccordionCaretHeader,
+  AccordionCaretSwitchHeader,
+} from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useManage } from '@/renderer/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { PermissionsProps } from './types';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import {
-  AccordionCaretHeader,
-  AccordionCaretSwitchHeader,
-} from '@app/library/Accordion/AccordionCaretHeaders';
 
 export const Permissions = ({
   breadcrumb,
@@ -47,8 +51,13 @@ export const Permissions = ({
     renderedSubscriptions,
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
+    tryUpdateDynamicIntervalTask,
+    tryRemoveIntervalSubscription,
     getCategorizedDynamicIntervals,
   } = useManage();
+
+  const { updateIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -98,7 +107,7 @@ export const Permissions = ({
     setAccordionActiveIntervalIndices([]);
   }, [activeChainId]);
 
-  /// Handle a toggle and update rendered subscription state.
+  /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (
     cached: WrappedSubscriptionTasks,
     setNativeChecked: AnyFunction
@@ -109,6 +118,40 @@ export const Permissions = ({
     const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
+  };
+
+  /// Handle toggling an interval subscription.
+  const handleIntervalToggle = async (task: IntervalSubscription) => {
+    // Invert task status.
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+
+    // Handle task in intervals controller.
+    switch (newStatus) {
+      case 'enable': {
+        IntervalsController.insertSubscription({ ...task });
+        break;
+      }
+      case 'disable': {
+        IntervalsController.removeSubscription({ ...task });
+        break;
+      }
+    }
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -190,7 +233,7 @@ export const Permissions = ({
     return map;
   };
 
-  /// Handle a one-shot event.
+  /// Handle a one-shot event for a subscription task.
   const handleOneShot = async (
     task: SubscriptionTask,
     setOneShotProcessing: AnyFunction,
@@ -199,6 +242,41 @@ export const Permissions = ({
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
     const result = await executeOneShot(task);
+
+    if (!result) {
+      setOneShotProcessing(false);
+
+      // Render error alert.
+      toast.error('API timed out.', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-connection',
+      });
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+    }
+  };
+
+  /// Handle a one-shot event for a subscription task.
+  const handleIntervalOneShot = async (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: AnyFunction
+  ) => {
+    setOneShotProcessing(true);
+    task.enableOsNotifications = nativeChecked;
+    const result = await executeIntervaledOneShot(task);
 
     if (!result) {
       setOneShotProcessing(false);
@@ -258,6 +336,55 @@ export const Permissions = ({
         account.queryMulti?.setOsNotificationsFlag(task);
       }
     }
+  };
+
+  /// Handle clicking native os notifications toggle for interval subscriptions.
+  const handleIntervalNativeCheckbox = async (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => {
+    const checked: boolean = flag;
+    task.enableOsNotifications = checked;
+
+    // Update task data in intervals controller.
+    IntervalsController.updateSubscription({ ...task });
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+  };
+
+  /// Handle removing an interval subscription.
+  const handleRemoveIntervalSubscription = async (
+    task: IntervalSubscription
+  ) => {
+    // Remove task from interval controller.
+    task.status === 'enable' &&
+      IntervalsController.removeSubscription({ ...task });
+    // Set status to disable.
+    task.status = 'disable';
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription({ ...task });
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
+    // Remove task from store.
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    // Send message to OpenGov window to update its subscription state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:removed',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /// Get dynamic accordion indices state for account categories or
@@ -344,6 +471,12 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
+                    handleIntervalToggle={handleIntervalToggle}
+                    handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
+                    handleIntervalOneShot={handleIntervalOneShot}
+                    handleRemoveIntervalSubscription={
+                      handleRemoveIntervalSubscription
+                    }
                     task={task}
                   />
                 ))}

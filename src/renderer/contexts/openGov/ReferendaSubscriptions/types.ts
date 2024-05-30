@@ -14,6 +14,7 @@ export interface ReferendaSubscriptionsContextInterface {
   setActiveTasksMap: (activeTasks: Map<number, string[]>) => void;
   addReferendaSubscription: (task: IntervalSubscription) => void;
   removeReferendaSubscription: (task: IntervalSubscription) => void;
+  updateReferendaSubscription: (task: IntervalSubscription) => void;
   isSubscribedToTask: (
     referendum: ActiveReferendaInfo,
     task: IntervalSubscription

@@ -476,9 +476,7 @@ export const useMainMessagePorts = () => {
     const task: IntervalSubscription = JSON.parse(serialized);
 
     // Add task to interval controller.
-    IntervalsController.stopInterval();
     IntervalsController.insertSubscription({ ...task });
-    IntervalsController.initClock();
 
     // Add task to dynamic manage state if necessary.
     tryAddIntervalSubscription({ ...task });
@@ -499,9 +497,7 @@ export const useMainMessagePorts = () => {
     const task: IntervalSubscription = JSON.parse(serialized);
 
     // Remove task from interval controller.
-    IntervalsController.stopInterval();
     IntervalsController.removeSubscription({ ...task });
-    IntervalsController.initClock();
 
     // Remove task from dynamic manage state if necessary.
     tryRemoveIntervalSubscription({ ...task });
@@ -510,7 +506,7 @@ export const useMainMessagePorts = () => {
     removeIntervalSubscription({ ...task });
 
     // Remove task from store.
-    window.myAPI.removeIntervalTask(JSON.stringify(task));
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
   };
 
   /**

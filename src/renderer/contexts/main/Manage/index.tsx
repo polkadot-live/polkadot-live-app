@@ -57,10 +57,12 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /// Update a task in the interval subscriptions state.
-  const updateDynamicIntervalTask = (task: IntervalSubscription) => {
+  const tryUpdateDynamicIntervalTask = (task: IntervalSubscription) => {
     setDynamicIntervalTasksState((prev) =>
       prev.map((t) =>
-        t.action === task.action && t.referendumId === task.referendumId
+        t.action === task.action &&
+        t.referendumId === task.referendumId &&
+        t.chainId === task.chainId
           ? task
           : t
       )
@@ -77,11 +79,16 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   /// Remove an interval task from state if it should be removed.
   const tryRemoveIntervalSubscription = (task: IntervalSubscription) => {
     if (activeChainRef.current === task.chainId) {
-      const { action, referendumId } = task;
+      const { action, chainId, referendumId } = task;
 
       setDynamicIntervalTasksState((prev) =>
         prev.filter(
-          (t) => !(t.action === action && t.referendumId === referendumId)
+          (t) =>
+            !(
+              t.action === action &&
+              t.chainId === chainId &&
+              t.referendumId === referendumId
+            )
         )
       );
     }
@@ -115,7 +122,12 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
       const { referendumId: rid } = task;
       map.has(rid)
-        ? map.set(rid, [...map.get(rid)!, { ...task }])
+        ? map.set(
+            rid,
+            [...map.get(rid)!, { ...task }].sort((a, b) =>
+              a.label.localeCompare(b.label)
+            )
+          )
         : map.set(rid, [{ ...task }]);
     }
 
@@ -135,7 +147,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         setDynamicIntervalTasks,
         setRenderedSubscriptions,
         updateRenderedSubscriptions,
-        updateDynamicIntervalTask,
+        tryUpdateDynamicIntervalTask,
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
         activeChainId,

@@ -16,6 +16,7 @@ export interface PreloadAPI {
 
   persistIntervalTask: ApiPersistIntervalTask;
   removeIntervalTask: ApiRemoveIntervalTask;
+  updateIntervalTask: ApiUpdateIntervalTask;
 
   getWindowId: () => string;
 
@@ -190,3 +191,4 @@ type ApiInitOnlineStatus = () => Promise<void>;
 
 type ApiPersistIntervalTask = (serialized: string) => Promise<void>;
 type ApiRemoveIntervalTask = (serialized: string) => Promise<void>;
+type ApiUpdateIntervalTask = (serialized: string) => Promise<void>;

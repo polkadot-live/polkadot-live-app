@@ -3,22 +3,46 @@
 
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
-import { useState } from 'react';
+import {
+  faInfo,
+  faTriangleExclamation,
+} from '@fortawesome/pro-solid-svg-icons';
+import { useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
+  faXmark,
 } from '@fortawesome/pro-light-svg-icons';
 import { Switch } from '@app/library/Switch';
+import type { AnyData } from '@/types/misc';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 
 interface IntervalRowProps {
   task: IntervalSubscription;
+  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
+  handleIntervalNativeCheckbox: (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => Promise<void>;
+  handleIntervalOneShot: (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: (processing: boolean) => void
+  ) => Promise<void>;
+  handleRemoveIntervalSubscription: (
+    task: IntervalSubscription
+  ) => Promise<void>;
 }
 
-export const IntervalRow = ({ task }: IntervalRowProps) => {
+export const IntervalRow = ({
+  task,
+  handleIntervalToggle,
+  handleIntervalNativeCheckbox,
+  handleIntervalOneShot,
+  handleRemoveIntervalSubscription,
+}: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -27,6 +51,28 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+  const [removeClicked, setRemoveClicked] = useState(false);
+  const removeTimeoutRef = useRef<null | AnyData>(null);
+
+  const handleToggle = async () => {
+    await handleIntervalToggle(task);
+    setIsToggled(!isToggled);
+  };
+
+  const handleNativeCheckbox = async () => {
+    const flag = !nativeChecked;
+    await handleIntervalNativeCheckbox(task, flag);
+    setNativeChecked(flag);
+  };
+
+  const handleRemove = async () => {
+    if (removeTimeoutRef.current !== null) {
+      clearTimeout(removeTimeoutRef.current);
+      removeTimeoutRef.current = null;
+    }
+    // Remove subscription.
+    await handleRemoveIntervalSubscription(task);
+  };
 
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
@@ -49,6 +95,35 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </div>
         </div>
         <div>
+          {/* Remove Button */}
+          <div
+            className="remove-wrapper tooltip-trigger-element"
+            data-tooltip-text={'Click Twice to Remove'}
+            onMouseMove={() => setTooltipTextAndOpen('Click Twice to Remove')}
+          >
+            {!removeClicked ? (
+              <FontAwesomeIcon
+                className="enabled"
+                icon={faXmark}
+                transform={'grow-8'}
+                onClick={() => {
+                  removeTimeoutRef.current = setTimeout(() => {
+                    removeTimeoutRef.current !== null &&
+                      setRemoveClicked(false);
+                  }, 5000);
+                  setRemoveClicked(true);
+                }}
+              />
+            ) : (
+              <FontAwesomeIcon
+                className="enabled"
+                icon={faTriangleExclamation}
+                transform={'grow-8'}
+                onClick={async () => await handleRemove()}
+              />
+            )}
+          </div>
+
           {/* One Shot Button */}
           <div
             className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
@@ -61,10 +136,13 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 className="enabled"
                 icon={faArrowDownFromDottedLine}
                 transform={'grow-8'}
-                onClick={() => {
-                  setOneShotProcessing(!oneShotProcessing);
-                  console.log('TODO: handle one-shot');
-                }}
+                onClick={async () =>
+                  await handleIntervalOneShot(
+                    task,
+                    nativeChecked,
+                    setOneShotProcessing
+                  )
+                }
               />
             )}
 
@@ -91,10 +169,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 className={nativeChecked ? 'checked' : 'unchecked'}
                 icon={faListRadio}
                 transform={'grow-8'}
-                onClick={() => {
-                  setNativeChecked(!nativeChecked);
-                  console.log('TODO: handle native checkbox');
-                }}
+                onClick={async () => await handleNativeCheckbox()}
               />
             )}
 
@@ -113,10 +188,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
             size="sm"
             type="secondary"
             isOn={isToggled}
-            handleToggle={() => {
-              console.log('TODO: handle switch toggle');
-              setIsToggled(!isToggled);
-            }}
+            handleToggle={async () => await handleToggle()}
           />
         </div>
       </div>

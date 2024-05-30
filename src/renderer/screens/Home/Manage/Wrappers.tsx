@@ -146,10 +146,22 @@ export const AccountWrapper = styled(motion.div)`
     }
   }
 
+  /* Remove button */
+  .remove-wrapper {
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
   /* One-shot icon */
   .one-shot-wrapper {
     background-color: var(--background-default);
-    margin-left: 1rem;
 
     .enabled {
       cursor: pointer;

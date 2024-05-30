@@ -12,5 +12,6 @@ export const defaultReferendaSubscriptionsContext: ReferendaSubscriptionsContext
     setActiveTasksMap: () => {},
     addReferendaSubscription: (t) => {},
     removeReferendaSubscription: (t) => {},
+    updateReferendaSubscription: (t) => {},
     isSubscribedToTask: () => true,
   };

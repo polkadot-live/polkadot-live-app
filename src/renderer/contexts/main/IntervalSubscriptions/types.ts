@@ -11,7 +11,9 @@ export interface IntervalSubscriptionsContextInterface {
   ) => void;
   addIntervalSubscription: (task: IntervalSubscription) => void;
   removeIntervalSubscription: (task: IntervalSubscription) => void;
+  updateIntervalSubscription: (task: IntervalSubscription) => void;
   getIntervalSubscriptionsForChain: (
     chainId: ChainID
   ) => IntervalSubscription[];
+  getSortedKeys: () => ChainID[];
 }

@@ -26,7 +26,7 @@ export const ReferendaSubscriptionsProvider = ({
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
-  /// Map to identify active subscriptions for individual referenda.
+  /// Map to identify added subscriptions for individual referenda.
   /// Key is referendum ID, value is array of subscription tasks.
   const [activeTasksMap, setActiveTasksMap] = useState<Map<number, string[]>>(
     new Map()
@@ -124,6 +124,23 @@ export const ReferendaSubscriptionsProvider = ({
     return false;
   };
 
+  /// Update data of a managed task.
+  const updateReferendaSubscription = (task: IntervalSubscription) => {
+    setSubscriptions((prev) => {
+      const { action, chainId, referendumId } = task;
+      const cloned = new Map(prev);
+
+      const updated = cloned
+        .get(chainId)!
+        .map((t) =>
+          t.action === action && t.referendumId === referendumId ? task : t
+        );
+
+      cloned.set(chainId, updated);
+      return cloned;
+    });
+  };
+
   return (
     <ReferendaSubscriptionsContext.Provider
       value={{
@@ -133,6 +150,7 @@ export const ReferendaSubscriptionsProvider = ({
         setActiveTasksMap,
         addReferendaSubscription,
         removeReferendaSubscription,
+        updateReferendaSubscription,
         isSubscribedToTask,
       }}
     >

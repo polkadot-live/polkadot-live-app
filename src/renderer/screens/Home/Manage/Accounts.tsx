@@ -33,10 +33,10 @@ export const Accounts = ({
 }: AccountsProps) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-  const {
-    subscriptions: intervalSubscriptions,
-    getIntervalSubscriptionsForChain,
-  } = useIntervalSubscriptions();
+
+  const { getIntervalSubscriptionsForChain, getSortedKeys } =
+    useIntervalSubscriptions();
+
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   /// Categorise addresses by their chain ID, sort by name.
@@ -213,38 +213,36 @@ export const Accounts = ({
             <AccordionPanel>
               <div style={{ padding: '0 0.75rem' }}>
                 <div className="flex-column">
-                  {intervalSubscriptions.size === 0 ? (
+                  {getSortedKeys().length === 0 ? (
                     <NoOpenGov />
                   ) : (
                     <>
-                      {Array.from(intervalSubscriptions.keys()).map(
-                        (chainId, i) => (
-                          <AccountWrapper
-                            whileHover={{ scale: 1.01 }}
-                            key={`manage_chain_${i}`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleClickOpenGovChain(chainId)}
-                            ></button>
-                            <div className="inner">
-                              <div>
-                                <span>{getIcon(chainId, 'chain-icon')}</span>
-                                <div className="content">
-                                  <h3>{chainId}</h3>
-                                </div>
-                              </div>
-                              <div>
-                                <ButtonText
-                                  text=""
-                                  iconRight={faChevronRight}
-                                  iconTransform="shrink-3"
-                                />
+                      {getSortedKeys().map((chainId, i) => (
+                        <AccountWrapper
+                          whileHover={{ scale: 1.01 }}
+                          key={`manage_chain_${i}`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleClickOpenGovChain(chainId)}
+                          ></button>
+                          <div className="inner">
+                            <div>
+                              <span>{getIcon(chainId, 'chain-icon')}</span>
+                              <div className="content">
+                                <h3>{chainId}</h3>
                               </div>
                             </div>
-                          </AccountWrapper>
-                        )
-                      )}
+                            <div>
+                              <ButtonText
+                                text=""
+                                iconRight={faChevronRight}
+                                iconTransform="shrink-3"
+                              />
+                            </div>
+                          </div>
+                        </AccountWrapper>
+                      ))}
                     </>
                   )}
                 </div>
