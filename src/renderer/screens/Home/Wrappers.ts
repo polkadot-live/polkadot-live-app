@@ -142,6 +142,11 @@ export const HeadingWrapper = styled.div`
       display: flex;
       justify-content: flex-start;
       flex: 1;
+
+      .icon-wrapper {
+        min-width: 0.75rem;
+        opacity: 0.4;
+      }
     }
     .right {
       display: flex;
