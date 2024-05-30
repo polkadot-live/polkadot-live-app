@@ -146,7 +146,7 @@ export class IntervalsController {
     }
 
     // Seconds until next period synched with clock.
-    const seconds = secondsUntilNextMinute(1);
+    const seconds = secondsUntilNextMinute(this.tickDuration);
     console.log(`seconds to wait: ${seconds}`);
 
     if (seconds === 0) {
@@ -172,7 +172,7 @@ export class IntervalsController {
       async () => {
         await this.processTick();
       },
-      this.tickDuration * 1000 // 1 minute
+      this.tickDuration * 60 * 1000 // 5 minutes
     );
   }
 
