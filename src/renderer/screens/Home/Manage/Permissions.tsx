@@ -52,10 +52,12 @@ export const Permissions = ({
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
+    tryRemoveIntervalSubscription,
     getCategorizedDynamicIntervals,
   } = useManage();
 
-  const { updateIntervalSubscription } = useIntervalSubscriptions();
+  const { updateIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -363,6 +365,25 @@ export const Permissions = ({
     await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
+  /// Handle removing an interval subscription.
+  const handleRemoveIntervalSubscription = async (
+    task: IntervalSubscription
+  ) => {
+    // Remove task from interval controller.
+    IntervalsController.removeSubscription({ ...task });
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription({ ...task });
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
+    // Remove task from store.
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    // Send message to OpenGov window to update its subscription state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:removed',
+      data: { serialized: JSON.stringify(task) },
+    });
+  };
+
   /// Get dynamic accordion indices state for account categories or
   /// static accordion indices for chain categories.
   const getAccordionIndices = () =>
@@ -450,6 +471,9 @@ export const Permissions = ({
                     handleIntervalToggle={handleIntervalToggle}
                     handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
                     handleIntervalOneShot={handleIntervalOneShot}
+                    handleRemoveIntervalSubscription={
+                      handleRemoveIntervalSubscription
+                    }
                     task={task}
                   />
                 ))}

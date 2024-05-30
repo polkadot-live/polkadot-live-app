@@ -31,6 +31,9 @@ interface IntervalRowProps {
     nativeChecked: boolean,
     setOneShotProcessing: (processing: boolean) => void
   ) => Promise<void>;
+  handleRemoveIntervalSubscription: (
+    task: IntervalSubscription
+  ) => Promise<void>;
 }
 
 export const IntervalRow = ({
@@ -38,6 +41,7 @@ export const IntervalRow = ({
   handleIntervalToggle,
   handleIntervalNativeCheckbox,
   handleIntervalOneShot,
+  handleRemoveIntervalSubscription,
 }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -59,6 +63,15 @@ export const IntervalRow = ({
     const flag = !nativeChecked;
     await handleIntervalNativeCheckbox(task, flag);
     setNativeChecked(flag);
+  };
+
+  const handleRemove = async () => {
+    if (removeTimeoutRef.current !== null) {
+      clearTimeout(removeTimeoutRef.current);
+      removeTimeoutRef.current = null;
+    }
+    // Remove subscription.
+    await handleRemoveIntervalSubscription(task);
   };
 
   return (
@@ -107,14 +120,7 @@ export const IntervalRow = ({
                 className="enabled"
                 icon={faTriangleExclamation}
                 transform={'grow-8'}
-                onClick={() => {
-                  if (removeTimeoutRef.current !== null) {
-                    clearTimeout(removeTimeoutRef.current);
-                    removeTimeoutRef.current = null;
-                  }
-                  // TODO: Remove subscription.
-                  setRemoveClicked(false);
-                }}
+                onClick={async () => await handleRemove()}
               />
             )}
           </div>

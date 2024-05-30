@@ -506,7 +506,7 @@ export const useMainMessagePorts = () => {
     removeIntervalSubscription({ ...task });
 
     // Remove task from store.
-    window.myAPI.removeIntervalTask(JSON.stringify(task));
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
   };
 
   /**
