@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import BigNumber from 'bignumber.js';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
@@ -8,6 +9,7 @@ import { rmCommas } from '@w3ux/utils';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import { NotificationsController } from '@/controller/renderer/NotificationsController';
 
 /// Debugging function.
 const logOneShot = (task: IntervalSubscription) => {
@@ -27,9 +29,8 @@ export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
 
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
-      //const result = await oneShot_openGov_referendumVotes(task);
-      logOneShot(task);
-      return true;
+      const result = await oneShot_openGov_referendumVotes(task);
+      return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
       logOneShot(task);
@@ -73,7 +74,7 @@ const oneShot_openGov_referendumVotes = async (
       },
     };
 
-    const { ayes, nays, support } = referendumInfo.Ongoing.tally;
+    const { ayes, nays } = referendumInfo.Ongoing.tally;
     const ayesBn = new BigNumber(rmCommas(String(ayes)));
     const naysBn = new BigNumber(rmCommas(String(nays)));
     const totalBn = ayesBn.plus(naysBn);
@@ -88,9 +89,14 @@ const oneShot_openGov_referendumVotes = async (
       .multipliedBy(100)
       .decimalPlaces(1);
 
-    console.log(`Ayes: ${percentAyes.toString()}%`);
-    console.log(`Nays: ${percentNays.toString()}%`);
-    console.log(`Support: ${support}`);
+    if (!RendererConfig.silenceNotifications) {
+      window.myAPI.showNotification(
+        NotificationsController.getIntervalNotification(task, {
+          percentAyes,
+          percentNays,
+        })
+      );
+    }
 
     return true;
   } else {
