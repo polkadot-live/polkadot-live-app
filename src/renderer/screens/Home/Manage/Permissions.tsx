@@ -8,10 +8,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import {
-  AccordionCaretHeader,
-  AccordionCaretSwitchHeader,
-} from '@app/library/Accordion/AccordionCaretHeaders';
+import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
@@ -231,6 +228,78 @@ export const Permissions = ({
     }
 
     return map;
+  };
+
+  /// Map referendum ID to its global toggle state.
+  const getOpenGovGlobalToggles = () => {
+    const map = new Map<number, boolean>();
+
+    // A "global" toggle is set if all of its tasks are enabled.
+    for (const [
+      referendumId,
+      intervalTasks,
+    ] of getCategorizedDynamicIntervals().entries()) {
+      const allToggled = intervalTasks.reduce(
+        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
+        true
+      );
+
+      map.set(referendumId, allToggled);
+    }
+
+    return map;
+  };
+
+  /// Handler for toggling the "global" switch for a referendum.
+  const toggleGlobalSwitch = async (referendumId: number, isOn: boolean) => {
+    // Get all tasks with the target status.
+    const targetStatus = isOn ? 'enable' : 'disable';
+
+    // Get dynamic tasks under the referendum ID with target status and invert it.
+    const tasks = dynamicIntervalTasksState
+      .filter(
+        (t) => t.referendumId === referendumId && t.status === targetStatus
+      )
+      .map((t) => {
+        t.status = t.status === 'enable' ? 'disable' : 'enable';
+        return t;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    // Return early if there are no tasks to toggle.
+    if (tasks.length === 0) {
+      return;
+    }
+
+    // Update task state.
+    for (const task of tasks) {
+      // Handle task in intervals controller.
+      switch (task.status) {
+        case 'enable': {
+          IntervalsController.insertSubscription({ ...task });
+          break;
+        }
+        case 'disable': {
+          IntervalsController.removeSubscription({ ...task });
+          break;
+        }
+      }
+
+      // Update main renderer state.
+      updateIntervalSubscription({ ...task });
+      tryUpdateDynamicIntervalTask({ ...task });
+
+      // Update OpenGov renderer state.
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
+
+      // Update persisted task in store.
+      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    }
   };
 
   /// Handle a one-shot event for a subscription task.
@@ -462,9 +531,22 @@ export const Permissions = ({
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
           <AccordionItem key={`${referendumId}_interval_subscriptions`}>
-            <AccordionCaretHeader
+            <AccordionCaretSwitchHeader
               title={`Referendum ${referendumId}`}
               itemIndex={i}
+              SwitchComponent={
+                <Switch
+                  size="sm"
+                  type="secondary"
+                  isOn={getOpenGovGlobalToggles().get(referendumId) || false}
+                  handleToggle={async () =>
+                    await toggleGlobalSwitch(
+                      referendumId,
+                      getOpenGovGlobalToggles().get(referendumId) || false
+                    )
+                  }
+                />
+              }
             />
             <AccordionPanel>
               <div className="flex-column" style={{ padding: '0 0.75rem' }}>
