@@ -28,6 +28,11 @@ interface IntervalRowProps {
     task: IntervalSubscription,
     flag: boolean
   ) => Promise<void>;
+  handleChangeIntervalDuration: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => void;
   handleIntervalOneShot: (
     task: IntervalSubscription,
     nativeChecked: boolean,
@@ -42,6 +47,7 @@ export const IntervalRow = ({
   task,
   handleIntervalToggle,
   handleIntervalNativeCheckbox,
+  handleChangeIntervalDuration,
   handleIntervalOneShot,
   handleRemoveIntervalSubscription,
 }: IntervalRowProps) => {
@@ -84,20 +90,6 @@ export const IntervalRow = ({
     }
     // Remove subscription.
     await handleRemoveIntervalSubscription(task);
-  };
-
-  const handleIntervalClicked = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newSetting: number = parseInt(event.target.value);
-    const settingObj = IntervalsController.durations.find(
-      (setting) => setting.ticksToWait === newSetting
-    );
-
-    if (settingObj) {
-      setIntervalSetting(newSetting);
-      // TODO: Update task.
-    }
   };
 
   return (
@@ -204,7 +196,9 @@ export const IntervalRow = ({
                   className="select-interval"
                   id="select-interval"
                   value={intervalSetting}
-                  onChange={(e) => handleIntervalClicked(e)}
+                  onChange={(e) =>
+                    handleChangeIntervalDuration(e, task, setIntervalSetting)
+                  }
                 >
                   {IntervalsController.durations.map(
                     ({ label, ticksToWait }, i) => (

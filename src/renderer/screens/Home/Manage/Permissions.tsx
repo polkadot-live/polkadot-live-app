@@ -456,6 +456,36 @@ export const Permissions = ({
     });
   };
 
+  /// Handle setting a new interval duration for the subscription.
+  const handleChangeIntervalDuration = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => {
+    const newSetting: number = parseInt(event.target.value);
+    const settingObj = IntervalsController.durations.find(
+      (setting) => setting.ticksToWait === newSetting
+    );
+
+    if (settingObj) {
+      setIntervalSetting(newSetting);
+
+      // Update task state.
+      task.intervalSetting = settingObj;
+      updateIntervalSubscription({ ...task });
+      tryUpdateDynamicIntervalTask({ ...task });
+
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
+
+      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    }
+  };
+
   /// Get dynamic accordion indices state for account categories or
   /// static accordion indices for chain categories.
   const getAccordionIndices = () =>
@@ -555,6 +585,7 @@ export const Permissions = ({
                     key={`${j}_${task.referendumId}_${task.action}`}
                     handleIntervalToggle={handleIntervalToggle}
                     handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
+                    handleChangeIntervalDuration={handleChangeIntervalDuration}
                     handleIntervalOneShot={handleIntervalOneShot}
                     handleRemoveIntervalSubscription={
                       handleRemoveIntervalSubscription
