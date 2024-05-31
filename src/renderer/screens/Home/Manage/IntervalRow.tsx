@@ -13,11 +13,13 @@ import { useEffect, useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
+  faTimer,
   faXmark,
 } from '@fortawesome/pro-light-svg-icons';
 import { Switch } from '@app/library/Switch';
-import type { AnyData } from '@/types/misc';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { AnyData } from '@/types/misc';
 
 interface IntervalRowProps {
   task: IntervalSubscription;
@@ -54,6 +56,11 @@ export const IntervalRow = ({
   const [removeClicked, setRemoveClicked] = useState(false);
   const removeTimeoutRef = useRef<null | AnyData>(null);
 
+  const [intervalClicked, setIntervalClicked] = useState(false);
+  const [intervalSetting, setIntervalSetting] = useState(
+    task.intervalSetting.ticksToWait
+  );
+
   useEffect(() => {
     const newStatusToBoolean = task.status === 'enable';
     newStatusToBoolean !== isToggled && setIsToggled(newStatusToBoolean);
@@ -79,6 +86,20 @@ export const IntervalRow = ({
     await handleRemoveIntervalSubscription(task);
   };
 
+  const handleIntervalClicked = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newSetting: number = parseInt(event.target.value);
+    const settingObj = IntervalsController.durations.find(
+      (setting) => setting.ticksToWait === newSetting
+    );
+
+    if (settingObj) {
+      setIntervalSetting(newSetting);
+      // TODO: Update task.
+    }
+  };
+
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -102,6 +123,7 @@ export const IntervalRow = ({
         <div>
           {/* Remove Button */}
           <div
+            style={{ display: intervalClicked ? 'none' : 'block' }}
             className="remove-wrapper tooltip-trigger-element"
             data-tooltip-text={'Click Twice to Remove'}
             onMouseMove={() => setTooltipTextAndOpen('Click Twice to Remove')}
@@ -131,6 +153,7 @@ export const IntervalRow = ({
 
           {/* One Shot Button */}
           <div
+            style={{ display: intervalClicked ? 'none' : 'block' }}
             className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
             data-tooltip-text={'Execute Once'}
             onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
@@ -159,6 +182,45 @@ export const IntervalRow = ({
                 icon={faArrowDownFromDottedLine}
                 transform={'grow-8'}
               />
+            )}
+          </div>
+
+          {/* Interval Selector */}
+          <div
+            className="interval-wrapper tooltip-trigger-element"
+            data-tooltip-text={'Set Interval'}
+            onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
+          >
+            {!intervalClicked ? (
+              <FontAwesomeIcon
+                className="enabled"
+                icon={faTimer}
+                transform={'grow-8'}
+                onClick={() => setIntervalClicked(true)}
+              />
+            ) : (
+              <div className="select-wrapper">
+                <select
+                  className="select-interval"
+                  id="select-interval"
+                  value={intervalSetting}
+                  onChange={(e) => handleIntervalClicked(e)}
+                >
+                  {IntervalsController.durations.map(
+                    ({ label, ticksToWait }, i) => (
+                      <option key={`interval_setting_${i}`} value={ticksToWait}>
+                        {label}
+                      </option>
+                    )
+                  )}
+                </select>
+                <FontAwesomeIcon
+                  className="enabled"
+                  icon={faXmark}
+                  transform={'grow-2'}
+                  onClick={() => setIntervalClicked(false)}
+                />
+              </div>
             )}
           </div>
 
