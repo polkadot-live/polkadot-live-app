@@ -6,13 +6,14 @@ import BigNumber from 'bignumber.js';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import type { AnyData } from '@/types/misc';
-import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import { getOriginIdFromName } from '../screens/OpenGov/utils';
 import { getTracks } from '@/model/Track';
+import type { AnyData } from '@/types/misc';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { NotificationData } from '@/types/reporter';
 
 /// Debugging function.
 const logOneShot = (task: IntervalSubscription) => {
@@ -124,6 +125,11 @@ const oneShot_openGov_decisionPeriod = async (
   const info: AnyData = result.toHuman();
 
   if (isObject(info) && 'Ongoing' in info) {
+    const notification: NotificationData = {
+      title: `Referendum ${referendumId}`,
+      body: '',
+    };
+
     const referendumInfo: ActiveReferendaInfo = {
       referendaId: referendumId,
       Ongoing: {
@@ -145,7 +151,7 @@ const oneShot_openGov_decisionPeriod = async (
           remainingBlocksBn.toString()
         );
 
-        console.log(`Confirmation period ends in ${formatted}`);
+        notification.body = `Confirmaing. Ends in ${formatted}.`;
       } else {
         const { since } = referendumInfo.Ongoing.deciding;
 
@@ -175,10 +181,16 @@ const oneShot_openGov_decisionPeriod = async (
           remainingBlocksBn.toString()
         );
 
-        console.log(`Decision period ends in ${formatted}`);
+        notification.body = `Decision period ends in ${formatted}.`;
       }
     }
+
+    if (!RendererConfig.silenceNotifications) {
+      window.myAPI.showNotification(notification);
+    }
+
+    return true;
   }
 
-  return true;
+  return false;
 };

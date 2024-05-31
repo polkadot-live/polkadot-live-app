@@ -33,19 +33,7 @@ export class NotificationsController {
         const { percentAyes, percentNays } = miscData;
         return {
           title: `Referendum ${referendumId}`,
-          body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%`,
-        };
-      }
-      case 'subscribe:interval:openGov:decisionPeriod': {
-        return {
-          title: 'Todo',
-          body: 'Todo',
-        };
-      }
-      case 'subscribe:interval:openGov:referendumThresholds': {
-        return {
-          title: 'Todo',
-          body: 'Todo',
+          body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
         };
       }
       default: {
