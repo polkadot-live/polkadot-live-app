@@ -217,7 +217,8 @@ export class IntervalsController {
       console.log(`Processing interval subscriptions for chain: ${chainId}`);
 
       for (const task of chainSubscriptions) {
-        if (task.tickCounter + 1 === task.intervalSetting.ticksToWait) {
+        const { tickCounter, intervalSetting } = task;
+        if (tickCounter + 1 === intervalSetting.ticksToWait) {
           // TODO: Implement queuing system.
           await this.executeAction(task);
         }
@@ -230,7 +231,7 @@ export class IntervalsController {
           (t): IntervalSubscription => ({
             ...t,
             tickCounter:
-              t.tickCounter + 1 === t.intervalSetting.ticksToWait
+              t.tickCounter + 1 >= t.intervalSetting.ticksToWait
                 ? 0
                 : t.tickCounter + 1,
           })
