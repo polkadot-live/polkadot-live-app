@@ -10,7 +10,7 @@ export interface IntervalSubscription {
   // Unique id for the task.
   action: string;
   // Number of ticks between each one-shot execution.
-  ticksToWait: number;
+  intervalSetting: IntervalSetting;
   // Used as a countdown.
   tickCounter: number;
   // Task category.
@@ -31,6 +31,11 @@ export interface IntervalSubscription {
   justBuilt?: boolean;
 }
 
+export interface IntervalSetting {
+  label: string;
+  ticksToWait: number;
+}
+
 export class IntervalsController {
   /// Active interval subscriptions keyed by chain ID.
   static subscriptions = new Map<ChainID, IntervalSubscription[]>();
@@ -43,6 +48,17 @@ export class IntervalsController {
   static tickDuration = 5;
   /// Maximum wait periods for an interval subscription.
   static maxPeriods = 5;
+  /// Possible durations for an interval subscription.
+  static durations: IntervalSetting[] = [
+    { label: '15 minutes', ticksToWait: 1 },
+    { label: '30 minutes', ticksToWait: 2 },
+    { label: '1 hour', ticksToWait: 4 },
+    { label: '2 hours', ticksToWait: 8 },
+    { label: '4 hours', ticksToWait: 16 },
+    { label: '6 hours', ticksToWait: 24 },
+    { label: '12 hours', ticksToWait: 48 },
+    { label: '24 hours', ticksToWait: 96 },
+  ];
 
   /**
    * @name initIntervals
@@ -201,7 +217,8 @@ export class IntervalsController {
       console.log(`Processing interval subscriptions for chain: ${chainId}`);
 
       for (const task of chainSubscriptions) {
-        if (task.tickCounter + 1 === task.ticksToWait) {
+        const { tickCounter, intervalSetting } = task;
+        if (tickCounter + 1 === intervalSetting.ticksToWait) {
           // TODO: Implement queuing system.
           await this.executeAction(task);
         }
@@ -214,7 +231,9 @@ export class IntervalsController {
           (t): IntervalSubscription => ({
             ...t,
             tickCounter:
-              t.tickCounter + 1 === t.ticksToWait ? 0 : t.tickCounter + 1,
+              t.tickCounter + 1 >= t.intervalSetting.ticksToWait
+                ? 0
+                : t.tickCounter + 1,
           })
         )
       );
