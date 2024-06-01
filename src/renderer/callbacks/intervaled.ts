@@ -50,7 +50,7 @@ export const executeIntervaledOneShot = async (
       return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
-      const result = await oneShot_openGov_decisionPeriod(task);
+      const result = await oneShot_openGov_decisionPeriod(task, isOneShot);
       return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
@@ -131,7 +131,8 @@ const oneShot_openGov_referendumVotes = async (
  * @summary One-shot call to remaining decision period time.
  */
 const oneShot_openGov_decisionPeriod = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -150,7 +151,9 @@ const oneShot_openGov_decisionPeriod = async (
     return { success: false, message: 'Referendum not being decided.' };
   }
 
-  const notification: NotificationData = {
+  // Data for rendering.
+  let formattedTime = '';
+  const notificationData: NotificationData = {
     title: `Referendum ${referendumId}`,
     body: '',
   };
@@ -173,8 +176,8 @@ const oneShot_openGov_decisionPeriod = async (
   if (confirming) {
     const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
     const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
-    const formatted = formatBlocksToTime(chainId, remainingBlocksBn.toString());
-    notification.body = `Confirmaing. Ends in ${formatted}.`;
+    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notificationData.body = `Confirmaing. Ends in ${formattedTime}.`;
   } else {
     const { since } = referendumInfo.Ongoing.deciding;
 
@@ -199,14 +202,20 @@ const oneShot_openGov_decisionPeriod = async (
     const dpEndBlockBn = dpSinceBn.plus(dpBn);
     const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
 
-    const formatted = formatBlocksToTime(chainId, remainingBlocksBn.toString());
-    notification.body = `Decision period ends in ${formatted}.`;
+    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notificationData.body = `Decision period ends in ${formattedTime}.`;
   }
 
-  if (!RendererConfig.silenceNotifications) {
-    window.myAPI.showNotification(notification);
-  }
+  const event = EventsController.getIntervalEvent(task, {
+    formattedTime,
+    subtext: notificationData.body,
+  });
 
+  const notification = getNotificationFlag(task, isOneShot)
+    ? notificationData
+    : null;
+
+  window.myAPI.persistEvent(event, notification, isOneShot);
   return { success: true };
 };
 
