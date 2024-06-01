@@ -1,16 +1,15 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as RendererConfig } from '@/config/processes/renderer';
 import BigNumber from 'bignumber.js';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import { getOriginIdFromName } from '../screens/OpenGov/utils';
-import { getTracks } from '@/model/Track';
-import { getMinApprovalSupport, rmChars } from '../utils/openGov';
+import { getMinApprovalSupport, rmChars, getTracks } from '../utils/openGov';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';

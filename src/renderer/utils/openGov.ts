@@ -2,14 +2,38 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import type { Track } from '@/model/Track';
+import { Track } from '@/model/Track';
 import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { AnyData } from '@/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 
+/**
+ * @name getTracks
+ * @summary Utility to initialise tracks from data returned from Polkadot JS API.
+ */
+export const getTracks = (data: AnyData[]) =>
+  data.map((trackDataArr: AnyData) => {
+    const trackId: string = trackDataArr[0];
+    return new Track(
+      trackDataArr[1].confirmPeriod,
+      trackDataArr[1].decisionDeposit,
+      trackDataArr[1].decisionPeriod,
+      trackDataArr[1].maxDeciding,
+      trackDataArr[1].minEnactmentPeriod,
+      trackDataArr[1].name,
+      trackDataArr[1].preparePeriod,
+      trackId,
+      trackDataArr[1].minApproval,
+      trackDataArr[1].minSupport
+    );
+  });
+
+/**
+ * @name rmChars
+ * @summary Regex to remove commas, percentage signs and spaces from string.
+ */
 export function rmChars(str: string): string {
-  // Regular expression to match commas, percentage signs, and spaces
   const regex = /[,%\s]/g;
-  // Replace the matched characters with an empty string
   return str.replace(regex, '');
 }
 

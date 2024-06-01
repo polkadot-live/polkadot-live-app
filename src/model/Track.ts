@@ -1,30 +1,13 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from '@/types/misc';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { MinApproval, MinSupport } from '@/types/openGov';
 
-/// Utility to initialise tracks from data returned from Polkadot JS API.
-/// TODO: Move to utils file.
-export const getTracks = (data: AnyData[]) =>
-  data.map((trackDataArr: AnyData) => {
-    const trackId: string = trackDataArr[0];
-    return new Track(
-      trackDataArr[1].confirmPeriod,
-      trackDataArr[1].decisionDeposit,
-      trackDataArr[1].decisionPeriod,
-      trackDataArr[1].maxDeciding,
-      trackDataArr[1].minEnactmentPeriod,
-      trackDataArr[1].name,
-      trackDataArr[1].preparePeriod,
-      trackId,
-      trackDataArr[1].minApproval,
-      trackDataArr[1].minSupport
-    );
-  });
-
-/// Class to represent an Open Gov track.
+/**
+ * @name Track
+ * @summary Class to represent an Open Gov track.
+ */
 export class Track {
   private _confirmPeriod: string;
   private _decisionDeposit: string;
