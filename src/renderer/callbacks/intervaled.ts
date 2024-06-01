@@ -9,7 +9,11 @@ import { rmCommas } from '@w3ux/utils';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import { getOriginIdFromName } from '../screens/OpenGov/utils';
-import { getMinApprovalSupport, rmChars, getTracks } from '../utils/openGov';
+import {
+  getMinApprovalSupport,
+  getTracks,
+  rmChars,
+} from '../utils/openGovUtils';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';

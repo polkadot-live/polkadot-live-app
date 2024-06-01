@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { getTracks } from '../utils/openGov';
+import { getTracks } from '../utils/openGovUtils';
 import { useEffect } from 'react';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useReferenda } from '../contexts/openGov/Referenda';
