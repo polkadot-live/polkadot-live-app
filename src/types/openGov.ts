@@ -40,3 +40,28 @@ export interface ActiveReferendaInfo {
     track: string;
   };
 }
+
+export interface LinearDecreasing {
+  length: string;
+  floor: string;
+  ceil: string;
+}
+
+export interface Reciprocal {
+  factor: string;
+  xOffset: string;
+  yOffset: string;
+}
+
+export type MinApproval =
+  | { Reciprocal: Reciprocal }
+  | { LinearDecreasing: LinearDecreasing };
+
+export type MinSupport =
+  | { Reciprocal: Reciprocal }
+  | { LinearDecreasing: LinearDecreasing };
+
+export interface OneShotReturn {
+  success: boolean;
+  message?: string;
+}

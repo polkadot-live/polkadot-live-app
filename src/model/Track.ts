@@ -3,32 +3,7 @@
 
 import type { AnyData } from '@/types/misc';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-
-/// TODO: Move types to appropriate definition file.
-export interface LinearDecreasing {
-  length: string;
-  floor: string;
-  ceil: string;
-}
-
-export interface Reciprocal {
-  factor: string;
-  xOffset: string;
-  yOffset: string;
-}
-
-export type MinApproval =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
-export type MinSupport =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
-export interface OneShotReturn {
-  success: boolean;
-  message?: string;
-}
+import type { MinApproval, MinSupport } from '@/types/openGov';
 
 /// Utility to initialise tracks from data returned from Polkadot JS API.
 /// TODO: Move to utils file.
