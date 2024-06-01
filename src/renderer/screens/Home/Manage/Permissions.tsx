@@ -345,13 +345,13 @@ export const Permissions = ({
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
-    const result = await executeIntervaledOneShot(task);
+    const { success, message } = await executeIntervaledOneShot(task);
 
-    if (!result) {
+    if (!success) {
       setOneShotProcessing(false);
 
       // Render error alert.
-      toast.error('API timed out.', {
+      toast.error(message ? message : 'Error', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: true,

@@ -72,8 +72,8 @@ export function makeLinearCurve(length: string, floor: string, ceil: string) {
 }
 
 /**
- * @name getMinApproval
- * @summary Get current minimum approval percentage for a referendum.
+ * @name getMinApprovalSupport
+ * @summary Get current minimum approval and support percentages for a referendum.
  */
 export const getMinApprovalSupport = async (
   api: ApiPromise,
@@ -84,10 +84,7 @@ export const getMinApprovalSupport = async (
     return null;
   }
 
-  const result = {
-    minApproval: '',
-    minSupport: '',
-  };
+  const result = { minApproval: '', minSupport: '' };
 
   const lastHeader = await api.rpc.chain.getHeader();
   const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());

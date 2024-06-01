@@ -10,11 +10,12 @@ import { NotificationsController } from '@/controller/renderer/NotificationsCont
 import { formatBlocksToTime } from '../utils/timeUtils';
 import { getOriginIdFromName } from '../screens/OpenGov/utils';
 import { getTracks } from '@/model/Track';
+import { getMinApprovalSupport, rmChars } from '../utils/openGov';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { NotificationData } from '@/types/reporter';
-import { getMinApprovalSupport, rmChars } from '../utils/openGov';
+import type { OneShotReturn } from '@/model/Track';
 
 /// Debugging function.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,12 +26,14 @@ const logOneShot = (task: IntervalSubscription) => {
   );
 };
 
-export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
+export const executeIntervaledOneShot = async (
+  task: IntervalSubscription
+): Promise<OneShotReturn> => {
   const { action, referendumId } = task;
 
   // Return early if referendum ID is undefined (should not happen).
   if (!referendumId) {
-    return false;
+    return { success: false, message: 'Undefined referendum ID' };
   }
 
   switch (action) {
@@ -47,7 +50,7 @@ export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
       return result;
     }
     default: {
-      return false;
+      return { success: false, message: 'One-shot action not found.' };
     }
   }
 };
@@ -58,12 +61,14 @@ export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
  */
 const oneShot_openGov_referendumVotes = async (
   task: IntervalSubscription
-): Promise<boolean> => {
+): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
 
   if (!instance || !referendumId) {
-    return false;
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
   }
 
   const { api } = instance;
@@ -102,9 +107,9 @@ const oneShot_openGov_referendumVotes = async (
       );
     }
 
-    return true;
+    return { success: true };
   } else {
-    return false;
+    return { success: false, message: 'Referendum not ongoing.' };
   }
 };
 
@@ -114,12 +119,14 @@ const oneShot_openGov_referendumVotes = async (
  */
 const oneShot_openGov_decisionPeriod = async (
   task: IntervalSubscription
-): Promise<boolean> => {
+): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
 
   if (!instance || !referendumId) {
-    return false;
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
   }
 
   const { api } = instance;
@@ -169,7 +176,7 @@ const oneShot_openGov_decisionPeriod = async (
         const tracksData = getTracks(tracksResult);
         const track = tracksData.find((t) => t.trackId === trackId);
         if (!track) {
-          return false;
+          return { success: false, message: 'Referendum track not found.' };
         }
 
         // Prefix `dp` meaning `Decision Period`.
@@ -191,10 +198,10 @@ const oneShot_openGov_decisionPeriod = async (
       window.myAPI.showNotification(notification);
     }
 
-    return true;
+    return { success: true };
   }
 
-  return false;
+  return { success: false, message: 'Referendum not ongoing.' };
 };
 
 /**
@@ -203,12 +210,14 @@ const oneShot_openGov_decisionPeriod = async (
  */
 const oneShot_openGov_thresholds = async (
   task: IntervalSubscription
-): Promise<boolean> => {
+): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
 
   if (!instance || !referendumId) {
-    return false;
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
   }
 
   const { api } = instance;
@@ -217,8 +226,7 @@ const oneShot_openGov_thresholds = async (
 
   // Confirm result is a referendum that is ongoing.
   if (!(isObject(info) && 'Ongoing' in info)) {
-    console.log('TODO: Handle not ongoing...');
-    return false;
+    return { success: false, message: 'Referendum not ongoing.' };
   }
 
   // Guarentee that the referendum is still in its deciding phase.
@@ -230,8 +238,7 @@ const oneShot_openGov_thresholds = async (
   };
 
   if (!referendumInfo.Ongoing.deciding) {
-    console.log('TODO: Handle not deciding...');
-    return false;
+    return { success: false, message: 'Referendum not being decided.' };
   }
 
   // Get track data for decision period.
@@ -246,15 +253,13 @@ const oneShot_openGov_thresholds = async (
   const tracksData = getTracks(tracksResult);
   const track = tracksData.find((t) => t.trackId === trackId);
   if (!track) {
-    console.log('TODO: Handle no track data...');
-    return false;
+    return { success: false, message: 'Referendum track not found.' };
   }
 
   // Get current approval and support thresholds.
   const thresholds = await getMinApprovalSupport(api, referendumInfo, track);
   if (!thresholds) {
-    console.log('TODO: Handle no threshold data...');
-    return false;
+    return { success: false, message: 'Threshold data error.' };
   }
 
   // Render native OS notification if enabled.
@@ -275,5 +280,5 @@ const oneShot_openGov_thresholds = async (
     });
   }
 
-  return true;
+  return { success: true };
 };

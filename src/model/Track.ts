@@ -4,26 +4,7 @@
 import type { AnyData } from '@/types/misc';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
-/// Utility to initialise tracks from data returned from Polkadot JS API.
-/// TODO: Move to utils file.
-export const getTracks = (data: AnyData[]) =>
-  data.map((trackDataArr: AnyData) => {
-    const trackId: string = trackDataArr[0];
-    return new Track(
-      trackDataArr[1].confirmPeriod,
-      trackDataArr[1].decisionDeposit,
-      trackDataArr[1].decisionPeriod,
-      trackDataArr[1].maxDeciding,
-      trackDataArr[1].minEnactmentPeriod,
-      trackDataArr[1].name,
-      trackDataArr[1].preparePeriod,
-      trackId,
-      trackDataArr[1].minApproval,
-      trackDataArr[1].minSupport
-    );
-  });
-
-/// Types for minApproval and minSupport data.
+/// TODO: Move types to appropriate definition file.
 export interface LinearDecreasing {
   length: string;
   floor: string;
@@ -43,6 +24,30 @@ export type MinApproval =
 export type MinSupport =
   | { Reciprocal: Reciprocal }
   | { LinearDecreasing: LinearDecreasing };
+
+export interface OneShotReturn {
+  success: boolean;
+  message?: string;
+}
+
+/// Utility to initialise tracks from data returned from Polkadot JS API.
+/// TODO: Move to utils file.
+export const getTracks = (data: AnyData[]) =>
+  data.map((trackDataArr: AnyData) => {
+    const trackId: string = trackDataArr[0];
+    return new Track(
+      trackDataArr[1].confirmPeriod,
+      trackDataArr[1].decisionDeposit,
+      trackDataArr[1].decisionPeriod,
+      trackDataArr[1].maxDeciding,
+      trackDataArr[1].minEnactmentPeriod,
+      trackDataArr[1].name,
+      trackDataArr[1].preparePeriod,
+      trackId,
+      trackDataArr[1].minApproval,
+      trackDataArr[1].minSupport
+    );
+  });
 
 /// Class to represent an Open Gov track.
 export class Track {
