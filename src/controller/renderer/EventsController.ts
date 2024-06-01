@@ -56,7 +56,16 @@ export class EventsController {
           data: { referendumId, ayeVotes, nayVotes },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              text: 'Polkassembly',
+            },
+            {
+              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              text: 'Subsquare',
+            },
+          ],
         };
       }
       default: {
