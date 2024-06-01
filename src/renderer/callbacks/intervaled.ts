@@ -6,6 +6,7 @@ import { Config as RendererConfig } from '@/config/processes/renderer';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
+import { EventsController } from '@/controller/renderer/EventsController';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import {
@@ -33,7 +34,8 @@ const logOneShot = (task: IntervalSubscription) => {
  * @summary Public function to execute a one-shot for an interval subscription task.
  */
 export const executeIntervaledOneShot = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { action, referendumId } = task;
 
@@ -44,7 +46,7 @@ export const executeIntervaledOneShot = async (
 
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
-      const result = await oneShot_openGov_referendumVotes(task);
+      const result = await oneShot_openGov_referendumVotes(task, isOneShot);
       return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
@@ -66,7 +68,8 @@ export const executeIntervaledOneShot = async (
  * @summary One-shot call to fetch a referendum's votes.
  */
 const oneShot_openGov_referendumVotes = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -107,15 +110,19 @@ const oneShot_openGov_referendumVotes = async (
     .multipliedBy(100)
     .decimalPlaces(1);
 
-  if (!RendererConfig.silenceNotifications) {
-    window.myAPI.showNotification(
-      NotificationsController.getIntervalNotification(task, {
+  const event = EventsController.getIntervalEvent(task, {
+    ayeVotes: percentAyes.toString(),
+    nayVotes: percentNays.toString(),
+  });
+
+  const notification = getNotificationFlag(task, isOneShot)
+    ? NotificationsController.getIntervalNotification(task, {
         percentAyes,
         percentNays,
       })
-    );
-  }
+    : null;
 
+  window.myAPI.persistEvent(event, notification, isOneShot);
   return { success: true };
 };
 
@@ -281,3 +288,11 @@ const oneShot_openGov_thresholds = async (
 
   return { success: true };
 };
+
+/**
+ * @name getNotificationFlag
+ * @summary Returns `true` if a notification should be rendered, `false` otherwise.
+ */
+const getNotificationFlag = (task: IntervalSubscription, isOneShot: boolean) =>
+  !RendererConfig.silenceNotifications &&
+  (task.enableOsNotifications || isOneShot);

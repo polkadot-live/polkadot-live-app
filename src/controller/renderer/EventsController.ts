@@ -26,14 +26,51 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
+import type { IntervalSubscription } from './IntervalsController';
 import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {
   /**
+   * @name getIntervalEvent
+   * @summary Same as `getEvent` but for interval subscription tasks.
+   */
+  static getIntervalEvent(
+    task: IntervalSubscription,
+    miscData: AnyData
+  ): EventCallback {
+    switch (task.action) {
+      case 'subscribe:interval:openGov:referendumVotes': {
+        const { action, chainId, referendumId } = task;
+        const { ayeVotes, nayVotes } = miscData;
+
+        return {
+          uid: '',
+          category: 'openGov',
+          taskAction: action,
+          who: {
+            origin: 'interval',
+            data: { chainId } as EventChainData,
+          },
+          title: `Referendum ${referendumId}`,
+          subtitle: `Ayes at ${ayeVotes}% and Nayes at ${nayVotes}%.`,
+          data: { referendumId, ayeVotes, nayVotes },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+      default: {
+        throw new Error('getEvent: Subscription task action not recognized');
+      }
+    }
+  }
+
+  /**
    * @name getEvent
-   * @summary Instantiate and return a new event based on the recieved entry and custom data.
+   * @summary Return a new event based on the recieved entry and data.
    *
-   * NOTE: `uid` is set to an empty string on the renderer side and initialized in the main process.
+   * The `uid` field is set to an empty string on the renderer side and
+   * initialized in the main process.
    */
   static getEvent(entry: ApiCallEntry, miscData: AnyData): EventCallback {
     switch (entry.task.action) {

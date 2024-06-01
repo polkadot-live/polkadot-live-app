@@ -33,6 +33,7 @@ const CategoryList = new Map([
   ['debugging', { name: 'Debugging', icon: faUserGroup }],
   ['nominationPools', { name: 'Nomination Pools', icon: faUserGroup }],
   ['nominating', { name: 'Nominating', icon: faUserGroup }],
+  ['openGov', { name: 'OpenGov', icon: faUserGroup }],
 ]);
 
 export const ChainList = new Map<ChainID, Chain>([

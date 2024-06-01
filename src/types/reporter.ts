@@ -81,9 +81,9 @@ export interface EventAction {
 export interface EventCallback {
   uid: string;
   category: string;
-  taskAction: TaskAction;
+  taskAction: TaskAction | string; // TODO: IntervalAction
   who: {
-    origin: 'account' | 'chain';
+    origin: 'account' | 'chain' | 'interval';
     data: EventAccountData | EventChainData;
   };
   title: string;
