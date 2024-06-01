@@ -14,8 +14,10 @@ import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { NotificationData } from '@/types/reporter';
+import { getMinApprovalSupport, rmChars } from '../utils/openGov';
 
 /// Debugging function.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logOneShot = (task: IntervalSubscription) => {
   const { action, chainId, referendumId } = task;
   console.log(
@@ -41,8 +43,8 @@ export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
       return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
-      logOneShot(task);
-      return true;
+      const result = await oneShot_openGov_thresholds(task);
+      return result;
     }
     default: {
       return false;
@@ -193,4 +195,85 @@ const oneShot_openGov_decisionPeriod = async (
   }
 
   return false;
+};
+
+/**
+ * @name oneShot_openGov_thresholds
+ * @summary One-shot call to referendum current thresholds.
+ */
+const oneShot_openGov_thresholds = async (
+  task: IntervalSubscription
+): Promise<boolean> => {
+  const { chainId, referendumId } = task;
+  const instance = await getApiInstance(chainId);
+
+  if (!instance || !referendumId) {
+    return false;
+  }
+
+  const { api } = instance;
+  const result = await api.query.referenda.referendumInfoFor(referendumId);
+  const info: AnyData = result.toHuman();
+
+  // Confirm result is a referendum that is ongoing.
+  if (!(isObject(info) && 'Ongoing' in info)) {
+    console.log('TODO: Handle not ongoing...');
+    return false;
+  }
+
+  // Guarentee that the referendum is still in its deciding phase.
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  if (!referendumInfo.Ongoing.deciding) {
+    console.log('TODO: Handle not deciding...');
+    return false;
+  }
+
+  // Get track data for decision period.
+  const originData = referendumInfo.Ongoing.origin;
+  const originName =
+    'system' in originData
+      ? String(originData.system)
+      : String(originData.Origins);
+
+  const trackId = getOriginIdFromName(originName);
+  const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
+  const tracksData = getTracks(tracksResult);
+  const track = tracksData.find((t) => t.trackId === trackId);
+  if (!track) {
+    console.log('TODO: Handle no track data...');
+    return false;
+  }
+
+  // Get current approval and support thresholds.
+  const thresholds = await getMinApprovalSupport(api, referendumInfo, track);
+  if (!thresholds) {
+    console.log('TODO: Handle no threshold data...');
+    return false;
+  }
+
+  // Render native OS notification if enabled.
+  if (!RendererConfig.silenceNotifications) {
+    const { minApproval, minSupport } = thresholds;
+
+    const formattedApp = new BigNumber(rmChars(minApproval))
+      .multipliedBy(100)
+      .toFixed(2);
+
+    const formattedSup = new BigNumber(rmChars(minSupport))
+      .multipliedBy(100)
+      .toFixed(2);
+
+    window.myAPI.showNotification({
+      title: `Referendum ${referendumId}`,
+      body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+    });
+  }
+
+  return true;
 };
