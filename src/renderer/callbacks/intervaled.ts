@@ -8,10 +8,10 @@ import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
-import { getOriginIdFromName } from '../screens/OpenGov/utils';
 import {
   getMinApprovalSupport,
   getTracks,
+  getOriginIdFromName,
   rmChars,
 } from '../utils/openGovUtils';
 import type { AnyData } from '@/types/misc';
@@ -28,6 +28,10 @@ const logOneShot = (task: IntervalSubscription) => {
   );
 };
 
+/**
+ * @name executeIntervaledOneShot
+ * @summary Public function to execute a one-shot for an interval subscription task.
+ */
 export const executeIntervaledOneShot = async (
   task: IntervalSubscription
 ): Promise<OneShotReturn> => {
@@ -194,6 +198,8 @@ const oneShot_openGov_decisionPeriod = async (
 
         notification.body = `Decision period ends in ${formatted}.`;
       }
+    } else {
+      return { success: false, message: 'Referendum not being decided.' };
     }
 
     if (!RendererConfig.silenceNotifications) {

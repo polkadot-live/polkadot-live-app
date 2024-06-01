@@ -4,7 +4,7 @@
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
-import { renderOrigin } from '../utils';
+import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
