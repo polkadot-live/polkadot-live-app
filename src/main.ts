@@ -356,9 +356,12 @@ app.whenReady().then(async () => {
   );
 
   // Show native notifications.
-  ipcMain.on('app:notification:show', (_, { title, body }) => {
-    NotificationsController.showNotification(title, body);
-  });
+  ipcMain.on(
+    'app:notification:show',
+    (_, { title, body }: NotificationData) => {
+      NotificationsController.showNotification(title, body);
+    }
+  );
 
   /**
    * Interval subscriptions

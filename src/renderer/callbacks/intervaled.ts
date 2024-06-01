@@ -2,14 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
+import { NotificationsController } from '@/controller/renderer/NotificationsController';
+import { formatBlocksToTime } from '../utils/timeUtils';
+import {
+  getMinApprovalSupport,
+  getTracks,
+  getOriginIdFromName,
+  rmChars,
+} from '../utils/openGovUtils';
 import type { AnyData } from '@/types/misc';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
 import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { NotificationData } from '@/types/reporter';
 
 /// Debugging function.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logOneShot = (task: IntervalSubscription) => {
   const { action, chainId, referendumId } = task;
   console.log(
@@ -17,30 +28,35 @@ const logOneShot = (task: IntervalSubscription) => {
   );
 };
 
-export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
+/**
+ * @name executeIntervaledOneShot
+ * @summary Public function to execute a one-shot for an interval subscription task.
+ */
+export const executeIntervaledOneShot = async (
+  task: IntervalSubscription
+): Promise<OneShotReturn> => {
   const { action, referendumId } = task;
 
   // Return early if referendum ID is undefined (should not happen).
   if (!referendumId) {
-    return false;
+    return { success: false, message: 'Undefined referendum ID' };
   }
 
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
-      //const result = await oneShot_openGov_referendumVotes(task);
-      logOneShot(task);
-      return true;
+      const result = await oneShot_openGov_referendumVotes(task);
+      return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
-      logOneShot(task);
-      return true;
+      const result = await oneShot_openGov_decisionPeriod(task);
+      return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
-      logOneShot(task);
-      return true;
+      const result = await oneShot_openGov_thresholds(task);
+      return result;
     }
     default: {
-      return false;
+      return { success: false, message: 'One-shot action not found.' };
     }
   }
 };
@@ -49,16 +65,16 @@ export const executeIntervaledOneShot = async (task: IntervalSubscription) => {
  * @name oneShot_openGov_referendumVotes
  * @summary One-shot call to fetch a referendum's votes.
  */
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const oneShot_openGov_referendumVotes = async (
   task: IntervalSubscription
-): Promise<boolean> => {
+): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
 
   if (!instance || !referendumId) {
-    return false;
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
   }
 
   const { api } = instance;
@@ -73,7 +89,7 @@ const oneShot_openGov_referendumVotes = async (
       },
     };
 
-    const { ayes, nays, support } = referendumInfo.Ongoing.tally;
+    const { ayes, nays } = referendumInfo.Ongoing.tally;
     const ayesBn = new BigNumber(rmCommas(String(ayes)));
     const naysBn = new BigNumber(rmCommas(String(nays)));
     const totalBn = ayesBn.plus(naysBn);
@@ -88,12 +104,189 @@ const oneShot_openGov_referendumVotes = async (
       .multipliedBy(100)
       .decimalPlaces(1);
 
-    console.log(`Ayes: ${percentAyes.toString()}%`);
-    console.log(`Nays: ${percentNays.toString()}%`);
-    console.log(`Support: ${support}`);
+    if (!RendererConfig.silenceNotifications) {
+      window.myAPI.showNotification(
+        NotificationsController.getIntervalNotification(task, {
+          percentAyes,
+          percentNays,
+        })
+      );
+    }
 
-    return true;
+    return { success: true };
   } else {
-    return false;
+    return { success: false, message: 'Referendum not ongoing.' };
   }
+};
+
+/**
+ * @name oneShot_openGov_decisionPeriod
+ * @summary One-shot call to remaining decision period time.
+ */
+const oneShot_openGov_decisionPeriod = async (
+  task: IntervalSubscription
+): Promise<OneShotReturn> => {
+  const { chainId, referendumId } = task;
+  const instance = await getApiInstance(chainId);
+
+  if (!instance || !referendumId) {
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
+  }
+
+  const { api } = instance;
+  const result = await api.query.referenda.referendumInfoFor(referendumId);
+  const info: AnyData = result.toHuman();
+
+  if (isObject(info) && 'Ongoing' in info) {
+    const notification: NotificationData = {
+      title: `Referendum ${referendumId}`,
+      body: '',
+    };
+
+    const referendumInfo: ActiveReferendaInfo = {
+      referendaId: referendumId,
+      Ongoing: {
+        ...info.Ongoing,
+      },
+    };
+
+    if (referendumInfo.Ongoing.deciding) {
+      const lastHeader = await api.rpc.chain.getHeader();
+      const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
+      const { confirming } = referendumInfo.Ongoing.deciding;
+
+      if (confirming) {
+        const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
+        const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
+
+        const formatted = formatBlocksToTime(
+          chainId,
+          remainingBlocksBn.toString()
+        );
+
+        notification.body = `Confirmaing. Ends in ${formatted}.`;
+      } else {
+        const { since } = referendumInfo.Ongoing.deciding;
+
+        // Get origin and its decision period in number of blocks.
+        const originData = referendumInfo.Ongoing.origin;
+        const originName =
+          'system' in originData
+            ? String(originData.system)
+            : String(originData.Origins);
+
+        const trackId = getOriginIdFromName(originName);
+        const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
+        const tracksData = getTracks(tracksResult);
+        const track = tracksData.find((t) => t.trackId === trackId);
+        if (!track) {
+          return { success: false, message: 'Referendum track not found.' };
+        }
+
+        // Prefix `dp` meaning `Decision Period`.
+        const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
+        const dpSinceBn = new BigNumber(rmCommas(String(since)));
+        const dpEndBlockBn = dpSinceBn.plus(dpBn);
+        const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
+
+        const formatted = formatBlocksToTime(
+          chainId,
+          remainingBlocksBn.toString()
+        );
+
+        notification.body = `Decision period ends in ${formatted}.`;
+      }
+    } else {
+      return { success: false, message: 'Referendum not being decided.' };
+    }
+
+    if (!RendererConfig.silenceNotifications) {
+      window.myAPI.showNotification(notification);
+    }
+
+    return { success: true };
+  }
+
+  return { success: false, message: 'Referendum not ongoing.' };
+};
+
+/**
+ * @name oneShot_openGov_thresholds
+ * @summary One-shot call to referendum current thresholds.
+ */
+const oneShot_openGov_thresholds = async (
+  task: IntervalSubscription
+): Promise<OneShotReturn> => {
+  const { chainId, referendumId } = task;
+  const instance = await getApiInstance(chainId);
+
+  if (!instance || !referendumId) {
+    return !instance
+      ? { success: false, message: 'API instance not found.' }
+      : { success: false, message: 'Undefined referendum ID.' };
+  }
+
+  const { api } = instance;
+  const result = await api.query.referenda.referendumInfoFor(referendumId);
+  const info: AnyData = result.toHuman();
+
+  // Confirm result is a referendum that is ongoing.
+  if (!(isObject(info) && 'Ongoing' in info)) {
+    return { success: false, message: 'Referendum not ongoing.' };
+  }
+
+  // Guarentee that the referendum is still in its deciding phase.
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  if (!referendumInfo.Ongoing.deciding) {
+    return { success: false, message: 'Referendum not being decided.' };
+  }
+
+  // Get track data for decision period.
+  const originData = referendumInfo.Ongoing.origin;
+  const originName =
+    'system' in originData
+      ? String(originData.system)
+      : String(originData.Origins);
+
+  const trackId = getOriginIdFromName(originName);
+  const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
+  const tracksData = getTracks(tracksResult);
+  const track = tracksData.find((t) => t.trackId === trackId);
+  if (!track) {
+    return { success: false, message: 'Referendum track not found.' };
+  }
+
+  // Get current approval and support thresholds.
+  const thresholds = await getMinApprovalSupport(api, referendumInfo, track);
+  if (!thresholds) {
+    return { success: false, message: 'Threshold data error.' };
+  }
+
+  // Render native OS notification if enabled.
+  if (!RendererConfig.silenceNotifications) {
+    const { minApproval, minSupport } = thresholds;
+
+    const formattedApp = new BigNumber(rmChars(minApproval))
+      .multipliedBy(100)
+      .toFixed(2);
+
+    const formattedSup = new BigNumber(rmChars(minSupport))
+      .multipliedBy(100)
+      .toFixed(2);
+
+    window.myAPI.showNotification({
+      title: `Referendum ${referendumId}`,
+      body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+    });
+  }
+
+  return { success: true };
 };

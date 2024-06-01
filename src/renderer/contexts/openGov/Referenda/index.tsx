@@ -3,10 +3,10 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
+import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
-import { getOrderedOrigins } from '@/renderer/screens/OpenGov/utils';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext

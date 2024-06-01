@@ -21,7 +21,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
 import { ReferendaGroup } from './Wrappers';
 import { useEffect, useState } from 'react';
-import { getSpacedOrigin } from '../utils';
+import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
   ControlsWrapper,
   SortControlButton,

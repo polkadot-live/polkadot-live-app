@@ -174,7 +174,7 @@ type ApiUpdatePersistedAccountTask = (
   serializedAccount: string
 ) => Promise<void>;
 
-type ApiShowNotification = (content: { title: string; body: string }) => void;
+type ApiShowNotification = (content: NotificationData) => void;
 
 type ApiUpdateAccountNameForEventsAndTasks = (
   address: string,
