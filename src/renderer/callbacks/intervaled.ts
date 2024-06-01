@@ -81,42 +81,42 @@ const oneShot_openGov_referendumVotes = async (
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   const info: AnyData = result.toHuman();
 
-  if (isObject(info) && 'Ongoing' in info) {
-    const referendumInfo: ActiveReferendaInfo = {
-      referendaId: referendumId,
-      Ongoing: {
-        ...info.Ongoing,
-      },
-    };
-
-    const { ayes, nays } = referendumInfo.Ongoing.tally;
-    const ayesBn = new BigNumber(rmCommas(String(ayes)));
-    const naysBn = new BigNumber(rmCommas(String(nays)));
-    const totalBn = ayesBn.plus(naysBn);
-
-    const percentAyes = ayesBn
-      .dividedBy(totalBn)
-      .multipliedBy(100)
-      .decimalPlaces(1);
-
-    const percentNays = naysBn
-      .dividedBy(totalBn)
-      .multipliedBy(100)
-      .decimalPlaces(1);
-
-    if (!RendererConfig.silenceNotifications) {
-      window.myAPI.showNotification(
-        NotificationsController.getIntervalNotification(task, {
-          percentAyes,
-          percentNays,
-        })
-      );
-    }
-
-    return { success: true };
-  } else {
+  if (!isObject(info) && 'Ongoing' in info) {
     return { success: false, message: 'Referendum not ongoing.' };
   }
+
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  const { ayes, nays } = referendumInfo.Ongoing.tally;
+  const ayesBn = new BigNumber(rmCommas(String(ayes)));
+  const naysBn = new BigNumber(rmCommas(String(nays)));
+  const totalBn = ayesBn.plus(naysBn);
+
+  const percentAyes = ayesBn
+    .dividedBy(totalBn)
+    .multipliedBy(100)
+    .decimalPlaces(1);
+
+  const percentNays = naysBn
+    .dividedBy(totalBn)
+    .multipliedBy(100)
+    .decimalPlaces(1);
+
+  if (!RendererConfig.silenceNotifications) {
+    window.myAPI.showNotification(
+      NotificationsController.getIntervalNotification(task, {
+        percentAyes,
+        percentNays,
+      })
+    );
+  }
+
+  return { success: true };
 };
 
 /**
@@ -139,77 +139,68 @@ const oneShot_openGov_decisionPeriod = async (
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   const info: AnyData = result.toHuman();
 
-  if (isObject(info) && 'Ongoing' in info) {
-    const notification: NotificationData = {
-      title: `Referendum ${referendumId}`,
-      body: '',
-    };
-
-    const referendumInfo: ActiveReferendaInfo = {
-      referendaId: referendumId,
-      Ongoing: {
-        ...info.Ongoing,
-      },
-    };
-
-    if (referendumInfo.Ongoing.deciding) {
-      const lastHeader = await api.rpc.chain.getHeader();
-      const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
-      const { confirming } = referendumInfo.Ongoing.deciding;
-
-      if (confirming) {
-        const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
-        const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
-
-        const formatted = formatBlocksToTime(
-          chainId,
-          remainingBlocksBn.toString()
-        );
-
-        notification.body = `Confirmaing. Ends in ${formatted}.`;
-      } else {
-        const { since } = referendumInfo.Ongoing.deciding;
-
-        // Get origin and its decision period in number of blocks.
-        const originData = referendumInfo.Ongoing.origin;
-        const originName =
-          'system' in originData
-            ? String(originData.system)
-            : String(originData.Origins);
-
-        const trackId = getOriginIdFromName(originName);
-        const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-        const tracksData = getTracks(tracksResult);
-        const track = tracksData.find((t) => t.trackId === trackId);
-        if (!track) {
-          return { success: false, message: 'Referendum track not found.' };
-        }
-
-        // Prefix `dp` meaning `Decision Period`.
-        const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
-        const dpSinceBn = new BigNumber(rmCommas(String(since)));
-        const dpEndBlockBn = dpSinceBn.plus(dpBn);
-        const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
-
-        const formatted = formatBlocksToTime(
-          chainId,
-          remainingBlocksBn.toString()
-        );
-
-        notification.body = `Decision period ends in ${formatted}.`;
-      }
-    } else {
-      return { success: false, message: 'Referendum not being decided.' };
-    }
-
-    if (!RendererConfig.silenceNotifications) {
-      window.myAPI.showNotification(notification);
-    }
-
-    return { success: true };
+  if (!isObject(info) && 'Ongoing' in info) {
+    return { success: false, message: 'Referendum not being decided.' };
   }
 
-  return { success: false, message: 'Referendum not ongoing.' };
+  const notification: NotificationData = {
+    title: `Referendum ${referendumId}`,
+    body: '',
+  };
+
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  if (!referendumInfo.Ongoing.deciding) {
+    return { success: false, message: 'Referendum not in decision period.' };
+  }
+
+  const lastHeader = await api.rpc.chain.getHeader();
+  const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
+  const { confirming } = referendumInfo.Ongoing.deciding;
+
+  if (confirming) {
+    const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
+    const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
+    const formatted = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notification.body = `Confirmaing. Ends in ${formatted}.`;
+  } else {
+    const { since } = referendumInfo.Ongoing.deciding;
+
+    // Get origin and its decision period in number of blocks.
+    const originData = referendumInfo.Ongoing.origin;
+    const originName =
+      'system' in originData
+        ? String(originData.system)
+        : String(originData.Origins);
+
+    const trackId = getOriginIdFromName(originName);
+    const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
+    const tracksData = getTracks(tracksResult);
+    const track = tracksData.find((t) => t.trackId === trackId);
+    if (!track) {
+      return { success: false, message: 'Referendum track not found.' };
+    }
+
+    // Prefix `dp` meaning `Decision Period`.
+    const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
+    const dpSinceBn = new BigNumber(rmCommas(String(since)));
+    const dpEndBlockBn = dpSinceBn.plus(dpBn);
+    const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
+
+    const formatted = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notification.body = `Decision period ends in ${formatted}.`;
+  }
+
+  if (!RendererConfig.silenceNotifications) {
+    window.myAPI.showNotification(notification);
+  }
+
+  return { success: true };
 };
 
 /**
