@@ -11,7 +11,7 @@ export const SettingsList: SettingItem[] = [
     enabled: true,
     helpKey: 'help:settings:dockedWindow',
     settingType: 'switch',
-    title: 'Docked window',
+    title: 'Docked Window',
   },
   {
     action: 'settings:execute:showOnAllWorkspaces',
@@ -19,7 +19,7 @@ export const SettingsList: SettingItem[] = [
     enabled: false,
     helpKey: 'help:settings:showOnAllWorkspaces',
     settingType: 'switch',
-    title: 'Show on all workspaces',
+    title: 'Show On All Workspaces',
   },
   {
     action: 'settings:execute:silenceOsNotifications',
@@ -27,7 +27,7 @@ export const SettingsList: SettingItem[] = [
     enabled: false,
     helpKey: 'help:settings:silenceOsNotifications',
     settingType: 'switch',
-    title: 'Silence OS notifications',
+    title: 'Silence OS Notifications',
   },
   {
     action: 'settings:execute:importData',
@@ -37,7 +37,7 @@ export const SettingsList: SettingItem[] = [
     enabled: true,
     helpKey: 'help:settings:importData',
     settingType: 'button',
-    title: 'Import data',
+    title: 'Import Accounts',
   },
   {
     action: 'settings:execute:exportData',
@@ -47,6 +47,6 @@ export const SettingsList: SettingItem[] = [
     enabled: true,
     helpKey: 'help:settings:exportData',
     settingType: 'button',
-    title: 'Export data',
+    title: 'Export Accounts',
   },
 ];
