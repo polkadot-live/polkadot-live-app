@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type {
+  IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';

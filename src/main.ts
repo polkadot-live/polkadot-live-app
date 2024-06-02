@@ -34,9 +34,11 @@ import type {
 } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { SubscriptionTask } from '@/types/subscriptions';
-import type { IntervalSubscription } from './controller/renderer/IntervalsController';
 import type { AnyJson } from '@w3ux/utils/types';
+import type {
+  SubscriptionTask,
+  IntervalSubscription,
+} from '@/types/subscriptions';
 
 const debug = MainDebug;
 

@@ -12,10 +12,9 @@ import {
 } from '@/utils/EventUtils';
 import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
-import type { ApiCallEntry } from '@/types/subscriptions';
+import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
 import type { ValidatorData } from '@/types/accounts';
-import type { IntervalSubscription } from './IntervalsController';
 
 export class NotificationsController {
   /**

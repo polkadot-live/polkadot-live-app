@@ -18,8 +18,8 @@ import {
 } from '@fortawesome/pro-light-svg-icons';
 import { Switch } from '@app/library/Switch';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 interface IntervalRowProps {
   task: IntervalSubscription;

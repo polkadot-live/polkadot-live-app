@@ -5,11 +5,11 @@ import * as defaults from './defaults';
 import { useState, createContext, useContext, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type {
+  IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { ManageContextInterface } from './types';
 
 // Hook to manage context.

@@ -5,40 +5,10 @@ import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-
-/// Where `default` reads the tasks `enableOsNotifications` field.
-export type NotificationPolicy = 'default' | 'none' | 'one-shot';
-
-export interface IntervalSubscription {
-  // Unique id for the task.
-  action: string;
-  // Number of ticks between each one-shot execution.
-  intervalSetting: IntervalSetting;
-  // Used as a countdown.
-  tickCounter: number;
-  // Task category.
-  category: string;
-  // Task's associated chain.
-  chainId: ChainID;
-  // Shown in renderer.
-  label: string;
-  // Enabled or disabled.
-  status: 'enable' | 'disable';
-  // Flag to enable or silence OS notifications.
-  enableOsNotifications: boolean;
-  // Key to retrieve help information about the task.
-  helpKey: HelpItemKey;
-  // Associated referendum id for task.
-  referendumId?: number;
-  // Flag to determine if the subscription was just build (may not be needed)
-  justBuilt?: boolean;
-}
-
-export interface IntervalSetting {
-  label: string;
-  ticksToWait: number;
-}
+import type {
+  IntervalSetting,
+  IntervalSubscription,
+} from '@/types/subscriptions';
 
 export class IntervalsController {
   /// Active interval subscriptions keyed by chain ID.
@@ -73,10 +43,43 @@ export class IntervalsController {
   }
 
   /**
-   * @name insertInterval
-   * @summary Insert an intervaled subscription into this controller's map.
+   * @name insertSubscriptions
+   * @summary Allows inserting multiple interval subscriptions into this controller's map.
    */
-  static insertSubscription(subscription: IntervalSubscription) {
+  static insertSubscriptions(
+    subscriptions: IntervalSubscription[],
+    isOnline = true
+  ) {
+    // Stop interval if it is running.
+    this.stopInterval();
+
+    // Insert tasks into map.
+    for (const task of subscriptions) {
+      if (task.status === 'disable') {
+        continue;
+      }
+
+      const { chainId } = task;
+      if (this.subscriptions.has(chainId)) {
+        const current = this.subscriptions.get(chainId)!;
+        this.subscriptions.set(chainId, [...current, { ...task }]);
+      } else {
+        this.subscriptions.set(chainId, [{ ...task }]);
+      }
+    }
+
+    // Restart interval.
+    isOnline && this.initClock();
+  }
+
+  /**
+   * @name insertInterval
+   * @summary Insert an interval subscription into this controller's map.
+   */
+  static insertSubscription(
+    subscription: IntervalSubscription,
+    isOnline = true
+  ) {
     console.log('INSERT SUBSCRIPTION:');
     console.log(subscription);
 
@@ -92,7 +95,38 @@ export class IntervalsController {
     }
 
     // Restart interval after updating cached tasks.
-    this.initClock();
+    isOnline && this.initClock();
+  }
+
+  /**
+   * @name removeSubscriptions
+   * @summary Allows removing multiple interval subscriptions from this controller's map.
+   */
+  static removeSubscriptions(subscriptions: IntervalSubscription[]) {
+    // Stop interval.
+    this.stopInterval();
+
+    // Remove subscriptions from map.
+    for (const task of subscriptions) {
+      if (!this.subscriptions.has(task.chainId)) {
+        continue;
+      }
+
+      const { chainId, action, referendumId } = task;
+      const updated = this.subscriptions
+        .get(chainId)!
+        .filter(
+          (t) => !(t.action === action && t.referendumId === referendumId)
+        );
+
+      updated.length !== 0
+        ? this.subscriptions.set(chainId, updated)
+        : this.subscriptions.delete(chainId);
+    }
+
+    if (this.subscriptions.size > 0) {
+      this.initClock();
+    }
   }
 
   /**
@@ -179,9 +213,12 @@ export class IntervalsController {
       this.startInterval();
     } else {
       // Wait until clock is synched before starting interval.
-      this.timeoutId = setTimeout(() => {
+      this.timeoutId = setTimeout(async () => {
         if (this.timeoutId !== null) {
           this.timeoutId = null;
+
+          // Process the first tick and then start the interval..
+          await this.processTick();
           this.startInterval();
         }
       }, seconds * 1000);
@@ -197,7 +234,7 @@ export class IntervalsController {
       async () => {
         await this.processTick();
       },
-      this.tickDuration * 60 * 1000 // 5 minutes
+      this.tickDuration * 60 * 1000 // tick duration in minutes
     );
   }
 
