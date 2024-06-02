@@ -18,7 +18,7 @@ import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 import { getAddressChainId } from '@/renderer/Utils';
-import { useConnections } from '@/renderer/contexts/import/Connections';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 
