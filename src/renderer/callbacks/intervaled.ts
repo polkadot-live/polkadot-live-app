@@ -54,7 +54,7 @@ export const executeIntervaledOneShot = async (
       return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
-      const result = await oneShot_openGov_thresholds(task);
+      const result = await oneShot_openGov_thresholds(task, isOneShot);
       return result;
     }
     default: {
@@ -224,7 +224,8 @@ const oneShot_openGov_decisionPeriod = async (
  * @summary One-shot call to referendum current thresholds.
  */
 const oneShot_openGov_thresholds = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -277,24 +278,28 @@ const oneShot_openGov_thresholds = async (
     return { success: false, message: 'Threshold data error.' };
   }
 
+  const formattedApp = new BigNumber(rmChars(thresholds.minApproval))
+    .multipliedBy(100)
+    .toFixed(2);
+
+  const formattedSup = new BigNumber(rmChars(thresholds.minSupport))
+    .multipliedBy(100)
+    .toFixed(2);
+
+  const event = EventsController.getIntervalEvent(task, {
+    formattedApp,
+    formattedSup,
+  });
+
   // Render native OS notification if enabled.
-  if (!RendererConfig.silenceNotifications) {
-    const { minApproval, minSupport } = thresholds;
+  const notification = getNotificationFlag(task, isOneShot)
+    ? NotificationsController.getIntervalNotification(task, {
+        formattedApp,
+        formattedSup,
+      })
+    : null;
 
-    const formattedApp = new BigNumber(rmChars(minApproval))
-      .multipliedBy(100)
-      .toFixed(2);
-
-    const formattedSup = new BigNumber(rmChars(minSupport))
-      .multipliedBy(100)
-      .toFixed(2);
-
-    window.myAPI.showNotification({
-      title: `Referendum ${referendumId}`,
-      body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
-    });
-  }
-
+  window.myAPI.persistEvent(event, notification, isOneShot);
   return { success: true };
 };
 

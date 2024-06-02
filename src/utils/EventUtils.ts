@@ -88,6 +88,10 @@ export const pushUniqueEvent = (
       push = filter_openGov_decisionPeriod(events, event);
       break;
     }
+    case 'subscribe:interval:openGov:referendumThresholds': {
+      push = filter_openGov_referendumThresholds(events, event);
+      break;
+    }
     default: {
       break;
     }
@@ -500,6 +504,45 @@ const filter_openGov_decisionPeriod = (
         referendumId === nextReferendumId &&
         chainId === nextChainId &&
         formattedTime === nextFormattedTime
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_openGov_referendumThresholds
+ * @summary The new event is considered a duplicate if another event has
+ * a matching action, chain id and referendum id.
+ */
+const filter_openGov_referendumThresholds = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { referendumId, formattedApp, formattedSup } = event.data;
+  const { chainId } = event.who.data as EventChainData;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { chainId: nextChainId } = e.who.data as
+        | EventChainData
+        | EventAccountData;
+
+      const {
+        referendumId: nextReferendumId,
+        formattedApp: nextformattedApp,
+        formattedSup: nextformattedSup,
+      } = e.data;
+
+      if (
+        referendumId === nextReferendumId &&
+        chainId === nextChainId &&
+        formattedApp === nextformattedApp &&
+        formattedSup === nextformattedSup
       ) {
         isUnique = false;
       }

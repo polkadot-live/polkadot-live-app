@@ -97,6 +97,35 @@ export class EventsController {
           ],
         };
       }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        const { action, chainId, referendumId } = task;
+        const { formattedApp, formattedSup } = miscData;
+
+        return {
+          uid: '',
+          category: 'openGov',
+          taskAction: action,
+          who: {
+            origin: 'interval',
+            data: { chainId } as EventChainData,
+          },
+          title: `Referendum ${referendumId}`,
+          subtitle: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+          data: { referendumId, formattedApp, formattedSup },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              text: 'Polkassembly',
+            },
+            {
+              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              text: 'Subsquare',
+            },
+          ],
+        };
+      }
       default: {
         throw new Error('getEvent: Subscription task action not recognized');
       }

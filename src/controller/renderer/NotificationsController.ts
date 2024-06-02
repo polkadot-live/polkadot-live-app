@@ -36,6 +36,13 @@ export class NotificationsController {
           body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
         };
       }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        const { formattedApp, formattedSup } = miscData;
+        return {
+          title: `Referendum ${referendumId}`,
+          body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+        };
+      }
       default: {
         throw new Error(
           `getIntervalNotification: Not implemented for ${task.action}`
