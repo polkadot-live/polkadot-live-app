@@ -22,6 +22,7 @@ import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
+import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
   ControlsWrapper,
@@ -71,27 +72,37 @@ export const OpenGov: React.FC = () => {
       const intervalId = setInterval(() => {
         if (ConfigOpenGov.portExists()) {
           clearInterval(intervalId);
-          initTreasury(treasuryChainId);
+          isConnected && initTreasury(treasuryChainId);
         }
       }, 1_000);
     } else {
-      initTreasury(treasuryChainId);
+      isConnected && initTreasury(treasuryChainId);
     }
   }, []);
+
+  /// Reload treasury data if app goes online from offline mode.
+  useEffect(() => {
+    if (isConnected) {
+      initTreasury(treasuryChainId);
+    }
+  }, [isConnected]);
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
     setActiveChainId(chainId);
-    setFetchingTracks(true);
 
-    // Request tracks data from main renderer.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:tracks:get',
-      data: {
-        chainId,
-      },
-    });
+    if (isConnected) {
+      setFetchingTracks(true);
+
+      // Request tracks data from main renderer.
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:tracks:get',
+        data: {
+          chainId,
+        },
+      });
+    }
 
     setSection(1);
   };
@@ -99,15 +110,18 @@ export const OpenGov: React.FC = () => {
   /// Open proposals.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
-    setFetchingReferenda(true);
     setActiveReferendaChainId(chainId);
 
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:referenda:get',
-      data: {
-        chainId,
-      },
-    });
+    if (isConnected) {
+      setFetchingReferenda(true);
+
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:referenda:get',
+        data: {
+          chainId,
+        },
+      });
+    }
 
     setSection(1);
   };
@@ -129,7 +143,10 @@ export const OpenGov: React.FC = () => {
   };
 
   /// Wrap some market around a tooltip if offline mode.
-  const wrapWithOfflineTooltip = (Inner: React.ReactNode) => (
+  const wrapWithOfflineTooltip = (
+    Inner: React.ReactNode,
+    styles?: CSSProperties
+  ) => (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {isConnected ? (
@@ -137,6 +154,7 @@ export const OpenGov: React.FC = () => {
         <>{Inner}</>
       ) : (
         <div
+          style={styles ? styles : {}}
           className="tooltip-trigger-element"
           data-tooltip-text="Currently Offline"
           onMouseMove={() => setTooltipTextAndOpen('Currently Offline')}
@@ -175,32 +193,42 @@ export const OpenGov: React.FC = () => {
           </HeaderWrapper>
 
           <TreasuryStats $chainId={treasuryChainId}>
-            {fetchingTreasuryData ? (
+            {fetchingTreasuryData && isConnected ? (
               <div className="loading-wrapper">
                 {renderPlaceholders(0, '68.47px', '0.5rem')}
               </div>
             ) : (
-              <section className="content-wrapper">
-                <div className="stat-wrapper">
-                  {renderInfoIcon(
-                    'Treasury Balance',
-                    'help:openGov:treasuryBalance'
-                  )}
-                  <h4>{getFormattedFreeBalance()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
-                  <h4>{getFormattedNextBurn()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('To Be Awarded', 'help:openGov:toBeAwarded')}
-                  <h4>{getFormattedToBeAwarded()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('Spend Period', 'help:openGov:spendPeriod')}
-                  <h4>{getSpendPeriodProgress()}</h4>
-                </div>
-              </section>
+              <>
+                {wrapWithOfflineTooltip(
+                  <section className="content-wrapper">
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'Treasury Balance',
+                        'help:openGov:treasuryBalance'
+                      )}
+                      <h4>{getFormattedFreeBalance()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
+                      <h4>{getFormattedNextBurn()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'To Be Awarded',
+                        'help:openGov:toBeAwarded'
+                      )}
+                      <h4>{getFormattedToBeAwarded()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'Spend Period',
+                        'help:openGov:spendPeriod'
+                      )}
+                      <h4>{getSpendPeriodProgress()}</h4>
+                    </div>
+                  </section>
+                )}
+              </>
             )}
           </TreasuryStats>
 

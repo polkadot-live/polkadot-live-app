@@ -10,6 +10,7 @@ import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import type { ReferendaProps } from '../types';
 import { OpenGovFooter, Scrollable } from '../Wrappers';
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
   faCaretLeft,
@@ -17,6 +18,7 @@ import {
   faLineHeight,
   faTimer,
 } from '@fortawesome/pro-solid-svg-icons';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
 import { ReferendaGroup } from './Wrappers';
@@ -33,9 +35,12 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
   const {
     referenda,
     fetchingReferenda,
+    setFetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
+
+  const { isConnected } = useConnections();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
@@ -65,6 +70,20 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
     );
     setExpandAll(true);
   }, [referenda]);
+
+  /// Re-fetch referenda if app goes online from offline mode.
+  useEffect(() => {
+    if (isConnected) {
+      setFetchingReferenda(true);
+
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:referenda:get',
+        data: {
+          chainId,
+        },
+      });
+    }
+  }, [isConnected]);
 
   /// Utility for making expand button dynamic.
   const isExpandActive = () =>
@@ -155,7 +174,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           <ControlsWrapper>
             <SortControlButton
               isActive={newestFirst}
-              isDisabled={fetchingReferenda}
+              isDisabled={!isConnected || fetchingReferenda}
               faIcon={faTimer}
               onClick={() => setNewestFirst(!newestFirst)}
               onLabel="Newest First"
@@ -163,7 +182,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
             />
             <SortControlButton
               isActive={groupingOn}
-              isDisabled={fetchingReferenda}
+              isDisabled={!isConnected || fetchingReferenda}
               faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
               onLabel="Grouping On"
@@ -171,7 +190,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
             />
             <SortControlButton
               isActive={isExpandActive()}
-              isDisabled={fetchingReferenda || !groupingOn}
+              isDisabled={!isConnected || fetchingReferenda || !groupingOn}
               faIcon={faLineHeight}
               onClick={() => handleExpandAll()}
               onLabel="All Expanded"
@@ -180,13 +199,22 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           </ControlsWrapper>
           {/* List referenda */}
           <section>
-            {fetchingReferenda ? (
-              <>{renderPlaceholders(4)}</>
+            {!isConnected ? (
+              <div style={{ padding: '0.5rem' }}>
+                <p>Currently offline.</p>
+                <p>Please reconnect to load OpenGov referenda.</p>
+              </div>
             ) : (
-              <>
-                {renderCategorised()}
-                {renderListed()}
-              </>
+              <div>
+                {fetchingReferenda ? (
+                  <>{renderPlaceholders(4)}</>
+                ) : (
+                  <>
+                    {renderCategorised()}
+                    {renderListed()}
+                  </>
+                )}
+              </div>
             )}
           </section>
         </ContentWrapper>

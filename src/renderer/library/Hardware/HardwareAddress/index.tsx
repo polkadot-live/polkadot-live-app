@@ -200,11 +200,11 @@ export const HardwareAddress = ({
           <div
             style={{ position: 'relative' }}
             className="tooltip-trigger-element"
-            data-tooltip-text={isConnected ? 'Import' : 'Offline Mode'}
+            data-tooltip-text={isConnected ? 'Import' : 'Currently Offline'}
             onMouseMove={() =>
               isConnected
                 ? setTooltipTextAndOpen('Import')
-                : setTooltipTextAndOpen('Offline Mode')
+                : setTooltipTextAndOpen('Currently Offline')
             }
           >
             <ButtonMono

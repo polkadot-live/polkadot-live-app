@@ -1,9 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowDownShortWide,
@@ -26,8 +28,9 @@ import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection, chainId }: TracksProps) => {
   /// Context data.
-  const { tracks, fetchingTracks } = useTracks();
+  const { tracks, fetchingTracks, setFetchingTracks } = useTracks();
   const { openHelp } = useHelp();
+  const { isConnected } = useConnections();
 
   /// Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);
@@ -38,6 +41,21 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
     </div>
   );
+
+  /// Re-fetch tracks if app goes online from offline mode.
+  useEffect(() => {
+    if (isConnected) {
+      setFetchingTracks(true);
+
+      // Request tracks data from main renderer.
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:tracks:get',
+        data: {
+          chainId,
+        },
+      });
+    }
+  }, [isConnected]);
 
   return (
     <>
@@ -53,27 +71,37 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
           <ControlsWrapper>
             <SortControlButton
               isActive={sortIdAscending}
-              isDisabled={fetchingTracks}
+              isDisabled={!isConnected || fetchingTracks}
               faIcon={faArrowDownShortWide}
               onClick={() => setSortIdAscending(!sortIdAscending)}
               onLabel="ID Ascend"
               offLabel="ID Descend"
             />
           </ControlsWrapper>
-          {fetchingTracks ? (
-            <>{renderPlaceholders(4)}</>
+
+          {!isConnected ? (
+            <div style={{ padding: '0.5rem' }}>
+              <p>Currently offline.</p>
+              <p>Please reconnect to load OpenGov tracks.</p>
+            </div>
           ) : (
-            <TrackGroup>
-              {tracks
-                .sort((a, b) =>
-                  sortIdAscending
-                    ? a.trackId - b.trackId
-                    : b.trackId - a.trackId
-                )
-                .map((track) => (
-                  <TrackRow key={track.trackId} track={track} />
-                ))}
-            </TrackGroup>
+            <div>
+              {fetchingTracks ? (
+                <>{renderPlaceholders(4)}</>
+              ) : (
+                <TrackGroup>
+                  {tracks
+                    .sort((a, b) =>
+                      sortIdAscending
+                        ? a.trackId - b.trackId
+                        : b.trackId - a.trackId
+                    )
+                    .map((track) => (
+                      <TrackRow key={track.trackId} track={track} />
+                    ))}
+                </TrackGroup>
+              )}
+            </div>
           )}
         </ContentWrapper>
       </Scrollable>
