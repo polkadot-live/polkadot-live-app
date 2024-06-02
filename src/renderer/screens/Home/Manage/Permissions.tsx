@@ -345,7 +345,10 @@ export const Permissions = ({
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
-    const { success, message } = await executeIntervaledOneShot(task, true);
+    const { success, message } = await executeIntervaledOneShot(
+      task,
+      'one-shot'
+    );
 
     if (!success) {
       setOneShotProcessing(false);
@@ -474,14 +477,16 @@ export const Permissions = ({
       task.intervalSetting = settingObj;
       updateIntervalSubscription({ ...task });
       tryUpdateDynamicIntervalTask({ ...task });
-
+      // Update managed task in intervals controller.
+      IntervalsController.updateSubscription({ ...task });
+      // Update state in OpenGov window.
       ConfigRenderer.portToOpenGov.postMessage({
         task: 'openGov:task:update',
         data: {
           serialized: JSON.stringify(task),
         },
       });
-
+      // Update persisted task in store.
       await window.myAPI.updateIntervalTask(JSON.stringify(task));
     }
   };

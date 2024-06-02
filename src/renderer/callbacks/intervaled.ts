@@ -17,7 +17,10 @@ import {
 } from '../utils/openGovUtils';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type {
+  IntervalSubscription,
+  NotificationPolicy,
+} from '@/controller/renderer/IntervalsController';
 import type { NotificationData } from '@/types/reporter';
 
 /// Debugging function.
@@ -35,7 +38,7 @@ const logOneShot = (task: IntervalSubscription) => {
  */
 export const executeIntervaledOneShot = async (
   task: IntervalSubscription,
-  isOneShot = false
+  policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { action, referendumId } = task;
 
@@ -46,15 +49,15 @@ export const executeIntervaledOneShot = async (
 
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
-      const result = await oneShot_openGov_referendumVotes(task, isOneShot);
+      const result = await oneShot_openGov_referendumVotes(task, policy);
       return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
-      const result = await oneShot_openGov_decisionPeriod(task, isOneShot);
+      const result = await oneShot_openGov_decisionPeriod(task, policy);
       return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
-      const result = await oneShot_openGov_thresholds(task, isOneShot);
+      const result = await oneShot_openGov_thresholds(task, policy);
       return result;
     }
     default: {
@@ -69,7 +72,7 @@ export const executeIntervaledOneShot = async (
  */
 const oneShot_openGov_referendumVotes = async (
   task: IntervalSubscription,
-  isOneShot = false
+  policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -115,14 +118,14 @@ const oneShot_openGov_referendumVotes = async (
     nayVotes: percentNays.toString(),
   });
 
-  const notification = getNotificationFlag(task, isOneShot)
+  const notification = getNotificationFlag(task, policy)
     ? NotificationsController.getIntervalNotification(task, {
         percentAyes,
         percentNays,
       })
     : null;
 
-  window.myAPI.persistEvent(event, notification, isOneShot);
+  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
   return { success: true };
 };
 
@@ -132,7 +135,7 @@ const oneShot_openGov_referendumVotes = async (
  */
 const oneShot_openGov_decisionPeriod = async (
   task: IntervalSubscription,
-  isOneShot = false
+  policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -211,11 +214,11 @@ const oneShot_openGov_decisionPeriod = async (
     subtext: notificationData.body,
   });
 
-  const notification = getNotificationFlag(task, isOneShot)
+  const notification = getNotificationFlag(task, policy)
     ? notificationData
     : null;
 
-  window.myAPI.persistEvent(event, notification, isOneShot);
+  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
   return { success: true };
 };
 
@@ -225,7 +228,7 @@ const oneShot_openGov_decisionPeriod = async (
  */
 const oneShot_openGov_thresholds = async (
   task: IntervalSubscription,
-  isOneShot = false
+  policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -292,14 +295,14 @@ const oneShot_openGov_thresholds = async (
   });
 
   // Render native OS notification if enabled.
-  const notification = getNotificationFlag(task, isOneShot)
+  const notification = getNotificationFlag(task, policy)
     ? NotificationsController.getIntervalNotification(task, {
         formattedApp,
         formattedSup,
       })
     : null;
 
-  window.myAPI.persistEvent(event, notification, isOneShot);
+  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
   return { success: true };
 };
 
@@ -307,6 +310,10 @@ const oneShot_openGov_thresholds = async (
  * @name getNotificationFlag
  * @summary Returns `true` if a notification should be rendered, `false` otherwise.
  */
-const getNotificationFlag = (task: IntervalSubscription, isOneShot: boolean) =>
+const getNotificationFlag = (
+  task: IntervalSubscription,
+  policy: NotificationPolicy
+) =>
+  policy !== 'none' &&
   !RendererConfig.silenceNotifications &&
-  (task.enableOsNotifications || isOneShot);
+  (task.enableOsNotifications || policy === 'one-shot');

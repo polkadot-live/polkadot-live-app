@@ -1,10 +1,14 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { AnyData } from '@/types/misc';
+
+/// Where `default` reads the tasks `enableOsNotifications` field.
+export type NotificationPolicy = 'default' | 'none' | 'one-shot';
 
 export interface IntervalSubscription {
   // Unique id for the task.
@@ -46,8 +50,6 @@ export class IntervalsController {
   static timeoutId: AnyData = null;
   /// Minimum clock period in seconds.
   static tickDuration = 5;
-  /// Maximum wait periods for an interval subscription.
-  static maxPeriods = 5;
   /// Possible durations for an interval subscription.
   static durations: IntervalSetting[] = [
     { label: '15 minutes', ticksToWait: 1 },
@@ -63,11 +65,10 @@ export class IntervalsController {
   /**
    * @name initIntervals
    * @summary Initialize the interval clock.
+   *
+   * NOTE: This method is called when app initializes and switches to online mode.
    */
   static async initIntervals(isOnline: boolean) {
-    // NOTE: This method is called when app initializes and switches to online mode.
-
-    // Start interval.
     isOnline && this.initClock();
   }
 
@@ -79,7 +80,8 @@ export class IntervalsController {
     console.log('INSERT SUBSCRIPTION:');
     console.log(subscription);
 
-    const restartInterval = this.subscriptions.size === 0;
+    // Stop interval.
+    this.stopInterval();
 
     const { chainId } = subscription;
     if (this.subscriptions.has(chainId)) {
@@ -89,10 +91,8 @@ export class IntervalsController {
       this.subscriptions.set(chainId, [{ ...subscription }]);
     }
 
-    // Start interval if it's not currently running.
-    if (restartInterval) {
-      this.initClock();
-    }
+    // Restart interval after updating cached tasks.
+    this.initClock();
   }
 
   /**
@@ -102,6 +102,9 @@ export class IntervalsController {
   static removeSubscription(subscription: IntervalSubscription) {
     console.log('REMOVE SUBSCRIPTION:');
     console.log(subscription);
+
+    // Stop interval.
+    this.stopInterval();
 
     const { chainId, action, referendumId } = subscription;
 
@@ -120,9 +123,9 @@ export class IntervalsController {
       ? this.subscriptions.set(chainId, updated)
       : this.subscriptions.delete(chainId);
 
-    // Stop interval if no tasks are being managed.
-    if (this.subscriptions.size === 0) {
-      this.stopInterval();
+    // Start interval if tasks are still being managed.
+    if (this.subscriptions.size > 0) {
+      this.initClock();
     }
   }
 
@@ -134,6 +137,9 @@ export class IntervalsController {
     console.log('UPDATE SUBSCRIPTION:');
     console.log(task);
 
+    // Stop interval.
+    this.stopInterval();
+
     const { chainId, action, referendumId } = task;
 
     const updated = this.subscriptions
@@ -143,6 +149,9 @@ export class IntervalsController {
       );
 
     this.subscriptions.set(chainId, updated);
+
+    // Restart interval.
+    this.initClock();
   }
 
   /**
@@ -153,7 +162,7 @@ export class IntervalsController {
    * at the nearest 15 minute multiple of the actual clock.
    */
   static initClock() {
-    console.log(`Initialized:`);
+    console.log(`Init Clock:`);
     console.log(this.subscriptions);
 
     // Exit early if no subscriptions are being managed.
@@ -212,6 +221,8 @@ export class IntervalsController {
    * @summary Process an interval tick.
    */
   static async processTick() {
+    const taskQueue: IntervalSubscription[] = [];
+
     // Iterate all subscriptions and execute the ones whose tick has synched.
     for (const [chainId, chainSubscriptions] of this.subscriptions.entries()) {
       console.log(`Processing interval subscriptions for chain: ${chainId}`);
@@ -219,8 +230,8 @@ export class IntervalsController {
       for (const task of chainSubscriptions) {
         const { tickCounter, intervalSetting } = task;
         if (tickCounter + 1 === intervalSetting.ticksToWait) {
-          // TODO: Implement queuing system.
-          await this.executeAction(task);
+          // Push to task queue.
+          taskQueue.push({ ...task });
         }
       }
 
@@ -238,32 +249,40 @@ export class IntervalsController {
         )
       );
     }
+
+    // Execute callbacks for queued tasks.
+    await this.processTaskQueue(taskQueue);
   }
 
   /**
-   * @name executeAction
-   * @summary Extract an interval subscription's action and execute a one-shot.
+   * @name processTaskQueue
+   * @summary Execute callbacks for queued tasks.
+   *
+   * If more than one native OS notification needs to be shown, process the
+   * queued tasks as a "batch" where only one OS notification is shown, and
+   * event items are rendered normally.
    */
-  private static async executeAction(task: IntervalSubscription) {
-    const { action } = task;
-    console.log(`Execute: ${action}`);
+  static async processTaskQueue(taskQueue: IntervalSubscription[]) {
+    if (taskQueue.length === 0) {
+      return;
+    }
 
-    switch (action) {
-      case 'subscribe:interval:openGov:referendumVotes': {
-        // TODO: Call one-shot.
-        break;
+    if (taskQueue.length === 1) {
+      // Execute callback as normal.
+      for (const task of taskQueue) {
+        await executeIntervaledOneShot(task);
       }
-      case 'subscribe:interval:openGov:decisionPeriod': {
-        // TODO: Call one-shot.
-        break;
+    } else {
+      // Instruct callbacks to not show a notification.
+      for (const task of taskQueue) {
+        await executeIntervaledOneShot(task, 'none');
       }
-      case 'subscribe:interval:openGov:referendumThresholds': {
-        // TODO: Call one-shot.
-        break;
-      }
-      default: {
-        throw new Error(`Interval task action ${action} not recognized`);
-      }
+
+      // Render a single OS notification.
+      window.myAPI.showNotification({
+        title: 'Polkadot Live',
+        body: `Processed ${taskQueue.length} new events.`,
+      });
     }
   }
 }

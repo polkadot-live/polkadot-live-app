@@ -127,7 +127,6 @@ export const getMinApprovalSupport = async (
   if ('LinearDecreasing' in track.minApproval) {
     const { length, floor, ceil } = track.minApproval.LinearDecreasing;
     const curveFn = makeLinearCurve(length, floor, ceil);
-    console.log(`percent`, bnPercent.toNumber());
     result.minApproval = curveFn(bnPercent.toNumber());
   }
 
