@@ -192,7 +192,9 @@ export const BootstrappingProvider = ({
 
       // Notify import renderer of connection status.
       if (!aborted) {
-        reportConnectionStatusToWindow('import', isOnline);
+        for (const windowId of ['import', 'openGov']) {
+          reportConnectionStatusToWindow(windowId, isOnline);
+        }
       }
 
       // Wait 100ms to avoid a snapping loading spinner.
@@ -216,7 +218,9 @@ export const BootstrappingProvider = ({
     setOnline(false);
 
     // Notify import renderer of connection status.
-    reportConnectionStatusToWindow('import', false);
+    for (const windowId of ['import', 'openGov']) {
+      reportConnectionStatusToWindow(windowId, false);
+    }
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -295,7 +299,9 @@ export const BootstrappingProvider = ({
 
     // Notify import renderer of connection status.
     if (!aborted) {
-      reportConnectionStatusToWindow('import', true);
+      for (const windowId of ['import', 'openGov']) {
+        reportConnectionStatusToWindow(windowId, true);
+      }
     }
 
     // Set config flag to false.
@@ -393,7 +399,7 @@ export const BootstrappingProvider = ({
       }
       case 'openGov':
         RendererConfig.portToOpenGov.postMessage({
-          task: 'import:connection:status',
+          task: 'openGov:connection:status',
           data: { status },
         });
         break;
