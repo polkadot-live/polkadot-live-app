@@ -23,7 +23,7 @@ import type { AccountSource } from '@/types/accounts';
 
 const FADE_TRANSITION = 200;
 
-export const Item = memo(function Item({ faIcon, event }: ItemProps) {
+export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
@@ -139,10 +139,7 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
                     data-tooltip-text={address}
                     onMouseMove={() => setTooltipTextAndOpen(address)}
                   />
-                  <Identicon value={address} size={29} />
-                  <div className="eventIcon">
-                    <FontAwesomeIcon icon={faIcon} />
-                  </div>
+                  <Identicon value={address} size={34} />
                 </div>
               </div>
               <div>

@@ -8,11 +8,7 @@ import { NoEvents } from './NoEvents';
 import { EventGroup, SortControlsWrapper, Wrapper } from './Wrappers';
 import { Accordion } from '@/renderer/library/Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTimer,
-  faLayerGroup,
-  faBlock,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
 
@@ -110,7 +106,6 @@ export const Events = () => {
               {sortedEvents.map((event) => (
                 <EventItem
                   key={`${getEventChainId(event)}_${event.uid}`}
-                  faIcon={faBlock}
                   event={event}
                 />
               ))}
