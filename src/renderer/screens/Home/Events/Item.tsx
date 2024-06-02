@@ -20,6 +20,7 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
+import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 
@@ -81,6 +82,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
     closed: { height: 0 },
   };
 
+  const showIconTooltip = () =>
+    event.category !== 'openGov' && event.category !== 'debugging';
+
   return (
     <AnimatePresence>
       {/* Event item wrapper */}
@@ -134,12 +138,23 @@ export const Item = memo(function Item({ event }: ItemProps) {
             <section className="item-main">
               <div>
                 <div className="icon ">
-                  <span
-                    className="tooltip tooltip-trigger-element"
-                    data-tooltip-text={address}
-                    onMouseMove={() => setTooltipTextAndOpen(address)}
-                  />
-                  <Identicon value={address} size={34} />
+                  {showIconTooltip() && (
+                    <span
+                      className="tooltip tooltip-trigger-element"
+                      data-tooltip-text={address}
+                      onMouseMove={() => setTooltipTextAndOpen(address)}
+                    />
+                  )}
+
+                  {event.category === 'openGov' ? (
+                    <Governance
+                      width="32px"
+                      height="32px"
+                      style={{ opacity: '0.85' }}
+                    />
+                  ) : (
+                    <Identicon value={address} size={32} />
+                  )}
                 </div>
               </div>
               <div>
