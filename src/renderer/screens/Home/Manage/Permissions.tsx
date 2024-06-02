@@ -571,6 +571,7 @@ export const Permissions = ({
               itemIndex={i}
               SwitchComponent={
                 <Switch
+                  disabled={isIntervalTaskDisabled()}
                   size="sm"
                   type="secondary"
                   isOn={getOpenGovGlobalToggles().get(referendumId) || false}
