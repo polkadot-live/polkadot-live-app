@@ -1,8 +1,24 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSetting,
+  IntervalSubscription,
+} from '@/types/subscriptions';
 
+/// Selectable durations for an interval subscription.
+export const intervalDurationsConfig: IntervalSetting[] = [
+  { label: '15 minutes', ticksToWait: 1 },
+  { label: '30 minutes', ticksToWait: 2 },
+  { label: '1 hour', ticksToWait: 4 },
+  { label: '2 hours', ticksToWait: 8 },
+  { label: '4 hours', ticksToWait: 16 },
+  { label: '6 hours', ticksToWait: 24 },
+  { label: '12 hours', ticksToWait: 48 },
+  { label: '24 hours', ticksToWait: 96 },
+];
+
+/// Interval subscription tasks.
 export const intervalTasks: IntervalSubscription[] = [
   // Polkadot
   {

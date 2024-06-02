@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
+import { intervalDurationsConfig } from '@/config/subscriptions/interval';
 import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
@@ -18,19 +19,10 @@ export class IntervalsController {
   static intervalId: AnyData = null;
   /// Timeout ID.
   static timeoutId: AnyData = null;
-  /// Minimum clock period in seconds.
-  static tickDuration = 5;
+  /// Minimum clock period in minutes.
+  static tickDuration = 15;
   /// Possible durations for an interval subscription.
-  static durations: IntervalSetting[] = [
-    { label: '15 minutes', ticksToWait: 1 },
-    { label: '30 minutes', ticksToWait: 2 },
-    { label: '1 hour', ticksToWait: 4 },
-    { label: '2 hours', ticksToWait: 8 },
-    { label: '4 hours', ticksToWait: 16 },
-    { label: '6 hours', ticksToWait: 24 },
-    { label: '12 hours', ticksToWait: 48 },
-    { label: '24 hours', ticksToWait: 96 },
-  ];
+  static durations: IntervalSetting[] = [...intervalDurationsConfig];
 
   /**
    * @name initIntervals
