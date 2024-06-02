@@ -133,7 +133,10 @@ export class IntervalsController {
    * @name removeSubscription
    * @summary Remove an intervaled subscription from the controller's map.
    */
-  static removeSubscription(subscription: IntervalSubscription) {
+  static removeSubscription(
+    subscription: IntervalSubscription,
+    isOnline = true
+  ) {
     console.log('REMOVE SUBSCRIPTION:');
     console.log(subscription);
 
@@ -158,7 +161,7 @@ export class IntervalsController {
       : this.subscriptions.delete(chainId);
 
     // Start interval if tasks are still being managed.
-    if (this.subscriptions.size > 0) {
+    if (isOnline && this.subscriptions.size > 0) {
       this.initClock();
     }
   }

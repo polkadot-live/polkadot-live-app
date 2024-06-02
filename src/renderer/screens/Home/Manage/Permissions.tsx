@@ -178,6 +178,9 @@ export const Permissions = ({
     }
   };
 
+  /// Determines if interval task should be disabled.
+  const isIntervalTaskDisabled = () => !isOnline || isConnecting;
+
   /// Get unique key for the task row component.
   const getKey = (
     type: string,
@@ -440,7 +443,7 @@ export const Permissions = ({
   ) => {
     // Remove task from interval controller.
     task.status === 'enable' &&
-      IntervalsController.removeSubscription({ ...task });
+      IntervalsController.removeSubscription({ ...task }, isOnline);
     // Set status to disable.
     task.status = 'disable';
     // Remove task from dynamic manage state if necessary.
@@ -592,6 +595,7 @@ export const Permissions = ({
                     handleRemoveIntervalSubscription={
                       handleRemoveIntervalSubscription
                     }
+                    isTaskDisabled={isIntervalTaskDisabled}
                     task={task}
                   />
                 ))}
