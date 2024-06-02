@@ -248,8 +248,8 @@ export const IntervalRow = ({
           {/* Native OS Notification Checkbox */}
           <div
             className={'native-wrapper tooltip-trigger-element'}
-            data-tooltip-text={'Toggle OS Notifications'}
-            onMouseMove={() => setTooltipTextAndOpen('Toggle OS Notifications')}
+            data-tooltip-text={'OS Notifications'}
+            onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
           >
             {/* Nativ checkbox enabled */}
             {!isTaskDisabled() && task.status === 'enable' && (

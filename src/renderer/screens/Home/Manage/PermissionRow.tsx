@@ -40,8 +40,6 @@ export const PermissionRow = ({
     }
   }, [task]);
 
-  const getNativeTooltipText = () => 'Toggle OS Notifications';
-
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -111,8 +109,8 @@ export const PermissionRow = ({
           {task.account && (
             <div
               className={`native-wrapper ${!getDisabled(task) && task.status === 'enable' ? 'tooltip-trigger-element' : ''}`}
-              data-tooltip-text={getNativeTooltipText()}
-              onMouseMove={() => setTooltipTextAndOpen(getNativeTooltipText())}
+              data-tooltip-text={'OS Notifications'}
+              onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
             >
               {/* Native checkbox enabled */}
               {!getDisabled(task) && task.status === 'enable' && (
