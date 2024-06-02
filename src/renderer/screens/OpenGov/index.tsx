@@ -13,7 +13,9 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { OpenGovCard, OpenGovFooter, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
@@ -31,6 +33,9 @@ export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
 
+  /// Connection status.
+  const { isConnected } = useConnections();
+
   /// Treasury context.
   const {
     fetchingTreasuryData,
@@ -42,8 +47,9 @@ export const OpenGov: React.FC = () => {
     getSpendPeriodProgress,
   } = useTreasury();
 
-  /// Help overlay.
+  /// Help overlay and tooltip.
   const { openHelp } = useHelp();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   /// Tracks context.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
@@ -121,6 +127,25 @@ export const OpenGov: React.FC = () => {
     const target = treasuryChainId === 'Polkadot' ? 'Kusama' : 'Polkadot';
     initTreasury(target);
   };
+
+  /// Wrap some market around a tooltip if offline mode.
+  const wrapWithOfflineTooltip = (Inner: React.ReactNode) => (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {isConnected ? (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <>{Inner}</>
+      ) : (
+        <div
+          className="tooltip-trigger-element"
+          data-tooltip-text="Currently Offline"
+          onMouseMove={() => setTooltipTextAndOpen('Currently Offline')}
+        >
+          {Inner}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <ModalSection type="carousel">
@@ -238,20 +263,28 @@ export const OpenGov: React.FC = () => {
                   <h2>Treasury Stats:</h2>
                   <span style={{ marginLeft: '1rem' }}>
                     <ControlsWrapper style={{ marginBottom: '0' }}>
-                      <SortControlButton
-                        isActive={treasuryChainId === 'Polkadot'}
-                        isDisabled={treasuryChainId === 'Polkadot'}
-                        onClick={() => handleChangeStats()}
-                        onLabel="Polkadot"
-                        offLabel="Polkadot"
-                      />
-                      <SortControlButton
-                        isActive={treasuryChainId === 'Kusama'}
-                        isDisabled={treasuryChainId === 'Kusama'}
-                        onClick={() => handleChangeStats()}
-                        onLabel="Kusama"
-                        offLabel="Kusama"
-                      />
+                      {wrapWithOfflineTooltip(
+                        <SortControlButton
+                          isActive={treasuryChainId === 'Polkadot'}
+                          isDisabled={
+                            treasuryChainId === 'Polkadot' || !isConnected
+                          }
+                          onClick={() => handleChangeStats()}
+                          onLabel="Polkadot"
+                          offLabel="Polkadot"
+                        />
+                      )}
+                      {wrapWithOfflineTooltip(
+                        <SortControlButton
+                          isActive={treasuryChainId === 'Kusama'}
+                          isDisabled={
+                            treasuryChainId === 'Kusama' || !isConnected
+                          }
+                          onClick={() => handleChangeStats()}
+                          onLabel="Kusama"
+                          offLabel="Kusama"
+                        />
+                      )}
                     </ControlsWrapper>
                   </span>
                 </div>
