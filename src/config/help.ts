@@ -127,7 +127,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:settings:showOnAllWorkspaces',
-    title: 'Show on All Workspaces',
+    title: 'Show On All Workspaces',
     definition: [
       'Displays Polkadot Live windows on all workspaces. Switching to a different workspace will still show your Polkadot Live windows.',
       'Turn off this setting to display Polkadot Live on a single workspace.',
