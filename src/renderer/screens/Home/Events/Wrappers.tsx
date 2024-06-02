@@ -135,7 +135,7 @@ export const EventItem = styled(motion.div)`
     right: 44px;
     color: #4d4c4c;
     transition: color ease-out 0.1s;
-    cursor: pointer;
+    cursor: default;
   }
   > span:first-child:hover {
     color: var(--text-color-secondary);
