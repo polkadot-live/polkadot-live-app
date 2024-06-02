@@ -85,7 +85,7 @@ export const Home = () => {
             setSection(1);
           }}
         >
-          <span>Manage</span>
+          <span>Subscriptions</span>
         </button>
       </TabsWrapper>
 
