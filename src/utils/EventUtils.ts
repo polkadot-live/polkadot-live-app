@@ -6,7 +6,11 @@ import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ChainID } from '@/types/chains';
-import type { EventAccountData, EventCallback } from '@/types/reporter';
+import type {
+  EventAccountData,
+  EventCallback,
+  EventChainData,
+} from '@/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
@@ -22,7 +26,7 @@ export const getEventChainId = (event: EventCallback): ChainID =>
 
 /**
  * @name pushUniqueEvent
- * @summary Throws away a new event if a duplicate event is already exists.
+ * @summary Throws away a new event if a duplicate event already exists.
  * This function is called for both React state and when persisting events.
  */
 export const pushUniqueEvent = (
@@ -34,6 +38,9 @@ export const pushUniqueEvent = (
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
+    /**
+     * Standard Subscriptions
+     */
     case 'subscribe:account:balance': {
       push = filter_query_system_account(events, event);
       break;
@@ -68,6 +75,21 @@ export const pushUniqueEvent = (
     }
     case 'subscribe:account:nominating:commission': {
       push = filter_nominating_commission(events, event);
+      break;
+    }
+    /**
+     * Interval Subscriptions
+     */
+    case 'subscribe:interval:openGov:referendumVotes': {
+      push = filter_openGov_referendumVotes(events, event);
+      break;
+    }
+    case 'subscribe:interval:openGov:decisionPeriod': {
+      push = filter_openGov_decisionPeriod(events, event);
+      break;
+    }
+    case 'subscribe:interval:openGov:referendumThresholds': {
+      push = filter_openGov_referendumThresholds(events, event);
       break;
     }
     default: {
@@ -408,6 +430,121 @@ const filter_nominating_commission = (
         if (isSameData) {
           isUnique = false;
         }
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_openGov_referendumVotes
+ * @summary The new event is considered a duplicate if another event has
+ * a matching action, chain id and referendum id.
+ */
+const filter_openGov_referendumVotes = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { referendumId, ayeVotes, nayVotes } = event.data;
+  const { chainId } = event.who.data as EventChainData;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { chainId: nextChainId } = e.who.data as
+        | EventChainData
+        | EventAccountData;
+
+      const {
+        referendumId: nextReferendumId,
+        ayeVotes: nextAyeVotes,
+        nayVotes: nextNayVotes,
+      } = e.data;
+
+      if (
+        referendumId === nextReferendumId &&
+        chainId === nextChainId &&
+        ayeVotes === nextAyeVotes &&
+        nayVotes === nextNayVotes
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_openGov_decisionPeriod
+ * @summary The new event is considered a duplicate if another event has
+ * a matching action, chain id and referendum id.
+ */
+const filter_openGov_decisionPeriod = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { referendumId, formattedTime } = event.data;
+  const { chainId } = event.who.data as EventChainData;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { chainId: nextChainId } = e.who.data as
+        | EventChainData
+        | EventAccountData;
+
+      const {
+        referendumId: nextReferendumId,
+        formattedTime: nextFormattedTime,
+      } = e.data;
+
+      if (
+        referendumId === nextReferendumId &&
+        chainId === nextChainId &&
+        formattedTime === nextFormattedTime
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_openGov_referendumThresholds
+ * @summary The new event is considered a duplicate if another event has
+ * a matching action, chain id and referendum id.
+ */
+const filter_openGov_referendumThresholds = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { referendumId, formattedApp, formattedSup } = event.data;
+  const { chainId } = event.who.data as EventChainData;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { chainId: nextChainId } = e.who.data as
+        | EventChainData
+        | EventAccountData;
+
+      const {
+        referendumId: nextReferendumId,
+        formattedApp: nextformattedApp,
+        formattedSup: nextformattedSup,
+      } = e.data;
+
+      if (
+        referendumId === nextReferendumId &&
+        chainId === nextChainId &&
+        formattedApp === nextformattedApp &&
+        formattedSup === nextformattedSup
+      ) {
+        isUnique = false;
       }
     }
   });

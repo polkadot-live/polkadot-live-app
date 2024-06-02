@@ -6,6 +6,7 @@ import { Config as RendererConfig } from '@/config/processes/renderer';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
+import { EventsController } from '@/controller/renderer/EventsController';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import {
@@ -33,7 +34,8 @@ const logOneShot = (task: IntervalSubscription) => {
  * @summary Public function to execute a one-shot for an interval subscription task.
  */
 export const executeIntervaledOneShot = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { action, referendumId } = task;
 
@@ -44,15 +46,15 @@ export const executeIntervaledOneShot = async (
 
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
-      const result = await oneShot_openGov_referendumVotes(task);
+      const result = await oneShot_openGov_referendumVotes(task, isOneShot);
       return result;
     }
     case 'subscribe:interval:openGov:decisionPeriod': {
-      const result = await oneShot_openGov_decisionPeriod(task);
+      const result = await oneShot_openGov_decisionPeriod(task, isOneShot);
       return result;
     }
     case 'subscribe:interval:openGov:referendumThresholds': {
-      const result = await oneShot_openGov_thresholds(task);
+      const result = await oneShot_openGov_thresholds(task, isOneShot);
       return result;
     }
     default: {
@@ -66,7 +68,8 @@ export const executeIntervaledOneShot = async (
  * @summary One-shot call to fetch a referendum's votes.
  */
 const oneShot_openGov_referendumVotes = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -81,42 +84,46 @@ const oneShot_openGov_referendumVotes = async (
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   const info: AnyData = result.toHuman();
 
-  if (isObject(info) && 'Ongoing' in info) {
-    const referendumInfo: ActiveReferendaInfo = {
-      referendaId: referendumId,
-      Ongoing: {
-        ...info.Ongoing,
-      },
-    };
-
-    const { ayes, nays } = referendumInfo.Ongoing.tally;
-    const ayesBn = new BigNumber(rmCommas(String(ayes)));
-    const naysBn = new BigNumber(rmCommas(String(nays)));
-    const totalBn = ayesBn.plus(naysBn);
-
-    const percentAyes = ayesBn
-      .dividedBy(totalBn)
-      .multipliedBy(100)
-      .decimalPlaces(1);
-
-    const percentNays = naysBn
-      .dividedBy(totalBn)
-      .multipliedBy(100)
-      .decimalPlaces(1);
-
-    if (!RendererConfig.silenceNotifications) {
-      window.myAPI.showNotification(
-        NotificationsController.getIntervalNotification(task, {
-          percentAyes,
-          percentNays,
-        })
-      );
-    }
-
-    return { success: true };
-  } else {
+  if (!isObject(info) && 'Ongoing' in info) {
     return { success: false, message: 'Referendum not ongoing.' };
   }
+
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  const { ayes, nays } = referendumInfo.Ongoing.tally;
+  const ayesBn = new BigNumber(rmCommas(String(ayes)));
+  const naysBn = new BigNumber(rmCommas(String(nays)));
+  const totalBn = ayesBn.plus(naysBn);
+
+  const percentAyes = ayesBn
+    .dividedBy(totalBn)
+    .multipliedBy(100)
+    .decimalPlaces(1);
+
+  const percentNays = naysBn
+    .dividedBy(totalBn)
+    .multipliedBy(100)
+    .decimalPlaces(1);
+
+  const event = EventsController.getIntervalEvent(task, {
+    ayeVotes: percentAyes.toString(),
+    nayVotes: percentNays.toString(),
+  });
+
+  const notification = getNotificationFlag(task, isOneShot)
+    ? NotificationsController.getIntervalNotification(task, {
+        percentAyes,
+        percentNays,
+      })
+    : null;
+
+  window.myAPI.persistEvent(event, notification, isOneShot);
+  return { success: true };
 };
 
 /**
@@ -124,7 +131,8 @@ const oneShot_openGov_referendumVotes = async (
  * @summary One-shot call to remaining decision period time.
  */
 const oneShot_openGov_decisionPeriod = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -139,77 +147,76 @@ const oneShot_openGov_decisionPeriod = async (
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   const info: AnyData = result.toHuman();
 
-  if (isObject(info) && 'Ongoing' in info) {
-    const notification: NotificationData = {
-      title: `Referendum ${referendumId}`,
-      body: '',
-    };
-
-    const referendumInfo: ActiveReferendaInfo = {
-      referendaId: referendumId,
-      Ongoing: {
-        ...info.Ongoing,
-      },
-    };
-
-    if (referendumInfo.Ongoing.deciding) {
-      const lastHeader = await api.rpc.chain.getHeader();
-      const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
-      const { confirming } = referendumInfo.Ongoing.deciding;
-
-      if (confirming) {
-        const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
-        const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
-
-        const formatted = formatBlocksToTime(
-          chainId,
-          remainingBlocksBn.toString()
-        );
-
-        notification.body = `Confirmaing. Ends in ${formatted}.`;
-      } else {
-        const { since } = referendumInfo.Ongoing.deciding;
-
-        // Get origin and its decision period in number of blocks.
-        const originData = referendumInfo.Ongoing.origin;
-        const originName =
-          'system' in originData
-            ? String(originData.system)
-            : String(originData.Origins);
-
-        const trackId = getOriginIdFromName(originName);
-        const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-        const tracksData = getTracks(tracksResult);
-        const track = tracksData.find((t) => t.trackId === trackId);
-        if (!track) {
-          return { success: false, message: 'Referendum track not found.' };
-        }
-
-        // Prefix `dp` meaning `Decision Period`.
-        const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
-        const dpSinceBn = new BigNumber(rmCommas(String(since)));
-        const dpEndBlockBn = dpSinceBn.plus(dpBn);
-        const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
-
-        const formatted = formatBlocksToTime(
-          chainId,
-          remainingBlocksBn.toString()
-        );
-
-        notification.body = `Decision period ends in ${formatted}.`;
-      }
-    } else {
-      return { success: false, message: 'Referendum not being decided.' };
-    }
-
-    if (!RendererConfig.silenceNotifications) {
-      window.myAPI.showNotification(notification);
-    }
-
-    return { success: true };
+  if (!isObject(info) && 'Ongoing' in info) {
+    return { success: false, message: 'Referendum not being decided.' };
   }
 
-  return { success: false, message: 'Referendum not ongoing.' };
+  // Data for rendering.
+  let formattedTime = '';
+  const notificationData: NotificationData = {
+    title: `Referendum ${referendumId}`,
+    body: '',
+  };
+
+  const referendumInfo: ActiveReferendaInfo = {
+    referendaId: referendumId,
+    Ongoing: {
+      ...info.Ongoing,
+    },
+  };
+
+  if (!referendumInfo.Ongoing.deciding) {
+    return { success: false, message: 'Referendum not in decision period.' };
+  }
+
+  const lastHeader = await api.rpc.chain.getHeader();
+  const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
+  const { confirming } = referendumInfo.Ongoing.deciding;
+
+  if (confirming) {
+    const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
+    const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
+    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notificationData.body = `Confirmaing. Ends in ${formattedTime}.`;
+  } else {
+    const { since } = referendumInfo.Ongoing.deciding;
+
+    // Get origin and its decision period in number of blocks.
+    const originData = referendumInfo.Ongoing.origin;
+    const originName =
+      'system' in originData
+        ? String(originData.system)
+        : String(originData.Origins);
+
+    const trackId = getOriginIdFromName(originName);
+    const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
+    const tracksData = getTracks(tracksResult);
+    const track = tracksData.find((t) => t.trackId === trackId);
+    if (!track) {
+      return { success: false, message: 'Referendum track not found.' };
+    }
+
+    // Prefix `dp` meaning `Decision Period`.
+    const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
+    const dpSinceBn = new BigNumber(rmCommas(String(since)));
+    const dpEndBlockBn = dpSinceBn.plus(dpBn);
+    const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
+
+    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    notificationData.body = `Decision period ends in ${formattedTime}.`;
+  }
+
+  const event = EventsController.getIntervalEvent(task, {
+    formattedTime,
+    subtext: notificationData.body,
+  });
+
+  const notification = getNotificationFlag(task, isOneShot)
+    ? notificationData
+    : null;
+
+  window.myAPI.persistEvent(event, notification, isOneShot);
+  return { success: true };
 };
 
 /**
@@ -217,7 +224,8 @@ const oneShot_openGov_decisionPeriod = async (
  * @summary One-shot call to referendum current thresholds.
  */
 const oneShot_openGov_thresholds = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
+  isOneShot = false
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   const instance = await getApiInstance(chainId);
@@ -270,23 +278,35 @@ const oneShot_openGov_thresholds = async (
     return { success: false, message: 'Threshold data error.' };
   }
 
+  const formattedApp = new BigNumber(rmChars(thresholds.minApproval))
+    .multipliedBy(100)
+    .toFixed(2);
+
+  const formattedSup = new BigNumber(rmChars(thresholds.minSupport))
+    .multipliedBy(100)
+    .toFixed(2);
+
+  const event = EventsController.getIntervalEvent(task, {
+    formattedApp,
+    formattedSup,
+  });
+
   // Render native OS notification if enabled.
-  if (!RendererConfig.silenceNotifications) {
-    const { minApproval, minSupport } = thresholds;
+  const notification = getNotificationFlag(task, isOneShot)
+    ? NotificationsController.getIntervalNotification(task, {
+        formattedApp,
+        formattedSup,
+      })
+    : null;
 
-    const formattedApp = new BigNumber(rmChars(minApproval))
-      .multipliedBy(100)
-      .toFixed(2);
-
-    const formattedSup = new BigNumber(rmChars(minSupport))
-      .multipliedBy(100)
-      .toFixed(2);
-
-    window.myAPI.showNotification({
-      title: `Referendum ${referendumId}`,
-      body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
-    });
-  }
-
+  window.myAPI.persistEvent(event, notification, isOneShot);
   return { success: true };
 };
+
+/**
+ * @name getNotificationFlag
+ * @summary Returns `true` if a notification should be rendered, `false` otherwise.
+ */
+const getNotificationFlag = (task: IntervalSubscription, isOneShot: boolean) =>
+  !RendererConfig.silenceNotifications &&
+  (task.enableOsNotifications || isOneShot);

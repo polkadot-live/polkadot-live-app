@@ -345,7 +345,7 @@ export const Permissions = ({
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
-    const { success, message } = await executeIntervaledOneShot(task);
+    const { success, message } = await executeIntervaledOneShot(task, true);
 
     if (!success) {
       setOneShotProcessing(false);
