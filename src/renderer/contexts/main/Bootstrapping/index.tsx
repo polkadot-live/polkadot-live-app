@@ -345,16 +345,13 @@ export const BootstrappingProvider = ({
     const serialized = await window.myAPI.getPersistedIntervalTasks();
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
+    // Insert subscriptions and start interval if online.
+    IntervalsController.insertSubscriptions(tasks, isOnline);
+
+    // Add tasks to React state in main and open gov window.
     for (const task of tasks) {
-      // Add task to interval subscription state.
       addIntervalSubscription({ ...task });
 
-      // Have intervals controller manage enabled subscriptions.
-      if (task.status === 'enable') {
-        IntervalsController.insertSubscription({ ...task });
-      }
-
-      // Post message to OpenGov window to cache tasks.
       RendererConfig.portToOpenGov.postMessage({
         task: 'openGov:task:add',
         data: {
@@ -362,8 +359,6 @@ export const BootstrappingProvider = ({
         },
       });
     }
-
-    await IntervalsController.initIntervals(isOnline);
   };
 
   const setSubscriptionsAndChainConnections = () => {

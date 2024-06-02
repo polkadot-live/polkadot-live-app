@@ -271,25 +271,23 @@ export const Permissions = ({
       return;
     }
 
-    // Update task state.
-    for (const task of tasks) {
-      // Handle task in intervals controller.
-      switch (task.status) {
-        case 'enable': {
-          IntervalsController.insertSubscription({ ...task });
-          break;
-        }
-        case 'disable': {
-          IntervalsController.removeSubscription({ ...task });
-          break;
-        }
+    // Update managed tasks in intervals controller.
+    switch (tasks[0].status) {
+      case 'enable': {
+        IntervalsController.insertSubscriptions(tasks);
+        break;
       }
+      case 'disable': {
+        IntervalsController.removeSubscriptions(tasks);
+        break;
+      }
+    }
 
-      // Update main renderer state.
+    // Update React and store state.
+    for (const task of tasks) {
       updateIntervalSubscription({ ...task });
       tryUpdateDynamicIntervalTask({ ...task });
 
-      // Update OpenGov renderer state.
       ConfigRenderer.portToOpenGov.postMessage({
         task: 'openGov:task:update',
         data: {
@@ -297,7 +295,6 @@ export const Permissions = ({
         },
       });
 
-      // Update persisted task in store.
       await window.myAPI.updateIntervalTask(JSON.stringify(task));
     }
   };
