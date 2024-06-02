@@ -157,8 +157,8 @@ export const IntervalRow = ({
           <div
             style={{ display: intervalClicked ? 'none' : 'block' }}
             className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
-            data-tooltip-text={'Execute Once'}
-            onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+            data-tooltip-text={'Get Notification'}
+            onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
           >
             {/* One-shot is enabled and not processing. */}
             {!isTaskDisabled() && !oneShotProcessing && (

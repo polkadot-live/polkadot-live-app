@@ -65,8 +65,8 @@ export const PermissionRow = ({
           {getTaskType(task) === 'account' && (
             <div
               className={`one-shot-wrapper ${!getDisabled(task) && !oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
-              data-tooltip-text={'Execute Once'}
-              onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+              data-tooltip-text={'Get Notification'}
+              onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
             >
               {/* One-shot is enabled and not processing. */}
               {!getDisabled(task) && !oneShotProcessing && (
