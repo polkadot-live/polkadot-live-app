@@ -3,6 +3,7 @@
 
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { getTracks } from '../utils/openGovUtils';
+import { useConnections } from '../contexts/common/Connections';
 import { useEffect } from 'react';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useReferenda } from '../contexts/openGov/Referenda';
@@ -12,6 +13,7 @@ import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
+  const { setIsConnected } = useConnections();
   const { setTracks, setFetchingTracks } = useTracks();
   const { setReferenda, setFetchingReferenda } = useReferenda();
   const { setTreasuryData } = useTreasury();
@@ -35,6 +37,11 @@ export const useOpenGovMessagePorts = () => {
         ConfigOpenGov.portOpenGov.onmessage = (ev: MessageEvent) => {
           // Message received from `main`.
           switch (ev.data.task) {
+            case 'openGov:connection:status': {
+              const { status } = ev.data.data;
+              setIsConnected(status);
+              break;
+            }
             case 'openGov:tracks:receive': {
               setTracks(getTracks(ev.data.data.result));
               setFetchingTracks(false);

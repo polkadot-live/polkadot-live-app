@@ -5,6 +5,7 @@
 import { HelpProvider } from '@/renderer/contexts/common/Help';
 import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
 import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
+import { ConnectionsProvider } from '@/renderer/contexts/common/Connections';
 
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
@@ -18,7 +19,6 @@ import { IntervalSubscriptionsProvider } from './contexts/main/IntervalSubscript
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
 import { AddressesProvider as ImportAddressesProvider } from '@app/contexts/import/Addresses';
-import { ConnectionsProvider as ImportConnectionsProvider } from '@app/contexts/import/Connections';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
@@ -60,9 +60,9 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         ImportAddressesProvider,
-        ImportAccountStatusesProvider,
-        ImportConnectionsProvider
+        ImportAccountStatusesProvider
       )(Theme);
     }
     case 'settings': {
@@ -86,6 +86,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         TracksProvider,
         TreasuryProvider,
         ReferendaProvider,

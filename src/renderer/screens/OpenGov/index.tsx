@@ -13,13 +13,16 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { OpenGovCard, OpenGovFooter, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
+import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
   ControlsWrapper,
@@ -30,6 +33,9 @@ import {
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
+
+  /// Connection status.
+  const { isConnected } = useConnections();
 
   /// Treasury context.
   const {
@@ -42,8 +48,9 @@ export const OpenGov: React.FC = () => {
     getSpendPeriodProgress,
   } = useTreasury();
 
-  /// Help overlay.
+  /// Help overlay and tooltip.
   const { openHelp } = useHelp();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   /// Tracks context.
   const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
@@ -65,27 +72,37 @@ export const OpenGov: React.FC = () => {
       const intervalId = setInterval(() => {
         if (ConfigOpenGov.portExists()) {
           clearInterval(intervalId);
-          initTreasury(treasuryChainId);
+          isConnected && initTreasury(treasuryChainId);
         }
       }, 1_000);
     } else {
-      initTreasury(treasuryChainId);
+      isConnected && initTreasury(treasuryChainId);
     }
   }, []);
+
+  /// Reload treasury data if app goes online from offline mode.
+  useEffect(() => {
+    if (isConnected) {
+      initTreasury(treasuryChainId);
+    }
+  }, [isConnected]);
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
     setActiveChainId(chainId);
-    setFetchingTracks(true);
 
-    // Request tracks data from main renderer.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:tracks:get',
-      data: {
-        chainId,
-      },
-    });
+    if (isConnected) {
+      setFetchingTracks(true);
+
+      // Request tracks data from main renderer.
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:tracks:get',
+        data: {
+          chainId,
+        },
+      });
+    }
 
     setSection(1);
   };
@@ -93,15 +110,18 @@ export const OpenGov: React.FC = () => {
   /// Open proposals.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
-    setFetchingReferenda(true);
     setActiveReferendaChainId(chainId);
 
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:referenda:get',
-      data: {
-        chainId,
-      },
-    });
+    if (isConnected) {
+      setFetchingReferenda(true);
+
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:referenda:get',
+        data: {
+          chainId,
+        },
+      });
+    }
 
     setSection(1);
   };
@@ -121,6 +141,29 @@ export const OpenGov: React.FC = () => {
     const target = treasuryChainId === 'Polkadot' ? 'Kusama' : 'Polkadot';
     initTreasury(target);
   };
+
+  /// Wrap some market around a tooltip if offline mode.
+  const wrapWithOfflineTooltip = (
+    Inner: React.ReactNode,
+    styles?: CSSProperties
+  ) => (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {isConnected ? (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        <>{Inner}</>
+      ) : (
+        <div
+          style={styles ? styles : {}}
+          className="tooltip-trigger-element"
+          data-tooltip-text="Currently Offline"
+          onMouseMove={() => setTooltipTextAndOpen('Currently Offline')}
+        >
+          {Inner}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <ModalSection type="carousel">
@@ -150,32 +193,42 @@ export const OpenGov: React.FC = () => {
           </HeaderWrapper>
 
           <TreasuryStats $chainId={treasuryChainId}>
-            {fetchingTreasuryData ? (
+            {fetchingTreasuryData && isConnected ? (
               <div className="loading-wrapper">
                 {renderPlaceholders(0, '68.47px', '0.5rem')}
               </div>
             ) : (
-              <section className="content-wrapper">
-                <div className="stat-wrapper">
-                  {renderInfoIcon(
-                    'Treasury Balance',
-                    'help:openGov:treasuryBalance'
-                  )}
-                  <h4>{getFormattedFreeBalance()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
-                  <h4>{getFormattedNextBurn()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('To Be Awarded', 'help:openGov:toBeAwarded')}
-                  <h4>{getFormattedToBeAwarded()}</h4>
-                </div>
-                <div className="stat-wrapper">
-                  {renderInfoIcon('Spend Period', 'help:openGov:spendPeriod')}
-                  <h4>{getSpendPeriodProgress()}</h4>
-                </div>
-              </section>
+              <>
+                {wrapWithOfflineTooltip(
+                  <section className="content-wrapper">
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'Treasury Balance',
+                        'help:openGov:treasuryBalance'
+                      )}
+                      <h4>{getFormattedFreeBalance()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
+                      <h4>{getFormattedNextBurn()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'To Be Awarded',
+                        'help:openGov:toBeAwarded'
+                      )}
+                      <h4>{getFormattedToBeAwarded()}</h4>
+                    </div>
+                    <div className="stat-wrapper">
+                      {renderInfoIcon(
+                        'Spend Period',
+                        'help:openGov:spendPeriod'
+                      )}
+                      <h4>{getSpendPeriodProgress()}</h4>
+                    </div>
+                  </section>
+                )}
+              </>
             )}
           </TreasuryStats>
 
@@ -238,20 +291,28 @@ export const OpenGov: React.FC = () => {
                   <h2>Treasury Stats:</h2>
                   <span style={{ marginLeft: '1rem' }}>
                     <ControlsWrapper style={{ marginBottom: '0' }}>
-                      <SortControlButton
-                        isActive={treasuryChainId === 'Polkadot'}
-                        isDisabled={treasuryChainId === 'Polkadot'}
-                        onClick={() => handleChangeStats()}
-                        onLabel="Polkadot"
-                        offLabel="Polkadot"
-                      />
-                      <SortControlButton
-                        isActive={treasuryChainId === 'Kusama'}
-                        isDisabled={treasuryChainId === 'Kusama'}
-                        onClick={() => handleChangeStats()}
-                        onLabel="Kusama"
-                        offLabel="Kusama"
-                      />
+                      {wrapWithOfflineTooltip(
+                        <SortControlButton
+                          isActive={treasuryChainId === 'Polkadot'}
+                          isDisabled={
+                            treasuryChainId === 'Polkadot' || !isConnected
+                          }
+                          onClick={() => handleChangeStats()}
+                          onLabel="Polkadot"
+                          offLabel="Polkadot"
+                        />
+                      )}
+                      {wrapWithOfflineTooltip(
+                        <SortControlButton
+                          isActive={treasuryChainId === 'Kusama'}
+                          isDisabled={
+                            treasuryChainId === 'Kusama' || !isConnected
+                          }
+                          onClick={() => handleChangeStats()}
+                          onLabel="Kusama"
+                          offLabel="Kusama"
+                        />
+                      )}
                     </ControlsWrapper>
                   </span>
                 </div>
