@@ -116,7 +116,7 @@ export interface EventChainData {
 export interface DismissEvent {
   uid: string;
   who: {
-    origin: 'account' | 'chain';
+    origin: 'account' | 'chain' | 'interval';
     data: EventAccountData | EventChainData;
   };
 }
