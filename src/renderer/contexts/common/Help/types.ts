@@ -86,7 +86,10 @@ export type HelpItemKey =
   | 'help:openGov:treasuryBalance'
   | 'help:openGov:nextBurn'
   | 'help:openGov:toBeAwarded'
-  | 'help:openGov:spendPeriod';
+  | 'help:openGov:spendPeriod'
+  | 'help:interval:openGov:referendumVotes'
+  | 'help:interval:openGov:decisionPeriod'
+  | 'help:interval:openGov:referendumThresholds';
 
 export interface HelpItem {
   key: HelpItemKey;

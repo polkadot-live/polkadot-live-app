@@ -10,7 +10,7 @@ import {
   faInfo,
 } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatBlocksToTime } from '@/model/Track';
+import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';

@@ -5,19 +5,20 @@
 import { HelpProvider } from '@/renderer/contexts/common/Help';
 import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
 import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
+import { ConnectionsProvider } from '@/renderer/contexts/common/Connections';
 
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
 import { ChainsProvider } from '@/renderer/contexts/main/Chains';
 import { EventsProvider } from '@/renderer/contexts/main/Events';
-import { ManageProvider } from './screens/Home/Manage/provider';
+import { ManageProvider } from '@/renderer/contexts/main/Manage';
 import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
+import { IntervalSubscriptionsProvider } from './contexts/main/IntervalSubscriptions';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
 import { AddressesProvider as ImportAddressesProvider } from '@app/contexts/import/Addresses';
-import { ConnectionsProvider as ImportConnectionsProvider } from '@app/contexts/import/Connections';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
@@ -29,6 +30,7 @@ import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
 import { TracksProvider } from './contexts/openGov/Tracks';
 import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
+import { ReferendaSubscriptionsProvider } from './contexts/openGov/ReferendaSubscriptions';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -46,6 +48,7 @@ const getProvidersForWindow = () => {
         AddressesProvider,
         ChainsProvider,
         SubscriptionsProvider,
+        IntervalSubscriptionsProvider,
         ManageProvider,
         EventsProvider,
         // Online status relies on other contexts being initialized.
@@ -57,9 +60,9 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         ImportAddressesProvider,
-        ImportAccountStatusesProvider,
-        ImportConnectionsProvider
+        ImportAccountStatusesProvider
       )(Theme);
     }
     case 'settings': {
@@ -83,9 +86,11 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         TracksProvider,
         TreasuryProvider,
-        ReferendaProvider
+        ReferendaProvider,
+        ReferendaSubscriptionsProvider
       )(Theme);
     }
     default: {

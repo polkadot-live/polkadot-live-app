@@ -8,7 +8,7 @@ export const defaultTreasuryContext: TreasuryContextInterface = {
   initTreasury: (c) => {},
   treasuryChainId: 'Polkadot',
   treasuryU8Pk: null,
-  fetchingTreasuryData: false,
+  fetchingTreasuryData: true,
   getFormattedNextBurn: () => '',
   setFetchingTreasuryData: (fetching) => {},
   setTreasuryData: (d) => {},

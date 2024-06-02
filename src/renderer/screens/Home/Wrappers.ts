@@ -134,7 +134,7 @@ export const HeadingWrapper = styled.div`
     > div {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: baseline;
       column-gap: 1rem;
       padding: 0.5rem;
     }
@@ -142,6 +142,11 @@ export const HeadingWrapper = styled.div`
       display: flex;
       justify-content: flex-start;
       flex: 1;
+
+      .icon-wrapper {
+        min-width: 0.75rem;
+        opacity: 0.4;
+      }
     }
     .right {
       display: flex;

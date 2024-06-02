@@ -1,36 +1,33 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  AccountsWrapper,
-  BreadcrumbsWrapper,
-  HeadingWrapper,
-} from './Wrappers';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
-  AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faCaretRight,
-} from '@fortawesome/free-solid-svg-icons';
+import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PermissionRow } from './PermissionRow';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useManage } from './provider';
+import { useManage } from '@/renderer/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
 import type {
+  IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
@@ -42,9 +39,22 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { online: isOnline, isConnecting } = useBootstrapping();
-  const { updateRenderedSubscriptions, renderedSubscriptions } = useManage();
+
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
+
+  const {
+    activeChainId,
+    renderedSubscriptions,
+    dynamicIntervalTasksState,
+    updateRenderedSubscriptions,
+    tryUpdateDynamicIntervalTask,
+    tryRemoveIntervalSubscription,
+    getCategorizedDynamicIntervals,
+  } = useManage();
+
+  const { updateIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -55,13 +65,46 @@ export const Permissions = ({
   const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
     useState<number[]>([0]);
 
+  /// Active accordion indices for interval subscription task categories.
+  const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
+    useState<number[]>([]);
+
+  /// Ref to keep track of number of interval categories being rendered.
+  const numIntervalCategoresRef = useRef(
+    Array.from(getCategorizedDynamicIntervals().keys()).length
+  );
+
   useEffect(() => {
     if (section === 1 && renderedSubscriptions.type == '') {
       setSection(0);
     }
   }, [renderedSubscriptions]);
 
-  /// Handle a toggle and update rendered subscription state.
+  /// Go to section zero if all interval subscriptions have been removed.
+  useEffect(() => {
+    if (typeClicked === 'interval' && dynamicIntervalTasksState.length === 0) {
+      setSection(0);
+    }
+
+    // Close all accordion panels if new category has been added.
+    if (typeClicked === 'interval') {
+      const newLength = Array.from(
+        getCategorizedDynamicIntervals().keys()
+      ).length;
+
+      if (newLength !== numIntervalCategoresRef.current) {
+        numIntervalCategoresRef.current = newLength;
+        setAccordionActiveIntervalIndices([]);
+      }
+    }
+  }, [dynamicIntervalTasksState]);
+
+  /// Update accordion interval indices if active chain has changed.
+  useEffect(() => {
+    setAccordionActiveIntervalIndices([]);
+  }, [activeChainId]);
+
+  /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (
     cached: WrappedSubscriptionTasks,
     setNativeChecked: AnyFunction
@@ -72,6 +115,40 @@ export const Permissions = ({
     const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
+  };
+
+  /// Handle toggling an interval subscription.
+  const handleIntervalToggle = async (task: IntervalSubscription) => {
+    // Invert task status.
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+
+    // Handle task in intervals controller.
+    switch (newStatus) {
+      case 'enable': {
+        IntervalsController.insertSubscription({ ...task });
+        break;
+      }
+      case 'disable': {
+        IntervalsController.removeSubscription({ ...task });
+        break;
+      }
+    }
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -100,6 +177,9 @@ export const Permissions = ({
       }
     }
   };
+
+  /// Determines if interval task should be disabled.
+  const isIntervalTaskDisabled = () => !isOnline || isConnecting;
 
   /// Get unique key for the task row component.
   const getKey = (
@@ -153,7 +233,76 @@ export const Permissions = ({
     return map;
   };
 
-  /// Handle a one-shot event.
+  /// Map referendum ID to its global toggle state.
+  const getOpenGovGlobalToggles = () => {
+    const map = new Map<number, boolean>();
+
+    // A "global" toggle is set if all of its tasks are enabled.
+    for (const [
+      referendumId,
+      intervalTasks,
+    ] of getCategorizedDynamicIntervals().entries()) {
+      const allToggled = intervalTasks.reduce(
+        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
+        true
+      );
+
+      map.set(referendumId, allToggled);
+    }
+
+    return map;
+  };
+
+  /// Handler for toggling the "global" switch for a referendum.
+  const toggleGlobalSwitch = async (referendumId: number, isOn: boolean) => {
+    // Get all tasks with the target status.
+    const targetStatus = isOn ? 'enable' : 'disable';
+
+    // Get dynamic tasks under the referendum ID with target status and invert it.
+    const tasks = dynamicIntervalTasksState
+      .filter(
+        (t) => t.referendumId === referendumId && t.status === targetStatus
+      )
+      .map((t) => {
+        t.status = t.status === 'enable' ? 'disable' : 'enable';
+        return t;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    // Return early if there are no tasks to toggle.
+    if (tasks.length === 0) {
+      return;
+    }
+
+    // Update managed tasks in intervals controller.
+    switch (tasks[0].status) {
+      case 'enable': {
+        IntervalsController.insertSubscriptions(tasks);
+        break;
+      }
+      case 'disable': {
+        IntervalsController.removeSubscriptions(tasks);
+        break;
+      }
+    }
+
+    // Update React and store state.
+    for (const task of tasks) {
+      updateIntervalSubscription({ ...task });
+      tryUpdateDynamicIntervalTask({ ...task });
+
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
+
+      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /// Handle a one-shot event for a subscription task.
   const handleOneShot = async (
     task: SubscriptionTask,
     setOneShotProcessing: AnyFunction,
@@ -168,6 +317,44 @@ export const Permissions = ({
 
       // Render error alert.
       toast.error('API timed out.', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-connection',
+      });
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+    }
+  };
+
+  /// Handle a one-shot event for a subscription task.
+  const handleIntervalOneShot = async (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: AnyFunction
+  ) => {
+    setOneShotProcessing(true);
+    task.enableOsNotifications = nativeChecked;
+    const { success, message } = await executeIntervaledOneShot(
+      task,
+      'one-shot'
+    );
+
+    if (!success) {
+      setOneShotProcessing(false);
+
+      // Render error alert.
+      toast.error(message ? message : 'Error', {
         position: 'bottom-center',
         autoClose: 3000,
         hideProgressBar: true,
@@ -223,6 +410,87 @@ export const Permissions = ({
     }
   };
 
+  /// Handle clicking native os notifications toggle for interval subscriptions.
+  const handleIntervalNativeCheckbox = async (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => {
+    const checked: boolean = flag;
+    task.enableOsNotifications = checked;
+
+    // Update task data in intervals controller.
+    IntervalsController.updateSubscription({ ...task });
+
+    // Update main renderer state.
+    updateIntervalSubscription({ ...task });
+    tryUpdateDynamicIntervalTask({ ...task });
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+  };
+
+  /// Handle removing an interval subscription.
+  const handleRemoveIntervalSubscription = async (
+    task: IntervalSubscription
+  ) => {
+    // Remove task from interval controller.
+    task.status === 'enable' &&
+      IntervalsController.removeSubscription({ ...task }, isOnline);
+    // Set status to disable.
+    task.status = 'disable';
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription({ ...task });
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
+    // Remove task from store.
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    // Send message to OpenGov window to update its subscription state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:removed',
+      data: { serialized: JSON.stringify(task) },
+    });
+  };
+
+  /// Handle setting a new interval duration for the subscription.
+  const handleChangeIntervalDuration = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => {
+    const newSetting: number = parseInt(event.target.value);
+    const settingObj = IntervalsController.durations.find(
+      (setting) => setting.ticksToWait === newSetting
+    );
+
+    if (settingObj) {
+      setIntervalSetting(newSetting);
+
+      // Update task state.
+      task.intervalSetting = settingObj;
+      updateIntervalSubscription({ ...task });
+      tryUpdateDynamicIntervalTask({ ...task });
+      // Update managed task in intervals controller.
+      IntervalsController.updateSubscription({ ...task });
+      // Update state in OpenGov window.
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
+      // Update persisted task in store.
+      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    }
+  };
+
   /// Get dynamic accordion indices state for account categories or
   /// static accordion indices for chain categories.
   const getAccordionIndices = () =>
@@ -246,46 +514,26 @@ export const Permissions = ({
     >
       {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
-          <HeadingWrapper>
-            <AccordionHeader>
-              <div className="flex">
-                <div className="left">
-                  <div className="icon-wrapper">
-                    {getAccordionIndices().includes(j) ? (
-                      <FontAwesomeIcon
-                        icon={faCaretDown}
-                        transform={'shrink-1'}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faCaretRight}
-                        transform={'shrink-1'}
-                      />
-                    )}
-                  </div>
-                  <h5>
-                    <span>{category}</span>
-                  </h5>
-                </div>
-                <div className="right">
-                  <Switch
-                    size="sm"
-                    type="secondary"
-                    isOn={getCategoryToggles().get(category) || false}
-                    disabled={getDisabled(tasks[0])}
-                    handleToggle={async () =>
-                      await toggleCategoryTasks(
-                        category,
-                        getCategoryToggles().get(category) || false,
-                        renderedSubscriptions,
-                        updateRenderedSubscriptions
-                      )
-                    }
-                  />
-                </div>
-              </div>
-            </AccordionHeader>
-          </HeadingWrapper>
+          <AccordionCaretSwitchHeader
+            title={category}
+            itemIndex={j}
+            SwitchComponent={
+              <Switch
+                size="sm"
+                type="secondary"
+                isOn={getCategoryToggles().get(category) || false}
+                disabled={getDisabled(tasks[0])}
+                handleToggle={async () =>
+                  await toggleCategoryTasks(
+                    category,
+                    getCategoryToggles().get(category) || false,
+                    renderedSubscriptions,
+                    updateRenderedSubscriptions
+                  )
+                }
+              />
+            }
+          />
           <AccordionPanel>
             <div className="flex-column" style={{ padding: '0 0.75rem' }}>
               {tasks
@@ -305,6 +553,58 @@ export const Permissions = ({
           </AccordionPanel>
         </AccordionItem>
       ))}
+    </Accordion>
+  );
+
+  /// Render a list of interval subscription tasks that can be toggled.
+  const renderIntervalSubscriptionTasks = () => (
+    <Accordion
+      multiple
+      defaultIndex={accordionActiveIntervalIndices}
+      setExternalIndices={setAccordionActiveIntervalIndices}
+    >
+      {Array.from(getCategorizedDynamicIntervals().entries()).map(
+        ([referendumId, intervalTasks], i) => (
+          <AccordionItem key={`${referendumId}_interval_subscriptions`}>
+            <AccordionCaretSwitchHeader
+              title={`Referendum ${referendumId}`}
+              itemIndex={i}
+              SwitchComponent={
+                <Switch
+                  disabled={isIntervalTaskDisabled()}
+                  size="sm"
+                  type="secondary"
+                  isOn={getOpenGovGlobalToggles().get(referendumId) || false}
+                  handleToggle={async () =>
+                    await toggleGlobalSwitch(
+                      referendumId,
+                      getOpenGovGlobalToggles().get(referendumId) || false
+                    )
+                  }
+                />
+              }
+            />
+            <AccordionPanel>
+              <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+                {intervalTasks.map((task: IntervalSubscription, j: number) => (
+                  <IntervalRow
+                    key={`${j}_${task.referendumId}_${task.action}`}
+                    handleIntervalToggle={handleIntervalToggle}
+                    handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
+                    handleChangeIntervalDuration={handleChangeIntervalDuration}
+                    handleIntervalOneShot={handleIntervalOneShot}
+                    handleRemoveIntervalSubscription={
+                      handleRemoveIntervalSubscription
+                    }
+                    isTaskDisabled={isIntervalTaskDisabled}
+                    task={task}
+                  />
+                ))}
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+        )
+      )}
     </Accordion>
   );
 
@@ -328,6 +628,7 @@ export const Permissions = ({
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
+        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );

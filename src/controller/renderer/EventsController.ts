@@ -20,7 +20,7 @@ import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyData } from '@/types/misc';
-import type { ApiCallEntry } from '@/types/subscriptions';
+import type { IntervalSubscription, ApiCallEntry } from '@/types/subscriptions';
 import type {
   EventAccountData,
   EventCallback,
@@ -30,10 +30,113 @@ import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {
   /**
+   * @name getIntervalEvent
+   * @summary Same as `getEvent` but for interval subscription tasks.
+   */
+  static getIntervalEvent(
+    task: IntervalSubscription,
+    miscData: AnyData
+  ): EventCallback {
+    switch (task.action) {
+      case 'subscribe:interval:openGov:referendumVotes': {
+        const { action, chainId, referendumId } = task;
+        const { ayeVotes, nayVotes } = miscData;
+
+        return {
+          uid: '',
+          category: 'openGov',
+          taskAction: action,
+          who: {
+            origin: 'interval',
+            data: { chainId } as EventChainData,
+          },
+          title: `Referendum ${referendumId}`,
+          subtitle: `Ayes at ${ayeVotes}% and Nayes at ${nayVotes}%.`,
+          data: { referendumId, ayeVotes, nayVotes },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              text: 'Polkassembly',
+            },
+            {
+              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              text: 'Subsquare',
+            },
+          ],
+        };
+      }
+      case 'subscribe:interval:openGov:decisionPeriod': {
+        const { action, chainId, referendumId } = task;
+        const { formattedTime, subtext } = miscData;
+
+        return {
+          uid: '',
+          category: 'openGov',
+          taskAction: action,
+          who: {
+            origin: 'interval',
+            data: { chainId } as EventChainData,
+          },
+          title: `Referendum ${referendumId}`,
+          subtitle: subtext,
+          data: { referendumId, formattedTime },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              text: 'Polkassembly',
+            },
+            {
+              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              text: 'Subsquare',
+            },
+          ],
+        };
+      }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        const { action, chainId, referendumId } = task;
+        const { formattedApp, formattedSup } = miscData;
+
+        return {
+          uid: '',
+          category: 'openGov',
+          taskAction: action,
+          who: {
+            origin: 'interval',
+            data: { chainId } as EventChainData,
+          },
+          title: `Referendum ${referendumId}`,
+          subtitle: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+          data: { referendumId, formattedApp, formattedSup },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              text: 'Polkassembly',
+            },
+            {
+              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              text: 'Subsquare',
+            },
+          ],
+        };
+      }
+      default: {
+        throw new Error('getEvent: Subscription task action not recognized');
+      }
+    }
+  }
+
+  /**
    * @name getEvent
-   * @summary Instantiate and return a new event based on the recieved entry and custom data.
+   * @summary Return a new event based on the recieved entry and data.
    *
-   * NOTE: `uid` is set to an empty string on the renderer side and initialized in the main process.
+   * The `uid` field is set to an empty string on the renderer side and
+   * initialized in the main process.
    */
   static getEvent(entry: ApiCallEntry, miscData: AnyData): EventCallback {
     switch (entry.task.action) {

@@ -18,6 +18,7 @@ import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -25,24 +26,36 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
-import { useManage } from '@app/screens/Home/Manage/provider';
+import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
+import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
 import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
-    useBootstrapping();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
-  const { setRenderedSubscriptions } = useManage();
+
+  const {
+    setRenderedSubscriptions,
+    tryAddIntervalSubscription,
+    tryRemoveIntervalSubscription,
+  } = useManage();
+
+  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
+    useBootstrapping();
+
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
+
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /**
    * @name handleImportAddress
@@ -455,6 +468,48 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleAddInterval
+   * @summary Add an interval subscription to the intervals controller.
+   */
+  const handleAddInterval = async (ev: MessageEvent) => {
+    const { task: serialized } = ev.data.data;
+    const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Add task to interval controller.
+    IntervalsController.insertSubscription({ ...task });
+
+    // Add task to dynamic manage state if necessary.
+    tryAddIntervalSubscription({ ...task });
+
+    // Add task to React state for rendering.
+    addIntervalSubscription({ ...task });
+
+    // Persist task to store.
+    await window.myAPI.persistIntervalTask(JSON.stringify(task));
+  };
+
+  /**
+   * @name handleRemoveInterval
+   * @summary Remove an interval subscription from the intervals controller.
+   */
+  const handleRemoveInterval = async (ev: MessageEvent) => {
+    const { task: serialized } = ev.data.data;
+    const task: IntervalSubscription = JSON.parse(serialized);
+
+    // Remove task from interval controller.
+    IntervalsController.removeSubscription({ ...task });
+
+    // Remove task from dynamic manage state if necessary.
+    tryRemoveIntervalSubscription({ ...task });
+
+    // Remove task from React state for rendering.
+    removeIntervalSubscription({ ...task });
+
+    // Remove task from store.
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -575,6 +630,14 @@ export const useMainMessagePorts = () => {
             }
             case 'openGov:treasury:init': {
               await handleInitTreasury(ev);
+              break;
+            }
+            case 'openGov:interval:add': {
+              await handleAddInterval(ev);
+              break;
+            }
+            case 'openGov:interval:remove': {
+              await handleRemoveInterval(ev);
               break;
             }
             default: {

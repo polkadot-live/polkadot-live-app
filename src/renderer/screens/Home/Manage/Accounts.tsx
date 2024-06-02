@@ -4,23 +4,18 @@
 import {
   Accordion,
   AccordionItem,
-  AccordionHeader,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { AccountWrapper, AccountsWrapper, HeadingWrapper } from './Wrappers';
+import { AccountWrapper, AccountsWrapper } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import {
-  faCaretDown,
-  faCaretRight,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
-import { NoAccounts } from '../NoAccounts';
-import { useManage } from './provider';
+import { NoAccounts, NoOpenGov } from '../NoAccounts';
+import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
 import { useState } from 'react';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -28,6 +23,7 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 
 export const Accounts = ({
   addresses,
@@ -37,7 +33,11 @@ export const Accounts = ({
 }: AccountsProps) => {
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-  const { setRenderedSubscriptions } = useManage();
+
+  const { getIntervalSubscriptionsForChain, getSortedKeys } =
+    useIntervalSubscriptions();
+
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -85,7 +85,7 @@ export const Accounts = ({
     number[]
   >(
     Array.from(
-      { length: Array.from(getSortedAddresses().keys()).length + 1 },
+      { length: Array.from(getSortedAddresses().keys()).length + 2 },
       (_, index) => index
     )
   );
@@ -127,6 +127,16 @@ export const Accounts = ({
     setSection(1);
   };
 
+  /// Set interval subscription tasks state when chain is clicked.
+  const handleClickOpenGovChain = (chainId: ChainID) => {
+    const tasks = getIntervalSubscriptionsForChain(chainId);
+
+    setTypeClicked('interval');
+    setDynamicIntervalTasks(tasks, chainId);
+    setBreadcrumb(`${chainId} OpenGov`);
+    setSection(1);
+  };
+
   return (
     <AccountsWrapper>
       <div
@@ -147,28 +157,10 @@ export const Accounts = ({
           {Array.from(getSortedAddresses().entries()).map(
             ([chainId, chainAddresses], k) => (
               <AccordionItem key={`${chainId}_accounts`}>
-                <HeadingWrapper>
-                  <AccordionHeader>
-                    <div className="flex">
-                      <div className="left">
-                        <div className="icon-wrapper">
-                          {accordionActiveIndices.includes(k) ? (
-                            <FontAwesomeIcon
-                              icon={faCaretDown}
-                              transform={'shrink-1'}
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faCaretRight}
-                              transform={'shrink-1'}
-                            />
-                          )}
-                        </div>
-                        <h5>{chainId} Accounts</h5>
-                      </div>
-                    </div>
-                  </AccordionHeader>
-                </HeadingWrapper>
+                <AccordionCaretHeader
+                  title={`${chainId} Accounts`}
+                  itemIndex={k}
+                />
                 <AccordionPanel>
                   <div style={{ padding: '0 0.75rem' }}>
                     <div className="flex-column">
@@ -212,30 +204,58 @@ export const Accounts = ({
             )
           )}
 
+          {/* Manage OpenGov Subscriptions*/}
+          <AccordionItem key={'openGov_accounts'}>
+            <AccordionCaretHeader
+              title={'OpenGov'}
+              itemIndex={Array.from(getSortedAddresses().keys()).length}
+            />
+            <AccordionPanel>
+              <div style={{ padding: '0 0.75rem' }}>
+                <div className="flex-column">
+                  {getSortedKeys().length === 0 ? (
+                    <NoOpenGov />
+                  ) : (
+                    <>
+                      {getSortedKeys().map((chainId, i) => (
+                        <AccountWrapper
+                          whileHover={{ scale: 1.01 }}
+                          key={`manage_chain_${i}`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleClickOpenGovChain(chainId)}
+                          ></button>
+                          <div className="inner">
+                            <div>
+                              <span>{getIcon(chainId, 'chain-icon')}</span>
+                              <div className="content">
+                                <h3>{chainId}</h3>
+                              </div>
+                            </div>
+                            <div>
+                              <ButtonText
+                                text=""
+                                iconRight={faChevronRight}
+                                iconTransform="shrink-3"
+                              />
+                            </div>
+                          </div>
+                        </AccountWrapper>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+
           {/* Manage Chains */}
           <AccordionItem key={'chain_accounts'}>
-            <HeadingWrapper>
-              <AccordionHeader>
-                <div className="flex">
-                  <div className="left">
-                    <div className="icon-wrapper">
-                      {accordionActiveIndices.includes(3) ? (
-                        <FontAwesomeIcon
-                          icon={faCaretDown}
-                          transform={'shrink-1'}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faCaretRight}
-                          transform={'shrink-1'}
-                        />
-                      )}
-                    </div>
-                    <h5>Chains</h5>
-                  </div>
-                </div>
-              </AccordionHeader>
-            </HeadingWrapper>
+            <AccordionCaretHeader
+              title={'Chains'}
+              itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
+            />
             <AccordionPanel>
               <div style={{ padding: '0 0.75rem' }}>
                 <div className="flex-column">

@@ -5,7 +5,6 @@ import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { EventCallback } from '@/types/reporter';
 
 export interface EventCategoryProps {
-  accordionActiveIndices: number[];
   accordionIndex: number;
   category: string;
   events: EventCallback[];

@@ -7,6 +7,7 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
@@ -19,7 +20,6 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
-import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 
 const FADE_TRANSITION = 200;
 
@@ -146,7 +146,7 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
                 </div>
               </div>
               <div>
-                <h4>{`${accountName}`}</h4>
+                <h4>{accountName}</h4>
                 <h5>{title}</h5>
                 <p>{subtitle}</p>
               </div>

@@ -6,7 +6,7 @@ import { Config as ConfigImport } from '@/config/processes/import';
 /// Import window contexts.
 import { useAddresses as useImportAddresses } from '@app/contexts/import/Addresses';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@app/contexts/import/Connections';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect } from 'react';
 
 export const useImportMessagePorts = () => {

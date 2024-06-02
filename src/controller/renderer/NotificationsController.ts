@@ -12,11 +12,44 @@ import {
 } from '@/utils/EventUtils';
 import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
-import type { ApiCallEntry } from '@/types/subscriptions';
+import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
 import type { ValidatorData } from '@/types/accounts';
 
 export class NotificationsController {
+  /**
+   * @name getIntervalNotification
+   * @summary Return notification data based on the received interval subscription.
+   */
+  static getIntervalNotification(
+    task: IntervalSubscription,
+    miscData?: AnyData
+  ): NotificationData {
+    const { action, referendumId } = task;
+
+    switch (action) {
+      case 'subscribe:interval:openGov:referendumVotes': {
+        const { percentAyes, percentNays } = miscData;
+        return {
+          title: `Referendum ${referendumId}`,
+          body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
+        };
+      }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        const { formattedApp, formattedSup } = miscData;
+        return {
+          title: `Referendum ${referendumId}`,
+          body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+        };
+      }
+      default: {
+        throw new Error(
+          `getIntervalNotification: Not implemented for ${task.action}`
+        );
+      }
+    }
+  }
+
   /**
    * @name getNotification
    * @summary Return notification data based on the received entry.

@@ -18,3 +18,17 @@ export const NoAccounts = () => (
     />
   </NoAccountsWrapper>
 );
+
+export const NoOpenGov = () => (
+  <NoAccountsWrapper>
+    <h4>No OpenGov subscriptions added.</h4>
+    <ButtonMonoInvert
+      lg
+      text="Explore OpenGov"
+      iconLeft={faLink}
+      onClick={() => {
+        window.myAPI.openWindow('openGov');
+      }}
+    />
+  </NoAccountsWrapper>
+);

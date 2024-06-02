@@ -146,10 +146,56 @@ export const AccountWrapper = styled(motion.div)`
     }
   }
 
+  /* Remove button */
+  .remove-wrapper {
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  /* Interval button */
+  .interval-wrapper {
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    /* Select */
+    .select-wrapper {
+      display: flex;
+      align-items: center;
+      column-gap: 0.25rem;
+
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.25rem;
+      padding: 0.35rem 0.6rem;
+      cursor: pointer;
+
+      select {
+        font-size: 1rem;
+        background-color: inherit;
+        color: #fcfcfc;
+        opacity: 0.8;
+        border: none;
+        cursor: pointer;
+      }
+    }
+  }
+
   /* One-shot icon */
   .one-shot-wrapper {
     background-color: var(--background-default);
-    margin-left: 1rem;
 
     .enabled {
       cursor: pointer;

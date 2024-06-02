@@ -57,25 +57,18 @@ export class EventsController {
     event: EventCallback;
     wasPersisted: boolean;
   } {
-    if (event.uid === '') {
-      event.uid = getUid();
-    }
+    // Set event UID and persist if it's unique.
+    event.uid === '' && (event.uid = getUid());
+    const stored = EventsController.getEventsFromStore();
+    const { events, updated } = pushUniqueEvent(event, stored);
 
-    const { events, updated } = pushUniqueEvent(
-      event,
-      EventsController.getEventsFromStore()
-    );
-
-    // Persist new array to store.
+    // Persist new array to store if event was pushed.
     if (updated) {
       EventsController.persistEventsToStore(events);
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
-    return {
-      event,
-      wasPersisted: updated,
-    };
+    return { event, wasPersisted: updated };
   }
 
   /**
@@ -145,6 +138,9 @@ export class EventsController {
   /**
    * @name removeOutdatedEvents
    * @summary Remove outdated events from the store.
+   *
+   * Currently only for nomination pool rewards and nominating pending payout events.
+   * Will remove old matching events from the store.
    */
   static removeOutdatedEvents(event: EventCallback) {
     switch (event.taskAction) {

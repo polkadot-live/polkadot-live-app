@@ -3,10 +3,10 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
+import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
-import { getOrderedOrigins } from '@/renderer/screens/OpenGov/utils';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
@@ -24,6 +24,7 @@ export const ReferendaProvider = ({
 
   /// Flag to indicate that referenda is being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
+
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');

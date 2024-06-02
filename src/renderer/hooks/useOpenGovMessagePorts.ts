@@ -2,17 +2,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { getTracks } from '../utils/openGovUtils';
+import { useConnections } from '../contexts/common/Connections';
 import { useEffect } from 'react';
-import { getTracks } from '@/model/Track';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import type { ActiveReferendaInfo } from '@/types/openGov';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
+import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
+  const { setIsConnected } = useConnections();
   const { setTracks, setFetchingTracks } = useTracks();
   const { setReferenda, setFetchingReferenda } = useReferenda();
   const { setTreasuryData } = useTreasury();
+  const {
+    addReferendaSubscription,
+    updateReferendaSubscription,
+    removeReferendaSubscription,
+  } = useReferendaSubscriptions();
 
   /**
    * @name handleReceivedPort
@@ -28,6 +37,11 @@ export const useOpenGovMessagePorts = () => {
         ConfigOpenGov.portOpenGov.onmessage = (ev: MessageEvent) => {
           // Message received from `main`.
           switch (ev.data.task) {
+            case 'openGov:connection:status': {
+              const { status } = ev.data.data;
+              setIsConnected(status);
+              break;
+            }
             case 'openGov:tracks:receive': {
               setTracks(getTracks(ev.data.data.result));
               setFetchingTracks(false);
@@ -43,6 +57,24 @@ export const useOpenGovMessagePorts = () => {
             }
             case 'openGov:treasury:set': {
               setTreasuryData(ev.data.data);
+              break;
+            }
+            case 'openGov:task:add': {
+              const { serialized } = ev.data.data;
+              const task: IntervalSubscription = JSON.parse(serialized);
+              addReferendaSubscription(task);
+              break;
+            }
+            case 'openGov:task:update': {
+              const { serialized } = ev.data.data;
+              const task: IntervalSubscription = JSON.parse(serialized);
+              updateReferendaSubscription(task);
+              break;
+            }
+            case 'openGov:task:removed': {
+              const { serialized } = ev.data.data;
+              const task: IntervalSubscription = JSON.parse(serialized);
+              removeReferendaSubscription({ ...task });
               break;
             }
             default: {

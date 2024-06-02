@@ -12,7 +12,7 @@ import {
   fetchAccountNominationPoolData,
 } from '@/utils/AccountUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { useAddresses } from '@app/contexts/main/Addresses';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import React, {
   createContext,
   useContext,
@@ -20,11 +20,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type { BootstrappingInterface } from './types';
-import { handleApiDisconnects } from '@/utils/ApiUtils';
-import { useSubscriptions } from '../Subscriptions';
+import { useAddresses } from '@app/contexts/main/Addresses';
 import { useChains } from '../Chains';
+import { useSubscriptions } from '../Subscriptions';
+import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { handleApiDisconnects } from '@/utils/ApiUtils';
+import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -50,6 +53,7 @@ export const BootstrappingProvider = ({
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
+  const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
 
@@ -161,6 +165,9 @@ export const BootstrappingProvider = ({
         ]);
       }
 
+      // Initialise intervals controller and interval subscriptions.
+      await initIntervalsController(isOnline);
+
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
 
@@ -185,7 +192,9 @@ export const BootstrappingProvider = ({
 
       // Notify import renderer of connection status.
       if (!aborted) {
-        reportConnectionStatusToImport(isOnline);
+        for (const windowId of ['import', 'openGov']) {
+          reportConnectionStatusToWindow(windowId, isOnline);
+        }
       }
 
       // Wait 100ms to avoid a snapping loading spinner.
@@ -202,11 +211,16 @@ export const BootstrappingProvider = ({
     // when connection status goes back online.
     RendererConfig.switchingToOnlineMode = false;
 
+    // Stop subscription intervals timer.
+    IntervalsController.stopInterval();
+
     // Report online status to renderer.
     setOnline(false);
 
     // Notify import renderer of connection status.
-    reportConnectionStatusToImport(false);
+    for (const windowId of ['import', 'openGov']) {
+      reportConnectionStatusToWindow(windowId, false);
+    }
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -272,6 +286,11 @@ export const BootstrappingProvider = ({
       ]);
     }
 
+    // Initialise intervals controller and interval subscriptions.
+    if (!aborted) {
+      await IntervalsController.initIntervals(true);
+    }
+
     // Disconnect from any API instances that are not currently needed.
     await handleApiDisconnects();
 
@@ -280,7 +299,9 @@ export const BootstrappingProvider = ({
 
     // Notify import renderer of connection status.
     if (!aborted) {
-      reportConnectionStatusToImport(true);
+      for (const windowId of ['import', 'openGov']) {
+        reportConnectionStatusToWindow(windowId, true);
+      }
     }
 
     // Set config flag to false.
@@ -326,6 +347,26 @@ export const BootstrappingProvider = ({
   };
 
   /// Utility.
+  const initIntervalsController = async (isOnline: boolean) => {
+    const serialized = await window.myAPI.getPersistedIntervalTasks();
+    const tasks: IntervalSubscription[] = JSON.parse(serialized);
+
+    // Insert subscriptions and start interval if online.
+    IntervalsController.insertSubscriptions(tasks, isOnline);
+
+    // Add tasks to React state in main and open gov window.
+    for (const task of tasks) {
+      addIntervalSubscription({ ...task });
+
+      RendererConfig.portToOpenGov.postMessage({
+        task: 'openGov:task:add',
+        data: {
+          serialized: JSON.stringify({ ...task }),
+        },
+      });
+    }
+  };
+
   const setSubscriptionsAndChainConnections = () => {
     // Set chain subscriptions data for rendering.
     setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
@@ -344,11 +385,25 @@ export const BootstrappingProvider = ({
   };
 
   /// Report connection status to import renderer.
-  const reportConnectionStatusToImport = (status: boolean) => {
-    RendererConfig.portToImport.postMessage({
-      task: 'import:connection:status',
-      data: { status },
-    });
+  const reportConnectionStatusToWindow = (
+    windowId: string,
+    status: boolean
+  ) => {
+    switch (windowId) {
+      case 'import': {
+        RendererConfig.portToImport.postMessage({
+          task: 'import:connection:status',
+          data: { status },
+        });
+        break;
+      }
+      case 'openGov':
+        RendererConfig.portToOpenGov.postMessage({
+          task: 'openGov:connection:status',
+          data: { status },
+        });
+        break;
+    }
   };
 
   /// Handle toggling the docked window state.

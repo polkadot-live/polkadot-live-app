@@ -34,7 +34,11 @@ import type {
 } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { AnyJson } from '@w3ux/utils/types';
+import type {
+  SubscriptionTask,
+  IntervalSubscription,
+} from '@/types/subscriptions';
 
 const debug = MainDebug;
 
@@ -354,8 +358,90 @@ app.whenReady().then(async () => {
   );
 
   // Show native notifications.
-  ipcMain.on('app:notification:show', (_, { title, body }) => {
-    NotificationsController.showNotification(title, body);
+  ipcMain.on(
+    'app:notification:show',
+    (_, { title, body }: NotificationData) => {
+      NotificationsController.showNotification(title, body);
+    }
+  );
+
+  /**
+   * Interval subscriptions
+   */
+
+  // Get interval subscriptions from store.
+  ipcMain.handle('app:interval:tasks:get', async () => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+    const stored: string = storePointer.get(key) || '[]';
+    return stored;
+  });
+
+  // Clear interval subscriptions from store.
+  ipcMain.handle('app:interval:tasks:clear', async () => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+    storePointer.delete(key);
+    return 'done';
+  });
+
+  // Add interval subscription to store.
+  ipcMain.handle('app:interval:task:add', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    stored.push(JSON.parse(serialized));
+    storePointer.set(key, JSON.stringify(stored));
+  });
+
+  // Add interval subscription to store.
+  ipcMain.handle('app:interval:task:remove', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    const task: IntervalSubscription = JSON.parse(serialized);
+    const { action, chainId, referendumId } = task;
+    const filtered = stored.filter(
+      (t) =>
+        !(
+          t.action === action &&
+          t.chainId === chainId &&
+          t.referendumId === referendumId
+        )
+    );
+
+    storePointer.set(key, JSON.stringify(filtered));
+  });
+
+  // Update an interval subscription in the store.
+  ipcMain.handle('app:interval:task:update', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const task: IntervalSubscription = JSON.parse(serialized);
+    const { action, chainId, referendumId } = task;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    const updated = stored.map((t) =>
+      t.action === action &&
+      t.chainId === chainId &&
+      t.referendumId === referendumId
+        ? task
+        : t
+    );
+
+    storePointer.set(key, JSON.stringify(updated));
   });
 
   /**

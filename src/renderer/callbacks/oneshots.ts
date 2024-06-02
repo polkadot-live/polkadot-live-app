@@ -1,9 +1,9 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ApiCallEntry, SubscriptionTask } from '@/types/subscriptions';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { Callbacks } from '.';
+import type { ApiCallEntry, SubscriptionTask } from '@/types/subscriptions';
 
 export const executeOneShot = async (task: SubscriptionTask) => {
   switch (task.action) {
