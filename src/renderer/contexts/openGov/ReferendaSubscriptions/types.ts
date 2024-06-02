@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export interface ReferendaSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;

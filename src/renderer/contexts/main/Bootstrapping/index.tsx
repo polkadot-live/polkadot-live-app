@@ -27,7 +27,7 @@ import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext

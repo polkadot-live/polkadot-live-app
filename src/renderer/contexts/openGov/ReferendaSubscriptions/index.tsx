@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { IntervalSubscription } from '@/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 

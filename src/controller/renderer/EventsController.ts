@@ -20,13 +20,12 @@ import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyData } from '@/types/misc';
-import type { ApiCallEntry } from '@/types/subscriptions';
+import type { IntervalSubscription, ApiCallEntry } from '@/types/subscriptions';
 import type {
   EventAccountData,
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
-import type { IntervalSubscription } from './IntervalsController';
 import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {

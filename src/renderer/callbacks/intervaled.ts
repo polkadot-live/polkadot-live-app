@@ -17,11 +17,11 @@ import {
 } from '../utils/openGovUtils';
 import type { AnyData } from '@/types/misc';
 import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
+import type { NotificationData } from '@/types/reporter';
 import type {
   IntervalSubscription,
   NotificationPolicy,
-} from '@/controller/renderer/IntervalsController';
-import type { NotificationData } from '@/types/reporter';
+} from '@/types/subscriptions';
 
 /// Debugging function.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

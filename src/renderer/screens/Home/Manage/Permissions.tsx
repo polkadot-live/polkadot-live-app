@@ -26,8 +26,8 @@ import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
 import type {
+  IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';

@@ -20,7 +20,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { IntervalSubscription } from '@/controller/renderer/IntervalsController';
+import type { IntervalSubscription } from '@/types/subscriptions';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
