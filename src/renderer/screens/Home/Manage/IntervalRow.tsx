@@ -6,6 +6,7 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faCircleCheck,
   faInfo,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
@@ -251,24 +252,47 @@ export const IntervalRow = ({
             data-tooltip-text={'OS Notifications'}
             onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
           >
-            {/* Nativ checkbox enabled */}
-            {!isTaskDisabled() && task.status === 'enable' && (
+            {/* Native checkbox enabled */}
+            <div
+              style={{ position: 'relative' }}
+              onClick={async () =>
+                !isTaskDisabled() &&
+                task.status === 'enable' &&
+                (await handleNativeCheckbox())
+              }
+            >
               <FontAwesomeIcon
-                className={nativeChecked ? 'checked' : 'unchecked'}
+                className={
+                  !isTaskDisabled() && task.status === 'enable'
+                    ? nativeChecked
+                      ? 'checked'
+                      : 'unchecked'
+                    : 'disabled'
+                }
                 icon={faListRadio}
                 transform={'grow-8'}
-                onClick={async () => await handleNativeCheckbox()}
               />
-            )}
 
-            {/* Native checkbox disabled */}
-            {(isTaskDisabled() || task.status === 'disable') && (
-              <FontAwesomeIcon
-                className="disabled"
-                icon={faListRadio}
-                transform={'grow-8'}
-              />
-            )}
+              {/* Check icon when clicked */}
+              {nativeChecked && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '0',
+                    right: '-4px',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    style={{
+                      opacity: task.status === 'disable' ? '0.4' : '1',
+                      color: '#c7c7c7',
+                    }}
+                    icon={faCircleCheck}
+                    transform={'shrink-2'}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Toggle Switch */}
