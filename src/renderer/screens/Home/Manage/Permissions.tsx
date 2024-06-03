@@ -22,6 +22,7 @@ import { Switch } from '@/renderer/library/Switch';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@w3ux/utils/types';
@@ -32,6 +33,10 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
+import {
+  getTooltipClassForGroup,
+  toolTipTextFor,
+} from '@app/utils/renderingUtils';
 
 export const Permissions = ({
   breadcrumb,
@@ -40,6 +45,7 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { online: isOnline, isConnecting } = useBootstrapping();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -530,13 +536,21 @@ export const Permissions = ({
             title={category}
             itemIndex={j}
             SwitchComponent={
-              <Switch
-                size="sm"
-                type="secondary"
-                isOn={getCategoryToggles().get(category) || false}
-                disabled={getDisabled(tasks[0])}
-                handleToggle={async () => await handleGroupSwitch(category)}
-              />
+              <div
+                className={getTooltipClassForGroup(tasks[0])}
+                data-tooltip={toolTipTextFor(category)}
+                onMouseMove={() =>
+                  setTooltipTextAndOpen(toolTipTextFor(category))
+                }
+              >
+                <Switch
+                  size="sm"
+                  type="secondary"
+                  isOn={getCategoryToggles().get(category) || false}
+                  disabled={getDisabled(tasks[0])}
+                  handleToggle={async () => await handleGroupSwitch(category)}
+                />
+              </div>
             }
           />
           <AccordionPanel>

@@ -14,6 +14,10 @@ import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { faCircleCheck } from '@fortawesome/pro-solid-svg-icons';
+import {
+  getTooltipClassForGroup,
+  toolTipTextFor,
+} from '@app/utils/renderingUtils';
 
 export const PermissionRow = ({
   task,
@@ -150,29 +154,37 @@ export const PermissionRow = ({
           )}
 
           {/* Toggle Switch */}
-          <Switch
-            size="sm"
-            type="secondary"
-            isOn={isToggled}
-            disabled={getDisabled(task)}
-            handleToggle={async () => {
-              // Send an account or chain subscription task.
-              await handleToggle(
-                {
-                  type: getTaskType(task),
-                  tasks: [
-                    {
-                      ...task,
-                      actionArgs: task.actionArgs
-                        ? [...task.actionArgs]
-                        : undefined,
-                    },
-                  ],
-                },
-                setNativeChecked
-              );
-            }}
-          />
+          <div
+            className={getTooltipClassForGroup(task)}
+            data-tooltip={toolTipTextFor(task.category)}
+            onMouseMove={() =>
+              setTooltipTextAndOpen(toolTipTextFor(task.category))
+            }
+          >
+            <Switch
+              size="sm"
+              type="secondary"
+              isOn={isToggled}
+              disabled={getDisabled(task)}
+              handleToggle={async () => {
+                // Send an account or chain subscription task.
+                await handleToggle(
+                  {
+                    type: getTaskType(task),
+                    tasks: [
+                      {
+                        ...task,
+                        actionArgs: task.actionArgs
+                          ? [...task.actionArgs]
+                          : undefined,
+                      },
+                    ],
+                  },
+                  setNativeChecked
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </AccountWrapper>
