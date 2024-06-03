@@ -11,7 +11,7 @@ import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
-import { isValidHttpUrl } from '@w3ux/utils';
+import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/main/Events';
@@ -142,7 +142,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     <span
                       className="tooltip tooltip-trigger-element"
                       data-tooltip-text={address}
-                      onMouseMove={() => setTooltipTextAndOpen(address)}
+                      onMouseMove={() =>
+                        setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
+                      }
                     />
                   )}
 
