@@ -17,6 +17,7 @@ export const TooltipProvider = ({
 
   const [text, setText] = useState<string>('');
   const [position, setPosition] = useState<[number, number]>([0, 0]);
+  const alignRef = useRef('top');
 
   const openTooltip = () => {
     if (open === 1) {
@@ -39,7 +40,8 @@ export const TooltipProvider = ({
     setStateWithRef(1, setShow, showRef);
   };
 
-  const setTooltipTextAndOpen = (t: string) => {
+  const setTooltipTextAndOpen = (t: string, align = 'top') => {
+    alignRef.current = align;
     if (open) {
       return;
     }
@@ -55,6 +57,7 @@ export const TooltipProvider = ({
         setTooltipPosition,
         showTooltip,
         setTooltipTextAndOpen,
+        alignRef,
         open,
         show: showRef.current,
         position,

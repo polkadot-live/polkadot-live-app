@@ -540,7 +540,7 @@ export const Permissions = ({
                 className={getTooltipClassForGroup(tasks[0])}
                 data-tooltip={toolTipTextFor(category)}
                 onMouseMove={() =>
-                  setTooltipTextAndOpen(toolTipTextFor(category))
+                  setTooltipTextAndOpen(toolTipTextFor(category), 'left')
                 }
               >
                 <Switch

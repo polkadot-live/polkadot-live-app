@@ -35,10 +35,10 @@ export const getTooltipClassForGroup = (task: SubscriptionTask) => {
 export const toolTipTextFor = (category: TaskCategory) => {
   switch (category) {
     case 'Nominating': {
-      return 'Not nominating.';
+      return 'Not nominating';
     }
     case 'Nomination Pools': {
-      return 'Not in nomination pool.';
+      return 'Not in nomination pool';
     }
     default: {
       return '';

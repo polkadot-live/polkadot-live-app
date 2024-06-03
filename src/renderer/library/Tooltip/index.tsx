@@ -12,6 +12,7 @@ export const Tooltip = () => {
     text,
     show,
     position,
+    alignRef,
     showTooltip,
     closeTooltip,
     setTooltipPosition,
@@ -39,10 +40,39 @@ export const Tooltip = () => {
     // Iterate trigger elements and act if the mouse is hovered over one.
     for (const element of elements) {
       if (element.matches(':hover')) {
-        const xPos: number =
-          pageX - (tooltipRef.current?.clientWidth || 0) * 0.5;
-        const offsetY = 45;
-        const yPos: number = pageY - offsetY;
+        const width: number = tooltipRef.current?.clientWidth || -1;
+        const height: number = tooltipRef.current?.clientHeight || -1;
+
+        const halfWidth = width * 0.5;
+        const halfHeight = height * 0.5;
+
+        const marginY = 15;
+        const marginX = 15;
+
+        let offsetY = 0;
+        let offsetX = 0;
+
+        switch (alignRef.current) {
+          case 'top': {
+            offsetY = -halfHeight - marginY;
+            break;
+          }
+          case 'bottom': {
+            offsetY = height + marginY;
+            break;
+          }
+          case 'right': {
+            offsetX = halfWidth + marginX;
+            break;
+          }
+          case 'left': {
+            offsetX = -halfWidth - marginX;
+            break;
+          }
+        }
+
+        const xPos: number = pageX - width * 0.5 + offsetX;
+        const yPos: number = pageY + offsetY - height * 0.5;
         setTooltipPosition(xPos, yPos);
 
         if (!show) {

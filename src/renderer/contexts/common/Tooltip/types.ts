@@ -6,7 +6,8 @@ export interface TooltipContextInterface {
   closeTooltip: () => void;
   setTooltipPosition: (x: number, y: number) => void;
   showTooltip: () => void;
-  setTooltipTextAndOpen: (t: string) => void;
+  setTooltipTextAndOpen: (t: string, align?: string) => void;
+  alignRef: React.MutableRefObject<string>;
   open: number;
   show: number;
   position: [number, number];
