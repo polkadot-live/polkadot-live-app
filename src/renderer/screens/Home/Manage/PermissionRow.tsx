@@ -41,6 +41,11 @@ export const PermissionRow = ({
     }
   }, [task]);
 
+  /// Handle clicking on OS Notifications toggle button.
+  const handleOsNotificationClick = async () => {
+    await handleNativeCheckbox(!nativeChecked, task, setNativeChecked);
+  };
+
   return (
     <AccountWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -115,13 +120,7 @@ export const PermissionRow = ({
             >
               <div
                 className="native-content"
-                onClick={async () => {
-                  await handleNativeCheckbox(
-                    !nativeChecked,
-                    task,
-                    setNativeChecked
-                  );
-                }}
+                onClick={async () => handleOsNotificationClick()}
               >
                 {/* Main icon */}
                 <FontAwesomeIcon
