@@ -124,6 +124,21 @@ export const AccountWrapper = styled(motion.div)`
   .native-wrapper {
     background-color: var(--background-default);
 
+    .native-content {
+      position: relative;
+    }
+
+    .checked-icon-wrapper {
+      position: absolute;
+      bottom: 0;
+      right: -4px;
+      color: #c7c7c7;
+
+      .disable {
+        opacity: 0.4;
+      }
+    }
+
     .checked {
       transition: opacity 0.1s ease-in-out;
       padding: 0.5rem;

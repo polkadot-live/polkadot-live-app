@@ -89,9 +89,11 @@ export const IntervalRow = ({
   };
 
   const handleNativeCheckbox = async () => {
-    const flag = !nativeChecked;
-    await handleIntervalNativeCheckbox(task, flag);
-    setNativeChecked(flag);
+    if (!isTaskDisabled() && task.status === 'enable') {
+      const flag = !nativeChecked;
+      await handleIntervalNativeCheckbox(task, flag);
+      setNativeChecked(flag);
+    }
   };
 
   const handleRemove = async () => {
@@ -254,12 +256,8 @@ export const IntervalRow = ({
           >
             {/* Native checkbox enabled */}
             <div
-              style={{ position: 'relative' }}
-              onClick={async () =>
-                !isTaskDisabled() &&
-                task.status === 'enable' &&
-                (await handleNativeCheckbox())
-              }
+              className="native-content"
+              onClick={async () => await handleNativeCheckbox()}
             >
               <FontAwesomeIcon
                 className={
@@ -273,22 +271,13 @@ export const IntervalRow = ({
                 transform={'grow-8'}
               />
 
-              {/* Check icon when clicked */}
+              {/* Check overlay icon when clicked */}
               {nativeChecked && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '0',
-                    right: '-4px',
-                  }}
-                >
+                <div className="checked-icon-wrapper">
                   <FontAwesomeIcon
-                    style={{
-                      opacity: task.status === 'disable' ? '0.4' : '1',
-                      color: '#c7c7c7',
-                    }}
+                    className={task.status === 'disable' ? 'disable' : ''}
                     icon={faCircleCheck}
-                    transform={'shrink-2'}
+                    transform={'shrink-3'}
                   />
                 </div>
               )}
