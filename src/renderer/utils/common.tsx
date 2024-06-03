@@ -131,6 +131,25 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   );
 };
 
+interface SortControlLabelProps {
+  label: string;
+  faIcon?: IconDefinition;
+}
+
+export const SortControlLabel: React.FC<SortControlLabelProps> = ({
+  faIcon,
+  label,
+}: SortControlLabelProps) => (
+  <div className="breadcrumb-wrapper">
+    {faIcon && (
+      <div>
+        <FontAwesomeIcon icon={faIcon} />
+      </div>
+    )}
+    <span>{label}</span>
+  </div>
+);
+
 /**
  * @name ControlsWrapper
  * @summary Wrapper styles for sorting control components.
@@ -146,7 +165,34 @@ export const ControlsWrapper = styled.div<{
 
   display: flex;
   column-gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+
+  .back-btn {
+    align-self: center;
+    font-size: 0.9rem;
+    border-color: #a94a75;
+    color: #a94a75;
+  }
+
+  .breadcrumb-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #454545;
+    border-radius: 1.25rem;
+
+    span {
+      display: inline-block;
+      text-align: center;
+      display: inline-block;
+      color: #666666;
+      font-size: 0.9rem;
+    }
+    .icon {
+      margin-left: 0.7rem;
+      color: #ededed;
+    }
+  }
 
   .icon-wrapper {
     opacity: 0.75;
@@ -163,8 +209,8 @@ export const ControlsWrapper = styled.div<{
     padding: 0.3rem 0.5rem;
     transition: border 0.1s ease-out;
     user-select: none;
-    cursor: pointer;
     transition: opacity 0.1s ease-out;
+    cursor: pointer;
 
     span {
       display: inline-block;

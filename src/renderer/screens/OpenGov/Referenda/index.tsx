@@ -171,7 +171,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
       <Scrollable>
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
-          <ControlsWrapper>
+          <ControlsWrapper $padBottom={!groupingOn}>
             <SortControlButton
               isActive={newestFirst}
               isDisabled={!isConnected || fetchingReferenda}

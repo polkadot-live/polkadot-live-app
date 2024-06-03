@@ -13,40 +13,6 @@ export const Wrapper = styled.div`
   max-height: 100%;
 `;
 
-export const BreadcrumbsWrapper = styled.div`
-  color: var(--text-color-primary);
-  background-color: var(--background-default);
-  border-bottom: 1px solid #262626;
-  padding: 0.75rem 1.75rem;
-  font-size: 0.92rem;
-  font-weight: 500;
-  line-height: 1.02rem;
-
-  ul {
-    margin: 4px 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    column-gap: 8px;
-
-    li {
-      opacity: 0.6;
-
-      &:first-child > button {
-        margin-left: -0.5rem;
-        font-weight: 500;
-        position: 'relative';
-      }
-
-      &:last-child {
-        color: var(--text-color-primary);
-        opacity: 1;
-      }
-    }
-  }
-`;
-
 export const HeadingWrapper = styled.div`
   width: 100%;
   padding: 0.5rem 1rem;

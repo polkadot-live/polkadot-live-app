@@ -68,7 +68,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       <Scrollable>
         <ContentWrapper>
           {/* Sorting controls */}
-          <ControlsWrapper>
+          <ControlsWrapper $padBottom={true}>
             <SortControlButton
               isActive={sortIdAscending}
               isDisabled={!isConnected || fetchingTracks}
