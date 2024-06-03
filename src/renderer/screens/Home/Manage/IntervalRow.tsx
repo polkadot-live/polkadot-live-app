@@ -254,11 +254,11 @@ export const IntervalRow = ({
             data-tooltip-text={'OS Notifications'}
             onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
           >
-            {/* Native checkbox enabled */}
             <div
               className="native-content"
               onClick={async () => await handleNativeCheckbox()}
             >
+              {/* Main icon */}
               <FontAwesomeIcon
                 className={
                   !isTaskDisabled() && task.status === 'enable'

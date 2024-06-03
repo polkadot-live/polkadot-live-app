@@ -13,6 +13,7 @@ import {
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { faCircleCheck } from '@fortawesome/pro-solid-svg-icons';
 
 export const PermissionRow = ({
   task,
@@ -112,30 +113,40 @@ export const PermissionRow = ({
               data-tooltip-text={'OS Notifications'}
               onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
             >
-              {/* Native checkbox enabled */}
-              {!getDisabled(task) && task.status === 'enable' && (
+              <div
+                className="native-content"
+                onClick={async () => {
+                  await handleNativeCheckbox(
+                    !nativeChecked,
+                    task,
+                    setNativeChecked
+                  );
+                }}
+              >
+                {/* Main icon */}
                 <FontAwesomeIcon
-                  className={nativeChecked ? 'checked' : 'unchecked'}
+                  className={
+                    !getDisabled(task) && task.status === 'enable'
+                      ? nativeChecked
+                        ? 'checked'
+                        : 'unchecked'
+                      : 'disabled'
+                  }
                   icon={faListRadio}
                   transform={'grow-8'}
-                  onClick={async () => {
-                    await handleNativeCheckbox(
-                      !nativeChecked,
-                      task,
-                      setNativeChecked
-                    );
-                  }}
                 />
-              )}
 
-              {/* Native checkbox disabled */}
-              {(getDisabled(task) || task.status === 'disable') && (
-                <FontAwesomeIcon
-                  className="disabled"
-                  icon={faListRadio}
-                  transform={'grow-8'}
-                />
-              )}
+                {/* Check overlay icon when clicked */}
+                {nativeChecked && (
+                  <div className="checked-icon-wrapper">
+                    <FontAwesomeIcon
+                      className={task.status === 'disable' ? 'disable' : ''}
+                      icon={faCircleCheck}
+                      transform={'shrink-3'}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
