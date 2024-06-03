@@ -118,6 +118,18 @@ export const Permissions = ({
     updateRenderedSubscriptions(task);
   };
 
+  /// Handle toggling a subscription task group switch.
+  const handleGroupSwitch = async (category: TaskCategory) => {
+    const isOn = getCategoryToggles().get(category) || false;
+
+    await toggleCategoryTasks(
+      category,
+      isOn,
+      renderedSubscriptions,
+      updateRenderedSubscriptions
+    );
+  };
+
   /// Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
     // Invert task status.
@@ -523,14 +535,7 @@ export const Permissions = ({
                 type="secondary"
                 isOn={getCategoryToggles().get(category) || false}
                 disabled={getDisabled(tasks[0])}
-                handleToggle={async () =>
-                  await toggleCategoryTasks(
-                    category,
-                    getCategoryToggles().get(category) || false,
-                    renderedSubscriptions,
-                    updateRenderedSubscriptions
-                  )
-                }
+                handleToggle={async () => await handleGroupSwitch(category)}
               />
             }
           />
