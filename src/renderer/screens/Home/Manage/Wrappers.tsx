@@ -131,7 +131,7 @@ export const AccountWrapper = styled(motion.div)`
     .checked-icon-wrapper {
       position: absolute;
       bottom: 0;
-      right: -4px;
+      right: -2px;
       color: #c7c7c7;
 
       .disable {

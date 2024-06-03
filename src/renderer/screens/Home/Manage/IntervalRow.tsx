@@ -1,6 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useEffect, useRef, useState } from 'react';
+import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { AccountWrapper } from './Wrappers';
@@ -10,7 +12,6 @@ import {
   faInfo,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
-import { useEffect, useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
@@ -20,31 +21,7 @@ import {
 import { Switch } from '@app/library/Switch';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
-import type { IntervalSubscription } from '@/types/subscriptions';
-import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
-
-interface IntervalRowProps {
-  task: IntervalSubscription;
-  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
-  handleIntervalNativeCheckbox: (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => Promise<void>;
-  handleChangeIntervalDuration: (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
-  ) => void;
-  handleIntervalOneShot: (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: (processing: boolean) => void
-  ) => Promise<void>;
-  handleRemoveIntervalSubscription: (
-    task: IntervalSubscription
-  ) => Promise<void>;
-  isTaskDisabled: () => boolean;
-}
+import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({
   task,
@@ -64,6 +41,7 @@ export const IntervalRow = ({
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+
   const [removeClicked, setRemoveClicked] = useState(false);
   const removeTimeoutRef = useRef<null | AnyData>(null);
 
