@@ -114,7 +114,7 @@ export const PermissionRow = ({
           {/* Native OS Notification Checkbox */}
           {task.account && (
             <div
-              className={`native-wrapper ${!getDisabled(task) && task.status === 'enable' ? 'tooltip-trigger-element' : ''}`}
+              className={'native-wrapper tooltip-trigger-element'}
               data-tooltip-text={'OS Notifications'}
               onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
             >
