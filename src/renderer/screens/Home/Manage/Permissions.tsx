@@ -29,6 +29,7 @@ import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
   SubscriptionTask,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -193,10 +194,9 @@ export const Permissions = ({
       : `${type}_${chainId}_${action}`;
 
   /// Return subscription tasks mapped by category.
-  const getCategorised = (): Map<string, SubscriptionTask[]> => {
+  const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
     const { tasks } = renderedSubscriptions;
-
-    const map = new Map<string, SubscriptionTask[]>();
+    const map = new Map<TaskCategory, SubscriptionTask[]>();
 
     tasks.forEach((t) => {
       const category = t.category;
@@ -218,7 +218,7 @@ export const Permissions = ({
 
   /// Map category name to its global toggle state.
   const getCategoryToggles = () => {
-    const map = new Map<string, boolean>();
+    const map = new Map<TaskCategory, boolean>();
 
     // A category toggle is set if all of its tasks are enabled.
     for (const [category, tasks] of getCategorised().entries()) {

@@ -6,6 +6,7 @@ import type { ChainID } from '@/types/chains';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -23,7 +24,7 @@ export interface SubscriptionsContextInterface {
     setNativeCheckbox: AnyFunction
   ) => Promise<void>;
   toggleCategoryTasks: (
-    c: string,
+    c: TaskCategory,
     i: boolean,
     s: WrappedSubscriptionTasks,
     u: AnyFunction
