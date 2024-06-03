@@ -118,13 +118,17 @@ export const PermissionRow = ({
           {/* Native OS Notification Checkbox */}
           {task.account && (
             <div
-              className={'native-wrapper tooltip-trigger-element'}
+              className={`native-wrapper ${!getDisabled(task) ? 'tooltip-trigger-element' : ''}`}
               data-tooltip-text={'OS Notifications'}
               onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
             >
               <div
                 className="native-content"
-                onClick={async () => handleOsNotificationClick()}
+                onClick={async () =>
+                  !getDisabled(task) &&
+                  task.status === 'enable' &&
+                  handleOsNotificationClick()
+                }
               >
                 {/* Main icon */}
                 <FontAwesomeIcon
