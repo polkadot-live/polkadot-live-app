@@ -5,13 +5,12 @@
 import type { TooltipContextInterface } from './types';
 
 export const defaultTooltipContext: TooltipContextInterface = {
-  setAlign: () => {},
   openTooltip: () => {},
   closeTooltip: () => {},
   setTooltipPosition: (x, y) => {},
   showTooltip: () => {},
   setTooltipTextAndOpen: (t) => {},
-  align: 'top',
+  alignRef: null,
   open: 0,
   show: 0,
   position: [0, 0],

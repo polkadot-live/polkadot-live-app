@@ -136,7 +136,14 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
  * @summary Wrapper styles for sorting control components.
  */
 
-export const ControlsWrapper = styled.div`
+export const ControlsWrapper = styled.div<{
+  $padWrapper?: boolean;
+  $padBottom?: boolean;
+}>`
+  width: 100%;
+  padding: ${(props) => (props.$padWrapper ? '2rem 1.5rem 0' : '0')};
+  padding-bottom: ${(props) => (props.$padBottom ? '1rem' : '0')};
+
   display: flex;
   column-gap: 1rem;
   margin-bottom: 1rem;
