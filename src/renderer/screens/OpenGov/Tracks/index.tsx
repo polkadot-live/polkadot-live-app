@@ -14,7 +14,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import { TrackGroup } from './Wrappers';
+import { StickyHeadings, TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
 import {
@@ -111,17 +111,35 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
               {fetchingTracks ? (
                 <>{renderPlaceholders(4)}</>
               ) : (
-                <TrackGroup>
-                  {tracks
-                    .sort((a, b) =>
-                      sortIdAscending
-                        ? a.trackId - b.trackId
-                        : b.trackId - a.trackId
-                    )
-                    .map((track) => (
-                      <TrackRow key={track.trackId} track={track} />
-                    ))}
-                </TrackGroup>
+                <>
+                  {/* Sticky Headings */}
+                  <StickyHeadings>
+                    <div className="content-wrapper">
+                      <div className="left">
+                        <div className="heading">ID</div>
+                        <div className="heading">Origin</div>
+                      </div>
+                      <div className="right">
+                        <div className="heading">Decision Deposit</div>
+                        <div className="heading">Max. Ongoing</div>
+                        <div className="heading">Metrics</div>
+                      </div>
+                    </div>
+                  </StickyHeadings>
+
+                  {/* Track Listing */}
+                  <TrackGroup>
+                    {tracks
+                      .sort((a, b) =>
+                        sortIdAscending
+                          ? a.trackId - b.trackId
+                          : b.trackId - a.trackId
+                      )
+                      .map((track) => (
+                        <TrackRow key={track.trackId} track={track} />
+                      ))}
+                  </TrackGroup>
+                </>
               )}
             </div>
           )}

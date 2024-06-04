@@ -9,7 +9,10 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGripDotsVertical } from '@fortawesome/pro-light-svg-icons';
+import {
+  faGripDotsVertical,
+  faHashtag,
+} from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -99,12 +102,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
       <div className="content-wrapper">
         <div className="left">
           <div className="stat-wrapper">
-            <span>ID</span>
-            <h4 className="mw-20">{referendum.referendaId}</h4>
-          </div>
-          <div className="stat-wrapper">
-            <span>Origin</span>
-            <h4>{renderOrigin(referendum)}</h4>
+            <span>
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
+              {referendum.referendaId}
+            </span>
+            <h4 className="mw-20">{renderOrigin(referendum)}</h4>
           </div>
         </div>
         <div className="right">

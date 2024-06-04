@@ -33,6 +33,66 @@ export const TrackGroup = styled.div`
   }
 `;
 
+export const StickyHeadings = styled.div`
+  background-color: var(--background-modal);
+  position: sticky;
+  top: -1.5rem;
+  z-index: 15;
+
+  .content-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+
+    div {
+      padding: 0.4rem 0 0.4rem;
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 64px;
+        padding-left: 20px;
+      }
+      div:nth-child(2) {
+        min-width: 40px;
+      }
+    }
+
+    .right {
+      justify-content: start;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 154px;
+      }
+      div:nth-child(2) {
+        min-width: 144px;
+      }
+      div:nth-child(3) {
+        min-width: 84px;
+      }
+    }
+  }
+
+  .heading {
+    font-size: 0.92rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    opacity: 0.6;
+    transition: opacity 0.2s ease-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 export const TrackItem = styled(motion.div)`
   position: relative;
   padding: 1rem 1.25rem;

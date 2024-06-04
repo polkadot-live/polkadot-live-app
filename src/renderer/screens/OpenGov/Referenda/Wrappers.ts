@@ -92,8 +92,9 @@ export const ReferendumRowWrapper = styled.div`
     }
     span {
       display: flex;
-      align-items: baseline;
-      padding: 0.6rem 1rem 0.5rem;
+      align-items: center;
+      column-gap: 0.4rem;
+      padding: 0.5rem 1rem 0.5rem;
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
       font-size: 0.8rem;
