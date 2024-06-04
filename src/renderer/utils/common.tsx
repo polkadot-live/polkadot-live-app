@@ -382,6 +382,16 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
       border-radius: 0.5rem;
       font-size: 0.8rem;
     }
+
+    &.badge-btn {
+      cursor: pointer;
+      &:hover {
+        .icon-wrapper {
+          color: #953254;
+          opacity: 1;
+        }
+      }
+    }
   }
 
   .footer-stat {

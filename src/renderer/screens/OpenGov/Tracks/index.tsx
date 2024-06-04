@@ -37,9 +37,14 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
   const [sortIdAscending, setSortIdAscending] = useState(true);
 
   /// Utility to render help icon.
-  const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
-      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+  const renderHelpBadge = (label: string, key: HelpItemKey) => (
+    <div className="stat-wrapper badge-btn" onClick={() => openHelp(key)}>
+      <span>
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+        </div>
+        {label}
+      </span>
     </div>
   );
 
@@ -138,17 +143,9 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
             <div className="footer-stat">
               <h2>Help:</h2>
             </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:origin')} Origin</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:track')} Track</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>
-                {renderHelpIcon('help:openGov:maxDeciding')} Max Deciding
-              </span>
-            </div>
+            {renderHelpBadge('Origin', 'help:openGov:origin')}
+            {renderHelpBadge('Track', 'help:openGov:track')}
+            {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
           </section>
         </div>
       </StatsFooter>
