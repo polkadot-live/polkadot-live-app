@@ -131,7 +131,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
         <div>
           <section className="left">
             <div className="footer-stat">
-              <h2>Chain ID:</h2>
+              <h2>Chain:</h2>
               <span>{chainId}</span>
             </div>
             <div className="footer-stat">
