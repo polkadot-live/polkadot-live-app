@@ -249,9 +249,19 @@ export const ControlsWrapper = styled.div<{
  * @summary A scrollable container with which takes into account header and footer heights.
  */
 
-export const Scrollable = styled.div`
-  --footer-height: 42.06px;
-  --header-height: 38.6px;
+export const Scrollable = styled.div<{
+  $footerHeight?: number;
+  $headerHeight?: number;
+}>`
+  --footer-height: ${(props) => {
+    const height = props.$footerHeight;
+    return height ? `${height}px` : '42.06px';
+  }};
+
+  --header-height: ${(props) => {
+    const height = props.$headerHeight;
+    return height ? `${height}px` : '38.6px';
+  }};
 
   // height = window height - (header height + footer height)
   height: calc(100vh - var(--footer-height) - var(--header-height));
