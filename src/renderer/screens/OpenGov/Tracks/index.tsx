@@ -70,6 +70,22 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
         <ContentWrapper>
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={true}>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+              style={{
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
+            />
             <SortControlButton
               isActive={sortIdAscending}
               isDisabled={!isConnected || fetchingTracks}
@@ -133,22 +149,6 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
                 {renderHelpIcon('help:openGov:maxDeciding')} Max Deciding
               </span>
             </div>
-            <ButtonPrimaryInvert
-              text={'Back'}
-              iconLeft={faCaretLeft}
-              style={{
-                padding: '0.3rem 1.25rem',
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-              onClick={() => setSection(0)}
-            />
           </section>
         </div>
       </StatsFooter>

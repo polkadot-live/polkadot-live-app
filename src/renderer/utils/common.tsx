@@ -169,6 +169,7 @@ export const ControlsWrapper = styled.div<{
   margin-bottom: 0.75rem;
 
   .back-btn {
+    max-height: 23.52px;
     align-self: center;
     font-size: 0.9rem;
     padding-top: 0.5rem;

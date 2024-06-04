@@ -173,6 +173,22 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={!groupingOn}>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+              style={{
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
+            />
             <SortControlButton
               isActive={newestFirst}
               isDisabled={!isConnected || fetchingReferenda}
@@ -231,24 +247,6 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               <h2>Active Referenda:</h2>
               <span>{fetchingReferenda ? '-' : referenda.length}</span>
             </div>
-          </section>
-          <section className="right">
-            <ButtonPrimaryInvert
-              text={'Back'}
-              iconLeft={faCaretLeft}
-              style={{
-                padding: '0.3rem 1.25rem',
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-              onClick={() => setSection(0)}
-            />
           </section>
         </div>
       </StatsFooter>
