@@ -40,6 +40,9 @@ export const TrackItem = styled(motion.div)`
   transition: background-color 0.2s ease-out;
 
   // Utility.
+  .mw-84 {
+    min-width: 84px;
+  }
   .mw-45 {
     min-width: 45px;
   }
@@ -100,7 +103,8 @@ export const TrackItem = styled(motion.div)`
     // Stat label.
     span {
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      column-gap: 0.4rem;
       padding: 0.5rem 1rem 0.5rem;
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
@@ -178,16 +182,17 @@ export const TrackItem = styled(motion.div)`
     display: flex;
     align-items: center;
     border-radius: 0.5rem;
-    opacity: 0.5;
+    padding-left: 0.75rem;
+    opacity: 0.8;
     transition: opacity 0.1s ease-out;
     cursor: pointer;
-    padding-left: 0.75rem;
 
     h4 {
+      color: #f1f1f1;
       font-size: 0.9rem;
     }
     &:hover {
-      opacity: 0.75;
+      opacity: 1;
     }
     .expand-btn {
       position: relative;
@@ -196,6 +201,7 @@ export const TrackItem = styled(motion.div)`
       padding: 0;
 
       svg {
+        color: #f1f1f1;
         position: absolute;
         top: 5px;
         left: 6px;
