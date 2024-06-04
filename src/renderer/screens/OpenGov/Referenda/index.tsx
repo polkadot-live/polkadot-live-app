@@ -216,7 +216,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           </ControlsWrapper>
 
           {/* Sticky Headings */}
-          {!groupingOn && (
+          {!groupingOn && !fetchingReferenda && (
             <StickyHeadings>
               <div className="content-wrapper">
                 <div className="left">
