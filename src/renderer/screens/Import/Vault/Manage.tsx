@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import {
   ControlsWrapper,
-  OpenGovFooter,
+  StatsFooter,
   Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
@@ -140,7 +140,7 @@ export const Manage = ({
         </ContentWrapper>
       </Scrollable>
 
-      <OpenGovFooter $chainId={'Polkadot'}>
+      <StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -149,7 +149,7 @@ export const Manage = ({
             </div>
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

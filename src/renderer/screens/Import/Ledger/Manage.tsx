@@ -19,7 +19,7 @@ import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import {
   ControlsWrapper,
-  OpenGovFooter,
+  StatsFooter,
   Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
@@ -145,7 +145,7 @@ export const Manage = ({
         </ContentWrapper>
       </Scrollable>
 
-      <OpenGovFooter $chainId={'Polkadot'}>
+      <StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -174,7 +174,7 @@ export const Manage = ({
             )}
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

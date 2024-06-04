@@ -26,7 +26,7 @@ import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
   renderPlaceholders,
   ControlsWrapper,
-  OpenGovFooter,
+  StatsFooter,
   Scrollable,
   SortControlButton,
 } from '@/renderer/utils/common';
@@ -220,7 +220,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           </section>
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter $chainId={chainId}>
+      <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -251,7 +251,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
             />
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

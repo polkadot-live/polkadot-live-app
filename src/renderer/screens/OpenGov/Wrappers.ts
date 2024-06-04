@@ -7,7 +7,6 @@ import type { ChainID } from '@/types/chains';
 /**
  * Provides the following styled components:
  *   OpenGovCard
- *   OpenGovFooter
  *   TreasuryStats
  */
 

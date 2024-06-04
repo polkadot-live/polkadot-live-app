@@ -24,7 +24,7 @@ import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 import {
   ControlsWrapper,
-  OpenGovFooter,
+  StatsFooter,
   Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
@@ -300,7 +300,7 @@ export const Manage = ({
         </ContentWrapper>
       </Scrollable>
 
-      <OpenGovFooter $chainId={'Polkadot'}>
+      <StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -309,7 +309,7 @@ export const Manage = ({
             </div>
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

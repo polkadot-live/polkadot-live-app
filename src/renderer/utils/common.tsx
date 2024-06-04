@@ -322,10 +322,10 @@ export const Scrollable = styled.div<{
 `;
 
 /**
- * @name OpenGovFooter
+ * @name StatsFooter
  * @summary Footer layout for child window.
  */
-export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
+export const StatsFooter = styled.section<{ $chainId: ChainID }>`
   position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;

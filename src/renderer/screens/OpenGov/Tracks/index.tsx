@@ -20,7 +20,7 @@ import { TrackRow } from './TrackRow';
 import {
   renderPlaceholders,
   ControlsWrapper,
-  OpenGovFooter,
+  StatsFooter,
   Scrollable,
   SortControlButton,
 } from '@/renderer/utils/common';
@@ -106,7 +106,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
           )}
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter $chainId={chainId}>
+      <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -151,7 +151,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
             />
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

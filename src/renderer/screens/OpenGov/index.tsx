@@ -25,7 +25,7 @@ import type { ChainID } from '@/types/chains';
 import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
-  OpenGovFooter,
+  StatsFooter,
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,
@@ -285,7 +285,7 @@ export const OpenGov: React.FC = () => {
             </div>
           </ContentWrapper>
 
-          <OpenGovFooter $chainId={'Polkadot'}>
+          <StatsFooter $chainId={'Polkadot'}>
             <div>
               <section className="left">
                 <div className="footer-stat">
@@ -319,7 +319,7 @@ export const OpenGov: React.FC = () => {
                 </div>
               </section>
             </div>
-          </OpenGovFooter>
+          </StatsFooter>
         </section>
 
         {/* Section 2 */}
