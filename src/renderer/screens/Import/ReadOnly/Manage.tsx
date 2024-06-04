@@ -7,19 +7,14 @@ import {
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { Address } from './Address';
-import { AddressWrapper } from '../Addresses/Wrappers';
-import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
-import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
-import { HeaderWrapper } from '../../Wrappers';
-import { HardwareStatusBar } from '@/renderer/library/Hardware/HardwareStatusBar';
+import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
-import ReadmeSVG from '@/config/svg/readonly.svg?react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
@@ -27,10 +22,18 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import type { FormEvent } from 'react';
 import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
+import {
+  ControlsWrapper,
+  OpenGovFooter,
+  Scrollable,
+  SortControlLabel,
+} from '@/renderer/utils/common';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 
 export const Manage = ({
   setSection,
-  section,
+  //section,
   addresses,
   setAddresses,
 }: ManageReadOnlyProps) => {
@@ -174,29 +177,42 @@ export const Manage = ({
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="import" />
-          <h4>
-            <AppSVG />
-            Read Only Accounts
-          </h4>
+          <h4>Manage Accounts</h4>
         </div>
       </HeaderWrapper>
 
-      <BodyInterfaceWrapper $maxHeight>
+      <Scrollable style={{ paddingTop: 0 }}>
+        {/* Top Controls */}
+        <ControlsWrapper
+          $padWrapper={true}
+          $padBottom={false}
+          style={{ marginBottom: 0 }}
+        >
+          <ButtonPrimaryInvert
+            className="back-btn"
+            text="Back"
+            iconLeft={faCaretLeft}
+            onClick={() => setSection(0)}
+          />
+          <SortControlLabel label="Read Only Accounts" />
+        </ControlsWrapper>
+
+        {/* Add Read Only Address */}
         <Wrapper
           style={{
-            backgroundColor: 'var(--background-primary)',
-            padding: '1.25rem 2rem 1rem',
-            borderBottom: '1px solid var(--border-primary-color)',
+            backgroundColor: 'inherit',
+            padding: '1.5rem 1.5rem 0rem',
           }}
         >
           <div className="content">
             <div className="inner">
               <div className="identicon">
-                <Identicon value={editName} size={30} />
+                <Identicon value={editName} size={28} />
               </div>
               <div>
-                <section className="row">
+                <section className="row" style={{ paddingLeft: '1.25rem' }}>
                   <input
+                    className="add-input"
                     type="text"
                     placeholder="Input Address"
                     value={editName}
@@ -222,78 +238,78 @@ export const Manage = ({
           </div>
         </Wrapper>
 
-        <AddressWrapper>
-          <div className="outer-wrapper" style={{ paddingTop: '1rem' }}>
-            <Accordion
-              multiple
-              defaultIndex={accordionActiveIndices}
-              setExternalIndices={setAccordionActiveIndices}
-            >
-              {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                ([chainId, chainAddresses], i) => (
-                  <div key={`${chainId}_read_only_addresses`}>
-                    <AccordionItem>
-                      <AccordionCaretHeader
-                        title={`${chainId} Accounts`}
-                        itemIndex={i}
-                        wide={true}
-                      />
-                      <AccordionPanel>
-                        <div className="items-wrapper">
-                          <div className="items">
-                            {addresses.length ? (
-                              <>
-                                {chainAddresses.map(
-                                  (
-                                    {
-                                      address,
-                                      index,
-                                      isImported,
-                                      name,
-                                    }: LocalAddress,
-                                    j
-                                  ) => (
-                                    <Address
-                                      key={address}
-                                      accountName={name}
-                                      source={'read-only'}
-                                      setAddresses={setAddresses}
-                                      address={address}
-                                      index={index}
-                                      isImported={isImported || false}
-                                      orderData={{
-                                        curIndex: j,
-                                        lastIndex: chainAddresses.length - 1,
-                                      }}
-                                      setSection={setSection}
-                                    />
-                                  )
-                                )}
-                              </>
-                            ) : (
-                              <p>No read only addresses imported.</p>
-                            )}
-                          </div>
+        {/* Address List */}
+        <ContentWrapper style={{ padding: '1.25rem 2rem 0' }}>
+          <Accordion
+            multiple
+            defaultIndex={accordionActiveIndices}
+            setExternalIndices={setAccordionActiveIndices}
+          >
+            {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+              ([chainId, chainAddresses], i) => (
+                <div key={`${chainId}_read_only_addresses`}>
+                  <AccordionItem>
+                    <AccordionCaretHeader
+                      title={`${chainId} Accounts`}
+                      itemIndex={i}
+                      wide={true}
+                    />
+                    <AccordionPanel>
+                      <div className="items-wrapper">
+                        <div className="items">
+                          {addresses.length ? (
+                            <>
+                              {chainAddresses.map(
+                                (
+                                  {
+                                    address,
+                                    index,
+                                    isImported,
+                                    name,
+                                  }: LocalAddress,
+                                  j
+                                ) => (
+                                  <Address
+                                    key={address}
+                                    accountName={name}
+                                    source={'read-only'}
+                                    setAddresses={setAddresses}
+                                    address={address}
+                                    index={index}
+                                    isImported={isImported || false}
+                                    orderData={{
+                                      curIndex: j,
+                                      lastIndex: chainAddresses.length - 1,
+                                    }}
+                                    setSection={setSection}
+                                  />
+                                )
+                              )}
+                            </>
+                          ) : (
+                            <p>No read only addresses imported.</p>
+                          )}
                         </div>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </div>
-                )
-              )}
-            </Accordion>
-          </div>
-        </AddressWrapper>
+                      </div>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </div>
+              )
+            )}
+          </Accordion>
+        </ContentWrapper>
+      </Scrollable>
 
-        <HardwareStatusBar
-          show={section === 1}
-          Icon={ReadmeSVG}
-          text={`${addresses.length} Read Only Account${
-            addresses.length == 1 ? '' : 's'
-          }`}
-          inProgress={false}
-          handleDone={() => setSection(0)}
-        />
-      </BodyInterfaceWrapper>
+      <OpenGovFooter $chainId={'Polkadot'}>
+        <div>
+          <section className="left">
+            <div className="footer-stat">
+              <h2>Imported Read Only Accounts:</h2>
+              <span>{addresses.length}</span>
+            </div>
+          </section>
+        </div>
+      </OpenGovFooter>
     </>
   );
 };

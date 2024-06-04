@@ -17,7 +17,7 @@ import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { OpenGovCard, OpenGovFooter, TreasuryStats } from './Wrappers';
+import { OpenGovCard, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
@@ -25,6 +25,7 @@ import type { ChainID } from '@/types/chains';
 import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
+  OpenGovFooter,
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,

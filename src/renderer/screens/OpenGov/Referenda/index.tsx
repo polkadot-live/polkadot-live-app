@@ -9,7 +9,6 @@ import {
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import type { ReferendaProps } from '../types';
-import { OpenGovFooter } from '../Wrappers';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
@@ -25,10 +24,11 @@ import { ReferendaGroup } from './Wrappers';
 import { useEffect, useState } from 'react';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
-  Scrollable,
-  ControlsWrapper,
-  SortControlButton,
   renderPlaceholders,
+  ControlsWrapper,
+  OpenGovFooter,
+  Scrollable,
+  SortControlButton,
 } from '@/renderer/utils/common';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 

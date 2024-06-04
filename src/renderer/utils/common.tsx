@@ -4,6 +4,7 @@
 import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { ChainID } from '@/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 /**
@@ -170,6 +171,8 @@ export const ControlsWrapper = styled.div<{
   .back-btn {
     align-self: center;
     font-size: 0.9rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     border-color: #a94a75;
     color: #a94a75;
   }
@@ -248,7 +251,6 @@ export const ControlsWrapper = styled.div<{
  * @name Scrollable
  * @summary A scrollable container with which takes into account header and footer heights.
  */
-
 export const Scrollable = styled.div<{
   $footerHeight?: number;
   $headerHeight?: number;
@@ -315,6 +317,84 @@ export const Scrollable = styled.div<{
         #101010 33%
       );
       background-size: 1200px; // Animation Area
+    }
+  }
+`;
+
+/**
+ * @name OpenGovFooter
+ * @summary Footer layout for child window.
+ */
+export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
+  position: fixed;
+  bottom: 0;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  border-top: 1px solid var(--border-primary-color);
+  background-color: var(--background-primary);
+
+  > div:first-of-type {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+  }
+
+  // Left and right.
+  .right,
+  .left {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+  }
+  .left {
+    flex: 1;
+  }
+
+  .stat-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    display: flex;
+    align-items: center;
+
+    // Help icon.
+    .icon-wrapper {
+      font-size: 0.8rem;
+      padding-right: 0.75rem;
+      padding-left: 0.4rem;
+      cursor: pointer;
+      opacity: 0.4;
+      &:hover {
+        color: #953254;
+        opacity: 1;
+      }
+    }
+
+    // Stat label.
+    span {
+      display: flex;
+      align-items: baseline;
+      padding: 0.5rem;
+      padding-right: 1rem;
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .footer-stat {
+    display: flex;
+    column-gap: 0.75rem;
+    align-items: center;
+
+    h2 {
+      font-size: 0.95rem;
+      opacity: 0.5;
+    }
+    span {
+      color: ${(props) =>
+        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
+      font-weight: 400;
+      font-size: 0.95rem;
     }
   }
 `;

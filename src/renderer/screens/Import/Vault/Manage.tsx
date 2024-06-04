@@ -7,26 +7,29 @@ import {
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { BodyInterfaceWrapper } from '@app/Wrappers';
-import AppSVG from '@/config/svg/ledger/polkadot.svg?react';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { DragClose } from '@app/library/DragClose';
 import { ErrorBoundary } from 'react-error-boundary';
-import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
-import { AddressWrapper } from '../Addresses/Wrappers';
 import { Address } from './Address';
 import { Reader } from './Reader';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
-import { HeaderWrapper } from '../../Wrappers';
-import { HardwareStatusBar } from '@app/library/Hardware/HardwareStatusBar';
-import type { ManageVaultProps } from '../types';
+import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import {
+  ControlsWrapper,
+  OpenGovFooter,
+  Scrollable,
+  SortControlLabel,
+} from '@/renderer/utils/common';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+import type { ManageVaultProps } from '../types';
 
 export const Manage = ({
   setSection,
-  section,
+  //section,
   addresses,
   setAddresses,
 }: ManageVaultProps) => {
@@ -51,96 +54,102 @@ export const Manage = ({
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="import" />
-          <h4>
-            <AppSVG />
-            Vault Accounts
-          </h4>
+          <h4>Manage Accounts</h4>
         </div>
       </HeaderWrapper>
 
-      <DragClose windowName="import" />
-      <BodyInterfaceWrapper $maxHeight>
-        {addresses.length ? (
-          <AddressWrapper>
-            <div className="outer-wrapper">
-              <div className="more">
-                <ButtonText
-                  iconLeft={faQrcode}
-                  text={'Import Another Account'}
-                  onClick={() => {
-                    openOverlayWith(
-                      <ErrorBoundary
-                        fallback={<h2>Could not load QR Scanner</h2>}
-                      >
-                        <Reader
-                          addresses={addresses}
-                          setAddresses={setAddresses}
-                        />
-                      </ErrorBoundary>,
-                      'small',
-                      true
-                    );
-                  }}
-                />
-              </div>
+      <Scrollable style={{ paddingTop: 0 }}>
+        {/* Top Controls */}
+        <ControlsWrapper
+          $padWrapper={true}
+          $padBottom={false}
+          style={{ marginBottom: 0 }}
+        >
+          <ButtonPrimaryInvert
+            className="back-btn"
+            text="Back"
+            iconLeft={faCaretLeft}
+            onClick={() => setSection(0)}
+          />
+          <SortControlLabel label="Vault Accounts" />
+          <ButtonText
+            iconLeft={faQrcode}
+            text={'Import Another Account'}
+            onClick={() => {
+              openOverlayWith(
+                <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
+                  <Reader addresses={addresses} setAddresses={setAddresses} />
+                </ErrorBoundary>,
+                'small',
+                true
+              );
+            }}
+          />
+        </ControlsWrapper>
 
-              <Accordion
-                multiple
-                defaultIndex={accordionActiveIndices}
-                setExternalIndices={setAccordionActiveIndices}
-              >
-                {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                  ([chainId, chainAddresses], i) => (
-                    <div key={`${chainId}_vault_addresses`}>
-                      <AccordionItem>
-                        <AccordionCaretHeader
-                          title={`${chainId} Accounts`}
-                          itemIndex={i}
-                          wide={true}
-                        />
-                        <AccordionPanel>
-                          <div className="items-wrapper">
-                            <div className="items">
-                              {chainAddresses.map(
-                                ({ address, index, isImported, name }, j) => (
-                                  <Address
-                                    key={address}
-                                    accountName={name}
-                                    source={'vault'}
-                                    setAddresses={setAddresses}
-                                    address={address}
-                                    index={index}
-                                    isImported={isImported || false}
-                                    setSection={setSection}
-                                    orderData={{
-                                      curIndex: j,
-                                      lastIndex: chainAddresses.length - 1,
-                                    }}
-                                  />
-                                )
-                              )}
-                            </div>
+        {/* Address List */}
+        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+          {addresses.length ? (
+            <Accordion
+              multiple
+              defaultIndex={accordionActiveIndices}
+              setExternalIndices={setAccordionActiveIndices}
+            >
+              {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                ([chainId, chainAddresses], i) => (
+                  <div
+                    key={`${chainId}_vault_addresses`}
+                    style={{ marginBottom: '0.75rem' }}
+                  >
+                    <AccordionItem>
+                      <AccordionCaretHeader
+                        title={`${chainId} Accounts`}
+                        itemIndex={i}
+                        wide={true}
+                      />
+                      <AccordionPanel>
+                        <div className="items-wrapper">
+                          <div className="items">
+                            {chainAddresses.map(
+                              ({ address, index, isImported, name }, j) => (
+                                <Address
+                                  key={address}
+                                  accountName={name}
+                                  source={'vault'}
+                                  setAddresses={setAddresses}
+                                  address={address}
+                                  index={index}
+                                  isImported={isImported || false}
+                                  setSection={setSection}
+                                  orderData={{
+                                    curIndex: j,
+                                    lastIndex: chainAddresses.length - 1,
+                                  }}
+                                />
+                              )
+                            )}
                           </div>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </div>
-                  )
-                )}
-              </Accordion>
-            </div>
-          </AddressWrapper>
-        ) : null}
+                        </div>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </div>
+                )
+              )}
+            </Accordion>
+          ) : null}
+        </ContentWrapper>
+      </Scrollable>
 
-        <HardwareStatusBar
-          show={section === 1}
-          Icon={PolkadotVaultSVG}
-          text={`${addresses.length} Vault Account${
-            addresses.length == 1 ? '' : 's'
-          }`}
-          inProgress={false}
-          handleDone={() => setSection(0)}
-        />
-      </BodyInterfaceWrapper>
+      <OpenGovFooter $chainId={'Polkadot'}>
+        <div>
+          <section className="left">
+            <div className="footer-stat">
+              <h2>Imported Vault Accounts:</h2>
+              <span>{addresses.length}</span>
+            </div>
+          </section>
+        </div>
+      </OpenGovFooter>
     </>
   );
 };
