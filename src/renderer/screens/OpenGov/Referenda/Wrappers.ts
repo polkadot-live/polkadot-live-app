@@ -177,22 +177,26 @@ export const ReferendumRowWrapper = styled.div`
       .subscription-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
         font-size: 0.95rem;
 
+        div {
+          justify-content: center;
+        }
+        // Keep for tweaking later.
         div:nth-child(3n + 2) {
           justify-content: center;
         }
         div:nth-child(3n + 3) {
-          justify-content: end;
+          justify-content: center;
         }
 
         .subscription-row {
           width: 100%;
           display: flex;
           align-items: center;
-          column-gap: 0.75rem;
+          column-gap: 1rem;
           width: 100%;
 
           p {
@@ -221,7 +225,7 @@ export const ReferendumRowWrapper = styled.div`
     column-gap: 0.5rem;
     margin-left: 0.25rem;
 
-    min-width: 80px;
+    min-width: 120px;
     background-color: rgb(19 19 19);
     border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);

@@ -161,7 +161,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faHexagonMinus} />
-                    <span>Remove</span>
+                    <span>Unsubscribe</span>
                   </button>
                 ) : (
                   <button
@@ -169,7 +169,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faHexagonPlus} />
-                    <span>Add</span>
+                    <span>Subscribe</span>
                   </button>
                 )}
               </div>
