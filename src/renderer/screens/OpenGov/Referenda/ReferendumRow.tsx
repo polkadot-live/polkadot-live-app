@@ -128,7 +128,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
           <div
             className="menu-btn-wrapper tooltip-trigger-element"
             data-tooltip-text="Subscriptions"
-            onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
+            onMouseMove={() => setTooltipTextAndOpen('Subscriptions', 'left')}
             onClick={() => setExpanded(!expanded)}
           >
             <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
