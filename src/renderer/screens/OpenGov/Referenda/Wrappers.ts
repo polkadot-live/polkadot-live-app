@@ -9,6 +9,65 @@ import styled from 'styled-components';
  *   ReferendumRowWrapper
  */
 
+export const StickyHeadings = styled.div`
+  background-color: var(--background-modal);
+  position: sticky;
+  top: -1.55rem;
+  z-index: 15;
+
+  .content-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+
+    div {
+      padding: 0.4rem 0 0.4rem;
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 70px;
+        padding-left: 20px;
+      }
+      div:nth-child(2) {
+        min-width: 40px;
+      }
+    }
+
+    .right {
+      justify-content: start;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 154px;
+      }
+      div:nth-child(2) {
+        padding-right: 20px;
+        text-align: right;
+        min-width: 118px;
+      }
+    }
+  }
+
+  .heading {
+    font-size: 0.92rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    opacity: 0.6;
+    transition: opacity 0.2s ease-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 export const ReferendaGroup = styled.div`
   --container-border-radius: 1.25rem;
 
@@ -142,17 +201,23 @@ export const ReferendumRowWrapper = styled.div`
     }
   }
   .menu-btn-wrapper {
+    display: flex;
+    justify-content: center;
     position: relative;
     padding: 0.25rem 0.5rem;
-    cursor: pointer;
+    min-width: 80px;
 
-    svg {
-      opacity: 0.6;
-      transition: opacity 0.2s ease-out;
-    }
-    &:hover {
+    > div {
+      cursor: pointer;
+
       svg {
-        opacity: 1;
+        opacity: 0.6;
+        transition: opacity 0.2s ease-out;
+      }
+      &:hover {
+        svg {
+          opacity: 1;
+        }
       }
     }
   }

@@ -127,13 +127,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </button>
           </div>
           {/* Expand Menu */}
-          <div
-            className="menu-btn-wrapper tooltip-trigger-element"
-            data-tooltip-text="Subscriptions"
-            onMouseMove={() => setTooltipTextAndOpen('Subscriptions', 'left')}
-            onClick={() => setExpanded(!expanded)}
-          >
-            <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
+          <div className="menu-btn-wrapper tooltip-trigger-element">
+            <div
+              style={{ padding: '0 0.75rem' }}
+              className="tooltip-trigger-element"
+              data-tooltip-text="Subscriptions"
+              onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
+              onClick={() => setExpanded(!expanded)}
+            >
+              <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
+            </div>
           </div>
         </div>
       </div>

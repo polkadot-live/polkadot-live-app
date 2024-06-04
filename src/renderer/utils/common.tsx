@@ -417,10 +417,13 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
  * @summary Get readable chain units for rendering.
  */
 export const formatChainUnits = (units: string, chainId: ChainID) => {
+  // Include regex to remove trailing zeros after decimal point.
   const formatted: string = planckToUnit(
     new BigNumber(rmCommas(units)),
     chainUnits(chainId)
-  ).toString();
+  )
+    .toFixed(2)
+    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1');
 
   return `${formatted} ${chainCurrency(chainId)}`;
 };

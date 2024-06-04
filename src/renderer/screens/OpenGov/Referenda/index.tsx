@@ -20,7 +20,7 @@ import {
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { ReferendumRow } from './ReferendumRow';
-import { ReferendaGroup } from './Wrappers';
+import { ReferendaGroup, StickyHeadings } from './Wrappers';
 import { useEffect, useState } from 'react';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
@@ -214,6 +214,23 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               offLabel="Collapsed"
             />
           </ControlsWrapper>
+
+          {/* Sticky Headings */}
+          {!groupingOn && (
+            <StickyHeadings>
+              <div className="content-wrapper">
+                <div className="left">
+                  <div className="heading">ID</div>
+                  <div className="heading">Origin</div>
+                </div>
+                <div className="right">
+                  <div className="heading">OpenGov Portal Links</div>
+                  <div className="heading">Subscriptions</div>
+                </div>
+              </div>
+            </StickyHeadings>
+          )}
+
           {/* List referenda */}
           <section>
             {!isConnected ? (

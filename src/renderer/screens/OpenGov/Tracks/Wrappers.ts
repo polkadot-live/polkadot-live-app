@@ -7,6 +7,7 @@ import styled from 'styled-components';
 /**
  * Provides the following styled components:
  *   TrackGroup
+ *   StickyHeadings
  *   TrackItem
  */
 
