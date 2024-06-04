@@ -61,6 +61,7 @@ export const StickyHeadings = styled.div`
     font-weight: 500;
     opacity: 0.6;
     transition: opacity 0.2s ease-out;
+    cursor: default;
 
     &:hover {
       opacity: 0.8;
