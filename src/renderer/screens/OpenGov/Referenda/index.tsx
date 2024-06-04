@@ -9,7 +9,6 @@ import {
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import type { ReferendaProps } from '../types';
-import { OpenGovFooter, Scrollable } from '../Wrappers';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
@@ -25,9 +24,11 @@ import { ReferendaGroup } from './Wrappers';
 import { useEffect, useState } from 'react';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
-  ControlsWrapper,
-  SortControlButton,
   renderPlaceholders,
+  ControlsWrapper,
+  StatsFooter,
+  Scrollable,
+  SortControlButton,
 } from '@/renderer/utils/common';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 
@@ -171,7 +172,23 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
       <Scrollable>
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
-          <ControlsWrapper>
+          <ControlsWrapper $padBottom={!groupingOn}>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+              style={{
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
+            />
             <SortControlButton
               isActive={newestFirst}
               isDisabled={!isConnected || fetchingReferenda}
@@ -219,7 +236,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
           </section>
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter $chainId={chainId}>
+      <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -231,26 +248,8 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               <span>{fetchingReferenda ? '-' : referenda.length}</span>
             </div>
           </section>
-          <section className="right">
-            <ButtonPrimaryInvert
-              text={'Back'}
-              iconLeft={faCaretLeft}
-              style={{
-                padding: '0.3rem 1.25rem',
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-              onClick={() => setSection(0)}
-            />
-          </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

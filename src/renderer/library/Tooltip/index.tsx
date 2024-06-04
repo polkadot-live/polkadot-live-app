@@ -52,7 +52,7 @@ export const Tooltip = () => {
         let offsetY = 0;
         let offsetX = 0;
 
-        switch (alignRef.current) {
+        switch (alignRef?.current || 'top') {
           case 'top': {
             offsetY = -halfHeight - marginY;
             break;

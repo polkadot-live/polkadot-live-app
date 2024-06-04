@@ -4,6 +4,7 @@
 import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { AnyFunction } from '@w3ux/utils/types';
+import type { ChainID } from '@/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 /**
@@ -131,15 +132,71 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   );
 };
 
+interface SortControlLabelProps {
+  label: string;
+  faIcon?: IconDefinition;
+}
+
+export const SortControlLabel: React.FC<SortControlLabelProps> = ({
+  faIcon,
+  label,
+}: SortControlLabelProps) => (
+  <div className="breadcrumb-wrapper">
+    {faIcon && (
+      <div>
+        <FontAwesomeIcon icon={faIcon} />
+      </div>
+    )}
+    <span>{label}</span>
+  </div>
+);
+
 /**
  * @name ControlsWrapper
  * @summary Wrapper styles for sorting control components.
  */
 
-export const ControlsWrapper = styled.div`
+export const ControlsWrapper = styled.div<{
+  $padWrapper?: boolean;
+  $padBottom?: boolean;
+}>`
+  width: 100%;
+  padding: ${(props) => (props.$padWrapper ? '2rem 1.5rem 0' : '0')};
+  padding-bottom: ${(props) => (props.$padBottom ? '1rem' : '0')};
+
   display: flex;
   column-gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+
+  .back-btn {
+    max-height: 23.52px;
+    align-self: center;
+    font-size: 0.9rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-color: #a94a75;
+    color: #a94a75;
+  }
+
+  .breadcrumb-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #454545;
+    border-radius: 1.25rem;
+
+    span {
+      display: inline-block;
+      text-align: center;
+      display: inline-block;
+      color: #666666;
+      font-size: 0.9rem;
+    }
+    .icon {
+      margin-left: 0.7rem;
+      color: #ededed;
+    }
+  }
 
   .icon-wrapper {
     opacity: 0.75;
@@ -156,8 +213,8 @@ export const ControlsWrapper = styled.div`
     padding: 0.3rem 0.5rem;
     transition: border 0.1s ease-out;
     user-select: none;
-    cursor: pointer;
     transition: opacity 0.1s ease-out;
+    cursor: pointer;
 
     span {
       display: inline-block;
@@ -187,6 +244,158 @@ export const ControlsWrapper = styled.div`
     }
     &.disable {
       opacity: 0.25;
+    }
+  }
+`;
+
+/**
+ * @name Scrollable
+ * @summary A scrollable container with which takes into account header and footer heights.
+ */
+export const Scrollable = styled.div<{
+  $footerHeight?: number;
+  $headerHeight?: number;
+}>`
+  --footer-height: ${(props) => {
+    const height = props.$footerHeight;
+    return height ? `${height}px` : '42.06px';
+  }};
+
+  --header-height: ${(props) => {
+    const height = props.$headerHeight;
+    return height ? `${height}px` : '38.6px';
+  }};
+
+  // height = window height - (header height + footer height)
+  height: calc(100vh - var(--footer-height) - var(--header-height));
+  width: 100%;
+  padding: 1.5rem 0 1rem;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #101010;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #212121;
+  }
+
+  // Placeholder loader.
+  @keyframes placeholderAnimate {
+    0% {
+      background-position: -650px 0;
+    }
+    100% {
+      background-position: 650px 0;
+    }
+  }
+
+  .placeholder-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+    margin-top: 2rem;
+
+    .placeholder-content {
+      height: 3rem;
+      background: #000;
+      border-radius: 1.25rem;
+
+      // Animation
+      animation-duration: 3s;
+      animation-fill-mode: forwards;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      animation-name: placeholderAnimate;
+      background: #101010; // Fallback
+      background: linear-gradient(
+        to right,
+        #101010 2%,
+        #202020 18%,
+        #101010 33%
+      );
+      background-size: 1200px; // Animation Area
+    }
+  }
+`;
+
+/**
+ * @name StatsFooter
+ * @summary Footer layout for child window.
+ */
+export const StatsFooter = styled.section<{ $chainId: ChainID }>`
+  position: fixed;
+  bottom: 0;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  border-top: 1px solid var(--border-primary-color);
+  background-color: var(--background-primary);
+
+  > div:first-of-type {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+  }
+
+  // Left and right.
+  .right,
+  .left {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+  }
+  .left {
+    flex: 1;
+  }
+
+  .stat-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    display: flex;
+    align-items: center;
+
+    // Help icon.
+    .icon-wrapper {
+      font-size: 0.8rem;
+      padding-right: 0.75rem;
+      padding-left: 0.4rem;
+      cursor: pointer;
+      opacity: 0.4;
+      &:hover {
+        color: #953254;
+        opacity: 1;
+      }
+    }
+
+    // Stat label.
+    span {
+      display: flex;
+      align-items: baseline;
+      padding: 0.5rem;
+      padding-right: 1rem;
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .footer-stat {
+    display: flex;
+    column-gap: 0.75rem;
+    align-items: center;
+
+    h2 {
+      font-size: 0.95rem;
+      opacity: 0.5;
+    }
+    span {
+      color: ${(props) =>
+        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
+      font-weight: 400;
+      font-size: 0.95rem;
     }
   }
 `;

@@ -14,14 +14,15 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import { OpenGovFooter, Scrollable } from '../Wrappers';
 import { TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
 import {
-  ControlsWrapper,
-  SortControlButton,
   renderPlaceholders,
+  ControlsWrapper,
+  StatsFooter,
+  Scrollable,
+  SortControlButton,
 } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
@@ -68,7 +69,23 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       <Scrollable>
         <ContentWrapper>
           {/* Sorting controls */}
-          <ControlsWrapper>
+          <ControlsWrapper $padBottom={true}>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+              style={{
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
+            />
             <SortControlButton
               isActive={sortIdAscending}
               isDisabled={!isConnected || fetchingTracks}
@@ -105,7 +122,7 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
           )}
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter $chainId={chainId}>
+      <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -132,25 +149,9 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
                 {renderHelpIcon('help:openGov:maxDeciding')} Max Deciding
               </span>
             </div>
-            <ButtonPrimaryInvert
-              text={'Back'}
-              iconLeft={faCaretLeft}
-              style={{
-                padding: '0.3rem 1.25rem',
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-              onClick={() => setSection(0)}
-            />
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

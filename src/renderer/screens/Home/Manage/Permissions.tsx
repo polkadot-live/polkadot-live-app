@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
+import { AccountsWrapper } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
@@ -10,10 +10,8 @@ import {
 } from '@/renderer/library/Accordion';
 import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
@@ -37,6 +35,9 @@ import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
+import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 
 export const Permissions = ({
   breadcrumb,
@@ -629,20 +630,16 @@ export const Permissions = ({
 
   return (
     <>
-      <BreadcrumbsWrapper>
-        <ul>
-          <li>
-            <ButtonText
-              text="Back"
-              onClick={() => setSection(0)}
-              iconLeft={faAngleLeft}
-              iconTransform="shrink-3"
-            />
-          </li>
-          <li>/</li>
-          <li>{breadcrumb}</li>
-        </ul>
-      </BreadcrumbsWrapper>
+      <ControlsWrapper $padWrapper={true}>
+        <ButtonPrimaryInvert
+          className="back-btn"
+          text="Back"
+          iconLeft={faCaretLeft}
+          onClick={() => setSection(0)}
+        />
+        <SortControlLabel label={breadcrumb} />
+      </ControlsWrapper>
+
       <AccountsWrapper>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}

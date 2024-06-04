@@ -5,12 +5,12 @@ import { useEvents } from '@/renderer/contexts/main/Events';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
-import { EventGroup, SortControlsWrapper, Wrapper } from './Wrappers';
+import { EventGroup, Wrapper } from './Wrappers';
 import { Accordion } from '@/renderer/library/Accordion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 
 export const Events = () => {
   /// State for sorting controls.
@@ -42,32 +42,28 @@ export const Events = () => {
 
   return (
     <>
-      <SortControlsWrapper>
-        <div className="controls-wrapper">
-          {/* Date Sort Button */}
-          <div
-            className={newestFirst ? 'icon-wrapper active' : 'icon-wrapper'}
-            onClick={() => setNewestFirst(!newestFirst)}
-          >
-            <div className="icon">
-              <FontAwesomeIcon icon={faTimer} />
-            </div>
-            <span>{newestFirst ? 'Newest First' : 'Oldest First'}</span>
-          </div>
-          {/* Grouping Button */}
-          <div
-            className={groupingOn ? 'icon-wrapper active' : 'icon-wrapper'}
-            onClick={() => setGroupingOn(!groupingOn)}
-          >
-            <div className="icon">
-              <FontAwesomeIcon icon={faLayerGroup} transform={'grow-1'} />
-            </div>
-            <span>{groupingOn ? 'Grouping On' : 'Grouping Off'}</span>
-          </div>
-        </div>
-      </SortControlsWrapper>
+      {/* Sorting controls */}
+      <ControlsWrapper $padWrapper={true} $padBottom={!groupingOn}>
+        <SortControlButton
+          isActive={newestFirst}
+          isDisabled={false}
+          faIcon={faTimer}
+          onClick={() => setNewestFirst(!newestFirst)}
+          onLabel="Newest First"
+          offLabel="Oldest First"
+        />
+        <SortControlButton
+          isActive={groupingOn}
+          isDisabled={false}
+          faIcon={faLayerGroup}
+          onClick={() => setGroupingOn(!groupingOn)}
+          onLabel="Grouping On"
+          offLabel="Grouping Off"
+        />
+      </ControlsWrapper>
 
-      <Wrapper style={{ margin: '1rem 0' }}>
+      {/* List Events */}
+      <Wrapper>
         {events.size === 0 && <NoEvents />}
 
         <div

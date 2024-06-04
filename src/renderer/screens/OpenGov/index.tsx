@@ -17,7 +17,7 @@ import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { OpenGovCard, OpenGovFooter, TreasuryStats } from './Wrappers';
+import { OpenGovCard, TreasuryStats } from './Wrappers';
 import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
@@ -25,6 +25,7 @@ import type { ChainID } from '@/types/chains';
 import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
+  StatsFooter,
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,
@@ -284,7 +285,7 @@ export const OpenGov: React.FC = () => {
             </div>
           </ContentWrapper>
 
-          <OpenGovFooter $chainId={'Polkadot'}>
+          <StatsFooter $chainId={'Polkadot'}>
             <div>
               <section className="left">
                 <div className="footer-stat">
@@ -318,7 +319,7 @@ export const OpenGov: React.FC = () => {
                 </div>
               </section>
             </div>
-          </OpenGovFooter>
+          </StatsFooter>
         </section>
 
         {/* Section 2 */}
