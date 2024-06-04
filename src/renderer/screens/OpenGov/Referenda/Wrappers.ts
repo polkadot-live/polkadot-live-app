@@ -9,6 +9,65 @@ import styled from 'styled-components';
  *   ReferendumRowWrapper
  */
 
+export const StickyHeadings = styled.div`
+  background-color: var(--background-modal);
+  position: sticky;
+  top: -1.55rem;
+  z-index: 15;
+
+  .content-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+
+    div {
+      padding: 0.4rem 0 0.4rem;
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 70px;
+        padding-left: 20px;
+      }
+      div:nth-child(2) {
+        min-width: 40px;
+      }
+    }
+
+    .right {
+      justify-content: start;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 154px;
+      }
+      div:nth-child(2) {
+        padding-right: 20px;
+        text-align: right;
+        min-width: 118px;
+      }
+    }
+  }
+
+  .heading {
+    font-size: 0.92rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    opacity: 0.6;
+    transition: opacity 0.2s ease-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 export const ReferendaGroup = styled.div`
   --container-border-radius: 1.25rem;
 
@@ -92,8 +151,9 @@ export const ReferendumRowWrapper = styled.div`
     }
     span {
       display: flex;
-      align-items: baseline;
-      padding: 0.6rem 1rem 0.5rem;
+      align-items: center;
+      column-gap: 0.4rem;
+      padding: 0.5rem 1rem 0.5rem;
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
       font-size: 0.8rem;
@@ -141,17 +201,23 @@ export const ReferendumRowWrapper = styled.div`
     }
   }
   .menu-btn-wrapper {
+    display: flex;
+    justify-content: center;
     position: relative;
     padding: 0.25rem 0.5rem;
-    cursor: pointer;
+    min-width: 80px;
 
-    svg {
-      opacity: 0.6;
-      transition: opacity 0.2s ease-out;
-    }
-    &:hover {
+    > div {
+      cursor: pointer;
+
       svg {
-        opacity: 1;
+        opacity: 0.6;
+        transition: opacity 0.2s ease-out;
+      }
+      &:hover {
+        svg {
+          opacity: 1;
+        }
       }
     }
   }
@@ -177,22 +243,26 @@ export const ReferendumRowWrapper = styled.div`
       .subscription-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
         font-size: 0.95rem;
 
+        div {
+          justify-content: center;
+        }
+        // Keep for tweaking later.
         div:nth-child(3n + 2) {
           justify-content: center;
         }
         div:nth-child(3n + 3) {
-          justify-content: end;
+          justify-content: center;
         }
 
         .subscription-row {
           width: 100%;
           display: flex;
           align-items: center;
-          column-gap: 0.75rem;
+          column-gap: 1rem;
           width: 100%;
 
           p {
@@ -221,7 +291,7 @@ export const ReferendumRowWrapper = styled.div`
     column-gap: 0.5rem;
     margin-left: 0.25rem;
 
-    min-width: 80px;
+    min-width: 120px;
     background-color: rgb(19 19 19);
     border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);

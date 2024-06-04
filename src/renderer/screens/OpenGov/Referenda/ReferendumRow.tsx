@@ -9,7 +9,10 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGripDotsVertical } from '@fortawesome/pro-light-svg-icons';
+import {
+  faGripDotsVertical,
+  faHashtag,
+} from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -99,12 +102,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
       <div className="content-wrapper">
         <div className="left">
           <div className="stat-wrapper">
-            <span>ID</span>
-            <h4 className="mw-20">{referendum.referendaId}</h4>
-          </div>
-          <div className="stat-wrapper">
-            <span>Origin</span>
-            <h4>{renderOrigin(referendum)}</h4>
+            <span>
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
+              {referendum.referendaId}
+            </span>
+            <h4 className="mw-20">{renderOrigin(referendum)}</h4>
           </div>
         </div>
         <div className="right">
@@ -125,13 +127,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </button>
           </div>
           {/* Expand Menu */}
-          <div
-            className="menu-btn-wrapper tooltip-trigger-element"
-            data-tooltip-text="Subscriptions"
-            onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
-            onClick={() => setExpanded(!expanded)}
-          >
-            <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
+          <div className="menu-btn-wrapper tooltip-trigger-element">
+            <div
+              style={{ padding: '0 0.75rem' }}
+              className="tooltip-trigger-element"
+              data-tooltip-text="Subscriptions"
+              onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
+              onClick={() => setExpanded(!expanded)}
+            >
+              <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
+            </div>
           </div>
         </div>
       </div>
@@ -161,7 +166,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faHexagonMinus} />
-                    <span>Remove</span>
+                    <span>Unsubscribe</span>
                   </button>
                 ) : (
                   <button
@@ -169,7 +174,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faHexagonPlus} />
-                    <span>Add</span>
+                    <span>Subscribe</span>
                   </button>
                 )}
               </div>

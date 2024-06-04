@@ -1,8 +1,11 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import BigNumber from 'bignumber.js';
 import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { planckToUnit, rmCommas } from '@w3ux/utils';
+import { chainCurrency, chainUnits } from '@/config/chains';
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { ChainID } from '@/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -155,7 +158,6 @@ export const SortControlLabel: React.FC<SortControlLabelProps> = ({
  * @name ControlsWrapper
  * @summary Wrapper styles for sorting control components.
  */
-
 export const ControlsWrapper = styled.div<{
   $padWrapper?: boolean;
   $padBottom?: boolean;
@@ -380,6 +382,16 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
       border-radius: 0.5rem;
       font-size: 0.8rem;
     }
+
+    &.badge-btn {
+      cursor: pointer;
+      &:hover {
+        .icon-wrapper {
+          color: #953254;
+          opacity: 1;
+        }
+      }
+    }
   }
 
   .footer-stat {
@@ -399,3 +411,19 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
     }
   }
 `;
+
+/**
+ * @name formatChainUnits
+ * @summary Get readable chain units for rendering.
+ */
+export const formatChainUnits = (units: string, chainId: ChainID) => {
+  // Include regex to remove trailing zeros after decimal point.
+  const formatted: string = planckToUnit(
+    new BigNumber(rmCommas(units)),
+    chainUnits(chainId)
+  )
+    .toFixed(2)
+    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1');
+
+  return `${formatted} ${chainCurrency(chainId)}`;
+};
