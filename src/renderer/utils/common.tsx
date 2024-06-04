@@ -243,3 +243,68 @@ export const ControlsWrapper = styled.div<{
     }
   }
 `;
+
+/**
+ * @name Scrollable
+ * @summary A scrollable container with which takes into account header and footer heights.
+ */
+
+export const Scrollable = styled.div`
+  --footer-height: 42.06px;
+  --header-height: 38.6px;
+
+  // height = window height - (header height + footer height)
+  height: calc(100vh - var(--footer-height) - var(--header-height));
+  width: 100%;
+  padding: 1.5rem 0 1rem;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #101010;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #212121;
+  }
+
+  // Placeholder loader.
+  @keyframes placeholderAnimate {
+    0% {
+      background-position: -650px 0;
+    }
+    100% {
+      background-position: 650px 0;
+    }
+  }
+
+  .placeholder-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+    margin-top: 2rem;
+
+    .placeholder-content {
+      height: 3rem;
+      background: #000;
+      border-radius: 1.25rem;
+
+      // Animation
+      animation-duration: 3s;
+      animation-fill-mode: forwards;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      animation-name: placeholderAnimate;
+      background: #101010; // Fallback
+      background: linear-gradient(
+        to right,
+        #101010 2%,
+        #202020 18%,
+        #101010 33%
+      );
+      background-size: 1200px; // Animation Area
+    }
+  }
+`;
