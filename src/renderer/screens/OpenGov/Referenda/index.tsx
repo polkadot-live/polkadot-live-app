@@ -242,17 +242,38 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       setAccordionActiveIndices([]);
       setExpandAll(false);
     } else {
-      setAccordionActiveIndices(
-        Array.from(
-          {
-            length: Array.from(getCategorisedReferenda(newestFirst).keys())
-              .length,
-          },
-          (_, index) => index
-        )
-      );
+      // Handle categorised all or subscribed referenda.
+      let length = 0;
+      if (onlySubscribed) {
+        const rs = getSubscribedReferenda();
+        const map = getCategorisedReferenda(newestFirst, rs);
+        length = Array.from(map.keys()).length;
+      } else {
+        const map = getCategorisedReferenda(newestFirst);
+        length = Array.from(map.keys()).length;
+      }
+
+      setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
       setExpandAll(true);
     }
+  };
+
+  /// Handle clicking only subscribed button.
+  const handleToggleOnlySubscribed = () => {
+    const target = !onlySubscribed;
+
+    let length = 0;
+    if (target) {
+      const rs = getSubscribedReferenda();
+      const map = getCategorisedReferenda(newestFirst, rs);
+      length = Array.from(map.keys()).length;
+    } else {
+      const map = getCategorisedReferenda(newestFirst);
+      length = Array.from(map.keys()).length;
+    }
+
+    setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
+    setOnlySubscribed(!onlySubscribed);
   };
 
   return (
@@ -341,7 +362,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 isActive={onlySubscribed}
                 isDisabled={!isConnected || fetchingReferenda}
                 faIcon={faGripDots}
-                onClick={() => setOnlySubscribed(!onlySubscribed)}
+                onClick={() => handleToggleOnlySubscribed()}
                 fixedWidth={false}
               />
             </div>
