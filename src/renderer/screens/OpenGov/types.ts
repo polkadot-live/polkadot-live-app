@@ -28,4 +28,8 @@ export interface ReferendumRowProps {
     task: IntervalSubscription,
     referendumInfo: ActiveReferendaInfo
   ) => void;
+  addAllIntervalSubscriptions: (
+    tasks: IntervalSubscription[],
+    referendumInfo: ActiveReferendaInfo
+  ) => void;
 }

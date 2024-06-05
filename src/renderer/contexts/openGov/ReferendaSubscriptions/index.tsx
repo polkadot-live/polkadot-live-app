@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { NUM_REFERENDUM_SUBSCRIPTIONS } from '@/config/subscriptions/interval';
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import type { ChainID } from '@/types/chains';
@@ -153,6 +154,27 @@ export const ReferendaSubscriptionsProvider = ({
       ? activeTasksMap.get(chainId)!.has(referendum.referendaId)
       : false;
 
+  /// Check if referendum has all subscriptions added.
+  const allSubscriptionsAdded = (
+    chainId: ChainID,
+    referendum: ActiveReferendaInfo
+  ) => {
+    if (!activeTasksMap.has(chainId)) {
+      return false;
+    }
+
+    const chainItems = activeTasksMap.get(chainId)!;
+    const { referendaId } = referendum;
+
+    if (!chainItems.has(referendaId)) {
+      return false;
+    }
+
+    return chainItems.get(referendaId)!.length === NUM_REFERENDUM_SUBSCRIPTIONS
+      ? true
+      : false;
+  };
+
   /// Check if any subscriptions have been added.
   const isNotSubscribedToAny = (chainId: ChainID) =>
     !activeTasksMap.has(chainId);
@@ -186,6 +208,7 @@ export const ReferendaSubscriptionsProvider = ({
         isSubscribedToTask,
         isSubscribedToReferendum,
         isNotSubscribedToAny,
+        allSubscriptionsAdded,
       }}
     >
       {children}

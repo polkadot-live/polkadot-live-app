@@ -54,6 +54,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   const {
     isSubscribedToReferendum,
+    isSubscribedToTask,
     isNotSubscribedToAny,
     addReferendaSubscription,
     removeReferendaSubscription,
@@ -152,6 +153,35 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     });
   };
 
+  /// Handles adding all available subscriptions for a referendum.
+  const addAllIntervalSubscriptions = (
+    tasks: IntervalSubscription[],
+    referendumInfo: ActiveReferendaInfo
+  ) => {
+    const { referendaId: referendumId } = referendumInfo;
+
+    // Throw away task if it's already added and set required fields.
+    const updated = tasks
+      .filter((t) => !isSubscribedToTask(referendumInfo, t))
+      .map(
+        (t) =>
+          ({ ...t, status: 'enable', referendumId }) as IntervalSubscription
+      );
+
+    // Cache task data in referenda subscriptions context.
+    for (const task of updated) {
+      addReferendaSubscription({ ...task });
+    }
+
+    // Communicate with main renderer to process subscription tasks.
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:interval:add:multi',
+      data: {
+        tasks: JSON.stringify(updated),
+      },
+    });
+  };
+
   /// Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
     refetchReferenda();
@@ -199,6 +229,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                       addIntervalSubscription={addIntervalSubscription}
                       removeIntervalSubscription={removeIntervalSubscription}
+                      addAllIntervalSubscriptions={addAllIntervalSubscriptions}
                     />
                   ))}
                 </ReferendaGroup>
@@ -248,6 +279,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                       addIntervalSubscription={addIntervalSubscription}
                       removeIntervalSubscription={removeIntervalSubscription}
+                      addAllIntervalSubscriptions={addAllIntervalSubscriptions}
                     />
                   ))}
                 </ReferendaGroup>
@@ -271,6 +303,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           index={i}
           addIntervalSubscription={addIntervalSubscription}
           removeIntervalSubscription={removeIntervalSubscription}
+          addAllIntervalSubscriptions={addAllIntervalSubscriptions}
         />
       ))}
     </ReferendaGroup>
@@ -294,6 +327,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               index={i}
               addIntervalSubscription={addIntervalSubscription}
               removeIntervalSubscription={removeIntervalSubscription}
+              addAllIntervalSubscriptions={addAllIntervalSubscriptions}
             />
           )
         )}

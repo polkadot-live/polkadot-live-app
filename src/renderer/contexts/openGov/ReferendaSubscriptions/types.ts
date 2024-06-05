@@ -23,4 +23,8 @@ export interface ReferendaSubscriptionsContextInterface {
     referendum: ActiveReferendaInfo
   ) => boolean;
   isNotSubscribedToAny: (chainId: ChainID) => boolean;
+  allSubscriptionsAdded: (
+    chainId: ChainID,
+    referendum: ActiveReferendaInfo
+  ) => boolean;
 }

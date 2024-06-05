@@ -18,6 +18,7 @@ import {
   faHexagonMinus,
   faHexagonPlus,
   faInfo,
+  faOctagonMinus,
   faOctagonPlus,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
@@ -29,11 +30,14 @@ export const ReferendumRow = ({
   index,
   addIntervalSubscription,
   removeIntervalSubscription,
+  addAllIntervalSubscriptions,
 }: ReferendumRowProps) => {
-  const { activeReferendaChainId: chainId } = useReferenda();
-  const { isSubscribedToTask } = useReferendaSubscriptions();
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
+
+  const { activeReferendaChainId: chainId } = useReferenda();
+  const { isSubscribedToTask, allSubscriptionsAdded } =
+    useReferendaSubscriptions();
 
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -80,22 +84,44 @@ export const ReferendumRow = ({
               Subsquare
             </button>
           </div>
-          {/* Expand Menu */}
+          {/* Add + Remove Subscriptions */}
           <div className="menu-btn-wrapper">
             <ControlsWrapper>
-              <div
-                className="tooltip-trigger-element"
-                data-tooltip-text="Subscribe All"
-                onMouseMove={() => setTooltipTextAndOpen('Subscribe All')}
-              >
-                <SortControlButton
-                  isActive={true}
-                  isDisabled={false}
-                  faIcon={faOctagonPlus}
-                  onClick={() => console.log('todo')}
-                  fixedWidth={false}
-                />
-              </div>
+              {!allSubscriptionsAdded(chainId, referendum) ? (
+                <div
+                  className="tooltip-trigger-element"
+                  data-tooltip-text="Subscribe All"
+                  onMouseMove={() => setTooltipTextAndOpen('Subscribe All')}
+                >
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faOctagonPlus}
+                    onClick={() =>
+                      addAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
+                    fixedWidth={false}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="tooltip-trigger-element"
+                  data-tooltip-text="Unsubscribe All"
+                  onMouseMove={() => setTooltipTextAndOpen('Unsubscribe All')}
+                >
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faOctagonMinus}
+                    onClick={() => console.log('TODO')}
+                    fixedWidth={false}
+                  />
+                </div>
+              )}
+              {/* Expand Button */}
               <SortControlButton
                 isActive={true}
                 isDisabled={false}

@@ -15,4 +15,5 @@ export const defaultReferendaSubscriptionsContext: ReferendaSubscriptionsContext
     isSubscribedToTask: () => true,
     isSubscribedToReferendum: () => false,
     isNotSubscribedToAny: (c) => true,
+    allSubscriptionsAdded: (c, r) => false,
   };

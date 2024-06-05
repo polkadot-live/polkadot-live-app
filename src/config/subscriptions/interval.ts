@@ -6,6 +6,9 @@ import type {
   IntervalSubscription,
 } from '@/types/subscriptions';
 
+/// Total interval subscription tasks for a referendum.
+export const NUM_REFERENDUM_SUBSCRIPTIONS = 3;
+
 /// Selectable durations for an interval subscription.
 export const intervalDurationsConfig: IntervalSetting[] = [
   { label: '15 minutes', ticksToWait: 1 },
