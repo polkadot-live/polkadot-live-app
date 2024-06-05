@@ -58,11 +58,7 @@ export const OpenGov: React.FC = () => {
   const { setFetchingTracks, setActiveChainId, activeChainId, getDataCached } =
     useTracks();
 
-  const {
-    setFetchingReferenda,
-    setActiveReferendaChainId,
-    activeReferendaChainId,
-  } = useReferenda();
+  const { fetchReferendaData, activeReferendaChainId } = useReferenda();
 
   /// Section state.
   const [section, setSection] = useState<number>(0);
@@ -116,22 +112,10 @@ export const OpenGov: React.FC = () => {
     refetchStats();
   };
 
-  /// Open proposals.
+  /// Open referenda.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
-    setActiveReferendaChainId(chainId);
-
-    if (isConnected) {
-      setFetchingReferenda(true);
-
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-
+    fetchReferendaData(chainId);
     setSection(1);
   };
 

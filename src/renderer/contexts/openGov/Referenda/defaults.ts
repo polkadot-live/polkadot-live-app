@@ -8,6 +8,7 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   referenda: [],
   fetchingReferenda: false,
   activeReferendaChainId: 'Polkadot',
+  fetchReferendaData: (c) => {},
   setReferenda: (r) => {},
   setFetchingReferenda: (f) => {},
   setActiveReferendaChainId: (c) => {},

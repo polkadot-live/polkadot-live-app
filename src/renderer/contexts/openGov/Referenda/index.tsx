@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -19,6 +21,8 @@ export const ReferendaProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
+
   /// Referenda data received from API.
   const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
 
@@ -28,6 +32,21 @@ export const ReferendaProvider = ({
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
+
+  /// Initiate feching referenda data.
+  const fetchReferendaData = (chainId: ChainID) => {
+    if (!isConnected) {
+      return;
+    }
+
+    setActiveReferendaChainId(chainId);
+    setFetchingReferenda(true);
+
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId },
+    });
+  };
 
   /// Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (desc: boolean) =>
@@ -83,6 +102,7 @@ export const ReferendaProvider = ({
         referenda,
         fetchingReferenda,
         activeReferendaChainId,
+        fetchReferendaData,
         setReferenda,
         setFetchingReferenda,
         setActiveReferendaChainId,
