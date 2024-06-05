@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@/types/chains';
@@ -23,6 +23,9 @@ export const ReferendaProvider = ({
 }) => {
   const { isConnected } = useConnections();
 
+  /// Ref to indiciate if referenda data has been fetched.
+  const dataCachedRef = useRef(false);
+
   /// Referenda data received from API.
   const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
 
@@ -35,7 +38,11 @@ export const ReferendaProvider = ({
 
   /// Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
-    if (!isConnected) {
+    // Return early if offline or data is already fetched for the chain.
+    if (
+      !isConnected ||
+      (dataCachedRef.current && chainId === activeReferendaChainId)
+    ) {
       return;
     }
 
@@ -96,12 +103,16 @@ export const ReferendaProvider = ({
     return map;
   };
 
+  /// Setter for data cached ref.
+  const setDataCached = (cached: boolean) => (dataCachedRef.current = cached);
+
   return (
     <ReferendaContext.Provider
       value={{
         referenda,
         fetchingReferenda,
         activeReferendaChainId,
+        setDataCached,
         fetchReferendaData,
         setReferenda,
         setFetchingReferenda,
