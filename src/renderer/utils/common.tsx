@@ -92,8 +92,8 @@ const LoadingPlaceholderWrapper = styled.div<{
 interface SortControlsButtonProps {
   isActive: boolean;
   isDisabled: boolean;
-  onLabel: string;
-  offLabel: string;
+  onLabel?: string;
+  offLabel?: string;
   fixedWidth?: boolean;
   onClick?: AnyFunction;
   faIcon?: IconDefinition;
@@ -104,8 +104,8 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   isDisabled,
   onClick,
   faIcon,
-  onLabel,
-  offLabel,
+  onLabel = '',
+  offLabel = '',
   fixedWidth = true,
 }: SortControlsButtonProps) => {
   /// Utility to calculate button classes.

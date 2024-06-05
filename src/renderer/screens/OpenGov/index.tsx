@@ -320,15 +320,25 @@ export const OpenGov: React.FC = () => {
                           offLabel="Kusama"
                         />
                       )}
-                      <SortControlButton
-                        isActive={true}
-                        isDisabled={fetchingTreasuryData || !isConnected}
-                        onClick={() => refetchTreasuryStats()}
-                        onLabel=""
-                        offLabel=""
-                        faIcon={faDownFromDottedLine}
-                        fixedWidth={false}
-                      />
+                      <div
+                        className="tooltip-trigger-element"
+                        data-tooltip-text={
+                          isConnected ? 'Refresh Stats' : 'Currently Offline'
+                        }
+                        onMouseMove={() =>
+                          setTooltipTextAndOpen(
+                            isConnected ? 'Refresh Stats' : 'Currently Offline'
+                          )
+                        }
+                      >
+                        <SortControlButton
+                          isActive={true}
+                          isDisabled={fetchingTreasuryData || !isConnected}
+                          onClick={() => refetchTreasuryStats()}
+                          faIcon={faDownFromDottedLine}
+                          fixedWidth={false}
+                        />
+                      </div>
                     </ControlsWrapper>
                   </span>
                 </div>
