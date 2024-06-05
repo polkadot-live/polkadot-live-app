@@ -107,9 +107,19 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   /// Utility for making expand button dynamic.
-  const isExpandActive = () =>
-    accordionActiveIndices.length ===
-    Array.from(getCategorisedReferenda(newestFirst)).length;
+  const isExpandActive = () => {
+    let length = 0;
+    if (onlySubscribed) {
+      const rs = getSubscribedReferenda();
+      const map = getCategorisedReferenda(newestFirst, rs);
+      length = Array.from(map.keys()).length;
+    } else {
+      const map = getCategorisedReferenda(newestFirst);
+      length = Array.from(map.keys()).length;
+    }
+
+    return accordionActiveIndices.length === length;
+  };
 
   /// Render categorized referenda.
   const renderCategorised = () => (
