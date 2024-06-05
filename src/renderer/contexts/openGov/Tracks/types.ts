@@ -11,4 +11,6 @@ export interface TracksContextInterface {
   setTracks: (tracks: Track[]) => void;
   setFetchingTracks: (fetching: boolean) => void;
   setActiveChainId: (chainId: ChainID) => void;
+  setDataCached: (cached: boolean) => void;
+  getDataCached: () => boolean;
 }

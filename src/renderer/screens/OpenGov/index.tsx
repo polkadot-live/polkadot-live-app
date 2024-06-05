@@ -55,7 +55,9 @@ export const OpenGov: React.FC = () => {
   const { setTooltipTextAndOpen } = useTooltip();
 
   /// Tracks context.
-  const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
+  const { setFetchingTracks, setActiveChainId, activeChainId, getDataCached } =
+    useTracks();
+
   const {
     setFetchingReferenda,
     setActiveReferendaChainId,
@@ -94,7 +96,7 @@ export const OpenGov: React.FC = () => {
     setSectionContent('tracks');
     setActiveChainId(chainId);
 
-    if (isConnected) {
+    if (isConnected && (!getDataCached() || activeChainId !== chainId)) {
       setFetchingTracks(true);
 
       // Request tracks data from main renderer.
