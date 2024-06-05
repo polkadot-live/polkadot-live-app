@@ -58,7 +58,7 @@ export const OpenGov: React.FC = () => {
   const { setFetchingTracks, setActiveChainId, activeChainId, getDataCached } =
     useTracks();
 
-  const { fetchReferendaData, activeReferendaChainId } = useReferenda();
+  const { fetchReferendaData } = useReferenda();
 
   /// Section state.
   const [section, setSection] = useState<number>(0);
@@ -335,10 +335,7 @@ export const OpenGov: React.FC = () => {
             <Tracks setSection={setSection} chainId={activeChainId} />
           )}
           {sectionContent === 'referenda' && (
-            <Referenda
-              setSection={setSection}
-              chainId={activeReferendaChainId}
-            />
+            <Referenda setSection={setSection} />
           )}
         </section>
       </ModalMotionTwoSection>

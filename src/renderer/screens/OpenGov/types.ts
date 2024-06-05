@@ -16,7 +16,6 @@ export interface TrackRowProps {
 
 export interface ReferendaProps {
   setSection: (section: number) => void;
-  chainId: ChainID;
 }
 
 export interface ReferendumRowProps {

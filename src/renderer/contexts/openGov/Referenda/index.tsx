@@ -41,7 +41,7 @@ export const ReferendaProvider = ({
     // Return early if offline or data is already fetched for the chain.
     if (
       !isConnected ||
-      (dataCachedRef.current && chainId === activeReferendaChainId)
+      (dataCachedRef.current === true && chainId === activeReferendaChainId)
     ) {
       return;
     }
@@ -52,6 +52,15 @@ export const ReferendaProvider = ({
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:referenda:get',
       data: { chainId },
+    });
+  };
+
+  /// Re-fetch referenda, called when user clicks refresh button.
+  const refetchReferenda = () => {
+    setFetchingReferenda(true);
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId: activeReferendaChainId },
     });
   };
 
@@ -117,10 +126,10 @@ export const ReferendaProvider = ({
         fetchingReferenda,
         activeReferendaChainId,
         fetchReferendaData,
+        refetchReferenda,
         receiveReferendaData,
         setReferenda,
         setFetchingReferenda,
-        setActiveReferendaChainId,
         getSortedActiveReferenda,
         getCategorisedReferenda,
       }}
