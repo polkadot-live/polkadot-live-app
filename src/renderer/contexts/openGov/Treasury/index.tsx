@@ -3,7 +3,7 @@
 
 import * as defaults from './default';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
@@ -50,8 +50,15 @@ export const TreasuryProvider = ({
     new BigNumber(0)
   );
 
+  /// Ref to indicate if data is has been fetched and cached.
+  const dataCachedRef = useRef(false);
+
   /// Initialize context when OpenGov window loads.
   const initTreasury = (chainId: ChainID) => {
+    if (dataCachedRef.current && chainId === treasuryChainId) {
+      return;
+    }
+
     setFetchingTreasuryData(true);
     setTreasuryChainId(chainId);
 
@@ -83,6 +90,9 @@ export const TreasuryProvider = ({
     );
 
     setFetchingTreasuryData(false);
+
+    // Update cached flag.
+    dataCachedRef.current = true;
   };
 
   /// Getter for the encoded treasury address.
