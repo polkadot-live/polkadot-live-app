@@ -31,6 +31,7 @@ export const ReferendumRow = ({
   addIntervalSubscription,
   removeIntervalSubscription,
   addAllIntervalSubscriptions,
+  removeAllIntervalSubscriptions,
 }: ReferendumRowProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
@@ -116,7 +117,12 @@ export const ReferendumRow = ({
                     isActive={true}
                     isDisabled={false}
                     faIcon={faOctagonMinus}
-                    onClick={() => console.log('TODO')}
+                    onClick={() =>
+                      removeAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
                     fixedWidth={false}
                   />
                 </div>

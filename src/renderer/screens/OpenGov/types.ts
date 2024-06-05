@@ -32,4 +32,8 @@ export interface ReferendumRowProps {
     tasks: IntervalSubscription[],
     referendumInfo: ActiveReferendaInfo
   ) => void;
+  removeAllIntervalSubscriptions: (
+    tasks: IntervalSubscription[],
+    referendumInfo: ActiveReferendaInfo
+  ) => void;
 }

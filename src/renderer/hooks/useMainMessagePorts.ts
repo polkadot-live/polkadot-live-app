@@ -534,6 +534,30 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleRemoveIntervals
+   * @summary Remove an array of interval subscriptions from the main renderer state.
+   */
+  const handleRemoveIntervals = async (ev: MessageEvent) => {
+    const { tasks } = ev.data.data;
+    const parsed: IntervalSubscription[] = JSON.parse(tasks);
+
+    // Update managed tasks in intervals controller.
+    IntervalsController.removeSubscriptions(parsed);
+
+    // Update React and store state.
+    for (const task of parsed) {
+      // Remove task from dynamic manage state if necessary.
+      tryRemoveIntervalSubscription({ ...task });
+
+      // Remove task from React state for rendering.
+      removeIntervalSubscription({ ...task });
+
+      // Remove task from store.
+      await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -666,6 +690,10 @@ export const useMainMessagePorts = () => {
             }
             case 'openGov:interval:add:multi': {
               await handleAddIntervals(ev);
+              break;
+            }
+            case 'openGov:interval:remove:multi': {
+              await handleRemoveIntervals(ev);
               break;
             }
             default: {
