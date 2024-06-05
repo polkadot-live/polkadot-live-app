@@ -14,13 +14,11 @@ import type { IntervalSubscription } from '@/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
   const { setIsConnected } = useConnections();
-  const {
-    setTracks,
-    setFetchingTracks,
-    setDataCached: setTracksDataCached,
-  } = useTracks();
+
+  const { receiveTracksData } = useTracks();
   const { receiveReferendaData } = useReferenda();
   const { setTreasuryData } = useTreasury();
+
   const {
     addReferendaSubscription,
     updateReferendaSubscription,
@@ -47,9 +45,7 @@ export const useOpenGovMessagePorts = () => {
               break;
             }
             case 'openGov:tracks:receive': {
-              setTracks(getTracks(ev.data.data.result));
-              setFetchingTracks(false);
-              setTracksDataCached(true);
+              receiveTracksData(getTracks(ev.data.data.result));
               break;
             }
             case 'openGov:referenda:receive': {

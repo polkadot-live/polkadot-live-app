@@ -54,10 +54,8 @@ export const OpenGov: React.FC = () => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
 
-  /// Tracks context.
-  const { setFetchingTracks, setActiveChainId, activeChainId, getDataCached } =
-    useTracks();
-
+  /// Tracks and referenda contexts.
+  const { fetchTracksData } = useTracks();
   const { fetchReferendaData } = useReferenda();
 
   /// Section state.
@@ -90,20 +88,7 @@ export const OpenGov: React.FC = () => {
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
-    setActiveChainId(chainId);
-
-    if (isConnected && (!getDataCached() || activeChainId !== chainId)) {
-      setFetchingTracks(true);
-
-      // Request tracks data from main renderer.
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:tracks:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-
+    fetchTracksData(chainId);
     setSection(1);
   };
 
@@ -331,9 +316,7 @@ export const OpenGov: React.FC = () => {
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          {sectionContent === 'tracks' && (
-            <Tracks setSection={setSection} chainId={activeChainId} />
-          )}
+          {sectionContent === 'tracks' && <Tracks setSection={setSection} />}
           {sectionContent === 'referenda' && (
             <Referenda setSection={setSection} />
           )}
