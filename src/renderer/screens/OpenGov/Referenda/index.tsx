@@ -360,11 +360,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <div
               className="tooltip-trigger-element"
               data-tooltip-text={
-                isConnected ? 'Subscribed Referenda' : 'Currently Offline'
+                isConnected ? 'Show Subscribed' : 'Currently Offline'
               }
               onMouseMove={() =>
                 setTooltipTextAndOpen(
-                  isConnected ? 'Subscribed Referenda' : 'Currently Offline'
+                  isConnected ? 'Show Subscribed' : 'Currently Offline'
                 )
               }
             >
@@ -388,7 +388,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 </div>
                 <div className="right">
                   <div className="heading">Portal Links</div>
-                  <div className="heading">Subscriptions</div>
+                  <div className="heading">Subscribe / Show All</div>
                 </div>
               </div>
             </StickyHeadings>

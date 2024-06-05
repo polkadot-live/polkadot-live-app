@@ -125,16 +125,23 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
     }
   };
 
+  const iconOnly = !onLabel && !offLabel;
+
   return (
     <div className={getButtonClass()} onClick={() => handleClick()}>
       {faIcon && (
         <div className="icon">
-          <FontAwesomeIcon icon={faIcon} />
+          <FontAwesomeIcon
+            icon={faIcon}
+            style={iconOnly ? { marginRight: '1rem' } : {}}
+          />
         </div>
       )}
-      <span style={{ width: '100%', textAlign: faIcon ? 'left' : 'center' }}>
-        {isActive ? onLabel : offLabel}
-      </span>
+      {!iconOnly && (
+        <span style={{ width: '100%', textAlign: faIcon ? 'left' : 'center' }}>
+          {isActive ? onLabel : offLabel}
+        </span>
+      )}
     </div>
   );
 };
@@ -227,7 +234,7 @@ export const ControlsWrapper = styled.div<{
     }
     &.icon-only {
       .icon {
-        margin-left: 1.5rem !important;
+        margin-left: 1rem !important;
       }
     }
     span {

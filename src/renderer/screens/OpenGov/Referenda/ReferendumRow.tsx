@@ -9,18 +9,19 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faGripDotsVertical,
-  faHashtag,
-} from '@fortawesome/pro-light-svg-icons';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
+  faChevronDown,
+  faChevronUp,
   faHexagonMinus,
   faHexagonPlus,
   faInfo,
+  faOctagonPlus,
 } from '@fortawesome/pro-solid-svg-icons';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { IntervalSubscription } from '@/types/subscriptions';
@@ -127,16 +128,29 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </button>
           </div>
           {/* Expand Menu */}
-          <div className="menu-btn-wrapper tooltip-trigger-element">
-            <div
-              style={{ padding: '0 0.75rem' }}
-              className="tooltip-trigger-element"
-              data-tooltip-text="Subscriptions"
-              onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
-              onClick={() => setExpanded(!expanded)}
-            >
-              <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
-            </div>
+          <div className="menu-btn-wrapper">
+            <ControlsWrapper>
+              <div
+                className="tooltip-trigger-element"
+                data-tooltip-text="Subscribe All"
+                onMouseMove={() => setTooltipTextAndOpen('Subscribe All')}
+              >
+                <SortControlButton
+                  isActive={true}
+                  isDisabled={false}
+                  faIcon={faOctagonPlus}
+                  onClick={() => console.log('todo')}
+                  fixedWidth={false}
+                />
+              </div>
+              <SortControlButton
+                isActive={true}
+                isDisabled={false}
+                faIcon={expanded ? faChevronUp : faChevronDown}
+                onClick={() => setExpanded(!expanded)}
+                fixedWidth={false}
+              />
+            </ControlsWrapper>
           </div>
         </div>
       </div>
