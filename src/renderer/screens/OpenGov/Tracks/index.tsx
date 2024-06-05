@@ -27,11 +27,16 @@ import {
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
 
-export const Tracks = ({ setSection, chainId }: TracksProps) => {
-  /// Context data.
-  const { tracks, fetchingTracks, setFetchingTracks } = useTracks();
+export const Tracks = ({ setSection }: TracksProps) => {
   const { openHelp } = useHelp();
   const { isConnected } = useConnections();
+
+  const {
+    activeChainId: chainId,
+    fetchingTracks,
+    tracks,
+    setFetchingTracks,
+  } = useTracks();
 
   /// Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);

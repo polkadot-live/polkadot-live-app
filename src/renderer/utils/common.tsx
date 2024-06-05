@@ -92,8 +92,9 @@ const LoadingPlaceholderWrapper = styled.div<{
 interface SortControlsButtonProps {
   isActive: boolean;
   isDisabled: boolean;
-  onLabel: string;
-  offLabel: string;
+  onLabel?: string;
+  offLabel?: string;
+  fixedWidth?: boolean;
   onClick?: AnyFunction;
   faIcon?: IconDefinition;
 }
@@ -103,14 +104,17 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   isDisabled,
   onClick,
   faIcon,
-  onLabel,
-  offLabel,
+  onLabel = '',
+  offLabel = '',
+  fixedWidth = true,
 }: SortControlsButtonProps) => {
   /// Utility to calculate button classes.
   const getButtonClass = () => {
     const classes = ['icon-wrapper'];
+    fixedWidth && classes.push('fixed');
     isActive && classes.push('active');
     isDisabled && classes.push('disable');
+    onLabel === '' && offLabel === '' && classes.push('icon-only');
     return classes.join(' ');
   };
 
@@ -205,7 +209,7 @@ export const ControlsWrapper = styled.div<{
     display: flex;
     column-gap: 0.75rem;
     align-items: center;
-    min-width: 120px;
+    min-width: auto;
 
     position: relative;
     border: 1px solid #535353;
@@ -218,6 +222,14 @@ export const ControlsWrapper = styled.div<{
     transition: opacity 0.1s ease-out;
     cursor: pointer;
 
+    &.fixed {
+      min-width: 120px !important;
+    }
+    &.icon-only {
+      .icon {
+        margin-left: 1.5rem !important;
+      }
+    }
     span {
       display: inline-block;
       padding-right: 0.7rem;
@@ -245,7 +257,28 @@ export const ControlsWrapper = styled.div<{
       }
     }
     &.disable {
-      opacity: 0.25;
+      opacity: 0.4;
+    }
+  }
+
+  /* Select */
+  .select-wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    border: 1px solid var(--border-secondary-color);
+    border-radius: 1.25rem;
+    padding: 0.35rem 1.5rem;
+    cursor: pointer;
+
+    select {
+      font-size: 1rem;
+      background-color: inherit;
+      color: #929292;
+      opacity: 0.8;
+      border: none;
+      cursor: pointer;
     }
   }
 `;

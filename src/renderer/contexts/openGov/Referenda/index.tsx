@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -19,6 +21,11 @@ export const ReferendaProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
+
+  /// Ref to indiciate if referenda data has been fetched.
+  const dataCachedRef = useRef(false);
+
   /// Referenda data received from API.
   const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
 
@@ -28,6 +35,41 @@ export const ReferendaProvider = ({
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
+
+  /// Initiate feching referenda data.
+  const fetchReferendaData = (chainId: ChainID) => {
+    // Return early if offline or data is already fetched for the chain.
+    if (
+      !isConnected ||
+      (dataCachedRef.current === true && chainId === activeReferendaChainId)
+    ) {
+      return;
+    }
+
+    setActiveReferendaChainId(chainId);
+    setFetchingReferenda(true);
+
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId },
+    });
+  };
+
+  /// Re-fetch referenda, called when user clicks refresh button.
+  const refetchReferenda = () => {
+    setFetchingReferenda(true);
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId: activeReferendaChainId },
+    });
+  };
+
+  /// Set state after receiving referenda data from main renderer.
+  const receiveReferendaData = (info: ActiveReferendaInfo[]) => {
+    setReferenda(info);
+    setFetchingReferenda(false);
+    dataCachedRef.current = true;
+  };
 
   /// Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (desc: boolean) =>
@@ -83,9 +125,11 @@ export const ReferendaProvider = ({
         referenda,
         fetchingReferenda,
         activeReferendaChainId,
+        fetchReferendaData,
+        refetchReferenda,
+        receiveReferendaData,
         setReferenda,
         setFetchingReferenda,
-        setActiveReferendaChainId,
         getSortedActiveReferenda,
         getCategorisedReferenda,
       }}

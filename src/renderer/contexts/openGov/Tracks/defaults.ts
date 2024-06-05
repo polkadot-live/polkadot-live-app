@@ -8,6 +8,8 @@ export const defaultTracksContext: TracksContextInterface = {
   tracks: [],
   fetchingTracks: false,
   activeChainId: 'Polkadot',
+  fetchTracksData: (c) => {},
+  receiveTracksData: (d) => {},
   setTracks: (t) => {},
   setFetchingTracks: (f) => {},
   setActiveChainId: (c) => {},

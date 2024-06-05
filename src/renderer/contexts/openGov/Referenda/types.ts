@@ -8,8 +8,10 @@ export interface ReferendaContextInterface {
   referenda: ActiveReferendaInfo[];
   fetchingReferenda: boolean;
   activeReferendaChainId: ChainID;
+  fetchReferendaData: (chainId: ChainID) => void;
+  refetchReferenda: () => void;
+  receiveReferendaData: (info: ActiveReferendaInfo[]) => void;
   setReferenda: (referenda: ActiveReferendaInfo[]) => void;
-  setActiveReferendaChainId: (chainId: ChainID) => void;
   setFetchingReferenda: (flag: boolean) => void;
   getSortedActiveReferenda: (desc: boolean) => ActiveReferendaInfo[];
   getCategorisedReferenda: (

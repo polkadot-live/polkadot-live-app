@@ -18,7 +18,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { OpenGovCard, TreasuryStats } from './Wrappers';
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
+import { faInfo, faDownFromDottedLine } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
@@ -47,19 +47,16 @@ export const OpenGov: React.FC = () => {
     getFormattedNextBurn,
     getFormattedToBeAwarded,
     getSpendPeriodProgress,
+    refetchStats,
   } = useTreasury();
 
   /// Help overlay and tooltip.
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
 
-  /// Tracks context.
-  const { setFetchingTracks, setActiveChainId, activeChainId } = useTracks();
-  const {
-    setFetchingReferenda,
-    setActiveReferendaChainId,
-    activeReferendaChainId,
-  } = useReferenda();
+  /// Tracks and referenda contexts.
+  const { fetchTracksData } = useTracks();
+  const { fetchReferendaData } = useReferenda();
 
   /// Section state.
   const [section, setSection] = useState<number>(0);
@@ -91,39 +88,19 @@ export const OpenGov: React.FC = () => {
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
-    setActiveChainId(chainId);
-
-    if (isConnected) {
-      setFetchingTracks(true);
-
-      // Request tracks data from main renderer.
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:tracks:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-
+    fetchTracksData(chainId);
     setSection(1);
   };
 
-  /// Open proposals.
+  /// Re-fetch treasury stats when user clicks refresh button.
+  const refetchTreasuryStats = () => {
+    refetchStats();
+  };
+
+  /// Open referenda.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
-    setActiveReferendaChainId(chainId);
-
-    if (isConnected) {
-      setFetchingReferenda(true);
-
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-
+    fetchReferendaData(chainId);
     setSection(1);
   };
 
@@ -138,9 +115,11 @@ export const OpenGov: React.FC = () => {
   );
 
   /// Handle changing treasury stats.
-  const handleChangeStats = () => {
-    const target = treasuryChainId === 'Polkadot' ? 'Kusama' : 'Polkadot';
-    initTreasury(target);
+  const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const target = event.target.value as ChainID;
+    if (target !== treasuryChainId) {
+      initTreasury(target);
+    }
   };
 
   /// Wrap some market around a tooltip if offline mode.
@@ -288,32 +267,45 @@ export const OpenGov: React.FC = () => {
           <StatsFooter $chainId={'Polkadot'}>
             <div>
               <section className="left">
-                <div className="footer-stat">
+                <div className="footer-stat" style={{ columnGap: '0' }}>
                   <h2>Treasury Stats:</h2>
                   <span style={{ marginLeft: '1rem' }}>
                     <ControlsWrapper style={{ marginBottom: '0' }}>
+                      {/* Select Box */}
                       {wrapWithOfflineTooltip(
-                        <SortControlButton
-                          isActive={treasuryChainId === 'Polkadot'}
-                          isDisabled={
-                            treasuryChainId === 'Polkadot' || !isConnected
-                          }
-                          onClick={() => handleChangeStats()}
-                          onLabel="Polkadot"
-                          offLabel="Polkadot"
-                        />
+                        <div className="select-wrapper">
+                          <select
+                            disabled={!isConnected}
+                            id="select-treasury-chain"
+                            value={treasuryChainId}
+                            onChange={(e) => handleChangeStats(e)}
+                          >
+                            <option value="Polkadot">Polkadot</option>
+                            <option value="Kusama">Kusama</option>
+                          </select>
+                        </div>
                       )}
-                      {wrapWithOfflineTooltip(
+
+                      {/* Re-fetch Stats */}
+                      <div
+                        className="tooltip-trigger-element"
+                        data-tooltip-text={
+                          isConnected ? 'Refresh Stats' : 'Currently Offline'
+                        }
+                        onMouseMove={() =>
+                          setTooltipTextAndOpen(
+                            isConnected ? 'Refresh Stats' : 'Currently Offline'
+                          )
+                        }
+                      >
                         <SortControlButton
-                          isActive={treasuryChainId === 'Kusama'}
-                          isDisabled={
-                            treasuryChainId === 'Kusama' || !isConnected
-                          }
-                          onClick={() => handleChangeStats()}
-                          onLabel="Kusama"
-                          offLabel="Kusama"
+                          isActive={true}
+                          isDisabled={fetchingTreasuryData || !isConnected}
+                          onClick={() => refetchTreasuryStats()}
+                          faIcon={faDownFromDottedLine}
+                          fixedWidth={false}
                         />
-                      )}
+                      </div>
                     </ControlsWrapper>
                   </span>
                 </div>
@@ -324,14 +316,9 @@ export const OpenGov: React.FC = () => {
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          {sectionContent === 'tracks' && (
-            <Tracks setSection={setSection} chainId={activeChainId} />
-          )}
+          {sectionContent === 'tracks' && <Tracks setSection={setSection} />}
           {sectionContent === 'referenda' && (
-            <Referenda
-              setSection={setSection}
-              chainId={activeReferendaChainId}
-            />
+            <Referenda setSection={setSection} />
           )}
         </section>
       </ModalMotionTwoSection>

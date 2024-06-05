@@ -13,16 +13,18 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
   faCaretLeft,
+  faDownFromDottedLine,
   faLayerGroup,
   faLineHeight,
   faTimer,
 } from '@fortawesome/pro-solid-svg-icons';
 import { useConnections } from '@/renderer/contexts/common/Connections';
+import { useEffect, useState } from 'react';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { ReferendaGroup, StickyHeadings } from './Wrappers';
-import { useEffect, useState } from 'react';
-import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import {
   renderPlaceholders,
   ControlsWrapper,
@@ -32,16 +34,19 @@ import {
 } from '@/renderer/utils/common';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 
-export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
+export const Referenda = ({ setSection }: ReferendaProps) => {
   const {
     referenda,
     fetchingReferenda,
+    refetchReferenda,
     setFetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    activeReferendaChainId: chainId,
   } = useReferenda();
 
   const { isConnected } = useConnections();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
@@ -85,6 +90,11 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
       });
     }
   }, [isConnected]);
+
+  /// Re-fetch referenda when user clicks refresh button.
+  const handleRefetchReferenda = () => {
+    refetchReferenda();
+  };
 
   /// Utility for making expand button dynamic.
   const isExpandActive = () =>
@@ -213,6 +223,26 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
               onLabel="All Expanded"
               offLabel="Collapsed"
             />
+
+            <div
+              className="tooltip-trigger-element"
+              data-tooltip-text={
+                isConnected ? 'Refresh Referenda' : 'Currently Offline'
+              }
+              onMouseMove={() =>
+                setTooltipTextAndOpen(
+                  isConnected ? 'Refresh Referenda' : 'Currently Offline'
+                )
+              }
+            >
+              <SortControlButton
+                isActive={true}
+                isDisabled={fetchingReferenda || !isConnected}
+                onClick={() => handleRefetchReferenda()}
+                faIcon={faDownFromDottedLine}
+                fixedWidth={false}
+              />
+            </div>
           </ControlsWrapper>
 
           {/* Sticky Headings */}
@@ -224,7 +254,7 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
                   <div className="heading">Origin</div>
                 </div>
                 <div className="right">
-                  <div className="heading">OpenGov Portal Links</div>
+                  <div className="heading">Portal Links</div>
                   <div className="heading">Subscriptions</div>
                 </div>
               </div>
@@ -262,7 +292,9 @@ export const Referenda = ({ setSection, chainId }: ReferendaProps) => {
             </div>
             <div className="footer-stat">
               <h2>Active Referenda:</h2>
-              <span>{fetchingReferenda ? '-' : referenda.length}</span>
+              <span style={{ minWidth: '14px' }}>
+                {fetchingReferenda ? '-' : referenda.length}
+              </span>
             </div>
           </section>
         </div>
