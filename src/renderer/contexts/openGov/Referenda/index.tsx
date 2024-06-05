@@ -55,6 +55,13 @@ export const ReferendaProvider = ({
     });
   };
 
+  /// Set state after receiving referenda data from main renderer.
+  const receiveReferendaData = (info: ActiveReferendaInfo[]) => {
+    setReferenda(info);
+    setFetchingReferenda(false);
+    dataCachedRef.current = true;
+  };
+
   /// Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (desc: boolean) =>
     referenda.sort((a, b) =>
@@ -103,17 +110,14 @@ export const ReferendaProvider = ({
     return map;
   };
 
-  /// Setter for data cached ref.
-  const setDataCached = (cached: boolean) => (dataCachedRef.current = cached);
-
   return (
     <ReferendaContext.Provider
       value={{
         referenda,
         fetchingReferenda,
         activeReferendaChainId,
-        setDataCached,
         fetchReferendaData,
+        receiveReferendaData,
         setReferenda,
         setFetchingReferenda,
         setActiveReferendaChainId,

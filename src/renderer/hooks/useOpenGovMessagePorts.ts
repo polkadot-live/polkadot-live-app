@@ -19,11 +19,7 @@ export const useOpenGovMessagePorts = () => {
     setFetchingTracks,
     setDataCached: setTracksDataCached,
   } = useTracks();
-  const {
-    setReferenda,
-    setFetchingReferenda,
-    setDataCached: setReferendaDataCached,
-  } = useReferenda();
+  const { receiveReferendaData } = useReferenda();
   const { setTreasuryData } = useTreasury();
   const {
     addReferendaSubscription,
@@ -59,10 +55,7 @@ export const useOpenGovMessagePorts = () => {
             case 'openGov:referenda:receive': {
               const { json } = ev.data.data;
               const parsed: ActiveReferendaInfo[] = JSON.parse(json);
-
-              setReferenda(parsed);
-              setFetchingReferenda(false);
-              setReferendaDataCached(true);
+              receiveReferendaData(parsed);
               break;
             }
             case 'openGov:treasury:set': {
