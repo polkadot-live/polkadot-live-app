@@ -18,7 +18,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { OpenGovCard, TreasuryStats } from './Wrappers';
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
+import { faInfo, faDownFromDottedLine } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
@@ -47,6 +47,7 @@ export const OpenGov: React.FC = () => {
     getFormattedNextBurn,
     getFormattedToBeAwarded,
     getSpendPeriodProgress,
+    refetchStats,
   } = useTreasury();
 
   /// Help overlay and tooltip.
@@ -106,6 +107,11 @@ export const OpenGov: React.FC = () => {
     }
 
     setSection(1);
+  };
+
+  /// Re-fetch treasury stats when user clicks refresh button.
+  const refetchTreasuryStats = () => {
+    refetchStats();
   };
 
   /// Open proposals.
@@ -314,6 +320,15 @@ export const OpenGov: React.FC = () => {
                           offLabel="Kusama"
                         />
                       )}
+                      <SortControlButton
+                        isActive={true}
+                        isDisabled={fetchingTreasuryData || !isConnected}
+                        onClick={() => refetchTreasuryStats()}
+                        onLabel=""
+                        offLabel=""
+                        faIcon={faDownFromDottedLine}
+                        fixedWidth={false}
+                      />
                     </ControlsWrapper>
                   </span>
                 </div>

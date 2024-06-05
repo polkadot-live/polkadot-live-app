@@ -19,4 +19,5 @@ export const defaultTreasuryContext: TreasuryContextInterface = {
   getFormattedSpendPeriod: () => '',
   getSpendPeriodProgress: () => '',
   getFormattedRemainingSpendPeriod: () => '',
+  refetchStats: () => {},
 };

@@ -69,6 +69,16 @@ export const TreasuryProvider = ({
     });
   };
 
+  /// Re-fetch treasury stats.
+  const refetchStats = () => {
+    setFetchingTreasuryData(true);
+
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:treasury:init',
+      data: { chainId: treasuryChainId },
+    });
+  };
+
   /// Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
     const {
@@ -176,6 +186,7 @@ export const TreasuryProvider = ({
         getFormattedSpendPeriod,
         getSpendPeriodProgress,
         getFormattedRemainingSpendPeriod,
+        refetchStats,
       }}
     >
       {children}
