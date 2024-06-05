@@ -9,9 +9,10 @@ export const defaultReferendaSubscriptionsContext: ReferendaSubscriptionsContext
     subscriptions: new Map(),
     setSubscriptions: () => {},
     activeTasksMap: new Map(),
-    setActiveTasksMap: () => {},
     addReferendaSubscription: (t) => {},
     removeReferendaSubscription: (t) => {},
     updateReferendaSubscription: (t) => {},
     isSubscribedToTask: () => true,
+    isSubscribedToReferendum: () => false,
+    isNotSubscribedToAny: (c) => true,
   };

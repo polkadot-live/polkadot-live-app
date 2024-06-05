@@ -10,8 +10,7 @@ export interface ReferendaSubscriptionsContextInterface {
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>
   ) => void;
-  activeTasksMap: Map<number, string[]>;
-  setActiveTasksMap: (activeTasks: Map<number, string[]>) => void;
+  activeTasksMap: Map<ChainID, Map<number, string[]>>;
   addReferendaSubscription: (task: IntervalSubscription) => void;
   removeReferendaSubscription: (task: IntervalSubscription) => void;
   updateReferendaSubscription: (task: IntervalSubscription) => void;
@@ -19,4 +18,9 @@ export interface ReferendaSubscriptionsContextInterface {
     referendum: ActiveReferendaInfo,
     task: IntervalSubscription
   ) => boolean;
+  isSubscribedToReferendum: (
+    chainId: ChainID,
+    referendum: ActiveReferendaInfo
+  ) => boolean;
+  isNotSubscribedToAny: (chainId: ChainID) => boolean;
 }
