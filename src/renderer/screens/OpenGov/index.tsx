@@ -144,9 +144,11 @@ export const OpenGov: React.FC = () => {
   );
 
   /// Handle changing treasury stats.
-  const handleChangeStats = () => {
-    const target = treasuryChainId === 'Polkadot' ? 'Kusama' : 'Polkadot';
-    initTreasury(target);
+  const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const target = event.target.value as ChainID;
+    if (target !== treasuryChainId) {
+      initTreasury(target);
+    }
   };
 
   /// Wrap some market around a tooltip if offline mode.
@@ -294,32 +296,26 @@ export const OpenGov: React.FC = () => {
           <StatsFooter $chainId={'Polkadot'}>
             <div>
               <section className="left">
-                <div className="footer-stat">
+                <div className="footer-stat" style={{ columnGap: '0' }}>
                   <h2>Treasury Stats:</h2>
                   <span style={{ marginLeft: '1rem' }}>
                     <ControlsWrapper style={{ marginBottom: '0' }}>
+                      {/* Select Box */}
                       {wrapWithOfflineTooltip(
-                        <SortControlButton
-                          isActive={treasuryChainId === 'Polkadot'}
-                          isDisabled={
-                            treasuryChainId === 'Polkadot' || !isConnected
-                          }
-                          onClick={() => handleChangeStats()}
-                          onLabel="Polkadot"
-                          offLabel="Polkadot"
-                        />
+                        <div className="select-wrapper">
+                          <select
+                            disabled={!isConnected}
+                            id="select-treasury-chain"
+                            value={treasuryChainId}
+                            onChange={(e) => handleChangeStats(e)}
+                          >
+                            <option value="Polkadot">Polkadot</option>
+                            <option value="Kusama">Kusama</option>
+                          </select>
+                        </div>
                       )}
-                      {wrapWithOfflineTooltip(
-                        <SortControlButton
-                          isActive={treasuryChainId === 'Kusama'}
-                          isDisabled={
-                            treasuryChainId === 'Kusama' || !isConnected
-                          }
-                          onClick={() => handleChangeStats()}
-                          onLabel="Kusama"
-                          offLabel="Kusama"
-                        />
-                      )}
+
+                      {/* Re-fetch Stats */}
                       <div
                         className="tooltip-trigger-element"
                         data-tooltip-text={

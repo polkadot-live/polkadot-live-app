@@ -257,7 +257,28 @@ export const ControlsWrapper = styled.div<{
       }
     }
     &.disable {
-      opacity: 0.25;
+      opacity: 0.4;
+    }
+  }
+
+  /* Select */
+  .select-wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    border: 1px solid var(--border-secondary-color);
+    border-radius: 1.25rem;
+    padding: 0.35rem 1.5rem;
+    cursor: pointer;
+
+    select {
+      font-size: 1rem;
+      background-color: inherit;
+      color: #929292;
+      opacity: 0.8;
+      border: none;
+      cursor: pointer;
     }
   }
 `;
