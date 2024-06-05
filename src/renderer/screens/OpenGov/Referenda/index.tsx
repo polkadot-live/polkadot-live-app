@@ -8,7 +8,6 @@ import {
 } from '@/renderer/library/Accordion';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import type { ReferendaProps } from '../types';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
@@ -35,6 +34,9 @@ import {
 } from '@/renderer/utils/common';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
+import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/types/subscriptions';
+import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
@@ -50,8 +52,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getCategorisedReferenda,
   } = useReferenda();
 
-  const { isSubscribedToReferendum, isNotSubscribedToAny } =
-    useReferendaSubscriptions();
+  const {
+    isSubscribedToReferendum,
+    isNotSubscribedToAny,
+    addReferendaSubscription,
+    removeReferendaSubscription,
+  } = useReferendaSubscriptions();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
@@ -101,6 +107,51 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
   }, [isConnected]);
 
+  /// Handles adding an interval subscription for a referendum.
+  const addIntervalSubscription = (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => {
+    // Set referendum ID on task.
+    const { referendaId: referendumId } = referendumInfo;
+    task.referendumId = referendumId;
+
+    // Enable the task since by default.
+    task.status = 'enable';
+
+    // Cache subscription in referenda subscriptions context.
+    addReferendaSubscription({ ...task });
+
+    // Communicate with main renderer to process subscription task.
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:interval:add',
+      data: {
+        task: JSON.stringify(task),
+      },
+    });
+  };
+
+  /// Handles removing an interval subscription for a referendum.
+  const removeIntervalSubscription = (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => {
+    // Set referendum ID on task.
+    const { referendaId: referendumId } = referendumInfo;
+    task.referendumId = referendumId;
+
+    // Remove subscription in referenda subscriptions context.
+    removeReferendaSubscription(task);
+
+    // Communicate with main renderer to remove subscription from controller.
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:interval:remove',
+      data: {
+        task: JSON.stringify(task),
+      },
+    });
+  };
+
   /// Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
     refetchReferenda();
@@ -146,6 +197,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       key={`${j}_${referendum.referendaId}`}
                       referendum={referendum}
                       index={j}
+                      addIntervalSubscription={addIntervalSubscription}
+                      removeIntervalSubscription={removeIntervalSubscription}
                     />
                   ))}
                 </ReferendaGroup>
@@ -193,6 +246,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       key={`${j}_${referendum.referendaId}`}
                       referendum={referendum}
                       index={j}
+                      addIntervalSubscription={addIntervalSubscription}
+                      removeIntervalSubscription={removeIntervalSubscription}
                     />
                   ))}
                 </ReferendaGroup>
@@ -214,6 +269,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           key={`${i}_${referendum.referendaId}`}
           referendum={referendum}
           index={i}
+          addIntervalSubscription={addIntervalSubscription}
+          removeIntervalSubscription={removeIntervalSubscription}
         />
       ))}
     </ReferendaGroup>
@@ -235,6 +292,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               key={`${i}_${referendum.referendaId}_subscribed`}
               referendum={referendum}
               index={i}
+              addIntervalSubscription={addIntervalSubscription}
+              removeIntervalSubscription={removeIntervalSubscription}
             />
           )
         )}

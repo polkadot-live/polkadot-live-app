@@ -1,7 +1,6 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
@@ -22,18 +21,17 @@ import {
   faOctagonPlus,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
-import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { IntervalSubscription } from '@/types/subscriptions';
 import type { ReferendumRowProps } from '../types';
 
-export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
+export const ReferendumRow = ({
+  referendum,
+  index,
+  addIntervalSubscription,
+  removeIntervalSubscription,
+}: ReferendumRowProps) => {
   const { activeReferendaChainId: chainId } = useReferenda();
-  const {
-    addReferendaSubscription,
-    removeReferendaSubscription,
-    isSubscribedToTask,
-  } = useReferendaSubscriptions();
+  const { isSubscribedToTask } = useReferendaSubscriptions();
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
 
@@ -46,51 +44,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
   const getIntervalSubscriptions = () =>
     allIntervalTasks.filter((t) => t.chainId === chainId);
-
-  /// Handles adding an interval subscription for a referendum.
-  const addIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
-  ) => {
-    // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-
-    // Enable the task since by default.
-    task.status = 'enable';
-
-    // Cache subscription in referenda subscriptions context.
-    addReferendaSubscription({ ...task });
-
-    // Communicate with main renderer to process subscription task.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:add',
-      data: {
-        task: JSON.stringify(task),
-      },
-    });
-  };
-
-  /// Handles removing an interval subscription for a referendum.
-  const removeIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
-  ) => {
-    // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-
-    // Remove subscription in referenda subscriptions context.
-    removeReferendaSubscription(task);
-
-    // Communicate with main renderer to remove subscription from controller.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:remove',
-      data: {
-        task: JSON.stringify(task),
-      },
-    });
-  };
 
   const renderHelpIcon = (key: HelpItemKey) => (
     <div className="icon-wrapper" onClick={() => openHelp(key)}>

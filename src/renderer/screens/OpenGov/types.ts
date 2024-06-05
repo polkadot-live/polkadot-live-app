@@ -3,6 +3,7 @@
 
 import type { Track } from '@/model/Track';
 import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { IntervalSubscription } from '@/types/subscriptions';
 
 export interface TracksProps {
   setSection: (section: number) => void;
@@ -19,4 +20,12 @@ export interface ReferendaProps {
 export interface ReferendumRowProps {
   referendum: ActiveReferendaInfo;
   index: number;
+  addIntervalSubscription: (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => void;
+  removeIntervalSubscription: (
+    task: IntervalSubscription,
+    referendumInfo: ActiveReferendaInfo
+  ) => void;
 }
