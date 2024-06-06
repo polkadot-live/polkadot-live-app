@@ -15,6 +15,7 @@ import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
+import type { SettingAction } from './renderer/screens/Settings/types';
 
 console.log(global.location.search);
 
@@ -89,6 +90,9 @@ export const API: PreloadAPI = {
   /**
    * New handlers
    */
+
+  toggleSetting: (action: SettingAction) =>
+    ipcRenderer.send('app:setting:toggle', action),
 
   toggleWindowWorkspaceVisibility: () =>
     ipcRenderer.send('app:set:workspaceVisibility'),

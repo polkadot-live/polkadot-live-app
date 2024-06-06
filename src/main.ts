@@ -35,6 +35,7 @@ import type {
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { AnyJson } from '@w3ux/utils/types';
+import type { SettingAction } from './renderer/screens/Settings/types';
 import type {
   SubscriptionTask,
   IntervalSubscription,
@@ -484,6 +485,33 @@ app.whenReady().then(async () => {
     // Update storage.
     const key = ConfigMain.settingsStorageKey;
     (store as Record<string, AnyData>).set(key, settings);
+  });
+
+  // Toggle an app setting.
+  ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {
+    switch (action) {
+      case 'settings:execute:showDebuggingSubscriptions': {
+        const settings = ConfigMain.getAppSettings();
+        const flag = !settings.appShowDebuggingSubscriptions;
+        settings.appShowDebuggingSubscriptions = flag;
+
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
+        break;
+      }
+      case 'settings:execute:silenceOsNotifications': {
+        const settings = ConfigMain.getAppSettings();
+        const flag = !settings.appSilenceOsNotifications;
+        settings.appSilenceOsNotifications = flag;
+
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   });
 
   /**

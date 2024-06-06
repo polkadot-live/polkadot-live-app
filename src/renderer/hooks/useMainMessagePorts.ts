@@ -648,7 +648,7 @@ export const useMainMessagePorts = () => {
               handleToggleSilenceOsNotifications();
               break;
             }
-            case 'settings:execute:showDebuggingSubscriptions:': {
+            case 'settings:execute:showDebuggingSubscriptions': {
               handleToggleShowDebuggingSubscriptions();
               break;
             }

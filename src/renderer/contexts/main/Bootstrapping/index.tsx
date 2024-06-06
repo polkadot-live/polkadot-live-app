@@ -62,15 +62,20 @@ export const BootstrappingProvider = ({
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
-      const { appDocked, appSilenceOsNotifications } =
-        await window.myAPI.getAppSettings();
+      const {
+        appDocked,
+        appSilenceOsNotifications,
+        appShowDebuggingSubscriptions,
+      } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
       RendererConfig.silenceNotifications = appSilenceOsNotifications;
+      RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
 
       // Set settings state.
       setDockToggled(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
+      setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
     };
 
     initSettings();
@@ -424,6 +429,8 @@ export const BootstrappingProvider = ({
       RendererConfig.silenceNotifications = newFlag;
       return newFlag;
     });
+
+    window.myAPI.toggleSetting('settings:execute:silenceOsNotifications');
   };
 
   /// Handle toggling show debugging subscriptions.
@@ -433,6 +440,8 @@ export const BootstrappingProvider = ({
       RendererConfig.showDebuggingSubscriptions = newFlag;
       return newFlag;
     });
+
+    window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
   };
 
   return (

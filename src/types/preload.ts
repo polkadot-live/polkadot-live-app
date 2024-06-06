@@ -8,7 +8,10 @@ import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
-import type { PersistedSettings } from '@/renderer/screens/Settings/types';
+import type {
+  PersistedSettings,
+  SettingAction,
+} from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
   getPersistedIntervalTasks: () => Promise<string>;
@@ -23,6 +26,7 @@ export interface PreloadAPI {
   exportAppData: ApiExportAppData;
   importAppData: ApiImportAppData;
 
+  toggleSetting: (action: SettingAction) => void;
   getAppSettings: ApiGetAppSettings;
   getDockedFlag: ApiGetDockedFlag;
   setDockedFlag: ApiSetDockedFlag;
