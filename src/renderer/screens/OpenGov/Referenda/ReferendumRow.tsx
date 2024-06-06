@@ -19,8 +19,8 @@ import {
   faHexagonMinus,
   faHexagonPlus,
   faInfo,
-  faOctagonMinus,
-  faOctagonPlus,
+  faMinusLarge,
+  faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
@@ -98,7 +98,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faOctagonPlus}
+                    faIcon={faPlusLarge}
                     onClick={() =>
                       addAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
@@ -117,7 +117,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faOctagonMinus}
+                    faIcon={faMinusLarge}
                     onClick={() =>
                       removeAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
