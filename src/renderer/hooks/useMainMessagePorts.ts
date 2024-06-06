@@ -48,8 +48,11 @@ export const useMainMessagePorts = () => {
     tryRemoveIntervalSubscription,
   } = useManage();
 
-  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
-    useBootstrapping();
+  const {
+    handleDockedToggle,
+    handleToggleSilenceOsNotifications,
+    handleToggleShowDebuggingSubscriptions,
+  } = useBootstrapping();
 
   const { setAccountSubscriptions, updateAccountNameInTasks } =
     useSubscriptions();
@@ -643,6 +646,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:silenceOsNotifications': {
               handleToggleSilenceOsNotifications();
+              break;
+            }
+            case 'settings:execute:showDebuggingSubscriptions:': {
+              handleToggleShowDebuggingSubscriptions();
               break;
             }
             case 'settings:execute:exportData': {

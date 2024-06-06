@@ -458,7 +458,7 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
-  // Get applicated docked flag.
+  // Get application docked flag.
   ipcMain.handle(
     'app:docked:get',
     async () => ConfigMain.getAppSettings().appDocked

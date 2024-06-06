@@ -49,6 +49,8 @@ export const BootstrappingProvider = ({
   const [dockToggled, setDockToggled] = useState<boolean>(true);
   const [silenceOsNotifications, setSilenceOsNotifications] =
     useState<boolean>(false);
+  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
+    useState<boolean>(false);
 
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
@@ -424,6 +426,15 @@ export const BootstrappingProvider = ({
     });
   };
 
+  /// Handle toggling show debugging subscriptions.
+  const handleToggleShowDebuggingSubscriptions = () => {
+    setShowDebuggingSubscriptions((prev) => {
+      const newFlag = !prev;
+      RendererConfig.showDebuggingSubscriptions = newFlag;
+      return newFlag;
+    });
+  };
+
   return (
     <BootstrappingContext.Provider
       value={{
@@ -433,8 +444,10 @@ export const BootstrappingProvider = ({
         online,
         dockToggled,
         silenceOsNotifications,
+        showDebuggingSubscriptions,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
+        handleToggleShowDebuggingSubscriptions,
         setSilenceOsNotifications,
         setAppLoading,
         setIsAborting,

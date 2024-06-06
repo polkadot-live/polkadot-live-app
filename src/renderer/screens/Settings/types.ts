@@ -8,6 +8,7 @@ export interface PersistedSettings {
   appDocked: boolean;
   appSilenceOsNotifications: boolean;
   appShowOnAllWorkspaces: boolean;
+  appShowDebuggingSubscriptions: boolean;
 }
 
 export type SettingAction =

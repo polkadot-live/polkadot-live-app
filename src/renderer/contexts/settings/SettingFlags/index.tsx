@@ -18,20 +18,27 @@ export const SettingFlagsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Store state of window docked setting.
+  /// Store state of switch settings.
   const [windowDocked, setWindowDocked] = useState(true);
   const [silenceOsNotifications, setSilenceOsNotifications] = useState(true);
   const [showOnAllWorkspaces, setShowOnAllWorkspaces] = useState(false);
+  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
+    useState(false);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
     const initSettings = async () => {
-      const { appDocked, appSilenceOsNotifications, appShowOnAllWorkspaces } =
-        await window.myAPI.getAppSettings();
+      const {
+        appDocked,
+        appSilenceOsNotifications,
+        appShowOnAllWorkspaces,
+        appShowDebuggingSubscriptions,
+      } = await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
       setShowOnAllWorkspaces(appShowOnAllWorkspaces);
+      setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
     };
 
     initSettings();
@@ -50,6 +57,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:showOnAllWorkspaces': {
         return showOnAllWorkspaces;
+      }
+      case 'settings:execute:showDebuggingSubscriptions': {
+        return showDebuggingSubscriptions;
       }
       default: {
         return true;
@@ -72,6 +82,10 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:showOnAllWorkspaces': {
         setShowOnAllWorkspaces(!showOnAllWorkspaces);
+        break;
+      }
+      case 'settings:execute:showDebuggingSubscriptions': {
+        setShowDebuggingSubscriptions(!showDebuggingSubscriptions);
         break;
       }
       default: {
