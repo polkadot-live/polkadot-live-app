@@ -5,6 +5,7 @@ import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
+import { Flip, toast } from 'react-toastify';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { IntervalSubscription } from '@/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';
@@ -25,6 +26,23 @@ export const TaskHandlerProvider = ({
     removeReferendaSubscription,
     isSubscribedToTask,
   } = useReferendaSubscriptions();
+
+  /// Utility to render toastify notification.
+  const showToastSuccess = (text: string, toastId: string) => {
+    toast.success(text, {
+      position: 'top-center',
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId,
+    });
+  };
 
   /// Handles adding an interval subscription for a referendum.
   const addIntervalSubscription = (
@@ -48,6 +66,10 @@ export const TaskHandlerProvider = ({
         task: JSON.stringify(task),
       },
     });
+
+    const text = `Subscription added for referendum ${referendumId}.`;
+    const toastId = `add-${task.chainId}-${referendumId}-${task.action}`;
+    showToastSuccess(text, toastId);
   };
 
   /// Handles removing an interval subscription for a referendum.
@@ -69,6 +91,10 @@ export const TaskHandlerProvider = ({
         task: JSON.stringify(task),
       },
     });
+
+    const text = `Subscription removed for referendum ${referendumId}.`;
+    const toastId = `remove-${task.chainId}-${referendumId}-${task.action}`;
+    showToastSuccess(text, toastId);
   };
 
   /// Handles adding all available subscriptions for a referendum.
@@ -98,6 +124,10 @@ export const TaskHandlerProvider = ({
         tasks: JSON.stringify(updated),
       },
     });
+
+    const text = `Subscriptions added for referendum ${referendumId}.`;
+    const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
+    showToastSuccess(text, toastId);
   };
 
   /// Handles removing all addde subscriptions for a referendum.
@@ -127,6 +157,10 @@ export const TaskHandlerProvider = ({
         tasks: JSON.stringify(updated),
       },
     });
+
+    const text = `Subscriptions removed for referendum ${referendumId}.`;
+    const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
+    showToastSuccess(text, toastId);
   };
 
   return (

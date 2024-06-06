@@ -4,10 +4,10 @@
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
@@ -16,10 +16,10 @@ import { motion } from 'framer-motion';
 import {
   faChevronDown,
   faChevronUp,
-  faHexagonMinus,
-  faHexagonPlus,
   faInfo,
+  faMinus,
   faMinusLarge,
+  faPlus,
   faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
@@ -165,7 +165,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     className="add-btn"
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
-                    <FontAwesomeIcon icon={faHexagonMinus} />
+                    <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
                     <span>Unsubscribe</span>
                   </button>
                 ) : (
@@ -173,7 +173,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     className="add-btn"
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
-                    <FontAwesomeIcon icon={faHexagonPlus} />
+                    <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
                     <span>Subscribe</span>
                   </button>
                 )}
