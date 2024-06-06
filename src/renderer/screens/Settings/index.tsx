@@ -16,6 +16,7 @@ import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import type { SettingItem } from './types';
+import { Scrollable } from '@/renderer/utils/common';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
@@ -66,39 +67,41 @@ export const Settings: React.FC = () => {
           <h3>Settings</h3>
         </div>
       </HeaderWrapper>
-      <ContentWrapper>
-        <Accordion
-          multiple
-          defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
-        >
-          {Array.from(getSortedSettings().entries()).map(
-            ([category, settings], i) => (
-              <AccordionItem key={`${category}_settings`}>
-                <AccordionCaretHeader
-                  title={category}
-                  itemIndex={i}
-                  wide={true}
-                />
-                <AccordionPanel>
-                  <div
-                    className="flex-column"
-                    style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
-                  >
-                    {settings.map((setting, j) => (
-                      <Setting
-                        key={j}
-                        setting={setting}
-                        handleSetting={handleSetting}
-                      />
-                    ))}
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            )
-          )}
-        </Accordion>
-      </ContentWrapper>
+      <Scrollable $footerHeight={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <ContentWrapper>
+          <Accordion
+            multiple
+            defaultIndex={accordionActiveIndices}
+            setExternalIndices={setAccordionActiveIndices}
+          >
+            {Array.from(getSortedSettings().entries()).map(
+              ([category, settings], i) => (
+                <AccordionItem key={`${category}_settings`}>
+                  <AccordionCaretHeader
+                    title={category}
+                    itemIndex={i}
+                    wide={true}
+                  />
+                  <AccordionPanel>
+                    <div
+                      className="flex-column"
+                      style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
+                    >
+                      {settings.map((setting, j) => (
+                        <Setting
+                          key={j}
+                          setting={setting}
+                          handleSetting={handleSetting}
+                        />
+                      ))}
+                    </div>
+                  </AccordionPanel>
+                </AccordionItem>
+              )
+            )}
+          </Accordion>
+        </ContentWrapper>
+      </Scrollable>
     </>
   );
 };
