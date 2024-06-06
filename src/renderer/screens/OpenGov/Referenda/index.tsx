@@ -8,12 +8,12 @@ import {
 } from '@/renderer/library/Accordion';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import type { ReferendaProps } from '../types';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
   faCaretLeft,
   faDownFromDottedLine,
+  faGripDots,
   faLayerGroup,
   faLineHeight,
   faTimer,
@@ -33,25 +33,31 @@ import {
   SortControlButton,
 } from '@/renderer/utils/common';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
+import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
+  const { isConnected } = useConnections();
+  const { setTooltipTextAndOpen } = useTooltip();
+
   const {
     referenda,
     fetchingReferenda,
+    activeReferendaChainId: chainId,
     refetchReferenda,
     setFetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
-    activeReferendaChainId: chainId,
   } = useReferenda();
 
-  const { isConnected } = useConnections();
-  const { setTooltipTextAndOpen } = useTooltip();
+  const { isSubscribedToReferendum, isNotSubscribedToAny } =
+    useReferendaSubscriptions();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
+  const [onlySubscribed, setOnlySubscribed] = useState(false);
 
   /// Calculate number of accordion panels needed.
   const indicesLength = Array.from(
@@ -62,6 +68,10 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: indicesLength }, (_, index) => index));
+
+  /// Get subscribed referenda only.
+  const getSubscribedReferenda = () =>
+    referenda.filter((r) => isSubscribedToReferendum(chainId, r));
 
   /// Open all accordion items when new referenda is loaded.
   useEffect(() => {
@@ -97,13 +107,25 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   /// Utility for making expand button dynamic.
-  const isExpandActive = () =>
-    accordionActiveIndices.length ===
-    Array.from(getCategorisedReferenda(newestFirst)).length;
+  const isExpandActive = () => {
+    let length = 0;
+    if (onlySubscribed) {
+      const rs = getSubscribedReferenda();
+      const map = getCategorisedReferenda(newestFirst, rs);
+      length = Array.from(map.keys()).length;
+    } else {
+      const map = getCategorisedReferenda(newestFirst);
+      length = Array.from(map.keys()).length;
+    }
+
+    return accordionActiveIndices.length === length;
+  };
 
   /// Render categorized referenda.
   const renderCategorised = () => (
-    <section style={{ display: groupingOn ? 'block' : 'none' }}>
+    <section
+      style={{ display: groupingOn && !onlySubscribed ? 'block' : 'none' }}
+    >
       <Accordion
         multiple
         defaultIndex={accordionActiveIndices}
@@ -135,9 +157,58 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     </section>
   );
 
+  /// Render categorised subscribed referenda.
+  const renderSubscribedCategorised = () => {
+    const display = groupingOn && onlySubscribed ? 'block' : 'none';
+
+    return isNotSubscribedToAny(chainId) ? (
+      <div style={{ display }}>
+        <p style={{ marginTop: '20px' }}>
+          You have not subscribed to any referenda.
+        </p>
+      </div>
+    ) : (
+      <section style={{ display }}>
+        <Accordion
+          multiple
+          defaultIndex={accordionActiveIndices}
+          setExternalIndices={setAccordionActiveIndices}
+        >
+          {Array.from(
+            getCategorisedReferenda(
+              newestFirst,
+              getSubscribedReferenda()
+            ).entries()
+          ).map(([origin, infos], i) => (
+            <AccordionItem key={`${origin}_subscribed_referenda_group`}>
+              <AccordionCaretHeader
+                title={getSpacedOrigin(origin)}
+                itemIndex={i}
+                wide={true}
+              />
+              <AccordionPanel>
+                <ReferendaGroup>
+                  {infos.map((referendum, j) => (
+                    <ReferendumRow
+                      key={`${j}_${referendum.referendaId}`}
+                      referendum={referendum}
+                      index={j}
+                    />
+                  ))}
+                </ReferendaGroup>
+              </AccordionPanel>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </section>
+    );
+  };
+
   /// Render referenda as single list.
   const renderListed = () => (
-    <ReferendaGroup style={{ display: groupingOn ? 'none' : 'block' }}>
+    <ReferendaGroup
+      style={{ display: groupingOn || onlySubscribed ? 'none' : 'block' }}
+    >
       {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
         <ReferendumRow
           key={`${i}_${referendum.referendaId}`}
@@ -147,6 +218,29 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       ))}
     </ReferendaGroup>
   );
+
+  /// Render subscribed referenda as a single list.
+  const renderSubscribedListed = () => {
+    const display = groupingOn || !onlySubscribed ? 'none' : 'block';
+
+    return isNotSubscribedToAny(chainId) ? (
+      <div style={{ display }}>
+        <p>You have not subscribed to any referenda.</p>
+      </div>
+    ) : (
+      <ReferendaGroup style={{ display }}>
+        {getSortedActiveReferenda(newestFirst, getSubscribedReferenda()).map(
+          (referendum, i) => (
+            <ReferendumRow
+              key={`${i}_${referendum.referendaId}_subscribed`}
+              referendum={referendum}
+              index={i}
+            />
+          )
+        )}
+      </ReferendaGroup>
+    );
+  };
 
   /// Handle expanding or collapsing all accordion panels.
   const handleExpandAll = () => {
@@ -158,17 +252,38 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       setAccordionActiveIndices([]);
       setExpandAll(false);
     } else {
-      setAccordionActiveIndices(
-        Array.from(
-          {
-            length: Array.from(getCategorisedReferenda(newestFirst).keys())
-              .length,
-          },
-          (_, index) => index
-        )
-      );
+      // Handle categorised all or subscribed referenda.
+      let length = 0;
+      if (onlySubscribed) {
+        const rs = getSubscribedReferenda();
+        const map = getCategorisedReferenda(newestFirst, rs);
+        length = Array.from(map.keys()).length;
+      } else {
+        const map = getCategorisedReferenda(newestFirst);
+        length = Array.from(map.keys()).length;
+      }
+
+      setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
       setExpandAll(true);
     }
+  };
+
+  /// Handle clicking only subscribed button.
+  const handleToggleOnlySubscribed = () => {
+    const target = !onlySubscribed;
+
+    let length = 0;
+    if (target) {
+      const rs = getSubscribedReferenda();
+      const map = getCategorisedReferenda(newestFirst, rs);
+      length = Array.from(map.keys()).length;
+    } else {
+      const map = getCategorisedReferenda(newestFirst);
+      length = Array.from(map.keys()).length;
+    }
+
+    setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
+    setOnlySubscribed(!onlySubscribed);
   };
 
   return (
@@ -212,18 +327,19 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               isDisabled={!isConnected || fetchingReferenda}
               faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
-              onLabel="Grouping On"
-              offLabel="Grouping Off"
+              onLabel="Grouping"
+              offLabel="Grouping"
+              fixedWidth={false}
             />
             <SortControlButton
               isActive={isExpandActive()}
               isDisabled={!isConnected || fetchingReferenda || !groupingOn}
               faIcon={faLineHeight}
               onClick={() => handleExpandAll()}
-              onLabel="All Expanded"
+              onLabel="Expanded"
               offLabel="Collapsed"
+              fixedWidth={false}
             />
-
             <div
               className="tooltip-trigger-element"
               data-tooltip-text={
@@ -243,6 +359,25 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 fixedWidth={false}
               />
             </div>
+            <div
+              className="tooltip-trigger-element"
+              data-tooltip-text={
+                isConnected ? 'Show Subscribed' : 'Currently Offline'
+              }
+              onMouseMove={() =>
+                setTooltipTextAndOpen(
+                  isConnected ? 'Show Subscribed' : 'Currently Offline'
+                )
+              }
+            >
+              <SortControlButton
+                isActive={onlySubscribed}
+                isDisabled={!isConnected || fetchingReferenda}
+                faIcon={faGripDots}
+                onClick={() => handleToggleOnlySubscribed()}
+                fixedWidth={false}
+              />
+            </div>
           </ControlsWrapper>
 
           {/* Sticky Headings */}
@@ -255,7 +390,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 </div>
                 <div className="right">
                   <div className="heading">Portal Links</div>
-                  <div className="heading">Subscriptions</div>
+                  <div className="heading">Subscribe / Show All</div>
                 </div>
               </div>
             </StickyHeadings>
@@ -276,6 +411,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   <>
                     {renderCategorised()}
                     {renderListed()}
+                    {renderSubscribedCategorised()}
+                    {renderSubscribedListed()}
                   </>
                 )}
               </div>

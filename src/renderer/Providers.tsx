@@ -31,6 +31,7 @@ import { TracksProvider } from './contexts/openGov/Tracks';
 import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
 import { ReferendaSubscriptionsProvider } from './contexts/openGov/ReferendaSubscriptions';
+import { TaskHandlerProvider } from './contexts/openGov/TaskHandler';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -90,7 +91,8 @@ const getProvidersForWindow = () => {
         TracksProvider,
         TreasuryProvider,
         ReferendaProvider,
-        ReferendaSubscriptionsProvider
+        ReferendaSubscriptionsProvider,
+        TaskHandlerProvider
       )(Theme);
     }
     default: {

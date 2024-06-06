@@ -48,9 +48,9 @@ export const StickyHeadings = styled.div`
         min-width: 154px;
       }
       div:nth-child(2) {
-        padding-right: 20px;
+        padding-right: 22px;
         text-align: right;
-        min-width: 118px;
+        min-width: 152px;
       }
     }
   }
@@ -207,20 +207,6 @@ export const ReferendumRowWrapper = styled.div`
     position: relative;
     padding: 0.25rem 0.5rem;
     min-width: 80px;
-
-    > div {
-      cursor: pointer;
-
-      svg {
-        opacity: 0.6;
-        transition: opacity 0.2s ease-out;
-      }
-      &:hover {
-        svg {
-          opacity: 1;
-        }
-      }
-    }
   }
 
   /* Collapsable Section */

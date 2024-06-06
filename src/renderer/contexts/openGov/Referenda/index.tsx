@@ -72,13 +72,23 @@ export const ReferendaProvider = ({
   };
 
   /// Get all referenda sorted by desc or asc.
-  const getSortedActiveReferenda = (desc: boolean) =>
-    referenda.sort((a, b) =>
-      desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
-    );
+  const getSortedActiveReferenda = (
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
+  ) => {
+    const sortFn = (info: ActiveReferendaInfo[]) =>
+      info.sort((a, b) =>
+        desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
+      );
+
+    return otherReferenda ? sortFn(otherReferenda) : sortFn(referenda);
+  };
 
   /// Get categorized referenda, sorted desc or asc in each category.
-  const getCategorisedReferenda = (desc: boolean) => {
+  const getCategorisedReferenda = (
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
+  ) => {
     const map = new Map<string, ActiveReferendaInfo[]>();
 
     // Insert keys into map in the desired order.
@@ -87,7 +97,9 @@ export const ReferendaProvider = ({
     }
 
     // Populate map with referenda data.
-    for (const info of referenda) {
+    const dataSet = otherReferenda || referenda;
+
+    for (const info of dataSet) {
       const originData = info.Ongoing.origin;
       const origin =
         'system' in originData

@@ -510,6 +510,54 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleAddIntervals
+   * @summary Add an array of interval subscriptions to the main renderer state.
+   */
+  const handleAddIntervals = async (ev: MessageEvent) => {
+    const { tasks } = ev.data.data;
+    const parsed: IntervalSubscription[] = JSON.parse(tasks);
+
+    // Update managed tasks in intervals controller.
+    IntervalsController.insertSubscriptions(parsed);
+
+    // Update React and store state.
+    for (const task of parsed) {
+      // Add task to dynamic manage state if necessary.
+      tryAddIntervalSubscription({ ...task });
+
+      // Add task to React state for rendering.
+      addIntervalSubscription({ ...task });
+
+      // Persist task to store.
+      await window.myAPI.persistIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /**
+   * @name handleRemoveIntervals
+   * @summary Remove an array of interval subscriptions from the main renderer state.
+   */
+  const handleRemoveIntervals = async (ev: MessageEvent) => {
+    const { tasks } = ev.data.data;
+    const parsed: IntervalSubscription[] = JSON.parse(tasks);
+
+    // Update managed tasks in intervals controller.
+    IntervalsController.removeSubscriptions(parsed);
+
+    // Update React and store state.
+    for (const task of parsed) {
+      // Remove task from dynamic manage state if necessary.
+      tryRemoveIntervalSubscription({ ...task });
+
+      // Remove task from React state for rendering.
+      removeIntervalSubscription({ ...task });
+
+      // Remove task from store.
+      await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -638,6 +686,14 @@ export const useMainMessagePorts = () => {
             }
             case 'openGov:interval:remove': {
               await handleRemoveInterval(ev);
+              break;
+            }
+            case 'openGov:interval:add:multi': {
+              await handleAddIntervals(ev);
+              break;
+            }
+            case 'openGov:interval:remove:multi': {
+              await handleRemoveIntervals(ev);
               break;
             }
             default: {

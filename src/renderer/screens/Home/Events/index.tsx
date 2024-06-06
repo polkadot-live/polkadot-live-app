@@ -57,8 +57,9 @@ export const Events = () => {
           isDisabled={false}
           faIcon={faLayerGroup}
           onClick={() => setGroupingOn(!groupingOn)}
-          onLabel="Grouping On"
-          offLabel="Grouping Off"
+          onLabel="Grouping"
+          offLabel="Grouping"
+          fixedWidth={false}
         />
       </ControlsWrapper>
 

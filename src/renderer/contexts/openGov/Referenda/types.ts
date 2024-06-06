@@ -13,8 +13,12 @@ export interface ReferendaContextInterface {
   receiveReferendaData: (info: ActiveReferendaInfo[]) => void;
   setReferenda: (referenda: ActiveReferendaInfo[]) => void;
   setFetchingReferenda: (flag: boolean) => void;
-  getSortedActiveReferenda: (desc: boolean) => ActiveReferendaInfo[];
+  getSortedActiveReferenda: (
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
+  ) => ActiveReferendaInfo[];
   getCategorisedReferenda: (
-    desc: boolean
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
   ) => Map<string, ActiveReferendaInfo[]>;
 }

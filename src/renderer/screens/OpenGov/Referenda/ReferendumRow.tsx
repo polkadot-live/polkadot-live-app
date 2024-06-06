@@ -1,40 +1,45 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faGripDotsVertical,
-  faHashtag,
-} from '@fortawesome/pro-light-svg-icons';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
+import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
 import { motion } from 'framer-motion';
 import {
-  faHexagonMinus,
-  faHexagonPlus,
+  faChevronDown,
+  faChevronUp,
   faInfo,
+  faMinus,
+  faMinusLarge,
+  faPlus,
+  faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { IntervalSubscription } from '@/types/subscriptions';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
-  const { activeReferendaChainId: chainId } = useReferenda();
-  const {
-    addReferendaSubscription,
-    removeReferendaSubscription,
-    isSubscribedToTask,
-  } = useReferendaSubscriptions();
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
+
+  const { activeReferendaChainId: chainId } = useReferenda();
+  const { isSubscribedToTask, allSubscriptionsAdded } =
+    useReferendaSubscriptions();
+
+  const {
+    addIntervalSubscription,
+    addAllIntervalSubscriptions,
+    removeAllIntervalSubscriptions,
+    removeIntervalSubscription,
+  } = useTaskHandler();
 
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -45,51 +50,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
   const getIntervalSubscriptions = () =>
     allIntervalTasks.filter((t) => t.chainId === chainId);
-
-  /// Handles adding an interval subscription for a referendum.
-  const addIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
-  ) => {
-    // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-
-    // Enable the task since by default.
-    task.status = 'enable';
-
-    // Cache subscription in referenda subscriptions context.
-    addReferendaSubscription({ ...task });
-
-    // Communicate with main renderer to process subscription task.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:add',
-      data: {
-        task: JSON.stringify(task),
-      },
-    });
-  };
-
-  /// Handles removing an interval subscription for a referendum.
-  const removeIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
-  ) => {
-    // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-
-    // Remove subscription in referenda subscriptions context.
-    removeReferendaSubscription(task);
-
-    // Communicate with main renderer to remove subscription from controller.
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:remove',
-      data: {
-        task: JSON.stringify(task),
-      },
-    });
-  };
 
   const renderHelpIcon = (key: HelpItemKey) => (
     <div className="icon-wrapper" onClick={() => openHelp(key)}>
@@ -126,17 +86,57 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               Subsquare
             </button>
           </div>
-          {/* Expand Menu */}
-          <div className="menu-btn-wrapper tooltip-trigger-element">
-            <div
-              style={{ padding: '0 0.75rem' }}
-              className="tooltip-trigger-element"
-              data-tooltip-text="Subscriptions"
-              onMouseMove={() => setTooltipTextAndOpen('Subscriptions')}
-              onClick={() => setExpanded(!expanded)}
-            >
-              <FontAwesomeIcon icon={faGripDotsVertical} transform={'grow-6'} />
-            </div>
+          {/* Add + Remove Subscriptions */}
+          <div className="menu-btn-wrapper">
+            <ControlsWrapper>
+              {!allSubscriptionsAdded(chainId, referendum) ? (
+                <div
+                  className="tooltip-trigger-element"
+                  data-tooltip-text="Subscribe All"
+                  onMouseMove={() => setTooltipTextAndOpen('Subscribe All')}
+                >
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faPlusLarge}
+                    onClick={() =>
+                      addAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
+                    fixedWidth={false}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="tooltip-trigger-element"
+                  data-tooltip-text="Unsubscribe All"
+                  onMouseMove={() => setTooltipTextAndOpen('Unsubscribe All')}
+                >
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faMinusLarge}
+                    onClick={() =>
+                      removeAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
+                    fixedWidth={false}
+                  />
+                </div>
+              )}
+              {/* Expand Button */}
+              <SortControlButton
+                isActive={true}
+                isDisabled={false}
+                faIcon={expanded ? faChevronUp : faChevronDown}
+                onClick={() => setExpanded(!expanded)}
+                fixedWidth={false}
+              />
+            </ControlsWrapper>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     className="add-btn"
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
-                    <FontAwesomeIcon icon={faHexagonMinus} />
+                    <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
                     <span>Unsubscribe</span>
                   </button>
                 ) : (
@@ -173,7 +173,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     className="add-btn"
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
-                    <FontAwesomeIcon icon={faHexagonPlus} />
+                    <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
                     <span>Subscribe</span>
                   </button>
                 )}
