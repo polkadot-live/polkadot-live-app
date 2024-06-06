@@ -123,7 +123,7 @@ export const ReferendaSubscriptionsProvider = ({
     });
   };
 
-  /// Check if a referendum is subscribed to the provided action.
+  /// Check if a task has been added for a referendum.
   const isSubscribedToTask = (
     referendum: ActiveReferendaInfo,
     task: IntervalSubscription
@@ -145,7 +145,7 @@ export const ReferendaSubscriptionsProvider = ({
     return false;
   };
 
-  /// Check if a referendum has added subscriptions.
+  /// Check if a referendum has added subscription tasks.
   const isSubscribedToReferendum = (
     chainId: ChainID,
     referendum: ActiveReferendaInfo
@@ -154,7 +154,7 @@ export const ReferendaSubscriptionsProvider = ({
       ? activeTasksMap.get(chainId)!.has(referendum.referendaId)
       : false;
 
-  /// Check if referendum has all subscriptions added.
+  /// Check if referendum has all its subscriptions added.
   const allSubscriptionsAdded = (
     chainId: ChainID,
     referendum: ActiveReferendaInfo
@@ -175,7 +175,7 @@ export const ReferendaSubscriptionsProvider = ({
       : false;
   };
 
-  /// Check if any subscriptions have been added.
+  /// Check if any subscriptions have been added for a given chain.
   const isNotSubscribedToAny = (chainId: ChainID) =>
     !activeTasksMap.has(chainId);
 
