@@ -327,16 +327,18 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               isDisabled={!isConnected || fetchingReferenda}
               faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
-              onLabel="Grouping On"
-              offLabel="Grouping Off"
+              onLabel="Grouping"
+              offLabel="Grouping"
+              fixedWidth={false}
             />
             <SortControlButton
               isActive={isExpandActive()}
               isDisabled={!isConnected || fetchingReferenda || !groupingOn}
               faIcon={faLineHeight}
               onClick={() => handleExpandAll()}
-              onLabel="All Expanded"
+              onLabel="Expanded"
               offLabel="Collapsed"
+              fixedWidth={false}
             />
             <div
               className="tooltip-trigger-element"

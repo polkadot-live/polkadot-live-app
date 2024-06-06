@@ -239,7 +239,7 @@ export const ControlsWrapper = styled.div<{
     }
     span {
       display: inline-block;
-      padding-right: 0.7rem;
+      padding-right: 1rem;
       color: #666666;
       font-size: 0.9rem;
     }
