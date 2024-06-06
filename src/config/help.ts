@@ -142,6 +142,14 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:showDebuggingSubscriptions',
+    title: 'Show Debugging Subscriptions',
+    definition: [
+      'Show debugging subscriptions under the Subsciptions tab in the main window.',
+      'Allows subscribing to the most recent slot and timestamp of the respective network.',
+    ],
+  },
+  {
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [
