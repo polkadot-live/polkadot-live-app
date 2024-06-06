@@ -273,9 +273,9 @@ export const Accounts = ({
 
           {/* Manage Chains */}
           {showDebuggingSubscriptions && (
-            <AccordionItem key={'chain_accounts'}>
+            <AccordionItem key={'debugging_accounts'}>
               <AccordionCaretHeader
-                title={'Chains'}
+                title={'Debugging'}
                 itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
               />
               <AccordionPanel>
