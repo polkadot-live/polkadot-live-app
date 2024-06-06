@@ -22,7 +22,6 @@ import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { ReferendaGroup, StickyHeadings } from './Wrappers';
@@ -53,13 +52,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
-
-  const {
-    addIntervalSubscription,
-    addAllIntervalSubscriptions,
-    removeIntervalSubscription,
-    removeAllIntervalSubscriptions,
-  } = useTaskHandler();
 
   /// Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
@@ -154,12 +146,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       key={`${j}_${referendum.referendaId}`}
                       referendum={referendum}
                       index={j}
-                      addIntervalSubscription={addIntervalSubscription}
-                      removeIntervalSubscription={removeIntervalSubscription}
-                      addAllIntervalSubscriptions={addAllIntervalSubscriptions}
-                      removeAllIntervalSubscriptions={
-                        removeAllIntervalSubscriptions
-                      }
                     />
                   ))}
                 </ReferendaGroup>
@@ -207,12 +193,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       key={`${j}_${referendum.referendaId}`}
                       referendum={referendum}
                       index={j}
-                      addIntervalSubscription={addIntervalSubscription}
-                      removeIntervalSubscription={removeIntervalSubscription}
-                      addAllIntervalSubscriptions={addAllIntervalSubscriptions}
-                      removeAllIntervalSubscriptions={
-                        removeAllIntervalSubscriptions
-                      }
                     />
                   ))}
                 </ReferendaGroup>
@@ -234,10 +214,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           key={`${i}_${referendum.referendaId}`}
           referendum={referendum}
           index={i}
-          addIntervalSubscription={addIntervalSubscription}
-          removeIntervalSubscription={removeIntervalSubscription}
-          addAllIntervalSubscriptions={addAllIntervalSubscriptions}
-          removeAllIntervalSubscriptions={removeAllIntervalSubscriptions}
         />
       ))}
     </ReferendaGroup>
@@ -259,10 +235,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               key={`${i}_${referendum.referendaId}_subscribed`}
               referendum={referendum}
               index={i}
-              addIntervalSubscription={addIntervalSubscription}
-              removeIntervalSubscription={removeIntervalSubscription}
-              addAllIntervalSubscriptions={addAllIntervalSubscriptions}
-              removeAllIntervalSubscriptions={removeAllIntervalSubscriptions}
             />
           )
         )}

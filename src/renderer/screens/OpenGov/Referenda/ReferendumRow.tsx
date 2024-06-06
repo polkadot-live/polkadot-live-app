@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
+import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
 import { motion } from 'framer-motion';
 import {
   faChevronDown,
@@ -25,20 +26,20 @@ import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 
-export const ReferendumRow = ({
-  referendum,
-  index,
-  addIntervalSubscription,
-  removeIntervalSubscription,
-  addAllIntervalSubscriptions,
-  removeAllIntervalSubscriptions,
-}: ReferendumRowProps) => {
+export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
     useReferendaSubscriptions();
+
+  const {
+    addIntervalSubscription,
+    addAllIntervalSubscriptions,
+    removeAllIntervalSubscriptions,
+    removeIntervalSubscription,
+  } = useTaskHandler();
 
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
