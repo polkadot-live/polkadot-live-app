@@ -149,13 +149,15 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
 interface SortControlLabelProps {
   label: string;
   faIcon?: IconDefinition;
+  noBorder?: boolean;
 }
 
 export const SortControlLabel: React.FC<SortControlLabelProps> = ({
   faIcon,
   label,
+  noBorder = false,
 }: SortControlLabelProps) => (
-  <div className="breadcrumb-wrapper">
+  <div className={`breadcrumb-wrapper${noBorder ? ' no-border' : ''}`}>
     {faIcon && (
       <div>
         <FontAwesomeIcon icon={faIcon} />
@@ -172,14 +174,46 @@ export const SortControlLabel: React.FC<SortControlLabelProps> = ({
 export const ControlsWrapper = styled.div<{
   $padWrapper?: boolean;
   $padBottom?: boolean;
+  $sticky?: boolean;
 }>`
-  width: 100%;
-  padding: ${(props) => (props.$padWrapper ? '2rem 1.5rem 0' : '0')};
-  padding-bottom: ${(props) => (props.$padBottom ? '1rem' : '0')};
+  padding: ${(props) => {
+    if (props.$sticky) {
+      return '1.25rem 1.5rem 1.25rem';
+    } else {
+      return props.$padWrapper
+        ? props.$padBottom
+          ? '2rem 1.5rem 1rem'
+          : '2rem 1.5rem 0'
+        : '0';
+    }
+  }};
 
+  z-index: ${(props) => (props.$sticky ? '4' : 'inherit')};
+  background-color: ${(props) =>
+    props.$sticky ? 'var(--background-modal)' : 'inherit'};
+
+  top: 0;
+  position: ${(props) => (props.$sticky ? 'sticky' : 'inherit')};
+
+  width: 100%;
   display: flex;
   column-gap: 1rem;
   margin-bottom: 0.75rem;
+
+  .no-border {
+    border: none !important;
+  }
+
+  // Left and right.
+  .right,
+  .left {
+    display: flex;
+    align-items: center;
+    column-gap: 1rem;
+  }
+  .left {
+    flex: 1;
+  }
 
   .back-btn {
     max-height: 23.52px;

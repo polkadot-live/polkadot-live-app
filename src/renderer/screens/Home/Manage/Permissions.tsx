@@ -639,14 +639,19 @@ export const Permissions = ({
 
   return (
     <>
-      <ControlsWrapper $padWrapper={true}>
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => setSection(0)}
-        />
-        <SortControlLabel label={breadcrumb} />
+      <ControlsWrapper $sticky={true}>
+        <div className="left">
+          <ButtonPrimaryInvert
+            className="back-btn"
+            text="Back"
+            iconLeft={faCaretLeft}
+            onClick={() => setSection(0)}
+          />
+          <SortControlLabel label={breadcrumb} />
+        </div>
+        <div className="right">
+          <SortControlLabel label={'Subscription On / Off'} noBorder={true} />
+        </div>
       </ControlsWrapper>
 
       <AccountsWrapper>
