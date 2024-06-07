@@ -555,7 +555,7 @@ export const Permissions = ({
               >
                 <Switch
                   size="sm"
-                  type="secondary"
+                  type="primary"
                   isOn={getCategoryToggles().get(category) || false}
                   disabled={getDisabled(tasks[0])}
                   handleToggle={async () => await handleGroupSwitch(category)}
@@ -602,7 +602,7 @@ export const Permissions = ({
                 <Switch
                   disabled={isIntervalTaskDisabled()}
                   size="sm"
-                  type="secondary"
+                  type="primary"
                   isOn={getOpenGovGlobalToggles().get(referendumId) || false}
                   handleToggle={async () =>
                     await toggleGlobalSwitch(
