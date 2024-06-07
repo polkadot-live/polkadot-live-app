@@ -12,9 +12,10 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
+import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
@@ -31,6 +32,7 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
+  const { showDebuggingSubscriptions } = useBootstrapping();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
 
@@ -80,15 +82,34 @@ export const Accounts = ({
     return sorted;
   };
 
-  /// Active accordion indices for account subscription tasks categories.
+  /// Active accordion indices for subscription categories.
+  /// TODO: Create context to hold active indices state.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
     Array.from(
-      { length: Array.from(getSortedAddresses().keys()).length + 2 },
+      {
+        length:
+          Array.from(getSortedAddresses().keys()).length +
+          (showDebuggingSubscriptions ? 2 : 1),
+      },
       (_, index) => index
     )
   );
+
+  /// Update accordion indices when debugging subscriptions are toggled.
+  useEffect(() => {
+    if (showDebuggingSubscriptions) {
+      const newIndex = Array.from(getSortedAddresses().keys()).length + 1;
+      setAccordionActiveIndices((prev) => [...prev, newIndex]);
+    } else {
+      const indexToRemove = Array.from(getSortedAddresses().keys()).length + 1;
+
+      setAccordionActiveIndices((prev) =>
+        prev.filter((i) => i !== indexToRemove)
+      );
+    }
+  }, [showDebuggingSubscriptions]);
 
   /// Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
@@ -251,44 +272,46 @@ export const Accounts = ({
           </AccordionItem>
 
           {/* Manage Chains */}
-          <AccordionItem key={'chain_accounts'}>
-            <AccordionCaretHeader
-              title={'Chains'}
-              itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
-            />
-            <AccordionPanel>
-              <div style={{ padding: '0 0.75rem' }}>
-                <div className="flex-column">
-                  {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                    <AccountWrapper
-                      whileHover={{ scale: 1.01 }}
-                      key={`manage_chain_${i}`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleClickChain(chain)}
-                      ></button>
-                      <div className="inner">
-                        <div>
-                          <span>{getIcon(chain, 'chain-icon')}</span>
-                          <div className="content">
-                            <h3>{chain}</h3>
+          {showDebuggingSubscriptions && (
+            <AccordionItem key={'debugging_accounts'}>
+              <AccordionCaretHeader
+                title={'Debugging'}
+                itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
+              />
+              <AccordionPanel>
+                <div style={{ padding: '0 0.75rem' }}>
+                  <div className="flex-column">
+                    {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                      <AccountWrapper
+                        whileHover={{ scale: 1.01 }}
+                        key={`manage_chain_${i}`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleClickChain(chain)}
+                        ></button>
+                        <div className="inner">
+                          <div>
+                            <span>{getIcon(chain, 'chain-icon')}</span>
+                            <div className="content">
+                              <h3>{chain}</h3>
+                            </div>
+                          </div>
+                          <div>
+                            <ButtonText
+                              text=""
+                              iconRight={faChevronRight}
+                              iconTransform="shrink-3"
+                            />
                           </div>
                         </div>
-                        <div>
-                          <ButtonText
-                            text=""
-                            iconRight={faChevronRight}
-                            iconTransform="shrink-3"
-                          />
-                        </div>
-                      </div>
-                    </AccountWrapper>
-                  ))}
+                      </AccountWrapper>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </AccordionPanel>
-          </AccordionItem>
+              </AccordionPanel>
+            </AccordionItem>
+          )}
         </Accordion>
       </div>
     </AccountsWrapper>

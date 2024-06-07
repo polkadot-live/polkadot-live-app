@@ -30,6 +30,14 @@ export const SettingsList: SettingItem[] = [
     title: 'Silence OS Notifications',
   },
   {
+    action: 'settings:execute:showDebuggingSubscriptions',
+    category: 'General',
+    enabled: false,
+    helpKey: 'help:settings:showDebuggingSubscriptions',
+    settingType: 'switch',
+    title: 'Show Debugging Subscriptions',
+  },
+  {
     action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,

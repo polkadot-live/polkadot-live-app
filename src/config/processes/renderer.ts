@@ -12,8 +12,9 @@ export class Config {
   private static _portToSettings: MessagePort;
   private static _portToOpenGov: MessagePort;
 
-  // Flag to silence all native OS notifications.
+  // App settings handled by main renderer (use in callbacks).
   private static _silenceNotifications = false;
+  private static _showDebuggingSubscriptions = false;
 
   // Flag set to `true` when app is switching to online mode.
   private static _switchingToOnlineMode = false;
@@ -83,6 +84,15 @@ export class Config {
 
   static set silenceNotifications(flag: boolean) {
     Config._silenceNotifications = flag;
+  }
+
+  // Accessors for `_showDebuggingSubscriptions` flag.
+  static get showDebuggingSubscriptions(): boolean {
+    return Config._showDebuggingSubscriptions;
+  }
+
+  static set showDebuggingSubscriptions(flag: boolean) {
+    Config._showDebuggingSubscriptions = flag;
   }
 
   // Accessors for `_switchingToOnlineMode` flag.

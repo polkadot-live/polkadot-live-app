@@ -45,8 +45,12 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
+  const {
+    online: isOnline,
+    isConnecting,
+    showDebuggingSubscriptions,
+  } = useBootstrapping();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -106,6 +110,11 @@ export const Permissions = ({
       }
     }
   }, [dynamicIntervalTasksState]);
+
+  /// Go to section zero if show debugging subscriptions setting turned off.
+  useEffect(() => {
+    !showDebuggingSubscriptions && setSection(0);
+  }, [showDebuggingSubscriptions]);
 
   /// Update accordion interval indices if active chain has changed.
   useEffect(() => {

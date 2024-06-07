@@ -59,6 +59,7 @@ export class Config {
         appDocked: true,
         appSilenceOsNotifications: false,
         appShowOnAllWorkspaces: true,
+        appShowDebuggingSubscriptions: false,
       };
 
       // Persist default settings to store and return them.

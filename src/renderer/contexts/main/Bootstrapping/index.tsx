@@ -49,6 +49,8 @@ export const BootstrappingProvider = ({
   const [dockToggled, setDockToggled] = useState<boolean>(true);
   const [silenceOsNotifications, setSilenceOsNotifications] =
     useState<boolean>(false);
+  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
+    useState<boolean>(false);
 
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
@@ -60,15 +62,20 @@ export const BootstrappingProvider = ({
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
-      const { appDocked, appSilenceOsNotifications } =
-        await window.myAPI.getAppSettings();
+      const {
+        appDocked,
+        appSilenceOsNotifications,
+        appShowDebuggingSubscriptions,
+      } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
       RendererConfig.silenceNotifications = appSilenceOsNotifications;
+      RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
 
       // Set settings state.
       setDockToggled(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
+      setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
     };
 
     initSettings();
@@ -422,6 +429,19 @@ export const BootstrappingProvider = ({
       RendererConfig.silenceNotifications = newFlag;
       return newFlag;
     });
+
+    window.myAPI.toggleSetting('settings:execute:silenceOsNotifications');
+  };
+
+  /// Handle toggling show debugging subscriptions.
+  const handleToggleShowDebuggingSubscriptions = () => {
+    setShowDebuggingSubscriptions((prev) => {
+      const newFlag = !prev;
+      RendererConfig.showDebuggingSubscriptions = newFlag;
+      return newFlag;
+    });
+
+    window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
   };
 
   return (
@@ -433,8 +453,10 @@ export const BootstrappingProvider = ({
         online,
         dockToggled,
         silenceOsNotifications,
+        showDebuggingSubscriptions,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
+        handleToggleShowDebuggingSubscriptions,
         setSilenceOsNotifications,
         setAppLoading,
         setIsAborting,
