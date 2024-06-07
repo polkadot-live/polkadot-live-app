@@ -59,7 +59,7 @@ export const AppSettingsProvider = ({
     });
   };
 
-  /// Handle toggling native OS notifications.
+  /// Handle toggling native OS notifications from main renderer UI.
   const handleToggleSilenceOsNotifications = () => {
     setSilenceOsNotifications((prev) => {
       const newFlag = !prev;

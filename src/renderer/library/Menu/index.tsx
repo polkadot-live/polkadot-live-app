@@ -57,7 +57,6 @@ export const Menu = () => {
   const handleSilenceOsNotifications = () => {
     handleToggleSilenceOsNotifications();
 
-    // Post message to settings window to update switch.
     RendererConfig.portToSettings.postMessage({
       task: 'settings:set:silenceOsNotifications',
       data: {
