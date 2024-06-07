@@ -12,7 +12,6 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
 import { Identicon } from '@app/library/Identicon';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
-import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
 import { useState, useEffect } from 'react';
@@ -25,6 +24,7 @@ import type {
   SubscriptionTask,
 } from '@/types/subscriptions';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 
 export const Accounts = ({
   addresses,
@@ -32,14 +32,12 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
-  const { showDebuggingSubscriptions } = useBootstrapping();
+  const { showDebuggingSubscriptions } = useAppSettings();
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
-
-  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {

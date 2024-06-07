@@ -22,7 +22,7 @@ import { IntervalsController } from '@/controller/renderer/IntervalsController';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useAppSettings } from '../contexts/main/AppSettings';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
@@ -56,7 +56,7 @@ export const useMainMessagePorts = () => {
     handleDockedToggle,
     handleToggleSilenceOsNotifications,
     handleToggleShowDebuggingSubscriptions,
-  } = useBootstrapping();
+  } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
     useSubscriptions();

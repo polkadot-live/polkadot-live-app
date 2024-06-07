@@ -9,6 +9,7 @@ import { ConnectionsProvider } from '@/renderer/contexts/common/Connections';
 
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
+import { AppSettingsProvider } from '@/renderer/contexts/main/AppSettings';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
 import { ChainsProvider } from '@/renderer/contexts/main/Chains';
 import { EventsProvider } from '@/renderer/contexts/main/Events';
@@ -47,6 +48,7 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         TooltipProvider,
         AddressesProvider,
+        AppSettingsProvider,
         ChainsProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,

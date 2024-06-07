@@ -8,6 +8,7 @@ import { useRef, useState } from 'react';
 import { MenuWrapper } from './Wrapper';
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import {
   faBell,
   faBellSlash,
@@ -23,13 +24,15 @@ export const Menu = () => {
   const menuOpenRef = useRef(menuOpen);
 
   /// App settings.
+  const { silenceOsNotifications, handleToggleSilenceOsNotifications } =
+    useAppSettings();
+
+  /// Bootstrapping.
   const {
     online: isOnline,
     appLoading,
     isAborting,
     isConnecting,
-    silenceOsNotifications,
-    handleToggleSilenceOsNotifications,
     handleInitializeAppOnline,
     handleInitializeAppOffline,
     setIsAborting,
