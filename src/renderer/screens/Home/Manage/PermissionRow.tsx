@@ -167,7 +167,7 @@ export const PermissionRow = ({
           >
             <Switch
               size="sm"
-              type="secondary"
+              type="primary"
               isOn={isToggled}
               disabled={getDisabled(task)}
               handleToggle={async () => {

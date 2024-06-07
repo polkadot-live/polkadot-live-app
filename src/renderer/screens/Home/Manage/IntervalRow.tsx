@@ -266,7 +266,7 @@ export const IntervalRow = ({
           <Switch
             disabled={isTaskDisabled()}
             size="sm"
-            type="secondary"
+            type="primary"
             isOn={isToggled}
             handleToggle={async () => await handleToggle()}
           />

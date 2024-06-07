@@ -15,12 +15,11 @@ export const Wrapper = styled.div`
 
 export const HeadingWrapper = styled.div`
   width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   z-index: 3;
   opacity: 0.75;
   user-select: none;
   cursor: pointer;
-  //margin-bottom: -0.5rem;
 
   .flex {
     display: flex;

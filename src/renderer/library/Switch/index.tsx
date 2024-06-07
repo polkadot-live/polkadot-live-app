@@ -32,7 +32,7 @@ export const Switch = ({
     switch (type) {
       case 'secondary': {
         if (disabled) {
-          setBgColor('grdey');
+          setBgColor('grey');
           setBorderColor('#393939');
           setButtonColor('#393939');
           break;
@@ -83,15 +83,16 @@ export const Switch = ({
       case 'primary':
       default: {
         if (disabled) {
-          setBgColor('grey');
-          setBorderColor('#CBCBCB');
-          setButtonColor('#CBCBCB');
+          setBgColor('var(--text-color-invert)');
+          setBorderColor('#2e2e2e');
+          setButtonColor('#2e2e2e');
           break;
         }
         setBorderColor('var(--border-primary-color)');
         if (!isOn) {
           setButtonColor('var(--accent-color-primary)');
-          setBgColor('var(--background-invert)');
+          setBgColor('inherit');
+          setBorderColor('var(--border-secondary-color)');
         } else {
           setButtonColor('#FFFFFF');
           setBgColor('var(--accent-color-primary)');
