@@ -14,7 +14,7 @@ import { Identicon } from '@app/library/Identicon';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
@@ -81,7 +81,6 @@ export const Accounts = ({
   };
 
   /// Active accordion indices for subscription categories.
-  /// TODO: Create context to hold active indices state.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
@@ -94,18 +93,19 @@ export const Accounts = ({
       (_, index) => index
     )
   );
+  const indicesRef = useRef(accordionActiveIndices);
 
-  /// Update accordion indices when debugging subscriptions are toggled.
+  /// Use indices ref to maintain open accordion panels when toggling debugging setting.
   useEffect(() => {
-    if (showDebuggingSubscriptions) {
-      const newIndex = Array.from(getSortedAddresses().keys()).length + 1;
-      setAccordionActiveIndices((prev) => [...prev, newIndex]);
-    } else {
-      const indexToRemove = Array.from(getSortedAddresses().keys()).length + 1;
+    const targetIndex = Array.from(getSortedAddresses().keys()).length + 1;
 
-      setAccordionActiveIndices((prev) =>
-        prev.filter((i) => i !== indexToRemove)
+    if (showDebuggingSubscriptions) {
+      setAccordionActiveIndices([...indicesRef.current, targetIndex]);
+    } else {
+      indicesRef.current = [...indicesRef.current].filter(
+        (i) => i !== targetIndex
       );
+      setAccordionActiveIndices(indicesRef.current);
     }
   }, [showDebuggingSubscriptions]);
 
@@ -170,7 +170,7 @@ export const Accounts = ({
         <Accordion
           multiple
           defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
+          indicesRef={indicesRef}
         >
           {/* Manage Accounts */}
           {Array.from(getSortedAddresses().entries()).map(

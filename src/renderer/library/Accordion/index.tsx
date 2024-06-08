@@ -27,6 +27,7 @@ export function Accordion({
   children,
   multiple,
   defaultIndex,
+  indicesRef,
 }: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
@@ -47,6 +48,11 @@ export function Accordion({
       } else {
         // Otherwise, add index to active array.
         activeIndices = activeIndices.concat(index);
+      }
+
+      // Update external indices ref.
+      if (indicesRef) {
+        indicesRef.current = [...activeIndices];
       }
 
       // Update internal indices state.
