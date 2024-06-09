@@ -6,41 +6,49 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Address } from './Address';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
-import {
-  getSortedLocalAddresses,
-  renderToast,
-} from '@/renderer/utils/ImportUtils';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
-import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
+import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
+
+/// Context imports.
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import type { FormEvent } from 'react';
-import type { LocalAddress } from '@/types/accounts';
-import type { ManageReadOnlyProps } from '../types';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
+
+/// Util imports.
 import {
   ControlsWrapper,
   StatsFooter,
   Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+import {
+  getSortedLocalAddresses,
+  renderToast,
+} from '@/renderer/utils/ImportUtils';
 
-export const Manage = ({
-  setSection,
-  //section,
-  addresses,
-  setAddresses,
-}: ManageReadOnlyProps) => {
-  const [editName, setEditName] = useState<string>('');
+/// Type imports.
+import type { FormEvent } from 'react';
+import type { LocalAddress } from '@/types/accounts';
+import type { ManageReadOnlyProps } from '../types';
+
+export const Manage = ({ setSection }: ManageReadOnlyProps) => {
+  const { readOnlyAddresses: addresses, setReadOnlyAddresses: setAddresses } =
+    useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
+  const { handleImportAddress } = useImportHandler();
+
+  /// Component state.
+  const [editName, setEditName] = useState<string>('');
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -104,6 +112,9 @@ export const Manage = ({
       return;
     }
 
+    // The default account name.
+    const accountName = ellipsisFn(trimmed);
+
     // Update local storage.
     const newAddresses = addresses
       .filter((a: LocalAddress) => a.address !== trimmed)
@@ -111,24 +122,22 @@ export const Manage = ({
         index: getNextAddressIndex(),
         address: trimmed,
         isImported: false,
-        name: ellipsisFn(trimmed),
+        name: accountName,
         source: 'read-only',
       });
 
     const storageKey = ConfigImport.getStorageKey('read-only');
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
+
+    // Reset read-only address input state.
     setEditName('');
 
     // Add account status entry.
     insertAccountStatus(trimmed, 'read-only');
 
-    // TODO: Set processing flag to true.
-
-    // TODO: Send import data to main renderer.
-
-    // TODO: Render success alert when account is imported.
-    renderToast('Address added successfully', 'success', `toast-${trimmed}`);
+    // Set processing flag to true and import via main renderer.
+    handleImportAddress(trimmed, 'read-only', accountName);
   };
 
   // Input change handler.

@@ -7,8 +7,10 @@ export interface AddressesContextInterface {
   ledgerAddresses: LedgerLocalAddress[];
   readOnlyAddresses: LocalAddress[];
   vaultAddresses: LocalAddress[];
-  setLedgerAddresses: (a: LedgerLocalAddress[]) => void;
-  setReadOnlyAddresses: (a: LocalAddress[]) => void;
-  setVaultAddresses: (a: LocalAddress[]) => void;
+  setLedgerAddresses: React.Dispatch<
+    React.SetStateAction<LedgerLocalAddress[]>
+  >;
+  setReadOnlyAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
+  setVaultAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
   importAccountJson: (a: LocalAddress) => void;
 }
