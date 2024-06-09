@@ -40,7 +40,7 @@ export const Manage = ({
   const [editName, setEditName] = useState<string>('');
   const { insertAccountStatus } = useAccountStatuses();
 
-  // Active accordion indices for account subscription tasks categories.
+  /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
@@ -52,12 +52,13 @@ export const Manage = ({
       (_, index) => index
     )
   );
-  // Cancel button clicked for address field.
+
+  /// Cancel button clicked for address field.
   const onCancel = () => {
     setEditName('');
   };
 
-  // Verify that the address is compatible with the supported networks.
+  /// Verify that the address is compatible with the supported networks.
   const validateAddress = (address: string) => {
     for (const prefix of [0, 2, 42]) {
       const result = checkAddress(address, prefix);
@@ -74,7 +75,7 @@ export const Manage = ({
     return false;
   };
 
-  // Verify that the address is not already imported.
+  /// Verify that the address is not already imported.
   const isAlreadyImported = (address: string): boolean => {
     for (const next of addresses) {
       if (next.address === address) {
@@ -85,47 +86,59 @@ export const Manage = ({
     return false;
   };
 
-  // Gets the next non-imported address index.
+  /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
+
+  /// Utility to render a toastify notification.
+  type ToastType = 'success' | 'error';
+
+  const renderToast = (text: string, toastType: ToastType, toastId: string) => {
+    switch (toastType) {
+      case 'success': {
+        toast.success(text, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          closeButton: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: 'dark',
+          transition: Flip,
+          toastId,
+        });
+        break;
+      }
+      case 'error': {
+        toast.error(text, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          closeButton: false,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+          theme: 'dark',
+          transition: Flip,
+          toastId,
+        });
+        break;
+      }
+    }
+  };
 
   // Validate input and add address to local storage.
   const onImport = () => {
     const trimmed = editName.trim();
 
     if (isAlreadyImported(trimmed)) {
-      // Render error alert.
-      toast.error('Address is already imported.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Address is already imported.', 'error', `toast-${trimmed}`);
       return;
     } else if (!validateAddress(trimmed)) {
-      // Render error alert.
-      toast.error('Bad account name.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
       return;
     }
 
@@ -148,20 +161,12 @@ export const Manage = ({
     // Add account status entry.
     insertAccountStatus(trimmed, 'read-only');
 
-    // Render success alert.
-    toast.success('Address addred successfully.', {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: false,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId: `toast-${trimmed}`, // prevent duplicate alerts
-    });
+    // TODO: Set processing flag to true.
+
+    // TODO: Send import data to main renderer.
+
+    // TODO: Render success alert when account is imported.
+    renderToast('Address added successfully', 'success', `toast-${trimmed}`);
   };
 
   // Input change handler.
