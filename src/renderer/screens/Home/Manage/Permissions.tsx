@@ -17,20 +17,6 @@ import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
-import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useEffect, useState, useRef } from 'react';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useManage } from '@/renderer/contexts/main/Manage';
-import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
-import type { AnyFunction } from '@w3ux/utils/types';
-import type { PermissionsProps } from './types';
-import type {
-  IntervalSubscription,
-  SubscriptionTask,
-  TaskCategory,
-  WrappedSubscriptionTasks,
-} from '@/types/subscriptions';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,
@@ -39,6 +25,25 @@ import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 
+/// Contexts.
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useSubscriptions } from '@app/contexts/main/Subscriptions';
+import { useEffect, useState, useRef } from 'react';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useManage } from '@/renderer/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
+
+/// Type imports.
+import type { AnyFunction } from '@w3ux/utils/types';
+import type { PermissionsProps } from './types';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+  TaskCategory,
+  WrappedSubscriptionTasks,
+} from '@/types/subscriptions';
+
 export const Permissions = ({
   breadcrumb,
   section,
@@ -46,11 +51,8 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
-  const {
-    online: isOnline,
-    isConnecting,
-    showDebuggingSubscriptions,
-  } = useBootstrapping();
+  const { showDebuggingSubscriptions } = useAppSettings();
+  const { online: isOnline, isConnecting } = useBootstrapping();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();

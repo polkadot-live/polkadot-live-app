@@ -7,6 +7,7 @@ export interface AccordionProps {
   children: React.ReactNode;
   multiple: boolean | string;
   defaultIndex: number | number[];
+  indicesRef?: React.MutableRefObject<number[]>;
   setExternalIndices?: AnyFunction;
 }
 

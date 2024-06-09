@@ -45,41 +45,12 @@ export const BootstrappingProvider = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [online, setOnline] = useState<boolean>(false);
 
-  // App settings.
-  const [dockToggled, setDockToggled] = useState<boolean>(true);
-  const [silenceOsNotifications, setSilenceOsNotifications] =
-    useState<boolean>(false);
-  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
-    useState<boolean>(false);
-
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
-
-  // Get settings from main and initialise state.
-  useEffect(() => {
-    const initSettings = async () => {
-      const {
-        appDocked,
-        appSilenceOsNotifications,
-        appShowDebuggingSubscriptions,
-      } = await window.myAPI.getAppSettings();
-
-      // Set cached notifications flag in renderer config.
-      RendererConfig.silenceNotifications = appSilenceOsNotifications;
-      RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
-
-      // Set settings state.
-      setDockToggled(appDocked);
-      setSilenceOsNotifications(appSilenceOsNotifications);
-      setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
-    };
-
-    initSettings();
-  }, []);
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
@@ -100,16 +71,6 @@ export const BootstrappingProvider = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
-
-  /// Get docked flag from storage and set state.
-  useEffect(() => {
-    const initDockedFlag = async () => {
-      const isDocked = await window.myAPI.getDockedFlag();
-      setDockToggled(isDocked);
-    };
-
-    initDockedFlag();
   }, []);
 
   /// Handle app initialization.
@@ -413,37 +374,6 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Handle toggling the docked window state.
-  const handleDockedToggle = () => {
-    setDockToggled((prev) => {
-      const docked = !prev;
-      window.myAPI.setDockedFlag(docked);
-      return docked;
-    });
-  };
-
-  /// Handle toggling native OS notifications.
-  const handleToggleSilenceOsNotifications = () => {
-    setSilenceOsNotifications((prev) => {
-      const newFlag = !prev;
-      RendererConfig.silenceNotifications = newFlag;
-      return newFlag;
-    });
-
-    window.myAPI.toggleSetting('settings:execute:silenceOsNotifications');
-  };
-
-  /// Handle toggling show debugging subscriptions.
-  const handleToggleShowDebuggingSubscriptions = () => {
-    setShowDebuggingSubscriptions((prev) => {
-      const newFlag = !prev;
-      RendererConfig.showDebuggingSubscriptions = newFlag;
-      return newFlag;
-    });
-
-    window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
-  };
-
   return (
     <BootstrappingContext.Provider
       value={{
@@ -451,13 +381,6 @@ export const BootstrappingProvider = ({
         isAborting,
         isConnecting,
         online,
-        dockToggled,
-        silenceOsNotifications,
-        showDebuggingSubscriptions,
-        handleDockedToggle,
-        handleToggleSilenceOsNotifications,
-        handleToggleShowDebuggingSubscriptions,
-        setSilenceOsNotifications,
         setAppLoading,
         setIsAborting,
         setIsConnecting,
