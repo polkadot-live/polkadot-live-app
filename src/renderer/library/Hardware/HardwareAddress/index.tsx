@@ -9,11 +9,10 @@ import {
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
-import { validateAccountName } from '@/renderer/utils/ImportUtils';
+import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
@@ -64,40 +63,14 @@ export const HardwareAddress = ({
 
     // Handle validation failure.
     if (!validateAccountName(trimmed)) {
-      // Render error alert.
-      toast.error('Bad account name.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
       setEditName(accountName);
       setEditing(false);
       return;
     }
 
     // Render success alert.
-    toast.success('Account name updated.', {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: false,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId: `toast-${trimmed}`, // prevent duplicate alerts
-    });
+    renderToast('Account name updated.', 'success', `toast-${trimmed}`);
 
     // Otherwise rename account.
     renameHandler(address, trimmed);
