@@ -6,71 +6,9 @@ import type { ChainID } from '@/types/chains';
 
 /**
  * Provides the following styled components:
- *   Scrollable
  *   OpenGovCard
- *   OpenGovFooter
  *   TreasuryStats
  */
-
-export const Scrollable = styled.div`
-  --footer-height: 42.06px;
-  --header-height: 38.6px;
-
-  // height = window height - (header height + footer height)
-  height: calc(100vh - var(--footer-height) - var(--header-height));
-  width: 100%;
-  padding: 1.5rem 0 1rem;
-  overflow-y: auto;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: #101010;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #212121;
-  }
-
-  // Placeholder loader.
-  @keyframes placeholderAnimate {
-    0% {
-      background-position: -650px 0;
-    }
-    100% {
-      background-position: 650px 0;
-    }
-  }
-
-  .placeholder-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 2rem;
-    margin-top: 2rem;
-
-    .placeholder-content {
-      height: 3rem;
-      background: #000;
-      border-radius: 1.25rem;
-
-      // Animation
-      animation-duration: 3s;
-      animation-fill-mode: forwards;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-      animation-name: placeholderAnimate;
-      background: #101010; // Fallback
-      background: linear-gradient(
-        to right,
-        #101010 2%,
-        #202020 18%,
-        #101010 33%
-      );
-      background-size: 1200px; // Animation Area
-    }
-  }
-`;
 
 export const OpenGovCard = styled.div`
   display: flex;
@@ -111,80 +49,6 @@ export const OpenGovCard = styled.div`
       > span {
         padding-right: 0.25rem;
       }
-    }
-  }
-`;
-
-export const OpenGovFooter = styled.section<{ $chainId: ChainID }>`
-  position: fixed;
-  bottom: 0;
-  padding: 0.75rem 1.5rem;
-  width: 100%;
-  border-top: 1px solid var(--border-primary-color);
-  background-color: var(--background-primary);
-
-  > div:first-of-type {
-    display: flex;
-    column-gap: 1rem;
-    align-items: center;
-  }
-
-  // Left and right.
-  .right,
-  .left {
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-  }
-  .left {
-    flex: 1;
-  }
-
-  .stat-wrapper {
-    display: flex;
-    column-gap: 1rem;
-    display: flex;
-    align-items: center;
-
-    // Help icon.
-    .icon-wrapper {
-      font-size: 0.8rem;
-      padding-right: 0.75rem;
-      padding-left: 0.4rem;
-      cursor: pointer;
-      opacity: 0.4;
-      &:hover {
-        color: #953254;
-        opacity: 1;
-      }
-    }
-
-    // Stat label.
-    span {
-      display: flex;
-      align-items: baseline;
-      padding: 0.5rem;
-      padding-right: 1rem;
-      border: 1px solid var(--border-secondary-color);
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-    }
-  }
-
-  .footer-stat {
-    display: flex;
-    column-gap: 0.75rem;
-    align-items: center;
-
-    h2 {
-      font-size: 0.95rem;
-      opacity: 0.5;
-    }
-    span {
-      color: ${(props) =>
-        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
-      font-weight: 400;
-      font-size: 0.95rem;
     }
   }
 `;

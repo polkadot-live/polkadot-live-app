@@ -12,6 +12,7 @@ import type { SubscriptionsContextInterface } from './types';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -130,7 +131,7 @@ export const SubscriptionsProvider = ({
 
   /// Handle toggling on all subscriptions in a category.
   const toggleCategoryTasks = async (
-    category: string,
+    category: TaskCategory,
     isOn: boolean,
     rendererdSubscriptions: WrappedSubscriptionTasks,
     updateRenderedSubscriptions: AnyFunction

@@ -54,7 +54,7 @@ export const RouterInner = () => {
       <Help />
       <Overlay />
       <Tooltip />
-      <ToastContainer />
+      <ToastContainer stacked />
       <Routes>{addRoutesForWindow()}</Routes>
     </MainInterfaceWrapper>
   );

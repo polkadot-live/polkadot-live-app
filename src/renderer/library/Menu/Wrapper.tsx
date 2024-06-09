@@ -7,7 +7,7 @@ export const MenuWrapper = styled.div`
   position: absolute;
   right: 0;
   top: 2.25rem;
-  z-index: 10;
+  z-index: 50;
 
   display: flex;
   flex-flow: column nowrap;

@@ -307,6 +307,35 @@ export const Wrapper = styled.div<{
           }
         }
 
+        .add-input {
+          border: 1px solid var(--border-primary-color);
+          background: var(--background-list-item);
+          color: var(--text-color-primary);
+          border-radius: 1.25rem;
+          padding: 0.6rem 1.25rem;
+          letter-spacing: 0.04rem;
+          font-size: 0.95rem;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
+          max-width: 380px;
+          transition:
+            background-color 0.2s,
+            max-width 0.2s,
+            padding 0.2s;
+
+          &:focus {
+            background: var(--background-modal);
+            max-width: 380px;
+          }
+
+          &:disabled {
+            border: 1px solid var(--background-menu);
+            background: none;
+          }
+        }
+
         .full {
           margin-top: 0.75rem;
           margin-bottom: 0.5rem;

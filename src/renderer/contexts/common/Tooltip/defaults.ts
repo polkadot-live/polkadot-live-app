@@ -10,6 +10,7 @@ export const defaultTooltipContext: TooltipContextInterface = {
   setTooltipPosition: (x, y) => {},
   showTooltip: () => {},
   setTooltipTextAndOpen: (t) => {},
+  alignRef: null,
   open: 0,
   show: 0,
   position: [0, 0],

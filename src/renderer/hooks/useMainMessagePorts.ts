@@ -22,7 +22,7 @@ import { IntervalsController } from '@/controller/renderer/IntervalsController';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useAppSettings } from '../contexts/main/AppSettings';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
@@ -34,7 +34,10 @@ import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions
 import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -43,15 +46,19 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
 
   const {
+    updateRenderedSubscriptions,
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
   } = useManage();
 
-  const { handleDockedToggle, handleToggleSilenceOsNotifications } =
-    useBootstrapping();
+  const {
+    handleDockedToggle,
+    handleToggleSilenceOsNotifications,
+    handleToggleShowDebuggingSubscriptions,
+  } = useAppSettings();
 
-  const { setAccountSubscriptions, updateAccountNameInTasks } =
+  const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
     useSubscriptions();
 
   const { addIntervalSubscription, removeIntervalSubscription } =
@@ -510,6 +517,88 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleAddIntervals
+   * @summary Add an array of interval subscriptions to the main renderer state.
+   */
+  const handleAddIntervals = async (ev: MessageEvent) => {
+    const { tasks } = ev.data.data;
+    const parsed: IntervalSubscription[] = JSON.parse(tasks);
+
+    // Update managed tasks in intervals controller.
+    IntervalsController.insertSubscriptions(parsed);
+
+    // Update React and store state.
+    for (const task of parsed) {
+      // Add task to dynamic manage state if necessary.
+      tryAddIntervalSubscription({ ...task });
+
+      // Add task to React state for rendering.
+      addIntervalSubscription({ ...task });
+
+      // Persist task to store.
+      await window.myAPI.persistIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /**
+   * @name handleRemoveIntervals
+   * @summary Remove an array of interval subscriptions from the main renderer state.
+   */
+  const handleRemoveIntervals = async (ev: MessageEvent) => {
+    const { tasks } = ev.data.data;
+    const parsed: IntervalSubscription[] = JSON.parse(tasks);
+
+    // Update managed tasks in intervals controller.
+    IntervalsController.removeSubscriptions(parsed);
+
+    // Update React and store state.
+    for (const task of parsed) {
+      // Remove task from dynamic manage state if necessary.
+      tryRemoveIntervalSubscription({ ...task });
+
+      // Remove task from React state for rendering.
+      removeIntervalSubscription({ ...task });
+
+      // Remove task from store.
+      await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    }
+  };
+
+  /**
+   * @name handleDebuggingSubscriptions
+   * @summary Handle debugging subcscriptions when setting is toggled.
+   */
+  const handleDebuggingSubscriptions = async () => {
+    handleToggleShowDebuggingSubscriptions();
+
+    // Return if setting has been turned on.
+    if (ConfigRenderer.showDebuggingSubscriptions) {
+      return;
+    }
+
+    // Unsubscribe from any active debugging subscriptions when setting turned off.
+    for (const chainTasks of SubscriptionsController.getChainSubscriptions().values()) {
+      const active = chainTasks
+        .filter((t) => t.status === 'enable')
+        .map((t) => ({ ...t, status: 'disable' }) as SubscriptionTask);
+
+      if (active.length === 0) {
+        continue;
+      }
+
+      // Update state.
+      for (const activeTask of active) {
+        await window.myAPI.updatePersistedChainTask(activeTask);
+        updateTask('chain', activeTask);
+        updateRenderedSubscriptions(activeTask);
+      }
+
+      // Unsubscribe from active debuggin tasks.
+      await SubscriptionsController.subscribeChainTasks(active);
+    }
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -597,6 +686,10 @@ export const useMainMessagePorts = () => {
               handleToggleSilenceOsNotifications();
               break;
             }
+            case 'settings:execute:showDebuggingSubscriptions': {
+              await handleDebuggingSubscriptions();
+              break;
+            }
             case 'settings:execute:exportData': {
               await handleDataExport();
               break;
@@ -638,6 +731,14 @@ export const useMainMessagePorts = () => {
             }
             case 'openGov:interval:remove': {
               await handleRemoveInterval(ev);
+              break;
+            }
+            case 'openGov:interval:add:multi': {
+              await handleAddIntervals(ev);
+              break;
+            }
+            case 'openGov:interval:remove:multi': {
+              await handleRemoveIntervals(ev);
               break;
             }
             default: {

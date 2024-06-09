@@ -14,31 +14,42 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
-import { OpenGovFooter, Scrollable } from '../Wrappers';
-import { TrackGroup } from './Wrappers';
+import { StickyHeadings, TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
 import {
-  ControlsWrapper,
-  SortControlButton,
   renderPlaceholders,
+  ControlsWrapper,
+  StatsFooter,
+  Scrollable,
+  SortControlButton,
 } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
 
-export const Tracks = ({ setSection, chainId }: TracksProps) => {
-  /// Context data.
-  const { tracks, fetchingTracks, setFetchingTracks } = useTracks();
+export const Tracks = ({ setSection }: TracksProps) => {
   const { openHelp } = useHelp();
   const { isConnected } = useConnections();
+
+  const {
+    activeChainId: chainId,
+    fetchingTracks,
+    tracks,
+    setFetchingTracks,
+  } = useTracks();
 
   /// Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);
 
   /// Utility to render help icon.
-  const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
-      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+  const renderHelpBadge = (label: string, key: HelpItemKey) => (
+    <div className="stat-wrapper badge-btn" onClick={() => openHelp(key)}>
+      <span>
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+        </div>
+        {label}
+      </span>
     </div>
   );
 
@@ -68,7 +79,23 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
       <Scrollable>
         <ContentWrapper>
           {/* Sorting controls */}
-          <ControlsWrapper>
+          <ControlsWrapper $padBottom={true}>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+              style={{
+                color:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+                borderColor:
+                  chainId === 'Polkadot'
+                    ? 'rgb(169, 74, 117)'
+                    : 'rgb(133, 113, 177)',
+              }}
+            />
             <SortControlButton
               isActive={sortIdAscending}
               isDisabled={!isConnected || fetchingTracks}
@@ -89,27 +116,45 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
               {fetchingTracks ? (
                 <>{renderPlaceholders(4)}</>
               ) : (
-                <TrackGroup>
-                  {tracks
-                    .sort((a, b) =>
-                      sortIdAscending
-                        ? a.trackId - b.trackId
-                        : b.trackId - a.trackId
-                    )
-                    .map((track) => (
-                      <TrackRow key={track.trackId} track={track} />
-                    ))}
-                </TrackGroup>
+                <>
+                  {/* Sticky Headings */}
+                  <StickyHeadings>
+                    <div className="content-wrapper">
+                      <div className="left">
+                        <div className="heading">ID</div>
+                        <div className="heading">Origin</div>
+                      </div>
+                      <div className="right">
+                        <div className="heading">Decision Deposit</div>
+                        <div className="heading">Max. Ongoing</div>
+                        <div className="heading">Metrics</div>
+                      </div>
+                    </div>
+                  </StickyHeadings>
+
+                  {/* Track Listing */}
+                  <TrackGroup>
+                    {tracks
+                      .sort((a, b) =>
+                        sortIdAscending
+                          ? a.trackId - b.trackId
+                          : b.trackId - a.trackId
+                      )
+                      .map((track) => (
+                        <TrackRow key={track.trackId} track={track} />
+                      ))}
+                  </TrackGroup>
+                </>
               )}
             </div>
           )}
         </ContentWrapper>
       </Scrollable>
-      <OpenGovFooter $chainId={chainId}>
+      <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
             <div className="footer-stat">
-              <h2>Chain ID:</h2>
+              <h2>Chain:</h2>
               <span>{chainId}</span>
             </div>
             <div className="footer-stat">
@@ -121,36 +166,12 @@ export const Tracks = ({ setSection, chainId }: TracksProps) => {
             <div className="footer-stat">
               <h2>Help:</h2>
             </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:origin')} Origin</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>{renderHelpIcon('help:openGov:track')} Track</span>
-            </div>
-            <div className="stat-wrapper">
-              <span>
-                {renderHelpIcon('help:openGov:maxDeciding')} Max Deciding
-              </span>
-            </div>
-            <ButtonPrimaryInvert
-              text={'Back'}
-              iconLeft={faCaretLeft}
-              style={{
-                padding: '0.3rem 1.25rem',
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-              onClick={() => setSection(0)}
-            />
+            {renderHelpBadge('Origin', 'help:openGov:origin')}
+            {renderHelpBadge('Track', 'help:openGov:track')}
+            {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
           </section>
         </div>
-      </OpenGovFooter>
+      </StatsFooter>
     </>
   );
 };

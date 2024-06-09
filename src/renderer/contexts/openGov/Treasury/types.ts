@@ -19,4 +19,5 @@ export interface TreasuryContextInterface {
   getFormattedSpendPeriod: () => string;
   getSpendPeriodProgress: () => string;
   getFormattedRemainingSpendPeriod: () => string;
+  refetchStats: () => void;
 }

@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -19,6 +21,11 @@ export const ReferendaProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
+
+  /// Ref to indiciate if referenda data has been fetched.
+  const dataCachedRef = useRef(false);
+
   /// Referenda data received from API.
   const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
 
@@ -29,14 +36,59 @@ export const ReferendaProvider = ({
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
 
+  /// Initiate feching referenda data.
+  const fetchReferendaData = (chainId: ChainID) => {
+    // Return early if offline or data is already fetched for the chain.
+    if (
+      !isConnected ||
+      (dataCachedRef.current === true && chainId === activeReferendaChainId)
+    ) {
+      return;
+    }
+
+    setActiveReferendaChainId(chainId);
+    setFetchingReferenda(true);
+
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId },
+    });
+  };
+
+  /// Re-fetch referenda, called when user clicks refresh button.
+  const refetchReferenda = () => {
+    setFetchingReferenda(true);
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:referenda:get',
+      data: { chainId: activeReferendaChainId },
+    });
+  };
+
+  /// Set state after receiving referenda data from main renderer.
+  const receiveReferendaData = (info: ActiveReferendaInfo[]) => {
+    setReferenda(info);
+    setFetchingReferenda(false);
+    dataCachedRef.current = true;
+  };
+
   /// Get all referenda sorted by desc or asc.
-  const getSortedActiveReferenda = (desc: boolean) =>
-    referenda.sort((a, b) =>
-      desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
-    );
+  const getSortedActiveReferenda = (
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
+  ) => {
+    const sortFn = (info: ActiveReferendaInfo[]) =>
+      info.sort((a, b) =>
+        desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
+      );
+
+    return otherReferenda ? sortFn(otherReferenda) : sortFn(referenda);
+  };
 
   /// Get categorized referenda, sorted desc or asc in each category.
-  const getCategorisedReferenda = (desc: boolean) => {
+  const getCategorisedReferenda = (
+    desc: boolean,
+    otherReferenda?: ActiveReferendaInfo[]
+  ) => {
     const map = new Map<string, ActiveReferendaInfo[]>();
 
     // Insert keys into map in the desired order.
@@ -45,7 +97,9 @@ export const ReferendaProvider = ({
     }
 
     // Populate map with referenda data.
-    for (const info of referenda) {
+    const dataSet = otherReferenda || referenda;
+
+    for (const info of dataSet) {
       const originData = info.Ongoing.origin;
       const origin =
         'system' in originData
@@ -83,9 +137,11 @@ export const ReferendaProvider = ({
         referenda,
         fetchingReferenda,
         activeReferendaChainId,
+        fetchReferendaData,
+        refetchReferenda,
+        receiveReferendaData,
         setReferenda,
         setFetchingReferenda,
-        setActiveReferendaChainId,
         getSortedActiveReferenda,
         getCategorisedReferenda,
       }}

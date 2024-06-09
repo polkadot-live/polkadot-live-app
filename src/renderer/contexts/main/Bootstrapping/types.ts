@@ -8,11 +8,6 @@ export interface BootstrappingInterface {
   isAborting: boolean;
   isConnecting: boolean;
   online: boolean;
-  dockToggled: boolean;
-  silenceOsNotifications: boolean;
-  setSilenceOsNotifications: (b: boolean) => void;
-  handleDockedToggle: () => void;
-  handleToggleSilenceOsNotifications: () => void;
   setAppLoading: (b: boolean) => void;
   setIsAborting: (b: boolean) => void;
   setIsConnecting: (b: boolean) => void;

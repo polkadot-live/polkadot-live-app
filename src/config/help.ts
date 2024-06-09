@@ -127,7 +127,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:settings:showOnAllWorkspaces',
-    title: 'Show on All Workspaces',
+    title: 'Show On All Workspaces',
     definition: [
       'Displays Polkadot Live windows on all workspaces. Switching to a different workspace will still show your Polkadot Live windows.',
       'Turn off this setting to display Polkadot Live on a single workspace.',
@@ -139,6 +139,14 @@ export const HelpConfig: HelpItems = [
     definition: [
       'Enable to silence (not display) native OS notifications application wide.',
       'This setting is global and will override OS notification settings for individual subscriptions.',
+    ],
+  },
+  {
+    key: 'help:settings:showDebuggingSubscriptions',
+    title: 'Show Debugging Subscriptions',
+    definition: [
+      'Show debugging subscriptions under the Subsciptions tab in the main window.',
+      'Allows subscribing to the most recent slot and timestamp of the respective network.',
     ],
   },
   {
@@ -361,18 +369,25 @@ export const HelpConfig: HelpItems = [
   {
     key: 'help:interval:openGov:referendumVotes',
     title: 'Votes Tally Subscription',
-    definition: ['TODO: Description of votes tally subscription.'],
+    definition: [
+      'Receive the latest votes tally for an ongoing referendum.',
+      'The proportion of total aye and nay votes are displayed as percentages for easily distingushing current voter sentiment.',
+    ],
   },
   {
     key: 'help:interval:openGov:decisionPeriod',
     title: 'Decision Period Subscription',
     definition: [
-      'TODO: Description of referendum decision period subscription.',
+      "Receive the remaining time of an ongoing referendum's decision period.",
+      'Remaining time is formatted in a readable Days, Hours and Minutes format.',
     ],
   },
   {
     key: 'help:interval:openGov:referendumThresholds',
     title: 'Thresholds Subscription',
-    definition: ['TODO: Description of referendum thresholds subscription.'],
+    definition: [
+      "Receive the latest 'Minimum Approval Threshold' and 'Minimum Support Threshold' for an ongoing referendum.",
+      "The referendum's approval and support thresholds must be over the minimum values for it to pass.",
+    ],
   },
 ];

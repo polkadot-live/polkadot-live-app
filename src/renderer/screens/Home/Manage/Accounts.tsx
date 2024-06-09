@@ -14,7 +14,7 @@ import { Identicon } from '@app/library/Identicon';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
@@ -24,6 +24,7 @@ import type {
   SubscriptionTask,
 } from '@/types/subscriptions';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 
 export const Accounts = ({
   addresses,
@@ -31,13 +32,12 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
+  const { showDebuggingSubscriptions } = useAppSettings();
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
-
-  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -80,15 +80,34 @@ export const Accounts = ({
     return sorted;
   };
 
-  /// Active accordion indices for account subscription tasks categories.
+  /// Active accordion indices for subscription categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
     Array.from(
-      { length: Array.from(getSortedAddresses().keys()).length + 2 },
+      {
+        length:
+          Array.from(getSortedAddresses().keys()).length +
+          (showDebuggingSubscriptions ? 2 : 1),
+      },
       (_, index) => index
     )
   );
+  const indicesRef = useRef(accordionActiveIndices);
+
+  /// Use indices ref to maintain open accordion panels when toggling debugging setting.
+  useEffect(() => {
+    const targetIndex = Array.from(getSortedAddresses().keys()).length + 1;
+
+    if (showDebuggingSubscriptions) {
+      setAccordionActiveIndices([...indicesRef.current, targetIndex]);
+    } else {
+      indicesRef.current = [...indicesRef.current].filter(
+        (i) => i !== targetIndex
+      );
+      setAccordionActiveIndices(indicesRef.current);
+    }
+  }, [showDebuggingSubscriptions]);
 
   /// Utility to copy tasks.
   const copyTasks = (tasks: SubscriptionTask[]) =>
@@ -151,7 +170,7 @@ export const Accounts = ({
         <Accordion
           multiple
           defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
+          indicesRef={indicesRef}
         >
           {/* Manage Accounts */}
           {Array.from(getSortedAddresses().entries()).map(
@@ -251,44 +270,46 @@ export const Accounts = ({
           </AccordionItem>
 
           {/* Manage Chains */}
-          <AccordionItem key={'chain_accounts'}>
-            <AccordionCaretHeader
-              title={'Chains'}
-              itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
-            />
-            <AccordionPanel>
-              <div style={{ padding: '0 0.75rem' }}>
-                <div className="flex-column">
-                  {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                    <AccountWrapper
-                      whileHover={{ scale: 1.01 }}
-                      key={`manage_chain_${i}`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleClickChain(chain)}
-                      ></button>
-                      <div className="inner">
-                        <div>
-                          <span>{getIcon(chain, 'chain-icon')}</span>
-                          <div className="content">
-                            <h3>{chain}</h3>
+          {showDebuggingSubscriptions && (
+            <AccordionItem key={'debugging_accounts'}>
+              <AccordionCaretHeader
+                title={'Debugging'}
+                itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
+              />
+              <AccordionPanel>
+                <div style={{ padding: '0 0.75rem' }}>
+                  <div className="flex-column">
+                    {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                      <AccountWrapper
+                        whileHover={{ scale: 1.01 }}
+                        key={`manage_chain_${i}`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleClickChain(chain)}
+                        ></button>
+                        <div className="inner">
+                          <div>
+                            <span>{getIcon(chain, 'chain-icon')}</span>
+                            <div className="content">
+                              <h3>{chain}</h3>
+                            </div>
+                          </div>
+                          <div>
+                            <ButtonText
+                              text=""
+                              iconRight={faChevronRight}
+                              iconTransform="shrink-3"
+                            />
                           </div>
                         </div>
-                        <div>
-                          <ButtonText
-                            text=""
-                            iconRight={faChevronRight}
-                            iconTransform="shrink-3"
-                          />
-                        </div>
-                      </div>
-                    </AccountWrapper>
-                  ))}
+                      </AccountWrapper>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </AccordionPanel>
-          </AccordionItem>
+              </AccordionPanel>
+            </AccordionItem>
+          )}
         </Accordion>
       </div>
     </AccountsWrapper>

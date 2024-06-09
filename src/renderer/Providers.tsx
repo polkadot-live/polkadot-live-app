@@ -9,6 +9,7 @@ import { ConnectionsProvider } from '@/renderer/contexts/common/Connections';
 
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
+import { AppSettingsProvider } from '@/renderer/contexts/main/AppSettings';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
 import { ChainsProvider } from '@/renderer/contexts/main/Chains';
 import { EventsProvider } from '@/renderer/contexts/main/Events';
@@ -31,6 +32,7 @@ import { TracksProvider } from './contexts/openGov/Tracks';
 import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
 import { ReferendaSubscriptionsProvider } from './contexts/openGov/ReferendaSubscriptions';
+import { TaskHandlerProvider } from './contexts/openGov/TaskHandler';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -46,6 +48,7 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         TooltipProvider,
         AddressesProvider,
+        AppSettingsProvider,
         ChainsProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,
@@ -90,7 +93,8 @@ const getProvidersForWindow = () => {
         TracksProvider,
         TreasuryProvider,
         ReferendaProvider,
-        ReferendaSubscriptionsProvider
+        ReferendaSubscriptionsProvider,
+        TaskHandlerProvider
       )(Theme);
     }
     default: {

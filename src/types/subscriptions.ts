@@ -49,7 +49,7 @@ export interface SubscriptionTask {
   // Api call representation.
   apiCallAsString: string;
   // Task category.
-  category: string;
+  category: TaskCategory;
   // Task's associated chain.
   chainId: ChainID;
   // Shown in renderer.
@@ -81,6 +81,13 @@ export type TaskAction =
   | 'subscribe:account:nominating:pendingPayouts'
   | 'subscribe:account:nominating:exposure'
   | 'subscribe:account:nominating:commission';
+
+/// String literals to define task categories.
+export type TaskCategory =
+  | 'Balances'
+  | 'Nomination Pools'
+  | 'Nominating'
+  | 'Chain';
 
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.

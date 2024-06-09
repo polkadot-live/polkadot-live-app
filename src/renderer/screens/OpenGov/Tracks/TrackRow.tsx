@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
+import { formatChainUnits } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TrackRowProps } from '../types';
 
@@ -38,17 +40,22 @@ export const TrackRow = ({ track }: TrackRowProps) => {
       <div className="content-wrapper">
         <div className="left">
           <div className="stat-wrapper">
-            <span>Track ID</span>
-            <h4 className="mw-20">{track.trackId}</h4>
-          </div>
-          <div className="stat-wrapper">
-            <span>Origin</span>
+            <span>
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-1'} />
+              {track.trackId}
+            </span>
             <h4>
               {renderHelpIcon(track.helpHey)} {track.label}
             </h4>
           </div>
         </div>
         <div className="right">
+          <div className="stat-wrapper">
+            <span>Deposit</span>
+            <h4 className="mw-84">
+              {formatChainUnits(track.decisionDeposit, chainId)}
+            </h4>
+          </div>
           <div className="stat-wrapper">
             <span>Max Deciding</span>
             <h4 className="mw-45">{track.maxDeciding}</h4>
@@ -57,7 +64,7 @@ export const TrackRow = ({ track }: TrackRowProps) => {
             className={`expand-btn-wrapper ${chainId === 'Polkadot' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
           >
-            <h4>Periods</h4>
+            <h4>Metrics</h4>
             <div className="expand-btn">
               <FontAwesomeIcon
                 icon={expanded ? faAngleUp : faAngleDown}

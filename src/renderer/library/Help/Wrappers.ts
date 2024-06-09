@@ -44,12 +44,12 @@ export const DefinitionWrapper = styled(motion.div)`
   flex-flow: row wrap;
   flex: 1;
   overflow: hidden;
-  margin-bottom: 1.25rem;
-  padding: 1.75rem;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
   width: 100%;
 
   @media (min-width: 0px) and (max-width: 425px) {
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem;
     border-radius: 1rem;
   }
 
@@ -83,9 +83,10 @@ export const DefinitionWrapper = styled(motion.div)`
       position: absolute;
     }
     h4 {
-      font-family: InterSemiBold, sans-serif;
-      font-size: 1.2rem;
-      line-height: 2.2rem;
+      font-family: Inter, sans-serif;
+      font-size: 1.15rem;
+      line-height: 2rem;
+      font-weight: 400;
 
       @media (min-width: 0px) and (max-width: 425px) {
         font-size: 1.15rem;

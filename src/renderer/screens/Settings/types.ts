@@ -8,6 +8,7 @@ export interface PersistedSettings {
   appDocked: boolean;
   appSilenceOsNotifications: boolean;
   appShowOnAllWorkspaces: boolean;
+  appShowDebuggingSubscriptions: boolean;
 }
 
 export type SettingAction =
@@ -15,7 +16,8 @@ export type SettingAction =
   | 'settings:execute:showOnAllWorkspaces'
   | 'settings:execute:silenceOsNotifications'
   | 'settings:execute:importData'
-  | 'settings:execute:exportData';
+  | 'settings:execute:exportData'
+  | 'settings:execute:showDebuggingSubscriptions';
 
 export interface SettingItem {
   action: SettingAction;

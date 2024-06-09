@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { AccountsWrapper, BreadcrumbsWrapper } from './Wrappers';
+import { AccountsWrapper } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
@@ -10,25 +10,37 @@ import {
 } from '@/renderer/library/Accordion';
 import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import { Switch } from '@/renderer/library/Switch';
+import {
+  getTooltipClassForGroup,
+  toolTipTextFor,
+} from '@app/utils/renderingUtils';
+import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+
+/// Contexts.
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
+
+/// Type imports.
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
   SubscriptionTask,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
@@ -38,6 +50,8 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
+  const { setTooltipTextAndOpen } = useTooltip();
+  const { showDebuggingSubscriptions } = useAppSettings();
   const { online: isOnline, isConnecting } = useBootstrapping();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
@@ -99,6 +113,11 @@ export const Permissions = ({
     }
   }, [dynamicIntervalTasksState]);
 
+  /// Go to section zero if show debugging subscriptions setting turned off.
+  useEffect(() => {
+    !showDebuggingSubscriptions && setSection(0);
+  }, [showDebuggingSubscriptions]);
+
   /// Update accordion interval indices if active chain has changed.
   useEffect(() => {
     setAccordionActiveIntervalIndices([]);
@@ -115,6 +134,18 @@ export const Permissions = ({
     const task = cached.tasks[0];
     task.status = task.status === 'enable' ? 'disable' : 'enable';
     updateRenderedSubscriptions(task);
+  };
+
+  /// Handle toggling a subscription task group switch.
+  const handleGroupSwitch = async (category: TaskCategory) => {
+    const isOn = getCategoryToggles().get(category) || false;
+
+    await toggleCategoryTasks(
+      category,
+      isOn,
+      renderedSubscriptions,
+      updateRenderedSubscriptions
+    );
   };
 
   /// Handle toggling an interval subscription.
@@ -193,10 +224,9 @@ export const Permissions = ({
       : `${type}_${chainId}_${action}`;
 
   /// Return subscription tasks mapped by category.
-  const getCategorised = (): Map<string, SubscriptionTask[]> => {
+  const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
     const { tasks } = renderedSubscriptions;
-
-    const map = new Map<string, SubscriptionTask[]>();
+    const map = new Map<TaskCategory, SubscriptionTask[]>();
 
     tasks.forEach((t) => {
       const category = t.category;
@@ -218,7 +248,7 @@ export const Permissions = ({
 
   /// Map category name to its global toggle state.
   const getCategoryToggles = () => {
-    const map = new Map<string, boolean>();
+    const map = new Map<TaskCategory, boolean>();
 
     // A category toggle is set if all of its tasks are enabled.
     for (const [category, tasks] of getCategorised().entries()) {
@@ -518,20 +548,21 @@ export const Permissions = ({
             title={category}
             itemIndex={j}
             SwitchComponent={
-              <Switch
-                size="sm"
-                type="secondary"
-                isOn={getCategoryToggles().get(category) || false}
-                disabled={getDisabled(tasks[0])}
-                handleToggle={async () =>
-                  await toggleCategoryTasks(
-                    category,
-                    getCategoryToggles().get(category) || false,
-                    renderedSubscriptions,
-                    updateRenderedSubscriptions
-                  )
+              <div
+                className={getTooltipClassForGroup(tasks[0])}
+                data-tooltip={toolTipTextFor(category)}
+                onMouseMove={() =>
+                  setTooltipTextAndOpen(toolTipTextFor(category), 'left')
                 }
-              />
+              >
+                <Switch
+                  size="sm"
+                  type="primary"
+                  isOn={getCategoryToggles().get(category) || false}
+                  disabled={getDisabled(tasks[0])}
+                  handleToggle={async () => await handleGroupSwitch(category)}
+                />
+              </div>
             }
           />
           <AccordionPanel>
@@ -573,7 +604,7 @@ export const Permissions = ({
                 <Switch
                   disabled={isIntervalTaskDisabled()}
                   size="sm"
-                  type="secondary"
+                  type="primary"
                   isOn={getOpenGovGlobalToggles().get(referendumId) || false}
                   handleToggle={async () =>
                     await toggleGlobalSwitch(
@@ -610,20 +641,21 @@ export const Permissions = ({
 
   return (
     <>
-      <BreadcrumbsWrapper>
-        <ul>
-          <li>
-            <ButtonText
-              text="Back"
-              onClick={() => setSection(0)}
-              iconLeft={faAngleLeft}
-              iconTransform="shrink-3"
-            />
-          </li>
-          <li>/</li>
-          <li>{breadcrumb}</li>
-        </ul>
-      </BreadcrumbsWrapper>
+      <ControlsWrapper $sticky={true}>
+        <div className="left">
+          <ButtonPrimaryInvert
+            className="back-btn"
+            text="Back"
+            iconLeft={faCaretLeft}
+            onClick={() => setSection(0)}
+          />
+          <SortControlLabel label={breadcrumb} />
+        </div>
+        <div className="right">
+          <SortControlLabel label={'Subscription On / Off'} noBorder={true} />
+        </div>
+      </ControlsWrapper>
+
       <AccountsWrapper>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}

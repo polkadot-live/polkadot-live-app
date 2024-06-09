@@ -11,7 +11,7 @@ import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
-import { isValidHttpUrl } from '@w3ux/utils';
+import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
 import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/main/Events';
@@ -20,10 +20,11 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
+import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 
-export const Item = memo(function Item({ faIcon, event }: ItemProps) {
+export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
@@ -81,6 +82,9 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
     closed: { height: 0 },
   };
 
+  const showIconTooltip = () =>
+    event.category !== 'openGov' && event.category !== 'debugging';
+
   return (
     <AnimatePresence>
       {/* Event item wrapper */}
@@ -134,15 +138,25 @@ export const Item = memo(function Item({ faIcon, event }: ItemProps) {
             <section className="item-main">
               <div>
                 <div className="icon ">
-                  <span
-                    className="tooltip tooltip-trigger-element"
-                    data-tooltip-text={address}
-                    onMouseMove={() => setTooltipTextAndOpen(address)}
-                  />
-                  <Identicon value={address} size={29} />
-                  <div className="eventIcon">
-                    <FontAwesomeIcon icon={faIcon} />
-                  </div>
+                  {showIconTooltip() && (
+                    <span
+                      className="tooltip tooltip-trigger-element"
+                      data-tooltip-text={address}
+                      onMouseMove={() =>
+                        setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
+                      }
+                    />
+                  )}
+
+                  {event.category === 'openGov' ? (
+                    <Governance
+                      width="32px"
+                      height="32px"
+                      style={{ opacity: '0.85' }}
+                    />
+                  ) : (
+                    <Identicon value={address} size={32} />
+                  )}
                 </div>
               </div>
               <div>

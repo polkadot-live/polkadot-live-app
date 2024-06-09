@@ -4,6 +4,7 @@
 import type { AnyFunction } from '@w3ux/utils/types';
 import type { FlattenedAccountData } from '@/types/accounts';
 import type {
+  IntervalSubscription,
   SubscriptionTask,
   SubscriptionTaskType,
   WrappedSubscriptionTasks,
@@ -45,4 +46,27 @@ export interface PermissionRowProps {
     cached: WrappedSubscriptionTasks,
     setNativeChecked: AnyFunction
   ) => Promise<void>;
+}
+
+export interface IntervalRowProps {
+  task: IntervalSubscription;
+  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
+  handleIntervalNativeCheckbox: (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => Promise<void>;
+  handleChangeIntervalDuration: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => void;
+  handleIntervalOneShot: (
+    task: IntervalSubscription,
+    nativeChecked: boolean,
+    setOneShotProcessing: (processing: boolean) => void
+  ) => Promise<void>;
+  handleRemoveIntervalSubscription: (
+    task: IntervalSubscription
+  ) => Promise<void>;
+  isTaskDisabled: () => boolean;
 }

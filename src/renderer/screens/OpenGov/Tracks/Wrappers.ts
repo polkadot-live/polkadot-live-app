@@ -7,6 +7,7 @@ import styled from 'styled-components';
 /**
  * Provides the following styled components:
  *   TrackGroup
+ *   StickyHeadings
  *   TrackItem
  */
 
@@ -33,6 +34,67 @@ export const TrackGroup = styled.div`
   }
 `;
 
+export const StickyHeadings = styled.div`
+  background-color: var(--background-modal);
+  position: sticky;
+  top: -1.5rem;
+  z-index: 15;
+
+  .content-wrapper {
+    display: flex;
+    column-gap: 1rem;
+    align-items: center;
+
+    div {
+      padding: 0.4rem 0 0.4rem;
+    }
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 64px;
+        padding-left: 20px;
+      }
+      div:nth-child(2) {
+        min-width: 40px;
+      }
+    }
+
+    .right {
+      justify-content: start;
+      display: flex;
+      align-items: center;
+      column-gap: 1rem;
+
+      div:nth-child(1) {
+        min-width: 154px;
+      }
+      div:nth-child(2) {
+        min-width: 144px;
+      }
+      div:nth-child(3) {
+        min-width: 84px;
+      }
+    }
+  }
+
+  .heading {
+    font-size: 0.92rem;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    opacity: 0.6;
+    transition: opacity 0.2s ease-out;
+    cursor: default;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 export const TrackItem = styled(motion.div)`
   position: relative;
   padding: 1rem 1.25rem;
@@ -40,6 +102,9 @@ export const TrackItem = styled(motion.div)`
   transition: background-color 0.2s ease-out;
 
   // Utility.
+  .mw-84 {
+    min-width: 84px;
+  }
   .mw-45 {
     min-width: 45px;
   }
@@ -100,7 +165,8 @@ export const TrackItem = styled(motion.div)`
     // Stat label.
     span {
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      column-gap: 0.4rem;
       padding: 0.5rem 1rem 0.5rem;
       border: 1px solid var(--border-secondary-color);
       border-radius: 0.5rem;
@@ -178,16 +244,17 @@ export const TrackItem = styled(motion.div)`
     display: flex;
     align-items: center;
     border-radius: 0.5rem;
-    opacity: 0.5;
+    padding-left: 0.75rem;
+    opacity: 0.8;
     transition: opacity 0.1s ease-out;
     cursor: pointer;
-    padding-left: 0.75rem;
 
     h4 {
+      color: #f1f1f1;
       font-size: 0.9rem;
     }
     &:hover {
-      opacity: 0.75;
+      opacity: 1;
     }
     .expand-btn {
       position: relative;
@@ -196,6 +263,7 @@ export const TrackItem = styled(motion.div)`
       padding: 0;
 
       svg {
+        color: #f1f1f1;
         position: absolute;
         top: 5px;
         left: 6px;

@@ -1,15 +1,17 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useEffect, useRef, useState } from 'react';
+import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faCircleCheck,
   faInfo,
   faTriangleExclamation,
 } from '@fortawesome/pro-solid-svg-icons';
-import { useEffect, useRef, useState } from 'react';
 import {
   faArrowDownFromDottedLine,
   faListRadio,
@@ -19,31 +21,7 @@ import {
 import { Switch } from '@app/library/Switch';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
-import type { IntervalSubscription } from '@/types/subscriptions';
-import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
-
-interface IntervalRowProps {
-  task: IntervalSubscription;
-  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
-  handleIntervalNativeCheckbox: (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => Promise<void>;
-  handleChangeIntervalDuration: (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
-  ) => void;
-  handleIntervalOneShot: (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: (processing: boolean) => void
-  ) => Promise<void>;
-  handleRemoveIntervalSubscription: (
-    task: IntervalSubscription
-  ) => Promise<void>;
-  isTaskDisabled: () => boolean;
-}
+import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({
   task,
@@ -63,6 +41,7 @@ export const IntervalRow = ({
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
+
   const [removeClicked, setRemoveClicked] = useState(false);
   const removeTimeoutRef = useRef<null | AnyData>(null);
 
@@ -88,9 +67,11 @@ export const IntervalRow = ({
   };
 
   const handleNativeCheckbox = async () => {
-    const flag = !nativeChecked;
-    await handleIntervalNativeCheckbox(task, flag);
-    setNativeChecked(flag);
+    if (!isTaskDisabled() && task.status === 'enable') {
+      const flag = !nativeChecked;
+      await handleIntervalNativeCheckbox(task, flag);
+      setNativeChecked(flag);
+    }
   };
 
   const handleRemove = async () => {
@@ -157,8 +138,8 @@ export const IntervalRow = ({
           <div
             style={{ display: intervalClicked ? 'none' : 'block' }}
             className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
-            data-tooltip-text={'Execute Once'}
-            onMouseMove={() => setTooltipTextAndOpen('Execute Once')}
+            data-tooltip-text={'Get Notification'}
+            onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
           >
             {/* One-shot is enabled and not processing. */}
             {!isTaskDisabled() && !oneShotProcessing && (
@@ -248,34 +229,44 @@ export const IntervalRow = ({
           {/* Native OS Notification Checkbox */}
           <div
             className={'native-wrapper tooltip-trigger-element'}
-            data-tooltip-text={'Toggle OS Notifications'}
-            onMouseMove={() => setTooltipTextAndOpen('Toggle OS Notifications')}
+            data-tooltip-text={'OS Notifications'}
+            onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
           >
-            {/* Nativ checkbox enabled */}
-            {!isTaskDisabled() && task.status === 'enable' && (
+            <div
+              className="native-content"
+              onClick={async () => await handleNativeCheckbox()}
+            >
+              {/* Main icon */}
               <FontAwesomeIcon
-                className={nativeChecked ? 'checked' : 'unchecked'}
+                className={
+                  !isTaskDisabled() && task.status === 'enable'
+                    ? nativeChecked
+                      ? 'checked'
+                      : 'unchecked'
+                    : 'disabled'
+                }
                 icon={faListRadio}
                 transform={'grow-8'}
-                onClick={async () => await handleNativeCheckbox()}
               />
-            )}
 
-            {/* Native checkbox disabled */}
-            {(isTaskDisabled() || task.status === 'disable') && (
-              <FontAwesomeIcon
-                className="disabled"
-                icon={faListRadio}
-                transform={'grow-8'}
-              />
-            )}
+              {/* Check overlay icon when clicked */}
+              {nativeChecked && (
+                <div className="checked-icon-wrapper">
+                  <FontAwesomeIcon
+                    className={task.status === 'disable' ? 'disable' : ''}
+                    icon={faCircleCheck}
+                    transform={'shrink-3'}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Toggle Switch */}
           <Switch
             disabled={isTaskDisabled()}
             size="sm"
-            type="secondary"
+            type="primary"
             isOn={isToggled}
             handleToggle={async () => await handleToggle()}
           />
