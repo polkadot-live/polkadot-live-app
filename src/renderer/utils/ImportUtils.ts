@@ -3,6 +3,7 @@
 
 import { Config as ConfigImport } from '@/config/processes/import';
 import { ellipsisFn } from '@w3ux/utils';
+import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -10,6 +11,53 @@ import type {
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
 import type { ChainID } from '@/types/chains';
+
+type ToastType = 'success' | 'error';
+
+/**
+ * @name renderToast
+ * @summary Utility to render a toastify notification.
+ */
+export const renderToast = (
+  text: string,
+  toastType: ToastType,
+  toastId: string
+) => {
+  switch (toastType) {
+    case 'success': {
+      toast.success(text, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId,
+      });
+      break;
+    }
+    case 'error': {
+      toast.error(text, {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId,
+      });
+      break;
+    }
+  }
+};
 
 /**
  * @name renameLocalAccount

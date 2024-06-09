@@ -11,8 +11,10 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
-import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import {
+  getSortedLocalAddresses,
+  renderToast,
+} from '@/renderer/utils/ImportUtils';
 import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
@@ -89,46 +91,6 @@ export const Manage = ({
   /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
-
-  /// Utility to render a toastify notification.
-  type ToastType = 'success' | 'error';
-
-  const renderToast = (text: string, toastType: ToastType, toastId: string) => {
-    switch (toastType) {
-      case 'success': {
-        toast.success(text, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          closeButton: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Flip,
-          toastId,
-        });
-        break;
-      }
-      case 'error': {
-        toast.error(text, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: false,
-          closeButton: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Flip,
-          toastId,
-        });
-        break;
-      }
-    }
-  };
 
   // Validate input and add address to local storage.
   const onImport = () => {
