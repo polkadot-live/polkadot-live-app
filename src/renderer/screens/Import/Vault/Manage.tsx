@@ -29,7 +29,6 @@ import type { ManageVaultProps } from '../types';
 
 export const Manage = ({
   setSection,
-  //section,
   addresses,
   setAddresses,
 }: ManageVaultProps) => {
@@ -113,7 +112,7 @@ export const Manage = ({
                             {chainAddresses.map(
                               ({ address, index, isImported, name }, j) => (
                                 <Address
-                                  key={address}
+                                  key={`address_${name}`}
                                   accountName={name}
                                   source={'vault'}
                                   setAddresses={setAddresses}

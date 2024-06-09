@@ -119,7 +119,7 @@ export const Manage = ({
                               j
                             ) => (
                               <Address
-                                key={address}
+                                key={`address_${name}`}
                                 address={address}
                                 source={'ledger'}
                                 accountName={name}

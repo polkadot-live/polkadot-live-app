@@ -14,36 +14,35 @@ import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
-import type { FormEvent } from 'react';
-import type { HardwareAddressProps } from './types';
 import { getAddressChainId } from '@/renderer/Utils';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import type { FormEvent } from 'react';
+import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
   address,
+  source,
   index,
   isImported,
   orderData,
-  isProcessing,
   accountName,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
 }: HardwareAddressProps) => {
+  const { setTooltipTextAndOpen } = useTooltip();
+  const { isConnected } = useConnections();
+  const { getStatusForAccount } = useAccountStatuses();
+
   // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
   // Store the currently edited name and validation errors flag.
   const [editName, setEditName] = useState<string>(accountName);
-
-  // Get app connection status.
-  const { isConnected } = useConnections();
-
-  // Use tool tip.
-  const { setTooltipTextAndOpen } = useTooltip();
 
   // Cancel button clicked for edit input.
   const cancelEditing = () => {
@@ -91,6 +90,9 @@ export const HardwareAddress = ({
     const ChainIcon = chainIcon(chainId);
     return <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />;
   };
+
+  // Utility to get processing status.
+  const isProcessing = () => getStatusForAccount(address, source) || false;
 
   // Function to render wrapper JSX.
   const renderContent = () => (
@@ -155,7 +157,7 @@ export const HardwareAddress = ({
 
       {/* Account buttons */}
       <div className="action">
-        {isImported && !isProcessing ? (
+        {isImported && !isProcessing() ? (
           <div
             style={{ position: 'relative' }}
             className="tooltip-trigger-element"
@@ -185,14 +187,14 @@ export const HardwareAddress = ({
               iconLeft={faDownFromDottedLine}
               iconTransform="grow-2"
               text={''}
-              onClick={() => !isProcessing && openConfirmHandler()}
+              onClick={() => !isProcessing() && openConfirmHandler()}
               className={
-                isProcessing
+                isProcessing()
                   ? 'account-action-btn processing'
                   : 'account-action-btn green-hover'
               }
             />
-            {isProcessing && (
+            {isProcessing() && (
               <div
                 style={{ position: 'absolute', left: '3px', top: '8px' }}
                 className="lds-ellipsis"

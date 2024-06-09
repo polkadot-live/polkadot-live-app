@@ -63,11 +63,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     )
   );
 
-  /// Cancel button clicked for address field.
-  const onCancel = () => {
-    setEditName('');
-  };
-
   /// Verify that the address is compatible with the supported networks.
   const validateAddress = (address: string) => {
     for (const prefix of [0, 2, 42]) {
@@ -100,7 +95,19 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
-  // Validate input and add address to local storage.
+  /// Cancel button clicked for address field.
+  const onCancel = () => {
+    setEditName('');
+  };
+
+  // Input change handler.
+  const onChange = (e: FormEvent<HTMLInputElement>) => {
+    let val = e.currentTarget.value || '';
+    val = unescape(val);
+    setEditName(val);
+  };
+
+  /// Handle import button click.
   const onImport = () => {
     const trimmed = editName.trim();
 
@@ -138,13 +145,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
     // Set processing flag to true and import via main renderer.
     handleImportAddress(trimmed, 'read-only', accountName);
-  };
-
-  // Input change handler.
-  const onChange = (e: FormEvent<HTMLInputElement>) => {
-    let val = e.currentTarget.value || '';
-    val = unescape(val);
-    setEditName(val);
   };
 
   return (
@@ -246,7 +246,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                                   j
                                 ) => (
                                   <Address
-                                    key={address}
+                                    key={`address_${name}`}
                                     accountName={name}
                                     source={'read-only'}
                                     setAddresses={setAddresses}
