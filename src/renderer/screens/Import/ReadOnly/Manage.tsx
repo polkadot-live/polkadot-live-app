@@ -6,41 +6,51 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
+import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Address } from './Address';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
-import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
-import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 import { useState } from 'react';
+import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
+
+/// Context imports.
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import type { FormEvent } from 'react';
-import type { LocalAddress } from '@/types/accounts';
-import type { ManageReadOnlyProps } from '../types';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
+
+/// Util imports.
 import {
   ControlsWrapper,
   StatsFooter,
   Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+import {
+  getSortedLocalAddresses,
+  renderToast,
+} from '@/renderer/utils/ImportUtils';
 
-export const Manage = ({
-  setSection,
-  //section,
-  addresses,
-  setAddresses,
-}: ManageReadOnlyProps) => {
-  const [editName, setEditName] = useState<string>('');
+/// Type imports.
+import type { FormEvent } from 'react';
+import type { LocalAddress } from '@/types/accounts';
+import type { ManageReadOnlyProps } from '../types';
+
+export const Manage = ({ setSection }: ManageReadOnlyProps) => {
+  const { readOnlyAddresses: addresses, setReadOnlyAddresses: setAddresses } =
+    useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
+  const { handleImportAddress } = useImportHandler();
 
-  // Active accordion indices for account subscription tasks categories.
+  /// Component state.
+  const [editName, setEditName] = useState<string>('');
+
+  /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(
@@ -52,12 +62,8 @@ export const Manage = ({
       (_, index) => index
     )
   );
-  // Cancel button clicked for address field.
-  const onCancel = () => {
-    setEditName('');
-  };
 
-  // Verify that the address is compatible with the supported networks.
+  /// Verify that the address is compatible with the supported networks.
   const validateAddress = (address: string) => {
     for (const prefix of [0, 2, 42]) {
       const result = checkAddress(address, prefix);
@@ -74,7 +80,7 @@ export const Manage = ({
     return false;
   };
 
-  // Verify that the address is not already imported.
+  /// Verify that the address is not already imported.
   const isAlreadyImported = (address: string): boolean => {
     for (const next of addresses) {
       if (next.address === address) {
@@ -85,49 +91,36 @@ export const Manage = ({
     return false;
   };
 
-  // Gets the next non-imported address index.
+  /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
-  // Validate input and add address to local storage.
+  /// Cancel button clicked for address field.
+  const onCancel = () => {
+    setEditName('');
+  };
+
+  // Input change handler.
+  const onChange = (e: FormEvent<HTMLInputElement>) => {
+    let val = e.currentTarget.value || '';
+    val = unescape(val);
+    setEditName(val);
+  };
+
+  /// Handle import button click.
   const onImport = () => {
     const trimmed = editName.trim();
 
     if (isAlreadyImported(trimmed)) {
-      // Render error alert.
-      toast.error('Address is already imported.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Address is already imported.', 'error', `toast-${trimmed}`);
       return;
     } else if (!validateAddress(trimmed)) {
-      // Render error alert.
-      toast.error('Bad account name.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
       return;
     }
+
+    // The default account name.
+    const accountName = ellipsisFn(trimmed);
 
     // Update local storage.
     const newAddresses = addresses
@@ -136,39 +129,22 @@ export const Manage = ({
         index: getNextAddressIndex(),
         address: trimmed,
         isImported: false,
-        name: ellipsisFn(trimmed),
+        name: accountName,
         source: 'read-only',
       });
 
     const storageKey = ConfigImport.getStorageKey('read-only');
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
+
+    // Reset read-only address input state.
     setEditName('');
 
     // Add account status entry.
     insertAccountStatus(trimmed, 'read-only');
 
-    // Render success alert.
-    toast.success('Address addred successfully.', {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: false,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId: `toast-${trimmed}`, // prevent duplicate alerts
-    });
-  };
-
-  // Input change handler.
-  const onChange = (e: FormEvent<HTMLInputElement>) => {
-    let val = e.currentTarget.value || '';
-    val = unescape(val);
-    setEditName(val);
+    // Set processing flag to true and import via main renderer.
+    handleImportAddress(trimmed, 'read-only', accountName);
   };
 
   return (
@@ -270,10 +246,9 @@ export const Manage = ({
                                   j
                                 ) => (
                                   <Address
-                                    key={address}
+                                    key={`address_${name}`}
                                     accountName={name}
                                     source={'read-only'}
-                                    setAddresses={setAddresses}
                                     address={address}
                                     index={index}
                                     isImported={isImported || false}

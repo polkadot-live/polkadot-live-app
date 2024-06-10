@@ -162,7 +162,6 @@ export const ImportLedger = ({
   ) : (
     <Manage
       addresses={addresses}
-      setAddresses={setAddresses}
       isImporting={isImporting}
       toggleImport={toggleImport}
       statusCodes={statusCodes}

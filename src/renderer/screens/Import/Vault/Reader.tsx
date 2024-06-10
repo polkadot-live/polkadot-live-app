@@ -15,10 +15,12 @@ import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { LocalAddress } from '@/types/accounts';
 import type { ReaderVaultProps } from '../types';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
   const { insertAccountStatus } = useAccountStatuses();
+  const { handleImportAddress } = useImportHandler();
 
   // Check whether initial render.
   const initialRender = useRef<boolean>(true);
@@ -78,13 +80,15 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
 
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = (address: string) => {
+    const accountName = ellipsisFn(address);
+
     const newAddresses = addresses
       .filter((a: LocalAddress) => a.address !== address)
       .concat({
         index: getNextAddressIndex(),
         address,
         isImported: false,
-        name: ellipsisFn(address),
+        name: accountName,
         source: 'vault',
       });
 
@@ -95,6 +99,9 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
 
     // Add account status entry.
     insertAccountStatus(address, 'vault');
+
+    // Set processing flag to true and import via main renderer.
+    handleImportAddress(address, 'vault', accountName);
   };
 
   // Gets the next non-imported address index.

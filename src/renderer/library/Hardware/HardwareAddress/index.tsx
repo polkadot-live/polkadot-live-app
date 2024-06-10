@@ -1,50 +1,45 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  faDownFromDottedLine,
-  faEraser,
-  faTrash,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faMinusLarge, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';
-import { validateAccountName } from '@/renderer/utils/ImportUtils';
+import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
-import type { FormEvent } from 'react';
-import type { HardwareAddressProps } from './types';
 import { getAddressChainId } from '@/renderer/Utils';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import type { FormEvent } from 'react';
+import type { HardwareAddressProps } from './types';
+import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
 
 export const HardwareAddress = ({
   address,
+  source,
   index,
   isImported,
   orderData,
-  isProcessing,
   accountName,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
 }: HardwareAddressProps) => {
+  const { setTooltipTextAndOpen } = useTooltip();
+  const { isConnected } = useConnections();
+  const { getStatusForAccount } = useAccountStatuses();
+
   // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
   // Store the currently edited name and validation errors flag.
   const [editName, setEditName] = useState<string>(accountName);
-
-  // Get app connection status.
-  const { isConnected } = useConnections();
-
-  // Use tool tip.
-  const { setTooltipTextAndOpen } = useTooltip();
 
   // Cancel button clicked for edit input.
   const cancelEditing = () => {
@@ -64,40 +59,14 @@ export const HardwareAddress = ({
 
     // Handle validation failure.
     if (!validateAccountName(trimmed)) {
-      // Render error alert.
-      toast.error('Bad account name.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: `toast-${trimmed}`, // prevent duplicate alerts
-      });
-
+      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
       setEditName(accountName);
       setEditing(false);
       return;
     }
 
     // Render success alert.
-    toast.success('Account name updated.', {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: false,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId: `toast-${trimmed}`, // prevent duplicate alerts
-    });
+    renderToast('Account name updated.', 'success', `toast-${trimmed}`);
 
     // Otherwise rename account.
     renameHandler(address, trimmed);
@@ -119,6 +88,9 @@ export const HardwareAddress = ({
     return <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />;
   };
 
+  // Utility to get processing status.
+  const isProcessing = () => getStatusForAccount(address, source) || false;
+
   // Function to render wrapper JSX.
   const renderContent = () => (
     <>
@@ -138,6 +110,7 @@ export const HardwareAddress = ({
                 </h5>
                 <input
                   type="text"
+                  disabled={isProcessing()}
                   value={editing ? editName : accountName}
                   onChange={(e) => handleChange(e)}
                   onFocus={() => setEditing(true)}
@@ -149,7 +122,7 @@ export const HardwareAddress = ({
                   }}
                 />
 
-                {editing && (
+                {editing && !isProcessing() && (
                   <div style={{ display: 'flex' }}>
                     &nbsp;
                     <button
@@ -182,16 +155,17 @@ export const HardwareAddress = ({
 
       {/* Account buttons */}
       <div className="action">
-        {isImported && !isProcessing ? (
+        {isImported && !isProcessing() ? (
           <div
             style={{ position: 'relative' }}
             className="tooltip-trigger-element"
-            data-tooltip-text={'Remove'}
-            onMouseMove={() => setTooltipTextAndOpen('Remove')}
+            data-tooltip-text={'Remove From Main Window'}
+            onMouseMove={() => setTooltipTextAndOpen('Remove From Main Window')}
           >
             <ButtonMono
               className="account-action-btn orange-hover"
-              iconLeft={faEraser}
+              iconLeft={faMinusLarge}
+              iconTransform={'shrink-4'}
               text={''}
               onClick={() => openRemoveHandler()}
             />
@@ -203,23 +177,23 @@ export const HardwareAddress = ({
             data-tooltip-text={isConnected ? 'Import' : 'Currently Offline'}
             onMouseMove={() =>
               isConnected
-                ? setTooltipTextAndOpen('Import')
+                ? setTooltipTextAndOpen('Add To Main Window')
                 : setTooltipTextAndOpen('Currently Offline')
             }
           >
             <ButtonMono
               disabled={!isConnected}
-              iconLeft={faDownFromDottedLine}
-              iconTransform="grow-2"
+              iconLeft={faPlusLarge}
+              iconTransform="grow-0"
               text={''}
-              onClick={() => !isProcessing && openConfirmHandler()}
+              onClick={() => !isProcessing() && openConfirmHandler()}
               className={
-                isProcessing
+                isProcessing()
                   ? 'account-action-btn processing'
                   : 'account-action-btn green-hover'
               }
             />
-            {isProcessing && (
+            {isProcessing() && (
               <div
                 style={{ position: 'absolute', left: '3px', top: '8px' }}
                 className="lds-ellipsis"
@@ -238,6 +212,7 @@ export const HardwareAddress = ({
           onMouseMove={() => setTooltipTextAndOpen('Delete')}
         >
           <ButtonMono
+            disabled={isProcessing()}
             className="account-action-btn red-hover"
             iconLeft={faTrash}
             iconTransform="shrink-2"

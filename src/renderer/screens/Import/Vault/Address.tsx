@@ -9,7 +9,6 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
-import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';
@@ -19,17 +18,14 @@ export const Address = ({
   source,
   index,
   accountName,
-  setAddresses,
   isImported,
   setSection,
   orderData,
 }: AddressProps) => {
-  // State for account name.
-  const [accountNameState, setAccountNameState] = useState<string>(accountName);
   const { openOverlayWith } = useOverlay();
 
-  // Getter for account's processing flag.
-  const { getStatusForAccount } = useAccountStatuses();
+  // State for account name.
+  const [accountNameState, setAccountNameState] = useState<string>(accountName);
 
   // Handler to rename an account.
   const renameHandler = (who: string, newName: string) => {
@@ -44,41 +40,24 @@ export const Address = ({
     <HardwareAddress
       key={index}
       address={address}
+      source={source}
       isImported={isImported}
       orderData={orderData}
-      isProcessing={getStatusForAccount(address, source) || false}
       index={index}
       accountName={accountNameState}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
-        openOverlayWith(
-          <Remove
-            setAddresses={setAddresses}
-            address={address}
-            source="vault"
-          />,
-          'small'
-        )
+        openOverlayWith(<Remove address={address} source="vault" />, 'small')
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm
-            setAddresses={setAddresses}
-            address={address}
-            name={accountNameState}
-            source="vault"
-          />,
+          <Confirm address={address} name={accountNameState} source="vault" />,
           'small'
         )
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete
-            setAddresses={setAddresses}
-            address={address}
-            source="vault"
-            setSection={setSection}
-          />
+          <Delete address={address} source="vault" setSection={setSection} />
         )
       }
     />
