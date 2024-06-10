@@ -60,7 +60,6 @@ export const Address = ({
       openConfirmHandler={() =>
         openOverlayWith(
           <Confirm
-            setAddresses={setAddresses}
             address={address}
             name={accountNameState}
             source="read-only"

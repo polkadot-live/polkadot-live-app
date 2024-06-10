@@ -59,12 +59,7 @@ export const Address = ({
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm
-            address={address}
-            setAddresses={setAddresses}
-            name={accountNameState}
-            source="ledger"
-          />,
+          <Confirm address={address} name={accountNameState} source="ledger" />,
           'small'
         )
       }

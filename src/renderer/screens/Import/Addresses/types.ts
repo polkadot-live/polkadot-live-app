@@ -20,7 +20,6 @@ export interface AddressProps {
 
 export interface ConfirmProps {
   address: string;
-  setAddresses: AnyFunction;
   name: string;
   source: AccountSource;
 }
