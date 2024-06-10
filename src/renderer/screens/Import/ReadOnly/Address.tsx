@@ -49,11 +49,7 @@ export const Address = ({
       renameHandler={renameHandler}
       openRemoveHandler={() =>
         openOverlayWith(
-          <Remove
-            setAddresses={setAddresses}
-            address={address}
-            source="read-only"
-          />,
+          <Remove address={address} source="read-only" />,
           'small'
         )
       }

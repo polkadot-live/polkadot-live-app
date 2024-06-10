@@ -26,7 +26,6 @@ export interface ConfirmProps {
 
 export interface RemoveProps {
   address: string;
-  setAddresses: AnyFunction;
   source: AccountSource;
 }
 

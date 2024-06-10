@@ -48,14 +48,7 @@ export const Address = ({
       isImported={isImported}
       orderData={orderData}
       openRemoveHandler={() =>
-        openOverlayWith(
-          <Remove
-            address={address}
-            setAddresses={setAddresses}
-            source="ledger"
-          />,
-          'small'
-        )
+        openOverlayWith(<Remove address={address} source="ledger" />, 'small')
       }
       openConfirmHandler={() =>
         openOverlayWith(

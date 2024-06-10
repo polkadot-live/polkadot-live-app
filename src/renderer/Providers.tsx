@@ -21,6 +21,7 @@ import { IntervalSubscriptionsProvider } from './contexts/main/IntervalSubscript
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
 import { AddressesProvider as ImportAddressesProvider } from '@app/contexts/import/Addresses';
 import { ImportHandlerProvider } from './contexts/import/ImportHandler';
+import { RemoveHandlerProvider } from './contexts/import/RemoveHandler';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
@@ -67,7 +68,8 @@ const getProvidersForWindow = () => {
         ConnectionsProvider,
         ImportAddressesProvider,
         ImportAccountStatusesProvider,
-        ImportHandlerProvider // Requires useAccountStatuses + useAddresses
+        ImportHandlerProvider, // Requires useAccountStatuses + useAddresses
+        RemoveHandlerProvider // Requires useAddresses
       )(Theme);
     }
     case 'settings': {

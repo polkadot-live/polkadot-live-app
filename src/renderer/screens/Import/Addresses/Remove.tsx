@@ -6,93 +6,16 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { Config as ConfigImport } from '@/config/processes/import';
-import { getAddressChainId } from '@/renderer/Utils';
+import { useRemoveHandler } from '@/renderer/contexts/import/RemoveHandler';
 import type { RemoveProps } from './types';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
 
-export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
+export const Remove = ({ address, source }: RemoveProps) => {
   const { setStatus } = useOverlay();
+  const { handleRemoveAddress } = useRemoveHandler();
 
-  // Click handler function.
-  const handleRemoveAddress = () => {
-    if (source === 'vault') {
-      handleRemoveVaultAddress();
-    } else if (source === 'ledger') {
-      handleRemoveLedgerAddress();
-    } else if (source === 'read-only') {
-      handleRemoveReadOnlyAddress();
-    }
-
+  const handleClickRemove = () => {
+    handleRemoveAddress(address, source);
     setStatus(0);
-  };
-
-  // Handle removal of a ledger address.
-  const handleRemoveLedgerAddress = () => {
-    // Update import window's managed address state and local storage.
-    setAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow();
-  };
-
-  // Handle removal of a vault address.
-  const handleRemoveVaultAddress = () => {
-    // Update import window's managed address state and local storage.
-    setAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow();
-  };
-
-  // Handle removal of a read-only address.
-  const handleRemoveReadOnlyAddress = () => {
-    // Update import window's managed address state and local storage.
-    setAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow();
-  };
-
-  // Send address data to main window to process removal.
-  const postAddressToMainWindow = () => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:address:remove',
-      data: {
-        address,
-        chainId: getAddressChainId(address),
-      },
-    });
   };
 
   return (
@@ -107,10 +30,7 @@ export const Remove = ({ address, setAddresses, source }: RemoveProps) => {
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
-        <ButtonMono
-          text="Remove Account"
-          onClick={() => handleRemoveAddress()}
-        />
+        <ButtonMono text="Remove Account" onClick={() => handleClickRemove()} />
       </div>
     </ConfirmWrapper>
   );
