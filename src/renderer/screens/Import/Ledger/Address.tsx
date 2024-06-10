@@ -17,7 +17,6 @@ export const Address = ({
   address,
   accountName,
   source,
-  setAddresses,
   index,
   isImported,
   orderData,
@@ -58,12 +57,7 @@ export const Address = ({
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete
-            setAddresses={setAddresses}
-            address={address}
-            source="ledger"
-            setSection={setSection}
-          />
+          <Delete address={address} source="ledger" setSection={setSection} />
         )
       }
     />

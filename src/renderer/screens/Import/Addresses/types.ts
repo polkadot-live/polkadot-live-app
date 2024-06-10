@@ -10,7 +10,6 @@ export interface AddressProps {
   address: string;
   index: number;
   isImported: boolean;
-  setAddresses: AnyFunction;
   setSection: AnyFunction;
   orderData: {
     curIndex: number;
@@ -31,7 +30,6 @@ export interface RemoveProps {
 
 export interface DeleteProps {
   address: string;
-  setAddresses: AnyFunction;
   source: AccountSource;
   setSection: AnyFunction | null;
 }

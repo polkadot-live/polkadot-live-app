@@ -249,7 +249,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                                     key={`address_${name}`}
                                     accountName={name}
                                     source={'read-only'}
-                                    setAddresses={setAddresses}
                                     address={address}
                                     index={index}
                                     isImported={isImported || false}

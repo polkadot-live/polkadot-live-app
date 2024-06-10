@@ -115,7 +115,6 @@ export const Manage = ({
                                   key={`address_${name}`}
                                   accountName={name}
                                   source={'vault'}
-                                  setAddresses={setAddresses}
                                   address={address}
                                   index={index}
                                   isImported={isImported || false}

@@ -44,7 +44,6 @@ export interface ImportLedgerManageProps {
   isImporting: boolean;
   statusCodes: LedgerResponse[];
   section: number;
-  setAddresses: AnyFunction;
   toggleImport: AnyFunction;
   cancelImport: AnyFunction;
   setSection: AnyFunction;
@@ -60,7 +59,6 @@ export interface LedgerAddressProps {
     curIndex: number;
     lastIndex: number;
   };
-  setAddresses: AnyFunction;
   setSection: AnyFunction;
 }
 
