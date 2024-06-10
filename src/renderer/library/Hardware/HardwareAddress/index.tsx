@@ -113,6 +113,7 @@ export const HardwareAddress = ({
                 </h5>
                 <input
                   type="text"
+                  disabled={isProcessing()}
                   value={editing ? editName : accountName}
                   onChange={(e) => handleChange(e)}
                   onFocus={() => setEditing(true)}
@@ -124,7 +125,7 @@ export const HardwareAddress = ({
                   }}
                 />
 
-                {editing && (
+                {editing && !isProcessing() && (
                   <div style={{ display: 'flex' }}>
                     &nbsp;
                     <button
@@ -213,6 +214,7 @@ export const HardwareAddress = ({
           onMouseMove={() => setTooltipTextAndOpen('Delete')}
         >
           <ButtonMono
+            disabled={isProcessing()}
             className="account-action-btn red-hover"
             iconLeft={faTrash}
             iconTransform="shrink-2"
