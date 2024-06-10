@@ -26,6 +26,9 @@ export const Import: React.FC = () => {
     }
   }, [section]);
 
+  const getShowClass = (target: AccountSource) =>
+    source === target ? 'show' : 'hide';
+
   return (
     <ModalSection type="carousel">
       <ModalMotionTwoSection
@@ -62,13 +65,13 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          <div className={source === 'ledger' ? 'show' : 'hide'}>
+          <div className={getShowClass('ledger')}>
             <ImportLedger section={section} setSection={setSection} />
           </div>
-          <div className={source === 'vault' ? 'show' : 'hide'}>
+          <div className={getShowClass('vault')}>
             <ImportVault section={section} setSection={setSection} />
           </div>
-          <div className={source === 'read-only' ? 'show' : 'hide'}>
+          <div className={getShowClass('read-only')}>
             <ImportReadOnly section={section} setSection={setSection} />
           </div>
         </div>
