@@ -1,11 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  faDownFromDottedLine,
-  faEraser,
-  faTrash,
-} from '@fortawesome/pro-solid-svg-icons';
+import { faMinusLarge, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
@@ -21,6 +17,7 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
+import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
 
 export const HardwareAddress = ({
   address,
@@ -162,12 +159,13 @@ export const HardwareAddress = ({
           <div
             style={{ position: 'relative' }}
             className="tooltip-trigger-element"
-            data-tooltip-text={'Remove'}
-            onMouseMove={() => setTooltipTextAndOpen('Remove')}
+            data-tooltip-text={'Remove From Main Window'}
+            onMouseMove={() => setTooltipTextAndOpen('Remove From Main Window')}
           >
             <ButtonMono
               className="account-action-btn orange-hover"
-              iconLeft={faEraser}
+              iconLeft={faMinusLarge}
+              iconTransform={'shrink-4'}
               text={''}
               onClick={() => openRemoveHandler()}
             />
@@ -179,14 +177,14 @@ export const HardwareAddress = ({
             data-tooltip-text={isConnected ? 'Import' : 'Currently Offline'}
             onMouseMove={() =>
               isConnected
-                ? setTooltipTextAndOpen('Import')
+                ? setTooltipTextAndOpen('Add To Main Window')
                 : setTooltipTextAndOpen('Currently Offline')
             }
           >
             <ButtonMono
               disabled={!isConnected}
-              iconLeft={faDownFromDottedLine}
-              iconTransform="grow-2"
+              iconLeft={faPlusLarge}
+              iconTransform="grow-0"
               text={''}
               onClick={() => !isProcessing() && openConfirmHandler()}
               className={

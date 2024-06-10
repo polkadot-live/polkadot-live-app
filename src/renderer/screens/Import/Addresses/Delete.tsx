@@ -121,8 +121,8 @@ export const Delete = ({
       <h3>Delete Account</h3>
       <h5>{address}</h5>
       <p>
-        Deleting this account will unsubscribe it from all of its events. After
-        deleted, it will need to be re-imported into the application.
+        Deleting this account will turn off all of its active subscriptions.
+        After deleted, it will need to be re-imported into the application.
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />

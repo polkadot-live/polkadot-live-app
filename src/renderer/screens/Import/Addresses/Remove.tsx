@@ -24,9 +24,8 @@ export const Remove = ({ address, source }: RemoveProps) => {
       <h3>Remove Account</h3>
       <h5>{address}</h5>
       <p>
-        Removing this account will unsubscribe it from all of its events. After
-        removal, this account will need to be re-imported to resume receiving
-        events.
+        This account will be removed from the main window. All active
+        subscriptions associated with this account will be turned off.
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />

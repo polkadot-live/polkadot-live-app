@@ -21,22 +21,15 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
   return (
     <ConfirmWrapper>
       <Identicon value={address} size={60} />
-      <h3>Import Account</h3>
+      <h3>Add Account</h3>
       <h5>{address}</h5>
       <p>
-        Importing this account will automatically subscribe it to events
-        relevant to its on-chain activity.
-      </p>
-      <p>
-        After importing, events can be manually managed from the main
-        menu&apos;s Manage tab.
+        This account will be added to the <b>Subscriptions</b> tab in the main
+        window. Click on the account to manage its subscriptions.
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
-        <ButtonMono
-          text="Import Account"
-          onClick={() => handleClickConfirm()}
-        />
+        <ButtonMono text="Add Account" onClick={() => handleClickConfirm()} />
       </div>
     </ConfirmWrapper>
   );
