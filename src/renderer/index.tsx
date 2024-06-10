@@ -10,6 +10,7 @@ import '@app/theme/accents/polkadot-relay.css';
 // App styles.
 import './theme/theme.scss';
 import './theme/index.scss';
+import './theme/utils.scss';
 
 // Library styles.
 import './kits/Buttons/index.scss';

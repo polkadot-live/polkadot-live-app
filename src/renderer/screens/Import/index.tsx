@@ -62,15 +62,15 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          {source === 'ledger' && (
+          <div className={source === 'ledger' ? 'show' : 'hide'}>
             <ImportLedger section={section} setSection={setSection} />
-          )}
-          {source === 'vault' && (
+          </div>
+          <div className={source === 'vault' ? 'show' : 'hide'}>
             <ImportVault section={section} setSection={setSection} />
-          )}
-          {source === 'read-only' && (
+          </div>
+          <div className={source === 'read-only' ? 'show' : 'hide'}>
             <ImportReadOnly section={section} setSection={setSection} />
-          )}
+          </div>
         </div>
       </ModalMotionTwoSection>
     </ModalSection>
