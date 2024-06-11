@@ -124,11 +124,8 @@ export const Permissions = ({
   }, [activeChainId]);
 
   /// Handle a subscription toggle and update rendered subscription state.
-  const handleToggle = async (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
-  ) => {
-    await handleQueuedToggle(cached, setNativeChecked);
+  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
+    await handleQueuedToggle(cached);
 
     // Update rendererd subscription tasks state.
     const task = cached.tasks[0];
