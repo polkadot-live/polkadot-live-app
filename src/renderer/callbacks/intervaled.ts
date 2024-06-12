@@ -314,6 +314,8 @@ const getNotificationFlag = (
   task: IntervalSubscription,
   policy: NotificationPolicy
 ) =>
-  policy !== 'none' &&
-  !RendererConfig.silenceNotifications &&
-  (task.enableOsNotifications || policy === 'one-shot');
+  policy === 'one-shot'
+    ? true
+    : policy !== 'none' &&
+      !RendererConfig.silenceNotifications &&
+      task.enableOsNotifications;
