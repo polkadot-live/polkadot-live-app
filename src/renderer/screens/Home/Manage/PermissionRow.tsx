@@ -166,6 +166,7 @@ export const PermissionRow = ({
             }
           >
             <Switch
+              style={{ paddingRight: '10px' }}
               size="sm"
               type="primary"
               isOn={isToggled}
