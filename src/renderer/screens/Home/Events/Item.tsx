@@ -141,7 +141,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                   {showIconTooltip() && (
                     <span
                       className="tooltip tooltip-trigger-element"
-                      data-tooltip-text={address}
+                      data-tooltip-text={ellipsisFn(address, 16)}
                       onMouseMove={() =>
                         setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
                       }
