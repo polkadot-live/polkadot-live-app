@@ -142,15 +142,15 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ManageContext.Provider
       value={{
-        renderedSubscriptions: renderedSubscriptionsState,
+        activeChainId,
         dynamicIntervalTasksState,
+        renderedSubscriptions: renderedSubscriptionsState,
         setDynamicIntervalTasks,
         setRenderedSubscriptions,
         updateRenderedSubscriptions,
         tryUpdateDynamicIntervalTask,
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
-        activeChainId,
         setActiveChainId,
         getCategorizedDynamicIntervals,
       }}

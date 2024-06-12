@@ -238,6 +238,7 @@ export const ControlsWrapper = styled.div<{
       display: inline-block;
       color: #666666;
       font-size: 0.9rem;
+      cursor: default;
     }
     .icon {
       margin-left: 0.7rem;
