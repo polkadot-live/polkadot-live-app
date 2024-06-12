@@ -211,7 +211,8 @@ export class SubscriptionsController {
   static getAllSubscriptionsForAccount = (account: Account) =>
     allAccountTasks
       .filter((t) => t.chainId === account.chain)
-      .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t));
+      .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
+      .map((t) => ({ ...t, status: 'enable' }) as SubscriptionTask);
 
   /**
    * @name getTaskArgsForAccount

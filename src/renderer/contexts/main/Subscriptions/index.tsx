@@ -106,11 +106,14 @@ export const SubscriptionsProvider = ({
   ) => {
     if (type === 'account') {
       setAccountSubscriptionsState((prev) => {
-        const tasks = prev.get(address!)!;
-        prev.set(
-          address!,
-          tasks.map((t) => (t.action === task.action ? task : t))
-        );
+        const tasks = prev.get(address!);
+        !tasks
+          ? prev.set(address!, [{ ...task }])
+          : prev.set(
+              address!,
+              tasks.map((t) => (t.action === task.action ? task : t))
+            );
+
         return prev;
       });
     } else {

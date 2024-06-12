@@ -3,6 +3,7 @@
 
 import { faMinusLarge, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +18,6 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
-import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
 
 export const HardwareAddress = ({
   address,
