@@ -94,6 +94,8 @@ export const AppSettingsProvider = ({
       RendererConfig.enableAutomaticSubscriptions = newFlag;
       return newFlag;
     });
+
+    window.myAPI.toggleSetting('settings:execute:enableAutomaticSubscriptions');
   };
 
   return (

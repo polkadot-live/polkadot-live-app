@@ -508,6 +508,15 @@ app.whenReady().then(async () => {
         (store as Record<string, AnyData>).set(key, settings);
         break;
       }
+      case 'settings:execute:enableAutomaticSubscriptions': {
+        const settings = ConfigMain.getAppSettings();
+        const flag = !settings.appEnableAutomaticSubscriptions;
+        settings.appEnableAutomaticSubscriptions = flag;
+
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
+        break;
+      }
       default: {
         break;
       }
