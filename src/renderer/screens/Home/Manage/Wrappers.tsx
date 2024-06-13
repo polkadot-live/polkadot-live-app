@@ -141,14 +141,33 @@ export const AccountWrapper = styled(motion.div)`
 
   /* Interval button */
   .interval-wrapper {
-    .enabled {
-      cursor: pointer;
-      padding: 0.5rem;
-      transition: opacity 0.1s ease-in-out;
+    position: relative;
+    transition: opacity 0.1s ease-in-out;
+    cursor: pointer;
 
-      &:hover {
-        opacity: 0.6;
-      }
+    .interval-badge {
+      position: absolute;
+      top: 9px;
+      left: -12px;
+      min-width: 46px;
+      padding: 1px 0;
+      opacity: 0.9;
+      color: #cbcbcb;
+      background-color: var(--border-mid-color);
+      border: 1px solid var(--background-modal);
+      border-radius: 1.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      z-index: 3;
+    }
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    .enabled {
+      padding: 0.5rem;
     }
 
     /* Select */
@@ -217,7 +236,7 @@ export const AccountWrapper = styled(motion.div)`
       position: relative;
       flex: 1;
       align-items: center;
-      column-gap: 1.5rem;
+      column-gap: 1.6rem;
 
       &:first-child {
         overflow: hidden;

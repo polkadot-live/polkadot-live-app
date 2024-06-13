@@ -45,3 +45,26 @@ export const toolTipTextFor = (category: TaskCategory) => {
     }
   }
 };
+
+export const getShortIntervalLabel = (ticksToWait: number) => {
+  switch (ticksToWait) {
+    case 1:
+      return '15 mins';
+    case 2:
+      return '30 mins';
+    case 4:
+      return '60 mins';
+    case 8:
+      return '2 hrs';
+    case 16:
+      return '4 hrs';
+    case 24:
+      return '6 hrs';
+    case 48:
+      return '12 hrs';
+    case 96:
+      return '24 hrs';
+    default:
+      return '';
+  }
+};
