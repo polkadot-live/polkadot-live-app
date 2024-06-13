@@ -60,6 +60,7 @@ export class Config {
         appSilenceOsNotifications: false,
         appShowOnAllWorkspaces: true,
         appShowDebuggingSubscriptions: false,
+        appEnableAutomaticSubscriptions: true,
       };
 
       // Persist default settings to store and return them.

@@ -44,6 +44,14 @@ export const Settings: React.FC = () => {
         : map.set(category, [{ ...setting }]);
     }
 
+    // Sort by label.
+    for (const [category, settings] of map.entries()) {
+      map.set(
+        category,
+        settings.sort((a, b) => a.title.localeCompare(b.title))
+      );
+    }
+
     return map;
   };
 

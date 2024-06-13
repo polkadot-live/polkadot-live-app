@@ -5,8 +5,10 @@ export interface AppSettingsContextInterface {
   dockToggled: boolean;
   silenceOsNotifications: boolean;
   showDebuggingSubscriptions: boolean;
+  enableAutomaticSubscriptions: boolean;
   setSilenceOsNotifications: (b: boolean) => void;
   handleDockedToggle: () => void;
   handleToggleSilenceOsNotifications: () => void;
   handleToggleShowDebuggingSubscriptions: () => void;
+  handleToggleEnableAutomaticSubscriptions: () => void;
 }

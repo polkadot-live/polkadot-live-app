@@ -57,6 +57,7 @@ export const useMainMessagePorts = () => {
     handleDockedToggle,
     handleToggleSilenceOsNotifications,
     handleToggleShowDebuggingSubscriptions,
+    handleToggleEnableAutomaticSubscriptions,
   } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
@@ -111,8 +112,7 @@ export const useMainMessagePorts = () => {
       await fetchNominatingDataForAccount(account);
     }
 
-    // Subscribe account to all possible subscriptions.
-    // TODO: Add app setting to toggle this behavior.
+    // Subscribe account to all possible subscriptions if setting enabled.
     if (account.queryMulti !== null) {
       const tasks =
         SubscriptionsController.getAllSubscriptionsForAccount(account);
@@ -127,15 +127,13 @@ export const useMainMessagePorts = () => {
         updateRenderedSubscriptions(task);
       }
 
-      // Subscribe to tasks.
-      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+      // Subscribe to tasks if app setting enabled.
+      ConfigRenderer.enableAutomaticSubscriptions &&
+        (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
       setSubscriptionsState();
     }
-
-    // Update React state.
-    setSubscriptionsState();
 
     // Add account to address context state.
     importAddress(chainId, source, address, name);
@@ -638,6 +636,15 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleEnableAutomaticSubscriptions
+   * @summary Handle toggling the handle automatic subscriptions setting.
+   */
+  const handleEnableAutomaticSubscriptions = () => {
+    handleToggleEnableAutomaticSubscriptions();
+    console.log('toggled automatic subscriptions...');
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -727,6 +734,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:showDebuggingSubscriptions': {
               await handleDebuggingSubscriptions();
+              break;
+            }
+            case 'settings:execute:enableAutomaticSubscriptions': {
+              handleEnableAutomaticSubscriptions();
               break;
             }
             case 'settings:execute:exportData': {

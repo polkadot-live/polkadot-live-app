@@ -61,6 +61,7 @@ export type HelpItemKey =
   | 'help:settings:importData'
   | 'help:settings:exportData'
   | 'help:settings:showDebuggingSubscriptions'
+  | 'help:settings:enableAutomaticSubscriptions'
   | 'help:openGov:track'
   | 'help:openGov:origin'
   | 'help:openGov:maxDeciding'

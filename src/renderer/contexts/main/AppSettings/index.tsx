@@ -28,6 +28,10 @@ export const AppSettingsProvider = ({
   const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
     useState<boolean>(false);
 
+  /// Enable automatic subscriptions.
+  const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
+    useState<boolean>(true);
+
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
@@ -35,16 +39,20 @@ export const AppSettingsProvider = ({
         appDocked,
         appSilenceOsNotifications,
         appShowDebuggingSubscriptions,
+        appEnableAutomaticSubscriptions,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
       RendererConfig.silenceNotifications = appSilenceOsNotifications;
       RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
+      RendererConfig.enableAutomaticSubscriptions =
+        appEnableAutomaticSubscriptions;
 
       // Set settings state.
       setDockToggled(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
+      setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
     };
 
     initSettings();
@@ -81,15 +89,28 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
   };
 
+  /// Handle toggling enable automatic subscriptions.
+  const handleToggleEnableAutomaticSubscriptions = () => {
+    setEnableAutomaticSubscriptions((prev) => {
+      const newFlag = !prev;
+      RendererConfig.enableAutomaticSubscriptions = newFlag;
+      return newFlag;
+    });
+
+    window.myAPI.toggleSetting('settings:execute:enableAutomaticSubscriptions');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
         dockToggled,
         silenceOsNotifications,
         showDebuggingSubscriptions,
+        enableAutomaticSubscriptions,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
+        handleToggleEnableAutomaticSubscriptions,
         setSilenceOsNotifications,
       }}
     >

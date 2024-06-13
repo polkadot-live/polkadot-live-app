@@ -38,6 +38,14 @@ export const SettingsList: SettingItem[] = [
     title: 'Show Debugging Subscriptions',
   },
   {
+    action: 'settings:execute:enableAutomaticSubscriptions',
+    category: 'General',
+    enabled: false,
+    helpKey: 'help:settings:enableAutomaticSubscriptions',
+    settingType: 'switch',
+    title: 'Enable Automatic Subscriptions',
+  },
+  {
     action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,
