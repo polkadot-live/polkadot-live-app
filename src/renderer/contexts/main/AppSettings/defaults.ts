@@ -8,8 +8,10 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   dockToggled: true,
   silenceOsNotifications: false,
   showDebuggingSubscriptions: false,
+  enableAutomaticSubscriptions: true,
   setSilenceOsNotifications: (b) => {},
   handleDockedToggle: () => {},
   handleToggleSilenceOsNotifications: () => {},
   handleToggleShowDebuggingSubscriptions: () => {},
+  handleToggleEnableAutomaticSubscriptions: () => {},
 };

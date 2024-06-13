@@ -28,6 +28,10 @@ export const AppSettingsProvider = ({
   const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
     useState<boolean>(false);
 
+  /// Enable automatic subscriptions.
+  const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
+    useState<boolean>(true);
+
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
@@ -35,6 +39,7 @@ export const AppSettingsProvider = ({
         appDocked,
         appSilenceOsNotifications,
         appShowDebuggingSubscriptions,
+        appEnableAutomaticSubscriptions,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -45,6 +50,7 @@ export const AppSettingsProvider = ({
       setDockToggled(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
+      setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
     };
 
     initSettings();
@@ -81,15 +87,22 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
   };
 
+  /// Handle toggling enable automatic subscriptions.
+  const handleToggleEnableAutomaticSubscriptions = () => {
+    setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
         dockToggled,
         silenceOsNotifications,
         showDebuggingSubscriptions,
+        enableAutomaticSubscriptions,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
+        handleToggleEnableAutomaticSubscriptions,
         setSilenceOsNotifications,
       }}
     >
