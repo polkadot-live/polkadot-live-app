@@ -145,6 +145,12 @@ export const AccountWrapper = styled(motion.div)`
     transition: opacity 0.1s ease-in-out;
     cursor: pointer;
 
+    .badge-container {
+      position: relative;
+      min-width: 24px;
+      height: 24px;
+    }
+
     .interval-badge {
       position: absolute;
       top: 9px;

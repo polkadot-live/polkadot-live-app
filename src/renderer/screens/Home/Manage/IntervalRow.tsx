@@ -186,16 +186,12 @@ export const IntervalRow = ({
           >
             {!intervalClicked || isTaskDisabled() ? (
               <div
+                className="badge-container"
                 onClick={() =>
                   setIntervalClicked((prev) =>
                     isTaskDisabled() ? prev : !prev
                   )
                 }
-                style={{
-                  position: 'relative',
-                  minWidth: '24px',
-                  height: '24px',
-                }}
               >
                 <div className="interval-badge">
                   {getShortIntervalLabel(intervalSetting)}
