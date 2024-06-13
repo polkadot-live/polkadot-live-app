@@ -46,6 +46,10 @@ export const toolTipTextFor = (category: TaskCategory) => {
   }
 };
 
+/**
+ * @name getShortIntervalLabel
+ * @summary Utility for getting shortened text for an interval setting.
+ */
 export const getShortIntervalLabel = (ticksToWait: number) => {
   switch (ticksToWait) {
     case 1:
