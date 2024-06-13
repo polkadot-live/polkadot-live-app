@@ -89,7 +89,11 @@ export const AppSettingsProvider = ({
 
   /// Handle toggling enable automatic subscriptions.
   const handleToggleEnableAutomaticSubscriptions = () => {
-    setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
+    setEnableAutomaticSubscriptions((prev) => {
+      const newFlag = !prev;
+      RendererConfig.enableAutomaticSubscriptions = newFlag;
+      return newFlag;
+    });
   };
 
   return (

@@ -15,6 +15,7 @@ export class Config {
   // App settings handled by main renderer (use in callbacks).
   private static _silenceNotifications = false;
   private static _showDebuggingSubscriptions = false;
+  private static _enableAutomaticSubscriptions = true;
 
   // Flag set to `true` when app is switching to online mode.
   private static _switchingToOnlineMode = false;
@@ -93,6 +94,15 @@ export class Config {
 
   static set showDebuggingSubscriptions(flag: boolean) {
     Config._showDebuggingSubscriptions = flag;
+  }
+
+  // Accessors for `_enableAutomaticSubscriptions` flag.
+  static get enableAutomaticSubscriptions(): boolean {
+    return Config._enableAutomaticSubscriptions;
+  }
+
+  static set enableAutomaticSubscriptions(flag: boolean) {
+    Config._enableAutomaticSubscriptions = flag;
   }
 
   // Accessors for `_switchingToOnlineMode` flag.
