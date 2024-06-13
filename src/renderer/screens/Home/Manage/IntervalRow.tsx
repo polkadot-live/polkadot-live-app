@@ -22,6 +22,7 @@ import { Switch } from '@app/library/Switch';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
 import type { IntervalRowProps } from './types';
+import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 
 export const IntervalRow = ({
   task,
@@ -184,19 +185,28 @@ export const IntervalRow = ({
             onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
           >
             {!intervalClicked || isTaskDisabled() ? (
-              <FontAwesomeIcon
-                style={
-                  isTaskDisabled() ? { opacity: '0.3', cursor: 'default' } : {}
-                }
-                className="enabled"
-                icon={faTimer}
-                transform={'grow-8'}
+              <div
+                className="badge-container"
                 onClick={() =>
                   setIntervalClicked((prev) =>
                     isTaskDisabled() ? prev : !prev
                   )
                 }
-              />
+              >
+                <div className="interval-badge">
+                  {getShortIntervalLabel(intervalSetting)}
+                </div>
+                <FontAwesomeIcon
+                  style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    opacity: isTaskDisabled() ? '0.3' : '1',
+                  }}
+                  className="enabled"
+                  icon={faTimer}
+                  transform={'grow-2'}
+                />
+              </div>
             ) : (
               <div className="select-wrapper">
                 <select

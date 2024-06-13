@@ -24,7 +24,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { ReferendaGroup, StickyHeadings } from './Wrappers';
+import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
 import {
   renderPlaceholders,
   ControlsWrapper,
@@ -379,6 +379,18 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               />
             </div>
           </ControlsWrapper>
+
+          {/* Only Subscribed Notice */}
+          {onlySubscribed && (
+            <NoteWrapper>
+              <div className="note-wrapper">
+                <span>Note:</span>
+                <p>
+                  You are viewing only referenda that you are subscribed to.
+                </p>
+              </div>
+            </NoteWrapper>
+          )}
 
           {/* Sticky Headings */}
           {!groupingOn && !fetchingReferenda && (
