@@ -45,6 +45,8 @@ export const AppSettingsProvider = ({
       // Set cached notifications flag in renderer config.
       RendererConfig.silenceNotifications = appSilenceOsNotifications;
       RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
+      RendererConfig.enableAutomaticSubscriptions =
+        appEnableAutomaticSubscriptions;
 
       // Set settings state.
       setDockToggled(appDocked);

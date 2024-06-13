@@ -112,8 +112,7 @@ export const useMainMessagePorts = () => {
       await fetchNominatingDataForAccount(account);
     }
 
-    // Subscribe account to all possible subscriptions.
-    // TODO: Add app setting to toggle this behavior.
+    // Subscribe account to all possible subscriptions if setting enabled.
     if (account.queryMulti !== null) {
       const tasks =
         SubscriptionsController.getAllSubscriptionsForAccount(account);
@@ -128,15 +127,13 @@ export const useMainMessagePorts = () => {
         updateRenderedSubscriptions(task);
       }
 
-      // Subscribe to tasks.
-      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+      // Subscribe to tasks if app setting enabled.
+      ConfigRenderer.enableAutomaticSubscriptions &&
+        (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
       setSubscriptionsState();
     }
-
-    // Update React state.
-    setSubscriptionsState();
 
     // Add account to address context state.
     importAddress(chainId, source, address, name);
