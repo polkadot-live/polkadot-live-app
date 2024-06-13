@@ -24,6 +24,8 @@ export const SettingFlagsProvider = ({
   const [showOnAllWorkspaces, setShowOnAllWorkspaces] = useState(false);
   const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
     useState(false);
+  const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
+    useState(true);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
@@ -33,12 +35,14 @@ export const SettingFlagsProvider = ({
         appSilenceOsNotifications,
         appShowOnAllWorkspaces,
         appShowDebuggingSubscriptions,
+        appEnableAutomaticSubscriptions,
       } = await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
       setShowOnAllWorkspaces(appShowOnAllWorkspaces);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
+      setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
     };
 
     initSettings();
@@ -60,6 +64,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:showDebuggingSubscriptions': {
         return showDebuggingSubscriptions;
+      }
+      case 'settings:execute:enableAutomaticSubscriptions': {
+        return enableAutomaticSubscriptions;
       }
       default: {
         return true;
@@ -86,6 +93,10 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:showDebuggingSubscriptions': {
         setShowDebuggingSubscriptions(!showDebuggingSubscriptions);
+        break;
+      }
+      case 'settings:execute:enableAutomaticSubscriptions': {
+        setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
         break;
       }
       default: {

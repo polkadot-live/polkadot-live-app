@@ -57,6 +57,7 @@ export const useMainMessagePorts = () => {
     handleDockedToggle,
     handleToggleSilenceOsNotifications,
     handleToggleShowDebuggingSubscriptions,
+    handleToggleEnableAutomaticSubscriptions,
   } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
@@ -638,6 +639,15 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleEnableAutomaticSubscriptions
+   * @summary Handle toggling the handle automatic subscriptions setting.
+   */
+  const handleEnableAutomaticSubscriptions = () => {
+    handleToggleEnableAutomaticSubscriptions();
+    console.log('toggled automatic subscriptions...');
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
@@ -727,6 +737,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:showDebuggingSubscriptions': {
               await handleDebuggingSubscriptions();
+              break;
+            }
+            case 'settings:execute:enableAutomaticSubscriptions': {
+              handleEnableAutomaticSubscriptions();
               break;
             }
             case 'settings:execute:exportData': {
