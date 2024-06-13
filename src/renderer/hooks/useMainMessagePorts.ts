@@ -154,6 +154,8 @@ export const useMainMessagePorts = () => {
   /**
    * @name handleRemoveAddress
    * @summary Removes an account a message is received from `import` window.
+   *
+   * Also called when deleting an account.
    */
   const handleRemoveAddress = async (ev: MessageEvent) => {
     const { address, chainId } = ev.data.data;
