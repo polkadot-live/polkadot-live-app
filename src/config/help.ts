@@ -150,6 +150,14 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:enableAutomaticSubscriptions',
+    title: 'Enable Automatic Subscriptions',
+    definition: [
+      'Automatically subscribe to all possible subscriptions for an account when importing it.',
+      'Turn this setting off if you prefer to have no subscriptions turned on for an account after importing it, and wish to turn on individual subscriptions manually.',
+    ],
+  },
+  {
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [

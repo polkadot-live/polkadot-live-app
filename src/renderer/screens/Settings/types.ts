@@ -17,7 +17,8 @@ export type SettingAction =
   | 'settings:execute:silenceOsNotifications'
   | 'settings:execute:importData'
   | 'settings:execute:exportData'
-  | 'settings:execute:showDebuggingSubscriptions';
+  | 'settings:execute:showDebuggingSubscriptions'
+  | 'settings:execute:enableAutomaticSubscriptions';
 
 export interface SettingItem {
   action: SettingAction;
