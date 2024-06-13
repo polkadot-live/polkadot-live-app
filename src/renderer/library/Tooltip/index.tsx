@@ -58,7 +58,7 @@ export const Tooltip = () => {
             break;
           }
           case 'bottom': {
-            offsetY = height + marginY;
+            offsetY = height + 10;
             break;
           }
           case 'right': {

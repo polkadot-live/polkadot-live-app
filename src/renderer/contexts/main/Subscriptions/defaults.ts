@@ -13,7 +13,7 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   getAccountSubscriptions: () => [],
   updateTask: () => {},
   updateAccountNameInTasks: () => {},
-  handleQueuedToggle: async (c, f) => {
+  handleQueuedToggle: async (c) => {
     await new Promise(() => {});
   },
   toggleCategoryTasks: async (c, i, ts, u) => {

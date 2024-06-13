@@ -38,6 +38,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -65,6 +66,24 @@ export const useMainMessagePorts = () => {
     useIntervalSubscriptions();
 
   /**
+   * @name setSubscriptionsAndChainConnections
+   * @summary Set subscription data React state.
+   */
+  const setSubscriptionsState = () => {
+    // Set account subscriptions data for rendering.
+    setAccountSubscriptions(
+      SubscriptionsController.getAccountSubscriptions(
+        AccountsController.accounts
+      )
+    );
+
+    // Report chain connections to UI.
+    for (const apiData of APIsController.getAllFlattenedAPIData()) {
+      addChain(apiData);
+    }
+  };
+
+  /**
    * @name handleImportAddress
    * @summary Imports a new account when a message is received from `import` window.
    */
@@ -79,7 +98,9 @@ export const useMainMessagePorts = () => {
       return;
     }
 
-    if (await window.myAPI.getOnlineStatus()) {
+    const isOnline = await window.myAPI.getOnlineStatus();
+
+    if (isOnline) {
       // Fetch account nonce and balance.
       await fetchBalanceForAccount(account);
 
@@ -88,20 +109,36 @@ export const useMainMessagePorts = () => {
 
       // Initialize nominating data for account if necessary.
       await fetchNominatingDataForAccount(account);
-
-      // Disconnect from any API instances that are not currently needed.
-      await handleApiDisconnects();
     }
+
+    // Subscribe account to all possible subscriptions.
+    // TODO: Add app setting to toggle this behavior.
+    if (account.queryMulti !== null) {
+      const tasks =
+        SubscriptionsController.getAllSubscriptionsForAccount(account);
+
+      // Update persisted state and React state for tasks.
+      for (const task of tasks) {
+        await window.myAPI.updatePersistedAccountTask(
+          JSON.stringify(task),
+          JSON.stringify(account.flatten())
+        );
+        updateTask('account', task, task.account?.address);
+        updateRenderedSubscriptions(task);
+      }
+
+      // Subscribe to tasks.
+      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+
+      // Update React subscriptions state.
+      setSubscriptionsState();
+    }
+
+    // Update React state.
+    setSubscriptionsState();
 
     // Add account to address context state.
     importAddress(chainId, source, address, name);
-
-    // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
 
     // Send message back to import window to reset account's processing flag.
     ConfigRenderer.portToImport.postMessage({
@@ -117,6 +154,8 @@ export const useMainMessagePorts = () => {
   /**
    * @name handleRemoveAddress
    * @summary Removes an account a message is received from `import` window.
+   *
+   * Also called when deleting an account.
    */
   const handleRemoveAddress = async (ev: MessageEvent) => {
     const { address, chainId } = ev.data.data;

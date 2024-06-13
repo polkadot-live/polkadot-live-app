@@ -43,6 +43,7 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
+import { ellipsisFn } from '@w3ux/utils';
 
 export const Permissions = ({
   breadcrumb,
@@ -124,11 +125,8 @@ export const Permissions = ({
   }, [activeChainId]);
 
   /// Handle a subscription toggle and update rendered subscription state.
-  const handleToggle = async (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
-  ) => {
-    await handleQueuedToggle(cached, setNativeChecked);
+  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
+    await handleQueuedToggle(cached);
 
     // Update rendererd subscription tasks state.
     const task = cached.tasks[0];
@@ -245,6 +243,14 @@ export const Permissions = ({
 
     return map;
   };
+
+  /// Cache categorised tasks and account address (if account was clicked).
+  const categorisedTasks = getCategorised();
+
+  const maybeAccountAddress =
+    categorisedTasks.size > 0
+      ? Array.from(categorisedTasks.values())[0][0].account?.address
+      : null;
 
   /// Map category name to its global toggle state.
   const getCategoryToggles = () => {
@@ -542,7 +548,7 @@ export const Permissions = ({
       defaultIndex={getAccordionIndices()}
       setExternalIndices={getAccordionIndicesSetter()}
     >
-      {Array.from(getCategorised().entries()).map(([category, tasks], j) => (
+      {Array.from(categorisedTasks.entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
           <AccordionCaretSwitchHeader
             title={category}
@@ -649,7 +655,22 @@ export const Permissions = ({
             iconLeft={faCaretLeft}
             onClick={() => setSection(0)}
           />
-          <SortControlLabel label={breadcrumb} />
+          {typeClicked === 'account' ? (
+            <div
+              className="tooltip-trigger-element"
+              data-tooltip-text={ellipsisFn(maybeAccountAddress || '', 16)}
+              onMouseMove={() =>
+                setTooltipTextAndOpen(
+                  ellipsisFn(maybeAccountAddress || '', 16),
+                  'bottom'
+                )
+              }
+            >
+              <SortControlLabel label={breadcrumb} />
+            </div>
+          ) : (
+            <SortControlLabel label={breadcrumb} />
+          )}
         </div>
         <div className="right">
           <SortControlLabel label={'Subscription On / Off'} noBorder={true} />

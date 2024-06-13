@@ -19,10 +19,7 @@ export interface SubscriptionsContextInterface {
   getAccountSubscriptions: (a: string) => SubscriptionTask[];
   updateTask: (type: string, task: SubscriptionTask, address?: string) => void;
   updateAccountNameInTasks: (address: string, newName: string) => void;
-  handleQueuedToggle: (
-    cached: WrappedSubscriptionTasks,
-    setNativeCheckbox: AnyFunction
-  ) => Promise<void>;
+  handleQueuedToggle: (cached: WrappedSubscriptionTasks) => Promise<void>;
   toggleCategoryTasks: (
     c: TaskCategory,
     i: boolean,

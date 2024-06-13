@@ -106,11 +106,14 @@ export const SubscriptionsProvider = ({
   ) => {
     if (type === 'account') {
       setAccountSubscriptionsState((prev) => {
-        const tasks = prev.get(address!)!;
-        prev.set(
-          address!,
-          tasks.map((t) => (t.action === task.action ? task : t))
-        );
+        const tasks = prev.get(address!);
+        !tasks
+          ? prev.set(address!, [{ ...task }])
+          : prev.set(
+              address!,
+              tasks.map((t) => (t.action === task.action ? task : t))
+            );
+
         return prev;
       });
     } else {
@@ -211,19 +214,13 @@ export const SubscriptionsProvider = ({
   };
 
   /// Execute queued subscription task.
-  const handleQueuedToggle = async (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction | null
-  ) => {
-    const p = async () => await toggleSubscription(cached, setNativeChecked);
+  const handleQueuedToggle = async (cached: WrappedSubscriptionTasks) => {
+    const p = async () => await toggleSubscription(cached);
     TaskQueue.add(p);
   };
 
   /// Handle subscription task toggle.
-  const toggleSubscription = async (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction | null
-  ) => {
+  const toggleSubscription = async (cached: WrappedSubscriptionTasks) => {
     // Invert the task status.
     const task: SubscriptionTask = { ...cached.tasks[0] };
     task.status = task.status === 'enable' ? 'disable' : 'enable';
@@ -253,11 +250,6 @@ export const SubscriptionsProvider = ({
 
         // Subscribe to and persist the task.
         await SubscriptionsController.subscribeAccountTask(task, account);
-
-        // Render checbox correctly.
-        if (setNativeChecked) {
-          setNativeChecked(false);
-        }
 
         await window.myAPI.updatePersistedAccountTask(
           JSON.stringify(task),

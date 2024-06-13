@@ -39,11 +39,11 @@ export const PermissionRow = ({
   useEffect(() => {
     if (task.status === 'enable') {
       setIsToggled(true);
+      setNativeChecked(true);
     } else {
-      setNativeChecked(false);
       setIsToggled(false);
     }
-  }, [task]);
+  }, [task.status]);
 
   /// Handle clicking on OS Notifications toggle button.
   const handleOsNotificationClick = async () => {
@@ -166,6 +166,7 @@ export const PermissionRow = ({
             }
           >
             <Switch
+              style={{ paddingRight: '10px' }}
               size="sm"
               type="primary"
               isOn={isToggled}

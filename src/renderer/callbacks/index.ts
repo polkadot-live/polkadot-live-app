@@ -774,6 +774,8 @@ export class Callbacks {
     entry: ApiCallEntry,
     isOneShot: boolean
   ) =>
-    !RendererConfig.silenceNotifications &&
-    (entry.task.enableOsNotifications || isOneShot);
+    isOneShot
+      ? true
+      : !RendererConfig.silenceNotifications &&
+        entry.task.enableOsNotifications;
 }

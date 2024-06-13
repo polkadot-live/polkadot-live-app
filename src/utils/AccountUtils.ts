@@ -179,6 +179,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
 
+  // Return early if account is not currently in a nomination pool.
   if (result === null) {
     return;
   }

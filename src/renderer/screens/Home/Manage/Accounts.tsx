@@ -16,6 +16,7 @@ import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
 import { useEffect, useRef, useState } from 'react';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData } from '@/types/accounts';
@@ -25,6 +26,7 @@ import type {
 } from '@/types/subscriptions';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { ellipsisFn } from '@w3ux/utils';
 
 export const Accounts = ({
   addresses,
@@ -32,6 +34,7 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
+  const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
@@ -198,7 +201,20 @@ export const Accounts = ({
                             ></button>
                             <div className="inner">
                               <div>
-                                <span className="icon">
+                                <span
+                                  style={{
+                                    zIndex: 100,
+                                    cursor: 'default',
+                                  }}
+                                  className="icon tooltip tooltip-trigger-element"
+                                  data-tooltip-text={ellipsisFn(address, 16)}
+                                  onMouseMove={() =>
+                                    setTooltipTextAndOpen(
+                                      ellipsisFn(address, 16),
+                                      'right'
+                                    )
+                                  }
+                                >
                                   <Identicon value={address} size={26} />
                                 </span>
                                 <div className="content">

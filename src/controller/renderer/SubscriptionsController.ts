@@ -186,53 +186,7 @@ export class SubscriptionsController {
           // Get all possible tasks for account's chain ID.
           .filter((t) => t.chainId === a.chain)
           // Populate tasks with correct arguments.
-          .map((t) => {
-            const task = { ...t, account: a.flatten() } as SubscriptionTask;
-
-            switch (t.action) {
-              case 'subscribe:account:balance': {
-                return { ...task, actionArgs: [a.address] } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:rewards': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolRewardAddress]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:state': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:renamed': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:roles': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:commission': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              default: {
-                return task;
-              }
-            }
-          })
+          .map((t) => SubscriptionsController.getTaskArgsForAccount(a, t))
           // Merge active tasks in the array.
           .map((t) => {
             for (const active of a.getSubscriptionTasks() || []) {
@@ -249,4 +203,72 @@ export class SubscriptionsController {
 
     return result;
   }
+
+  /**
+   * @name enableAllSubscriptionsForAccount
+   * @summary Activate all subscriptions when an account is imported.
+   */
+  static getAllSubscriptionsForAccount = (account: Account) =>
+    allAccountTasks
+      .filter((t) => t.chainId === account.chain)
+      .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
+      .map((t) => ({ ...t, status: 'enable' }) as SubscriptionTask);
+
+  /**
+   * @name getTaskArgsForAccount
+   * @summary Populate a task with correct arguments for an account.
+   */
+  static getTaskArgsForAccount = (
+    account: Account,
+    taskTemplate: SubscriptionTask
+  ) => {
+    const task = {
+      ...taskTemplate,
+      account: account.flatten(),
+    } as SubscriptionTask;
+
+    switch (task.action) {
+      case 'subscribe:account:balance': {
+        return { ...task, actionArgs: [account.address] } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolRewardAddress]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:state': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:renamed': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:roles': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:commission': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      default: {
+        return task;
+      }
+    }
+  };
 }

@@ -140,9 +140,16 @@ export class AccountsController {
     );
 
     // Send tasks to query multi wrapper for removal.
-    if (tasks && tasks?.length !== 0) {
+    if (tasks && tasks.length && account && account.queryMulti) {
+      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+
+      // Remove tasks from electron store.
+      // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        await account.subscribeToTask(task);
+        await window.myAPI.updatePersistedAccountTask(
+          JSON.stringify(task),
+          JSON.stringify(account.flatten())
+        );
       }
     }
   }
