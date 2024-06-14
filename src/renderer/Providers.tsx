@@ -36,6 +36,7 @@ import { TreasuryProvider } from './contexts/openGov/Treasury';
 import { ReferendaProvider } from './contexts/openGov/Referenda';
 import { ReferendaSubscriptionsProvider } from './contexts/openGov/ReferendaSubscriptions';
 import { TaskHandlerProvider } from './contexts/openGov/TaskHandler';
+import { PolkassemblyProvider } from './contexts/openGov/Polkassembly';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -99,6 +100,7 @@ const getProvidersForWindow = () => {
         TracksProvider,
         TreasuryProvider,
         ReferendaProvider,
+        PolkassemblyProvider, // Requires useReferenda
         ReferendaSubscriptionsProvider,
         TaskHandlerProvider
       )(Theme);
