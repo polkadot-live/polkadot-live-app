@@ -2,23 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useReferenda } from '../Referenda';
 import axios from 'axios';
-import type { PolkassemblyContextInterface } from './types';
+import type {
+  PolkassemblyContextInterface,
+  PolkassemblyProposal,
+} from './types';
 
 export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
   defaults.defaultPolkassemblyContext
 );
 
 export const usePolkassembly = () => useContext(PolkassemblyContext);
-
-export interface PolkassemblyProposal {
-  title: string;
-  postId: number;
-  content: string;
-  status: string;
-}
 
 export const PolkassemblyProvider = ({
   children,
@@ -28,11 +24,17 @@ export const PolkassemblyProvider = ({
   const { activeReferendaChainId, referenda, fetchingReferenda } =
     useReferenda();
 
+  const [proposals, setProposals] = useState<PolkassemblyProposal[]>([]);
+  const [fetchingProposals, setFetchingProposals] = useState(false);
+  const proposalsRef = useRef<PolkassemblyProposal[]>([]);
+
   /// Fetch proposal data after referenda have been loaded in referenda context.
   useEffect(() => {
     if (fetchingReferenda) {
       return;
     }
+
+    setFetchingProposals(true);
 
     // Fetch proposal data using Polkassembly API.
     const fetchProposals = async () => {
@@ -57,13 +59,18 @@ export const PolkassemblyProvider = ({
         )
       );
 
-      // Store fetched state.
-      for (const response of results) {
-        const { title, post_id, status } = response.data;
-        console.log(`${title}-${post_id}-${status}`);
+      // Store fetched proposals in state and render in OpenGov window.
+      const collection: PolkassemblyProposal[] = [];
 
-        // TODO: Store fetched proposals in state and render in OpenGov window.
+      for (const response of results) {
+        const { content, post_id, status, title } = response.data;
+        collection.push({ title, postId: post_id, content, status });
       }
+
+      // Set context state.
+      setProposals([...collection]);
+      setFetchingProposals(false);
+      proposalsRef.current = [...collection];
     };
 
     fetchProposals();
@@ -72,7 +79,8 @@ export const PolkassemblyProvider = ({
   return (
     <PolkassemblyContext.Provider
       value={{
-        proposals: null,
+        proposals,
+        fetchingProposals,
       }}
     >
       {children}
