@@ -76,11 +76,16 @@ export const PolkassemblyProvider = ({
     fetchProposals();
   }, [fetchingReferenda]);
 
+  /// Get polkassembly proposal via referendum id.
+  const getProposal = (referendumId: number): PolkassemblyProposal | null =>
+    proposals.find(({ postId }) => postId === referendumId) || null;
+
   return (
     <PolkassemblyContext.Provider
       value={{
         proposals,
         fetchingProposals,
+        getProposal,
       }}
     >
       {children}

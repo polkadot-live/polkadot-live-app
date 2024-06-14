@@ -12,6 +12,7 @@ import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
+import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
 import {
   faChevronDown,
@@ -25,8 +26,12 @@ import {
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
+import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
+import { ellipsisFn } from '@w3ux/utils';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
+  const { referendaId } = referendum;
+
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
 
@@ -41,10 +46,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     removeIntervalSubscription,
   } = useTaskHandler();
 
+  const { fetchingProposals, getProposal } = usePolkassembly();
+  const proposalData = getProposal(referendaId);
+
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
-
-  const { referendaId } = referendum;
   const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
   const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;
 
@@ -57,6 +63,17 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     </div>
   );
 
+  const getProposalTitle = (data: PolkassemblyProposal) => {
+    const { title } = data;
+    return title === '' ? (
+      <p style={{ margin: 0, opacity: 0.75 }}>No Title</p>
+    ) : title.length < 28 ? (
+      title
+    ) : (
+      ellipsisFn(title, 28, 'end')
+    );
+  };
+
   return (
     <ReferendumRowWrapper>
       <div className="content-wrapper">
@@ -66,7 +83,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
               {referendum.referendaId}
             </span>
-            <h4 className="mw-20">{renderOrigin(referendum)}</h4>
+            {fetchingProposals || !proposalData ? (
+              <h4 className="mw-20">{renderOrigin(referendum)}</h4>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <h4 className="mw-20">{getProposalTitle(proposalData)}</h4>
+                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                  {renderOrigin(referendum)}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         <div className="right">
@@ -88,7 +114,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
           </div>
           {/* Add + Remove Subscriptions */}
           <div className="menu-btn-wrapper">
-            <ControlsWrapper>
+            <ControlsWrapper style={{ marginBottom: '0' }}>
               {!allSubscriptionsAdded(chainId, referendum) ? (
                 <div
                   className="tooltip-trigger-element"

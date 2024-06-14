@@ -35,6 +35,7 @@ import {
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import type { ReferendaProps } from '../types';
+import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
@@ -49,6 +50,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
+
+  const { fetchingProposals, proposals } = usePolkassembly();
+  console.log(fetchingProposals);
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -398,7 +402,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               <div className="content-wrapper">
                 <div className="left">
                   <div className="heading">ID</div>
-                  <div className="heading">Origin</div>
+                  <div className="heading">
+                    {fetchingProposals || !proposals.length
+                      ? 'Origin'
+                      : 'Title and Origin'}
+                  </div>
                 </div>
                 <div className="right">
                   <div className="heading">Portal Links</div>
@@ -445,6 +453,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 {fetchingReferenda ? '-' : referenda.length}
               </span>
             </div>
+            {fetchingProposals && (
+              <div className="footer-stat animate-fade">
+                <h2>Fetching from Polkassembly...</h2>
+              </div>
+            )}
           </section>
         </div>
       </StatsFooter>

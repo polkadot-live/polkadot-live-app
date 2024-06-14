@@ -11,4 +11,5 @@ export interface PolkassemblyProposal {
 export interface PolkassemblyContextInterface {
   proposals: PolkassemblyProposal[];
   fetchingProposals: boolean;
+  getProposal: (referendumId: number) => PolkassemblyProposal | null;
 }
