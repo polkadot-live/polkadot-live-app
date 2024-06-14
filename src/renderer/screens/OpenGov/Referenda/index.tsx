@@ -453,11 +453,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 {fetchingReferenda ? '-' : referenda.length}
               </span>
             </div>
-            {fetchingProposals && (
-              <div className="footer-stat animate-fade">
-                <h2>Fetching from Polkassembly...</h2>
-              </div>
-            )}
           </section>
         </div>
       </StatsFooter>

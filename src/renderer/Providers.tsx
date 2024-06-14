@@ -99,8 +99,8 @@ const getProvidersForWindow = () => {
         ConnectionsProvider,
         TracksProvider,
         TreasuryProvider,
-        ReferendaProvider,
-        PolkassemblyProvider, // Requires useReferenda
+        PolkassemblyProvider,
+        ReferendaProvider, // Requires usePolkassembly
         ReferendaSubscriptionsProvider,
         TaskHandlerProvider
       )(Theme);

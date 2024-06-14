@@ -6,6 +6,7 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
+import { usePolkassembly } from '../Polkassembly';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -22,6 +23,7 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   const { isConnected } = useConnections();
+  const { fetchProposals } = usePolkassembly();
 
   /// Ref to indiciate if referenda data has been fetched.
   const dataCachedRef = useRef(false);
@@ -65,10 +67,14 @@ export const ReferendaProvider = ({
   };
 
   /// Set state after receiving referenda data from main renderer.
-  const receiveReferendaData = (info: ActiveReferendaInfo[]) => {
+  const receiveReferendaData = async (info: ActiveReferendaInfo[]) => {
     setReferenda(info);
-    setFetchingReferenda(false);
+
+    // TODO: Fetch proposals if Polkassembly enabled.
+    await fetchProposals(activeReferendaChainId, info);
+
     dataCachedRef.current = true;
+    setFetchingReferenda(false);
   };
 
   /// Get all referenda sorted by desc or asc.
