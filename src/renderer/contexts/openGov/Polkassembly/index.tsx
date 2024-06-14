@@ -3,8 +3,9 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useEffect } from 'react';
-import type { PolkassemblyContextInterface } from './types';
 import { useReferenda } from '../Referenda';
+import axios from 'axios';
+import type { PolkassemblyContextInterface } from './types';
 
 export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
   defaults.defaultPolkassemblyContext
@@ -12,12 +13,20 @@ export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
 
 export const usePolkassembly = () => useContext(PolkassemblyContext);
 
+export interface PolkassemblyProposal {
+  title: string;
+  postId: number;
+  content: string;
+  status: string;
+}
+
 export const PolkassemblyProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const { referenda, fetchingReferenda } = useReferenda();
+  const { activeReferendaChainId, referenda, fetchingReferenda } =
+    useReferenda();
 
   /// Fetch proposal data after referenda have been loaded in referenda context.
   useEffect(() => {
@@ -25,9 +34,39 @@ export const PolkassemblyProvider = ({
       return;
     }
 
-    // TODO: Fetch proposal data using Polkassembly API.
-    const referendaIds = referenda.map(({ referendaId }) => referendaId);
-    console.log(referendaIds);
+    // Fetch proposal data using Polkassembly API.
+    const fetchProposals = async () => {
+      // Create Axios instance with base URL to Polkassembly API.
+      const axiosApi = axios.create({
+        baseURL: `https://api.polkassembly.io/api/v1/`,
+      });
+
+      // Header requires `polkadot` or `kusama`.
+      const network = (activeReferendaChainId as string).toLowerCase();
+
+      // Make asynchronous requests to Polkassembly API for each referenda.
+      const results = await Promise.all(
+        referenda.map(({ referendaId }) =>
+          axiosApi.get(
+            `/posts/on-chain-post?postId=${referendaId}&proposalType=referendums_v2`,
+            {
+              maxBodyLength: Infinity,
+              headers: { 'x-network': network },
+            }
+          )
+        )
+      );
+
+      // Store fetched state.
+      for (const response of results) {
+        const { title, post_id, status } = response.data;
+        console.log(`${title}-${post_id}-${status}`);
+
+        // TODO: Store fetched proposals in state and render in OpenGov window.
+      }
+    };
+
+    fetchProposals();
   }, [fetchingReferenda]);
 
   return (

@@ -13,8 +13,11 @@ export class AxiosPool {
   private static _axiosApi = axios.create();
   private static _pending = 0;
 
-  static MAX_REQUEST_COUNT = 5;
-  static INTERVAL_MS = 100;
+  private static MAX_REQUEST_COUNT = 5;
+  private static INTERVAL_MS = 10;
+
+  /// Total number of proposals to fetch.
+  static target = 0;
 
   /// Accessors
   static get api(): AxiosInstance {
