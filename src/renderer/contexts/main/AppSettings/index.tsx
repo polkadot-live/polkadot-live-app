@@ -106,6 +106,12 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:enableAutomaticSubscriptions');
   };
 
+  /// Handle toggling enable Polkassembly API.
+  const handleToggleEnablePolkassemblyApi = () => {
+    setEnablePolkassemblyApi(!enablePolkassemblyApi);
+    window.myAPI.toggleSetting('settings:execute:enablePolkassembly');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -118,6 +124,7 @@ export const AppSettingsProvider = ({
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
         handleToggleEnableAutomaticSubscriptions,
+        handleToggleEnablePolkassemblyApi,
         setSilenceOsNotifications,
       }}
     >

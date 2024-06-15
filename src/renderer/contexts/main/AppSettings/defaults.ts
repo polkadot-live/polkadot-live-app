@@ -15,4 +15,5 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   handleToggleSilenceOsNotifications: () => {},
   handleToggleShowDebuggingSubscriptions: () => {},
   handleToggleEnableAutomaticSubscriptions: () => {},
+  handleToggleEnablePolkassemblyApi: () => {},
 };

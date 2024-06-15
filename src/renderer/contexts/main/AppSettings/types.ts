@@ -12,4 +12,5 @@ export interface AppSettingsContextInterface {
   handleToggleSilenceOsNotifications: () => void;
   handleToggleShowDebuggingSubscriptions: () => void;
   handleToggleEnableAutomaticSubscriptions: () => void;
+  handleToggleEnablePolkassemblyApi: () => void;
 }
