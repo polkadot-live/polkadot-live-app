@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { ReferendumRowWrapper } from './Wrappers';
+import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
@@ -24,16 +26,17 @@ import {
   faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
-import { ellipsisFn } from '@w3ux/utils';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;
 
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
+  const { openOverlayWith } = useOverlay();
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
@@ -74,6 +77,10 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     );
   };
 
+  const handleMoreClick = () => {
+    openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
+  };
+
   return (
     <ReferendumRowWrapper>
       <div className="content-wrapper">
@@ -84,14 +91,15 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               {referendum.referendaId}
             </span>
             {usePolkassemblyApi ? (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <h4 className="mw-20">
-                  {proposalData ? getProposalTitle(proposalData) : ''}
-                </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                  {renderOrigin(referendum)}
-                </p>
-              </div>
+              <TitleWithOrigin>
+                <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
+                <div>
+                  <p>{renderOrigin(referendum)}</p>
+                  <MoreButton onClick={() => handleMoreClick()}>
+                    More
+                  </MoreButton>
+                </div>
+              </TitleWithOrigin>
             ) : (
               <h4 className="mw-20">{renderOrigin(referendum)}</h4>
             )}

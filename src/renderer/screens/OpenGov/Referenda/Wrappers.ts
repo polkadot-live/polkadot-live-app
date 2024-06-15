@@ -5,10 +5,95 @@ import styled from 'styled-components';
 
 /**
  * Provides the following styled components:
+ *   TitleWithOrigin
+ *   MoreButton
+ *   MoreOverlay
  *   NoteWrapper
  *   ReferendaGroup
  *   ReferendumRowWrapper
  */
+
+export const TitleWithOrigin = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  h4 {
+    min-width: 18px;
+  }
+  div:nth-of-type(1) {
+    display: flex;
+    column-gap: 0.5rem;
+    align-items: center;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+`;
+
+export const MoreButton = styled.button`
+  font-size: 0.85rem;
+  background-color: var(--border-primary-color);
+  padding: 1px 6px;
+  border-radius: 1.25rem;
+  transition: background-color 0.2s ease-out;
+
+  &:hover {
+    background-color: var(--border-mid-color);
+  }
+`;
+
+export const MoreOverlay = styled.div`
+  width: 100%;
+  padding: 1rem 1rem;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--background-default);
+  z-index: 20;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1.5rem;
+
+    h1 {
+      font-size: 1.25rem;
+      text-align: center;
+    }
+
+    .outer-wrapper {
+      --border-style: 1px solid #1f1f1f;
+      border-top: var(--border-style);
+      border-bottom: var(--border-style);
+
+      background-color: #111;
+      padding: 0.75rem;
+      max-width: 100%;
+
+      .description {
+        padding: 1rem;
+        white-space: pre-wrap;
+        position: relative;
+        max-height: 240px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        font-size: 1.05rem;
+        line-height: 1.6rem;
+
+        &::-webkit-scrollbar {
+          width: 5px;
+        }
+        &::-webkit-scrollbar-track {
+          background-color: #101010;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #212121;
+        }
+      }
+    }
+  }
+`;
 
 export const NoteWrapper = styled.div`
   padding: 0.75rem 1.5rem;
