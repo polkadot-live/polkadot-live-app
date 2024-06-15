@@ -5,11 +5,32 @@ import styled from 'styled-components';
 
 /**
  * Provides the following styled components:
+ *   TitleWithOrigin
  *   MoreButton
+ *   MoreOverlay
  *   NoteWrapper
  *   ReferendaGroup
  *   ReferendumRowWrapper
  */
+
+export const TitleWithOrigin = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  h4 {
+    min-width: 18px;
+  }
+  div:nth-of-type(1) {
+    display: flex;
+    column-gap: 0.5rem;
+    align-items: center;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  }
+`;
 
 export const MoreButton = styled.button`
   font-size: 0.85rem;

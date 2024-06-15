@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { MoreButton, MoreOverlay, ReferendumRowWrapper } from './Wrappers';
+import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,22 +25,18 @@ import {
   faPlus,
   faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
-import {
-  ControlsWrapper,
-  Scrollable,
-  SortControlButton,
-} from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;
 
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
-  const { openOverlayWith, setStatus } = useOverlay();
+  const { openOverlayWith } = useOverlay();
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
@@ -81,6 +77,10 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     );
   };
 
+  const handleMoreClick = () => {
+    openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
+  };
+
   return (
     <ReferendumRowWrapper>
       <div className="content-wrapper">
@@ -91,50 +91,15 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               {referendum.referendaId}
             </span>
             {usePolkassemblyApi ? (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <h4 className="mw-20">
-                  {proposalData ? getProposalTitle(proposalData) : ''}
-                </h4>
-                <div
-                  style={{
-                    display: 'flex',
-                    columnGap: '0.5rem',
-                    alignItems: 'center',
-                  }}
-                >
-                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                    {renderOrigin(referendum)}
-                  </p>
-                  <MoreButton
-                    onClick={() =>
-                      openOverlayWith(
-                        <MoreOverlay>
-                          <Scrollable
-                            style={{ height: 'auto', padding: '1rem' }}
-                          >
-                            <div className="content">
-                              <h1>{proposalData?.title}</h1>
-
-                              <div className="outer-wrapper">
-                                <div className="description">
-                                  {proposalData?.content}
-                                </div>
-                              </div>
-                              <ButtonPrimaryInvert
-                                text="Close"
-                                onClick={() => setStatus(0)}
-                              />
-                            </div>
-                          </Scrollable>
-                        </MoreOverlay>,
-                        'large'
-                      )
-                    }
-                  >
+              <TitleWithOrigin>
+                <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
+                <div>
+                  <p>{renderOrigin(referendum)}</p>
+                  <MoreButton onClick={() => handleMoreClick()}>
                     More
                   </MoreButton>
                 </div>
-              </div>
+              </TitleWithOrigin>
             ) : (
               <h4 className="mw-20">{renderOrigin(referendum)}</h4>
             )}
