@@ -36,10 +36,12 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import type { ReferendaProps } from '../types';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
+  const { status: overlayStatus } = useOverlay();
 
   const {
     referenda,
@@ -397,7 +399,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
           {/* Sticky Headings */}
           {!groupingOn && !fetchingReferenda && (
-            <StickyHeadings>
+            <StickyHeadings style={{ opacity: overlayStatus === 0 ? 1 : 0 }}>
               <div className="content-wrapper">
                 <div className="left">
                   <div className="heading">ID</div>

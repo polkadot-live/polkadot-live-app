@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { ReferendumRowWrapper } from './Wrappers';
+import { MoreButton, MoreOverlay, ReferendumRowWrapper } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
@@ -23,17 +25,22 @@ import {
   faPlus,
   faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import {
+  ControlsWrapper,
+  Scrollable,
+  SortControlButton,
+} from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
-import { ellipsisFn } from '@w3ux/utils';
+import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;
 
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
+  const { openOverlayWith, setStatus } = useOverlay();
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
@@ -88,9 +95,45 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 <h4 className="mw-20">
                   {proposalData ? getProposalTitle(proposalData) : ''}
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                  {renderOrigin(referendum)}
-                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    columnGap: '0.5rem',
+                    alignItems: 'center',
+                  }}
+                >
+                  <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                    {renderOrigin(referendum)}
+                  </p>
+                  <MoreButton
+                    onClick={() =>
+                      openOverlayWith(
+                        <MoreOverlay>
+                          <Scrollable
+                            style={{ height: 'auto', padding: '1rem' }}
+                          >
+                            <div className="content">
+                              <h1>{proposalData?.title}</h1>
+
+                              <div className="outer-wrapper">
+                                <div className="description">
+                                  {proposalData?.content}
+                                </div>
+                              </div>
+                              <ButtonPrimaryInvert
+                                text="Close"
+                                onClick={() => setStatus(0)}
+                              />
+                            </div>
+                          </Scrollable>
+                        </MoreOverlay>,
+                        'large'
+                      )
+                    }
+                  >
+                    More
+                  </MoreButton>
+                </div>
               </div>
             ) : (
               <h4 className="mw-20">{renderOrigin(referendum)}</h4>
