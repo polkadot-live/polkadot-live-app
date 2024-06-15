@@ -23,16 +23,15 @@ export const Settings: React.FC = () => {
   useSettingsMessagePorts();
 
   /// Active accordion indices for settings panels.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >([0, 1]);
+  const [accordionActiveIndices, setAccordionActiveIndices] =
+    useState<number>(0);
 
   /// Return a map of settings organised by their category.
   const getSortedSettings = () => {
     const map = new Map<string, SettingItem[]>();
 
     // Insert categories in a desired order.
-    for (const category of ['General', 'Backup']) {
+    for (const category of ['General', 'Subscriptions', 'Backup']) {
       map.set(category, []);
     }
 
@@ -78,7 +77,6 @@ export const Settings: React.FC = () => {
       <Scrollable $footerHeight={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
         <ContentWrapper>
           <Accordion
-            multiple
             defaultIndex={accordionActiveIndices}
             setExternalIndices={setAccordionActiveIndices}
           >
