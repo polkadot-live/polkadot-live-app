@@ -19,4 +19,6 @@ export interface PolkassemblyContextInterface {
     chainId: ChainID,
     referenda: ActiveReferendaInfo[]
   ) => Promise<void>;
+  usePolkassemblyApi: boolean;
+  setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

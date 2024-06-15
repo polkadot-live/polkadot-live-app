@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import type { ChainID } from '@/types/chains';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -22,6 +22,17 @@ export const PolkassemblyProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [usePolkassemblyApi, setUsePolkassemblyApi] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchSetting = async () => {
+      const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
+      setUsePolkassemblyApi(appEnablePolkassemblyApi);
+    };
+
+    fetchSetting();
+  }, []);
+
   const [proposals, setProposals] = useState<PolkassemblyProposal[]>([]);
   const [fetchingProposals, setFetchingProposals] = useState(false);
   const proposalsRef = useRef<PolkassemblyProposal[]>([]);
@@ -76,9 +87,11 @@ export const PolkassemblyProvider = ({
     <PolkassemblyContext.Provider
       value={{
         proposals,
-        fetchingProposals,
         getProposal,
         fetchProposals,
+        fetchingProposals,
+        usePolkassemblyApi,
+        setUsePolkassemblyApi,
       }}
     >
       {children}

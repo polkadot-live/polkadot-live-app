@@ -23,7 +23,7 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   const { isConnected } = useConnections();
-  const { fetchProposals } = usePolkassembly();
+  const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
   /// Ref to indiciate if referenda data has been fetched.
   const dataCachedRef = useRef(false);
@@ -70,8 +70,14 @@ export const ReferendaProvider = ({
   const receiveReferendaData = async (info: ActiveReferendaInfo[]) => {
     setReferenda(info);
 
-    // TODO: Fetch proposals if Polkassembly enabled.
-    await fetchProposals(activeReferendaChainId, info);
+    // Get Polkassembly enabled setting.
+    const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
+    setUsePolkassemblyApi(appEnablePolkassemblyApi);
+
+    // Fetch proposal metadata if Polkassembly enabled.
+    if (appEnablePolkassemblyApi) {
+      await fetchProposals(activeReferendaChainId, info);
+    }
 
     dataCachedRef.current = true;
     setFetchingReferenda(false);

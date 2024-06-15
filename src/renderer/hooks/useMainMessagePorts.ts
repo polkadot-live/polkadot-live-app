@@ -58,6 +58,7 @@ export const useMainMessagePorts = () => {
     handleToggleSilenceOsNotifications,
     handleToggleShowDebuggingSubscriptions,
     handleToggleEnableAutomaticSubscriptions,
+    handleToggleEnablePolkassemblyApi,
   } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
@@ -738,6 +739,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:enableAutomaticSubscriptions': {
               handleEnableAutomaticSubscriptions();
+              break;
+            }
+            case 'settings:execute:enablePolkassembly': {
+              handleToggleEnablePolkassemblyApi();
               break;
             }
             case 'settings:execute:exportData': {

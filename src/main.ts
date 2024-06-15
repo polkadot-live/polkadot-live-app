@@ -489,9 +489,10 @@ app.whenReady().then(async () => {
 
   // Toggle an app setting.
   ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {
+    const settings = ConfigMain.getAppSettings();
+
     switch (action) {
       case 'settings:execute:showDebuggingSubscriptions': {
-        const settings = ConfigMain.getAppSettings();
         const flag = !settings.appShowDebuggingSubscriptions;
         settings.appShowDebuggingSubscriptions = flag;
 
@@ -500,27 +501,27 @@ app.whenReady().then(async () => {
         break;
       }
       case 'settings:execute:silenceOsNotifications': {
-        const settings = ConfigMain.getAppSettings();
         const flag = !settings.appSilenceOsNotifications;
         settings.appSilenceOsNotifications = flag;
-
-        const key = ConfigMain.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
         break;
       }
       case 'settings:execute:enableAutomaticSubscriptions': {
-        const settings = ConfigMain.getAppSettings();
         const flag = !settings.appEnableAutomaticSubscriptions;
         settings.appEnableAutomaticSubscriptions = flag;
-
-        const key = ConfigMain.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
+        break;
+      }
+      case 'settings:execute:enablePolkassembly': {
+        const flag = !settings.appEnablePolkassemblyApi;
+        settings.appEnablePolkassemblyApi = flag;
         break;
       }
       default: {
         break;
       }
     }
+
+    const key = ConfigMain.settingsStorageKey;
+    (store as Record<string, AnyData>).set(key, settings);
   });
 
   /**

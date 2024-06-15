@@ -51,8 +51,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getCategorisedReferenda,
   } = useReferenda();
 
-  const { fetchingProposals, proposals } = usePolkassembly();
-  console.log(fetchingProposals);
+  const { usePolkassemblyApi } = usePolkassembly();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -403,9 +402,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 <div className="left">
                   <div className="heading">ID</div>
                   <div className="heading">
-                    {fetchingProposals || !proposals.length
-                      ? 'Origin'
-                      : 'Title and Origin'}
+                    {usePolkassemblyApi ? 'Title and Origin' : 'Origin'}
                   </div>
                 </div>
                 <div className="right">
