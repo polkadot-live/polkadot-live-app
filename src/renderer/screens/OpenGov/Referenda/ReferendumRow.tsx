@@ -46,7 +46,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     removeIntervalSubscription,
   } = useTaskHandler();
 
-  const { fetchingProposals, getProposal } = usePolkassembly();
+  const { getProposal, usePolkassemblyApi } = usePolkassembly();
   const proposalData = getProposal(referendaId);
 
   /// Whether subscriptions are showing.
@@ -83,15 +83,17 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
               {referendum.referendaId}
             </span>
-            {fetchingProposals || !proposalData ? (
-              <h4 className="mw-20">{renderOrigin(referendum)}</h4>
-            ) : (
+            {usePolkassemblyApi ? (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <h4 className="mw-20">{getProposalTitle(proposalData)}</h4>
+                <h4 className="mw-20">
+                  {proposalData ? getProposalTitle(proposalData) : ''}
+                </h4>
                 <p style={{ margin: 0, fontSize: '0.9rem' }}>
                   {renderOrigin(referendum)}
                 </p>
               </div>
+            ) : (
+              <h4 className="mw-20">{renderOrigin(referendum)}</h4>
             )}
           </div>
         </div>

@@ -15,8 +15,8 @@ import { useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import type { SettingItem } from './types';
 import { Scrollable } from '@/renderer/utils/common';
+import type { SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
