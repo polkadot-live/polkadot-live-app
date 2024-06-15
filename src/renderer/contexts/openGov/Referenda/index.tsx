@@ -37,6 +37,7 @@ export const ReferendaProvider = ({
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
+  const activeReferendaChainRef = useRef(activeReferendaChainId);
 
   /// Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
@@ -49,6 +50,7 @@ export const ReferendaProvider = ({
     }
 
     setActiveReferendaChainId(chainId);
+    activeReferendaChainRef.current = chainId;
     setFetchingReferenda(true);
 
     ConfigOpenGov.portOpenGov.postMessage({
@@ -76,7 +78,7 @@ export const ReferendaProvider = ({
 
     // Fetch proposal metadata if Polkassembly enabled.
     if (appEnablePolkassemblyApi) {
-      await fetchProposals(activeReferendaChainId, info);
+      await fetchProposals(activeReferendaChainRef.current, info);
     }
 
     dataCachedRef.current = true;
