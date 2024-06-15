@@ -10,6 +10,7 @@ export interface PersistedSettings {
   appShowOnAllWorkspaces: boolean;
   appShowDebuggingSubscriptions: boolean;
   appEnableAutomaticSubscriptions: boolean;
+  appEnablePolkassemblyApi: boolean;
 }
 
 export type SettingAction =

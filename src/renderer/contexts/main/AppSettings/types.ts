@@ -6,6 +6,7 @@ export interface AppSettingsContextInterface {
   silenceOsNotifications: boolean;
   showDebuggingSubscriptions: boolean;
   enableAutomaticSubscriptions: boolean;
+  enablePolkassemblyApi: boolean;
   setSilenceOsNotifications: (b: boolean) => void;
   handleDockedToggle: () => void;
   handleToggleSilenceOsNotifications: () => void;

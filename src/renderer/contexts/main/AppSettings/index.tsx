@@ -32,6 +32,10 @@ export const AppSettingsProvider = ({
   const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
     useState<boolean>(true);
 
+  /// Enable Polkassembly API.
+  const [enablePolkassemblyApi, setEnablePolkassemblyApi] =
+    useState<boolean>(true);
+
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
@@ -40,6 +44,7 @@ export const AppSettingsProvider = ({
         appSilenceOsNotifications,
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
+        appEnablePolkassemblyApi,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -53,6 +58,7 @@ export const AppSettingsProvider = ({
       setSilenceOsNotifications(appSilenceOsNotifications);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
+      setEnablePolkassemblyApi(appEnablePolkassemblyApi);
     };
 
     initSettings();
@@ -107,6 +113,7 @@ export const AppSettingsProvider = ({
         silenceOsNotifications,
         showDebuggingSubscriptions,
         enableAutomaticSubscriptions,
+        enablePolkassemblyApi,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,

@@ -9,6 +9,7 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   silenceOsNotifications: false,
   showDebuggingSubscriptions: false,
   enableAutomaticSubscriptions: true,
+  enablePolkassemblyApi: true,
   setSilenceOsNotifications: (b) => {},
   handleDockedToggle: () => {},
   handleToggleSilenceOsNotifications: () => {},
