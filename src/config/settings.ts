@@ -46,6 +46,14 @@ export const SettingsList: SettingItem[] = [
     title: 'Enable Automatic Subscriptions',
   },
   {
+    action: 'settings:execute:enablePolkassembly',
+    category: 'General',
+    enabled: false,
+    helpKey: 'help:settings:enablePolkassembly',
+    settingType: 'switch',
+    title: 'Enable Polkassembly Data',
+  },
+  {
     action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,
