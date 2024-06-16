@@ -85,6 +85,14 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const showIconTooltip = () =>
     event.category !== 'openGov' && event.category !== 'debugging';
 
+  // Get primary actions that will always be rendered.
+  const getPrimaryActions = () =>
+    actions.filter(({ uri }) => !isValidHttpUrl(uri));
+
+  // Get secondary actions for rendering in actions menu.
+  const getSecondaryActions = () =>
+    actions.filter(({ uri }) => isValidHttpUrl(uri));
+
   return (
     <AnimatePresence>
       {/* Event item wrapper */}
@@ -166,33 +174,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
               </div>
             </section>
 
-            {/* Render actions */}
-            {actions.length > 0 && (
-              <motion.section
-                className="actions-wrapper"
-                initial={{ height: 0 }}
-                animate={showActions ? 'open' : 'closed'}
-                variants={actionsVariants}
-                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
-              >
+            {/* Render primary actions */}
+            {getPrimaryActions().length > 0 && (
+              <section className="actions-wrapper">
                 <div className="actions">
-                  {actions.map((action, i) => {
-                    const { uri, text } = action;
+                  {getPrimaryActions().map((action, i) => {
+                    const { text } = action;
                     action.txMeta && (action.txMeta.eventUid = event.uid);
 
-                    const isUrl = isValidHttpUrl(uri);
-                    if (isUrl) {
-                      return (
-                        <ButtonMonoInvert
-                          key={`action_${uid}_${i}`}
-                          text={text || ''}
-                          iconRight={faExternalLinkAlt}
-                          onClick={() => {
-                            window.myAPI.openBrowserURL(uri);
-                          }}
-                        />
-                      );
-                    } else if (source === 'ledger') {
+                    if (source === 'ledger') {
                       return (
                         <div
                           key={`action_${uid}_${i}`}
@@ -236,6 +226,35 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         />
                       );
                     }
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Render secondary actions */}
+            {actions.length > 0 && (
+              <motion.section
+                className="actions-wrapper"
+                initial={{ height: 0 }}
+                animate={showActions ? 'open' : 'closed'}
+                variants={actionsVariants}
+                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+              >
+                <div className="actions">
+                  {getSecondaryActions().map((action, i) => {
+                    const { uri, text } = action;
+                    action.txMeta && (action.txMeta.eventUid = event.uid);
+
+                    return (
+                      <ButtonMonoInvert
+                        key={`action_${uid}_${i}`}
+                        text={text || ''}
+                        iconRight={faExternalLinkAlt}
+                        onClick={() => {
+                          window.myAPI.openBrowserURL(uri);
+                        }}
+                      />
+                    );
                   })}
                 </div>
               </motion.section>
