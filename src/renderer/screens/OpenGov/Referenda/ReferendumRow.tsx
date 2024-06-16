@@ -2,16 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { ReferendumRowWrapper } from './Wrappers';
+import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useState } from 'react';
 import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
+import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
 import {
   faChevronDown,
@@ -23,12 +26,17 @@ import {
   faPlusLarge,
 } from '@fortawesome/pro-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
+import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
+  const { referendaId } = referendum;
+
   const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
+  const { openOverlayWith } = useOverlay();
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
@@ -41,10 +49,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     removeIntervalSubscription,
   } = useTaskHandler();
 
+  const { getProposal, usePolkassemblyApi } = usePolkassembly();
+  const proposalData = getProposal(referendaId);
+
   /// Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
-
-  const { referendaId } = referendum;
   const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
   const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;
 
@@ -57,6 +66,21 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     </div>
   );
 
+  const getProposalTitle = (data: PolkassemblyProposal) => {
+    const { title } = data;
+    return title === '' ? (
+      <p style={{ margin: 0, opacity: 0.75 }}>No Title</p>
+    ) : title.length < 28 ? (
+      title
+    ) : (
+      ellipsisFn(title, 28, 'end')
+    );
+  };
+
+  const handleMoreClick = () => {
+    openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
+  };
+
   return (
     <ReferendumRowWrapper>
       <div className="content-wrapper">
@@ -66,7 +90,19 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
               {referendum.referendaId}
             </span>
-            <h4 className="mw-20">{renderOrigin(referendum)}</h4>
+            {usePolkassemblyApi ? (
+              <TitleWithOrigin>
+                <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
+                <div>
+                  <p>{renderOrigin(referendum)}</p>
+                  <MoreButton onClick={() => handleMoreClick()}>
+                    More
+                  </MoreButton>
+                </div>
+              </TitleWithOrigin>
+            ) : (
+              <h4 className="mw-20">{renderOrigin(referendum)}</h4>
+            )}
           </div>
         </div>
         <div className="right">
@@ -88,7 +124,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
           </div>
           {/* Add + Remove Subscriptions */}
           <div className="menu-btn-wrapper">
-            <ControlsWrapper>
+            <ControlsWrapper style={{ marginBottom: '0' }}>
               {!allSubscriptionsAdded(chainId, referendum) ? (
                 <div
                   className="tooltip-trigger-element"

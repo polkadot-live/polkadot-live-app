@@ -26,6 +26,7 @@ export const SettingFlagsProvider = ({
     useState(false);
   const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
     useState(true);
+  const [enablePolkassemblyApi, setEnablePolkassemblyApi] = useState(true);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
@@ -36,6 +37,7 @@ export const SettingFlagsProvider = ({
         appShowOnAllWorkspaces,
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
+        appEnablePolkassemblyApi,
       } = await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
@@ -43,6 +45,7 @@ export const SettingFlagsProvider = ({
       setShowOnAllWorkspaces(appShowOnAllWorkspaces);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
+      setEnablePolkassemblyApi(appEnablePolkassemblyApi);
     };
 
     initSettings();
@@ -67,6 +70,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:enableAutomaticSubscriptions': {
         return enableAutomaticSubscriptions;
+      }
+      case 'settings:execute:enablePolkassembly': {
+        return enablePolkassemblyApi;
       }
       default: {
         return true;
@@ -97,6 +103,10 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:enableAutomaticSubscriptions': {
         setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
+        break;
+      }
+      case 'settings:execute:enablePolkassembly': {
+        setEnablePolkassemblyApi(!enablePolkassemblyApi);
         break;
       }
       default: {

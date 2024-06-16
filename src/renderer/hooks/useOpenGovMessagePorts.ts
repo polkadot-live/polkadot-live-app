@@ -36,7 +36,7 @@ export const useOpenGovMessagePorts = () => {
       case 'main-openGov:openGov': {
         ConfigOpenGov.portOpenGov = e.ports[0];
 
-        ConfigOpenGov.portOpenGov.onmessage = (ev: MessageEvent) => {
+        ConfigOpenGov.portOpenGov.onmessage = async (ev: MessageEvent) => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'openGov:connection:status': {
@@ -51,7 +51,7 @@ export const useOpenGovMessagePorts = () => {
             case 'openGov:referenda:receive': {
               const { json } = ev.data.data;
               const parsed: ActiveReferendaInfo[] = JSON.parse(json);
-              receiveReferendaData(parsed);
+              await receiveReferendaData(parsed);
               break;
             }
             case 'openGov:treasury:set': {

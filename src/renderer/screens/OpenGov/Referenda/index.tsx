@@ -35,10 +35,13 @@ import {
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import type { ReferendaProps } from '../types';
+import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
+  const { status: overlayStatus } = useOverlay();
 
   const {
     referenda,
@@ -49,6 +52,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
+
+  const { usePolkassemblyApi } = usePolkassembly();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -394,11 +399,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
           {/* Sticky Headings */}
           {!groupingOn && !fetchingReferenda && (
-            <StickyHeadings>
+            <StickyHeadings style={{ opacity: overlayStatus === 0 ? 1 : 0 }}>
               <div className="content-wrapper">
                 <div className="left">
                   <div className="heading">ID</div>
-                  <div className="heading">Origin</div>
+                  <div className="heading">
+                    {usePolkassemblyApi ? 'Title and Origin' : 'Origin'}
+                  </div>
                 </div>
                 <div className="right">
                   <div className="heading">Portal Links</div>

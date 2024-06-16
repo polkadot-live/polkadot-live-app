@@ -61,6 +61,7 @@ export class Config {
         appShowOnAllWorkspaces: true,
         appShowDebuggingSubscriptions: false,
         appEnableAutomaticSubscriptions: true,
+        appEnablePolkassemblyApi: true,
       };
 
       // Persist default settings to store and return them.

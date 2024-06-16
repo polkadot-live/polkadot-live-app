@@ -6,6 +6,7 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
+import { usePolkassembly } from '../Polkassembly';
 import type { ChainID } from '@/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -22,6 +23,7 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   const { isConnected } = useConnections();
+  const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
   /// Ref to indiciate if referenda data has been fetched.
   const dataCachedRef = useRef(false);
@@ -35,6 +37,7 @@ export const ReferendaProvider = ({
   /// Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
+  const activeReferendaChainRef = useRef(activeReferendaChainId);
 
   /// Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
@@ -47,6 +50,7 @@ export const ReferendaProvider = ({
     }
 
     setActiveReferendaChainId(chainId);
+    activeReferendaChainRef.current = chainId;
     setFetchingReferenda(true);
 
     ConfigOpenGov.portOpenGov.postMessage({
@@ -65,10 +69,20 @@ export const ReferendaProvider = ({
   };
 
   /// Set state after receiving referenda data from main renderer.
-  const receiveReferendaData = (info: ActiveReferendaInfo[]) => {
+  const receiveReferendaData = async (info: ActiveReferendaInfo[]) => {
     setReferenda(info);
-    setFetchingReferenda(false);
+
+    // Get Polkassembly enabled setting.
+    const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
+    setUsePolkassemblyApi(appEnablePolkassemblyApi);
+
+    // Fetch proposal metadata if Polkassembly enabled.
+    if (appEnablePolkassemblyApi) {
+      await fetchProposals(activeReferendaChainRef.current, info);
+    }
+
     dataCachedRef.current = true;
+    setFetchingReferenda(false);
   };
 
   /// Get all referenda sorted by desc or asc.

@@ -10,7 +10,7 @@ export interface ReferendaContextInterface {
   activeReferendaChainId: ChainID;
   fetchReferendaData: (chainId: ChainID) => void;
   refetchReferenda: () => void;
-  receiveReferendaData: (info: ActiveReferendaInfo[]) => void;
+  receiveReferendaData: (info: ActiveReferendaInfo[]) => Promise<void>;
   setReferenda: (referenda: ActiveReferendaInfo[]) => void;
   setFetchingReferenda: (flag: boolean) => void;
   getSortedActiveReferenda: (

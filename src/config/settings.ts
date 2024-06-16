@@ -30,8 +30,16 @@ export const SettingsList: SettingItem[] = [
     title: 'Silence OS Notifications',
   },
   {
-    action: 'settings:execute:showDebuggingSubscriptions',
+    action: 'settings:execute:enablePolkassembly',
     category: 'General',
+    enabled: false,
+    helpKey: 'help:settings:enablePolkassembly',
+    settingType: 'switch',
+    title: 'Enable Polkassembly Data',
+  },
+  {
+    action: 'settings:execute:showDebuggingSubscriptions',
+    category: 'Subscriptions',
     enabled: false,
     helpKey: 'help:settings:showDebuggingSubscriptions',
     settingType: 'switch',
@@ -39,7 +47,7 @@ export const SettingsList: SettingItem[] = [
   },
   {
     action: 'settings:execute:enableAutomaticSubscriptions',
-    category: 'General',
+    category: 'Subscriptions',
     enabled: false,
     helpKey: 'help:settings:enableAutomaticSubscriptions',
     settingType: 'switch',

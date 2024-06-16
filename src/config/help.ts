@@ -158,6 +158,14 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:enablePolkassembly',
+    title: 'Enable Polkassembly Data',
+    definition: [
+      'Use the Polkassembly API to fetch OpenGov metadata including proposal titles and descriptions.',
+      'It is recommended to have this setting on if you wish to browse and subscribe to OpenGov referenda.',
+    ],
+  },
+  {
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [
