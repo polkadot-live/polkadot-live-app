@@ -7,6 +7,9 @@ import type { AxiosInstance } from 'axios';
 /**
  * Set up an Axios instance that limits the amount of requests it can process
  * at a given time.
+ *
+ * @todo Throw away class if it's not to be used in the initial stable version
+ * of Polkadot live.
  */
 export class AxiosPool {
   /// Data
