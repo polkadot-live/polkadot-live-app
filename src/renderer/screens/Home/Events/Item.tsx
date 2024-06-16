@@ -174,9 +174,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
               </div>
             </section>
 
-            {/* Render primary actions */}
-            {getPrimaryActions().length > 0 && (
+            {actions.length > 0 && (
               <section className="actions-wrapper">
+                {/* Render primary actions */}
                 <div className="actions">
                   {getPrimaryActions().map((action, i) => {
                     const { text } = action;
@@ -227,6 +227,12 @@ export const Item = memo(function Item({ event }: ItemProps) {
                       );
                     }
                   })}
+
+                  {/* Render secondary actions menu */}
+                  <ButtonMonoInvert
+                    text="More"
+                    onClick={() => console.log('todo')}
+                  />
                 </div>
               </section>
             )}
