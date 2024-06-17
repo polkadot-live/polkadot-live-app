@@ -162,7 +162,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
             >
               <FontAwesomeIcon
                 icon={showActions ? faAngleUp : faAngleDown}
-                transform={'shrink-2'}
+                transform={'shrink-0'}
               />
             </div>
           )}
@@ -264,6 +264,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     <ButtonMonoInvert
                       text="Links"
                       iconRight={faAngleRight}
+                      iconTransform="shrink-2"
                       onClick={() => setActiveSide('right')}
                     />
                   )}
@@ -273,6 +274,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     <ButtonMono
                       text=""
                       iconLeft={faAngleLeft}
+                      iconTransform="shrink-2"
                       onClick={() => setActiveSide('left')}
                     />
                   )}
@@ -286,6 +288,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
+                        iconTransform="shrink-2"
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
                         }}

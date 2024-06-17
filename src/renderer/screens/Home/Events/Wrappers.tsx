@@ -80,47 +80,56 @@ export const EventItem = styled(motion.div)`
 
   // Dismiss button
   > .dismiss-btn {
+    --main-color: #4f4f4f;
     position: absolute;
     width: 2.2rem;
     height: 2.2rem;
+    opacity: 0.75;
     top: 1rem;
     right: 10px;
     transition: color 0.2s ease-out;
     padding: 0;
     border-radius: 0.65rem;
-    border: 1px solid var(--border-mid-color);
+    border: 1px solid var(--main-color);
     cursor: pointer;
 
     svg {
-      color: var(--border-mid-color);
+      color: var(--main-color);
     }
     &:hover {
-      border-color: #7e3333;
+      border-color: rgb(169 74 117);
       svg {
-        color: #7e3333;
+        color: rgb(169 74 117);
       }
     }
   }
 
   // Show actions buttons
   .show-actions-btn {
-    background-color: #953254;
+    //background-color: #953254;
+    --main-color: #4f4f4f;
     position: absolute;
+    border: 1px solid var(--main-color);
     top: 4rem;
     right: 10px;
     width: 2.2rem;
     height: 2.2rem;
-    opacity: 0.3;
+    opacity: 0.75;
     border-radius: 0.65rem;
     padding: 0;
     cursor: pointer;
-
     transition: opacity 0.1s ease-out;
-    &:hover {
-      opacity: 0.75;
-    }
+
     svg {
-      color: #f1f1f1;
+      color: var(--main-color);
+    }
+
+    &:hover {
+      border-color: rgb(169 74 117);
+      svg {
+        color: rgb(169 74 117);
+      }
+      opacity: 0.75;
     }
   }
 
@@ -239,6 +248,10 @@ export const EventItem = styled(motion.div)`
       .btn-mono-invert {
         border: 1px solid #a23b5e;
         color: #a23b5e;
+      }
+      button {
+        font-size: 0.95rem;
+        padding-top: 0.25rem;
       }
     }
   }
