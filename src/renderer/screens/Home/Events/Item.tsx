@@ -100,7 +100,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
     actions.filter(({ uri }) => isValidHttpUrl(uri));
 
   // Flag to determine of primary actions exist for this event.
-  const hasPrimaryActions: boolean = getPrimaryActions().length > 0;
+  const hasPrimaryActions: boolean =
+    getPrimaryActions().length > 0 && source !== 'read-only';
+
   const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
 
   // Flag indicating if action buttons are showing.
