@@ -106,7 +106,6 @@ export const EventItem = styled(motion.div)`
 
   // Show actions buttons
   .show-actions-btn {
-    //background-color: #953254;
     --main-color: #4f4f4f;
     position: absolute;
     border: 1px solid var(--main-color);
