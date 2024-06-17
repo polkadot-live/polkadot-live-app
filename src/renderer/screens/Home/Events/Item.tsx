@@ -6,7 +6,12 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
-import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faAngleRight,
+  faExternalLinkAlt,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
@@ -24,12 +29,11 @@ import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 
+type ActionsActiveSide = 'left' | 'right';
+
 export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
-
-  // Flag indicating if action buttons are showing.
-  const [showActions, setShowActions] = useState(false);
 
   const { dismissEvent } = useEvents();
   const { online: isOnline, isConnecting } = useBootstrapping();
@@ -78,12 +82,44 @@ export const Item = memo(function Item({ event }: ItemProps) {
 
   // Variants for actions section.
   const actionsVariants = {
-    open: { height: 'auto' },
-    closed: { height: 0 },
+    openLeft: { height: 'auto', marginLeft: 0 },
+    openRight: { height: 'auto', marginLeft: '-100%' },
+    closedLeft: { height: 0, marginLeft: 0 },
+    closedRight: { height: 0, marginLeft: '-100%' },
   };
 
   const showIconTooltip = () =>
     event.category !== 'openGov' && event.category !== 'debugging';
+
+  // Get primary actions that will always be rendered.
+  const getPrimaryActions = () =>
+    actions.filter(({ uri }) => !isValidHttpUrl(uri));
+
+  // Get secondary actions for rendering in actions menu.
+  const getSecondaryActions = () =>
+    actions.filter(({ uri }) => isValidHttpUrl(uri));
+
+  // Flag to determine of primary actions exist for this event.
+  const hasPrimaryActions: boolean =
+    getPrimaryActions().length > 0 && source !== 'read-only';
+
+  const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
+
+  // Flag indicating if action buttons are showing.
+  const [showActions, setShowActions] = useState(hasPrimaryActions);
+
+  const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
+    hasPrimaryActions ? 'left' : hasSecondaryActions ? 'right' : 'left'
+  );
+
+  const getActionsVariant = () =>
+    showActions
+      ? activeSide === 'left'
+        ? 'openLeft'
+        : 'openRight'
+      : activeSide === 'left'
+        ? 'closedLeft'
+        : 'closedRight';
 
   return (
     <AnimatePresence>
@@ -117,11 +153,11 @@ export const Item = memo(function Item({ event }: ItemProps) {
             className="dismiss-btn"
             onClick={async () => await handleDismissEvent()}
           >
-            <FontAwesomeIcon icon={faTimes} />
+            <FontAwesomeIcon icon={faTimes} transform={'shrink-2'} />
           </div>
 
           {/* Expand actions button */}
-          {actions.length > 0 && (
+          {hasSecondaryActions && (
             <div
               className="show-actions-btn"
               onClick={() => setShowActions(!showActions)}
@@ -166,33 +202,21 @@ export const Item = memo(function Item({ event }: ItemProps) {
               </div>
             </section>
 
-            {/* Render actions */}
             {actions.length > 0 && (
               <motion.section
                 className="actions-wrapper"
-                initial={{ height: 0 }}
-                animate={showActions ? 'open' : 'closed'}
+                initial={{ marginLeft: 0 }}
+                animate={getActionsVariant()}
                 variants={actionsVariants}
                 transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
               >
+                {/* Render primary actions */}
                 <div className="actions">
-                  {actions.map((action, i) => {
-                    const { uri, text } = action;
+                  {getPrimaryActions().map((action, i) => {
+                    const { text } = action;
                     action.txMeta && (action.txMeta.eventUid = event.uid);
 
-                    const isUrl = isValidHttpUrl(uri);
-                    if (isUrl) {
-                      return (
-                        <ButtonMonoInvert
-                          key={`action_${uid}_${i}`}
-                          text={text || ''}
-                          iconRight={faExternalLinkAlt}
-                          onClick={() => {
-                            window.myAPI.openBrowserURL(uri);
-                          }}
-                        />
-                      );
-                    } else if (source === 'ledger') {
+                    if (source === 'ledger') {
                       return (
                         <div
                           key={`action_${uid}_${i}`}
@@ -236,6 +260,42 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         />
                       );
                     }
+                  })}
+
+                  {hasSecondaryActions && (
+                    <ButtonMonoInvert
+                      text="Links"
+                      iconRight={faAngleRight}
+                      iconTransform="shrink-2"
+                      onClick={() => setActiveSide('right')}
+                    />
+                  )}
+                </div>
+                <div className="actions">
+                  {hasPrimaryActions && (
+                    <ButtonMono
+                      text=""
+                      iconLeft={faAngleLeft}
+                      iconTransform="shrink-2"
+                      onClick={() => setActiveSide('left')}
+                    />
+                  )}
+
+                  {getSecondaryActions().map((action, i) => {
+                    const { uri, text } = action;
+                    action.txMeta && (action.txMeta.eventUid = event.uid);
+
+                    return (
+                      <ButtonMonoInvert
+                        key={`action_${uid}_${i}`}
+                        text={text || ''}
+                        iconRight={faExternalLinkAlt}
+                        iconTransform="shrink-2"
+                        onClick={() => {
+                          window.myAPI.openBrowserURL(uri);
+                        }}
+                      />
+                    );
                   })}
                 </div>
               </motion.section>
