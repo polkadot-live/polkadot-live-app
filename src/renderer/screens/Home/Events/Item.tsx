@@ -6,7 +6,12 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
-import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faAngleRight,
+  faExternalLinkAlt,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
@@ -24,12 +29,11 @@ import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 
+type ActionsActiveSide = 'left' | 'right';
+
 export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
-
-  // Flag indicating if action buttons are showing.
-  const [showActions, setShowActions] = useState(false);
 
   const { dismissEvent } = useEvents();
   const { online: isOnline, isConnecting } = useBootstrapping();
@@ -77,9 +81,11 @@ export const Item = memo(function Item({ event }: ItemProps) {
   }, [display]);
 
   // Variants for actions section.
-  const actionsVariants = {
-    open: { height: 'auto' },
-    closed: { height: 0 },
+  const actionsSlideVariants = {
+    openLeft: { height: 'auto', marginLeft: 0 },
+    openRight: { height: 'auto', marginLeft: '-100%' },
+    closedLeft: { height: 0, marginLeft: 0 },
+    closedRight: { height: 0, marginLeft: '-100%' },
   };
 
   const showIconTooltip = () =>
@@ -92,6 +98,26 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // Get secondary actions for rendering in actions menu.
   const getSecondaryActions = () =>
     actions.filter(({ uri }) => isValidHttpUrl(uri));
+
+  // Flag to determine of primary actions exist for this event.
+  const hasPrimaryActions: boolean = getPrimaryActions().length > 0;
+  const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
+
+  // Flag indicating if action buttons are showing.
+  const [showActions, setShowActions] = useState(false);
+
+  const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
+    hasPrimaryActions ? 'left' : hasSecondaryActions ? 'right' : 'left'
+  );
+
+  const getActionsVariant = () =>
+    showActions
+      ? activeSide === 'left'
+        ? 'openLeft'
+        : 'openRight'
+      : activeSide === 'left'
+        ? 'closedLeft'
+        : 'closedRight';
 
   return (
     <AnimatePresence>
@@ -129,7 +155,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
           </div>
 
           {/* Expand actions button */}
-          {actions.length > 0 && (
+          {hasSecondaryActions && (
             <div
               className="show-actions-btn"
               onClick={() => setShowActions(!showActions)}
@@ -175,7 +201,13 @@ export const Item = memo(function Item({ event }: ItemProps) {
             </section>
 
             {actions.length > 0 && (
-              <section className="actions-wrapper">
+              <motion.section
+                className="actions-wrapper"
+                initial={{ marginLeft: 0 }}
+                animate={getActionsVariant()}
+                variants={actionsSlideVariants}
+                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+              >
                 {/* Render primary actions */}
                 <div className="actions">
                   {getPrimaryActions().map((action, i) => {
@@ -228,25 +260,23 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     }
                   })}
 
-                  {/* Render secondary actions menu */}
-                  <ButtonMonoInvert
-                    text="More"
-                    onClick={() => console.log('todo')}
-                  />
+                  {hasSecondaryActions && (
+                    <ButtonMonoInvert
+                      text="Links"
+                      iconRight={faAngleRight}
+                      onClick={() => setActiveSide('right')}
+                    />
+                  )}
                 </div>
-              </section>
-            )}
-
-            {/* Render secondary actions */}
-            {actions.length > 0 && (
-              <motion.section
-                className="actions-wrapper"
-                initial={{ height: 0 }}
-                animate={showActions ? 'open' : 'closed'}
-                variants={actionsVariants}
-                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
-              >
                 <div className="actions">
+                  {hasPrimaryActions && (
+                    <ButtonMono
+                      text=""
+                      iconLeft={faAngleLeft}
+                      onClick={() => setActiveSide('left')}
+                    />
+                  )}
+
                   {getSecondaryActions().map((action, i) => {
                     const { uri, text } = action;
                     action.txMeta && (action.txMeta.eventUid = event.uid);

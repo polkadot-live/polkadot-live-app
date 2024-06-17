@@ -213,12 +213,23 @@ export const EventItem = styled(motion.div)`
   }
   // Actions container
   .actions-wrapper {
+    width: 200%;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-items: start;
+
     .actions {
       display: flex;
       flex-direction: row;
+      justify-content: start;
       column-gap: 1rem;
-      margin: 1.5rem 0 0;
+      // even width for actions contaienrs.
+      flex-grow: 1;
+      flex-basis: 0;
+      margin: 1rem 0 0;
       overflow: hidden;
+      padding-left: 4.5rem;
 
       .btn-mono {
         background-color: #953254;
