@@ -81,7 +81,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   }, [display]);
 
   // Variants for actions section.
-  const actionsSlideVariants = {
+  const actionsVariants = {
     openLeft: { height: 'auto', marginLeft: 0 },
     openRight: { height: 'auto', marginLeft: '-100%' },
     closedLeft: { height: 0, marginLeft: 0 },
@@ -104,7 +104,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
 
   // Flag indicating if action buttons are showing.
-  const [showActions, setShowActions] = useState(false);
+  const [showActions, setShowActions] = useState(hasPrimaryActions);
 
   const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
     hasPrimaryActions ? 'left' : hasSecondaryActions ? 'right' : 'left'
@@ -205,7 +205,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 className="actions-wrapper"
                 initial={{ marginLeft: 0 }}
                 animate={getActionsVariant()}
-                variants={actionsSlideVariants}
+                variants={actionsVariants}
                 transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
               >
                 {/* Render primary actions */}
