@@ -82,14 +82,14 @@ export const EventItem = styled(motion.div)`
   > .dismiss-btn {
     --main-color: #4f4f4f;
     position: absolute;
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2rem;
+    height: 2rem;
     opacity: 0.75;
     top: 1rem;
     right: 10px;
     transition: color 0.2s ease-out;
     padding: 0;
-    border-radius: 0.65rem;
+    border-radius: 0.5rem;
     border: 1px solid var(--main-color);
     cursor: pointer;
 
@@ -112,10 +112,10 @@ export const EventItem = styled(motion.div)`
     border: 1px solid var(--main-color);
     top: 4rem;
     right: 10px;
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2rem;
+    height: 2rem;
     opacity: 0.75;
-    border-radius: 0.65rem;
+    border-radius: 0.5rem;
     padding: 0;
     cursor: pointer;
     transition: opacity 0.1s ease-out;
