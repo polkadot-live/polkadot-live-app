@@ -45,7 +45,7 @@ export const doRemoveOutdatedEvents = (
     // Extract data from next event.
     const { taskAction: nextTaskAction } = ev;
 
-    if (ev.who.origin === 'interval') {
+    if (ev.who.origin === 'interval' && event.who.origin === 'interval') {
       const { chainId: nextChainId } = ev.who.data as EventChainData;
       const { referendumId: nextReferendumId } = ev.data;
       const { referendumId } = event.data;
@@ -58,7 +58,7 @@ export const doRemoveOutdatedEvents = (
       ) {
         return false;
       }
-    } else if (ev.who.origin === 'account') {
+    } else if (ev.who.origin === 'account' && event.who.origin === 'account') {
       const { address: nextAddress, chainId: nextChainId } = ev.who
         .data as EventAccountData;
 
