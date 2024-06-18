@@ -108,7 +108,7 @@ export const Manage = ({
                       />
                       <AccordionPanel>
                         <div className="items-wrapper">
-                          <div className="items">
+                          <div className="items round-primary-border">
                             {chainAddresses.map(
                               ({ address, index, isImported, name }, j) => (
                                 <Address

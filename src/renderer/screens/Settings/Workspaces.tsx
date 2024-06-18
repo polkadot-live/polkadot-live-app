@@ -3,7 +3,7 @@
 
 import { AccordionItem, AccordionPanel } from '@/renderer/library/Accordion';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import { WorkspaceRow, WorkspacesContainer } from './Wrappers';
+import { WorkspaceRowWrapper, WorkspacesContainer } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
@@ -47,7 +47,7 @@ export const Workspaces = () => {
       <AccordionPanel>
         <WorkspacesContainer>
           {workspacesSample.map(({ createdAt, label, index }) => (
-            <WorkspaceRow key={`${index}_${label}`}>
+            <WorkspaceRowWrapper key={`${index}_${label}`}>
               <>
                 <div className="stat-wrapper">
                   <span>
@@ -87,7 +87,7 @@ export const Workspaces = () => {
                   </ControlsWrapper>
                 </div>
               </>
-            </WorkspaceRow>
+            </WorkspaceRowWrapper>
           ))}
         </WorkspacesContainer>
       </AccordionPanel>

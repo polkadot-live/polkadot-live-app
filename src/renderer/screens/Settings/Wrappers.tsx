@@ -104,8 +104,10 @@ export const HeadingWrapper = styled.div`
 `;
 
 export const WorkspacesContainer = styled.div`
-  padding: 0 0.75rem;
   margin-bottom: 1.5rem;
+  background-color: var(--background-primary);
+  border: 1px solid var(--border-primary-color);
+  border-radius: 1.25rem;
 
   > div:first-of-type {
     border-top-left-radius: 1.25rem;
@@ -118,7 +120,7 @@ export const WorkspacesContainer = styled.div`
   }
 `;
 
-export const WorkspaceRow = styled.div`
+export const WorkspaceRowWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: 1.5rem;
