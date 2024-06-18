@@ -21,12 +21,21 @@ export const WebsocketServerProvider = ({
 
   /// Post IPC message to main process to start listening.
   const startListening = async () => {
-    // TODO: const result = await window.myAPI.startListening();
+    const result = await window.myAPI.startWebsocketServer();
+    console.log(`Websocket start response: ${result}`);
+    setIsListening(result);
+  };
+
+  /// Post IPC message to main process to stop listening.
+  const stopListening = async () => {
+    const result = await window.myAPI.stopWebsocketServer();
+    console.log(`Websocket stop response: ${result}`);
+    result && setIsListening(false);
   };
 
   return (
     <WebsocketServerContext.Provider
-      value={{ isListening, setIsListening, startListening }}
+      value={{ isListening, setIsListening, startListening, stopListening }}
     >
       {children}
     </WebsocketServerContext.Provider>

@@ -14,6 +14,9 @@ import type {
 } from '@/renderer/screens/Settings/types';
 
 export interface PreloadAPI {
+  startWebsocketServer: () => Promise<boolean>;
+  stopWebsocketServer: () => Promise<boolean>;
+
   getPersistedIntervalTasks: () => Promise<string>;
   clearPersistedIntervalTasks: () => Promise<string>;
 

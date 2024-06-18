@@ -5,4 +5,5 @@ export interface WebsocketServerContextInterface {
   isListening: boolean;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
   startListening: () => Promise<void>;
+  stopListening: () => Promise<void>;
 }

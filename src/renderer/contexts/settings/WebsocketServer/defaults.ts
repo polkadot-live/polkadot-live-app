@@ -6,5 +6,7 @@ import type { WebsocketServerContextInterface } from './types';
 
 export const defaultWebsocketServerContext: WebsocketServerContextInterface = {
   isListening: false,
+  setIsListening: () => {},
   startListening: () => new Promise(() => {}),
+  stopListening: () => new Promise(() => {}),
 };

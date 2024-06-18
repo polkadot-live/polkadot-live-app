@@ -449,6 +449,24 @@ app.whenReady().then(async () => {
   });
 
   /**
+   * Websockets
+   */
+
+  // Handle starting the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:start', async () => {
+    // TODO: start websocket server.
+    const success = true;
+    return success;
+  });
+
+  // Handle stopping the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:stop', async () => {
+    // TODO: stop websocket server.
+    const success = true;
+    return success;
+  });
+
+  /**
    * Window management
    */
 

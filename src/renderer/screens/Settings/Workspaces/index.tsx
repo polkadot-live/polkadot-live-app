@@ -35,7 +35,17 @@ const workspacesSample: WorkspaceItem[] = [
 ];
 
 export const Workspaces = () => {
-  const { isListening, setIsListening } = useWebsocketServer();
+  const { isListening, startListening, stopListening } = useWebsocketServer();
+
+  const handleClickConnectButton = async () => {
+    if (isListening) {
+      // TODO: Disconnect websocket server.
+      await stopListening();
+    } else {
+      // TODO: Connect websocket server.
+      await startListening();
+    }
+  };
 
   return (
     <AccordionItem key={`workspaces_settings`}>
@@ -54,7 +64,7 @@ export const Workspaces = () => {
               offLabel="Disconnect"
               faIcon={isListening ? faPlugCircleXmark : faPlug}
               fixedWidth={false}
-              onClick={() => setIsListening(!isListening)}
+              onClick={async () => await handleClickConnectButton()}
             />
           </ControlsWrapper>
 

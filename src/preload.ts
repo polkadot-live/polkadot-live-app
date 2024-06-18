@@ -60,6 +60,16 @@ export const API: PreloadAPI = {
   },
 
   /**
+   * Websocket Server
+   */
+
+  startWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:start'),
+
+  stopWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:stop'),
+
+  /**
    * Interval subscriptions
    */
 
