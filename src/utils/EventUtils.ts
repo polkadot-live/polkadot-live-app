@@ -25,6 +25,53 @@ export const getEventChainId = (event: EventCallback): ChainID =>
   event.who.data.chainId;
 
 /**
+ * @name doRemoveOutdatedEvents
+ * @summary Removes outdated events upon receiving a new event.
+ * This function is called in both renderer and main processes.
+ */
+export const doRemoveOutdatedEvents = (
+  event: EventCallback,
+  all: EventCallback[]
+): { updated: boolean; events: EventCallback[] } => {
+  switch (event.taskAction) {
+    case 'subscribe:account:nominationPools:rewards':
+    case 'subscribe:account:nominating:pendingPayouts': {
+      const { address, chainId } = event.who.data as EventAccountData;
+      const { taskAction } = event;
+
+      const updated = all.filter((ev) => {
+        // Keep if it's a chain event.
+        if (ev.who.origin === 'chain') {
+          return true;
+        }
+
+        // Extract target data from next event.
+        const { taskAction: nextTaskAction } = ev;
+        const { address: nextAddress, chainId: nextChainId } = ev.who
+          .data as EventAccountData;
+
+        // Remove event if its `action`, `address` and `chain id` are the same.
+        if (
+          nextTaskAction === taskAction &&
+          nextAddress === address &&
+          nextChainId === chainId
+        ) {
+          return false;
+        }
+
+        // Otherwise, keep the event.
+        return true;
+      });
+
+      return { updated: true, events: updated };
+    }
+    default: {
+      return { updated: false, events: all };
+    }
+  }
+};
+
+/**
  * @name pushUniqueEvent
  * @summary Throws away a new event if a duplicate event already exists.
  * This function is called for both React state and when persisting events.
