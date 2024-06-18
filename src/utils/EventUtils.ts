@@ -33,42 +33,50 @@ export const doRemoveOutdatedEvents = (
   event: EventCallback,
   all: EventCallback[]
 ): { updated: boolean; events: EventCallback[] } => {
-  switch (event.taskAction) {
-    case 'subscribe:account:nominationPools:rewards':
-    case 'subscribe:account:nominating:pendingPayouts': {
-      const { address, chainId } = event.who.data as EventAccountData;
-      const { taskAction } = event;
+  const { address, chainId } = event.who.data as EventAccountData;
+  const { taskAction } = event;
 
-      const updated = all.filter((ev) => {
-        // Keep if it's a chain event.
-        if (ev.who.origin === 'chain') {
-          return true;
-        }
-
-        // Extract target data from next event.
-        const { taskAction: nextTaskAction } = ev;
-        const { address: nextAddress, chainId: nextChainId } = ev.who
-          .data as EventAccountData;
-
-        // Remove event if its `action`, `address` and `chain id` are the same.
-        if (
-          nextTaskAction === taskAction &&
-          nextAddress === address &&
-          nextChainId === chainId
-        ) {
-          return false;
-        }
-
-        // Otherwise, keep the event.
-        return true;
-      });
-
-      return { updated: true, events: updated };
+  const updated = all.filter((ev) => {
+    // Keep if it's a chain event.
+    if (ev.who.origin === 'chain') {
+      return true;
     }
-    default: {
-      return { updated: false, events: all };
+
+    // Extract data from next event.
+    const { taskAction: nextTaskAction } = ev;
+
+    if (ev.who.origin === 'interval') {
+      const { chainId: nextChainId } = ev.who.data as EventChainData;
+      const { referendumId: nextReferendumId } = ev.data;
+      const { referendumId } = event.data;
+
+      // Remove event if its `referendum id`, `action` and `chain id` are the same.
+      if (
+        nextReferendumId === referendumId &&
+        nextTaskAction === taskAction &&
+        nextChainId === chainId
+      ) {
+        return false;
+      }
+    } else if (ev.who.origin === 'account') {
+      const { address: nextAddress, chainId: nextChainId } = ev.who
+        .data as EventAccountData;
+
+      // Remove event if its `action`, `address` and `chain id` are the same.
+      if (
+        nextTaskAction === taskAction &&
+        nextAddress === address &&
+        nextChainId === chainId
+      ) {
+        return false;
+      }
     }
-  }
+
+    // Otherwise, keep the event.
+    return true;
+  });
+
+  return { updated: true, events: updated };
 };
 
 /**
