@@ -241,7 +241,6 @@ export const ReferendumRowWrapper = styled.div`
     display: flex;
     column-gap: 1rem;
     min-width: 90px;
-    display: flex;
     align-items: center;
 
     .icon-wrapper {
