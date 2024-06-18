@@ -515,6 +515,11 @@ app.whenReady().then(async () => {
         settings.appEnablePolkassemblyApi = flag;
         break;
       }
+      case 'settings:execute:keepOutdatedEvents': {
+        const flag = !settings.appKeepOutdatedEvents;
+        settings.appKeepOutdatedEvents = flag;
+        break;
+      }
       default: {
         break;
       }
