@@ -1,6 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useEvents } from '@/renderer/contexts/main/Events';
@@ -39,8 +40,10 @@ export const Home = () => {
     // Listen for event callbacks.
     window.myAPI.reportNewEvent(
       (_: IpcRendererEvent, eventData: EventCallback) => {
-        // Remove any outdated events in the state.
-        removeOutdatedEvents(eventData);
+        // Remove any outdated events in the state, if setting enabled.
+        if (!ConfigRenderer.keepOutdatedEvents) {
+          removeOutdatedEvents(eventData);
+        }
 
         // Add received event to state.
         addEvent({ ...eventData });

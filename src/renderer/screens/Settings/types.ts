@@ -11,6 +11,7 @@ export interface PersistedSettings {
   appShowDebuggingSubscriptions: boolean;
   appEnableAutomaticSubscriptions: boolean;
   appEnablePolkassemblyApi: boolean;
+  appKeepOutdatedEvents: boolean;
 }
 
 export type SettingAction =
@@ -21,7 +22,8 @@ export type SettingAction =
   | 'settings:execute:exportData'
   | 'settings:execute:showDebuggingSubscriptions'
   | 'settings:execute:enableAutomaticSubscriptions'
-  | 'settings:execute:enablePolkassembly';
+  | 'settings:execute:enablePolkassembly'
+  | 'settings:execute:keepOutdatedEvents';
 
 export interface SettingItem {
   action: SettingAction;

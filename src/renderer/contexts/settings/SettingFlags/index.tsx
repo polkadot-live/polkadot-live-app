@@ -27,6 +27,7 @@ export const SettingFlagsProvider = ({
   const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
     useState(true);
   const [enablePolkassemblyApi, setEnablePolkassemblyApi] = useState(true);
+  const [keepOutdatedEvents, setKeepOutdatedEvents] = useState(true);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
@@ -38,6 +39,7 @@ export const SettingFlagsProvider = ({
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
+        appKeepOutdatedEvents,
       } = await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
@@ -46,6 +48,7 @@ export const SettingFlagsProvider = ({
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
       setEnablePolkassemblyApi(appEnablePolkassemblyApi);
+      setKeepOutdatedEvents(appKeepOutdatedEvents);
     };
 
     initSettings();
@@ -73,6 +76,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:enablePolkassembly': {
         return enablePolkassemblyApi;
+      }
+      case 'settings:execute:keepOutdatedEvents': {
+        return keepOutdatedEvents;
       }
       default: {
         return true;
@@ -107,6 +113,10 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:enablePolkassembly': {
         setEnablePolkassemblyApi(!enablePolkassemblyApi);
+        break;
+      }
+      case 'settings:execute:keepOutdatedEvents': {
+        setKeepOutdatedEvents(!keepOutdatedEvents);
         break;
       }
       default: {

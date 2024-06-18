@@ -45,6 +45,7 @@ export const AppSettingsProvider = ({
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
+        appKeepOutdatedEvents,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -52,6 +53,7 @@ export const AppSettingsProvider = ({
       RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
       RendererConfig.enableAutomaticSubscriptions =
         appEnableAutomaticSubscriptions;
+      RendererConfig.keepOutdatedEvents = appKeepOutdatedEvents;
 
       // Set settings state.
       setDockToggled(appDocked);
@@ -112,6 +114,13 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:enablePolkassembly');
   };
 
+  /// Handle toggling keep outdated events setting.
+  const handleToggleKeepOutdatedEvents = () => {
+    const newFlag = !RendererConfig.keepOutdatedEvents;
+    RendererConfig.keepOutdatedEvents = newFlag;
+    window.myAPI.toggleSetting('settings:execute:keepOutdatedEvents');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -125,6 +134,7 @@ export const AppSettingsProvider = ({
         handleToggleShowDebuggingSubscriptions,
         handleToggleEnableAutomaticSubscriptions,
         handleToggleEnablePolkassemblyApi,
+        handleToggleKeepOutdatedEvents,
         setSilenceOsNotifications,
       }}
     >

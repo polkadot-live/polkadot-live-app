@@ -166,6 +166,15 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:keepOutdatedEvents',
+    title: 'Keep Outdated Events',
+    definition: [
+      'Turn this setting on if you wish to keep old event items upon receiving a new event item for subscriptions.',
+      'When disabled, outdated event items will be removed when a new event item of the same subscription is received.',
+      'Keep this setting enabled to track past event items for enabled subscriptions. Turning this setting off may be useful for users who have enabled many subscriptions, and only wish to see the most up-to-date notification data.',
+    ],
+  },
+  {
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [

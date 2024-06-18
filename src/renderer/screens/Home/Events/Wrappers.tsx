@@ -226,6 +226,7 @@ export const EventItem = styled(motion.div)`
     display: flex;
     align-items: center;
     justify-items: start;
+    overflow: hidden;
 
     .actions {
       display: flex;

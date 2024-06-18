@@ -62,6 +62,7 @@ export class Config {
         appShowDebuggingSubscriptions: false,
         appEnableAutomaticSubscriptions: true,
         appEnablePolkassemblyApi: true,
+        appKeepOutdatedEvents: true,
       };
 
       // Persist default settings to store and return them.

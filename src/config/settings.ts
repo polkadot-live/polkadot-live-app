@@ -54,6 +54,14 @@ export const SettingsList: SettingItem[] = [
     title: 'Enable Automatic Subscriptions',
   },
   {
+    action: 'settings:execute:keepOutdatedEvents',
+    category: 'Subscriptions',
+    enabled: true,
+    helpKey: 'help:settings:keepOutdatedEvents',
+    settingType: 'switch',
+    title: 'Keep Outdated Events',
+  },
+  {
     action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,

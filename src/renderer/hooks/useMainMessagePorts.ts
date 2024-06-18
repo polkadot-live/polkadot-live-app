@@ -59,6 +59,7 @@ export const useMainMessagePorts = () => {
     handleToggleShowDebuggingSubscriptions,
     handleToggleEnableAutomaticSubscriptions,
     handleToggleEnablePolkassemblyApi,
+    handleToggleKeepOutdatedEvents,
   } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
@@ -642,7 +643,6 @@ export const useMainMessagePorts = () => {
    */
   const handleEnableAutomaticSubscriptions = () => {
     handleToggleEnableAutomaticSubscriptions();
-    console.log('toggled automatic subscriptions...');
   };
 
   /**
@@ -743,6 +743,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:enablePolkassembly': {
               handleToggleEnablePolkassemblyApi();
+              break;
+            }
+            case 'settings:execute:keepOutdatedEvents': {
+              handleToggleKeepOutdatedEvents();
               break;
             }
             case 'settings:execute:exportData': {

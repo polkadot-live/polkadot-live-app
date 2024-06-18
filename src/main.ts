@@ -242,8 +242,11 @@ app.whenReady().then(async () => {
       notification: NotificationData | null,
       isOneShot: boolean
     ) => {
-      // Remove any outdated events of the same type.
-      EventsController.removeOutdatedEvents(e);
+      // Remove any outdated events of the same type, if setting enabled.
+      const { appKeepOutdatedEvents } = ConfigMain.getAppSettings();
+      if (!appKeepOutdatedEvents) {
+        EventsController.removeOutdatedEvents(e);
+      }
 
       // Persist new event to store.
       const { event: eventWithUid, wasPersisted } =
@@ -513,6 +516,11 @@ app.whenReady().then(async () => {
       case 'settings:execute:enablePolkassembly': {
         const flag = !settings.appEnablePolkassemblyApi;
         settings.appEnablePolkassemblyApi = flag;
+        break;
+      }
+      case 'settings:execute:keepOutdatedEvents': {
+        const flag = !settings.appKeepOutdatedEvents;
+        settings.appKeepOutdatedEvents = flag;
         break;
       }
       default: {
