@@ -16,6 +16,7 @@ export class Config {
   private static _silenceNotifications = false;
   private static _showDebuggingSubscriptions = false;
   private static _enableAutomaticSubscriptions = true;
+  private static _keepOutdatedEvents = true;
 
   // Flag set to `true` when app is switching to online mode.
   private static _switchingToOnlineMode = false;
@@ -103,6 +104,15 @@ export class Config {
 
   static set enableAutomaticSubscriptions(flag: boolean) {
     Config._enableAutomaticSubscriptions = flag;
+  }
+
+  // Accessors for `_enableAutomaticSubscriptions` flag.
+  static get keepOutdatedEvents(): boolean {
+    return Config._keepOutdatedEvents;
+  }
+
+  static set keepOutdatedEvents(flag: boolean) {
+    Config._keepOutdatedEvents = flag;
   }
 
   // Accessors for `_switchingToOnlineMode` flag.

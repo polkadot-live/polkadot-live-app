@@ -11,6 +11,7 @@ export interface PersistedSettings {
   appShowDebuggingSubscriptions: boolean;
   appEnableAutomaticSubscriptions: boolean;
   appEnablePolkassemblyApi: boolean;
+  appKeepOutdatedEvents: boolean;
 }
 
 export type SettingAction =

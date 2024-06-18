@@ -45,6 +45,7 @@ export const AppSettingsProvider = ({
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
+        appKeepOutdatedEvents,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -52,6 +53,7 @@ export const AppSettingsProvider = ({
       RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
       RendererConfig.enableAutomaticSubscriptions =
         appEnableAutomaticSubscriptions;
+      RendererConfig.keepOutdatedEvents = appKeepOutdatedEvents;
 
       // Set settings state.
       setDockToggled(appDocked);
