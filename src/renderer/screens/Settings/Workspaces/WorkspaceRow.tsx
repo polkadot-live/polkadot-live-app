@@ -19,7 +19,6 @@ export const WorkspaceRow = ({
   label,
   createdAt,
 }: WorkspaceRowProps) => {
-  console.log('tmp');
   const { wrapWithTooltip } = useTooltip();
 
   return (

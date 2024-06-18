@@ -6,9 +6,9 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
-import { useState } from 'react';
 import { faPlug } from '@fortawesome/pro-light-svg-icons';
 import { faPlugCircleXmark } from '@fortawesome/pro-solid-svg-icons';
+import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 
 interface WorkspaceItem {
   label: string;
@@ -35,7 +35,7 @@ const workspacesSample: WorkspaceItem[] = [
 ];
 
 export const Workspaces = () => {
-  const [connected, setConnected] = useState(false);
+  const { isListening, setIsListening } = useWebsocketServer();
 
   return (
     <AccordionItem key={`workspaces_settings`}>
@@ -48,13 +48,13 @@ export const Workspaces = () => {
         <>
           <ControlsWrapper $padBottom={false} style={{ margin: '2rem 0' }}>
             <SortControlButton
-              isActive={!connected}
+              isActive={!isListening}
               isDisabled={false}
               onLabel="Connect"
               offLabel="Disconnect"
-              faIcon={connected ? faPlugCircleXmark : faPlug}
+              faIcon={isListening ? faPlugCircleXmark : faPlug}
               fixedWidth={false}
-              onClick={() => setConnected(!connected)}
+              onClick={() => setIsListening(!isListening)}
             />
           </ControlsWrapper>
 
