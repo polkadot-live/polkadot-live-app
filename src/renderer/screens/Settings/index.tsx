@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import { Workspaces } from './Workspaces';
+import { Workspaces } from '@app/screens/Settings/Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
 import type { SettingItem } from './types';
 

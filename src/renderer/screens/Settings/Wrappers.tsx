@@ -167,6 +167,9 @@ export const WorkspaceRowWrapper = styled.div`
     .icon-wrapper:first-of-type {
       font-size: 0.9rem;
       cursor: pointer;
+      svg {
+        margin-left: 1px !important;
+      }
     }
     .icon-wrapper:last-of-type {
       font-size: 0.8rem;
