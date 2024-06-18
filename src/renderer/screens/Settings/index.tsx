@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import { Workspaces } from './Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
 import type { SettingItem } from './types';
 
@@ -23,8 +24,9 @@ export const Settings: React.FC = () => {
   useSettingsMessagePorts();
 
   /// Active accordion indices for settings panels.
+  // TEMP: Show workspaces item.
   const [accordionActiveIndices, setAccordionActiveIndices] =
-    useState<number>(0);
+    useState<number>(3);
 
   /// Return a map of settings organised by their category.
   const getSortedSettings = () => {
@@ -105,6 +107,9 @@ export const Settings: React.FC = () => {
                 </AccordionItem>
               )
             )}
+
+            {/* Workspaces Accordion Item */}
+            <Workspaces />
           </Accordion>
         </ContentWrapper>
       </Scrollable>
