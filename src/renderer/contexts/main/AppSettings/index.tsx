@@ -114,6 +114,13 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:enablePolkassembly');
   };
 
+  /// Handle toggling keep outdated events setting.
+  const handleToggleKeepOutdatedEvents = () => {
+    const newFlag = !RendererConfig.keepOutdatedEvents;
+    RendererConfig.keepOutdatedEvents = newFlag;
+    window.myAPI.toggleSetting('settings:execute:keepOutdatedEvents');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -127,6 +134,7 @@ export const AppSettingsProvider = ({
         handleToggleShowDebuggingSubscriptions,
         handleToggleEnableAutomaticSubscriptions,
         handleToggleEnablePolkassemblyApi,
+        handleToggleKeepOutdatedEvents,
         setSilenceOsNotifications,
       }}
     >

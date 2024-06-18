@@ -16,4 +16,5 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   handleToggleShowDebuggingSubscriptions: () => {},
   handleToggleEnableAutomaticSubscriptions: () => {},
   handleToggleEnablePolkassemblyApi: () => {},
+  handleToggleKeepOutdatedEvents: () => {},
 };

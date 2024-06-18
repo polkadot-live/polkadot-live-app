@@ -13,4 +13,5 @@ export interface AppSettingsContextInterface {
   handleToggleShowDebuggingSubscriptions: () => void;
   handleToggleEnableAutomaticSubscriptions: () => void;
   handleToggleEnablePolkassemblyApi: () => void;
+  handleToggleKeepOutdatedEvents: () => void;
 }
