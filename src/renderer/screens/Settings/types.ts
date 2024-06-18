@@ -21,7 +21,8 @@ export type SettingAction =
   | 'settings:execute:exportData'
   | 'settings:execute:showDebuggingSubscriptions'
   | 'settings:execute:enableAutomaticSubscriptions'
-  | 'settings:execute:enablePolkassembly';
+  | 'settings:execute:enablePolkassembly'
+  | 'settings:execute:keepOutdatedEvents';
 
 export interface SettingItem {
   action: SettingAction;
