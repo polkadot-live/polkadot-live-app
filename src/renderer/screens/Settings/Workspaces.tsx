@@ -9,7 +9,6 @@ import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faLinkSimple, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import type { CSSProperties } from 'react';
 
 interface WorkspaceItem {
   label: string;
@@ -36,22 +35,7 @@ const workspacesSample: WorkspaceItem[] = [
 ];
 
 export const Workspaces = () => {
-  const { setTooltipTextAndOpen } = useTooltip();
-
-  const wrapWithTooltip = (
-    Inner: React.ReactNode,
-    text: string,
-    styles?: CSSProperties
-  ) => (
-    <div
-      style={styles ? styles : {}}
-      className="tooltip-trigger-element"
-      data-tooltip-text={text}
-      onMouseMove={() => setTooltipTextAndOpen(text)}
-    >
-      {Inner}
-    </div>
-  );
+  const { wrapWithTooltip } = useTooltip();
 
   return (
     <AccordionItem key={`workspaces_settings`}>

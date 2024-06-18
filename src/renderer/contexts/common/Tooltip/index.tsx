@@ -4,6 +4,7 @@
 import { setStateWithRef } from '@w3ux/utils';
 import React, { createContext, useContext, useRef, useState } from 'react';
 import { defaultTooltipContext } from './defaults';
+import type { CSSProperties } from 'react';
 import type { TooltipContextInterface } from './types';
 
 export const TooltipProvider = ({
@@ -49,6 +50,45 @@ export const TooltipProvider = ({
     openTooltip();
   };
 
+  /// Utility to render a tooltip over some generic JSX.
+  const wrapWithTooltip = (
+    Inner: React.ReactNode,
+    tooltipText: string,
+    styles?: CSSProperties
+  ) => (
+    <div
+      style={styles ? styles : {}}
+      className="tooltip-trigger-element"
+      data-tooltip-text={text}
+      onMouseMove={() => setTooltipTextAndOpen(tooltipText)}
+    >
+      {Inner}
+    </div>
+  );
+
+  /// Utility to render a tooltip over some generic JSX if app is offline.
+  const wrapWithOfflineTooltip = (
+    Inner: React.ReactNode,
+    isConnected: boolean,
+    tooltipText = 'Currently Offline',
+    styles?: CSSProperties
+  ): JSX.Element | React.ReactNode => {
+    if (isConnected) {
+      return Inner;
+    } else {
+      return (
+        <div
+          style={styles ? styles : {}}
+          className="tooltip-trigger-element"
+          data-tooltip-text={tooltipText}
+          onMouseMove={() => setTooltipTextAndOpen(tooltipText)}
+        >
+          {Inner}
+        </div>
+      );
+    }
+  };
+
   return (
     <TooltipContext.Provider
       value={{
@@ -57,6 +97,8 @@ export const TooltipProvider = ({
         setTooltipPosition,
         showTooltip,
         setTooltipTextAndOpen,
+        wrapWithTooltip,
+        wrapWithOfflineTooltip,
         alignRef,
         open,
         show: showRef.current,

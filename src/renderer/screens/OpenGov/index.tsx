@@ -22,7 +22,6 @@ import { faInfo, faDownFromDottedLine } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
-import type { CSSProperties } from 'react';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import {
   StatsFooter,
@@ -52,7 +51,7 @@ export const OpenGov: React.FC = () => {
 
   /// Help overlay and tooltip.
   const { openHelp } = useHelp();
-  const { setTooltipTextAndOpen } = useTooltip();
+  const { setTooltipTextAndOpen, wrapWithOfflineTooltip } = useTooltip();
 
   /// Tracks and referenda contexts.
   const { fetchTracksData } = useTracks();
@@ -122,29 +121,6 @@ export const OpenGov: React.FC = () => {
     }
   };
 
-  /// Wrap some market around a tooltip if offline mode.
-  const wrapWithOfflineTooltip = (
-    Inner: React.ReactNode,
-    styles?: CSSProperties
-  ) => (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {isConnected ? (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>{Inner}</>
-      ) : (
-        <div
-          style={styles ? styles : {}}
-          className="tooltip-trigger-element"
-          data-tooltip-text="Currently Offline"
-          onMouseMove={() => setTooltipTextAndOpen('Currently Offline')}
-        >
-          {Inner}
-        </div>
-      )}
-    </>
-  );
-
   return (
     <ModalSection type="carousel">
       <ModalMotionTwoSection
@@ -206,7 +182,8 @@ export const OpenGov: React.FC = () => {
                       )}
                       <h4>{getSpendPeriodProgress()}</h4>
                     </div>
-                  </section>
+                  </section>,
+                  isConnected
                 )}
               </>
             )}
@@ -283,7 +260,8 @@ export const OpenGov: React.FC = () => {
                             <option value="Polkadot">Polkadot</option>
                             <option value="Kusama">Kusama</option>
                           </select>
-                        </div>
+                        </div>,
+                        isConnected
                       )}
 
                       {/* Re-fetch Stats */}
