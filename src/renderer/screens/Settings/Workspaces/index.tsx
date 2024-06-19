@@ -39,13 +39,21 @@ export const Workspaces = () => {
 
   const handleClickConnectButton = async () => {
     if (isListening) {
-      // TODO: Disconnect websocket server.
       await stopListening();
     } else {
-      // TODO: Connect websocket server.
       await startListening();
     }
   };
+
+  /// Handle receiving a workspace from the main process.
+  window.myAPI.reportWorkspace((_, serialized) => {
+    console.log('> Received workspace');
+    console.log(serialized);
+
+    // TODO: Deserialise data
+    // TODO: Check if workspace exists and update if necessary
+    // TODO: Persist workspace to state + store if new
+  });
 
   return (
     <AccordionItem key={`workspaces_settings`}>
@@ -56,7 +64,10 @@ export const Workspaces = () => {
       />
       <AccordionPanel>
         <>
-          <ControlsWrapper $padBottom={false} style={{ margin: '2rem 0' }}>
+          <ControlsWrapper
+            $padBottom={false}
+            style={{ margin: '2rem 0', alignItems: 'baseline' }}
+          >
             <SortControlButton
               isActive={!isListening}
               isDisabled={false}
@@ -66,6 +77,14 @@ export const Workspaces = () => {
               fixedWidth={false}
               onClick={async () => await handleClickConnectButton()}
             />
+            <span
+              style={{
+                fontSize: '0.95rem',
+                color: isListening ? 'lightgreen' : 'red',
+              }}
+            >
+              {isListening ? 'Connected' : 'Disconnected'}
+            </span>
           </ControlsWrapper>
 
           <WorkspacesContainer>

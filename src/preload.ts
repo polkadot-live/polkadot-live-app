@@ -69,6 +69,9 @@ export const API: PreloadAPI = {
   stopWebsocketServer: async () =>
     await ipcRenderer.invoke('app:websockets:stop'),
 
+  reportWorkspace: (callback) =>
+    ipcRenderer.on('settings:workspace:receive', callback),
+
   /**
    * Interval subscriptions
    */

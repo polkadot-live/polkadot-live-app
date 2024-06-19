@@ -40,6 +40,7 @@ import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
+import { WebsocketsController } from './controller/main/WebsocketsController';
 
 const debug = MainDebug;
 
@@ -454,16 +455,14 @@ app.whenReady().then(async () => {
 
   // Handle starting the websocket server and return a success flag.
   ipcMain.handle('app:websockets:start', async () => {
-    // TODO: start websocket server.
-    const success = true;
-    return success;
+    WebsocketsController.startServer();
+    return true;
   });
 
   // Handle stopping the websocket server and return a success flag.
   ipcMain.handle('app:websockets:stop', async () => {
-    // TODO: stop websocket server.
-    const success = true;
-    return success;
+    WebsocketsController.stopServer();
+    return true;
   });
 
   /**

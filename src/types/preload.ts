@@ -16,6 +16,9 @@ import type {
 export interface PreloadAPI {
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;
+  reportWorkspace: (
+    callback: (_: IpcRendererEvent, serialized: string) => void
+  ) => Electron.IpcRenderer;
 
   getPersistedIntervalTasks: () => Promise<string>;
   clearPersistedIntervalTasks: () => Promise<string>;

@@ -1,0 +1,70 @@
+// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import http from 'http';
+import { Server } from 'socket.io';
+import { MainDebug } from '@/utils/DebugUtils';
+import { WindowsController } from './WindowsController';
+
+const debug = MainDebug.extend('WebsocketsController');
+
+const DEFAULT_PORT = 3001;
+
+export class WebsocketsController {
+  private static _port: number = DEFAULT_PORT;
+  private static _server: ReturnType<typeof http.createServer> | null = null;
+  private static _io: Server | null = null;
+
+  private static initialise() {
+    this._server = http.createServer();
+    this._io = new Server(this._server);
+  }
+
+  static startServer() {
+    if (!this._io) {
+      this.initialise();
+    }
+
+    this._server?.listen(this._port, () => {
+      debug('🔷 Socket.io server listening on port %o', this._port);
+    });
+
+    this.setupHandlers();
+  }
+
+  static stopServer() {
+    if (!this._io) {
+      return;
+    }
+
+    this._io.disconnectSockets();
+    this._io.close();
+    debug('🔷 Socket.io server closed on port %o', this._port);
+  }
+
+  static setupHandlers() {
+    if (!this._io) {
+      throw new Error('Server should not be null.');
+    }
+
+    this._io.on('connection', async (socket) => {
+      // Handle message received from socket.
+      socket.on('message', async (message: string) => {
+        console.log(`received message: ${message}`);
+        // Send message back to client.
+        socket.send(`Hello, you sent -> ${message}`);
+      });
+
+      // Reveive workspace and send to settings window to process.
+      socket.on('workspace', async (serialised: string) => {
+        WindowsController.get('settings')?.webContents?.send(
+          'settings:workspace:receive',
+          serialised
+        );
+      });
+
+      // Immediately send feedback to incoming connection.
+      socket.send(`Hello from Websocket Server on port ${this._port}`);
+    });
+  }
+}
