@@ -68,8 +68,6 @@ export const AddressWrapper = styled.div`
         flex-direction: column;
         justify-content: center;
         margin: 0 0.25rem;
-        border: 1px solid var(--border-primary-color);
-        border-radius: 1.25rem;
       }
     }
     .edit {

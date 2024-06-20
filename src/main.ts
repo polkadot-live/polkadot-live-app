@@ -21,7 +21,9 @@ import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
+import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -446,6 +448,53 @@ app.whenReady().then(async () => {
     );
 
     storePointer.set(key, JSON.stringify(updated));
+  });
+
+  /**
+   * Websockets
+   */
+
+  // Handle starting the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:start', async () => {
+    WebsocketsController.startServer();
+    return true;
+  });
+
+  // Handle stopping the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:stop', async () => {
+    WebsocketsController.stopServer();
+    return true;
+  });
+
+  /**
+   * Workspaces
+   */
+
+  // Handle fetching workspaces from Electron store.
+  ipcMain.handle('app:workspaces:fetch', async () =>
+    WorkspacesController.fetchPersistedWorkspaces()
+  );
+
+  // Handle deleting a workspace from Electron store.
+  ipcMain.on('app:workspace:delete', (_, serialised: string) => {
+    try {
+      WorkspacesController.removeWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
+  });
+
+  // Handle emitting workspace to developer console.
+  ipcMain.on('app:workspace:launch', (_, serialised: string) => {
+    try {
+      WebsocketsController.launchWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
   });
 
   /**

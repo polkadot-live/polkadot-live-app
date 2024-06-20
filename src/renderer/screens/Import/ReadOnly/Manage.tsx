@@ -232,7 +232,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                     />
                     <AccordionPanel>
                       <div className="items-wrapper">
-                        <div className="items">
+                        <div className="items round-primary-border">
                           {addresses.length ? (
                             <>
                               {chainAddresses.map(

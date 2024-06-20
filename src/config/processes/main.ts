@@ -12,6 +12,7 @@ export class Config {
   // Storage keys.
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
   private static _settingsStorageKey = 'app_settings';
+  private static _workspacesStorageKey = 'developer_console_workspaces';
 
   // Main window's docked properties.
   private static _dockedWidth = 420;
@@ -150,6 +151,10 @@ export class Config {
   // Accessors.
   static get settingsStorageKey(): string {
     return Config._settingsStorageKey;
+  }
+
+  static get workspacesStorageKey(): string {
+    return Config._workspacesStorageKey;
   }
 
   static get dockedWidth(): number {

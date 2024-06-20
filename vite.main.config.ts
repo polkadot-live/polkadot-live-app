@@ -13,6 +13,7 @@ export default defineConfig({
       external: [
         'usb',
         'node-hid',
+        'socket.io',
       ]
     }
   },

@@ -9,4 +9,6 @@ export const defaultPolkassemblyContext: PolkassemblyContextInterface = {
   fetchingProposals: false,
   getProposal: () => null,
   fetchProposals: () => new Promise(() => {}),
+  usePolkassemblyApi: true,
+  setUsePolkassemblyApi: () => {},
 };

@@ -12,8 +12,19 @@ import type {
   PersistedSettings,
   SettingAction,
 } from '@/renderer/screens/Settings/types';
+import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
+  fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
+  deleteWorkspace: (serialised: string) => void;
+  launchWorkspace: (serialised: string) => void;
+
+  startWebsocketServer: () => Promise<boolean>;
+  stopWebsocketServer: () => Promise<boolean>;
+  reportWorkspace: (
+    callback: (_: IpcRendererEvent, serialised: string) => void
+  ) => Electron.IpcRenderer;
+
   getPersistedIntervalTasks: () => Promise<string>;
   clearPersistedIntervalTasks: () => Promise<string>;
 

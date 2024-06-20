@@ -10,6 +10,10 @@ export const defaultTooltipContext: TooltipContextInterface = {
   setTooltipPosition: (x, y) => {},
   showTooltip: () => {},
   setTooltipTextAndOpen: (t) => {},
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  wrapWithTooltip: () => <></>,
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  wrapWithOfflineTooltip: () => <></>,
   alignRef: null,
   open: 0,
   show: 0,

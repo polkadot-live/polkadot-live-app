@@ -186,7 +186,7 @@ export const ReferendaGroup = styled.div`
   flex-direction: column;
   margin-bottom: 1.5rem;
   border-radius: var(--container-border-radius);
-  border: 1px solid var(--border-mid-color);
+  border: 1px solid var(--border-primary-color);
 
   > div {
     border-bottom: 2px solid var(--background-default);
@@ -241,7 +241,6 @@ export const ReferendumRowWrapper = styled.div`
     display: flex;
     column-gap: 1rem;
     min-width: 90px;
-    display: flex;
     align-items: center;
 
     .icon-wrapper {

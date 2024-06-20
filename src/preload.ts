@@ -60,6 +60,31 @@ export const API: PreloadAPI = {
   },
 
   /**
+   * Workspaces (Developer Console)
+   */
+  fetchPersistedWorkspaces: async () =>
+    await ipcRenderer.invoke('app:workspaces:fetch'),
+
+  deleteWorkspace: (serialised: string) =>
+    ipcRenderer.send('app:workspace:delete', serialised),
+
+  launchWorkspace: (serialised: string) =>
+    ipcRenderer.send('app:workspace:launch', serialised),
+
+  /**
+   * Websocket Server
+   */
+
+  startWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:start'),
+
+  stopWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:stop'),
+
+  reportWorkspace: (callback) =>
+    ipcRenderer.on('settings:workspace:receive', callback),
+
+  /**
    * Interval subscriptions
    */
 
