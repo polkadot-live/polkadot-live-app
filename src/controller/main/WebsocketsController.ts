@@ -5,6 +5,8 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
+import { WorkspacesController } from './WorkspacesController';
+import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 const debug = MainDebug.extend('WebsocketsController');
 
@@ -20,6 +22,7 @@ export class WebsocketsController {
     this._io = new Server(this._server);
   }
 
+  /// Start socket server.
   static startServer() {
     if (!this._io) {
       this.initialise();
@@ -32,6 +35,7 @@ export class WebsocketsController {
     this.setupHandlers();
   }
 
+  /// Stop socket server.
   static stopServer() {
     if (!this._io) {
       return;
@@ -42,6 +46,7 @@ export class WebsocketsController {
     debug('🔷 Socket.io server closed on port %o', this._port);
   }
 
+  /// Setup socket communication.
   static setupHandlers() {
     if (!this._io) {
       throw new Error('Server should not be null.');
@@ -55,16 +60,52 @@ export class WebsocketsController {
         socket.send(`Hello, you sent -> ${message}`);
       });
 
-      // Reveive workspace and send to settings window to process.
+      /// Receive workspace and send to settings window to process.
       socket.on('workspace', async (serialised: string) => {
-        WindowsController.get('settings')?.webContents?.send(
-          'settings:workspace:receive',
-          serialised
-        );
+        try {
+          const workspace: WorkspaceItem = JSON.parse(serialised);
+
+          // Add to storage.
+          WorkspacesController.addWorkspace(workspace);
+
+          // Send to settings window.
+          WindowsController.get('settings')?.webContents?.send(
+            'settings:workspace:receive',
+            serialised
+          );
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
+      });
+
+      /// Same as `workspace` but for multiple workspaces.
+      socket.on('workspaces', async (serialised: string) => {
+        try {
+          const workspaces: WorkspaceItem[] = JSON.parse(serialised);
+          for (const workspace of workspaces) {
+            WorkspacesController.addWorkspace(workspace);
+            WindowsController.get('settings')?.webContents?.send(
+              'settings:workspace:receive',
+              JSON.stringify(workspace)
+            );
+          }
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
       });
 
       // Immediately send feedback to incoming connection.
       socket.send(`Hello from Websocket Server on port ${this._port}`);
     });
+  }
+
+  /// Emit workspace to clients.
+  static launchWorkspace(workspace: WorkspaceItem) {
+    console.log('> Todo: Emit workspace to connected clients.');
+    console.log(workspace);
   }
 }

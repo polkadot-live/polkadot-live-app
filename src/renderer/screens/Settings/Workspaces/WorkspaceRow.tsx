@@ -7,19 +7,26 @@ import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faLinkSimple, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
+import type { WorkspaceRowProps } from '../types';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { Confirm } from './Confirm';
+import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 
-interface WorkspaceRowProps {
-  index: number;
-  label: string;
-  createdAt: string;
-}
+export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
+  const { createdAt, index, label } = workspace;
 
-export const WorkspaceRow = ({
-  index,
-  label,
-  createdAt,
-}: WorkspaceRowProps) => {
   const { wrapWithTooltip } = useTooltip();
+  const { openOverlayWith } = useOverlay();
+  const { launchWorkspace } = useWorkspaces();
+  const { isListening } = useWebsocketServer();
+
+  /// Handle delete button click.
+  const handleDelete = () =>
+    openOverlayWith(<Confirm workspace={workspace} />, 'small');
+
+  /// Handle launch button click.
+  const handleLaunch = () => launchWorkspace(workspace);
 
   return (
     <WorkspaceRowWrapper key={`${index}_${label}`}>
@@ -42,9 +49,9 @@ export const WorkspaceRow = ({
             {wrapWithTooltip(
               <SortControlButton
                 isActive={true}
-                isDisabled={false}
+                isDisabled={!isListening}
                 faIcon={faLinkSimple}
-                onClick={() => console.log('todo')}
+                onClick={() => handleLaunch()}
                 fixedWidth={false}
               />,
               'Launch In Console'
@@ -54,7 +61,7 @@ export const WorkspaceRow = ({
                 isActive={true}
                 isDisabled={false}
                 faIcon={faTrash}
-                onClick={() => console.log('todo')}
+                onClick={() => handleDelete()}
                 fixedWidth={false}
               />,
               'Delete'

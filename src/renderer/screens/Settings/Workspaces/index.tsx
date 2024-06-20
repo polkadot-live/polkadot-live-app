@@ -14,7 +14,8 @@ import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 
 export const Workspaces = () => {
   const { isListening, startServer, stopServer } = useWebsocketServer();
-  const { workspaces, setWorkspaces } = useWorkspaces();
+  const { workspaces, getOrderedWorkspaces, setWorkspaces, addWorkspace } =
+    useWorkspaces();
 
   /// Fetch workspaces from store when component loads.
   useEffect(() => {
@@ -36,13 +37,14 @@ export const Workspaces = () => {
   };
 
   /// Handle receiving a workspace from the main process.
-  window.myAPI.reportWorkspace((_, serialized) => {
-    console.log('> Received workspace');
-    console.log(serialized);
-
-    // TODO: Deserialise data
-    // TODO: Check if workspace exists and update if necessary
-    // TODO: Persist workspace to state + store if new
+  window.myAPI.reportWorkspace((_, serialised) => {
+    try {
+      addWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
   });
 
   return (
@@ -80,12 +82,10 @@ export const Workspaces = () => {
           <WorkspacesContainer>
             {workspaces.length ? (
               <>
-                {workspaces.map(({ createdAt, label, index }) => (
+                {getOrderedWorkspaces().map((workspace) => (
                   <WorkspaceRow
-                    key={`${index}_${label}`}
-                    label={label}
-                    index={index}
-                    createdAt={createdAt}
+                    key={`${workspace.index}_${workspace.label}`}
+                    workspace={workspace}
                   />
                 ))}
               </>

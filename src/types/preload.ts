@@ -16,11 +16,13 @@ import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
+  deleteWorkspace: (serialised: string) => void;
+  launchWorkspace: (serialised: string) => void;
 
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;
   reportWorkspace: (
-    callback: (_: IpcRendererEvent, serialized: string) => void
+    callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
 
   getPersistedIntervalTasks: () => Promise<string>;

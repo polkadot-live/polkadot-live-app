@@ -19,8 +19,40 @@ export const WorkspacesProvider = ({
 }) => {
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>([]);
 
+  /// Get workspaces ordered by index.
+  const getOrderedWorkspaces = (): WorkspaceItem[] =>
+    workspaces.sort((a, b) => a.index - b.index);
+
+  /// Add a new workspace.
+  const addWorkspace = (workspace: WorkspaceItem) => {
+    setWorkspaces((prev) => {
+      const filtered = prev.filter((ws) => ws.label !== workspace.label);
+      return [...filtered, workspace];
+    });
+  };
+
+  /// Remove a workspace (identified by label).
+  const removeWorkspace = (workspace: WorkspaceItem) => {
+    window.myAPI.deleteWorkspace(JSON.stringify(workspace));
+    setWorkspaces((prev) => prev.filter((ws) => ws.label !== workspace.label));
+  };
+
+  /// Instruct main process to launch workspace.
+  const launchWorkspace = (workspace: WorkspaceItem) => {
+    window.myAPI.launchWorkspace(JSON.stringify(workspace));
+  };
+
   return (
-    <WorkspacesContext.Provider value={{ workspaces, setWorkspaces }}>
+    <WorkspacesContext.Provider
+      value={{
+        workspaces,
+        setWorkspaces,
+        getOrderedWorkspaces,
+        addWorkspace,
+        launchWorkspace,
+        removeWorkspace,
+      }}
+    >
       {children}
     </WorkspacesContext.Provider>
   );

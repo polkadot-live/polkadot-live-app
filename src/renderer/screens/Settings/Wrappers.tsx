@@ -187,3 +187,36 @@ export const WorkspaceRowWrapper = styled.div`
     background-color: #121212;
   }
 `;
+
+export const ConfirmWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 2.5rem;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--background-default);
+
+  h3,
+  h5,
+  p {
+    text-align: center;
+  }
+  h3 {
+    margin: 1.25rem 0 0.5rem 0;
+  }
+  h5 {
+    margin: 0.25rem 0;
+  }
+  .footer {
+    display: flex;
+    margin-top: 1rem;
+
+    > button {
+      margin-right: 1rem;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+`;
