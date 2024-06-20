@@ -19,6 +19,10 @@ export const WorkspacesProvider = ({
 }) => {
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>([]);
 
+  /// Get workspaces ordered by index.
+  const getOrderedWorkspaces = (): WorkspaceItem[] =>
+    workspaces.sort((a, b) => a.index - b.index);
+
   /// Add a new workspace.
   const addWorkspace = (workspace: WorkspaceItem) => {
     setWorkspaces((prev) => {
@@ -43,6 +47,7 @@ export const WorkspacesProvider = ({
       value={{
         workspaces,
         setWorkspaces,
+        getOrderedWorkspaces,
         addWorkspace,
         launchWorkspace,
         removeWorkspace,

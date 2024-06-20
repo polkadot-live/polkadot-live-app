@@ -7,6 +7,7 @@ export interface WorkspacesContextInterface {
   workspaces: WorkspaceItem[];
   setWorkspaces: React.Dispatch<React.SetStateAction<WorkspaceItem[]>>;
   addWorkspace: (workspace: WorkspaceItem) => void;
+  getOrderedWorkspaces: () => WorkspaceItem[];
   launchWorkspace: (workspace: WorkspaceItem) => void;
   removeWorkspace: (workspace: WorkspaceItem) => void;
 }

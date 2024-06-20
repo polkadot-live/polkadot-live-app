@@ -14,7 +14,8 @@ import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 
 export const Workspaces = () => {
   const { isListening, startServer, stopServer } = useWebsocketServer();
-  const { workspaces, setWorkspaces, addWorkspace } = useWorkspaces();
+  const { workspaces, getOrderedWorkspaces, setWorkspaces, addWorkspace } =
+    useWorkspaces();
 
   /// Fetch workspaces from store when component loads.
   useEffect(() => {
@@ -81,7 +82,7 @@ export const Workspaces = () => {
           <WorkspacesContainer>
             {workspaces.length ? (
               <>
-                {workspaces.map((workspace) => (
+                {getOrderedWorkspaces().map((workspace) => (
                   <WorkspaceRow
                     key={`${workspace.index}_${workspace.label}`}
                     workspace={workspace}
