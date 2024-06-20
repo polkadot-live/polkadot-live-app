@@ -22,6 +22,7 @@ export class WebsocketsController {
     this._io = new Server(this._server);
   }
 
+  /// Start socket server.
   static startServer() {
     if (!this._io) {
       this.initialise();
@@ -34,6 +35,7 @@ export class WebsocketsController {
     this.setupHandlers();
   }
 
+  /// Stop socket server.
   static stopServer() {
     if (!this._io) {
       return;
@@ -44,6 +46,7 @@ export class WebsocketsController {
     debug('🔷 Socket.io server closed on port %o', this._port);
   }
 
+  /// Setup socket communication.
   static setupHandlers() {
     if (!this._io) {
       throw new Error('Server should not be null.');
@@ -80,5 +83,11 @@ export class WebsocketsController {
       // Immediately send feedback to incoming connection.
       socket.send(`Hello from Websocket Server on port ${this._port}`);
     });
+  }
+
+  /// Emit workspace to clients.
+  static launchWorkspace(workspace: WorkspaceItem) {
+    console.log('> Todo: Emit workspace to connected clients.');
+    console.log(workspace);
   }
 }

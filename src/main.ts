@@ -486,6 +486,17 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Handle emitting workspace to developer console.
+  ipcMain.on('app:workspace:launch', (_, serialised: string) => {
+    try {
+      WebsocketsController.launchWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
+  });
+
   /**
    * Window management
    */

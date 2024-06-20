@@ -3,6 +3,7 @@
 
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 export interface PersistedSettings {
   appDocked: boolean;
@@ -39,4 +40,8 @@ export interface SettingItem {
 export interface SettingProps {
   setting: SettingItem;
   handleSetting: (setting: SettingItem) => void;
+}
+
+export interface WorkspaceRowProps {
+  workspace: WorkspaceItem;
 }

@@ -8,5 +8,6 @@ export const defaultWorkspacesContext: WorkspacesContextInterface = {
   workspaces: [],
   setWorkspaces: () => {},
   addWorkspace: () => {},
+  launchWorkspace: () => {},
   removeWorkspace: () => {},
 };

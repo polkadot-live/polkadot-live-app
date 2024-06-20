@@ -8,20 +8,19 @@ import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faLinkSimple, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
-
-interface WorkspaceRowProps {
-  workspace: WorkspaceItem;
-}
+import type { WorkspaceRowProps } from '../types';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
   const { createdAt, index, label } = workspace;
 
   const { wrapWithTooltip } = useTooltip();
-  const { removeWorkspace } = useWorkspaces();
+  const { removeWorkspace, launchWorkspace } = useWorkspaces();
 
   /// Handle delete button click.
   const handleDelete = () => removeWorkspace(workspace);
+
+  /// Handle launch button click.
+  const handleLaunch = () => launchWorkspace(workspace);
 
   return (
     <WorkspaceRowWrapper key={`${index}_${label}`}>
@@ -46,7 +45,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
                 isActive={true}
                 isDisabled={false}
                 faIcon={faLinkSimple}
-                onClick={() => console.log('todo')}
+                onClick={() => handleLaunch()}
                 fixedWidth={false}
               />,
               'Launch In Console'

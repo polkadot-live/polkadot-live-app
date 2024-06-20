@@ -33,9 +33,20 @@ export const WorkspacesProvider = ({
     setWorkspaces((prev) => prev.filter((ws) => ws.label !== workspace.label));
   };
 
+  /// Instruct main process to launch workspace.
+  const launchWorkspace = (workspace: WorkspaceItem) => {
+    window.myAPI.launchWorkspace(JSON.stringify(workspace));
+  };
+
   return (
     <WorkspacesContext.Provider
-      value={{ workspaces, setWorkspaces, addWorkspace, removeWorkspace }}
+      value={{
+        workspaces,
+        setWorkspaces,
+        addWorkspace,
+        launchWorkspace,
+        removeWorkspace,
+      }}
     >
       {children}
     </WorkspacesContext.Provider>
