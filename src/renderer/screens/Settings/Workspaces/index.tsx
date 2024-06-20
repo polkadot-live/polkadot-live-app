@@ -21,7 +21,6 @@ export const Workspaces = () => {
   useEffect(() => {
     const fetchWorkspaces = async () => {
       const result = await window.myAPI.fetchPersistedWorkspaces();
-      console.log(result);
       setWorkspaces(result);
     };
     fetchWorkspaces();

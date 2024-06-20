@@ -8,10 +8,10 @@ import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faLinkSimple, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
-import type { WorkspaceRowProps } from '../types';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { Confirm } from './Confirm';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
+import type { WorkspaceRowProps } from '../types';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
   const { createdAt, index, label } = workspace;
