@@ -20,7 +20,7 @@ export interface PreloadAPI {
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;
   reportWorkspace: (
-    callback: (_: IpcRendererEvent, serialized: string) => void
+    callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
 
   getPersistedIntervalTasks: () => Promise<string>;

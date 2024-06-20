@@ -5,6 +5,8 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
+import { WorkspacesController } from './WorkspacesController';
+import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 const debug = MainDebug.extend('WebsocketsController');
 
@@ -57,10 +59,22 @@ export class WebsocketsController {
 
       // Reveive workspace and send to settings window to process.
       socket.on('workspace', async (serialised: string) => {
-        WindowsController.get('settings')?.webContents?.send(
-          'settings:workspace:receive',
-          serialised
-        );
+        try {
+          const workspace: WorkspaceItem = JSON.parse(serialised);
+
+          // Add to storage.
+          WorkspacesController.addWorkspace(workspace);
+
+          // Send to settings window.
+          WindowsController.get('settings')?.webContents?.send(
+            'settings:workspace:receive',
+            serialised
+          );
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
       });
 
       // Immediately send feedback to incoming connection.
