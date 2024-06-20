@@ -60,7 +60,7 @@ export class WebsocketsController {
         socket.send(`Hello, you sent -> ${message}`);
       });
 
-      // Reveive workspace and send to settings window to process.
+      /// Receive workspace and send to settings window to process.
       socket.on('workspace', async (serialised: string) => {
         try {
           const workspace: WorkspaceItem = JSON.parse(serialised);
@@ -73,6 +73,24 @@ export class WebsocketsController {
             'settings:workspace:receive',
             serialised
           );
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
+      });
+
+      /// Same as `workspace` but for multiple workspaces.
+      socket.on('workspaces', async (serialised: string) => {
+        try {
+          const workspaces: WorkspaceItem[] = JSON.parse(serialised);
+          for (const workspace of workspaces) {
+            WorkspacesController.addWorkspace(workspace);
+            WindowsController.get('settings')?.webContents?.send(
+              'settings:workspace:receive',
+              JSON.stringify(workspace)
+            );
+          }
         } catch (error) {
           if (error instanceof SyntaxError) {
             console.error(error.message);
