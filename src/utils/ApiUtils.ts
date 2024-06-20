@@ -20,14 +20,21 @@ const debug = MainDebug.extend('ApiUtils');
  */
 export const getApiInstance = async (chainId: ChainID) => {
   const instance = await APIsController.fetchConnectedInstance(chainId);
+  return instance ? instance : null;
+};
 
+/**
+ * @name getApiInstanceOrThrow
+ * @summary Same as `getApiInstance` but throws an error if the endpoint fails to connect.
+ */
+export const getApiInstanceOrThrow = async (
+  chainId: ChainID,
+  error: string
+) => {
+  const instance = await getApiInstance(chainId);
   if (!instance) {
-    throw new Error(
-      `ensureApiConnected: ${chainId} API instance couldn't be fetched.`
-    );
+    throw new Error(`${error} - Could not get API instance.`);
   }
-
-  debug('🔷 Fetched API instance for chain: %o', chainId);
   return instance;
 };
 
@@ -51,9 +58,11 @@ export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
  * @summary Disconnect from any API instances that are not currently required.
  */
 export const handleApiDisconnects = async () => {
-  for (const chainId of ['Kusama', 'Polkadot', 'Westend'] as ChainID[]) {
-    !isApiInstanceRequiredFor(chainId) && (await APIsController.close(chainId));
-  }
+  await Promise.all(
+    (['Polkadot', 'Kusama', 'Westend'] as ChainID[])
+      .filter((c) => !isApiInstanceRequiredFor(c))
+      .map((c) => APIsController.close(c))
+  );
 };
 
 /**

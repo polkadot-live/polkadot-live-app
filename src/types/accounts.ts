@@ -60,6 +60,9 @@ export interface NominationPoolCommission {
  */
 
 export interface AccountNominatingData {
+  exposed: boolean;
+  lastCheckedEra: number;
+  submittedIn: number;
   validators: ValidatorData[];
 }
 
@@ -75,6 +78,16 @@ export interface StoredAccount {
   _source: AccountSource;
   _address: string;
   _name: string;
+}
+
+/**
+ * Account JSON representation.
+ */
+export interface AccountJson {
+  _address: string;
+  _chain: ChainID;
+  _name: string;
+  _source: AccountSource;
 }
 
 /*
@@ -97,6 +110,7 @@ export interface LocalAddress {
   isImported: boolean;
   index: number;
   name: string;
+  source: AccountSource;
 }
 
 /**

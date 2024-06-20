@@ -1,22 +1,22 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faTimes, faToggleOn } from '@fortawesome/free-solid-svg-icons';
+import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
+import { Config as RendererConfig } from '@/config/processes/renderer';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
+import { HeaderWrapper } from './Wrapper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import { useLocation } from 'react-router-dom';
-import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
-//TMP
-import BigNumber from 'bignumber.js';
-import { getApiInstance } from '@/utils/ApiUtils';
-import { getUnclaimedPayouts } from '@/renderer/callbacks/nominating';
-import type { ChainID } from '@/types/chains';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { pathname } = useLocation();
+  const { dockToggled, handleDockedToggle } = useAppSettings();
 
-  // Determine active window by pathname.
+  /// Determine active window by pathname.
   let activeWindow: string;
   switch (pathname) {
     case '/import':
@@ -26,51 +26,47 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
       activeWindow = 'menu';
   }
 
-  // Function to calculate an account's unclaimed payouts.
-  const doUnclaimedPayouts = async () => {
-    //const address = '13htYtmALyHWxz6s6zcEnDtwBmtL1Ay54U3i4TEM555HJEhL';
-    //const chainId = 'Polkadot' as ChainID;
-    const address = '5ExuYYE7Qfq2BJYqUygBa8Nr2y1qemkuGwZHEuEujkqnL4Xs';
-    const chainId = 'Westend' as ChainID;
-    const { api } = await getApiInstance(chainId);
+  /// Handle clicking the docked button.
+  const handleDocked = () => {
+    handleDockedToggle();
 
-    const unclaimed = await getUnclaimedPayouts(address, api, chainId);
-    let pendingPayout = new BigNumber(0);
-
-    for (const validatorToPayout of unclaimed.values()) {
-      for (const payoutItem of validatorToPayout.values()) {
-        const payout = payoutItem[1];
-        pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
-      }
-    }
-
-    console.log(`Pending payout: ${pendingPayout}`);
+    RendererConfig.portToSettings.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
   };
 
   return (
     <HeaderWrapper>
-      <div />
-      <div>
-        {showMenu || activeWindow === 'menu' ? (
-          <>
+      <div className="content-wrapper">
+        <div className="grab" />
+        <div className="right">
+          {showMenu || activeWindow === 'menu' ? (
+            <div className="controls-wrapper">
+              {/* Dock window */}
+              <ButtonSecondary
+                className="dock-btn"
+                text={dockToggled ? 'Detach' : 'Dock'}
+                iconLeft={dockToggled ? faUnlock : faLock}
+                iconTransform="shrink-5"
+                onClick={() => handleDocked()}
+              />
+
+              {/* Cog menu*/}
+              <Menu />
+            </div>
+          ) : (
             <button
               type="button"
               disabled={appLoading}
-              onClick={async () => await doUnclaimedPayouts()}
+              onClick={() => window.myAPI.closeWindow(activeWindow)}
             >
-              <FontAwesomeIcon icon={faToggleOn} transform="grow-3" />
+              <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
             </button>
-            <Menu />
-          </>
-        ) : (
-          <button
-            type="button"
-            disabled={appLoading}
-            onClick={() => window.myAPI.closeWindow(activeWindow)}
-          >
-            <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </HeaderWrapper>
   );

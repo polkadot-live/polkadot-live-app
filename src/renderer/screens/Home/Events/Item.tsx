@@ -1,30 +1,42 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { EventItem } from './Wrappers';
-import { faExternalLinkAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faAngleRight,
+  faExternalLinkAlt,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
-import { isValidHttpUrl /*, remToUnit*/ } from '@w3ux/utils';
+import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';
-import { useEffect, useState } from 'react';
-import { useEvents } from '@/renderer/contexts/Events';
-import { useOnlineStatus } from '@/renderer/contexts/OnlineStatus';
-import { useTooltip } from '@app/contexts/Tooltip';
+import { useEffect, useState, memo } from 'react';
+import { useEvents } from '@/renderer/contexts/main/Events';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@/types/reporter';
-import type { EventItemProps } from './types';
+import type { ItemProps } from './types';
 import type { AccountSource } from '@/types/accounts';
+import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 
-export const Item = ({ faIcon, event }: EventItemProps) => {
+type ActionsActiveSide = 'left' | 'right';
+
+export const Item = memo(function Item({ event }: ItemProps) {
+  // The state of the event item display.
+  const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
+
   const { dismissEvent } = useEvents();
-  const { online: isOnline } = useOnlineStatus();
+  const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
 
   const { uid, title, subtitle, actions /*, data*/ } = event;
@@ -50,9 +62,6 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
       ? (event.who.data as EventAccountData).accountName
       : chainId;
 
-  // The state of the event item display.
-  const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
-
   // Allow the fade-out transition to happen before the event is dismissed from the UI.
   const handleDismissEvent = async () => {
     setDisplay('fade');
@@ -70,6 +79,47 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
       dismissEvent({ uid, who: event.who });
     }
   }, [display]);
+
+  // Variants for actions section.
+  const actionsVariants = {
+    openLeft: { height: 'auto', marginLeft: 0 },
+    openRight: { height: 'auto', marginLeft: '-100%' },
+    closedLeft: { height: 0, marginLeft: 0 },
+    closedRight: { height: 0, marginLeft: '-100%' },
+  };
+
+  const showIconTooltip = () =>
+    event.category !== 'openGov' && event.category !== 'debugging';
+
+  // Get primary actions that will always be rendered.
+  const getPrimaryActions = () =>
+    actions.filter(({ uri }) => !isValidHttpUrl(uri));
+
+  // Get secondary actions for rendering in actions menu.
+  const getSecondaryActions = () =>
+    actions.filter(({ uri }) => isValidHttpUrl(uri));
+
+  // Flag to determine of primary actions exist for this event.
+  const hasPrimaryActions: boolean =
+    getPrimaryActions().length > 0 && source !== 'read-only';
+
+  const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
+
+  // Flag indicating if action buttons are showing.
+  const [showActions, setShowActions] = useState(hasPrimaryActions);
+
+  const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
+    hasPrimaryActions ? 'left' : hasSecondaryActions ? 'right' : 'left'
+  );
+
+  const getActionsVariant = () =>
+    showActions
+      ? activeSide === 'left'
+        ? 'openLeft'
+        : 'openRight'
+      : activeSide === 'left'
+        ? 'closedLeft'
+        : 'closedRight';
 
   return (
     <AnimatePresence>
@@ -99,88 +149,160 @@ export const Item = ({ faIcon, event }: EventItemProps) => {
         >
           <span>{renderTimeAgo(event.timestamp)}</span>
           {/* Dismiss button */}
-          <button
-            type="button"
+          <div
+            className="dismiss-btn"
             onClick={async () => await handleDismissEvent()}
           >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+            <FontAwesomeIcon icon={faTimes} transform={'shrink-2'} />
+          </div>
+
+          {/* Expand actions button */}
+          {hasSecondaryActions && (
+            <div
+              className="show-actions-btn"
+              onClick={() => setShowActions(!showActions)}
+            >
+              <FontAwesomeIcon
+                icon={showActions ? faAngleUp : faAngleDown}
+                transform={'shrink-2'}
+              />
+            </div>
+          )}
 
           {/* Main content */}
           <div>
-            <section>
+            <section className="item-main">
               <div>
                 <div className="icon ">
-                  <span
-                    className="tooltip tooltip-trigger-element"
-                    data-tooltip-text={address}
-                    onMouseMove={() => setTooltipTextAndOpen(address)}
-                  />
-                  <Identicon value={address} size={29} />
-                  <div className="eventIcon">
-                    <FontAwesomeIcon icon={faIcon} />
-                  </div>
+                  {showIconTooltip() && (
+                    <span
+                      className="tooltip tooltip-trigger-element"
+                      data-tooltip-text={ellipsisFn(address, 16)}
+                      onMouseMove={() =>
+                        setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
+                      }
+                    />
+                  )}
+
+                  {event.category === 'openGov' ? (
+                    <Governance
+                      width="32px"
+                      height="32px"
+                      style={{ opacity: '0.85' }}
+                    />
+                  ) : (
+                    <Identicon value={address} size={32} />
+                  )}
                 </div>
               </div>
               <div>
-                <h4>{`${accountName}`}</h4>
+                <h4>{accountName}</h4>
                 <h5>{title}</h5>
                 <p>{subtitle}</p>
               </div>
             </section>
 
-            {/* Render actions */}
             {actions.length > 0 && (
-              <section className="actions">
-                {actions.map((action, i) => {
-                  const { uri, text } = action;
-                  action.txMeta && (action.txMeta.eventUid = event.uid);
+              <motion.section
+                className="actions-wrapper"
+                initial={{ marginLeft: 0 }}
+                animate={getActionsVariant()}
+                variants={actionsVariants}
+                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
+              >
+                {/* Render primary actions */}
+                <div className="actions">
+                  {getPrimaryActions().map((action, i) => {
+                    const { text } = action;
+                    action.txMeta && (action.txMeta.eventUid = event.uid);
 
-                  const isUrl = isValidHttpUrl(uri);
-                  if (isUrl) {
+                    if (source === 'ledger') {
+                      return (
+                        <div
+                          key={`action_${uid}_${i}`}
+                          className="tooltip tooltip-trigger-element"
+                          data-tooltip-text={'Ledger Signing Unsupported'}
+                          onMouseMove={() =>
+                            setTooltipTextAndOpen(
+                              'Ledger Signing Not Supported'
+                            )
+                          }
+                        >
+                          <ButtonMono disabled={true} text={text || ''} />
+                        </div>
+                      );
+                    } else if (source !== 'read-only') {
+                      return (
+                        <ButtonMono
+                          disabled={
+                            event.stale ||
+                            !isOnline ||
+                            (isOnline && isConnecting)
+                          }
+                          key={`action_${uid}_${i}`}
+                          text={text || ''}
+                          onClick={async () => {
+                            window.myAPI.openWindow('action');
+
+                            // Set nonce.
+                            if (action.txMeta) {
+                              action.txMeta.nonce = await getAddressNonce(
+                                address,
+                                chainId
+                              );
+                            }
+
+                            ConfigRenderer.portToAction.postMessage({
+                              task: 'action:init',
+                              data: JSON.stringify(action.txMeta),
+                            });
+                          }}
+                        />
+                      );
+                    }
+                  })}
+
+                  {hasSecondaryActions && (
+                    <ButtonMonoInvert
+                      text="Links"
+                      iconRight={faAngleRight}
+                      iconTransform="shrink-2"
+                      onClick={() => setActiveSide('right')}
+                    />
+                  )}
+                </div>
+                <div className="actions">
+                  {hasPrimaryActions && (
+                    <ButtonMono
+                      text=""
+                      iconLeft={faAngleLeft}
+                      iconTransform="shrink-2"
+                      onClick={() => setActiveSide('left')}
+                    />
+                  )}
+
+                  {getSecondaryActions().map((action, i) => {
+                    const { uri, text } = action;
+                    action.txMeta && (action.txMeta.eventUid = event.uid);
+
                     return (
                       <ButtonMonoInvert
                         key={`action_${uid}_${i}`}
                         text={text || ''}
                         iconRight={faExternalLinkAlt}
+                        iconTransform="shrink-2"
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
                         }}
                       />
                     );
-                  } else if (source !== 'read-only') {
-                    return (
-                      <ButtonMono
-                        disabled={
-                          event.stale || source === 'ledger' || !isOnline
-                        }
-                        key={`action_${uid}_${i}`}
-                        text={text || ''}
-                        onClick={async () => {
-                          window.myAPI.openWindow('action');
-
-                          // Set nonce.
-                          if (action.txMeta) {
-                            action.txMeta.nonce = await getAddressNonce(
-                              address,
-                              chainId
-                            );
-                          }
-
-                          ConfigRenderer.portToAction.postMessage({
-                            task: 'action:init',
-                            data: JSON.stringify(action.txMeta),
-                          });
-                        }}
-                      />
-                    );
-                  }
-                })}
-              </section>
+                  })}
+                </div>
+              </motion.section>
             )}
           </div>
         </EventItem>
       )}
     </AnimatePresence>
   );
-};
+});

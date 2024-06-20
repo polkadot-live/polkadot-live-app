@@ -6,6 +6,7 @@ import styled from 'styled-components';
 export const HeaderWrapper = styled.div`
   --header-height: 3rem;
   height: var(--header-height);
+  background-color: var(--background-menu);
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
@@ -16,21 +17,52 @@ export const HeaderWrapper = styled.div`
   left: 0;
   z-index: 5;
 
-  > div {
-    &:first-child {
+  .content-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .grab {
       height: 2rem;
       display: flex;
-      flex-grow: 1;
-      justify-content: flex-start;
-      padding-right: 1.25rem;
+      flex: 1;
       -webkit-app-region: drag;
       cursor: grab;
-      border-radius: 1.5rem;
     }
-    &:last-child {
+    > .right {
       display: flex;
+      align-items: center;
       justify-content: flex-end;
+      padding-top: 0.5rem;
+      column-gap: 0.5rem;
 
+      .controls-wrapper {
+        display: flex;
+        column-gap: 1rem;
+        z-index: 5;
+        align-items: center;
+        position: relative;
+
+        .hide-text {
+          color: rgba(0, 0, 0, 0);
+        }
+        .dock-btn {
+          border: 1px solid var(--border-mid-color);
+          min-width: 96px;
+          font-size: 0.85rem;
+          max-height: 18px;
+          user-select: none;
+          transition: background-color 0.2s ease-out;
+          transition: opacity 0.2s ease-out;
+          opacity: 0.4;
+
+          &:hover {
+            background-color: inherit;
+            border: 1px solid var(--border-secondary-color) !important;
+            opacity: 0.8;
+          }
+        }
+      }
       > button {
         margin-left: 1.4rem;
       }

@@ -3,6 +3,14 @@
 
 import styled from 'styled-components';
 
+export const FooterWrapper = styled.div`
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--background-default);
+  border-top: 1px solid var(--border-primary-color);
+`;
+
 export const EstimatedFee = styled.div`
   p {
     color: var(--text-color-secondary);
@@ -58,14 +66,14 @@ export const QRViewerWrapper = styled.div`
       padding: 0.95rem;
       border: 3.75px solid var(--network-color-pending);
     }
+  }
 
-    /* Override QRScanner styles */
-    > div {
-      width: 175px !important;
-      height: 175px !important;
-      > section > section > div {
-        border-width: 20px !important;
-      }
+  /* Override QRScanner styles */
+  > .payload-wrapper {
+    width: 175px !important;
+    height: 175px !important;
+    > section > section > div {
+      border-width: 20px !important;
     }
   }
   .foot {

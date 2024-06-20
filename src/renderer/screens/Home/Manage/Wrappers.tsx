@@ -4,10 +4,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-interface PermissionCheckBoxProps {
-  disabled: boolean;
-}
-
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -15,77 +11,54 @@ export const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   max-height: 100%;
-  overflow: hidden;
-  overflow-y: scroll;
-  width: 105%;
-  padding-right: 5%;
-`;
-
-export const BreadcrumbsWrapper = styled.div`
-  color: var(--text-color-primary);
-  background-color: rgba(57, 52, 58, 0.4);
-  padding: 0.75rem 1.75rem;
-  font-size: 0.92rem;
-  font-weight: 500;
-  line-height: 1.02rem;
-
-  ul {
-    margin: 4px 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    column-gap: 8px;
-
-    li {
-      opacity: 0.6;
-
-      &:first-child > button {
-        margin-left: -0.5rem;
-        font-weight: 500;
-        position: 'relative';
-      }
-
-      &:last-child {
-        color: var(--text-color-primary);
-        opacity: 1;
-      }
-    }
-  }
 `;
 
 export const HeadingWrapper = styled.div`
-  position: sticky;
   width: 100%;
-  top: 0rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   z-index: 3;
   opacity: 0.75;
   user-select: none;
+  cursor: pointer;
 
-  > div > h5 {
+  .flex {
     display: flex;
+    column-gap: 0.5rem;
     align-items: center;
-    margin: 0.1rem 0;
-    padding: 1rem;
-
-    cursor: pointer;
-    background-color: #181818;
-    border-radius: 1rem;
+    padding: 0.25rem 0.5rem;
     transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid var(--border-secondary-color);
 
     &:hover {
       background-color: #141414;
     }
-    > span {
-      margin-left: 1rem;
-      color: var(--text-color-primary);
+    > div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      column-gap: 1rem;
+      padding: 0.5rem;
     }
-    .icon {
-      fill: var(--text-color-primary);
-      width: 0.95rem;
-      height: 0.95rem;
-      margin-right: 0.5rem;
+
+    .left {
+      flex: 1;
+      display: flex;
+      column-gap: 0.75rem;
+      justify-content: flex-start;
+
+      .icon-wrapper {
+        min-width: 0.75rem;
+        opacity: 0.4;
+      }
+      h5 {
+        > span {
+          color: var(--text-color-primary);
+        }
+      }
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
     }
   }
 `;
@@ -94,158 +67,158 @@ export const AccountsWrapper = styled.div`
   --item-height: 2.75rem;
   width: 100%;
   margin-top: 1.25rem;
-  margin-bottom: 2rem;
-  padding: 0 0.5rem;
-`;
+  padding: 0 0.5rem 1rem;
 
-export const PermissionCheckBox = styled.div<PermissionCheckBoxProps>`
-  /* Checkbox */
-  .checkbox-wrapper-29 {
-    --size: 1.4rem;
-    --background: var(--background-color-secondary);
-    font-size: var(--size);
-  }
-  .checkbox-wrapper-29 *,
-  .checkbox-wrapper-29 *::after,
-  .checkbox-wrapper-29 *::before {
-    box-sizing: border-box;
-  }
-  .checkbox-wrapper-29 input[type='checkbox'] {
-    visibility: hidden;
-    display: none;
-  }
-  .checkbox-wrapper-29 .checkbox__label {
-    width: var(--size);
-  }
-  .checkbox-wrapper-29 .checkbox__label:before {
-    content: ' ';
-    display: block;
-    height: var(--size);
-    width: var(--size);
-    position: absolute;
-    top: calc(var(--size) * 0.125);
-    left: 0;
-    background: var(--background);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after {
-    content: ' ';
-    display: block;
-    height: var(--size);
-    width: var(--size);
-    border: calc(var(--size) * 0.1) solid
-      ${(props: PermissionCheckBoxProps) =>
-        props.disabled ? '#4a4a4a' : 'var(--text-color-secondary)'};
-    border-radius: 2px;
-    transition: 200ms;
-    position: absolute;
-    top: calc(var(--size) * 0.125);
-    left: 0;
-    background: var(--background);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after {
-    transition: 100ms ease-in-out;
-  }
-  .checkbox-wrapper-29 .checkbox__input:checked ~ .checkbox__label:after {
-    border-top-style: none;
-    border-right-style: none;
-    -ms-transform: rotate(-45deg); /* IE9 */
-    transform: rotate(-45deg);
-    height: calc(var(--size) * 0.5);
-    border-color: green;
-    border-width: 2px;
-  }
-  .checkbox-wrapper-29 .checkbox {
-    position: relative;
+  .flex-column {
     display: flex;
-    cursor: pointer;
-    /* Mobile Safari: */
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-  .checkbox-wrapper-29 .checkbox__label:after:hover,
-  .checkbox-wrapper-29 .checkbox__label:after:active {
-    border-color: green;
-  }
-  .checkbox-wrapper-29 .checkbox__label {
-    margin-right: calc(var(--size) * 0.47);
-  }
-  .checkbox-wrapper-29 .checkbox__title {
-    color: ${(props: PermissionCheckBoxProps) =>
-      props.disabled ? '#4a4a4a' : 'var(--background)'};
-    font-size: 1.12rem;
-    margin-top: 2px;
+    flex-direction: column;
+    row-gap: 1rem;
+    margin: 0.5rem 0;
   }
 `;
 
 export const AccountWrapper = styled(motion.div)`
   background: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   width: 100%;
   position: relative;
-  margin-bottom: 0.5rem;
   border-radius: 1.25rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
+  padding: 0.6rem 1.25rem;
 
-  /* 3 Dot Spinner */
-  .lds-ellipsis {
-    /* change color here */
-    color: #afafaf;
+  /* Native icon */
+  .native-wrapper {
+    background-color: var(--background-default);
+
+    .native-content {
+      position: relative;
+    }
+
+    .checked-icon-wrapper {
+      position: absolute;
+      bottom: 0;
+      right: -2px;
+      color: #c7c7c7;
+
+      .disable {
+        opacity: 0.4;
+      }
+    }
+
+    .checked {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .unchecked {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.4;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+    .disabled {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.15;
+    }
   }
-  .lds-ellipsis,
-  .lds-ellipsis div {
-    box-sizing: border-box;
+
+  /* Remove button */
+  .remove-wrapper {
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
   }
-  .lds-ellipsis {
-    margin-left: 8px;
-    top: 12px;
-    display: inline-block;
+
+  /* Interval button */
+  .interval-wrapper {
     position: relative;
-  }
-  .lds-ellipsis div {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .lds-ellipsis div:nth-child(1) {
-    left: 4px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(2) {
-    left: 4px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(3) {
-    left: 16px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(4) {
-    left: 28px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
+    transition: opacity 0.1s ease-in-out;
+    cursor: pointer;
+
+    .badge-container {
+      position: relative;
+      min-width: 24px;
+      height: 24px;
     }
-    100% {
-      transform: scale(1);
+
+    .interval-badge {
+      position: absolute;
+      top: 9px;
+      left: -12px;
+      min-width: 46px;
+      padding: 1px 0;
+      opacity: 0.9;
+      color: #cbcbcb;
+      background-color: var(--border-mid-color);
+      border: 1px solid var(--background-modal);
+      border-radius: 1.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      z-index: 3;
+    }
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    .enabled {
+      padding: 0.5rem;
+    }
+
+    /* Select */
+    .select-wrapper {
+      display: flex;
+      align-items: center;
+      column-gap: 0.25rem;
+
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.25rem;
+      padding: 0.35rem 0.6rem;
+      cursor: pointer;
+
+      select {
+        font-size: 1rem;
+        background-color: inherit;
+        color: #fcfcfc;
+        opacity: 0.8;
+        border: none;
+        cursor: pointer;
+      }
     }
   }
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
+
+  /* One-shot icon */
+  .one-shot-wrapper {
+    background-color: var(--background-default);
+
+    .enabled {
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: opacity 0.1s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
     }
-    100% {
-      transform: scale(0);
+    .processing {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
     }
-  }
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(12px, 0);
+    .disabled {
+      transition: opacity 0.1s ease-in-out;
+      padding: 0.5rem;
+      opacity: 0.4;
     }
   }
 
@@ -269,7 +242,7 @@ export const AccountWrapper = styled(motion.div)`
       position: relative;
       flex: 1;
       align-items: center;
-      column-gap: 1.5rem;
+      column-gap: 1.6rem;
 
       &:first-child {
         overflow: hidden;
@@ -294,24 +267,36 @@ export const AccountWrapper = styled(motion.div)`
         }
 
         .content {
+          display: flex;
+          align-items: center;
           height: var(--item-height);
           flex: 1;
-          position: relative;
-          margin-left: 0.75rem;
 
           h3 {
-            &.permission {
-              top: 0.8rem;
-            }
-            position: absolute;
-            top: 0.55rem;
-            left: 0;
+            display: flex;
+            align-items: center;
+            column-gap: 0.75rem;
             width: 100%;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
             margin: 0;
             font-size: 1rem;
+
+            &.permission {
+              top: 0.8rem;
+            }
+            .icon-wrapper {
+              margin-top: -2px;
+              padding: 0 0.3rem;
+              color: #4a4a4a;
+              cursor: pointer;
+              transition: color 0.2s ease-out;
+
+              &:hover {
+                color: #953254;
+              }
+            }
           }
         }
       }

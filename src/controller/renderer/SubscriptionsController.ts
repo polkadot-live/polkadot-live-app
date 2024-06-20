@@ -48,18 +48,7 @@ export class SubscriptionsController {
       serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
-  }
-
-  /**
-   * @name unsubscribeChains
-   * @summary Calls `unsub` for each chain's queryMulti entry, but keeps the
-   * subscription data. This method is called when the app goes into offline mode.
-   */
-  static unsubscribeChains() {
-    this.chainSubscriptions?.unsubOnly();
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -67,14 +56,35 @@ export class SubscriptionsController {
    * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
    */
-  static async resubscribeAccounts() {
+  static async resubscribeChains() {
     if (!this.chainSubscriptions) {
       return;
     }
 
-    for (const task of this.chainSubscriptions?.getSubscriptionTasks() || []) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    // Get subscription task array and subscribe to batched tasks.
+    const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
+
+    if (tasks.length) {
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
     }
+  }
+
+  /**
+   * @name resubscribeChain
+   * @summary Re-subscribe to tasks for a particular chain.
+   */
+  static async resubscribeChain(chainId: ChainID) {
+    if (!this.chainSubscriptions) {
+      return;
+    }
+
+    // Fetch task to re-subscribe to.
+    const tasks = this.chainSubscriptions
+      .getSubscriptionTasks()
+      .filter((task) => task.chainId === chainId);
+
+    tasks.length &&
+      (await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions));
   }
 
   /**
@@ -84,6 +94,20 @@ export class SubscriptionsController {
   static async subscribeChainTask(task: SubscriptionTask) {
     if (this.chainSubscriptions) {
       await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    } else {
+      throw new Error(
+        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
+      );
+    }
+  }
+
+  /**
+   * @name subscribeChainTasks
+   * @summary Subscribe to a batch of chain tasks.
+   */
+  static async subscribeChainTasks(tasks: SubscriptionTask[]) {
+    if (this.chainSubscriptions) {
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
     } else {
       throw new Error(
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
@@ -162,53 +186,7 @@ export class SubscriptionsController {
           // Get all possible tasks for account's chain ID.
           .filter((t) => t.chainId === a.chain)
           // Populate tasks with correct arguments.
-          .map((t) => {
-            const task = { ...t, account: a.flatten() } as SubscriptionTask;
-
-            switch (t.action) {
-              case 'subscribe:account:balance': {
-                return { ...task, actionArgs: [a.address] } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:rewards': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolRewardAddress]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:state': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:renamed': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:roles': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              case 'subscribe:account:nominationPools:commission': {
-                const actionArgs = a.nominationPoolData
-                  ? [a.nominationPoolData.poolId]
-                  : undefined;
-
-                return { ...task, actionArgs } as SubscriptionTask;
-              }
-              default: {
-                return task;
-              }
-            }
-          })
+          .map((t) => SubscriptionsController.getTaskArgsForAccount(a, t))
           // Merge active tasks in the array.
           .map((t) => {
             for (const active of a.getSubscriptionTasks() || []) {
@@ -225,4 +203,72 @@ export class SubscriptionsController {
 
     return result;
   }
+
+  /**
+   * @name enableAllSubscriptionsForAccount
+   * @summary Activate all subscriptions when an account is imported.
+   */
+  static getAllSubscriptionsForAccount = (account: Account) =>
+    allAccountTasks
+      .filter((t) => t.chainId === account.chain)
+      .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
+      .map((t) => ({ ...t, status: 'enable' }) as SubscriptionTask);
+
+  /**
+   * @name getTaskArgsForAccount
+   * @summary Populate a task with correct arguments for an account.
+   */
+  static getTaskArgsForAccount = (
+    account: Account,
+    taskTemplate: SubscriptionTask
+  ) => {
+    const task = {
+      ...taskTemplate,
+      account: account.flatten(),
+    } as SubscriptionTask;
+
+    switch (task.action) {
+      case 'subscribe:account:balance': {
+        return { ...task, actionArgs: [account.address] } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolRewardAddress]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:state': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:renamed': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:roles': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      case 'subscribe:account:nominationPools:commission': {
+        const actionArgs = account.nominationPoolData
+          ? [account.nominationPoolData.poolId]
+          : undefined;
+
+        return { ...task, actionArgs } as SubscriptionTask;
+      }
+      default: {
+        return task;
+      }
+    }
+  };
 }

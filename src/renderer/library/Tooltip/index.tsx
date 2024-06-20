@@ -1,7 +1,7 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useTooltip } from '@app/contexts/Tooltip';
+import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useEffect, useRef } from 'react';
 import { Wrapper } from './Wrapper';
 import type { AnyData } from '@/types/misc';
@@ -12,6 +12,7 @@ export const Tooltip = () => {
     text,
     show,
     position,
+    alignRef,
     showTooltip,
     closeTooltip,
     setTooltipPosition,
@@ -32,24 +33,59 @@ export const Tooltip = () => {
   }, [open]);
 
   const mouseMoveCallback = (e: AnyData) => {
-    const { target, pageX, pageY } = e;
+    // Get all trigger elements in the document.
+    const elements = document.querySelectorAll('.tooltip-trigger-element');
+    const { pageX, pageY } = e;
 
-    if (tooltipRef?.current) {
-      setTooltipPosition(pageX, pageY - (tooltipRef.current.offsetHeight || 0));
-      if (!show) {
-        showTooltip();
+    // Iterate trigger elements and act if the mouse is hovered over one.
+    for (const element of elements) {
+      if (element.matches(':hover')) {
+        const width: number = tooltipRef.current?.clientWidth || -1;
+        const height: number = tooltipRef.current?.clientHeight || -1;
+
+        const halfWidth = width * 0.5;
+        const halfHeight = height * 0.5;
+
+        const marginY = 15;
+        const marginX = 15;
+
+        let offsetY = 0;
+        let offsetX = 0;
+
+        switch (alignRef?.current || 'top') {
+          case 'top': {
+            offsetY = -halfHeight - marginY;
+            break;
+          }
+          case 'bottom': {
+            offsetY = height + 10;
+            break;
+          }
+          case 'right': {
+            offsetX = halfWidth + marginX;
+            break;
+          }
+          case 'left': {
+            offsetX = -halfWidth - marginX;
+            break;
+          }
+        }
+
+        const xPos: number = pageX - width * 0.5 + offsetX;
+        const yPos: number = pageY + offsetY - height * 0.5;
+        setTooltipPosition(xPos, yPos);
+
+        if (!show) {
+          showTooltip();
+        }
+
+        // Return after processing the tooltip.
+        return;
       }
     }
 
-    const isTriggerElement = target?.classList.contains(
-      'tooltip-trigger-element'
-    );
-    const dataAttribute = target?.getAttribute('data-tooltip-text') ?? false;
-    if (!isTriggerElement) {
-      closeTooltip();
-    } else if (dataAttribute !== text) {
-      closeTooltip();
-    }
+    // Close tooltip if cursor is not over a trigger element.
+    closeTooltip();
   };
 
   return (

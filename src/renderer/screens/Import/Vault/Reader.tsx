@@ -1,7 +1,8 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@app/contexts/Overlay';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
@@ -14,9 +15,12 @@ import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { LocalAddress } from '@/types/accounts';
 import type { ReaderVaultProps } from '../types';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
+  const { insertAccountStatus } = useAccountStatuses();
+  const { handleImportAddress } = useImportHandler();
 
   // Check whether initial render.
   const initialRender = useRef<boolean>(true);
@@ -76,19 +80,28 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
 
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = (address: string) => {
+    const accountName = ellipsisFn(address);
+
     const newAddresses = addresses
       .filter((a: LocalAddress) => a.address !== address)
       .concat({
         index: getNextAddressIndex(),
         address,
         isImported: false,
-        name: ellipsisFn(address),
+        name: accountName,
+        source: 'vault',
       });
 
     const storageKey = ConfigImport.getStorageKey('vault');
     localStorage.setItem(storageKey, JSON.stringify(newAddresses));
     setAddresses(newAddresses);
     setImported(true);
+
+    // Add account status entry.
+    insertAccountStatus(address, 'vault');
+
+    // Set processing flag to true and import via main renderer.
+    handleImportAddress(address, 'vault', accountName);
   };
 
   // Gets the next non-imported address index.
@@ -124,12 +137,12 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
     setOverlayStatus(0);
   };
 
-  const containerStyle = useMemo(() => createImgSize(279), []);
+  const containerStyle = useMemo(() => createImgSize(400), []);
 
   return (
     <QRVieweraWrapper>
       <div className="viewer">
-        <ScanWrapper className={''} style={containerStyle}>
+        <ScanWrapper style={containerStyle}>
           <Html5QrCodePlugin
             fps={10}
             qrCodeSuccessCallback={onScan}

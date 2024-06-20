@@ -4,7 +4,13 @@
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@/utils/AccountUtils';
+import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
+import {
+  getAccountExposed,
+  getAccountExposedWestend,
+  getUnclaimedPayouts,
+} from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import * as ApiUtils from '@/utils/ApiUtils';
@@ -13,7 +19,7 @@ import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { AccountBalance, ValidatorData } from '@/types/accounts';
-import { getUnclaimedPayouts } from './nominating';
+import { rmCommas } from '@w3ux/utils';
 
 export class Callbacks {
   /**
@@ -111,14 +117,22 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['balance']);
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account) {
+        return;
+      }
 
       // Get the received balance.
       const received: AccountBalance = {
-        free: new BigNumber(data.data.free),
-        reserved: new BigNumber(data.data.reserved),
-        frozen: new BigNumber(data.data.frozen),
-        nonce: new BigNumber(data.nonce),
+        free: new BigNumber(rmCommas(String(data.data.free))),
+        reserved: new BigNumber(rmCommas(String(data.data.reserved))),
+        frozen: new BigNumber(rmCommas(String(data.data.frozen))),
+        nonce: new BigNumber(rmCommas(String(data.nonce))),
       };
 
       let isSame = false;
@@ -147,12 +161,11 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              received,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            received,
+          })
+        : null;
 
       // Send event and notification data to main process.
       window.myAPI.persistEvent(parsed, notification, isOneShot);
@@ -181,29 +194,37 @@ export class Callbacks {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
       const chainId = account.chain;
-      const { api } = await ApiUtils.getApiInstance(chainId);
+      const origin = 'callback_nomination_pool_rewards';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
 
       // Fetch pending rewards for the account.
       const pendingRewardsPlanck: BigNumber =
         await api.call.nominationPoolsApi.pendingRewards(account.address);
 
-      // Return if pending rewards is zero.
-      if (!isOneShot && pendingRewardsPlanck.eq(0)) {
+      const isSame =
+        account.nominationPoolData!.poolPendingRewards.eq(pendingRewardsPlanck);
+
+      // Return if pending rewards is zero or no change.
+      if (
+        (!isOneShot && isSame) ||
+        (!isOneShot && pendingRewardsPlanck.eq(0))
+      ) {
         return;
       }
 
       // Update account and entry data.
-      account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
-      await AccountsController.set(chainId, account);
-      entry.task.account = account.flatten();
+      if (!isSame) {
+        account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
+        await AccountsController.set(chainId, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              pendingRewardsPlanck,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            pendingRewardsPlanck,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -247,12 +268,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              prevState,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            prevState,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -283,7 +303,7 @@ export class Callbacks {
       // Get the received pool name.
       const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
       const prevName = account.nominationPoolData!.poolName;
-      const isSame = prevName === receivedPoolName;
+      const isSame = prevName === receivedPoolName || receivedPoolName === '';
 
       if (!isOneShot && isSame) {
         return;
@@ -297,12 +317,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              prevName,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            prevName,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -331,7 +350,14 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      const { depositor, root, nominator, bouncer } = data.toHuman().roles;
+      interface Target {
+        depositor: string;
+        root: string;
+        nominator: string;
+        bouncer: string;
+      }
+      const humanData: AnyData = data.toHuman();
+      const { depositor, root, nominator, bouncer }: Target = humanData.roles;
 
       // Return if roles have not changed.
       const poolRoles = account.nominationPoolData!.poolRoles;
@@ -355,12 +381,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              poolRoles,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            poolRoles,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -389,8 +414,8 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool commission.
-      const { changeRate, current, max, throttleFrom } =
-        data.toHuman().commission;
+      const humanData: AnyData = data.toHuman();
+      const { changeRate, current, max, throttleFrom } = humanData.commission;
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
@@ -415,12 +440,11 @@ export class Callbacks {
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              poolCommission,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            poolCommission,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -448,7 +472,11 @@ export class Callbacks {
     try {
       // Check if account has any nominating rewards from the previous era (current era - 1).
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
+      const origin = 'callback_nomination_pending_payouts';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
 
       // Map<era: string, Map<validator: string, payout: [number, string]>>
       const unclaimed = await getUnclaimedPayouts(
@@ -476,13 +504,12 @@ export class Callbacks {
       const era = data.toHuman().index as string;
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              pendingPayout,
-              chainId: account.chain,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            pendingPayout,
+            chainId: account.chain,
+          })
+        : null;
 
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { pendingPayout, era }),
@@ -512,47 +539,39 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const result: AnyData = await api.query.staking.erasStakers.entries(era);
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      let exposed = false;
-      for (const val of result) {
-        // Check if account address is the validator.
-        if (val[0].toHuman() === account.address) {
-          exposed = true;
-          break;
-        }
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-        // Check if account address is nominating this validator.
-        let counter = 0;
-        for (const { who } of val[1].toHuman().others) {
-          if (counter >= 512) {
-            break;
-          } else if (who === account.address) {
-            exposed = true;
-            break;
-          }
-          counter += 1;
-        }
+      // Otherwise get exposure.
+      const origin = 'callback_nominating_exposure';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+      const exposed = await getAccountExposed(api, era, account);
 
-        // Break if the inner loop found exposure.
-        if (exposed) {
-          break;
-        }
+      // Update account data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              era,
-              exposed,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            era,
+            exposed,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -576,55 +595,39 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
-      const validators = account.nominatingData!.validators.map(
-        (v) => v.validatorId
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
+
+      // Exit early if this era exposure is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
+
+      const origin = 'callback_nominating_exposure_westend';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
       );
+      const vs = account.nominatingData!.validators;
+      const exposed = await getAccountExposedWestend(api, era, account, vs);
 
-      let exposed = false;
-
-      // Iterate validators account is nominating.
-      validatorLoop: for (const vId of validators) {
-        // Check if target address is the validator.
-        if (account.address === vId) {
-          exposed = true;
-          break;
-        }
-
-        // Iterate validator paged exposures.
-        const result: AnyData =
-          await api.query.staking.erasStakersPaged.entries(era, vId);
-
-        let counter = 0;
-
-        for (const item of result) {
-          for (const { who } of item[1].toHuman().others) {
-            // Move to next validator if account is not in top 512 stakers for this validator.
-            if (counter >= 512) {
-              continue validatorLoop;
-            }
-            // We know the account is exposed for this era if their address is found.
-            if ((who as string) === account.address) {
-              exposed = true;
-              break validatorLoop;
-            }
-            counter += 1;
-          }
-        }
+      // Update account data.
+      if (account.nominatingData!.lastCheckedEra < era) {
+        account.nominatingData!.exposed = exposed;
+        account.nominatingData!.lastCheckedEra = era;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              era,
-              exposed,
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            era,
+            exposed,
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -651,55 +654,105 @@ export class Callbacks {
     isOneShot = false
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await ApiUtils.getApiInstance(account.chain);
-
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
-      // Get an array of changed validators.
-      const validatorData = account.nominatingData!.validators;
-      const changedValidators: ValidatorData[] = [];
+      // Exit early if nominator data for this era is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
 
-      for (const { validatorId, commission } of validatorData) {
+      // Get live nominator data and check to see if it has changed.
+      const origin = 'callback_nominating_commission';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
+      const nominatorData: AnyData = (
+        await api.query.staking.nominators(account.address)
+      ).toHuman();
+
+      // Return if account is no longer nominating.
+      if (nominatorData === null) {
+        account.nominatingData = null;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Return if retrieved `submittedIn` matches account data.
+      const submittedIn: number = parseInt(
+        (nominatorData.submittedIn as string).replace(/,/g, '')
+      );
+
+      const isSame = account.nominatingData!.submittedIn === submittedIn;
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Something may have changed, firstly get new validator info.
+      const accumulated: ValidatorData[] = [];
+
+      for (const validatorId of nominatorData.targets as string[]) {
         const prefs: AnyData = (
           await api.query.staking.erasValidatorPrefs(era, validatorId)
         ).toHuman();
 
-        const nextCommission: string = prefs.commission as string;
-        if (commission !== nextCommission) {
-          changedValidators.push({ validatorId, commission: nextCommission });
+        const commission: string = prefs.commission as string;
+        accumulated.push({ validatorId, commission });
+      }
+
+      // Get an array of changed validators.
+      const changedValidators: ValidatorData[] = [];
+
+      const validatorData = account.nominatingData!.validators;
+      const oldIds = validatorData.map((v) => v.validatorId);
+      const newIds = accumulated.map((v) => v.validatorId);
+
+      const idsInOld = newIds.filter((vid) => oldIds.includes(vid));
+      const idsNew = newIds.filter((vid) => !oldIds.includes(vid));
+
+      // Add old validators with commission changes.
+      for (const vid of idsInOld) {
+        const oldData = validatorData.find((v) => v.validatorId === vid);
+        const newData = accumulated.find((v) => v.validatorId === vid);
+
+        if (!oldData || !newData) {
+          continue;
+        } else if (oldData.commission !== newData.commission) {
+          changedValidators.push(newData);
+        }
+      }
+
+      // Add new validator commissions.
+      for (const vid of idsNew) {
+        const vData = accumulated.find((v) => v.validatorId === vid);
+        if (vData) {
+          changedValidators.push(vData);
         }
       }
 
       // Exit early if there are no commission changes.
-      if (changedValidators.length > 0 && !isOneShot) {
+      if (!isOneShot && changedValidators.length === 0) {
         return;
       }
 
       // Update account nominating data with new commissions.
-      const updated = account.nominatingData!.validators.map((v) => {
-        const changed = changedValidators.find(
-          (x) => x.validatorId === v.validatorId
-        );
-
-        return changed !== undefined
-          ? ({ ...v, commission: changed.commission } as ValidatorData)
-          : v;
-      });
-
-      // Persist updated data.
-      account.nominatingData = { validators: [...updated] };
-      await AccountsController.set(account.chain, account);
+      if (changedValidators.length > 0) {
+        account.nominatingData!.validators = [...accumulated];
+        account.nominatingData!.submittedIn = submittedIn;
+        AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
 
       // Get notification.
-      const notification =
-        entry.task.enableOsNotifications || isOneShot
-          ? NotificationsController.getNotification(entry, account, {
-              updated: [...changedValidators],
-            })
-          : null;
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            updated: [...changedValidators],
+          })
+        : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
@@ -712,4 +765,17 @@ export class Callbacks {
       return;
     }
   }
+
+  /**
+   * @name showNotificationFlag
+   * @summary Determine if the task should show a native OS notification.
+   */
+  private static getNotificationFlag = (
+    entry: ApiCallEntry,
+    isOneShot: boolean
+  ) =>
+    isOneShot
+      ? true
+      : !RendererConfig.silenceNotifications &&
+        entry.task.enableOsNotifications;
 }

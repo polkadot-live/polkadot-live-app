@@ -9,21 +9,23 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
-import { useOverlay } from '@app/contexts/Overlay';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useState } from 'react';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({
   address,
   accountName,
-  setAddresses,
+  source,
   index,
   isImported,
+  orderData,
   setSection,
 }: LedgerAddressProps) => {
+  const { openOverlayWith } = useOverlay();
+
   // State for account name.
   const [accountNameState, setAccountNameState] = useState<string>(accountName);
-  const { openOverlayWith } = useOverlay();
 
   // Handler to rename an account.
   const renameHandler = (who: string, newName: string) => {
@@ -37,40 +39,25 @@ export const Address = ({
   return (
     <HardwareAddress
       key={index}
+      source={source}
       address={address}
       index={index}
       accountName={accountNameState}
       renameHandler={renameHandler}
       isImported={isImported}
+      orderData={orderData}
       openRemoveHandler={() =>
-        openOverlayWith(
-          <Remove
-            address={address}
-            setAddresses={setAddresses}
-            source="ledger"
-          />,
-          'small'
-        )
+        openOverlayWith(<Remove address={address} source="ledger" />, 'small')
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm
-            address={address}
-            setAddresses={setAddresses}
-            name={accountNameState}
-            source="ledger"
-          />,
+          <Confirm address={address} name={accountNameState} source="ledger" />,
           'small'
         )
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete
-            setAddresses={setAddresses}
-            address={address}
-            source="ledger"
-            setSection={setSection}
-          />
+          <Delete address={address} source="ledger" setSection={setSection} />
         )
       }
     />

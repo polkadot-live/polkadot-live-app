@@ -5,7 +5,20 @@ import type { AnyFunction } from '@w3ux/utils/types';
 
 export interface AccordionProps {
   children: React.ReactNode;
-  multiple: boolean | string;
+  multiple?: boolean | string;
   defaultIndex: number | number[];
+  indicesRef?: React.MutableRefObject<number[]>;
   setExternalIndices?: AnyFunction;
+}
+
+export interface AccordionCaretHeaderProps {
+  title: string;
+  itemIndex: number;
+  wide?: boolean;
+}
+
+export interface AccordionCaretSwitchHeaderProps {
+  title: string;
+  itemIndex: number;
+  SwitchComponent: React.ReactNode;
 }

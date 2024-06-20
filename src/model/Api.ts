@@ -23,6 +23,7 @@ const debug = MainDebug.extend('Api');
  * @property {ApiPromise | null} api - the API instance of the chain.
  * @property {string | null} chain - the chain name.
  * @property {APIConstants | null} consts - the constants of the chain.
+ * @property {string[]} rpcs - rpc endpoints for connecting to the chain network.
  */
 export class Api {
   private _endpoint: string;
@@ -37,12 +38,15 @@ export class Api {
 
   private _consts: APIConstants | null = null;
 
-  constructor(endpoint: string, chainId: ChainID) {
+  private _rpcs: string[] = [];
+
+  constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
     this._chain = chainId;
     this._endpoint = endpoint;
     this._status = 'disconnected';
     this._provider = null;
     this._api = null;
+    this._rpcs = rpcs;
   }
 
   /**
@@ -76,6 +80,7 @@ export class Api {
 
     this.setApi(api, chainId as ChainID);
     await this.getConsts();
+    this.status = 'connected';
   };
 
   get endpoint() {
@@ -151,17 +156,16 @@ export class Api {
    */
   initEvents = () => {
     this.provider?.on('connected', () => {
-      debug('⭕ %o', this.endpoint, ' CONNECTED');
-      this.status = 'connected';
+      console.log('⭕ %o', this.endpoint, ' CONNECTED');
     });
 
-    this.provider?.on('disconnected', () => {
-      debug('❌ %o', this.endpoint, ' DISCONNECTED');
+    this.provider?.on('disconnected', async () => {
+      console.log('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
     });
 
-    this.provider?.on('error', () => {
-      debug('❗ %o', this.endpoint, ' ERROR');
+    this.provider?.on('error', async () => {
+      console.log('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
     });
   };
@@ -216,19 +220,20 @@ export class Api {
    * @summary Disconnect from a chain.
    */
   disconnect = async () => {
-    this._api &&
-      this._api.isConnected &&
-      (await this._api.disconnect().catch(console.error));
+    // Web socket will disconnect automatically if status goes offline.
+    if (await window.myAPI.getOnlineStatus()) {
+      this._api &&
+        this._api.isConnected &&
+        (await this._api.disconnect().catch(console.error));
 
-    this._provider &&
-      this._provider.isConnected &&
-      this._provider.disconnect().catch(console.error);
+      this._provider &&
+        this._provider.isConnected &&
+        this._provider.disconnect().catch(console.error);
+    }
 
     this.provider = null;
     this._api = null;
     this.status = 'disconnected';
-
-    console.log(`Disconnected: ${this._chain}`);
   };
 
   /**
@@ -241,5 +246,6 @@ export class Api {
       endpoint: this.endpoint,
       chainId: this.chain,
       status: this.status,
+      rpcs: this._rpcs,
     }) as FlattenedAPIData;
 }

@@ -1,18 +1,29 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { app, ipcMain, protocol, shell, systemPreferences } from 'electron';
+import {
+  app,
+  dialog,
+  ipcMain,
+  powerMonitor,
+  protocol,
+  shell,
+  systemPreferences,
+} from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
+import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -25,7 +36,12 @@ import type {
 } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { AnyJson } from '@w3ux/utils/types';
+import type { SettingAction } from './renderer/screens/Settings/types';
+import type {
+  SubscriptionTask,
+  IntervalSubscription,
+} from '@/types/subscriptions';
 
 const debug = MainDebug;
 
@@ -117,10 +133,10 @@ app.whenReady().then(async () => {
   // ------------------------------
 
   // Create menu bar and tray.
-  WindowUtils.createMainWindow(isTest);
   WindowUtils.createTray();
+  WindowUtils.createMainWindow(isTest);
 
-  // Handle Ledger account import.
+  // Handle import window.
   WindowUtils.handleWindowOnIPC('import', isTest);
 
   // Handle action window.
@@ -128,6 +144,27 @@ app.whenReady().then(async () => {
     height: 375,
     minHeight: 375,
     maxHeight: 375,
+  });
+
+  // Handle settings window.
+  WindowUtils.handleWindowOnIPC('settings', isTest);
+
+  // Handle open gov window.
+  WindowUtils.handleWindowOnIPC('openGov', isTest);
+
+  // ------------------------------
+  // Handle Power Changes
+  // ------------------------------
+
+  // Emitted when the system is suspending.
+  powerMonitor.on('suspend', async () => {
+    await OnlineStatusController.handleSuspend();
+  });
+
+  // Emitted when system is resuming.
+  powerMonitor.on('resume', async () => {
+    console.log('Resuming...');
+    await OnlineStatusController.handleResume();
   });
 
   // ------------------------------
@@ -207,8 +244,11 @@ app.whenReady().then(async () => {
       notification: NotificationData | null,
       isOneShot: boolean
     ) => {
-      // Remove any outdated events of the same type.
-      EventsController.removeOutdatedEvents(e);
+      // Remove any outdated events of the same type, if setting enabled.
+      const { appKeepOutdatedEvents } = ConfigMain.getAppSettings();
+      if (!appKeepOutdatedEvents) {
+        EventsController.removeOutdatedEvents(e);
+      }
 
       // Persist new event to store.
       const { event: eventWithUid, wasPersisted } =
@@ -275,8 +315,8 @@ app.whenReady().then(async () => {
   });
 
   // Handle switching between online and offline.
-  ipcMain.on('app:connection:status', () => {
-    OnlineStatusController.handleStatusChange();
+  ipcMain.on('app:connection:status', async () => {
+    await OnlineStatusController.handleStatusChange();
   });
 
   // Send connection status to frontend.
@@ -324,8 +364,137 @@ app.whenReady().then(async () => {
   );
 
   // Show native notifications.
-  ipcMain.on('app:notification:show', (_, { title, body }) => {
-    NotificationsController.showNotification(title, body);
+  ipcMain.on(
+    'app:notification:show',
+    (_, { title, body }: NotificationData) => {
+      NotificationsController.showNotification(title, body);
+    }
+  );
+
+  /**
+   * Interval subscriptions
+   */
+
+  // Get interval subscriptions from store.
+  ipcMain.handle('app:interval:tasks:get', async () => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+    const stored: string = storePointer.get(key) || '[]';
+    return stored;
+  });
+
+  // Clear interval subscriptions from store.
+  ipcMain.handle('app:interval:tasks:clear', async () => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+    storePointer.delete(key);
+    return 'done';
+  });
+
+  // Add interval subscription to store.
+  ipcMain.handle('app:interval:task:add', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    stored.push(JSON.parse(serialized));
+    storePointer.set(key, JSON.stringify(stored));
+  });
+
+  // Add interval subscription to store.
+  ipcMain.handle('app:interval:task:remove', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    const task: IntervalSubscription = JSON.parse(serialized);
+    const { action, chainId, referendumId } = task;
+    const filtered = stored.filter(
+      (t) =>
+        !(
+          t.action === action &&
+          t.chainId === chainId &&
+          t.referendumId === referendumId
+        )
+    );
+
+    storePointer.set(key, JSON.stringify(filtered));
+  });
+
+  // Update an interval subscription in the store.
+  ipcMain.handle('app:interval:task:update', async (_, serialized: string) => {
+    const key = 'interval_subscriptions';
+    const storePointer: Record<string, AnyJson> = store;
+
+    const task: IntervalSubscription = JSON.parse(serialized);
+    const { action, chainId, referendumId } = task;
+
+    const stored: IntervalSubscription[] = storePointer.get(key)
+      ? JSON.parse(storePointer.get(key) as string)
+      : [];
+
+    const updated = stored.map((t) =>
+      t.action === action &&
+      t.chainId === chainId &&
+      t.referendumId === referendumId
+        ? task
+        : t
+    );
+
+    storePointer.set(key, JSON.stringify(updated));
+  });
+
+  /**
+   * Websockets
+   */
+
+  // Handle starting the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:start', async () => {
+    WebsocketsController.startServer();
+    return true;
+  });
+
+  // Handle stopping the websocket server and return a success flag.
+  ipcMain.handle('app:websockets:stop', async () => {
+    WebsocketsController.stopServer();
+    return true;
+  });
+
+  /**
+   * Workspaces
+   */
+
+  // Handle fetching workspaces from Electron store.
+  ipcMain.handle('app:workspaces:fetch', async () =>
+    WorkspacesController.fetchPersistedWorkspaces()
+  );
+
+  // Handle deleting a workspace from Electron store.
+  ipcMain.on('app:workspace:delete', (_, serialised: string) => {
+    try {
+      WorkspacesController.removeWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
+  });
+
+  // Handle emitting workspace to developer console.
+  ipcMain.on('app:workspace:launch', (_, serialised: string) => {
+    try {
+      WebsocketsController.launchWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
   });
 
   /**
@@ -342,6 +511,76 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
+  // Get application docked flag.
+  ipcMain.handle(
+    'app:docked:get',
+    async () => ConfigMain.getAppSettings().appDocked
+  );
+
+  // Set application docked flag.
+  ipcMain.on('app:docked:set', (_, flag) => {
+    WindowUtils.handleNewDockFlag(flag);
+  });
+
+  // Get app settings.
+  ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
+
+  ipcMain.on('app:set:workspaceVisibility', () => {
+    // Get new flag.
+    const settings = ConfigMain.getAppSettings();
+    const flag = !settings.appShowOnAllWorkspaces;
+
+    // Update windows.
+    settings.appShowOnAllWorkspaces = flag;
+    WindowsController.setVisibleOnAllWorkspaces(flag);
+
+    // Update storage.
+    const key = ConfigMain.settingsStorageKey;
+    (store as Record<string, AnyData>).set(key, settings);
+  });
+
+  // Toggle an app setting.
+  ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {
+    const settings = ConfigMain.getAppSettings();
+
+    switch (action) {
+      case 'settings:execute:showDebuggingSubscriptions': {
+        const flag = !settings.appShowDebuggingSubscriptions;
+        settings.appShowDebuggingSubscriptions = flag;
+
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
+        break;
+      }
+      case 'settings:execute:silenceOsNotifications': {
+        const flag = !settings.appSilenceOsNotifications;
+        settings.appSilenceOsNotifications = flag;
+        break;
+      }
+      case 'settings:execute:enableAutomaticSubscriptions': {
+        const flag = !settings.appEnableAutomaticSubscriptions;
+        settings.appEnableAutomaticSubscriptions = flag;
+        break;
+      }
+      case 'settings:execute:enablePolkassembly': {
+        const flag = !settings.appEnablePolkassemblyApi;
+        settings.appEnablePolkassemblyApi = flag;
+        break;
+      }
+      case 'settings:execute:keepOutdatedEvents': {
+        const flag = !settings.appKeepOutdatedEvents;
+        settings.appKeepOutdatedEvents = flag;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    const key = ConfigMain.settingsStorageKey;
+    (store as Record<string, AnyData>).set(key, settings);
+  });
+
   /**
    * Ledger
    */
@@ -356,6 +595,88 @@ app.whenReady().then(async () => {
       await executeLedgerLoop(importWindow, appName, tasks, {
         accountIndex,
       });
+    }
+  });
+
+  /**
+   * Data
+   */
+
+  // Export a data-file.
+  ipcMain.handle('app:data:export', async (_, serialized) => {
+    if (!ConfigMain.exportingData) {
+      ConfigMain.exportingData = true;
+
+      // Get response from dialog.
+      const window = WindowsController.get('settings');
+      if (!window) {
+        return { result: false, msg: 'error' };
+      }
+
+      const { canceled, filePath } = await dialog.showSaveDialog(window, {
+        title: 'Export Data',
+        defaultPath: 'polkadot-live-data.txt',
+        filters: [
+          {
+            name: 'Text Files',
+            extensions: ['txt'],
+          },
+        ],
+        properties: [],
+      });
+
+      // Handle save or cancel.
+      if (!canceled && filePath) {
+        try {
+          await fsPromises.writeFile(filePath, serialized, {
+            encoding: 'utf8',
+          });
+
+          ConfigMain.exportingData = false;
+          return { result: true, msg: 'success' };
+        } catch (err) {
+          ConfigMain.exportingData = false;
+          return { result: false, msg: 'error' };
+        }
+      } else {
+        ConfigMain.exportingData = false;
+        return { result: false, msg: 'canceled' };
+      }
+    }
+
+    // Export dialog is already open.
+    return { result: false, msg: 'executing' };
+  });
+
+  // Import a data-file.
+  ipcMain.handle('app:data:import', async () => {
+    const window = WindowsController.get('settings');
+    if (!window) {
+      return { result: false, msg: 'error' };
+    }
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+      title: 'Import Data',
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['txt'],
+        },
+      ],
+      properties: ['openFile'],
+    });
+
+    if (!canceled && filePaths.length) {
+      try {
+        const serialized = await fsPromises.readFile(filePaths[0], {
+          encoding: 'utf-8',
+        });
+        return { result: true, msg: 'success', data: { serialized } };
+      } catch (err) {
+        return { result: false, msg: 'error' };
+      }
+    } else {
+      return { result: false, msg: 'canceled' };
     }
   });
 });

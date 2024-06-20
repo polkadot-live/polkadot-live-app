@@ -8,8 +8,41 @@ import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { SubscriptionTask } from './subscriptions';
+import type {
+  PersistedSettings,
+  SettingAction,
+} from '@/renderer/screens/Settings/types';
+import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
+  fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
+  deleteWorkspace: (serialised: string) => void;
+  launchWorkspace: (serialised: string) => void;
+
+  startWebsocketServer: () => Promise<boolean>;
+  stopWebsocketServer: () => Promise<boolean>;
+  reportWorkspace: (
+    callback: (_: IpcRendererEvent, serialised: string) => void
+  ) => Electron.IpcRenderer;
+
+  getPersistedIntervalTasks: () => Promise<string>;
+  clearPersistedIntervalTasks: () => Promise<string>;
+
+  persistIntervalTask: ApiPersistIntervalTask;
+  removeIntervalTask: ApiRemoveIntervalTask;
+  updateIntervalTask: ApiUpdateIntervalTask;
+
+  getWindowId: () => string;
+
+  exportAppData: ApiExportAppData;
+  importAppData: ApiImportAppData;
+
+  toggleSetting: (action: SettingAction) => void;
+  getAppSettings: ApiGetAppSettings;
+  getDockedFlag: ApiGetDockedFlag;
+  setDockedFlag: ApiSetDockedFlag;
+  toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
+
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
   initializeAppOffline: ApiInitializeAppOffline;
@@ -103,13 +136,32 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
+type ApiExportAppData = (
+  serialized: string
+) => Promise<{ result: boolean; msg: string }>;
+
+type ApiImportAppData = () => Promise<{
+  result: boolean;
+  msg: string;
+  data?: AnyJson;
+}>;
+
+type ApiToggleWorkspaceVisibility = () => void;
+
+type ApiGetAppSettings = () => Promise<PersistedSettings>;
+
+type ApiGetDockedFlag = () => Promise<boolean>;
+
+type ApiSetDockedFlag = (flag: boolean) => void;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 
-type ApiInitializeAppOnline = (callback: (_: IpcRendererEvent) => void) => void;
+type ApiInitializeAppOnline = (
+  callback: (_: IpcRendererEvent) => Promise<void>
+) => void;
 
 type ApiInitializeAppOffline = (
-  callback: (_: IpcRendererEvent) => void
+  callback: (_: IpcRendererEvent) => Promise<void>
 ) => void;
 
 type ApiGetOnlineStatus = () => Promise<boolean>;
@@ -137,7 +189,7 @@ type ApiUpdatePersistedAccountTask = (
   serializedAccount: string
 ) => Promise<void>;
 
-type ApiShowNotification = (content: { title: string; body: string }) => void;
+type ApiShowNotification = (content: NotificationData) => void;
 
 type ApiUpdateAccountNameForEventsAndTasks = (
   address: string,
@@ -151,3 +203,7 @@ type ApiReportStaleEvent = (
 ) => Electron.IpcRenderer;
 
 type ApiInitOnlineStatus = () => Promise<void>;
+
+type ApiPersistIntervalTask = (serialized: string) => Promise<void>;
+type ApiRemoveIntervalTask = (serialized: string) => Promise<void>;
+type ApiUpdateIntervalTask = (serialized: string) => Promise<void>;

@@ -23,7 +23,7 @@ export const Switch = ({
   onColor,
   className,
 }: SwitchPrimaryProps) => {
-  const [switchOn, setSwitchOn] = useState<boolean>(isOn);
+  // const [switchOn, setSwitchOn] = useState<boolean>(isOn);
   const [bgColor, setBgColor] = useState<string>('');
   const [buttonColor, setButtonColor] = useState<string>('');
   const [borderColor, setBorderColor] = useState<string>('');
@@ -32,13 +32,13 @@ export const Switch = ({
     switch (type) {
       case 'secondary': {
         if (disabled) {
-          setBgColor('grdey');
+          setBgColor('grey');
           setBorderColor('#393939');
           setButtonColor('#393939');
           break;
         }
         setBorderColor('var(--border-secondary-color)');
-        if (!switchOn) {
+        if (!isOn) {
           setButtonColor('var(--accent-color-secondary)');
           setBgColor('var(--background-color-primary)');
         } else {
@@ -54,7 +54,7 @@ export const Switch = ({
           setButtonColor('#CCCCCC');
           break;
         }
-        if (!switchOn) {
+        if (!isOn) {
           setButtonColor('#000000');
           setBgColor('var(--text-color-invert)');
         } else {
@@ -71,7 +71,7 @@ export const Switch = ({
           break;
         }
         setBorderColor('var(--border-primary-color)');
-        if (!switchOn) {
+        if (!isOn) {
           setButtonColor('#FFFFFF');
           setBgColor('var(--text-color-tertiary)');
         } else {
@@ -83,22 +83,23 @@ export const Switch = ({
       case 'primary':
       default: {
         if (disabled) {
-          setBgColor('grey');
-          setBorderColor('#CBCBCB');
-          setButtonColor('#CBCBCB');
+          setBgColor('var(--text-color-invert)');
+          setBorderColor('#2e2e2e');
+          setButtonColor('#2e2e2e');
           break;
         }
         setBorderColor('var(--border-primary-color)');
-        if (!switchOn) {
+        if (!isOn) {
           setButtonColor('var(--accent-color-primary)');
-          setBgColor('var(--background-invert)');
+          setBgColor('inherit');
+          setBorderColor('var(--border-secondary-color)');
         } else {
           setButtonColor('#FFFFFF');
           setBgColor('var(--accent-color-primary)');
         }
       }
     }
-  }, [disabled, type, switchOn, onColor]);
+  }, [disabled, type, isOn, onColor]);
 
   return (
     <Wrapper>
@@ -110,13 +111,13 @@ export const Switch = ({
           disabled={disabled}
           onChange={() => {
             if (!disabled) {
-              setSwitchOn(!switchOn);
+              //setSwitchOn(!switchOn);
               if (handleToggle) {
                 handleToggle();
               }
             }
           }}
-          checked={switchOn}
+          checked={isOn}
           className="base-inputs-switch-checkbox"
           type="checkbox"
         />
@@ -124,7 +125,7 @@ export const Switch = ({
           style={{ backgroundColor: buttonColor }}
           className={`base-inputs-switch-button ${size || ''} ${
             disabled ? `is-disabled` : ``
-          } is-clicked${switchOn ? `` : `-not`}`}
+          } is-clicked${isOn ? `` : `-not`}`}
         />
       </label>
     </Wrapper>

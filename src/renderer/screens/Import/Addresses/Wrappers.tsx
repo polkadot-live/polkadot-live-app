@@ -4,15 +4,12 @@
 import styled from 'styled-components';
 
 export const AddressWrapper = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 0rem 0rem 5rem 0rem;
   height: 100vh;
-  overflow: scroll;
-  padding-right: 20px;
-  box-sizing: content-box;
+  overflow: auto;
 
+  // TODO: Remove (not being used)
   .heading {
     background: var(--background-modal);
     border-bottom: 1px solid var(--border-primary-color);
@@ -46,35 +43,44 @@ export const AddressWrapper = styled.div`
     }
   }
 
-  .items {
-    display: flex;
-    width: 100%;
-    margin: 1rem 0;
-    padding: 0 1rem;
+  .outer-wrapper {
+    height: calc(100% - 4.5rem);
     overflow-y: auto;
     overflow-x: hidden;
-    flex-direction: column;
+    padding: 1.5rem;
+    padding-top: 2.25rem;
 
     &::-webkit-scrollbar {
       width: 5px;
     }
     &::-webkit-scrollbar-track {
-      background-color: rgb(45, 41, 45);
+      background-color: #101010;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: rgb(25, 22, 25);
+      background-color: #212121;
     }
-  }
 
-  .edit {
-    margin-left: 0.75rem;
-  }
+    .items-wrapper {
+      padding-bottom: 1rem;
 
-  .more {
-    margin-top: 1rem;
-    padding: 0 1.5rem;
-    h4 {
-      opacity: var(--opacity-disabled);
+      .items {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0 0.25rem;
+      }
+    }
+    .edit {
+      margin-left: 0.75rem;
+    }
+    .more {
+      margin-bottom: 1rem;
+      button {
+        padding: 0.25rem;
+      }
+      h4 {
+        opacity: var(--opacity-disabled);
+      }
     }
   }
 `;
@@ -85,6 +91,8 @@ export const ConfirmWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2.5rem;
+  border: 1px solid var(--border-primary-color);
+  background-color: var(--background-default);
 
   h3,
   h5,

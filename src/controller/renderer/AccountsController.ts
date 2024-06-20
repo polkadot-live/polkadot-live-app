@@ -11,6 +11,7 @@ import type {
   StoredAccount,
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 const debug = MainDebug.extend('Accounts');
 
@@ -62,6 +63,10 @@ export class AccountsController {
    * @summary Fetched persisted tasks from the store and re-subscribe to them.
    */
   static async subscribeAccounts() {
+    if (!this.accounts) {
+      return;
+    }
+
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
         const stored = await window.myAPI.getPersistedAccountTasks(
@@ -71,24 +76,32 @@ export class AccountsController {
         const tasks: SubscriptionTask[] =
           stored !== '' ? JSON.parse(stored) : [];
 
-        for (const task of tasks) {
-          if (task.status === 'enable') {
-            await account.subscribeToTask(task);
-          }
+        if (account.queryMulti !== null) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }
   }
 
   /**
-   * @name unsubscribeAccounts
-   * @summary Calls `unsub` for each account's queryMulti entries, but keeps the
-   * subscription data. This method is called when the app goes into offline mode.
+   * @name subscribeAccountsForChain
+   * @summary Same as `subscribeAccounts` but for a specific chain.
    */
-  static unsubscribeAccounts() {
-    for (const accounts of this.accounts.values()) {
-      for (const account of accounts) {
-        account.unsubQueryMulti();
+  static async subscribeAccountsForChain(chainId: ChainID) {
+    // Get accounts for provided chain ID.
+    const chainAccounts = this.accounts.get(chainId);
+    if (!chainAccounts) {
+      return;
+    }
+
+    // Resubscribe to the each account's persisted tasks.
+    for (const account of chainAccounts) {
+      const tasks = (account.getSubscriptionTasks() || []).filter(
+        (t) => t.chainId === chainId
+      );
+
+      if (tasks.length && account.queryMulti) {
+        await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
       }
     }
   }
@@ -97,14 +110,16 @@ export class AccountsController {
    * @name resubscribeAccounts
    * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
+   *
+   * @deprecated Currently not being called.
    */
   static async resubscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
         const tasks = account.getSubscriptionTasks() || [];
 
-        for (const task of tasks) {
-          await account.subscribeToTask(task);
+        if (tasks.length && account.queryMulti) {
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }
@@ -125,9 +140,16 @@ export class AccountsController {
     );
 
     // Send tasks to query multi wrapper for removal.
-    if (tasks && tasks?.length !== 0) {
+    if (tasks && tasks.length && account && account.queryMulti) {
+      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+
+      // Remove tasks from electron store.
+      // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        await account.subscribeToTask(task);
+        await window.myAPI.updatePersistedAccountTask(
+          JSON.stringify(task),
+          JSON.stringify(account.flatten())
+        );
       }
     }
   }

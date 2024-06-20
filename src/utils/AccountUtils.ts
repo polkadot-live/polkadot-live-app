@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { planckToUnit } from '@w3ux/utils';
-import { chainUnits } from '@/config/chains';
 import BigNumber from 'bignumber.js';
 import {
   BN,
@@ -13,6 +11,11 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
+import {
+  getAccountExposed,
+  getAccountExposedWestend,
+} from '@/renderer/callbacks/nominating';
+import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
   FlattenedAccountData,
@@ -33,25 +36,32 @@ import * as ApiUtils from '@/utils/ApiUtils';
  */
 export const fetchAccountBalances = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow fetching balance data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Iterate accounts associated with the chain and initialize balance data.
-    for (const account of accounts) {
-      const result: AnyJson = await api.query.system.account(account.address);
-
-      account.balance = {
-        nonce: new BigNumber(result.nonce),
-        free: new BigNumber(result.data.free),
-        reserved: new BigNumber(result.data.reserved),
-        frozen: new BigNumber(result.data.frozen),
-      } as AccountBalance;
-    }
+    console.log(`fetching balances for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => fetchBalanceForAccount(a)));
   }
+};
+
+/**
+ * @name fetchBalanceForAccount
+ * @summary Fetch balance data for a single account.
+ */
+export const fetchBalanceForAccount = async (account: Account) => {
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const origin = 'fetchBalanceForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
+  const result: AnyJson = await api.query.system.account(account.address);
+
+  account.balance = {
+    nonce: new BigNumber(rmCommas(String(result.nonce))),
+    free: new BigNumber(rmCommas(String(result.data.free))),
+    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
+    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
+  } as AccountBalance;
+
+  await AccountsController.set(account.chain, account);
 };
 
 /**
@@ -60,18 +70,8 @@ export const fetchAccountBalances = async () => {
  */
 export const fetchAccountNominatingData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow nominating data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Iterate accounts associated with chain and initialise nominating data.
-    for (const account of accounts) {
-      console.log(`>>> set nominating data for ${account.name}`);
-      await setNominatingDataForAccount(api, account);
-    }
+    console.log(`fetching nominating data for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => setNominatingDataForAccount(a)));
   }
 };
 
@@ -79,37 +79,43 @@ export const fetchAccountNominatingData = async () => {
  * @name fetchNominatingDataForAccount
  * @summary Fetch nomination pool data for a single account.
  */
-export const fetchNominatingDataForAccount = async (
-  account: Account,
-  chainId: ChainID
-) => {
-  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await ApiUtils.getApiInstance(chainId);
-    await setNominatingDataForAccount(api, account);
-  }
+export const fetchNominatingDataForAccount = async (account: Account) => {
+  await setNominatingDataForAccount(account);
 };
 
 /**
  * @name setNominatingDataForAccount
  * @summary Fetch nominating data for a single account.
  */
-export const setNominatingDataForAccount = async (
-  api: ApiPromise,
-  account: Account
-) => {
+export const setNominatingDataForAccount = async (account: Account) => {
+  // Only allow nominating data on specific chains.
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const origin = 'setNominatingDataForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
+
   // Check if account is currently nominating.
-  const resA: AnyData = await api.query.staking.nominators(account.address);
-  const nominators = resA.toHuman();
+  const nominatorData: AnyData = await api.query.staking.nominators(
+    account.address
+  );
+  const nominators = nominatorData.toHuman();
 
   // Return early if account is not nominating.
   if (nominators === null) {
     return;
   }
 
+  // Get submitted in era.
+  const submittedIn: number = parseInt(
+    (nominators.submittedIn as string).replace(/,/g, '')
+  );
+
   // Set account's nominating data.
   const accumulated: ValidatorData[] = [];
-  const resB: AnyData = (await api.query.staking.activeEra()).toHuman();
-  const era: number = parseInt((resB.index as string).replace(/,/g, ''));
+  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
 
   for (const validatorId of nominators.targets as string[]) {
     const prefs: AnyData = (
@@ -120,8 +126,17 @@ export const setNominatingDataForAccount = async (
     accumulated.push({ validatorId, commission });
   }
 
+  // Call correct exposure function.
+  const exposed: boolean =
+    account.chain === 'Westend'
+      ? await getAccountExposedWestend(api, era, account, accumulated)
+      : await getAccountExposed(api, era, account);
+
   // Set account's nominator data.
   account.nominatingData = {
+    exposed,
+    lastCheckedEra: era,
+    submittedIn,
     validators: accumulated,
   };
 
@@ -135,17 +150,8 @@ export const setNominatingDataForAccount = async (
  */
 export const fetchAccountNominationPoolData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
-    // Only allow nomination pool data on specific chains.
-    if (!['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-      continue;
-    }
-
-    const { api } = await ApiUtils.getApiInstance(chainId);
-
-    // Iterate accounts associated with chain and initialise nomination pool data.
-    for (const account of accounts) {
-      await setNominationPoolDataForAccount(api, account, chainId);
-    }
+    console.log(`fetching nomination pool data for chain: ${chainId}`);
+    await Promise.all(accounts.map((a) => setNominationPoolDataForAccount(a)));
   }
 };
 
@@ -153,14 +159,8 @@ export const fetchAccountNominationPoolData = async () => {
  * @name fetchNominationPoolDataForAccount
  * @summary Fetch nomination pool data for a single account.
  */
-export const fetchNominationPoolDataForAccount = async (
-  account: Account,
-  chainId: ChainID
-) => {
-  if (['Polkadot', 'Kusama', 'Westend'].includes(chainId)) {
-    const { api } = await ApiUtils.getApiInstance(chainId);
-    await setNominationPoolDataForAccount(api, account, chainId);
-  }
+export const fetchNominationPoolDataForAccount = async (account: Account) => {
+  await setNominationPoolDataForAccount(account);
 };
 
 /**
@@ -168,15 +168,18 @@ export const fetchNominationPoolDataForAccount = async (
  * @summary Utility that uses an API instance to get and update an account's nomination
  * pool data.
  */
-const setNominationPoolDataForAccount = async (
-  api: ApiPromise,
-  account: Account,
-  chainId: ChainID
-) => {
+const setNominationPoolDataForAccount = async (account: Account) => {
+  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+    return;
+  }
+
+  const origin = 'setNominationPoolDataForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
   const result: AnyJson = (
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
 
+  // Return early if account is not currently in a nomination pool.
   if (result === null) {
     return;
   }
@@ -186,13 +189,10 @@ const setNominationPoolDataForAccount = async (
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
   // Get pending rewards for the account.
-  const pendingRewardsResult = await api.call.nominationPoolsApi.pendingRewards(
-    account.address
-  );
-
-  const poolPendingRewards = planckToUnit(
-    new BigNumber(pendingRewardsResult.toString()),
-    chainUnits(chainId)
+  const pendingRewardsResult: AnyJson =
+    await api.call.nominationPoolsApi.pendingRewards(account.address);
+  const poolPendingRewards = new BigNumber(
+    rmCommas(String(pendingRewardsResult))
   );
 
   // Get nomination pool data.
@@ -221,7 +221,7 @@ const setNominationPoolDataForAccount = async (
     };
 
     // Store updated account data in controller.
-    await AccountsController.set(chainId, account);
+    await AccountsController.set(account.chain, account);
   }
 };
 
@@ -264,9 +264,10 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  * @summary Get the live nonce for an address.
  */
 export const getAddressNonce = async (address: string, chainId: ChainID) => {
-  const instance = await ApiUtils.getApiInstance(chainId);
+  const origin = 'getAddressNonce';
+  const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
   const result: AnyData = await instance.api.query.system.account(address);
-  return new BigNumber(result.nonce);
+  return new BigNumber(rmCommas(String(result.nonce)));
 };
 
 /**

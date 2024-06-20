@@ -26,7 +26,7 @@ export class QueryMultiWrapper {
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
-  requiresApiInstanceForChain(chainId: ChainID) {
+  requiresApiInstanceForChain(chainId: ChainID): boolean {
     return this.subscriptions.has(chainId);
   }
 
@@ -237,16 +237,14 @@ export class QueryMultiWrapper {
    */
   async build(chainId: ChainID) {
     if (!this.subscriptions.get(chainId)) {
-      debug('🟠 queryMulti map is empty.');
+      console.log('🟠 queryMulti map is empty.');
       return;
     }
 
     // Construct the argument for new queryMulti call.
     const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
-    const instance = await ApiUtils.getApiInstance(chainId);
-
-    // Make the new call to queryMulti.
-    debug('🔷 Call to api.queryMulti.');
+    const origin = 'QueryMultiWrapper.build';
+    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
@@ -358,23 +356,11 @@ export class QueryMultiWrapper {
   }
 
   /**
-   * @name unsubOnly
-   * @summary Unsubscribe from the wrapped queryMulti but keep the cached call entries.
-   * This method is called when the app goes into offline mode.
-   */
-  unsubOnly() {
-    for (const { unsub } of this.subscriptions.values()) {
-      // TODO: Might be clearer if the entry's `unsub` field is also set to `null`.
-      unsub();
-    }
-  }
-
-  /**
    * @name setOsNotificationsFlag
    * @summary Set the enableOsNotifications for a task.
    */
   setOsNotificationsFlag(task: SubscriptionTask) {
-    const { chainId } = task;
+    const { chainId, enableOsNotifications } = task;
     const chainEntry = this.subscriptions.get(chainId);
 
     if (chainEntry) {
@@ -384,7 +370,7 @@ export class QueryMultiWrapper {
           e.task.action === task.action
             ? {
                 ...e,
-                task,
+                task: { ...e.task, enableOsNotifications },
               }
             : e
         ),
@@ -419,8 +405,9 @@ export class QueryMultiWrapper {
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
   private async buildQueryMultiArg(chainId: ChainID) {
-    const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
+    // An array of arrays. The inner array represents a single API call.
     const argument: AnyData = [];
+    const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
       return argument;
@@ -442,7 +429,7 @@ export class QueryMultiWrapper {
         const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
 
         const callArray: AnyData[] = task.actionArgs
-          ? [apiCall].concat(task.actionArgs)
+          ? [apiCall].concat([...task.actionArgs])
           : [apiCall];
 
         argument.push(callArray);
@@ -467,7 +454,7 @@ export class QueryMultiWrapper {
 
           const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
           const callArray: AnyData[] = task.actionArgs
-            ? [apiCall].concat(task.actionArgs)
+            ? [apiCall].concat([...task.actionArgs])
             : [apiCall];
 
           argument.push(callArray);
@@ -535,7 +522,7 @@ export class QueryMultiWrapper {
     console.log('debug: data index registry:');
     console.log(dataIndexRegistry);
 
-    // Get updated entries with correct dataIndex for each task and set `justBuilt` flag.
+    // Get updated entries with correct `dataIndex` for each task and set `justBuilt` flag.
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
 

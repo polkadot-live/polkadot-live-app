@@ -4,6 +4,40 @@
 import type { ChainID } from './chains';
 import type { AnyFunction, AnyData } from './misc';
 import type { FlattenedAccountData } from './accounts';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+
+/// Where `default` reads the tasks `enableOsNotifications` field.
+export type NotificationPolicy = 'default' | 'none' | 'one-shot';
+
+export interface IntervalSetting {
+  label: string;
+  ticksToWait: number;
+}
+
+export interface IntervalSubscription {
+  // Unique id for the task.
+  action: string;
+  // Number of ticks between each one-shot execution.
+  intervalSetting: IntervalSetting;
+  // Used as a countdown.
+  tickCounter: number;
+  // Task category.
+  category: string;
+  // Task's associated chain.
+  chainId: ChainID;
+  // Shown in renderer.
+  label: string;
+  // Enabled or disabled.
+  status: 'enable' | 'disable';
+  // Flag to enable or silence OS notifications.
+  enableOsNotifications: boolean;
+  // Key to retrieve help information about the task.
+  helpKey: HelpItemKey;
+  // Associated referendum id for task.
+  referendumId?: number;
+  // Flag to determine if the subscription was just build (may not be needed)
+  justBuilt?: boolean;
+}
 
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
@@ -15,7 +49,7 @@ export interface SubscriptionTask {
   // Api call representation.
   apiCallAsString: string;
   // Task category.
-  category: string;
+  category: TaskCategory;
   // Task's associated chain.
   chainId: ChainID;
   // Shown in renderer.
@@ -30,6 +64,8 @@ export interface SubscriptionTask {
   enableOsNotifications: boolean;
   // Flag to determine if the subscription was just built.
   justBuilt?: boolean;
+  // Key into help array to retrieve information about the task.
+  helpKey: HelpItemKey;
 }
 
 // String literals to limit subscription task actions.
@@ -46,6 +82,13 @@ export type TaskAction =
   | 'subscribe:account:nominating:exposure'
   | 'subscribe:account:nominating:commission';
 
+/// String literals to define task categories.
+export type TaskCategory =
+  | 'Balances'
+  | 'Nomination Pools'
+  | 'Nominating'
+  | 'Chain';
+
 // Stores an actual Polkadot JS API function, it's current
 // cached value, and associated subscription task.
 export interface ApiCallEntry {
@@ -59,7 +102,7 @@ export interface QueryMultiEntry {
   unsub: AnyFunction | null;
 }
 
-export type SubscriptionTaskType = 'chain' | 'account' | '';
+export type SubscriptionTaskType = 'account' | 'chain' | 'interval' | '';
 
 // Wraps an array of subscription tasks along with their
 // associated type (chain or account) and possible account

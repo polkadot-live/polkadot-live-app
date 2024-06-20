@@ -2,20 +2,59 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
 
-// action content wrapper
+// Child window header
+export const HeaderWrapper = styled.div`
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 5;
+  width: 100%;
+
+  background-color: var(--background-menu);
+  border-bottom: 1px solid var(--border-primary-color);
+
+  .content {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem 0.75rem;
+
+    h3,
+    h4 {
+      font-weight: 600;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    h4 {
+      display: flex;
+      align-items: center;
+      > span {
+        color: var(--text-color-primary);
+        margin-right: 0%.5rem;
+      }
+      svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        margin-right: 0.6rem;
+        path {
+          fill: var(--text-color-primary);
+        }
+      }
+    }
+  }
+`;
+
+// Action content wrapper
 export const ContentWrapper = styled.div`
   width: 100%;
-  height: auto;
-  overflow: hidden;
   position: relative;
-  padding: 1rem 1.5rem;
+  padding: 0 1.5rem;
+  background-color: var(--background-modal);
 
-  .Toastify__toast {
-    font-size: 1.2rem;
-    color: var(--text-color-primary);
-    background-color: var(--background-menu);
+  .grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
   }
 
   .svg-title {

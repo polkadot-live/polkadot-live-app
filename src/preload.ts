@@ -15,6 +15,9 @@ import type { FlattenedAccountData } from './types/accounts';
 import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
+import type { SettingAction } from './renderer/screens/Settings/types';
+
+console.log(global.location.search);
 
 // Expose Electron API to wdio tests
 const isTest = process.env.NODE_ENV === 'test';
@@ -36,8 +39,94 @@ ipcRenderer.on('port', (e: AnyJson, msg: AnyJson) => {
 
 export const API: PreloadAPI = {
   /**
+   * Extract window ID from browser window's location to enable dynamic rendering.
+   */
+  getWindowId: () => {
+    const urlString = global.location.href;
+
+    // Regular expression to match URL parameters
+    const regex = /[?&]([^=#]+)=([^&#]*)/g;
+
+    let match;
+    while ((match = regex.exec(urlString)) !== null) {
+      const paramName = match[1];
+      const paramValue = match[2];
+
+      if (paramName === 'windowId') {
+        return paramValue;
+      }
+    }
+    return '';
+  },
+
+  /**
+   * Workspaces (Developer Console)
+   */
+  fetchPersistedWorkspaces: async () =>
+    await ipcRenderer.invoke('app:workspaces:fetch'),
+
+  deleteWorkspace: (serialised: string) =>
+    ipcRenderer.send('app:workspace:delete', serialised),
+
+  launchWorkspace: (serialised: string) =>
+    ipcRenderer.send('app:workspace:launch', serialised),
+
+  /**
+   * Websocket Server
+   */
+
+  startWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:start'),
+
+  stopWebsocketServer: async () =>
+    await ipcRenderer.invoke('app:websockets:stop'),
+
+  reportWorkspace: (callback) =>
+    ipcRenderer.on('settings:workspace:receive', callback),
+
+  /**
+   * Interval subscriptions
+   */
+
+  getPersistedIntervalTasks: async () =>
+    await ipcRenderer.invoke('app:interval:tasks:get'),
+
+  clearPersistedIntervalTasks: async () =>
+    await ipcRenderer.invoke('app:interval:tasks:clear'),
+
+  persistIntervalTask: async (serialized: string) =>
+    await ipcRenderer.invoke('app:interval:task:add', serialized),
+
+  removeIntervalTask: async (serialized: string) =>
+    await ipcRenderer.invoke('app:interval:task:remove', serialized),
+
+  updateIntervalTask: async (serialized: string) =>
+    await ipcRenderer.invoke('app:interval:task:update', serialized),
+
+  /**
+   * File import and export
+   */
+
+  exportAppData: async (serialized: string) =>
+    await ipcRenderer.invoke('app:data:export', serialized),
+
+  importAppData: async () => await ipcRenderer.invoke('app:data:import'),
+
+  /**
    * New handlers
    */
+
+  toggleSetting: (action: SettingAction) =>
+    ipcRenderer.send('app:setting:toggle', action),
+
+  toggleWindowWorkspaceVisibility: () =>
+    ipcRenderer.send('app:set:workspaceVisibility'),
+
+  getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
+
+  getDockedFlag: async () => await ipcRenderer.invoke('app:docked:get'),
+
+  setDockedFlag: (flag: boolean) => ipcRenderer.send('app:docked:set', flag),
 
   initializeApp: (callback) =>
     ipcRenderer.on('renderer:app:initialize', callback),

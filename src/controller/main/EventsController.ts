@@ -3,7 +3,7 @@
 
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { pushUniqueEvent } from '@/utils/EventUtils';
+import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@w3ux/utils/types';
@@ -57,25 +57,18 @@ export class EventsController {
     event: EventCallback;
     wasPersisted: boolean;
   } {
-    if (event.uid === '') {
-      event.uid = getUid();
-    }
+    // Set event UID and persist if it's unique.
+    event.uid === '' && (event.uid = getUid());
+    const stored = EventsController.getEventsFromStore();
+    const { events, updated } = pushUniqueEvent(event, stored);
 
-    const { events, updated } = pushUniqueEvent(
-      event,
-      EventsController.getEventsFromStore()
-    );
-
-    // Persist new array to store.
+    // Persist new array to store if event was pushed.
     if (updated) {
       EventsController.persistEventsToStore(events);
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
-    return {
-      event,
-      wasPersisted: updated,
-    };
+    return { event, wasPersisted: updated };
   }
 
   /**
@@ -145,46 +138,14 @@ export class EventsController {
   /**
    * @name removeOutdatedEvents
    * @summary Remove outdated events from the store.
+   *
+   * Currently only for nomination pool rewards and nominating pending payout events.
+   * Will remove old matching events from the store.
    */
   static removeOutdatedEvents(event: EventCallback) {
-    switch (event.taskAction) {
-      case 'subscribe:account:nominationPools:rewards':
-      case 'subscribe:account:nominating:pendingPayouts': {
-        const { address, chainId } = event.who.data as EventAccountData;
-        const { taskAction } = event;
-        const all = EventsController.getEventsFromStore();
-
-        const updated = all.filter((ev) => {
-          // Keep if it's a chain event.
-          if (ev.who.origin === 'chain') {
-            return true;
-          }
-
-          // Extract target data from next event.
-          const { taskAction: nextTaskAction } = ev;
-          const { address: nextAddress, chainId: nextChainId } = ev.who
-            .data as EventAccountData;
-
-          // Remove event if its task action, address and chain id are the same.
-          if (
-            nextTaskAction === taskAction &&
-            nextAddress === address &&
-            nextChainId === chainId
-          ) {
-            return false;
-          }
-
-          // Otherwise, keep the event.
-          return true;
-        });
-
-        this.persistEventsToStore(updated);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    const all = EventsController.getEventsFromStore();
+    const { updated, events } = doRemoveOutdatedEvents(event, all);
+    updated && this.persistEventsToStore(events);
   }
 
   /**

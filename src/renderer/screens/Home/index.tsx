@@ -1,9 +1,10 @@
 // Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { useAddresses } from '@app/contexts/Addresses';
-import { useEvents } from '@app/contexts/Events';
+import { useAddresses } from '@/renderer/contexts/main/Addresses';
+import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
 import { useEffect, useState } from 'react';
@@ -11,18 +12,26 @@ import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
 import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
+import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 
 export const Home = () => {
+  // Set up port communication for the `main` renderer.
+  useMainMessagePorts();
+
   const { getAddresses } = useAddresses();
   const { addEvent, dismissEvent, markStaleEvent, removeOutdatedEvents } =
     useEvents();
 
   // Set up app initialization and online/offline switching handlers.
-  const { appLoading } = useInitIpcHandlers();
+  useInitIpcHandlers();
+
+  // Get app loading flag.
+  const { appLoading } = useBootstrapping();
 
   // Store the currently active menu tab.
   const [section, setSection] = useState<number>(0);
@@ -31,8 +40,10 @@ export const Home = () => {
     // Listen for event callbacks.
     window.myAPI.reportNewEvent(
       (_: IpcRendererEvent, eventData: EventCallback) => {
-        // Remove any outdated events in the state.
-        removeOutdatedEvents(eventData);
+        // Remove any outdated events in the state, if setting enabled.
+        if (!ConfigRenderer.keepOutdatedEvents) {
+          removeOutdatedEvents(eventData);
+        }
 
         // Add received event to state.
         addEvent({ ...eventData });
@@ -77,7 +88,7 @@ export const Home = () => {
             setSection(1);
           }}
         >
-          <span>Manage</span>
+          <span>Subscriptions</span>
         </button>
       </TabsWrapper>
 
@@ -103,7 +114,7 @@ export const Home = () => {
             {appLoading ? (
               <>
                 <IconWrapper>
-                  <IconSVG width={175} opacity={0.02} />
+                  <IconSVG width={175} opacity={0.01} />
                 </IconWrapper>
                 <div className="app-loading">
                   <div className="lds-grid">
@@ -123,7 +134,7 @@ export const Home = () => {
             ) : (
               <>
                 <IconWrapper>
-                  <IconSVG width={175} opacity={0.08} />
+                  <IconSVG width={175} opacity={0.02} />
                 </IconWrapper>
                 <Events />
               </>

@@ -7,13 +7,17 @@ import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
-import type { AccountSource } from '@/types/accounts';
 import { ImportReadOnly } from './ReadOnly';
+import { useImportMessagePorts } from '@/renderer/hooks/useImportMessagePorts';
+import type { AccountSource } from '@/types/accounts';
 
 export const Import: React.FC = () => {
+  // Set up port communication for `import` window.
+  useImportMessagePorts();
+
   const [source, setSource] = useState<AccountSource | undefined>('ledger');
 
-  // active section
+  // Active section
   const [section, setSection] = useState<number>(0);
 
   useEffect(() => {
@@ -21,6 +25,9 @@ export const Import: React.FC = () => {
       setSource(undefined);
     }
   }, [section]);
+
+  const getShowClass = (target: AccountSource) =>
+    source === target ? 'show' : 'hide';
 
   return (
     <ModalSection type="carousel">
@@ -58,15 +65,15 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          {source === 'ledger' && (
+          <div className={getShowClass('ledger')}>
             <ImportLedger section={section} setSection={setSection} />
-          )}
-          {source === 'vault' && (
+          </div>
+          <div className={getShowClass('vault')}>
             <ImportVault section={section} setSection={setSection} />
-          )}
-          {source === 'read-only' && (
+          </div>
+          <div className={getShowClass('read-only')}>
             <ImportReadOnly section={section} setSection={setSection} />
-          )}
+          </div>
         </div>
       </ModalMotionTwoSection>
     </ModalSection>

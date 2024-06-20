@@ -3,6 +3,7 @@
 
 import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
+import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
@@ -14,6 +15,7 @@ import type {
 } from '@/types/ledger';
 import type { LedgerLocalAddress } from '@/types/accounts';
 import type { IpcRendererEvent } from 'electron';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
@@ -28,16 +30,10 @@ export const ImportLedger = ({
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
 
-  // Store addresses retreived from Ledger device. Defaults to addresses saved in local storage.
-  const [addresses, setAddresses] = useState<LedgerLocalAddress[]>(() => {
-    const key = ConfigImport.getStorageKey('ledger');
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LedgerLocalAddress[] =
-      fetched !== null ? JSON.parse(fetched) : [];
-    return parsed;
-  });
-
-  //const addressesRef = useRef(addresses);
+  // Status entry is added for a newly imported account.
+  const { insertAccountStatus } = useAccountStatuses();
+  const { ledgerAddresses: addresses, setLedgerAddresses: setAddresses } =
+    useAddresses();
 
   // Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
@@ -110,8 +106,10 @@ export const ImportLedger = ({
       localStorage.setItem(storageKey, JSON.stringify(newAddresses));
       setStateWithRef(false, setIsImporting, isImportingRef);
       setAddresses(newAddresses);
-      //setStateWithRef(newAddresses, setAddresses, addressesRef);
       setStateWithRef([], setStatusCodes, statusCodesRef);
+
+      // Insert account status entry.
+      insertAccountStatus(address, 'ledger');
 
       // Stop polling ledger device.
       intervalRef.current && clearInterval(intervalRef.current);
@@ -164,7 +162,6 @@ export const ImportLedger = ({
   ) : (
     <Manage
       addresses={addresses}
-      setAddresses={setAddresses}
       isImporting={isImporting}
       toggleImport={toggleImport}
       statusCodes={statusCodes}

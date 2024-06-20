@@ -25,3 +25,4 @@ CHANGELOG.md
 CODEOWNERS
 .yarn
 .licenserc.json
+.env.yarn

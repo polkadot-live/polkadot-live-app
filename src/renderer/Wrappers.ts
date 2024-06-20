@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 // The outer-most component wrapping the app.
 export const MainInterfaceWrapper = styled.div`
@@ -16,13 +17,22 @@ export const MainInterfaceWrapper = styled.div`
   position: relative;
   height: 100vh;
   width: 100%;
+
+  .Toastify__toast {
+    font-size: 1.1rem;
+    color: var(--text-color-primary);
+    background-color: var(--background-modal);
+    border: 1px solid var(--border-mid-color);
+    border-radius: 1rem;
+    margin: 0.5rem;
+  }
 `;
 
 // A component that consumes the height of the window, can sit in-between the header and footer.
 export const BodyInterfaceWrapper = styled.div<{
   $maxHeight?: boolean;
 }>`
-  max-height: ${(props) => (props.$maxHeight ? '100vh' : 'auto')};
+  max-height: ${(props) => (props.$maxHeight ? 'calc(100vh - 4rem)' : 'auto')};
   width: 100%;
   max-width: 100%;
   flex: 1;
