@@ -53,13 +53,6 @@ export class WebsocketsController {
     }
 
     this._io.on('connection', async (socket) => {
-      // Handle message received from socket.
-      socket.on('message', async (message: string) => {
-        console.log(`received message: ${message}`);
-        // Send message back to client.
-        socket.send(`Hello, you sent -> ${message}`);
-      });
-
       /// Receive workspace and send to settings window to process.
       socket.on('workspace', async (serialised: string) => {
         try {
@@ -98,7 +91,14 @@ export class WebsocketsController {
         }
       });
 
-      // Immediately send feedback to incoming connection.
+      /// Test handler: Message received from socket.
+      socket.on('message', async (message: string) => {
+        console.log(`received message: ${message}`);
+        // Send message back to client.
+        socket.send(`Hello, you sent -> ${message}`);
+      });
+
+      /// Test handler: Immediately send feedback to incoming connection.
       socket.send(`Hello from Websocket Server on port ${this._port}`);
     });
   }
