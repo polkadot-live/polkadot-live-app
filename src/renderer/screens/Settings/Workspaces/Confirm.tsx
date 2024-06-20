@@ -5,8 +5,9 @@ import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { ConfirmWrapper } from '../Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
+import { Flip, toast } from 'react-toastify';
+import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 interface ConfirmProps {
   workspace: WorkspaceItem;
@@ -18,6 +19,21 @@ export const Confirm = ({ workspace }: ConfirmProps) => {
 
   const handleClickConfirm = () => {
     removeWorkspace(workspace);
+
+    toast.success('Workspace deleted successfully.', {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: false,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId: `workspace-deleted-${workspace.index}`,
+    });
+
     setStatus(0);
   };
 
