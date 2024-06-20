@@ -9,12 +9,7 @@ import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faPlug } from '@fortawesome/pro-light-svg-icons';
 import { faPlugCircleXmark } from '@fortawesome/pro-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
-
-interface WorkspaceItem {
-  label: string;
-  createdAt: string;
-  index: number;
-}
+import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 const workspacesSample: WorkspaceItem[] = [
   {
