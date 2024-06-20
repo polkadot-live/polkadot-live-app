@@ -49,7 +49,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
             {wrapWithTooltip(
               <SortControlButton
                 isActive={true}
-                isDisabled={!isListening}
+                isDisabled={!isListening || true} // enable when developer console integrated
                 faIcon={faLinkSimple}
                 onClick={() => handleLaunch()}
                 fixedWidth={false}
