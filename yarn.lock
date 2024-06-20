@@ -2219,6 +2219,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@substrate/connect-discovery@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@substrate/connect-discovery@npm:0.0.6"
+  dependencies:
+    "@substrate/discovery": "npm:^0.0.1"
+  checksum: 0ddcc1846472b171344a1a4f77ef607c068d434241a484bcfad5a3e3c781777f27dba50b31b8161f8279c323904510fc76d28f556af9eb2d7a84fb4247e13834
+  languageName: node
+  linkType: hard
+
 "@substrate/connect-extension-protocol@npm:^2.0.0":
   version: 2.0.0
   resolution: "@substrate/connect-extension-protocol@npm:2.0.0"
@@ -2233,7 +2242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect-known-chains@npm:^1.1.4":
+"@substrate/connect-known-chains@npm:^1.1.4, @substrate/connect-known-chains@npm:^1.1.6":
   version: 1.1.6
   resolution: "@substrate/connect-known-chains@npm:1.1.6"
   checksum: 1457106ed701d731eefe9214f4b23c23c8b60d642617c7de87b71a3fb2593b110a03c2df452ba76a40427af610d1444aeb6895fe20327ad9ee0a239310a8829a
@@ -2252,7 +2261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect@npm:0.8.7, @substrate/connect@npm:^0.8.7":
+"@substrate/connect@npm:0.8.7":
   version: 0.8.7
   resolution: "@substrate/connect@npm:0.8.7"
   dependencies:
@@ -2261,6 +2270,26 @@ __metadata:
     "@substrate/light-client-extension-helpers": "npm:^0.0.3"
     smoldot: "npm:2.0.21"
   checksum: 351e23f83e173157cbe3d89fd62d3ad353d0392a6a4e25d561ab3990db450adfbe8dffddf1359ec7e9f37059782e40b322e0e3e6b51e5e70a79cb76e7d189d66
+  languageName: node
+  linkType: hard
+
+"@substrate/connect@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@substrate/connect@npm:1.0.2"
+  dependencies:
+    "@substrate/connect-discovery": "npm:^0.0.6"
+    "@substrate/connect-extension-protocol": "npm:^2.0.0"
+    "@substrate/connect-known-chains": "npm:^1.1.6"
+    "@substrate/smoldot-discovery": "npm:^0.0.6"
+    smoldot: "npm:2.0.29"
+  checksum: 5fe2891f75e8821a88e60e48cd907e3cc598f614056479093f7457792289f3dbafb07ed84862afb51ee60c3356ad2940b2e49b7f8381e9839f396f0aa0ee6fdc
+  languageName: node
+  linkType: hard
+
+"@substrate/discovery@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@substrate/discovery@npm:0.0.1"
+  checksum: c5ed807322e5dc1901c3f86aa9b1a2a1794fb845637be66ae54da306a8bf66cedfcd460c36aa424efbaaa750b526e5cc082b45facfcf4524a0828dbb82681309
   languageName: node
   linkType: hard
 
@@ -2295,6 +2324,15 @@ __metadata:
   peerDependencies:
     smoldot: 2.x
   checksum: b48083b64c359a2dcec4268f189e0edc6ff4af14a8e534933bcd03a96fe341d0849d979b7e181d857f895951ebf5d90df53b06c67b005581f5d09f2bd67e2d27
+  languageName: node
+  linkType: hard
+
+"@substrate/smoldot-discovery@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@substrate/smoldot-discovery@npm:0.0.6"
+  dependencies:
+    "@substrate/discovery": "npm:^0.0.1"
+  checksum: 743f9352ec6016e54e91c1a8ea6a7b3efd8e69ac196c067890100a0584eee89acb6a847c7ca1a6545a2346b86f86e025093ec52a2e89be5ff0d48c2e26d27990
   languageName: node
   linkType: hard
 
@@ -10136,7 +10174,7 @@ __metadata:
     "@polkadot/types-codec": "npm:^11.3.1"
     "@polkadot/util": "npm:^12.6.2"
     "@polkadot/util-crypto": "npm:^12.6.2"
-    "@substrate/connect": "npm:^0.8.7"
+    "@substrate/connect": "npm:^1.0.2"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"
     "@types/electron-localshortcut": "npm:^3.1.0"
@@ -11512,6 +11550,15 @@ __metadata:
   dependencies:
     ws: "npm:^8.8.1"
   checksum: fa439bebfe0d0d46e4da342a313d0653fd56557b6459b5ba3db1fd6bcfb345e9d9577c27e1f6692e67dec0206addb95de6b594c17041729f5689b4b123974495
+  languageName: node
+  linkType: hard
+
+"smoldot@npm:2.0.29":
+  version: 2.0.29
+  resolution: "smoldot@npm:2.0.29"
+  dependencies:
+    ws: "npm:^8.8.1"
+  checksum: 9b807cfd4cc35a47c646cf330edf5efa1a3296cd06d7e3fe5385764b7b4f7c4d7821274dd529a01d364880d499b0a9f835f49b30d74d78c315ecb7c6d85438a6
   languageName: node
   linkType: hard
 
