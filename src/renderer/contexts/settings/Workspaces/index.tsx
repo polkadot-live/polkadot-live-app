@@ -19,8 +19,23 @@ export const WorkspacesProvider = ({
 }) => {
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>([]);
 
+  /// Add a new workspace.
+  const addWorkspace = (workspace: WorkspaceItem) => {
+    setWorkspaces((prev) => {
+      const filtered = prev.filter((ws) => ws.label !== workspace.label);
+      return [...filtered, workspace];
+    });
+  };
+
+  /// Remove a workspace (identified by label).
+  const removeWorkspace = (workspace: WorkspaceItem) => {
+    setWorkspaces((prev) => prev.filter((ws) => ws.label !== workspace.label));
+  };
+
   return (
-    <WorkspacesContext.Provider value={{ workspaces, setWorkspaces }}>
+    <WorkspacesContext.Provider
+      value={{ workspaces, setWorkspaces, addWorkspace, removeWorkspace }}
+    >
       {children}
     </WorkspacesContext.Provider>
   );

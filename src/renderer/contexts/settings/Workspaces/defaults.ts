@@ -7,4 +7,6 @@ import type { WorkspacesContextInterface } from './types';
 export const defaultWorkspacesContext: WorkspacesContextInterface = {
   workspaces: [],
   setWorkspaces: () => {},
+  addWorkspace: () => {},
+  removeWorkspace: () => {},
 };

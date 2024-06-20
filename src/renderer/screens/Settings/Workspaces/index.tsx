@@ -11,11 +11,10 @@ import { faPlugCircleXmark } from '@fortawesome/pro-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 export const Workspaces = () => {
   const { isListening, startServer, stopServer } = useWebsocketServer();
-  const { workspaces, setWorkspaces } = useWorkspaces();
+  const { workspaces, setWorkspaces, addWorkspace } = useWorkspaces();
 
   /// Fetch workspaces from store when component loads.
   useEffect(() => {
@@ -38,12 +37,13 @@ export const Workspaces = () => {
 
   /// Handle receiving a workspace from the main process.
   window.myAPI.reportWorkspace((_, serialised) => {
-    const workspace: WorkspaceItem = JSON.parse(serialised);
-    console.log(workspace);
-
-    // TODO: Deserialise data
-    // TODO: Check if workspace exists and update if necessary
-    // TODO: Persist workspace to state + store if new
+    try {
+      addWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
   });
 
   return (
