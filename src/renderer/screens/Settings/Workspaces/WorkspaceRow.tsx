@@ -11,6 +11,7 @@ import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 import type { WorkspaceRowProps } from '../types';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { Confirm } from './Confirm';
+import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
   const { createdAt, index, label } = workspace;
@@ -18,6 +19,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
   const { wrapWithTooltip } = useTooltip();
   const { openOverlayWith } = useOverlay();
   const { launchWorkspace } = useWorkspaces();
+  const { isListening } = useWebsocketServer();
 
   /// Handle delete button click.
   const handleDelete = () =>
@@ -47,7 +49,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
             {wrapWithTooltip(
               <SortControlButton
                 isActive={true}
-                isDisabled={false}
+                isDisabled={!isListening}
                 faIcon={faLinkSimple}
                 onClick={() => handleLaunch()}
                 fixedWidth={false}
