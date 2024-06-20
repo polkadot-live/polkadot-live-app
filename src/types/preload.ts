@@ -12,8 +12,11 @@ import type {
   PersistedSettings,
   SettingAction,
 } from '@/renderer/screens/Settings/types';
+import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
+  fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
+
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;
   reportWorkspace: (

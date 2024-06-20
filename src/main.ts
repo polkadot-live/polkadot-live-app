@@ -21,6 +21,7 @@ import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
@@ -40,7 +41,7 @@ import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
-import { WebsocketsController } from './controller/main/WebsocketsController';
+import type { WorkspaceItem } from './types/developerConsole/workspaces';
 
 const debug = MainDebug;
 
@@ -463,6 +464,34 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:websockets:stop', async () => {
     WebsocketsController.stopServer();
     return true;
+  });
+
+  /**
+   * Workspaces
+   */
+
+  // Handle fetching workspaces from Electron store.
+  ipcMain.handle('app:workspaces:fetch', async () => {
+    // TODO: Fetch workspaces from store.
+    const workspacesSample: WorkspaceItem[] = [
+      {
+        label: 'Workspace Label 1',
+        createdAt: '06/18/2024',
+        index: 1,
+      },
+      {
+        label: 'Workspace Label 2',
+        createdAt: '06/14/2024',
+        index: 2,
+      },
+      {
+        label: 'Workspace Label 3',
+        createdAt: '06/10/2024',
+        index: 3,
+      },
+    ];
+
+    return workspacesSample;
   });
 
   /**

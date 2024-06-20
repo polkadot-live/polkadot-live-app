@@ -60,6 +60,12 @@ export const API: PreloadAPI = {
   },
 
   /**
+   * Workspaces (Developer Console)
+   */
+  fetchPersistedWorkspaces: async () =>
+    await ipcRenderer.invoke('app:workspaces:fetch'),
+
+  /**
    * Websocket Server
    */
 

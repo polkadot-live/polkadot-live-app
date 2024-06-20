@@ -9,29 +9,24 @@ import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faPlug } from '@fortawesome/pro-light-svg-icons';
 import { faPlugCircleXmark } from '@fortawesome/pro-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
-
-const workspacesSample: WorkspaceItem[] = [
-  {
-    label: 'Workspace Label 1',
-    createdAt: '06/18/2024',
-    index: 1,
-  },
-  {
-    label: 'Workspace Label 2',
-    createdAt: '06/14/2024',
-    index: 2,
-  },
-  {
-    label: 'Workspace Label 3',
-    createdAt: '06/10/2024',
-    index: 3,
-  },
-];
+import { useEffect } from 'react';
+import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 
 export const Workspaces = () => {
   const { isListening, startServer, stopServer } = useWebsocketServer();
+  const { workspaces, setWorkspaces } = useWorkspaces();
 
+  /// Fetch workspaces from store when component loads.
+  useEffect(() => {
+    const fetchWorkspaces = async () => {
+      const result = await window.myAPI.fetchPersistedWorkspaces();
+      console.log(result);
+      setWorkspaces(result);
+    };
+    fetchWorkspaces();
+  }, []);
+
+  /// Handle connect button click.
   const handleConnectButtonClick = async () => {
     if (isListening) {
       await stopServer();
@@ -83,7 +78,7 @@ export const Workspaces = () => {
           </ControlsWrapper>
 
           <WorkspacesContainer>
-            {workspacesSample.map(({ createdAt, label, index }) => (
+            {workspaces.map(({ createdAt, label, index }) => (
               <WorkspaceRow
                 key={`${index}_${label}`}
                 label={label}
