@@ -27,6 +27,7 @@ import { DeleteHandlerProvider } from './contexts/import/DeleteHandler';
 // Settings window contexts.
 import { SettingFlagsProvider } from './contexts/settings/SettingFlags';
 import { WebsocketServerProvider } from './contexts/settings/WebsocketServer';
+import { WorkspacesProvider } from './contexts/settings/Workspaces';
 
 // Actions window contexts.
 import { TxMetaProvider } from '@/renderer/contexts/action/TxMeta';
@@ -82,7 +83,8 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         TooltipProvider,
         SettingFlagsProvider,
-        WebsocketServerProvider
+        WebsocketServerProvider,
+        WorkspacesProvider
       )(Theme);
     }
     case 'action': {
