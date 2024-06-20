@@ -23,6 +23,7 @@ import { NotificationsController } from './controller/main/NotificationsControll
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
+import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -41,7 +42,6 @@ import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
-import type { WorkspaceItem } from './types/developerConsole/workspaces';
 
 const debug = MainDebug;
 
@@ -471,28 +471,9 @@ app.whenReady().then(async () => {
    */
 
   // Handle fetching workspaces from Electron store.
-  ipcMain.handle('app:workspaces:fetch', async () => {
-    // TODO: Fetch workspaces from store.
-    const workspacesSample: WorkspaceItem[] = [
-      {
-        label: 'Workspace Label 1',
-        createdAt: '06/18/2024',
-        index: 1,
-      },
-      {
-        label: 'Workspace Label 2',
-        createdAt: '06/14/2024',
-        index: 2,
-      },
-      {
-        label: 'Workspace Label 3',
-        createdAt: '06/10/2024',
-        index: 3,
-      },
-    ];
-
-    return workspacesSample;
-  });
+  ipcMain.handle('app:workspaces:fetch', async () =>
+    WorkspacesController.fetchPersistedWorkspaces()
+  );
 
   /**
    * Window management

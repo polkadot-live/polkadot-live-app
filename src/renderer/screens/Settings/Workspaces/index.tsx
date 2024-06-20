@@ -78,14 +78,22 @@ export const Workspaces = () => {
           </ControlsWrapper>
 
           <WorkspacesContainer>
-            {workspaces.map(({ createdAt, label, index }) => (
-              <WorkspaceRow
-                key={`${index}_${label}`}
-                label={label}
-                index={index}
-                createdAt={createdAt}
-              />
-            ))}
+            {workspaces.length ? (
+              <>
+                {workspaces.map(({ createdAt, label, index }) => (
+                  <WorkspaceRow
+                    key={`${index}_${label}`}
+                    label={label}
+                    index={index}
+                    createdAt={createdAt}
+                  />
+                ))}
+              </>
+            ) : (
+              <div style={{ padding: '0 1.5rem' }}>
+                <p>No workspaces.</p>
+              </div>
+            )}
           </WorkspacesContainer>
         </>
       </AccordionPanel>
