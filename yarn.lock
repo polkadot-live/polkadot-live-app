@@ -1601,7 +1601,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/types-codec@npm:10.11.3, @polkadot/types-codec@npm:^10.11.2":
+"@polkadot/types-codec@npm:10.11.3":
   version: 10.11.3
   resolution: "@polkadot/types-codec@npm:10.11.3"
   dependencies:
@@ -1609,6 +1609,17 @@ __metadata:
     "@polkadot/x-bigint": "npm:^12.6.2"
     tslib: "npm:^2.6.2"
   checksum: f0cf3adb28fdc7cee19af0748431516434a386926117a0bda5fea8eddf5b6b92576abe728ff8cf00162b67d55743c5d090e21ba80147894cace8a8dc5a96ef4a
+  languageName: node
+  linkType: hard
+
+"@polkadot/types-codec@npm:^10.13.1":
+  version: 10.13.1
+  resolution: "@polkadot/types-codec@npm:10.13.1"
+  dependencies:
+    "@polkadot/util": "npm:^12.6.2"
+    "@polkadot/x-bigint": "npm:^12.6.2"
+    tslib: "npm:^2.6.2"
+  checksum: 8a35c492006502804a5531231c14037ab98a13f345f4e550142254e69d62d451f0caa89347ac689b92f90b582fe6ab2f1c8eca30cdf327951323b6400fca2e50
   languageName: node
   linkType: hard
 
@@ -9837,7 +9848,7 @@ __metadata:
     "@polkadot/api": "npm:^10.11.2"
     "@polkadot/rpc-provider": "npm:^10.11.2"
     "@polkadot/types": "npm:^10.11.2"
-    "@polkadot/types-codec": "npm:^10.11.2"
+    "@polkadot/types-codec": "npm:^10.13.1"
     "@polkadot/util": "npm:^12.6.2"
     "@polkadot/util-crypto": "npm:^12.6.2"
     "@substrate/connect": "npm:^0.8.7"
