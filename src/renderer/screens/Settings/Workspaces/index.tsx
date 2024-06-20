@@ -35,13 +35,13 @@ const workspacesSample: WorkspaceItem[] = [
 ];
 
 export const Workspaces = () => {
-  const { isListening, startListening, stopListening } = useWebsocketServer();
+  const { isListening, startServer, stopServer } = useWebsocketServer();
 
-  const handleClickConnectButton = async () => {
+  const handleConnectButtonClick = async () => {
     if (isListening) {
-      await stopListening();
+      await stopServer();
     } else {
-      await startListening();
+      await startServer();
     }
   };
 
@@ -75,7 +75,7 @@ export const Workspaces = () => {
               offLabel="Disconnect"
               faIcon={isListening ? faPlugCircleXmark : faPlug}
               fixedWidth={false}
-              onClick={async () => await handleClickConnectButton()}
+              onClick={async () => await handleConnectButtonClick()}
             />
             <span
               style={{
