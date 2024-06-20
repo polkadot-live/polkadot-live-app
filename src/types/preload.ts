@@ -16,6 +16,7 @@ import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
+  deleteWorkspace: (serialised: string) => void;
 
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;

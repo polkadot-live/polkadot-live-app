@@ -81,12 +81,10 @@ export const Workspaces = () => {
           <WorkspacesContainer>
             {workspaces.length ? (
               <>
-                {workspaces.map(({ createdAt, label, index }) => (
+                {workspaces.map((workspace) => (
                   <WorkspaceRow
-                    key={`${index}_${label}`}
-                    label={label}
-                    index={index}
-                    createdAt={createdAt}
+                    key={`${workspace.index}_${workspace.label}`}
+                    workspace={workspace}
                   />
                 ))}
               </>

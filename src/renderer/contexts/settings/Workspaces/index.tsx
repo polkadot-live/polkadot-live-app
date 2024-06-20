@@ -29,6 +29,7 @@ export const WorkspacesProvider = ({
 
   /// Remove a workspace (identified by label).
   const removeWorkspace = (workspace: WorkspaceItem) => {
+    window.myAPI.deleteWorkspace(JSON.stringify(workspace));
     setWorkspaces((prev) => prev.filter((ws) => ws.label !== workspace.label));
   };
 

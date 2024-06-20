@@ -475,6 +475,17 @@ app.whenReady().then(async () => {
     WorkspacesController.fetchPersistedWorkspaces()
   );
 
+  // Handle deleting a workspace from Electron store.
+  ipcMain.on('app:workspace:delete', (_, serialised: string) => {
+    try {
+      WorkspacesController.removeWorkspace(JSON.parse(serialised));
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        console.error(error.message);
+      }
+    }
+  });
+
   /**
    * Window management
    */
