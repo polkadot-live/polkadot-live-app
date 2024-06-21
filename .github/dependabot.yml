@@ -44,9 +44,20 @@ updates:
         - "major"
         - "minor"
         - "patch"
+      # Group w3ux package updates.
+      w3ux:
+        applies-to: version-updates
+        dependency-type: "production"
+        patterns:
+        - "@w3ux*"
+        update-types:
+        - "major"
+        - "minor"
+        - "patch"
     ignore:
       # Ignore all WDIO updates.
       - dependency-name: "wdio*"
+      - dependency-name: "expect-webdriverio"
 
   - package-ecosystem: github-actions
     directory: '/'
