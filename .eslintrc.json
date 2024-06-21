@@ -86,7 +86,7 @@
     ],
     // Typescript
     // ----------
-    "@typescript-eslint/no-shadow": ["error"],
+    "@typescript-eslint/no-shadow": "error",
     "@typescript-eslint/consistent-type-imports": [
       "error",
       {
