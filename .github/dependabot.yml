@@ -44,6 +44,9 @@ updates:
         - "major"
         - "minor"
         - "patch"
+    ignore:
+      # Ignore all WDIO updates.
+      - dependency-name: "wdio*"
 
   - package-ecosystem: github-actions
     directory: '/'
