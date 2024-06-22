@@ -26,7 +26,7 @@ export const Settings: React.FC = () => {
   /// Active accordion indices for settings panels.
   // TEMP: Show workspaces item.
   const [accordionActiveIndices, setAccordionActiveIndices] =
-    useState<number>(3);
+    useState<number>(0);
 
   /// Return a map of settings organised by their category.
   const getSortedSettings = () => {
