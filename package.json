@@ -5,8 +5,8 @@
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "main": ".vite/build/main.js",
   "contributors": [
-    "Ross Bulat<ross@parity.io>",
-    "Dane Bulat<danebulat@gmail.com>"
+    "Dane Bulat<dane.bulat@gmail.com>",
+    "Ross Bulat<ross@parity.io>"
   ],
   "scripts": {
     "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
@@ -22,8 +22,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "Ross Bulat",
-    "email": "ross@parity.io"
+    "name": "Dane Bulat",
+    "email": "dane.bulat@gmail.com"
   },
   "license": "GPL-3.0-only",
   "devDependencies": {

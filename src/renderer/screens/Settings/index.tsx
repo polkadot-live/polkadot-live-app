@@ -1,4 +1,4 @@
-// Copyright 2024 @rossbulat/polkadot-live-app authors & contributors
+// Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
@@ -26,7 +26,7 @@ export const Settings: React.FC = () => {
   /// Active accordion indices for settings panels.
   // TEMP: Show workspaces item.
   const [accordionActiveIndices, setAccordionActiveIndices] =
-    useState<number>(3);
+    useState<number>(0);
 
   /// Return a map of settings organised by their category.
   const getSortedSettings = () => {
