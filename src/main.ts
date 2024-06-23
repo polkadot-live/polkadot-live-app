@@ -27,7 +27,7 @@ import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
-import type { AnyData } from '@/types/misc';
+import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type {
   DismissEvent,
@@ -36,7 +36,6 @@ import type {
 } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { AnyJson } from '@w3ux/utils/types';
 import type { SettingAction } from './renderer/screens/Settings/types';
 import type {
   SubscriptionTask,

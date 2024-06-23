@@ -4,7 +4,7 @@
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
 import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn } from '@app/utils/cryptoUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';

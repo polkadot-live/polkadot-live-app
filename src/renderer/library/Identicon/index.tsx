@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Polkicon } from '@w3ux/react-polkicon';
+import { Polkicon } from '@app/library/Polkicon';
 import styled from 'styled-components';
 import type { IdenticonProps } from './types';
 

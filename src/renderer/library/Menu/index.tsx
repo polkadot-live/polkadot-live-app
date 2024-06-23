@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setStateWithRef } from '@w3ux/utils';
+import { setStateWithRef } from '@app/utils/cryptoUtils';
 import { useOutsideAlerter } from '@app/library/Hooks/useOutsideAlerter';
 import { useRef, useState } from 'react';
 import { MenuWrapper } from './Wrapper';

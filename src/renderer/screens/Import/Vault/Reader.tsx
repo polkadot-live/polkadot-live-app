@@ -4,7 +4,7 @@
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn } from '@app/utils/cryptoUtils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { Config as ConfigImport } from '@/config/processes/import';

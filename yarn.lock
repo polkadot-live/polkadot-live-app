@@ -720,22 +720,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/is-prop-valid@npm:^0.8.2":
-  version: 0.8.8
-  resolution: "@emotion/is-prop-valid@npm:0.8.8"
-  dependencies:
-    "@emotion/memoize": "npm:0.7.4"
-  checksum: f6be625f067c7fa56a12a4edaf090715616dc4fc7803c87212831f38c969350107b9709b1be54100e53153b18d9fa068eb4bf4f9ac66a37a8edf1bac9b64e279
-  languageName: node
-  linkType: hard
-
-"@emotion/memoize@npm:0.7.4":
-  version: 0.7.4
-  resolution: "@emotion/memoize@npm:0.7.4"
-  checksum: b2376548fc147b43afd1ff005a80a1a025bd7eb4fb759fdb23e96e5ff290ee8ba16628a332848d600fb91c3cdc319eee5395fa33d8875e5d5a8c4ce18cddc18e
-  languageName: node
-  linkType: hard
-
 "@emotion/memoize@npm:^0.8.1":
   version: 0.8.1
   resolution: "@emotion/memoize@npm:0.8.1"
@@ -3106,35 +3090,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/react-polkicon@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@w3ux/react-polkicon@npm:0.0.2"
-  dependencies:
-    "@polkadot/util": "npm:^12.6.2"
-    "@w3ux/utils": "npm:0.0.1"
-    framer-motion: "npm:^11.0.6"
-  checksum: f1566d84f9991a64bd97aabec1475a876c86017070590bf111779c6f2baa1194818d6162416758368a8902cbeb4c8da7ca8998a0a8251d161a79f75a77b952cc
-  languageName: node
-  linkType: hard
-
-"@w3ux/utils@npm:0.0.1":
-  version: 0.0.1
-  resolution: "@w3ux/utils@npm:0.0.1"
-  checksum: a14823f3f0e3776a472ccaf6838745af077191fe3a004ceea3936c4d5767189de96eba9752b9cf8eb56a1aa24e38c6a05f673748a955671be761cb713108b8c4
-  languageName: node
-  linkType: hard
-
-"@w3ux/utils@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@w3ux/utils@npm:0.0.2"
-  dependencies:
-    "@polkadot/keyring": "npm:^12.6.2"
-    "@polkadot/util": "npm:^12.6.2"
-    bignumber.js: "npm:^9.1.1"
-  checksum: 33ce48775fd806313363d029c11c34dbe269d2f93aa64e2bc0229ce26383277d6bc0d8e2452b4df2e31d87a41020289a8cf4bd6f3efc4b089387247455b3426d
-  languageName: node
-  linkType: hard
-
 "@wdio/cli@npm:8.32.3":
   version: 8.32.3
   resolution: "@wdio/cli@npm:8.32.3"
@@ -4004,7 +3959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^9.1.1, bignumber.js@npm:^9.1.2":
+"bignumber.js@npm:^9.1.2":
   version: 9.1.2
   resolution: "bignumber.js@npm:9.1.2"
   checksum: e17786545433f3110b868725c449fa9625366a6e675cd70eb39b60938d6adbd0158cb4b3ad4f306ce817165d37e63f4aa3098ba4110db1d9a3b9f66abfbaf10d
@@ -6899,27 +6854,6 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: 9b67c3fac86acdbc9ae47ba1ddd5f2f81526fa4c8226863ede5600a3f7c7416ef451f6f1e240a3cc32d0fd79fcfe6beb08fd0da454f360032bde70bf80afbb33
-  languageName: node
-  linkType: hard
-
-"framer-motion@npm:^11.0.6":
-  version: 11.0.8
-  resolution: "framer-motion@npm:11.0.8"
-  dependencies:
-    "@emotion/is-prop-valid": "npm:^0.8.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 098776e277b1707116c511f62261ed421381071258a6174c51bf1cdbb7ed436b5789fa114144426253d1719e6426d51e3f1812a9cbc1ca773361b63aacda8056
   languageName: node
   linkType: hard
 
@@ -10361,8 +10295,6 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.7.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@w3ux/extension-assets": "npm:^0.2.6"
-    "@w3ux/react-polkicon": "npm:^0.0.2"
-    "@w3ux/utils": "npm:^0.0.2"
     "@wdio/cli": "npm:8.32.3"
     "@wdio/dot-reporter": "npm:^8.32.2"
     "@wdio/globals": "npm:^8.32.3"

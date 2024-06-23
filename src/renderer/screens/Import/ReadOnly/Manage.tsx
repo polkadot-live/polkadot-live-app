@@ -12,7 +12,7 @@ import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert
 import { checkAddress } from '@polkadot/util-crypto';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
-import { ellipsisFn, unescape } from '@w3ux/utils';
+import { ellipsisFn, unescape } from '@app/utils/cryptoUtils';
 import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';

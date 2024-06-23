@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
-import { appendOr, appendOrEmpty } from '@w3ux/utils';
+import { appendOr, appendOrEmpty } from '@app/utils/cryptoUtils';
 import { onMouseHandlers } from '../Utils';
 
 export type ButtonMonoProps = ComponentBaseWithClassName &

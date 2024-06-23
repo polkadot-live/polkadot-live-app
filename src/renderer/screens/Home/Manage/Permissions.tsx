@@ -10,6 +10,7 @@ import {
 } from '@/renderer/library/Accordion';
 import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
+import { ellipsisFn } from '@app/utils/cryptoUtils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
@@ -35,7 +36,7 @@ import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type { AnyFunction } from '@w3ux/utils/types';
+import type { AnyFunction } from '@/types/misc';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
@@ -43,7 +44,6 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import { ellipsisFn } from '@w3ux/utils';
 
 export const Permissions = ({
   breadcrumb,

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn } from '@app/utils/cryptoUtils';
 import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,

@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { getApiInstance } from '@/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
-import { rmCommas } from '@w3ux/utils';
+import { rmCommas } from '@app/utils/cryptoUtils';
 import { EventsController } from '@/controller/renderer/EventsController';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';

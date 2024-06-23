@@ -16,7 +16,7 @@ import {
 } from '@/utils/AccountUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
-import { planckToUnit, rmCommas } from '@w3ux/utils';
+import { planckToUnit, rmCommas } from '@app/utils/cryptoUtils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 

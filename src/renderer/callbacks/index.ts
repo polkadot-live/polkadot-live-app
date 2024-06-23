@@ -13,13 +13,13 @@ import {
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
+import { rmCommas } from '@app/utils/cryptoUtils';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import type { AccountBalance, ValidatorData } from '@/types/accounts';
-import { rmCommas } from '@w3ux/utils';
 
 export class Callbacks {
   /**

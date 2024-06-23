@@ -5,7 +5,7 @@ import { faPenToSquare, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ReactElement } from 'react';
 import { Wrapper } from './Wrapper';
-import { appendOrEmpty } from '@w3ux/utils';
+import { appendOrEmpty } from '@app/utils/cryptoUtils';
 
 export type DisplayFor = 'default' | 'modal' | 'canvas';
 

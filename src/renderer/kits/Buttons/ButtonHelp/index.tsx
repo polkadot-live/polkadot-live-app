@@ -3,7 +3,7 @@
 
 import InfoSVG from '../svg/help.svg?react';
 import type { ButtonCommonProps } from '../types';
-import { appendOrEmpty } from '@w3ux/utils';
+import { appendOrEmpty } from '@app/utils/cryptoUtils';
 import { onMouseHandlers } from '../Utils';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 

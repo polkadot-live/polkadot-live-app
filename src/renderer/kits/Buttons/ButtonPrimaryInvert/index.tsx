@@ -4,7 +4,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
-import { appendOr, appendOrEmpty } from '@w3ux/utils';
+import { appendOr, appendOrEmpty } from '@app/utils/cryptoUtils';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonPrimaryInvertProps = ComponentBaseWithClassName &

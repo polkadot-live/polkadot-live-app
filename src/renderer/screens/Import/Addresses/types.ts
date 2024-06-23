@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from '@/types/accounts';
-import type { AnyFunction } from '@w3ux/utils/types';
+import type { AnyFunction } from '@/types/misc';
 
 export interface AddressProps {
   accountName: string;
