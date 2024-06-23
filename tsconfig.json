@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
     "baseUrl": ".",
     "checkJs": false,
-    "target": "ES6",
     "strict": true,
     "allowJs": true,
     "jsx": "react-jsx",
@@ -21,6 +22,16 @@
     },
     "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
   },
-  "include": ["src", "test", "wdio.conf.ts"],
+  "include": [
+    "src",
+    "src/**/*.ts",
+    "test",
+    "wdio.conf.ts",
+    "forge.env.d.ts",
+    "vite.base.config.ts",
+    "vite.main.config.ts",
+    "vite.preload.config.ts",
+    "vite.renderer.config.ts",
+  ],
   "exclude": ["node_modules", ".vite/**/*", "out/**/*"]
 }
