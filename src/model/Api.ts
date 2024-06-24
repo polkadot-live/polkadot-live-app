@@ -5,7 +5,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
-import { rmCommas } from '@app/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import type { AnyJson } from '@/types/misc';
 import type { APIConstants } from '@/types/chains/polkadot';
 import type { Codec } from '@polkadot/types-codec/types';

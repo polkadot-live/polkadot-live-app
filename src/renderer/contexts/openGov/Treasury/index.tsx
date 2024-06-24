@@ -6,7 +6,7 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
-import { rmCommas } from '@app/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { chainCurrency } from '@/config/chains';
 import type { AnyData } from '@/types/misc';

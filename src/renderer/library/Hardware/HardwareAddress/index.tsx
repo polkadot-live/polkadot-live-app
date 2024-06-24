@@ -5,7 +5,7 @@ import { faMinusLarge, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
 import { chainIcon } from '@/config/chains';
-import { unescape } from '@app/utils/cryptoUtils';
+import { unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/Identicon';
 import { useState } from 'react';

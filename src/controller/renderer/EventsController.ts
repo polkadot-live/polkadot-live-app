@@ -17,7 +17,7 @@ import {
   getPendingRewardsText,
 } from '@/utils/EventUtils';
 import { getUnixTime } from 'date-fns';
-import { planckToUnit } from '@app/utils/cryptoUtils';
+import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@/types/tx';
 import type { AnyData } from '@/types/misc';
 import type { IntervalSubscription, ApiCallEntry } from '@/types/subscriptions';

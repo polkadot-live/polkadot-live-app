@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
-import { appendOrEmpty } from '@app/utils/cryptoUtils';
+import { appendOrEmpty } from '@w3ux/utils';
 
 export type ButtonMonoProps = ComponentBaseWithClassName &
   ButtonIconProps &

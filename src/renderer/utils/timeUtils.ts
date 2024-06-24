@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { formatDuration } from 'date-fns';
-import { rmCommas } from '@app/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import type { ChainID } from '@/types/chains';
 
 /**

@@ -7,7 +7,7 @@ import { chainCurrency, chainIcon } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@app/library/DragClose';
-import { ellipsisFn } from '@app/utils/cryptoUtils';
+import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';

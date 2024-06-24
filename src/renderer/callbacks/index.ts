@@ -13,7 +13,7 @@ import {
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
-import { rmCommas } from '@app/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import * as ApiUtils from '@/utils/ApiUtils';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';

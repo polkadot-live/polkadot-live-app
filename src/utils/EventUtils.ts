@@ -4,7 +4,7 @@
 import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
-import { planckToUnit } from '@/renderer/utils/cryptoUtils';
+import { planckToUnit } from '@w3ux/utils';
 import type { ChainID } from '@/types/chains';
 import type {
   EventAccountData,

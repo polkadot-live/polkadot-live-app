@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import type { ModalContentProps } from '../types';
-import { appendOrEmpty } from '@app/utils/cryptoUtils';
+import { appendOrEmpty } from '@w3ux/utils';
 
 /**
  * @name ModalContent

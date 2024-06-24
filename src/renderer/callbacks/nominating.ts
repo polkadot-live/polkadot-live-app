@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { rmCommas } from '@app/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiPromise } from '@polkadot/api';

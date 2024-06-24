@@ -26,7 +26,7 @@ import type {
 } from '@/types/subscriptions';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
-import { ellipsisFn } from '@app/utils/cryptoUtils';
+import { ellipsisFn } from '@w3ux/utils';
 
 export const Accounts = ({
   addresses,

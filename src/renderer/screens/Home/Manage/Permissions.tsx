@@ -10,7 +10,7 @@ import {
 } from '@/renderer/library/Accordion';
 import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
-import { ellipsisFn } from '@app/utils/cryptoUtils';
+import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';

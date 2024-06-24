@@ -15,7 +15,7 @@ import {
   getAccountExposed,
   getAccountExposedWestend,
 } from '@/renderer/callbacks/nominating';
-import { rmCommas } from '@/renderer/utils/cryptoUtils';
+import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
   FlattenedAccountData,
