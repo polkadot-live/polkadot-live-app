@@ -9,19 +9,30 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import path from 'path';
+import fs from 'fs';
 
 const config: ForgeConfig = {
   packagerConfig: {
     prune: process.env.NODE_ENV !== 'test',
     asar: true,
-    osxSign: {
-      optionsForFile: (filepath) => {
-        // Here, we keep it simple and return a single entitlements.plist file.
-        // You can use this callback to map different sets of entitlements
-        // to specific files in your packaged app.
-        return {
-          entitlements: 'entitlements/default.darwin.plist'
-        }
+    // TODO: Fix or remove local plist file.
+    //osxSign: {
+    //  optionsForFile: (filepath) => {
+    //    // Here, we keep it simple and return a single entitlements.plist file.
+    //    // You can use this callback to map different sets of entitlements
+    //    // to specific files in your packaged app.
+    //    return {
+    //      entitlements: 'entitlements/default.darwin.plist'
+    //    }
+    //  }
+    //}
+  },
+  hooks: {
+    packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
+      if (platform === 'darwin') {
+        // We need to remove the problematic link file on macOS.
+        fs.unlinkSync(path.join(buildPath, 'node_modules/usb/build/node_gyp_bins/python3'));
       }
     }
   },
