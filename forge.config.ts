@@ -27,18 +27,8 @@ const config: ForgeConfig = {
     icon: path.resolve(rootDir, 'public/assets/icons/icon'),
     // Keep dev dependencies if in test mode.
     prune: process.env.NODE_ENV !== 'test',
-
-    // TODO: Fix or remove local plist file.
-    //osxSign: {
-    //  optionsForFile: (filepath) => {
-    //    // Here, we keep it simple and return a single entitlements.plist file.
-    //    // You can use this callback to map different sets of entitlements
-    //    // to specific files in your packaged app.
-    //    return {
-    //      entitlements: 'entitlements/default.darwin.plist'
-    //    }
-    //  }
-    //}
+    // The osxSign config comes with defaults that work out of the box in most cases.
+    osxSign: {}
   },
   hooks: {
     packageAfterPrune: async (forgeConfig, buildPath, electronVersion, platform, arch) => {
