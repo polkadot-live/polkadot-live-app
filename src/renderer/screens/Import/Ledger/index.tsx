@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
+import { setStateWithRef, ellipsisFn } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { Config as ConfigImport } from '@/config/processes/import';

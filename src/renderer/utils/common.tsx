@@ -6,7 +6,7 @@ import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@/config/chains';
-import type { AnyFunction } from '@w3ux/utils/types';
+import type { AnyFunction } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 

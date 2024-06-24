@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@/types/misc';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
+import type { AnyFunction } from '@/types/misc';
 
 // Report online status to renderer.
 export const reportOnlineStatus = (id: string) => {

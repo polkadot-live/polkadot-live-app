@@ -6,7 +6,7 @@ import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
-import type { AnyJson } from '@w3ux/utils/types';
+import type { AnyJson } from '@/types/misc';
 import type { EventAccountData, EventCallback } from '@/types/reporter';
 
 const debug = MainDebug.extend('EventsController');

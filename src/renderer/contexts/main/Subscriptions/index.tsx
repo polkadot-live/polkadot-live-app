@@ -5,7 +5,7 @@ import { createContext, useContext, useState } from 'react';
 import { TaskQueue } from '@/orchestrators/TaskQueue';
 import * as ApiUtils from '@/utils/ApiUtils';
 import * as defaults from './defaults';
-import type { AnyFunction } from '@w3ux/utils/types';
+import type { AnyFunction } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from './types';
