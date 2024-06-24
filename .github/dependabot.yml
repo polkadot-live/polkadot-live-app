@@ -7,12 +7,13 @@ updates:
       interval: monthly
     open-pull-requests-limit: 30
     groups:
-      # Group polkadot package updates.
-      polkadot:
+      # Group electron-forge package updates.
+      electron-forge:
         applies-to: version-updates
-        dependency-type: "production"
+        dependency-type: "development"
         patterns:
-        - "@polkadot*"
+        - "@electron-forge*"
+        - "@electron/fuses"
         update-types:
         - "major"
         - "minor"
@@ -30,6 +31,16 @@ updates:
         - "eslint-plugin-react"
         - "eslint-plugin-react-hooks"
         - "eslint-plugin-unused-imports"
+        update-types:
+        - "major"
+        - "minor"
+        - "patch"
+      # Group polkadot package updates.
+      polkadot:
+        applies-to: version-updates
+        dependency-type: "production"
+        patterns:
+        - "@polkadot*"
         update-types:
         - "major"
         - "minor"
