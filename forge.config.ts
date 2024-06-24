@@ -9,13 +9,25 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
+import { productName } from './package.json';
 import path from 'path';
 import fs from 'fs';
 
+const rootDir = process.cwd();
+
 const config: ForgeConfig = {
   packagerConfig: {
-    prune: process.env.NODE_ENV !== 'test',
+    // Create asar archive for main, renderer process files.
     asar: true,
+    // Set application copyright.
+    appCopyright: 'Copyright (C) 2024 Polkadot Live Authors & Contributors',
+    // Set executable name.
+    executableName: productName,
+    // Set application icon.
+    icon: path.resolve(rootDir, 'public/assets/icons/icon'),
+    // Keep dev dependencies if in test mode.
+    prune: process.env.NODE_ENV !== 'test',
+
     // TODO: Fix or remove local plist file.
     //osxSign: {
     //  optionsForFile: (filepath) => {
