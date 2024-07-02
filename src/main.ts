@@ -25,6 +25,7 @@ import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
+import { hideDockIcon } from './utils/SystemUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -126,6 +127,9 @@ app.whenReady().then(async () => {
       })
       .catch((err) => console.error(err));
   }
+
+  // Hide dock icon if we're on mac OS.
+  hideDockIcon();
 
   // ------------------------------
   // Create windows
@@ -536,6 +540,10 @@ app.whenReady().then(async () => {
     // Update storage.
     const key = ConfigMain.settingsStorageKey;
     (store as Record<string, AnyData>).set(key, settings);
+
+    // Re-hide dock if we're on macOS.
+    // Electron will show the dock icon after calling the workspaces API.
+    hideDockIcon();
   });
 
   // Toggle an app setting.

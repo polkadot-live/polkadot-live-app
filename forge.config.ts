@@ -20,7 +20,7 @@ const config: ForgeConfig = {
     // Create asar archive for main, renderer process files.
     asar: true,
     // Set application copyright.
-    appCopyright: 'Copyright (C) 2024 Polkadot Live Authors & Contributors',
+    appCopyright: `Copyright (C) ${new Date().getFullYear()} Polkadot Live Authors & Contributors`,
     // Set executable name.
     executableName: productName,
     // Set application icon.

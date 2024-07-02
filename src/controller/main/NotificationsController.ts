@@ -13,6 +13,9 @@ export class NotificationsController {
    * @summary Show a native notification directly.
    */
   static showNotification(title: string, body: string) {
-    new Notification({ title, body }).show();
+    new Notification({
+      title,
+      body,
+    }).show();
   }
 }
