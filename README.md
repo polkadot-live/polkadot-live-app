@@ -3,14 +3,17 @@
 [![License](https://img.shields.io/badge/License-GPL3.0-blue.svg)](https://opensource.org/license/gpl-3-0/)
 <!-- markdown-link-check-enable -->
 
-# Polkadot Live
+![github-banner](https://github.com/polkadot-live/polkadot-live-app/assets/6109302/844c9951-fe28-478e-9e40-5aa01fff27a2)
+
+## Overview
 
 Decentralised Polkadot Notifications and Chain Interactions on the Desktop.
 
+Polkadot Live is a cross-platform desktop application built with Electron and React using TypeScript.
+
 ## Documentation
 
-Find out more about Polkadot Live here:
-- https://github.com/polkadot-live/docs
+Learn all about the Polkadot Live application by reading through its [Documentation Portal Website](https://polkadot-live.github.io/).
 
 ## Build and run
 
