@@ -114,11 +114,18 @@ export const createMainWindow = (isTest: boolean) => {
     'menu_bounds'
   );
 
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth, height: screenHeight } =
+    primaryDisplay.workAreaSize;
+
+  const defaultX = screenWidth / 2 - ConfigMain.dockedWidth / 2;
+  const defaultY = screenHeight / 2 - (ConfigMain.dockedHeight / 2) * 1.75;
+
   const mainWindow = new BrowserWindow({
     alwaysOnTop: true,
     frame: false,
-    x: initialMenuBounds?.x || ConfigMain.dockedWidth,
-    y: initialMenuBounds?.y || 0,
+    x: initialMenuBounds?.x || defaultX,
+    y: initialMenuBounds?.y || defaultY,
     width: initialMenuBounds?.height || ConfigMain.dockedWidth,
     height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: 420,
