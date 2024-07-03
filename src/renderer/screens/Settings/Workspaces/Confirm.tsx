@@ -24,7 +24,7 @@ export const Confirm = ({ workspace }: ConfirmProps) => {
       position: 'top-center',
       autoClose: 3000,
       hideProgressBar: true,
-      closeOnClick: false,
+      closeOnClick: true,
       closeButton: false,
       pauseOnHover: false,
       draggable: false,

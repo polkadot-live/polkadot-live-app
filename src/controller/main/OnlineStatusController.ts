@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
-import dns from 'dns';
+import http2 from 'http2';
 
 export class OnlineStatusController {
   private static onlineStatus = false;
@@ -69,10 +69,20 @@ export class OnlineStatusController {
 
   /**
    * @name isConnected
-   * @summary One-liner function to check if internet is available.
+   * @summary Function to check if internet is available.
    */
-  private static isConnected = async () =>
-    !!(await dns.promises.resolve('google.com').catch(() => false));
+  private static isConnected = (): Promise<boolean> =>
+    new Promise((resolve) => {
+      const client = http2.connect('https://www.google.com');
+      client.on('connect', () => {
+        resolve(true);
+        client.destroy();
+      });
+      client.on('error', () => {
+        resolve(false);
+        client.destroy();
+      });
+    });
 
   /**
    * @name handleSuspend
