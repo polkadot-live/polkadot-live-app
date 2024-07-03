@@ -95,10 +95,10 @@ export const Menu = () => {
       } else {
         // Render error alert.
         toast.error('You are offline.', {
-          position: 'bottom-center',
+          position: 'top-center',
           autoClose: 3000,
           hideProgressBar: true,
-          closeOnClick: false,
+          closeOnClick: true,
           closeButton: false,
           pauseOnHover: false,
           draggable: false,

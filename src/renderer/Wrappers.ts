@@ -19,12 +19,14 @@ export const MainInterfaceWrapper = styled.div`
   width: 100%;
 
   .Toastify__toast {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     color: var(--text-color-primary);
     background-color: var(--background-modal);
     border: 1px solid var(--border-mid-color);
     border-radius: 1rem;
     margin: 0.5rem;
+    margin-top: 0.75rem;
+    max-width: 97%;
   }
 `;
 
