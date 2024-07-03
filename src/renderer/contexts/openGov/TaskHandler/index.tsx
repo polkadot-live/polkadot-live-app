@@ -33,7 +33,7 @@ export const TaskHandlerProvider = ({
       position: 'top-center',
       autoClose: 2000,
       hideProgressBar: true,
-      closeOnClick: false,
+      closeOnClick: true,
       closeButton: false,
       pauseOnHover: false,
       draggable: false,
