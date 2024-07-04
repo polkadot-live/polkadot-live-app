@@ -144,11 +144,11 @@ export const createMainWindow = (isTest: boolean) => {
     },
   });
 
+  // Hide menu bar on Linux and Windows.
+  setWindowMenuVisibility(mainWindow);
+
   // Load correct URL and HTML file.
   loadUrlWithRoute(mainWindow, { args: { windowId: 'main' } });
-
-  // Initially hide the menu bar.
-  //mainWindow.hide();
 
   mainWindow.once('ready-to-show', () => {
     // Send ports to main window to facilitate communication with other windows.
