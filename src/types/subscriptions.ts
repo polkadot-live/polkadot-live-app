@@ -73,6 +73,7 @@ export type TaskAction =
   | 'subscribe:chain:timestamp'
   | 'subscribe:chain:currentSlot'
   | 'subscribe:account:balance'
+  | 'subscribe:account:balance:frozen'
   | 'subscribe:account:nominationPools:rewards'
   | 'subscribe:account:nominationPools:state'
   | 'subscribe:account:nominationPools:renamed'

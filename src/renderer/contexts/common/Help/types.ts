@@ -45,6 +45,7 @@ export type HelpItemKey =
   | 'help:import:ledger'
   | 'help:import:readOnly'
   | 'help:subscription:balances:transfers'
+  | 'help:subscription:balances:frozen'
   | 'help:subscription:nominationPools:commission'
   | 'help:subscription:nominationPools:name'
   | 'help:subscription:nominationPools:state'

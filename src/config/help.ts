@@ -39,6 +39,11 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:subscription:balances:frozen',
+    title: 'Balances: Frozen Subscription',
+    definition: ['Todo'],
+  },
+  {
     key: 'help:subscription:nominationPools:commission',
     title: 'Nomination Pools: Commission Subscription',
     definition: [
