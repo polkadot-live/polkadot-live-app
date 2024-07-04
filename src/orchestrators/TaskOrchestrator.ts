@@ -98,6 +98,10 @@ export class TaskOrchestrator {
             TaskOrchestrator.subscribe_account_balance_reserved(task, wrapper);
             break;
           }
+          case 'subscribe:account:balance:spendable': {
+            TaskOrchestrator.subscribe_account_balance_spendable(task, wrapper);
+            break;
+          }
           case 'subscribe:account:nominationPools:rewards': {
             TaskOrchestrator.subscribe_nomination_pool_rewards(task, wrapper);
             break;
@@ -190,6 +194,8 @@ export class TaskOrchestrator {
         return instance.api.query.system.account;
       case 'subscribe:account:balance:reserved':
         return instance.api.query.system.account;
+      case 'subscribe:account:balance:spendable':
+        return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:rewards':
         return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:state':
@@ -264,6 +270,17 @@ export class TaskOrchestrator {
    * @summary Subscribe to api.query.system.account to fetch an account's reserved balance.
    */
   private static subscribe_account_balance_reserved(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_account_balance_spendable
+   * @summary Subscribe to api.query.system.account to fetch an account's spendable balance.
+   */
+  private static subscribe_account_balance_spendable(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

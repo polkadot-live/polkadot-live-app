@@ -217,6 +217,7 @@ export class Callbacks {
       return;
     }
   }
+
   /**
    * @name callback_account_balance_reserved
    * @summary Handle callback for an account's reserved balance subscription.
@@ -267,6 +268,84 @@ export class Callbacks {
         : null;
 
       // Send event and notification data to main process.
+      window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+  /**
+   * @name callback_account_balance_spendable
+   * @summary Handle callback for an account's spendable balance subscription.
+   */
+  static async callback_account_balance_spendable(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account || !account.balance) {
+        return;
+      }
+
+      // Get API instance.
+      const origin = 'callback_account_balance_spendable';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
+      /*
+        Spendable balance equation:
+        spendable = free - max(frozen - on_hold, ED)
+        spendable = free - max(frozen - reserved, ED)
+      */
+      const free = new BigNumber(rmCommas(String(data.data.free)));
+      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
+      const reserved = new BigNumber(rmCommas(String(data.data.reserved)));
+      const ed = new BigNumber(
+        rmCommas(String(api.consts.balances.existentialDeposit))
+      );
+
+      const spendable = free.minus(BigNumber.max(frozen.minus(reserved), ed));
+
+      // TODO: Remove check, we know the account has a balance.
+      let isSame = false;
+      if (account.balance) {
+        const {
+          free: accFree,
+          frozen: accFroz,
+          reserved: accRes,
+        } = account.balance;
+
+        const accSpendable = accFree.minus(
+          BigNumber.max(accFroz.minus(accRes), ed)
+        );
+
+        isSame = spendable.eq(accSpendable);
+      }
+
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Create an event and parse into same format as persisted event.
+      const event = EventsController.getEvent(entry, { spendable });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Get notification.
+      const notificaiton = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, { spendable })
+        : null;
+
+      // Send event and notification to main process.
       window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
     } catch (err) {
       console.error(err);

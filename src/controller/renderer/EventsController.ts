@@ -283,6 +283,38 @@ export class EventsController {
       }
 
       /**
+       * subscribe:account:balance:reserved
+       */
+      case 'subscribe:account:balance:spendable': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newSpendable = miscData.spendable;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Spendable Balance',
+          subtitle: getFreeBalanceText(newSpendable, chainId),
+          data: { spendable: newSpendable.toString() },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {

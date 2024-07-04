@@ -108,6 +108,10 @@ export const pushUniqueEvent = (
       push = filter_account_balance_reserved(events, event);
       break;
     }
+    case 'subscribe:account:balance:spendable': {
+      push = filter_account_balance_spendable(events, event);
+      break;
+    }
     case 'subscribe:account:nominationPools:rewards': {
       push = filter_nomination_pool_rewards(events, event);
       break;
@@ -246,6 +250,32 @@ const filter_account_balance_reserved = (
       const nextReserved: string = e.data.reserved;
 
       if (address === nextAddress && reserved === nextReserved) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_account_balance_spendable
+ * @summary Event is duplicate if it matches on address, chain and spendable balance.
+ */
+const filter_account_balance_spendable = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  const { address } = event.who.data as EventAccountData;
+  const spendable: string = event.data.spendable;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const nextSpendable: string = e.data.spendable;
+
+      if (address === nextAddress && spendable === nextSpendable) {
         isUnique = false;
       }
     }
