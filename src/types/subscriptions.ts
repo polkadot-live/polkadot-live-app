@@ -74,6 +74,7 @@ export type TaskAction =
   | 'subscribe:chain:currentSlot'
   | 'subscribe:account:balance'
   | 'subscribe:account:balance:frozen'
+  | 'subscribe:account:balance:reserved'
   | 'subscribe:account:nominationPools:rewards'
   | 'subscribe:account:nominationPools:state'
   | 'subscribe:account:nominationPools:renamed'
