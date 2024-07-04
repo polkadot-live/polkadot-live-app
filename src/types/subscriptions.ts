@@ -75,7 +75,6 @@ export type TaskAction =
   | 'subscribe:account:balance:free'
   | 'subscribe:account:balance:frozen'
   | 'subscribe:account:balance:reserved'
-  | 'subscribe:account:balance:spendable'
   | 'subscribe:account:nominationPools:rewards'
   | 'subscribe:account:nominationPools:state'
   | 'subscribe:account:nominationPools:renamed'
