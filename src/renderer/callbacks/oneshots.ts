@@ -15,6 +15,10 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       const result = await oneShot_account_balance_frozen(task);
       return result;
     }
+    case 'subscribe:account:balance:reserved': {
+      const result = await oneShot_account_balance_reserved(task);
+      return result;
+    }
     case 'subscribe:account:nominationPools:rewards': {
       const result = await oneShot_nomination_pool_rewards(task);
       return result;
@@ -84,6 +88,23 @@ const oneShot_account_balance_frozen = async (task: SubscriptionTask) => {
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   await Callbacks.callback_account_balance_frozen(data, entry, true);
+  return true;
+};
+
+/**
+ * @name oneShot_account_balance_reserved
+ * @summary One-shot to fetch an account's reserved balance.
+ */
+const oneShot_account_balance_reserved = async (task: SubscriptionTask) => {
+  const instance = await getApiInstance(task.chainId);
+  if (!instance) {
+    return false;
+  }
+
+  const { api } = instance;
+  const data = await api.query.system.account(task.account!.address);
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_account_balance_reserved(data, entry, true);
   return true;
 };
 

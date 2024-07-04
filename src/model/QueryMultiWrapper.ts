@@ -155,6 +155,13 @@ export class QueryMultiWrapper {
         );
         break;
       }
+      case 'subscribe:account:balance:reserved': {
+        await Callbacks.callback_account_balance_reserved(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
       case 'subscribe:account:nominationPools:rewards': {
         await Callbacks.callback_nomination_pool_rewards(entry);
         break;

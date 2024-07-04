@@ -255,6 +255,38 @@ export class EventsController {
       }
 
       /**
+       * subscribe:account:balance:reserved
+       */
+      case 'subscribe:account:balance:reserved': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newReserved = miscData.reserved;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Reserved Balance',
+          subtitle: getFreeBalanceText(newReserved, chainId),
+          data: { frozen: newReserved.toString() },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {

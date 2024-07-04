@@ -72,6 +72,12 @@ export class NotificationsController {
           body: getFreeBalanceText(miscData.frozen, account.chain),
         };
       }
+      case 'subscribe:account:balance:reserved': {
+        return {
+          title: 'Reserved Balance',
+          body: getFreeBalanceText(miscData.reserved, account.chain),
+        };
+      }
       case 'subscribe:account:nominationPools:rewards': {
         return {
           title: 'Unclaimed Nomination Pool Rewards',

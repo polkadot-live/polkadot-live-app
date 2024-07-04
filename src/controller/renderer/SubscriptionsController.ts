@@ -228,10 +228,9 @@ export class SubscriptionsController {
     } as SubscriptionTask;
 
     switch (task.action) {
-      case 'subscribe:account:balance': {
-        return { ...task, actionArgs: [account.address] } as SubscriptionTask;
-      }
-      case 'subscribe:account:balance:frozen': {
+      case 'subscribe:account:balance':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved': {
         return { ...task, actionArgs: [account.address] } as SubscriptionTask;
       }
       case 'subscribe:account:nominationPools:rewards': {
@@ -241,27 +240,9 @@ export class SubscriptionsController {
 
         return { ...task, actionArgs } as SubscriptionTask;
       }
-      case 'subscribe:account:nominationPools:state': {
-        const actionArgs = account.nominationPoolData
-          ? [account.nominationPoolData.poolId]
-          : undefined;
-
-        return { ...task, actionArgs } as SubscriptionTask;
-      }
-      case 'subscribe:account:nominationPools:renamed': {
-        const actionArgs = account.nominationPoolData
-          ? [account.nominationPoolData.poolId]
-          : undefined;
-
-        return { ...task, actionArgs } as SubscriptionTask;
-      }
-      case 'subscribe:account:nominationPools:roles': {
-        const actionArgs = account.nominationPoolData
-          ? [account.nominationPoolData.poolId]
-          : undefined;
-
-        return { ...task, actionArgs } as SubscriptionTask;
-      }
+      case 'subscribe:account:nominationPools:state':
+      case 'subscribe:account:nominationPools:renamed':
+      case 'subscribe:account:nominationPools:roles':
       case 'subscribe:account:nominationPools:commission': {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolId]
