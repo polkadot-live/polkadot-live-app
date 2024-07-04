@@ -105,6 +105,62 @@ export class Callbacks {
   }
 
   /**
+   * @name callback_account_balance_frozen
+   * @summary Handle callback for an account's frozen balance subscription.
+   */
+  static async callback_account_balance_frozen(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account || !account.balance) {
+        return;
+      }
+
+      // Get the received frozen balance.
+      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
+
+      let isSame = false;
+      if (account.balance?.frozen) {
+        isSame = frozen.eq(account.balance.frozen);
+      }
+
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Update account data if balance has changed.
+      if (!isSame) {
+        account.balance.frozen = frozen;
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Create event and parse into same format as persisted events.
+      const event = EventsController.getEvent(entry, { frozen });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Get notification.
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, { frozen })
+        : null;
+
+      // Send event and notification data to main process.
+      window.myAPI.persistEvent(parsed, notification, isOneShot);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+  /**
    * @name callback_query_system_account
    * @summary Callback for 'subscribe:account:balance'.
    *

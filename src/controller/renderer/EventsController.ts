@@ -187,7 +187,7 @@ export class EventsController {
       }
 
       /**
-       * subscribe:query.system.account
+       * subscribe:account:balance
        */
       case 'subscribe:account:balance': {
         const account = checkAccountWithProperties(entry, ['balance']);
@@ -216,6 +216,38 @@ export class EventsController {
             reserved: miscData.received.reserved.toString(),
             nonce: miscData.received.nonce.toString(),
           },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
+       * subscribe:account:balance:frozen
+       */
+      case 'subscribe:account:balance:frozen': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newFrozen = miscData.frozen;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Frozen Balance',
+          subtitle: getFreeBalanceText(newFrozen, chainId),
+          data: { frozen: newFrozen.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           actions: [],

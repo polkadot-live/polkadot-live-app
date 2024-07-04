@@ -90,6 +90,10 @@ export class TaskOrchestrator {
             TaskOrchestrator.subscribe_query_system_account(task, wrapper);
             break;
           }
+          case 'subscribe:account:balance:frozen': {
+            TaskOrchestrator.subscribe_account_balance_frozen(task, wrapper);
+            break;
+          }
           case 'subscribe:account:nominationPools:rewards': {
             TaskOrchestrator.subscribe_nomination_pool_rewards(task, wrapper);
             break;
@@ -178,6 +182,8 @@ export class TaskOrchestrator {
         return instance.api.query.babe.currentSlot;
       case 'subscribe:account:balance':
         return instance.api.query.system.account;
+      case 'subscribe:account:balance:frozen':
+        return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:rewards':
         return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:state':
@@ -230,6 +236,17 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.system.account.
    */
   private static subscribe_query_system_account(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_account_balance_frozen
+   * @summary Subscribe to api.query.system.account to fetch an account's frozen balance.
+   */
+  private static subscribe_account_balance_frozen(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

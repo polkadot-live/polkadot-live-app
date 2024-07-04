@@ -231,6 +231,9 @@ export class SubscriptionsController {
       case 'subscribe:account:balance': {
         return { ...task, actionArgs: [account.address] } as SubscriptionTask;
       }
+      case 'subscribe:account:balance:frozen': {
+        return { ...task, actionArgs: [account.address] } as SubscriptionTask;
+      }
       case 'subscribe:account:nominationPools:rewards': {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolRewardAddress]

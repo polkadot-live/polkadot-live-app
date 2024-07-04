@@ -11,6 +11,10 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       const result = await oneShot_query_system_account(task);
       return result;
     }
+    case 'subscribe:account:balance:frozen': {
+      const result = await oneShot_account_balance_frozen(task);
+      return result;
+    }
     case 'subscribe:account:nominationPools:rewards': {
       const result = await oneShot_nomination_pool_rewards(task);
       return result;
@@ -63,6 +67,23 @@ const oneShot_query_system_account = async (task: SubscriptionTask) => {
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   await Callbacks.callback_query_system_account(data, entry, true);
+  return true;
+};
+
+/**
+ * @name oneShot_account_balance_frozen
+ * @summary One-shot to fetch an account's frozen balance.
+ */
+const oneShot_account_balance_frozen = async (task: SubscriptionTask) => {
+  const instance = await getApiInstance(task.chainId);
+  if (!instance) {
+    return false;
+  }
+
+  const { api } = instance;
+  const data = await api.query.system.account(task.account!.address);
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_account_balance_frozen(data, entry, true);
   return true;
 };
 

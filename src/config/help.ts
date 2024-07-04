@@ -40,7 +40,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:frozen',
-    title: 'Balances: Frozen Subscription',
+    title: 'Subscription: Frozen Balance',
     definition: ['Todo'],
   },
   {
