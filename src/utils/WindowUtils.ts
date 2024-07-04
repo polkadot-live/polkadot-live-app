@@ -255,6 +255,9 @@ export const handleWindowOnIPC = (
       },
     });
 
+    // Hide menu bar on Linux and Windows.
+    setWindowMenuVisibility(window);
+
     registerLocalShortcut(window, 'CmdOrCtrl+Q', () =>
       WindowsController.close(name)
     );
@@ -417,4 +420,15 @@ export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
   const window = WindowsController.get(windowId);
   const { appShowOnAllWorkspaces } = ConfigMain.getAppSettings();
   window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
+};
+
+/**
+ * @name setWindowMenuVisibility
+ * @summary Hide the window menu on Linux and Windows.
+ */
+const setWindowMenuVisibility = (window: BrowserWindow) => {
+  if (process.platform !== 'darwin') {
+    window.setAutoHideMenuBar(false);
+    window.setMenuBarVisibility(false);
+  }
 };

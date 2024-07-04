@@ -9,6 +9,7 @@ import {
   protocol,
   shell,
   systemPreferences,
+  Menu,
 } from 'electron';
 import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
@@ -54,6 +55,12 @@ if (require('electron-squirrel-startup')) {
 const isTest = process.env.NODE_ENV === 'test';
 if (isTest) {
   require('wdio-electron-service/main');
+}
+
+// Hide application menu (mac OS) if DEBUG env variable doesn't exist.
+// NOTE: Showing window on all workspaces disables the application menu.
+if (process.platform === 'darwin' && !process.env.DEBUG) {
+  Menu.setApplicationMenu(null);
 }
 
 // Enable priviledges.
