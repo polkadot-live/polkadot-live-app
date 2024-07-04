@@ -228,7 +228,7 @@ export class SubscriptionsController {
     } as SubscriptionTask;
 
     switch (task.action) {
-      case 'subscribe:account:balance':
+      case 'subscribe:account:balance:free':
       case 'subscribe:account:balance:frozen':
       case 'subscribe:account:balance:reserved': {
         return { ...task, actionArgs: [account.address] } as SubscriptionTask;

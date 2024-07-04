@@ -7,8 +7,8 @@ import type { ApiCallEntry, SubscriptionTask } from '@/types/subscriptions';
 
 export const executeOneShot = async (task: SubscriptionTask) => {
   switch (task.action) {
-    case 'subscribe:account:balance': {
-      const result = await oneShot_query_system_account(task);
+    case 'subscribe:account:balance:free': {
+      const result = await oneShot_account_balance_free(task);
       return result;
     }
     case 'subscribe:account:balance:frozen': {
@@ -58,10 +58,10 @@ export const executeOneShot = async (task: SubscriptionTask) => {
 };
 
 /**
- * @name oneShot_query_system_account
- * @summary One-shot call to fetch an account's balance.
+ * @name oneShot_account_balance_free
+ * @summary One-shot call to fetch an account's free balance.
  */
-const oneShot_query_system_account = async (task: SubscriptionTask) => {
+const oneShot_account_balance_free = async (task: SubscriptionTask) => {
   const instance = await getApiInstance(task.chainId);
   if (!instance) {
     return false;
@@ -70,7 +70,7 @@ const oneShot_query_system_account = async (task: SubscriptionTask) => {
   const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_query_system_account(data, entry, true);
+  await Callbacks.callback_account_balance_free(data, entry, true);
   return true;
 };
 

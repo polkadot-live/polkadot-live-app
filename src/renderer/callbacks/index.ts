@@ -19,7 +19,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { AccountBalance, ValidatorData } from '@/types/accounts';
+import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -105,13 +105,10 @@ export class Callbacks {
   }
 
   /**
-   * @name callback_query_system_account
-   * @summary Callback for 'subscribe:account:balance'.
-   *
-   * Get the balance of the task target account on the target chain. Returns
-   * the balance's nonce, free and reserved values.
+   * @name callback_account_balance_free
+   * @summary Handle callback for an account's free balance subscription.
    */
-  static async callback_query_system_account(
+  static async callback_account_balance_free(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -123,25 +120,16 @@ export class Callbacks {
         entry.task.account!.address
       );
 
-      if (!account) {
+      if (!account || !account.balance) {
         return;
       }
 
       // Get the received balance.
-      const received: AccountBalance = {
-        free: new BigNumber(rmCommas(String(data.data.free))),
-        reserved: new BigNumber(rmCommas(String(data.data.reserved))),
-        frozen: new BigNumber(rmCommas(String(data.data.frozen))),
-        nonce: new BigNumber(rmCommas(String(data.nonce))),
-      };
+      const free = new BigNumber(rmCommas(String(data.data.free)));
 
       let isSame = false;
-      if (account.balance) {
-        isSame =
-          received.free.eq(account.balance.free) &&
-          received.reserved.eq(account.balance.reserved) &&
-          received.frozen.eq(account.balance.frozen) &&
-          received.nonce.eq(account.balance.nonce);
+      if (account.balance.free) {
+        isSame = free.eq(account.balance.free);
       }
 
       // Exit early if nothing has changed.
@@ -151,20 +139,18 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance = received;
+        account.balance.free = free;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
       // Create event and parse into same format as persisted events.
-      const event = EventsController.getEvent(entry, { received });
+      const event = EventsController.getEvent(entry, { free });
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            received,
-          })
+        ? NotificationsController.getNotification(entry, account, { free })
         : null;
 
       // Send event and notification data to main process.

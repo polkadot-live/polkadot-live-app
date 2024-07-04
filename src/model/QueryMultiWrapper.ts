@@ -141,8 +141,8 @@ export class QueryMultiWrapper {
         );
         break;
       }
-      case 'subscribe:account:balance': {
-        await Callbacks.callback_query_system_account(
+      case 'subscribe:account:balance:free': {
+        await Callbacks.callback_account_balance_free(
           dataArr[entry.task.dataIndex!],
           entry
         );

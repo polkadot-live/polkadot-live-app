@@ -96,8 +96,8 @@ export const pushUniqueEvent = (
     /**
      * Standard Subscriptions
      */
-    case 'subscribe:account:balance': {
-      push = filter_query_system_account(events, event);
+    case 'subscribe:account:balance:free': {
+      push = filter_account_balance_free(events, event);
       break;
     }
     case 'subscribe:account:balance:frozen': {
@@ -180,31 +180,20 @@ export const pushUniqueEvent = (
  * Fix (something wrong with comparing account data and event data)
  * This filter function is currently not being used.
  */
-const filter_query_system_account = (
+const filter_account_balance_free = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  interface Target {
-    free: string;
-    reserved: string;
-    nonce: string;
-  }
-
   const { address } = event.who.data as EventAccountData;
-  const balances: Target = event.data;
+  const free: string = event.data.free;
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextBalances: Target = e.data;
+      const nextFree: string = e.data.free;
 
-      if (
-        address === nextAddress &&
-        balances.free === nextBalances.free &&
-        balances.reserved === nextBalances.reserved &&
-        balances.nonce === nextBalances.nonce
-      ) {
+      if (address === nextAddress && free === nextFree) {
         isUnique = false;
       }
     }

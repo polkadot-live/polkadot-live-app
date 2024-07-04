@@ -72,7 +72,7 @@ export interface SubscriptionTask {
 export type TaskAction =
   | 'subscribe:chain:timestamp'
   | 'subscribe:chain:currentSlot'
-  | 'subscribe:account:balance'
+  | 'subscribe:account:balance:free'
   | 'subscribe:account:balance:frozen'
   | 'subscribe:account:balance:reserved'
   | 'subscribe:account:nominationPools:rewards'

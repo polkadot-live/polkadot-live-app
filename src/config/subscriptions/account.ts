@@ -16,13 +16,13 @@ import type { SubscriptionTask } from '@/types/subscriptions';
 export const accountTasks: SubscriptionTask[] = [
   // Polkadot
   {
-    action: 'subscribe:account:balance',
+    action: 'subscribe:account:balance:free',
     apiCallAsString: 'api.query.system.account',
     category: 'Balances',
     chainId: 'Polkadot',
     enableOsNotifications: true,
     helpKey: 'help:subscription:balances:transfers',
-    label: 'Transfers',
+    label: 'Free',
     status: 'disable',
   },
   {
@@ -127,13 +127,13 @@ export const accountTasks: SubscriptionTask[] = [
   },
   // Kusama
   {
-    action: 'subscribe:account:balance',
+    action: 'subscribe:account:balance:free',
     apiCallAsString: 'api.query.system.account',
     category: 'Balances',
     chainId: 'Kusama',
     enableOsNotifications: true,
     helpKey: 'help:subscription:balances:transfers',
-    label: 'Transfers',
+    label: 'Free',
     status: 'disable',
   },
   {
@@ -238,13 +238,13 @@ export const accountTasks: SubscriptionTask[] = [
   },
   // Westend
   {
-    action: 'subscribe:account:balance',
+    action: 'subscribe:account:balance:free',
     apiCallAsString: 'api.query.system.account',
     category: 'Balances',
     chainId: 'Westend',
     enableOsNotifications: true,
     helpKey: 'help:subscription:balances:transfers',
-    label: 'Transfers',
+    label: 'Free',
     status: 'disable',
   },
   {
