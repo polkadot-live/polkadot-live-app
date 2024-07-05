@@ -412,7 +412,9 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolPendingRewards = pendingRewardsPlanck;
+        account.nominationPoolData!.poolPendingRewards = new BigNumber(
+          pendingRewardsPlanck
+        );
         await AccountsController.set(chainId, account);
         entry.task.account = account.flatten();
       }
@@ -420,13 +422,15 @@ export class Callbacks {
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingRewardsPlanck,
+            pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
           })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { pendingRewardsPlanck }),
+        EventsController.getEvent(entry, {
+          pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
+        }),
         notification,
         isOneShot
       );
@@ -704,13 +708,16 @@ export class Callbacks {
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingPayout,
+            pendingPayout: new BigNumber(pendingPayout),
             chainId: account.chain,
           })
         : null;
 
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { pendingPayout, era }),
+        EventsController.getEvent(entry, {
+          pendingPayout: new BigNumber(pendingPayout),
+          era,
+        }),
         notification,
         isOneShot
       );

@@ -14,7 +14,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getEventChainId, renderTimeAgo } from '@/utils/EventUtils';
+import { getEventChainId } from '@/utils/EventUtils';
+import { renderTimeAgo } from '@/utils/TextUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/Identicon';

@@ -159,6 +159,7 @@ const oneShot_openGov_decisionPeriod = async (
   const notificationData: NotificationData = {
     title: `Referendum ${referendumId}`,
     body: '',
+    subtitle: 'Decision Period',
   };
 
   const referendumInfo: ActiveReferendaInfo = {
@@ -206,7 +207,7 @@ const oneShot_openGov_decisionPeriod = async (
     const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
 
     formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
-    notificationData.body = `Decision period ends in ${formattedTime}.`;
+    notificationData.body = `Ends in ${formattedTime}.`;
   }
 
   const event = EventsController.getIntervalEvent(task, {

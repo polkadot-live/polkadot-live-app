@@ -8,14 +8,12 @@ import {
   checkFlattenedAccountWithProperties,
 } from '@/utils/AccountUtils';
 import {
-  getFreeBalanceText,
-  getNominatingPendingPayoutText,
+  getBalanceText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-  getPendingRewardsText,
-} from '@/utils/EventUtils';
+} from '@/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@/types/tx';
@@ -210,7 +208,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Free Balance',
-          subtitle: getFreeBalanceText(newFree, chainId),
+          subtitle: getBalanceText(newFree, chainId),
           data: { free: newFree.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -242,7 +240,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Frozen Balance',
-          subtitle: getFreeBalanceText(newFrozen, chainId),
+          subtitle: getBalanceText(newFrozen, chainId),
           data: { frozen: newFrozen.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -274,7 +272,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Reserved Balance',
-          subtitle: getFreeBalanceText(newReserved, chainId),
+          subtitle: getBalanceText(newReserved, chainId),
           data: { frozen: newReserved.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -306,7 +304,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Spendable Balance',
-          subtitle: getFreeBalanceText(newSpendable, chainId),
+          subtitle: getBalanceText(newSpendable, chainId),
           data: { spendable: newSpendable.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -325,6 +323,8 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
+
+        const pendingRewardsPlanck = miscData.pendingRewardsPlanck as BigNumber;
 
         const pendingRewardsUnit = planckToUnit(
           new BigNumber(poolPendingRewards.toString()),
@@ -345,10 +345,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Unclaimed Nomination Pool Rewards',
-          subtitle: getPendingRewardsText(
-            chainId,
-            miscData.pendingRewardsPlanck
-          ),
+          subtitle: getBalanceText(pendingRewardsPlanck, chainId),
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -574,7 +571,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nominating Pending Payout',
-          subtitle: getNominatingPendingPayoutText(pendingPayout, chainId),
+          subtitle: getBalanceText(pendingPayout, chainId),
           data: {
             era,
             pendingPayout: pendingPayout.toString(), // string required
