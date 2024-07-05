@@ -47,6 +47,7 @@ export type HelpItemKey =
   | 'help:subscription:balances:transfers'
   | 'help:subscription:balances:frozen'
   | 'help:subscription:balances:reserved'
+  | 'help:subscription:balances:spendable'
   | 'help:subscription:nominationPools:commission'
   | 'help:subscription:nominationPools:name'
   | 'help:subscription:nominationPools:state'

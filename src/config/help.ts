@@ -49,6 +49,11 @@ export const HelpConfig: HelpItems = [
     definition: ['Todo'],
   },
   {
+    key: 'help:subscription:balances:spendable',
+    title: 'Subscription: Spendable Balance',
+    definition: ['Todo'],
+  },
+  {
     key: 'help:subscription:nominationPools:commission',
     title: 'Nomination Pools: Commission Subscription',
     definition: [
