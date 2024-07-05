@@ -778,21 +778,15 @@ export const getNominationPoolStateText = (
     : `Current state is ${curState}.`;
 
 /**
- * @name getFreeBalanceText
+ * @name getBalanceText
  * @summary Text to render for transfer events.
  */
-export const getFreeBalanceText = (newBalance: BigNumber, chainId: ChainID) => {
-  const freeBalance = planckToUnit(
-    newBalance as BigNumber,
-    chainUnits(chainId)
-  );
+export const getBalanceText = (balance: BigNumber, chainId: ChainID) => {
+  const asUnit = planckToUnit(balance as BigNumber, chainUnits(chainId));
+  const regexA = /\.0+$/; // Remove trailing zeros after a decimal point.
+  const regexB = /\B(?=(\d{3})+(?!\d))/g; // Insert commas as thousand separators.
 
-  // RegexA: Remove trailing zeros after a decimal point.
-  // RegexB: Insert commas as thousand separators.
-  const regexA = /\.0+$/;
-  const regexB = /\B(?=(\d{3})+(?!\d))/g;
-
-  const formatted: string = freeBalance
+  const formatted: string = asUnit
     .toFixed(3)
     .replace(regexA, '')
     .replace(regexB, ',');
