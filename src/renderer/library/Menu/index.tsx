@@ -125,7 +125,12 @@ export const Menu = () => {
         </button>
       ) : null}
       {!menuOpenRef.current ? (
-        <button type="button" onClick={() => toggleMenu(true)}>
+        <button
+          type="button"
+          disabled={appLoading}
+          onClick={() => !appLoading && toggleMenu(true)}
+          style={{ opacity: appLoading ? '0.3' : '1' }}
+        >
           <FontAwesomeIcon icon={faCog} transform="grow-1" />
         </button>
       ) : null}

@@ -84,6 +84,7 @@ export const Home = () => {
           type="button"
           disabled={appLoading}
           className={section === 1 ? 'active' : undefined}
+          style={{ opacity: appLoading ? '0.3' : '1' }}
           onClick={() => {
             setSection(1);
           }}
