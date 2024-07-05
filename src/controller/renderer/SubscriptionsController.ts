@@ -230,7 +230,8 @@ export class SubscriptionsController {
     switch (task.action) {
       case 'subscribe:account:balance:free':
       case 'subscribe:account:balance:frozen':
-      case 'subscribe:account:balance:reserved': {
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable': {
         return { ...task, actionArgs: [account.address] } as SubscriptionTask;
       }
       case 'subscribe:account:nominationPools:rewards': {
