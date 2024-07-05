@@ -1,6 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
+import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { DragClose } from '@/renderer/library/DragClose';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
@@ -17,7 +19,7 @@ import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { OpenGovCard, TreasuryStats } from './Wrappers';
+import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
 import { faInfo, faDownFromDottedLine } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
@@ -194,6 +196,13 @@ export const OpenGov: React.FC = () => {
             <ActionItem text={'Origins and Tracks'} />
             <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
               <OpenGovCard onClick={() => handleOpenTracks('Polkadot')}>
+                <IconWrapper className="hover" $chainId={'Polkadot'}>
+                  <PolkadotSVG
+                    width={65}
+                    opacity={0.03}
+                    className="svg-wrapper"
+                  />
+                </IconWrapper>
                 <div className="content-wrapper">
                   <h4 className="btn-polkadot">
                     <span>
@@ -204,6 +213,13 @@ export const OpenGov: React.FC = () => {
                 </div>
               </OpenGovCard>
               <OpenGovCard onClick={() => handleOpenTracks('Kusama')}>
+                <IconWrapper className="hover" $chainId={'Kusama'}>
+                  <KusamaSVG
+                    width={100}
+                    opacity={0.04}
+                    className="svg-wrapper"
+                  />
+                </IconWrapper>
                 <div className="content-wrapper">
                   <h4 className="btn-kusama">
                     <span>
@@ -219,6 +235,13 @@ export const OpenGov: React.FC = () => {
             <ActionItem text={'Referenda'} />
             <div className="grid-wrapper">
               <OpenGovCard onClick={() => handleOpenReferenda('Polkadot')}>
+                <IconWrapper className="hover" $chainId={'Polkadot'}>
+                  <PolkadotSVG
+                    width={65}
+                    opacity={0.03}
+                    className="svg-wrapper"
+                  />
+                </IconWrapper>
                 <div className="content-wrapper">
                   <h4 className="btn-polkadot">
                     <span>
@@ -229,6 +252,13 @@ export const OpenGov: React.FC = () => {
                 </div>
               </OpenGovCard>
               <OpenGovCard onClick={() => handleOpenReferenda('Kusama')}>
+                <IconWrapper className="hover" $chainId={'Kusama'}>
+                  <KusamaSVG
+                    width={100}
+                    opacity={0.04}
+                    className="svg-wrapper"
+                  />
+                </IconWrapper>
                 <div className="content-wrapper">
                   <h4 className="btn-kusama">
                     <span>
