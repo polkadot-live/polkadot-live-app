@@ -7,7 +7,7 @@ import {
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-} from '@/utils/EventUtils';
+} from '@/utils/TextUtils';
 import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';

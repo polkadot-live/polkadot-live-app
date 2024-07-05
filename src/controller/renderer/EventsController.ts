@@ -13,7 +13,7 @@ import {
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-} from '@/utils/EventUtils';
+} from '@/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@/types/tx';
