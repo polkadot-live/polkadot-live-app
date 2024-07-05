@@ -86,8 +86,20 @@ export class TaskOrchestrator {
             TaskOrchestrator.subscribe_query_babe_currentSlot(task, wrapper);
             break;
           }
-          case 'subscribe:account:balance': {
-            TaskOrchestrator.subscribe_query_system_account(task, wrapper);
+          case 'subscribe:account:balance:free': {
+            TaskOrchestrator.subscribe_account_balance_free(task, wrapper);
+            break;
+          }
+          case 'subscribe:account:balance:frozen': {
+            TaskOrchestrator.subscribe_account_balance_frozen(task, wrapper);
+            break;
+          }
+          case 'subscribe:account:balance:reserved': {
+            TaskOrchestrator.subscribe_account_balance_reserved(task, wrapper);
+            break;
+          }
+          case 'subscribe:account:balance:spendable': {
+            TaskOrchestrator.subscribe_account_balance_spendable(task, wrapper);
             break;
           }
           case 'subscribe:account:nominationPools:rewards': {
@@ -176,7 +188,13 @@ export class TaskOrchestrator {
         return instance.api.query.timestamp.now;
       case 'subscribe:chain:currentSlot':
         return instance.api.query.babe.currentSlot;
-      case 'subscribe:account:balance':
+      case 'subscribe:account:balance:free':
+        return instance.api.query.system.account;
+      case 'subscribe:account:balance:frozen':
+        return instance.api.query.system.account;
+      case 'subscribe:account:balance:reserved':
+        return instance.api.query.system.account;
+      case 'subscribe:account:balance:spendable':
         return instance.api.query.system.account;
       case 'subscribe:account:nominationPools:rewards':
         return instance.api.query.system.account;
@@ -226,10 +244,43 @@ export class TaskOrchestrator {
   }
 
   /**
-   * @name subscribe_query_system_account
+   * @name subscribe_account_balance_free
    * @summary Handle a task that subscribes to the API function api.query.system.account.
    */
-  private static subscribe_query_system_account(
+  private static subscribe_account_balance_free(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_account_balance_frozen
+   * @summary Subscribe to api.query.system.account to fetch an account's frozen balance.
+   */
+  private static subscribe_account_balance_frozen(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_account_balance_reserved
+   * @summary Subscribe to api.query.system.account to fetch an account's reserved balance.
+   */
+  private static subscribe_account_balance_reserved(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_account_balance_spendable
+   * @summary Subscribe to api.query.system.account to fetch an account's spendable balance.
+   */
+  private static subscribe_account_balance_spendable(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

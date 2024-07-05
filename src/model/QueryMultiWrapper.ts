@@ -141,8 +141,29 @@ export class QueryMultiWrapper {
         );
         break;
       }
-      case 'subscribe:account:balance': {
-        await Callbacks.callback_query_system_account(
+      case 'subscribe:account:balance:free': {
+        await Callbacks.callback_account_balance_free(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:balance:frozen': {
+        await Callbacks.callback_account_balance_frozen(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:balance:reserved': {
+        await Callbacks.callback_account_balance_reserved(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:balance:spendable': {
+        await Callbacks.callback_account_balance_spendable(
           dataArr[entry.task.dataIndex!],
           entry
         );

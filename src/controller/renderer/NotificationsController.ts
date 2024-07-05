@@ -60,10 +60,28 @@ export class NotificationsController {
     miscData?: AnyData
   ): NotificationData {
     switch (entry.task.action) {
-      case 'subscribe:account:balance': {
+      case 'subscribe:account:balance:free': {
         return {
           title: 'Free Balance',
-          body: getFreeBalanceText(miscData.received.free, account.chain),
+          body: getFreeBalanceText(miscData.free, account.chain),
+        };
+      }
+      case 'subscribe:account:balance:frozen': {
+        return {
+          title: 'Frozen Balance',
+          body: getFreeBalanceText(miscData.frozen, account.chain),
+        };
+      }
+      case 'subscribe:account:balance:reserved': {
+        return {
+          title: 'Reserved Balance',
+          body: getFreeBalanceText(miscData.reserved, account.chain),
+        };
+      }
+      case 'subscribe:account:balance:spendable': {
+        return {
+          title: 'Spendable Balance',
+          body: getFreeBalanceText(miscData.spendable, account.chain),
         };
       }
       case 'subscribe:account:nominationPools:rewards': {

@@ -187,11 +187,11 @@ export class EventsController {
       }
 
       /**
-       * subscribe:query.system.account
+       * subscribe:account:balance:free
        */
-      case 'subscribe:account:balance': {
+      case 'subscribe:account:balance:free': {
         const account = checkAccountWithProperties(entry, ['balance']);
-        const newBalance = miscData.received.free;
+        const newFree = miscData.free;
 
         const { chainId } = entry.task;
         const address = account.address;
@@ -210,12 +210,104 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Free Balance',
-          subtitle: getFreeBalanceText(newBalance, chainId),
-          data: {
-            free: miscData.received.free.toString(),
-            reserved: miscData.received.reserved.toString(),
-            nonce: miscData.received.nonce.toString(),
+          subtitle: getFreeBalanceText(newFree, chainId),
+          data: { free: newFree.toString() },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
+       * subscribe:account:balance:frozen
+       */
+      case 'subscribe:account:balance:frozen': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newFrozen = miscData.frozen;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
           },
+          title: 'Frozen Balance',
+          subtitle: getFreeBalanceText(newFrozen, chainId),
+          data: { frozen: newFrozen.toString() },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
+       * subscribe:account:balance:reserved
+       */
+      case 'subscribe:account:balance:reserved': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newReserved = miscData.reserved;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Reserved Balance',
+          subtitle: getFreeBalanceText(newReserved, chainId),
+          data: { frozen: newReserved.toString() },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
+
+      /**
+       * subscribe:account:balance:reserved
+       */
+      case 'subscribe:account:balance:spendable': {
+        const account = checkAccountWithProperties(entry, ['balance']);
+        const newSpendable = miscData.spendable;
+
+        const { chainId } = entry.task;
+        const address = account.address;
+        const accountName = entry.task.account!.name;
+
+        return {
+          uid: '',
+          category: 'balances',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Spendable Balance',
+          subtitle: getFreeBalanceText(newSpendable, chainId),
+          data: { spendable: newSpendable.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           actions: [],

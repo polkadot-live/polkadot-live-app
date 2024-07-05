@@ -19,7 +19,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { AccountBalance, ValidatorData } from '@/types/accounts';
+import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -105,13 +105,10 @@ export class Callbacks {
   }
 
   /**
-   * @name callback_query_system_account
-   * @summary Callback for 'subscribe:account:balance'.
-   *
-   * Get the balance of the task target account on the target chain. Returns
-   * the balance's nonce, free and reserved values.
+   * @name callback_account_balance_free
+   * @summary Handle callback for an account's free balance subscription.
    */
-  static async callback_query_system_account(
+  static async callback_account_balance_free(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -123,25 +120,16 @@ export class Callbacks {
         entry.task.account!.address
       );
 
-      if (!account) {
+      if (!account || !account.balance) {
         return;
       }
 
       // Get the received balance.
-      const received: AccountBalance = {
-        free: new BigNumber(rmCommas(String(data.data.free))),
-        reserved: new BigNumber(rmCommas(String(data.data.reserved))),
-        frozen: new BigNumber(rmCommas(String(data.data.frozen))),
-        nonce: new BigNumber(rmCommas(String(data.nonce))),
-      };
+      const free = new BigNumber(rmCommas(String(data.data.free)));
 
       let isSame = false;
-      if (account.balance) {
-        isSame =
-          received.free.eq(account.balance.free) &&
-          received.reserved.eq(account.balance.reserved) &&
-          received.frozen.eq(account.balance.frozen) &&
-          received.nonce.eq(account.balance.nonce);
+      if (account.balance.free) {
+        isSame = free.eq(account.balance.free);
       }
 
       // Exit early if nothing has changed.
@@ -151,24 +139,234 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance = received;
+        account.balance.free = free;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
       // Create event and parse into same format as persisted events.
-      const event = EventsController.getEvent(entry, { received });
+      const event = EventsController.getEvent(entry, { free });
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            received,
-          })
+        ? NotificationsController.getNotification(entry, account, { free })
         : null;
 
       // Send event and notification data to main process.
       window.myAPI.persistEvent(parsed, notification, isOneShot);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
+   * @name callback_account_balance_frozen
+   * @summary Handle callback for an account's frozen balance subscription.
+   */
+  static async callback_account_balance_frozen(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account || !account.balance) {
+        return;
+      }
+
+      // Get the received frozen balance.
+      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
+
+      let isSame = false;
+      if (account.balance.frozen) {
+        isSame = frozen.eq(account.balance.frozen);
+      }
+
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Update account data if balance has changed.
+      if (!isSame) {
+        account.balance.frozen = frozen;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Create event and parse into same format as persisted events.
+      const event = EventsController.getEvent(entry, { frozen });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Get notification.
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, { frozen })
+        : null;
+
+      // Send event and notification data to main process.
+      window.myAPI.persistEvent(parsed, notification, isOneShot);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
+   * @name callback_account_balance_reserved
+   * @summary Handle callback for an account's reserved balance subscription.
+   */
+  static async callback_account_balance_reserved(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account || !account.balance) {
+        return;
+      }
+
+      // Get the received reserved balance.
+      const reserved = new BigNumber(rmCommas(String(data.data.reserved)));
+
+      let isSame = false;
+      if (account.balance.reserved) {
+        isSame = reserved.eq(account.balance.reserved);
+      }
+
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Update account data if balance has changed.
+      if (!isSame) {
+        account.balance.reserved = reserved;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Create an event and parse into same format as persisted event.
+      const event = EventsController.getEvent(entry, { reserved });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Get notification.
+      const notificaiton = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, { reserved })
+        : null;
+
+      // Send event and notification data to main process.
+      window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+  /**
+   * @name callback_account_balance_spendable
+   * @summary Handle callback for an account's spendable balance subscription.
+   */
+  static async callback_account_balance_spendable(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // Get account.
+      const account = AccountsController.get(
+        entry.task.chainId,
+        entry.task.account!.address
+      );
+
+      if (!account || !account.balance) {
+        return;
+      }
+
+      // Get API instance.
+      const origin = 'callback_account_balance_spendable';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
+      /*
+        Spendable balance equation:
+        spendable = free - max(max(frozen, reserved), ed)
+      */
+      const free = new BigNumber(rmCommas(String(data.data.free)));
+      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
+      const reserved = new BigNumber(rmCommas(String(data.data.reserved)));
+      const ed = new BigNumber(
+        rmCommas(String(api.consts.balances.existentialDeposit))
+      );
+
+      let spendable = free.minus(
+        BigNumber.max(BigNumber.max(frozen, reserved), ed)
+      );
+
+      const zero = new BigNumber(0);
+      if (spendable.lt(zero)) {
+        spendable = new BigNumber(0);
+      }
+
+      // TODO: Remove check, we know the account has a balance.
+      let isSame = false;
+      if (account.balance) {
+        const {
+          free: accFree,
+          frozen: accFroz,
+          reserved: accRes,
+        } = account.balance;
+
+        let accSpendable = accFree.minus(
+          BigNumber.max(BigNumber.max(accFroz, accRes), ed)
+        );
+
+        if (accSpendable.lt(zero)) {
+          accSpendable = new BigNumber(0);
+        }
+
+        isSame = spendable.eq(accSpendable);
+      }
+
+      // Exit early if nothing has changed.
+      if (!isOneShot && isSame) {
+        return;
+      }
+
+      // Update account nonce if balance has changed.
+      if (!isSame) {
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
+      }
+
+      // Create an event and parse into same format as persisted event.
+      const event = EventsController.getEvent(entry, { spendable });
+      const parsed: EventCallback = JSON.parse(JSON.stringify(event));
+
+      // Get notification.
+      const notificaiton = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, { spendable })
+        : null;
+
+      // Send event and notification to main process.
+      window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
     } catch (err) {
       console.error(err);
       return;

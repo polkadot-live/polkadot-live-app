@@ -96,8 +96,20 @@ export const pushUniqueEvent = (
     /**
      * Standard Subscriptions
      */
-    case 'subscribe:account:balance': {
-      push = filter_query_system_account(events, event);
+    case 'subscribe:account:balance:free': {
+      push = filter_account_balance_free(events, event);
+      break;
+    }
+    case 'subscribe:account:balance:frozen': {
+      push = filter_account_balance_frozen(events, event);
+      break;
+    }
+    case 'subscribe:account:balance:reserved': {
+      push = filter_account_balance_reserved(events, event);
+      break;
+    }
+    case 'subscribe:account:balance:spendable': {
+      push = filter_account_balance_spendable(events, event);
       break;
     }
     case 'subscribe:account:nominationPools:rewards': {
@@ -172,31 +184,98 @@ export const pushUniqueEvent = (
  * Fix (something wrong with comparing account data and event data)
  * This filter function is currently not being used.
  */
-const filter_query_system_account = (
+const filter_account_balance_free = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  interface Target {
-    free: string;
-    reserved: string;
-    nonce: string;
-  }
-
   const { address } = event.who.data as EventAccountData;
-  const balances: Target = event.data;
+  const free: string = event.data.free;
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextBalances: Target = e.data;
+      const nextFree: string = e.data.free;
 
-      if (
-        address === nextAddress &&
-        balances.free === nextBalances.free &&
-        balances.reserved === nextBalances.reserved &&
-        balances.nonce === nextBalances.nonce
-      ) {
+      if (address === nextAddress && free === nextFree) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_account_balance_frozen
+ * @summary Event is duplicate if it matches on address, chain and frozen balance.
+ */
+const filter_account_balance_frozen = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  const { address } = event.who.data as EventAccountData;
+  const frozen: string = event.data.frozen;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const nextFrozen: string = e.data.frozen;
+
+      if (address === nextAddress && frozen === nextFrozen) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_account_balance_reserved
+ * @summary Event is duplicate if it matches on address, chain and frozen balance.
+ */
+const filter_account_balance_reserved = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  const { address } = event.who.data as EventAccountData;
+  const reserved: string = event.data.reserved;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const nextReserved: string = e.data.reserved;
+
+      if (address === nextAddress && reserved === nextReserved) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_account_balance_spendable
+ * @summary Event is duplicate if it matches on address, chain and spendable balance.
+ */
+const filter_account_balance_spendable = (
+  events: EventCallback[],
+  event: EventCallback
+) => {
+  const { address } = event.who.data as EventAccountData;
+  const spendable: string = event.data.spendable;
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const nextSpendable: string = e.data.spendable;
+
+      if (address === nextAddress && spendable === nextSpendable) {
         isUnique = false;
       }
     }
