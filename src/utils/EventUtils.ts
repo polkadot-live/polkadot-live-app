@@ -787,7 +787,17 @@ export const getFreeBalanceText = (newBalance: BigNumber, chainId: ChainID) => {
     chainUnits(chainId)
   );
 
-  return `${freeBalance} ${chainCurrency(chainId)}`;
+  // RegexA: Remove trailing zeros after a decimal point.
+  // RegexB: Insert commas as thousand separators.
+  const regexA = /\.0+$/;
+  const regexB = /\B(?=(\d{3})+(?!\d))/g;
+
+  const formatted: string = freeBalance
+    .toFixed(3)
+    .replace(regexA, '')
+    .replace(regexB, ',');
+
+  return `${formatted} ${chainCurrency(chainId)}`;
 };
 
 /**
