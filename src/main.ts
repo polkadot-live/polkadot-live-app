@@ -266,8 +266,8 @@ app.whenReady().then(async () => {
 
       // Show notification if event was added and notification data was received.
       if ((wasPersisted || isOneShot) && notification !== null) {
-        const { title, body } = notification;
-        NotificationsController.showNotification(title, body);
+        const { title, body, subtitle } = notification;
+        NotificationsController.showNotification(title, body, subtitle);
       }
 
       WindowsController.get('menu')?.webContents?.send(
@@ -376,8 +376,8 @@ app.whenReady().then(async () => {
   // Show native notifications.
   ipcMain.on(
     'app:notification:show',
-    (_, { title, body }: NotificationData) => {
-      NotificationsController.showNotification(title, body);
+    (_, { title, body, subtitle }: NotificationData) => {
+      NotificationsController.showNotification(title, body, subtitle);
     }
   );
 

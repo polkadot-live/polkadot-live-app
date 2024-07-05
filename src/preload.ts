@@ -186,8 +186,11 @@ export const API: PreloadAPI = {
       serializedAccount
     ),
 
-  showNotification: (content: { title: string; body: string }) =>
-    ipcRenderer.send('app:notification:show', content),
+  showNotification: (content: {
+    title: string;
+    body: string;
+    subtitle?: string;
+  }) => ipcRenderer.send('app:notification:show', content),
 
   /**
    * Window lifecycle

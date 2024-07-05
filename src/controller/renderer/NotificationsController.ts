@@ -32,13 +32,15 @@ export class NotificationsController {
         return {
           title: `Referendum ${referendumId}`,
           body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
+          subtitle: `Votes Tally`,
         };
       }
       case 'subscribe:interval:openGov:referendumThresholds': {
         const { formattedApp, formattedSup } = miscData;
         return {
           title: `Referendum ${referendumId}`,
-          body: `Approval thresold at ${formattedApp}% and support threshold at ${formattedSup}%`,
+          body: `Approval at ${formattedApp}% and support at ${formattedSup}%`,
+          subtitle: `Thresholds`,
         };
       }
       default: {
@@ -61,35 +63,40 @@ export class NotificationsController {
     switch (entry.task.action) {
       case 'subscribe:account:balance:free': {
         return {
-          title: 'Free Balance',
+          title: account.name,
           body: getBalanceText(miscData.free, account.chain),
+          subtitle: 'Free Balance',
         };
       }
       case 'subscribe:account:balance:frozen': {
         return {
-          title: 'Frozen Balance',
+          title: account.name,
           body: getBalanceText(miscData.frozen, account.chain),
+          subtitle: 'Frozen Balance',
         };
       }
       case 'subscribe:account:balance:reserved': {
         return {
-          title: 'Reserved Balance',
+          title: account.name,
           body: getBalanceText(miscData.reserved, account.chain),
+          subtitle: 'Reserved Balance',
         };
       }
       case 'subscribe:account:balance:spendable': {
         return {
-          title: 'Spendable Balance',
+          title: account.name,
           body: getBalanceText(miscData.spendable, account.chain),
+          subtitle: 'Spendable Balance',
         };
       }
       case 'subscribe:account:nominationPools:rewards': {
         return {
-          title: 'Unclaimed Nomination Pool Rewards',
+          title: account.name,
           body: getBalanceText(
             miscData.pendingRewardsPlanck as BigNumber,
             account.chain
           ),
+          subtitle: 'Nomination Pool Rewards',
         };
       }
       case 'subscribe:account:nominationPools:state': {
@@ -97,8 +104,9 @@ export class NotificationsController {
         const { prevState } = miscData;
 
         return {
-          title: 'Nomiantion Pool State',
+          title: account.name,
           body: getNominationPoolStateText(poolState, prevState),
+          subtitle: 'Nomiantion Pool State',
         };
       }
       case 'subscribe:account:nominationPools:renamed': {
@@ -106,8 +114,9 @@ export class NotificationsController {
         const { prevName } = miscData;
 
         return {
-          title: 'Nomination Pool Name',
+          title: account.name,
           body: getNominationPoolRenamedText(poolName, prevName),
+          subtitle: 'Nomination Pool Name',
         };
       }
       case 'subscribe:account:nominationPools:roles': {
@@ -115,8 +124,9 @@ export class NotificationsController {
         const { poolRoles: prevRoles } = miscData;
 
         return {
-          title: 'Nomination Pool Roles',
+          title: account.name,
           body: getNominationPoolRolesText(poolRoles, prevRoles),
+          subtitle: 'Nomination Pool Roles',
         };
       }
       case 'subscribe:account:nominationPools:commission': {
@@ -124,16 +134,18 @@ export class NotificationsController {
         const { poolCommission: prev } = miscData;
 
         return {
-          title: 'Nomination Pool Commission',
+          title: account.name,
           body: getNominationPoolCommissionText(cur, prev),
+          subtitle: 'Nomination Pool Commission',
         };
       }
       case 'subscribe:account:nominating:pendingPayouts': {
         const { pendingPayout, chainId } = miscData;
 
         return {
-          title: 'Nominating Pending Payout',
+          title: account.name,
           body: getBalanceText(pendingPayout, chainId),
+          subtitle: 'Nominating Pending Payout',
         };
       }
       case 'subscribe:account:nominating:exposure': {
@@ -144,8 +156,9 @@ export class NotificationsController {
           : `NOT actively nominating in the current era.`;
 
         return {
-          title: 'Era Exposure',
+          title: account.name,
           body,
+          subtitle: 'Era Exposure',
         };
       }
       case 'subscribe:account:nominating:commission': {
@@ -157,8 +170,9 @@ export class NotificationsController {
             : `${updated.length} nominated validators have changed commission.`;
 
         return {
-          title: 'Commission Changed',
+          title: account.name,
           body,
+          subtitle: 'Commission Changed',
         };
       }
       default: {

@@ -98,6 +98,7 @@ export interface EventCallback {
 export interface NotificationData {
   title: string;
   body: string;
+  subtitle?: string;
 }
 
 // Data to identify an account with an event.
