@@ -418,7 +418,10 @@ export const useMainMessagePorts = () => {
           },
         };
 
-        activeReferenda.push(next);
+        // If `deciding` is null, the referendum is in the Prepare period.
+        if (next.Ongoing.deciding) {
+          activeReferenda.push(next);
+        }
       }
     }
 
