@@ -3,18 +3,17 @@
 
 import {
   getBalanceText,
-  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-  getPendingRewardsText,
 } from '@/utils/EventUtils';
 import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
 import type { ValidatorData } from '@/types/accounts';
+import type BigNumber from 'bignumber.js';
 
 export class NotificationsController {
   /**
@@ -87,9 +86,9 @@ export class NotificationsController {
       case 'subscribe:account:nominationPools:rewards': {
         return {
           title: 'Unclaimed Nomination Pool Rewards',
-          body: getPendingRewardsText(
-            account.chain,
-            miscData.pendingRewardsPlanck
+          body: getBalanceText(
+            miscData.pendingRewardsPlanck as BigNumber,
+            account.chain
           ),
         };
       }
@@ -134,7 +133,7 @@ export class NotificationsController {
 
         return {
           title: 'Nominating Pending Payout',
-          body: getNominatingPendingPayoutText(pendingPayout, chainId),
+          body: getBalanceText(pendingPayout, chainId),
         };
       }
       case 'subscribe:account:nominating:exposure': {

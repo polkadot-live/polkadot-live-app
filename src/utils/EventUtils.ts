@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
+import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@/types/chains';
 import type {
   EventAccountData,
@@ -730,7 +730,7 @@ export const renderTimeAgo = (timestamp: number): string => {
 export const getNominationPoolRolesText = (
   curState: NominationPoolRoles,
   prevState: NominationPoolRoles
-) => {
+): string => {
   // Add changed roles to an array.
   const changedRoles: string[] = [];
 
@@ -760,7 +760,7 @@ export const getNominationPoolRolesText = (
 export const getNominationPoolRenamedText = (
   curName: string,
   prevName: string
-) =>
+): string =>
   curName !== prevName
     ? `Changed from ${prevName} to ${curName}`
     : `${curName}`;
@@ -772,7 +772,7 @@ export const getNominationPoolRenamedText = (
 export const getNominationPoolStateText = (
   curState: string,
   prevState: string
-) =>
+): string =>
   curState !== prevState
     ? `Changed from ${prevState} to ${curState}.`
     : `Current state is ${curState}.`;
@@ -781,7 +781,10 @@ export const getNominationPoolStateText = (
  * @name getBalanceText
  * @summary Text to render for transfer events.
  */
-export const getBalanceText = (balance: BigNumber, chainId: ChainID) => {
+export const getBalanceText = (
+  balance: BigNumber,
+  chainId: ChainID
+): string => {
   const asUnit = planckToUnit(balance as BigNumber, chainUnits(chainId));
   const regexA = /\.0+$/; // Remove trailing zeros after a decimal point.
   const regexB = /\B(?=(\d{3})+(?!\d))/g; // Insert commas as thousand separators.
@@ -793,19 +796,6 @@ export const getBalanceText = (balance: BigNumber, chainId: ChainID) => {
 
   return `${formatted} ${chainCurrency(chainId)}`;
 };
-
-/**
- * @name getPendingRewardsText
- * @summary Text to render for nomination pool pending rewards events.
- */
-export const getPendingRewardsText = (
-  chainId: ChainID,
-  pendingRewards: BigNumber
-) =>
-  `${planckToUnit(
-    new BigNumber(pendingRewards.toString()),
-    chainUnits(chainId)
-  )} ${chainCurrency(chainId)}`;
 
 /**
  * @name getNominationPoolCommissionText
@@ -822,19 +812,3 @@ export const getNominationPoolCommissionText = (
   cur.max === prev.max
     ? `Pool commission is ${cur.current}.`
     : `Pool commission set to ${cur.current}.`;
-
-/**
- * @name getNominatingPendingPayoutsText
- * @summary Text to render for nominating pending payout events.
- */
-export const getNominatingPendingPayoutText = (
-  pendingPayout: BigNumber,
-  chainId: ChainID
-) => {
-  const pendingPayoutUnit = planckToUnit(
-    pendingPayout as BigNumber,
-    chainUnits(chainId)
-  );
-
-  return `${pendingPayoutUnit.toString()} ${chainCurrency(chainId)}`;
-};

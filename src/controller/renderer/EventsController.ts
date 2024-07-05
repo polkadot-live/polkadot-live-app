@@ -9,12 +9,10 @@ import {
 } from '@/utils/AccountUtils';
 import {
   getBalanceText,
-  getNominatingPendingPayoutText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-  getPendingRewardsText,
 } from '@/utils/EventUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
@@ -326,6 +324,8 @@ export class EventsController {
         const { address, name: accountName, source } = flattenedAccount;
         const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
 
+        const pendingRewardsPlanck = miscData.pendingRewardsPlanck as BigNumber;
+
         const pendingRewardsUnit = planckToUnit(
           new BigNumber(poolPendingRewards.toString()),
           chainUnits(chainId)
@@ -345,10 +345,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Unclaimed Nomination Pool Rewards',
-          subtitle: getPendingRewardsText(
-            chainId,
-            miscData.pendingRewardsPlanck
-          ),
+          subtitle: getBalanceText(pendingRewardsPlanck, chainId),
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -574,7 +571,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nominating Pending Payout',
-          subtitle: getNominatingPendingPayoutText(pendingPayout, chainId),
+          subtitle: getBalanceText(pendingPayout, chainId),
           data: {
             era,
             pendingPayout: pendingPayout.toString(), // string required
