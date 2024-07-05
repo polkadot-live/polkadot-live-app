@@ -303,8 +303,7 @@ export class Callbacks {
 
       /*
         Spendable balance equation:
-        spendable = free - max(frozen - on_hold, ED)
-        spendable = free - max(frozen - reserved, ED)
+        spendable = free - max(max(frozen, reserved), ed)
       */
       const free = new BigNumber(rmCommas(String(data.data.free)));
       const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
@@ -313,7 +312,14 @@ export class Callbacks {
         rmCommas(String(api.consts.balances.existentialDeposit))
       );
 
-      const spendable = free.minus(BigNumber.max(frozen.minus(reserved), ed));
+      let spendable = free.minus(
+        BigNumber.max(BigNumber.max(frozen, reserved), ed)
+      );
+
+      const zero = new BigNumber(0);
+      if (spendable.lt(zero)) {
+        spendable = new BigNumber(0);
+      }
 
       // TODO: Remove check, we know the account has a balance.
       let isSame = false;
@@ -324,9 +330,13 @@ export class Callbacks {
           reserved: accRes,
         } = account.balance;
 
-        const accSpendable = accFree.minus(
-          BigNumber.max(accFroz.minus(accRes), ed)
+        let accSpendable = accFree.minus(
+          BigNumber.max(BigNumber.max(accFroz, accRes), ed)
         );
+
+        if (accSpendable.lt(zero)) {
+          accSpendable = new BigNumber(0);
+        }
 
         isSame = spendable.eq(accSpendable);
       }
