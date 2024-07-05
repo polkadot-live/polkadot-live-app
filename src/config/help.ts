@@ -51,7 +51,7 @@ export const HelpConfig: HelpItems = [
     title: 'Subscription: Reserved Balance',
     definition: [
       "Get notified when an account's reserved balance changes.",
-      "An account's reserved balance (also known as 'on hold') is used for identities, proxies, OpenGov preimages and deposits, and it is no longer free.",
+      'An account\'s reserved balance (also known as "on hold") is used for identities, proxies, OpenGov preimages and deposits, and it is no longer free.',
     ],
   },
   {
