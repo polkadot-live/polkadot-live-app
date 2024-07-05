@@ -140,8 +140,11 @@ export const Home = () => {
               </>
             )}
           </div>
-          {/* Render Manage Content */}
+          {/* Render Subscriptions Content */}
           <div>
+            <IconWrapper>
+              <IconSVG width={175} opacity={0.02} />
+            </IconWrapper>
             <div className="container">
               {!appLoading && <Manage addresses={getAddresses()} />}
             </div>
