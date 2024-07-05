@@ -140,6 +140,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.free = free;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -197,6 +198,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.frozen = frozen;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -254,6 +256,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.reserved = reserved;
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -344,6 +347,13 @@ export class Callbacks {
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
         return;
+      }
+
+      // Update account nonce if balance has changed.
+      if (!isSame) {
+        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        await AccountsController.set(account.chain, account);
+        entry.task.account = account.flatten();
       }
 
       // Create an event and parse into same format as persisted event.

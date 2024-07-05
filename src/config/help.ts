@@ -34,24 +34,33 @@ export const HelpConfig: HelpItems = [
     key: 'help:subscription:balances:transfers',
     title: 'Balances: Transfers Subscription',
     definition: [
-      'Get notified when any part of your balance changes.',
-      'A Polkadot balance is comprised of a free, reserved, and frozen balance. Regular transfers to and from other addresses will change your free balance, whilst staking and voting activities may change your reserved and frozen balances, respectively.',
+      "Get notified when an account's free balance changes.",
+      "An account's free balance can be used for on-chain activity like staking, participating in governance etc. but is not necessarily spendable (or transferrable).",
     ],
   },
   {
     key: 'help:subscription:balances:frozen',
     title: 'Subscription: Frozen Balance',
-    definition: ['Todo'],
+    definition: [
+      "Get notified when an account's frozen balance changes.",
+      "An account's frozen balance is the free balance locked for staking, governance, and vesting (also called locked balance).",
+    ],
   },
   {
     key: 'help:subscription:balances:reserved',
     title: 'Subscription: Reserved Balance',
-    definition: ['Todo'],
+    definition: [
+      "Get notified when an account's reserved balance changes.",
+      "An account's reserved balance (also known as 'on hold') is used for identities, proxies, OpenGov preimages and deposits, and it is no longer free.",
+    ],
   },
   {
     key: 'help:subscription:balances:spendable',
     title: 'Subscription: Spendable Balance',
-    definition: ['Todo'],
+    definition: [
+      "Get notified when an account's spendable balance changes.",
+      "An account's spendable balance is the free balance that can be spent.",
+    ],
   },
   {
     key: 'help:subscription:nominationPools:commission',
