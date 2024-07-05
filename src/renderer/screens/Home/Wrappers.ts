@@ -88,7 +88,7 @@ export const TabsWrapper = styled.div`
 
 export const IconWrapper = styled.div`
   position: absolute;
-  top: 3rem;
+  top: 6rem;
   width: 100%;
   display: flex;
   justify-content: center;

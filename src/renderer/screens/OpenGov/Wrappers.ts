@@ -9,23 +9,44 @@ import type { ChainID } from '@/types/chains';
  *   OpenGovCard
  *   TreasuryStats
  */
+export const IconWrapper = styled.div<{ $chainId: ChainID }>`
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 0;
+  transition: opacity 0.2s ease-out;
+
+  svg {
+    top: ${(props) => (props.$chainId === 'Polkadot' ? '-8px' : '-2rem')};
+    left: ${(props) => (props.$chainId === 'Polkadot' ? '4.75rem' : '3rem')};
+    position: absolute;
+  }
+`;
 
 export const OpenGovCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  overflow: hidden;
 
   padding: 1rem;
   border: 1px solid var(--border-primary-color);
   border-radius: 0.5rem;
 
   background-color: var(--background-primary);
-  transition: background-color 0.2s ease-out;
+  transition:
+    background-color 0.2s ease-out,
+    opacity 0.2s ease-out;
   cursor: pointer;
 
   &:hover {
     background-color: var(--background-modal);
+
+    .svg-wrapper {
+      opacity: 0.06;
+    }
   }
   .content-wrapper {
     display: flex;
@@ -44,7 +65,7 @@ export const OpenGovCard = styled.div`
     .btn-kusama {
       display: flex;
       column-gap: 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
 
       > span {
         padding-right: 0.25rem;

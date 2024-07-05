@@ -84,6 +84,7 @@ export const Home = () => {
           type="button"
           disabled={appLoading}
           className={section === 1 ? 'active' : undefined}
+          style={{ opacity: appLoading ? '0.3' : '1' }}
           onClick={() => {
             setSection(1);
           }}
@@ -140,8 +141,11 @@ export const Home = () => {
               </>
             )}
           </div>
-          {/* Render Manage Content */}
+          {/* Render Subscriptions Content */}
           <div>
+            <IconWrapper>
+              <IconSVG width={175} opacity={0.02} />
+            </IconWrapper>
             <div className="container">
               {!appLoading && <Manage addresses={getAddresses()} />}
             </div>
