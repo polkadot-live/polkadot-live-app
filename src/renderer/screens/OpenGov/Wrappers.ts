@@ -18,7 +18,7 @@ export const IconWrapper = styled.div<{ $chainId: ChainID }>`
   transition: opacity 0.2s ease-out;
 
   svg {
-    top: ${(props) => (props.$chainId === 'Polkadot' ? '-8px' : '-2rem')};
+    top: ${(props) => (props.$chainId === 'Polkadot' ? '-6px' : '-2rem')};
     left: ${(props) => (props.$chainId === 'Polkadot' ? '4.75rem' : '3rem')};
     position: absolute;
   }
@@ -43,10 +43,6 @@ export const OpenGovCard = styled.div`
 
   &:hover {
     background-color: var(--background-modal);
-
-    .svg-wrapper {
-      opacity: 0.06;
-    }
   }
   .content-wrapper {
     display: flex;
