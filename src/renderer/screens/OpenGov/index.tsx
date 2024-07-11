@@ -198,8 +198,8 @@ export const OpenGov: React.FC = () => {
               <OpenGovCard onClick={() => handleOpenTracks('Polkadot')}>
                 <IconWrapper className="hover" $chainId={'Polkadot'}>
                   <PolkadotSVG
-                    width={65}
-                    opacity={0.03}
+                    width={60}
+                    opacity={0.06}
                     className="svg-wrapper"
                   />
                 </IconWrapper>
@@ -216,7 +216,7 @@ export const OpenGov: React.FC = () => {
                 <IconWrapper className="hover" $chainId={'Kusama'}>
                   <KusamaSVG
                     width={100}
-                    opacity={0.04}
+                    opacity={0.06}
                     className="svg-wrapper"
                   />
                 </IconWrapper>
@@ -237,8 +237,8 @@ export const OpenGov: React.FC = () => {
               <OpenGovCard onClick={() => handleOpenReferenda('Polkadot')}>
                 <IconWrapper className="hover" $chainId={'Polkadot'}>
                   <PolkadotSVG
-                    width={65}
-                    opacity={0.03}
+                    width={60}
+                    opacity={0.06}
                     className="svg-wrapper"
                   />
                 </IconWrapper>
@@ -255,7 +255,7 @@ export const OpenGov: React.FC = () => {
                 <IconWrapper className="hover" $chainId={'Kusama'}>
                   <KusamaSVG
                     width={100}
-                    opacity={0.04}
+                    opacity={0.06}
                     className="svg-wrapper"
                   />
                 </IconWrapper>

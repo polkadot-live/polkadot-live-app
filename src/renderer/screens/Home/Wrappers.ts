@@ -100,18 +100,26 @@ export const NoAccountsWrapper = styled.div`
   flex-direction: column;
   row-gap: 1rem;
   align-items: center;
-  margin: 0.25rem;
-  margin-bottom: 0.75rem;
+  margin: 1rem 1rem 0.75rem;
   padding: 2rem;
-  border-radius: 1.25rem;
-  background-color: var(--background-default);
+  border-radius: 1rem;
+  background: rgb(126, 61, 90);
+  background: linear-gradient(
+    45deg,
+    rgb(48 13 28) 0%,
+    rgb(88 47 66) 50%,
+    rgb(56 16 33) 101%
+  );
+  filter: brightness(75%);
 
   button {
     z-index: 1;
     padding: 0.5rem 1.75rem !important;
+    filter: brightness(120%);
   }
   h4 {
     text-align: center;
+    filter: brightness(120%);
   }
 `;
 
