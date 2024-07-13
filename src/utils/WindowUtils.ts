@@ -154,8 +154,12 @@ export const createMainWindow = (isTest: boolean) => {
     // Send ports to main window to facilitate communication with other windows.
     sendMainWindowPorts(mainWindow);
 
-    // Set window bounds.
-    setMainWindowPosition(mainWindow);
+    // Freeze window if in docked mode.
+    const { appDocked } = ConfigMain.getAppSettings();
+    if (appDocked) {
+      mainWindow.setMovable(false);
+      mainWindow.setResizable(false);
+    }
 
     // Set all workspaces visibility.
     setAllWorkspaceVisibilityForWindow('menu');
@@ -383,6 +387,9 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
 
   // Make window not resizable if docked.
   mainWindow.setResizable(false);
+
+  // Persist window position.
+  (store as Record<string, AnyJson>).set('menu_bounds', mainWindow.getBounds());
 };
 
 /**
