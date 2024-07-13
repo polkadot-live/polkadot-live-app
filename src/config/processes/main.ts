@@ -57,7 +57,7 @@ export class Config {
       return (store as Record<string, AnyData>).get(key);
     } else {
       const settings: PersistedSettings = {
-        appDocked: true,
+        appDocked: false,
         appSilenceOsNotifications: false,
         appShowOnAllWorkspaces: true,
         appShowDebuggingSubscriptions: false,
