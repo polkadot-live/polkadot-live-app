@@ -39,7 +39,19 @@ const config: ForgeConfig = {
     }
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({}),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {
+        icon: path.resolve(rootDir, 'public/assets/icons/icon.icns'),
+        format: "ULFO"
+      }
+    }
+  ],
   plugins: [
     new VitePlugin({
       // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
