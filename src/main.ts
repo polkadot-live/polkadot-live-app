@@ -27,6 +27,7 @@ import { WindowsController } from '@/controller/main/WindowsController';
 import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import { hideDockIcon } from './utils/SystemUtils';
+import { menuTemplate } from './utils/MenuUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -60,7 +61,8 @@ if (isTest) {
 // Hide application menu (mac OS) if DEBUG env variable doesn't exist.
 // NOTE: Showing window on all workspaces disables the application menu.
 if (process.platform === 'darwin' && !process.env.DEBUG) {
-  Menu.setApplicationMenu(null);
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
 }
 
 // Enable priviledges.
