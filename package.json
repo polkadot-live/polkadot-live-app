@@ -1,7 +1,7 @@
 {
   "name": "polkadot-live-vite",
   "productName": "Polkadot Live",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "main": ".vite/build/main.js",
   "contributors": [
