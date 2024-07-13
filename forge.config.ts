@@ -45,7 +45,7 @@ const config: ForgeConfig = {
     // Set Apple team ID and associated team member credentials for notaraization.
     osxNotarize: process.env['SKIP_NOTARIZE'] ? undefined : {
       appleId: process.env.APPLE_ID || '',
-      appleIdPassword: process.env.APPLE_PASSWORD || '',
+      appleIdPassword: process.env.APPLE_ID_PASSWORD || '',
       teamId: process.env.APPLE_TEAM_ID || '',
     },
   },
