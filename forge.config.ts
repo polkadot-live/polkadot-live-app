@@ -74,6 +74,18 @@ const config: ForgeConfig = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'polkadot-live',
+          name: 'polkadot-live-app',
+        },
+        draft: false,
+      }
+    }
+  ],
 };
 
 export default config;
