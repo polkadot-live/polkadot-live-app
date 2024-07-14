@@ -13,6 +13,7 @@ export interface PersistedSettings {
   appEnableAutomaticSubscriptions: boolean;
   appEnablePolkassemblyApi: boolean;
   appKeepOutdatedEvents: boolean;
+  appHideDockIcon: boolean;
 }
 
 export type SettingAction =

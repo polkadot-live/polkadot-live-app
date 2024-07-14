@@ -18,6 +18,15 @@ export const hideDockIcon = () => {
   }
 };
 
+// Show dock icon.
+export const showDockIcon = () => {
+  if (process.platform === 'darwin') {
+    setTimeout(() => {
+      app.dock.show();
+    }, 2_000);
+  }
+};
+
 // Report online status to renderer.
 export const reportOnlineStatus = (id: string) => {
   const status = OnlineStatusController.getStatus();

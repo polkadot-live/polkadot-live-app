@@ -313,7 +313,8 @@ export const handleWindowOnIPC = (
     setAllWorkspaceVisibilityForWindow(name);
 
     // Hide dock icon.
-    hideDockIcon();
+    const { appHideDockIcon } = ConfigMain.getAppSettings();
+    appHideDockIcon && hideDockIcon();
   });
 };
 

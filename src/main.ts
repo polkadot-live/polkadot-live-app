@@ -26,7 +26,7 @@ import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
-import { hideDockIcon } from './utils/SystemUtils';
+import { hideDockIcon, showDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
@@ -138,7 +138,8 @@ app.whenReady().then(async () => {
   }
 
   // Hide dock icon if we're on mac OS.
-  hideDockIcon();
+  const { appHideDockIcon } = ConfigMain.getAppSettings();
+  appHideDockIcon && hideDockIcon();
 
   // ------------------------------
   // Create windows
@@ -552,7 +553,7 @@ app.whenReady().then(async () => {
 
     // Re-hide dock if we're on macOS.
     // Electron will show the dock icon after calling the workspaces API.
-    hideDockIcon();
+    settings.appHideDockIcon && hideDockIcon();
   });
 
   // Toggle an app setting.
@@ -586,6 +587,14 @@ app.whenReady().then(async () => {
       case 'settings:execute:keepOutdatedEvents': {
         const flag = !settings.appKeepOutdatedEvents;
         settings.appKeepOutdatedEvents = flag;
+        break;
+      }
+      case 'settings:execute:hideDockIcon': {
+        const flag = !settings.appHideDockIcon;
+        settings.appHideDockIcon = flag;
+
+        // Hide or show dock icon.
+        flag ? hideDockIcon() : showDockIcon();
         break;
       }
       default: {

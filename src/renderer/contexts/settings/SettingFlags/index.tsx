@@ -28,6 +28,7 @@ export const SettingFlagsProvider = ({
     useState(true);
   const [enablePolkassemblyApi, setEnablePolkassemblyApi] = useState(true);
   const [keepOutdatedEvents, setKeepOutdatedEvents] = useState(true);
+  const [hideDockIcon, setHideDockIcon] = useState(false);
 
   /// Fetch settings from store and set state.
   useEffect(() => {
@@ -40,6 +41,7 @@ export const SettingFlagsProvider = ({
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
         appKeepOutdatedEvents,
+        appHideDockIcon,
       } = await window.myAPI.getAppSettings();
 
       setWindowDocked(appDocked);
@@ -49,6 +51,7 @@ export const SettingFlagsProvider = ({
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
       setEnablePolkassemblyApi(appEnablePolkassemblyApi);
       setKeepOutdatedEvents(appKeepOutdatedEvents);
+      setHideDockIcon(appHideDockIcon);
     };
 
     initSettings();
@@ -79,6 +82,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:keepOutdatedEvents': {
         return keepOutdatedEvents;
+      }
+      case 'settings:execute:hideDockIcon': {
+        return hideDockIcon;
       }
       default: {
         return true;
@@ -117,6 +123,10 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:keepOutdatedEvents': {
         setKeepOutdatedEvents(!keepOutdatedEvents);
+        break;
+      }
+      case 'settings:execute:hideDockIcon': {
+        setHideDockIcon(!hideDockIcon);
         break;
       }
       default: {
