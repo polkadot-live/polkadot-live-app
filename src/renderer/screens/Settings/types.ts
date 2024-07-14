@@ -24,7 +24,8 @@ export type SettingAction =
   | 'settings:execute:showDebuggingSubscriptions'
   | 'settings:execute:enableAutomaticSubscriptions'
   | 'settings:execute:enablePolkassembly'
-  | 'settings:execute:keepOutdatedEvents';
+  | 'settings:execute:keepOutdatedEvents'
+  | 'settings:execute:hideDockIcon';
 
 export interface SettingItem {
   action: SettingAction;

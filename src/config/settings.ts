@@ -38,6 +38,14 @@ export const SettingsList: SettingItem[] = [
     title: 'Enable Polkassembly Data',
   },
   {
+    action: 'settings:execute:hideDockIcon',
+    category: 'General',
+    enabled: false,
+    helpKey: 'help:settings:hideDockIcon',
+    settingType: 'switch',
+    title: 'Hide Dock Icon',
+  },
+  {
     action: 'settings:execute:showDebuggingSubscriptions',
     category: 'Subscriptions',
     enabled: false,

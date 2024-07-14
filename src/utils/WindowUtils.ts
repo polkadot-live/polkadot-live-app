@@ -16,7 +16,7 @@ import {
 } from 'electron-localshortcut';
 import path from 'path';
 import { store } from '@/main';
-import { reportOnlineStatus } from '@/utils/SystemUtils';
+import { hideDockIcon, reportOnlineStatus } from '@/utils/SystemUtils';
 import { EventsController } from '@/controller/main/EventsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
@@ -311,6 +311,9 @@ export const handleWindowOnIPC = (
 
     // Set all workspaces visibility.
     setAllWorkspaceVisibilityForWindow(name);
+
+    // Hide dock icon.
+    hideDockIcon();
   });
 };
 

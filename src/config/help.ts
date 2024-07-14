@@ -190,6 +190,11 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:hideDockIcon',
+    title: 'Hide Dock Icon',
+    definition: ['TODO'],
+  },
+  {
     key: 'help:settings:keepOutdatedEvents',
     title: 'Keep Outdated Events',
     definition: [
