@@ -64,6 +64,7 @@ export class Config {
         appEnableAutomaticSubscriptions: true,
         appEnablePolkassemblyApi: true,
         appKeepOutdatedEvents: true,
+        appHideDockIcon: false,
       };
 
       // Persist default settings to store and return them.

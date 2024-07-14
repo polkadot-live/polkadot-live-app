@@ -8,12 +8,21 @@ import { app } from 'electron';
 import type { AnyFunction } from '@/types/misc';
 
 // Hide dock icon if platform is macOS.
-// NOTE: We need to wait over a second for the `app.dock.hide()` API to work.
+// NOTE: We need to wait over a second for the `.hide()` API to work.
 // Issue discussed here: https://github.com/electron/electron/issues/37832
 export const hideDockIcon = () => {
   if (process.platform === 'darwin') {
     setTimeout(() => {
       app.dock.hide();
+    }, 2_000);
+  }
+};
+
+// Show dock icon.
+export const showDockIcon = () => {
+  if (process.platform === 'darwin') {
+    setTimeout(() => {
+      app.dock.show();
     }, 2_000);
   }
 };

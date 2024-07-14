@@ -36,6 +36,9 @@ export const AppSettingsProvider = ({
   const [enablePolkassemblyApi, setEnablePolkassemblyApi] =
     useState<boolean>(true);
 
+  /// Hide dock icon.
+  const [hideDockIcon, setHideDockIcon] = useState<boolean>(false);
+
   // Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
@@ -46,6 +49,7 @@ export const AppSettingsProvider = ({
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
         appKeepOutdatedEvents,
+        appHideDockIcon,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -61,6 +65,7 @@ export const AppSettingsProvider = ({
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
       setEnablePolkassemblyApi(appEnablePolkassemblyApi);
+      setHideDockIcon(appHideDockIcon);
     };
 
     initSettings();
@@ -121,6 +126,12 @@ export const AppSettingsProvider = ({
     window.myAPI.toggleSetting('settings:execute:keepOutdatedEvents');
   };
 
+  /// Handle toggling hide dock icon setting.
+  const handleToggleHideDockIcon = () => {
+    setHideDockIcon(!hideDockIcon);
+    window.myAPI.toggleSetting('settings:execute:hideDockIcon');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -129,12 +140,14 @@ export const AppSettingsProvider = ({
         showDebuggingSubscriptions,
         enableAutomaticSubscriptions,
         enablePolkassemblyApi,
+        hideDockIcon,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
         handleToggleEnableAutomaticSubscriptions,
         handleToggleEnablePolkassemblyApi,
         handleToggleKeepOutdatedEvents,
+        handleToggleHideDockIcon,
         setSilenceOsNotifications,
       }}
     >

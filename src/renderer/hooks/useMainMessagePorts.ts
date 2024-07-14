@@ -60,6 +60,7 @@ export const useMainMessagePorts = () => {
     handleToggleEnableAutomaticSubscriptions,
     handleToggleEnablePolkassemblyApi,
     handleToggleKeepOutdatedEvents,
+    handleToggleHideDockIcon,
   } = useAppSettings();
 
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
@@ -750,6 +751,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:keepOutdatedEvents': {
               handleToggleKeepOutdatedEvents();
+              break;
+            }
+            case 'settings:execute:hideDockIcon': {
+              handleToggleHideDockIcon();
               break;
             }
             case 'settings:execute:exportData': {

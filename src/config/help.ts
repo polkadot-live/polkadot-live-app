@@ -190,6 +190,13 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:settings:hideDockIcon',
+    title: 'Hide Dock Icon',
+    definition: [
+      'Turn this setting on to hide the Polkadot Live application icon in the Dock (macOS) or Taskbar (Windows).',
+    ],
+  },
+  {
     key: 'help:settings:keepOutdatedEvents',
     title: 'Keep Outdated Events',
     definition: [
