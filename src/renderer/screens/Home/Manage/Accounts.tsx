@@ -44,7 +44,7 @@ export const Accounts = ({
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
-    const sorted = new Map<ChainID, FlattenedAccountData[]>();
+    const sorted = new Map<ChainID | 'Empty', FlattenedAccountData[]>();
 
     // Insert map keys in a certain order.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -73,12 +73,17 @@ export const Accounts = ({
     // Remove any empty entries.
     const redundantEntries: ChainID[] = [];
     for (const [chainId, chainAddresses] of sorted.entries()) {
-      chainAddresses.length === 0 && redundantEntries.push(chainId);
+      chainAddresses.length === 0 && redundantEntries.push(chainId as ChainID);
     }
 
     redundantEntries.forEach((chainId) => {
       sorted.delete(chainId);
     });
+
+    // Add a single `Empty` key if there are no accounts to render.
+    if (sorted.size === 0) {
+      sorted.set('Empty', []);
+    }
 
     return sorted;
   };
@@ -161,14 +166,6 @@ export const Accounts = ({
 
   return (
     <AccountsWrapper>
-      <div
-        style={{
-          display: addresses.length === 0 ? 'inherit' : 'none',
-          padding: '0 0.5rem',
-        }}
-      >
-        <NoAccounts />
-      </div>
       <div>
         <Accordion
           multiple
@@ -180,59 +177,67 @@ export const Accounts = ({
             ([chainId, chainAddresses], k) => (
               <AccordionItem key={`${chainId}_accounts`}>
                 <AccordionCaretHeader
-                  title={`${chainId} Accounts`}
+                  title={
+                    chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`
+                  }
                   itemIndex={k}
                 />
                 <AccordionPanel>
-                  <div style={{ padding: '0 0.75rem' }}>
-                    <div className="flex-column">
-                      {chainAddresses.map(
-                        (
-                          { address, name }: FlattenedAccountData,
-                          j: number
-                        ) => (
-                          <AccountWrapper
-                            whileHover={{ scale: 1.01 }}
-                            key={`manage_account_${j}`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleClickAccount(name, address)}
-                            ></button>
-                            <div className="inner">
-                              <div>
-                                <span
-                                  style={{
-                                    zIndex: 2,
-                                    cursor: 'default',
-                                  }}
-                                  className="icon tooltip tooltip-trigger-element"
-                                  data-tooltip-text={ellipsisFn(address, 16)}
-                                  onMouseMove={() =>
-                                    setTooltipTextAndOpen(
-                                      ellipsisFn(address, 16),
-                                      'right'
-                                    )
-                                  }
-                                >
-                                  <Identicon value={address} size={26} />
-                                </span>
-                                <div className="content">
-                                  <h3>{name}</h3>
+                  <div style={{ padding: '0.5rem 0.75rem 0' }}>
+                    {chainId === 'Empty' ? (
+                      <NoAccounts />
+                    ) : (
+                      <div className="flex-column">
+                        {chainAddresses.map(
+                          (
+                            { address, name }: FlattenedAccountData,
+                            j: number
+                          ) => (
+                            <AccountWrapper
+                              whileHover={{ scale: 1.01 }}
+                              key={`manage_account_${j}`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleClickAccount(name, address)
+                                }
+                              ></button>
+                              <div className="inner">
+                                <div>
+                                  <span
+                                    style={{
+                                      zIndex: 2,
+                                      cursor: 'default',
+                                    }}
+                                    className="icon tooltip tooltip-trigger-element"
+                                    data-tooltip-text={ellipsisFn(address, 16)}
+                                    onMouseMove={() =>
+                                      setTooltipTextAndOpen(
+                                        ellipsisFn(address, 16),
+                                        'right'
+                                      )
+                                    }
+                                  >
+                                    <Identicon value={address} size={26} />
+                                  </span>
+                                  <div className="content">
+                                    <h3>{name}</h3>
+                                  </div>
+                                </div>
+                                <div>
+                                  <ButtonText
+                                    text=""
+                                    iconRight={faChevronRight}
+                                    iconTransform="shrink-3"
+                                  />
                                 </div>
                               </div>
-                              <div>
-                                <ButtonText
-                                  text=""
-                                  iconRight={faChevronRight}
-                                  iconTransform="shrink-3"
-                                />
-                              </div>
-                            </div>
-                          </AccountWrapper>
-                        )
-                      )}
-                    </div>
+                            </AccountWrapper>
+                          )
+                        )}
+                      </div>
+                    )}
                   </div>
                 </AccordionPanel>
               </AccordionItem>
