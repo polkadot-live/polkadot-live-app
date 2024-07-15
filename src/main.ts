@@ -106,7 +106,6 @@ unhandled({
 
 // Initialise Electron store.
 export const store = new Store();
-store.delete('app_settings');
 
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.

@@ -106,20 +106,20 @@ export const NoAccountsWrapper = styled.div`
   background: rgb(126, 61, 90);
   background: linear-gradient(
     45deg,
-    rgb(48 13 28) 0%,
-    rgb(88 47 66) 50%,
-    rgb(56 16 33) 101%
+    rgb(100 33 62) 0%,
+    rgb(126 40 80) 50%,
+    rgb(124 49 82) 101%
   );
   filter: brightness(75%);
 
   button {
     z-index: 1;
     padding: 0.5rem 1.75rem !important;
-    filter: brightness(120%);
+    filter: brightness(140%);
   }
   h4 {
     text-align: center;
-    filter: brightness(120%);
+    filter: brightness(140%);
   }
 `;
 
