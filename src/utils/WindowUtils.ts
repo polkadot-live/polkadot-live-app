@@ -348,17 +348,10 @@ const loadUrlWithRoute = (
 };
 
 /**
- * @name setMainWindowPosition
- * @summary Calculate main window bounds (screen position and dimensions).
+ * @name setDockedOnMac
+ * @summary Setup main window in docked mode and position under tray icon on macOS.
  */
-const setMainWindowPosition = (mainWindow: BrowserWindow) => {
-  // Get docked setting from storage.
-  const { appDocked } = ConfigMain.getAppSettings();
-
-  if (!appDocked) {
-    return;
-  }
-
+const setDockedOnMac = (mainWindow: BrowserWindow) => {
   // Get tray bounds.
   const { x: trayX, width: trayWidth } = ConfigMain.getAppTrayBounds();
 
@@ -383,13 +376,41 @@ const setMainWindowPosition = (mainWindow: BrowserWindow) => {
     height: ConfigMain.dockedHeight,
   };
 
-  // Set window position and size:
+  fixMainWindow(mainWindow, windowBounds);
+};
+
+/**
+ * @name setDockedOnWindows
+ * @summary Setup main window in docked mode and move to top-right of screen on Windows.
+ */
+const setDockedOnWindows = (mainWindow: BrowserWindow) => {
+  // Get screen width.
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth } = primaryDisplay.workAreaSize;
+
+  // Calculate window screen bounds.
+  const windowBounds: Rectangle = {
+    x: screenWidth - ConfigMain.dockedWidth,
+    y: 0,
+    width: ConfigMain.dockedWidth,
+    height: ConfigMain.dockedHeight,
+  };
+
+  fixMainWindow(mainWindow, windowBounds);
+};
+
+/**
+ * @name fixMainWindow
+ * @summary Utility to set the main window to a docked state given its window bounds.
+ */
+const fixMainWindow = (mainWindow: BrowserWindow, windowBounds: Rectangle) => {
+  // Set window position and size.
   mainWindow.setBounds(windowBounds);
 
-  // Make window un-moveable if docked.
+  // Make window un-moveable when docked.
   mainWindow.setMovable(false);
 
-  // Make window not resizable if docked.
+  // Make window not resizable when docked.
   mainWindow.setResizable(false);
 
   // Persist window position.
@@ -416,7 +437,19 @@ export const handleNewDockFlag = (isDocked: boolean) => {
 
   // Update window.
   if (isDocked) {
-    setMainWindowPosition(mainWindow);
+    switch (process.platform) {
+      case 'darwin': {
+        setDockedOnMac(mainWindow);
+        break;
+      }
+      case 'win32': {
+        setDockedOnWindows(mainWindow);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   } else {
     mainWindow.setMovable(true);
     mainWindow.setResizable(true);
