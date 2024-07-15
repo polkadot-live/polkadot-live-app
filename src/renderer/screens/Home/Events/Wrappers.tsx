@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
 `;
 
 export const NoEventsWrapper = styled.div`
-  margin-top: 6rem;
+  margin-top: 6.75rem;
   z-index: 1;
 
   button {
@@ -29,6 +29,7 @@ export const NoEventsWrapper = styled.div`
   h3 {
     text-align: center;
     margin: 2rem 0 1rem 0;
+    font-size: 1.2rem;
   }
   h5 {
     text-align: center;
