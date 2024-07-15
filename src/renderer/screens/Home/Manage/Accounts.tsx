@@ -203,7 +203,7 @@ export const Accounts = ({
                               <div>
                                 <span
                                   style={{
-                                    zIndex: 100,
+                                    zIndex: 2,
                                     cursor: 'default',
                                   }}
                                   className="icon tooltip tooltip-trigger-element"

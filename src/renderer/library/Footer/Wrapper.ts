@@ -15,9 +15,9 @@ export const FooterWrapper = styled.div`
   bottom: 0;
   left: 0;
   height: 3rem;
-  z-index: 5;
   overflow: hidden;
   padding-top: 0.5rem;
+  z-index: 20;
 
   section {
     width: 100%;
@@ -51,7 +51,6 @@ export const FooterWrapper = styled.div`
   &.expanded {
     height: calc(100% - 35px); // minus height of header
     border-top: none;
-    z-index: 2;
 
     .status {
       height: 4rem;
