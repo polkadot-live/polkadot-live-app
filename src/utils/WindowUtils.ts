@@ -41,7 +41,7 @@ export const createTray = () => {
 
   tray.setToolTip('Polkadot Live');
 
-  tray.addListener('mouse-up', () => {
+  tray.addListener('click', () => {
     try {
       WindowsController.toggleVisible('menu');
     } catch (e) {
