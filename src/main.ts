@@ -464,6 +464,11 @@ app.whenReady().then(async () => {
   });
 
   /**
+   * Platform
+   */
+  ipcMain.handle('app:platform:get', async () => process.platform as string);
+
+  /**
    * Websockets
    */
 
@@ -539,6 +544,10 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
 
   ipcMain.on('app:set:workspaceVisibility', () => {
+    if (!['darwin', 'linux'].includes(process.platform)) {
+      return;
+    }
+
     // Get new flag.
     const settings = ConfigMain.getAppSettings();
     const flag = !settings.appShowOnAllWorkspaces;

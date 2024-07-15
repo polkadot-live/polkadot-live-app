@@ -16,6 +16,8 @@ export interface PersistedSettings {
   appHideDockIcon: boolean;
 }
 
+export type OsPlatform = 'darwin' | 'linux' | 'win32';
+
 export type SettingAction =
   | 'settings:execute:dockedWindow'
   | 'settings:execute:showOnAllWorkspaces'
@@ -37,6 +39,7 @@ export interface SettingItem {
   settingType: string;
   buttonText?: string;
   buttonIcon?: IconProp;
+  platforms: OsPlatform[];
 }
 
 export interface SettingProps {

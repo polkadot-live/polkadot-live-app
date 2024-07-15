@@ -15,6 +15,8 @@ import type {
 import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
+  getOsPlatform: () => Promise<string>;
+
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
   deleteWorkspace: (serialised: string) => void;
   launchWorkspace: (serialised: string) => void;

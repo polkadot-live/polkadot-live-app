@@ -11,13 +11,13 @@ import { HeaderWrapper } from '@app/screens/Wrappers';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@/config/settings';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Workspaces } from '@app/screens/Settings/Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
-import type { SettingItem } from './types';
+import type { OsPlatform, SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
@@ -28,9 +28,25 @@ export const Settings: React.FC = () => {
   const [accordionActiveIndices, setAccordionActiveIndices] =
     useState<number>(0);
 
+  const [osPlatform, setOsPlatform] = useState<OsPlatform | null>(null);
+
+  useEffect(() => {
+    const initOsPlatform = async () => {
+      const platform = await window.myAPI.getOsPlatform();
+      setOsPlatform(platform as OsPlatform);
+    };
+
+    initOsPlatform();
+  }, []);
+
   /// Return a map of settings organised by their category.
   const getSortedSettings = () => {
     const map = new Map<string, SettingItem[]>();
+
+    // Exit early if platform hasn't been set.
+    if (!osPlatform) {
+      return map;
+    }
 
     // Insert categories in a desired order.
     for (const category of ['General', 'Subscriptions', 'Backup']) {
@@ -39,6 +55,10 @@ export const Settings: React.FC = () => {
 
     // Populate map.
     for (const setting of SettingsList) {
+      if (!setting.platforms.includes(osPlatform as OsPlatform)) {
+        continue;
+      }
+
       const category = setting.category;
       map.has(category)
         ? map.set(category, [...map.get(category)!, { ...setting }])
