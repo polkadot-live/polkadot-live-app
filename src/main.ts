@@ -106,6 +106,7 @@ unhandled({
 
 // Initialise Electron store.
 export const store = new Store();
+store.delete('app_settings');
 
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.
@@ -462,6 +463,11 @@ app.whenReady().then(async () => {
 
     storePointer.set(key, JSON.stringify(updated));
   });
+
+  /**
+   * Platform
+   */
+  ipcMain.handle('app:platform:get', async () => process.platform as string);
 
   /**
    * Websockets

@@ -60,6 +60,11 @@ export const API: PreloadAPI = {
   },
 
   /**
+   * Platform
+   */
+  getOsPlatform: async () => await ipcRenderer.invoke('app:platform:get'),
+
+  /**
    * Workspaces (Developer Console)
    */
   fetchPersistedWorkspaces: async () =>
