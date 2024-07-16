@@ -20,7 +20,7 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
-import { faInfo, faDownFromDottedLine } from '@fortawesome/pro-solid-svg-icons';
+import { faInfo } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import type { ChainID } from '@/types/chains';
@@ -31,6 +31,7 @@ import {
   SortControlButton,
   renderPlaceholders,
 } from '@/renderer/utils/common';
+import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -310,7 +311,7 @@ export const OpenGov: React.FC = () => {
                           isActive={true}
                           isDisabled={fetchingTreasuryData || !isConnected}
                           onClick={() => refetchTreasuryStats()}
-                          faIcon={faDownFromDottedLine}
+                          faIcon={faArrowsRotate}
                           fixedWidth={false}
                         />
                       </div>

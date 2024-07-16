@@ -12,7 +12,6 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
   faCaretLeft,
-  faDownFromDottedLine,
   faGripDots,
   faLayerGroup,
   faLineHeight,
@@ -37,6 +36,7 @@ import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/Referenda
 import type { ReferendaProps } from '../types';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
@@ -360,7 +360,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 isActive={true}
                 isDisabled={fetchingReferenda || !isConnected}
                 onClick={() => handleRefetchReferenda()}
-                faIcon={faDownFromDottedLine}
+                faIcon={faArrowsRotate}
                 fixedWidth={false}
               />
             </div>
@@ -442,10 +442,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
-            <div className="footer-stat">
-              <h2>Chain:</h2>
-              <span>{chainId}</span>
-            </div>
             <div className="footer-stat">
               <h2>Active Referenda:</h2>
               <span style={{ minWidth: '14px' }}>

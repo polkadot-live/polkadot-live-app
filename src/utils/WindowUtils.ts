@@ -341,7 +341,7 @@ const loadUrlWithRoute = (
     window.loadURL(
       `file://${path.join(
         __dirname,
-        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#/${route}`
+        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#${route}`
       )}`
     );
   }
