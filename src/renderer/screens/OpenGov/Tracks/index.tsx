@@ -73,7 +73,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
       <HeaderWrapper>
         <div className="content">
           <DragClose windowName="openGov" />
-          <h3>{chainId} Origins and Tracks</h3>
+          <h3>{chainId} Tracks</h3>
         </div>
       </HeaderWrapper>
       <Scrollable>
@@ -122,7 +122,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                     <div className="content-wrapper">
                       <div className="left">
                         <div className="heading">ID</div>
-                        <div className="heading">Origin</div>
+                        <div className="heading">Track</div>
                       </div>
                       <div className="right">
                         <div className="heading">Decision Deposit</div>
@@ -162,7 +162,6 @@ export const Tracks = ({ setSection }: TracksProps) => {
             <div className="footer-stat">
               <h2>Help:</h2>
             </div>
-            {renderHelpBadge('Origin', 'help:openGov:origin')}
             {renderHelpBadge('Track', 'help:openGov:track')}
             {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
           </section>

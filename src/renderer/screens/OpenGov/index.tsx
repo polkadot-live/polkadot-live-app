@@ -194,7 +194,7 @@ export const OpenGov: React.FC = () => {
 
           <ContentWrapper>
             {/* Origins and Tracks */}
-            <ActionItem text={'Origins and Tracks'} />
+            <ActionItem text={'Tracks'} />
             <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
               <OpenGovCard onClick={() => handleOpenTracks('Polkadot')}>
                 <IconWrapper className="hover" $chainId={'Polkadot'}>
