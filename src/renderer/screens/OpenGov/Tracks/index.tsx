@@ -126,8 +126,8 @@ export const Tracks = ({ setSection }: TracksProps) => {
                       </div>
                       <div className="right">
                         <div className="heading">Decision Deposit</div>
-                        <div className="heading">Max. Ongoing</div>
-                        <div className="heading">Metrics</div>
+                        <div className="heading">Max Deciding</div>
+                        <div className="heading">Timeline</div>
                       </div>
                     </div>
                   </StickyHeadings>
@@ -153,10 +153,6 @@ export const Tracks = ({ setSection }: TracksProps) => {
       <StatsFooter $chainId={chainId}>
         <div>
           <section className="left">
-            <div className="footer-stat">
-              <h2>Chain:</h2>
-              <span>{chainId}</span>
-            </div>
             <div className="footer-stat">
               <h2>Total Tracks:</h2>
               <span>{tracks.length}</span>

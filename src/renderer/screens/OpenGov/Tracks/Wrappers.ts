@@ -73,10 +73,10 @@ export const StickyHeadings = styled.div`
         min-width: 154px;
       }
       div:nth-child(2) {
-        min-width: 144px;
+        min-width: 140px;
       }
       div:nth-child(3) {
-        min-width: 84px;
+        min-width: 90px;
       }
     }
   }

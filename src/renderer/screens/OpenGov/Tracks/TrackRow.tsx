@@ -51,20 +51,18 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         </div>
         <div className="right">
           <div className="stat-wrapper">
-            <span>Deposit</span>
-            <h4 className="mw-84">
+            <h4 style={{ minWidth: '160px' }}>
               {formatChainUnits(track.decisionDeposit, chainId)}
             </h4>
           </div>
           <div className="stat-wrapper">
-            <span>Max Deciding</span>
-            <h4 className="mw-45">{track.maxDeciding}</h4>
+            <h4 style={{ minWidth: '130px' }}>{track.maxDeciding}</h4>
           </div>
           <div
             className={`expand-btn-wrapper ${chainId === 'Polkadot' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
           >
-            <h4>Metrics</h4>
+            <h4>Timeline</h4>
             <div className="expand-btn">
               <FontAwesomeIcon
                 icon={expanded ? faAngleUp : faAngleDown}

@@ -498,7 +498,8 @@ export const formatChainUnits = (units: string, chainId: ChainID) => {
     chainUnits(chainId)
   )
     .toFixed(2)
-    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1');
+    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1')
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   return `${formatted} ${chainCurrency(chainId)}`;
 };
