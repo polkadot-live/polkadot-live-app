@@ -5,10 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { setStateWithRef } from '@w3ux/utils';
 import { useOutsideAlerter } from '@app/library/Hooks/useOutsideAlerter';
 import { useRef, useState } from 'react';
-import { MenuWrapper } from './Wrapper';
+import { MenuWrapper, Separator } from './Wrapper';
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useHelp } from '@/renderer/contexts/common/Help';
 import {
   faBell,
   faBellSlash,
@@ -38,6 +39,8 @@ export const Menu = () => {
     setIsAborting,
     setIsConnecting,
   } = useBootstrapping();
+
+  const { openHelp } = useHelp();
 
   const toggleMenu = (val: boolean) => {
     setStateWithRef(val, setMenuOpen, menuOpenRef);
@@ -171,6 +174,28 @@ export const Menu = () => {
             className="separator"
           >
             Exit
+          </button>
+
+          <Separator style={{ opacity: '0.5' }} />
+
+          <button
+            type="button"
+            onClick={() => {
+              openHelp('help:docs:disclaimer');
+              toggleMenu(false);
+            }}
+          >
+            Disclaimer
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              openHelp('help:docs:privacy');
+              toggleMenu(false);
+            }}
+          >
+            Privacy
           </button>
 
           {/* Controls */}

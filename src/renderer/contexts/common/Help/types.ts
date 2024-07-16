@@ -97,7 +97,9 @@ export type HelpItemKey =
   | 'help:openGov:spendPeriod'
   | 'help:interval:openGov:referendumVotes'
   | 'help:interval:openGov:decisionPeriod'
-  | 'help:interval:openGov:referendumThresholds';
+  | 'help:interval:openGov:referendumThresholds'
+  | 'help:docs:disclaimer'
+  | 'help:docs:privacy';
 
 export interface HelpItem {
   key: HelpItemKey;
