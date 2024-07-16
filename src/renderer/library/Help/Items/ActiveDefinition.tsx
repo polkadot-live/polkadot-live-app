@@ -11,9 +11,18 @@ export const ActiveDefinition = ({
   <DefinitionWrapper>
     <div>
       {description.map((item, index: number) => (
-        <h4 key={`inner_def_${index}`} className="definition">
-          {item}
-        </h4>
+        <>
+          {item.startsWith('#') && (
+            <h4 key={`inner_def_${index}`} className="definition header">
+              {item.slice(1)}
+            </h4>
+          )}
+          {!item.startsWith('#') && (
+            <h4 key={`inner_def_${index}`} className="definition">
+              {item}
+            </h4>
+          )}
+        </>
       ))}
     </div>
   </DefinitionWrapper>

@@ -53,6 +53,11 @@ export const DefinitionWrapper = styled(motion.div)`
     border-radius: 1rem;
   }
 
+  .header {
+    font-weight: 600;
+    color: var(--text-color-secondary);
+  }
+
   button {
     padding: 0;
     h2 {

@@ -7,8 +7,8 @@ import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import type { SettingProps } from './types';
 import { useSettingFlags } from '@/renderer/contexts/settings/SettingFlags';
+import type { SettingProps } from './types';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;
