@@ -60,7 +60,7 @@ if (isTest) {
 
 // Hide application menu (mac OS) if DEBUG env variable doesn't exist.
 // NOTE: Showing window on all workspaces disables the application menu.
-if (process.platform === 'darwin' && !process.env.DEBUG) {
+if (!process.env.DEBUG) {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 }
