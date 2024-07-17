@@ -98,9 +98,9 @@ type ApiOpenWindow = (id: string, args?: AnyJson) => void;
 
 type ApiDoLedgerLoop = (
   accountIndex: number,
-  appName: string,
+  chainName: string,
   tasks: LedgerTask[]
-) => void;
+) => Promise<void>;
 
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void

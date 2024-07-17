@@ -78,7 +78,7 @@ export const Manage = ({
             iconLeft={faArrowDown}
             text={
               isImporting
-                ? ' Getting Account'
+                ? 'Getting Account'
                 : 'Get Another Account (Coming Soon)'
             }
             disabled={isImporting || true}

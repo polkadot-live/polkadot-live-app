@@ -620,17 +620,19 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:do-loop', async (_, accountIndex, appName, tasks) => {
-    console.debug(accountIndex, appName, tasks);
+  ipcMain.handle(
+    'app:ledger:do-loop',
+    async (_, accountIndex, chainName, tasks) => {
+      console.debug(accountIndex, chainName, tasks);
+      const importWindow = WindowsController.get('import');
 
-    const importWindow = WindowsController.get('import');
-
-    if (importWindow) {
-      await executeLedgerLoop(importWindow, appName, tasks, {
-        accountIndex,
-      });
+      if (importWindow) {
+        await executeLedgerLoop(importWindow, chainName, tasks, {
+          accountIndex,
+        });
+      }
     }
-  });
+  );
 
   /**
    * Data
