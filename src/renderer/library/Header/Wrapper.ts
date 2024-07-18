@@ -21,6 +21,22 @@ export const HeaderWrapper = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
+    position: relative;
+
+    .alpha {
+      position: absolute;
+      top: 0.5rem;
+      left: 0;
+      height: 18px;
+      padding: 0.2rem 1.2rem;
+      opacity: 0.85;
+      font-size: 0.85rem;
+      letter-spacing: 0.05rem;
+      color: #959595;
+      background-color: rgb(42 42 42);
+      border-radius: 1.5rem;
+      user-select: none;
+    }
 
     .grab {
       height: 2rem;

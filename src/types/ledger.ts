@@ -13,8 +13,6 @@ export interface LedgerResponse {
 export interface LedgerGetAddressResult {
   pubKey: string;
   address: string;
-  //return_code: number;
-  //error_message: string;
 }
 
 /**
