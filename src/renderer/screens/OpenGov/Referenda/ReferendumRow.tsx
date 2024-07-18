@@ -6,7 +6,6 @@ import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
@@ -22,6 +21,7 @@ import {
   faInfo,
   faMinus,
   faPlus,
+  faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { InfoOverlay } from './InfoOverlay';

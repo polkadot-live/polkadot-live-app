@@ -6,8 +6,7 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
-import { faPlug } from '@fortawesome/pro-light-svg-icons';
-import { faPlugCircleXmark } from '@fortawesome/pro-solid-svg-icons';
+import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';

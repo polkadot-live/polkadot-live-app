@@ -11,8 +11,9 @@ import {
   faAngleRight,
   faExternalLinkAlt,
   faTimes,
+  faAngleDown,
+  faAngleUp,
 } from '@fortawesome/free-solid-svg-icons';
-import { faAngleDown, faAngleUp } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@/utils/EventUtils';
 import { renderTimeAgo } from '@/utils/TextUtils';

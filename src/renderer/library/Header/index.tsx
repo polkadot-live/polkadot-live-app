@@ -3,8 +3,7 @@
 
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
 import { Config as RendererConfig } from '@/config/processes/renderer';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { faUnlock, faLock } from '@fortawesome/pro-solid-svg-icons';
+import { faTimes, faUnlock, faLock } from '@fortawesome/free-solid-svg-icons';
 import { HeaderWrapper } from './Wrapper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';

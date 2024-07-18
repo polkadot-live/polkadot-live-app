@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { SettingItem } from '@/renderer/screens/Settings/types';
-import { faFileExport, faFileImport } from '@fortawesome/pro-solid-svg-icons';
+import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
 export const SettingsList: SettingItem[] = [
   {

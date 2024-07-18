@@ -12,7 +12,11 @@ import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
 import { ActionItem } from '@/renderer/library/ActionItem';
-import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretRight,
+  faInfo,
+  faArrowsRotate,
+} from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@/renderer/contexts/common/Connections';
@@ -30,7 +34,6 @@ import {
   SortControlButton,
   renderPlaceholders,
 } from '@/renderer/utils/common';
-import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
