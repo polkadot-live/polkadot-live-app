@@ -11,18 +11,13 @@ export const ActiveDefinition = ({
   <DefinitionWrapper>
     <div>
       {description.map((item, index: number) => (
-        <>
-          {item.startsWith('#') && (
-            <h4 key={`inner_def_${index}`} className="definition header">
-              {item.slice(1)}
-            </h4>
+        <div key={`inner_def_${index}`}>
+          {item.startsWith('#') ? (
+            <h4 className="definition header">{item.slice(1)}</h4>
+          ) : (
+            <h4 className="definition">{item}</h4>
           )}
-          {!item.startsWith('#') && (
-            <h4 key={`inner_def_${index}`} className="definition">
-              {item}
-            </h4>
-          )}
-        </>
+        </div>
       ))}
     </div>
   </DefinitionWrapper>

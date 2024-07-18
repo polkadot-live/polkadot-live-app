@@ -42,6 +42,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     <HeaderWrapper>
       <div className="content-wrapper">
         <div className="grab" />
+        <span className="alpha">alpha</span>
         <div className="right">
           {showMenu || activeWindow === 'menu' ? (
             <div className="controls-wrapper">

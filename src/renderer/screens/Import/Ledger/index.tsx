@@ -4,52 +4,47 @@
 import { setStateWithRef, ellipsisFn } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import type { AnyFunction } from '@/types/misc';
 import type {
   GetAddressMessage,
   LedgerResponse,
   LedgerTask,
 } from '@/types/ledger';
 import type { LedgerLocalAddress } from '@/types/accounts';
+import type { ImportLedgerProps } from '../types';
 import type { IpcRendererEvent } from 'electron';
-import { useAddresses } from '@/renderer/contexts/import/Addresses';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
 export const ImportLedger = ({
   section,
   setSection,
-}: {
-  section: number;
-  setSection: AnyFunction;
-}) => {
-  // Store whether import is in process
+  curSource,
+}: ImportLedgerProps) => {
+  /// Store whether import is in process
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
 
-  // Status entry is added for a newly imported account.
+  /// Status entry is added for a newly imported account.
   const { insertAccountStatus } = useAccountStatuses();
   const { ledgerAddresses: addresses, setLedgerAddresses: setAddresses } =
     useAddresses();
 
-  // Store status codes received from Ledger device.
+  /// Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
-  // Reference to ledger loop interval id.
+  /// Reference to ledger loop interval id.
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Gets the next non-imported address index.
+  /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
-  // Handle an incoming new status code and persists to state.
-  //
-  // The most recent status code is stored at the start of the array at index 0. If total status
-  // codes are larger than the maximum allowed, the status code array is popped.
+  /// Handle an incoming new status code and persist to state.
   const handleNewStatusCode = (ack: string, statusCode: string) => {
     const newStatusCodes = [{ ack, statusCode }, ...statusCodesRef.current];
 
@@ -60,10 +55,7 @@ export const ImportLedger = ({
     setStateWithRef(newStatusCodes, setStatusCodes, statusCodesRef);
   };
 
-  // Connect to Ledger device and perform necessary tasks.
-  //
-  // The tasks sent to the device depend on the current state of the import process. The interval is
-  // cleared once the address has been successfully fetched.
+  /// Start interval to poll Ledger device and perform necessary tasks.
   const handleLedgerLoop = () => {
     intervalRef.current = setInterval(() => {
       const tasks: LedgerTask[] = [];
@@ -73,20 +65,22 @@ export const ImportLedger = ({
       }
 
       // TODO: Make dynamic
-      const appName = 'Polkadot';
+      const chainName = 'Polkadot';
 
-      window.myAPI.doLedgerLoop(getNextAddressIndex(), appName, tasks);
+      window.myAPI.doLedgerLoop(getNextAddressIndex(), chainName, tasks);
     }, 2000);
   };
 
-  // Handle new Ledger status report.
+  /// Handle a received Ledger address.
   const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
     const { ack, device, statusCode, body, options } = parsed;
     handleNewStatusCode(ack, statusCode);
 
     if (statusCode === 'ReceivedAddress') {
-      const { pubKey, address } = body[0];
+      // Stop polling ledger device.
+      intervalRef.current && clearInterval(intervalRef.current);
 
+      const { pubKey, address } = body[0];
       const addressFormatted: LedgerLocalAddress = {
         address,
         device: { ...device },
@@ -110,27 +104,28 @@ export const ImportLedger = ({
 
       // Insert account status entry.
       insertAccountStatus(address, 'ledger');
-
-      // Stop polling ledger device.
-      intervalRef.current && clearInterval(intervalRef.current);
     }
   };
 
-  // Toggle import
+  /// Toggle import
   const toggleImport = (value: boolean) => {
     setStateWithRef(value, setIsImporting, isImportingRef);
 
-    // Start the ledger loop and poll for device.
-    handleLedgerLoop();
+    if (value) {
+      handleLedgerLoop();
+    } else {
+      intervalRef.current && clearInterval(intervalRef.current);
+      cancelImport();
+    }
   };
 
-  // Cancel ongoing import.
+  /// Cancel ongoing import.
   const cancelImport = () => {
     setStateWithRef(false, setIsImporting, isImportingRef);
     setStateWithRef([], setStatusCodes, statusCodesRef);
   };
 
-  // Initialise listeners for Ledger IO.
+  /// Initialise listeners for Ledger IO.
   useEffect(() => {
     window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
       const parsed: GetAddressMessage | undefined = JSON.parse(result);
@@ -142,20 +137,18 @@ export const ImportLedger = ({
       handleLedgerStatusResponse(parsed);
     });
 
-    // Initialise fetch interval
-    if (!addresses.length) {
-      setStateWithRef(true, setIsImporting, isImportingRef);
-    }
-
     // Start the loop if no ledger accounts have been imported and splash page is shown.
-    if (addresses.length === 0) {
+    if (curSource && curSource === 'ledger' && !addresses.length) {
+      setStateWithRef(true, setIsImporting, isImportingRef);
       handleLedgerLoop();
+    } else {
+      intervalRef.current && clearInterval(intervalRef.current);
     }
 
     return () => {
       intervalRef.current && clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [curSource]);
 
   return !addresses.length ? (
     <Splash setSection={setSection} statusCodes={statusCodesRef.current} />

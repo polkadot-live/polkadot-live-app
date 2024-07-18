@@ -121,7 +121,7 @@ export const DeleteHandlerProvider = ({
     });
 
     postAddressDeleteMessage(address);
-    return false;
+    return true;
   };
 
   /// Send address data to main window to process removal.

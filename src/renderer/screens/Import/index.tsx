@@ -15,19 +15,19 @@ export const Import: React.FC = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
 
-  const [source, setSource] = useState<AccountSource | undefined>('ledger');
+  const [source, setSource] = useState<AccountSource | null>(null);
 
   // Active section
   const [section, setSection] = useState<number>(0);
 
   useEffect(() => {
     if (section === 0) {
-      setSource(undefined);
+      setSource(null);
     }
   }, [section]);
 
   const getShowClass = (target: AccountSource) =>
-    source === target ? 'show' : 'hide';
+    source ? (source === target ? 'show' : 'hide') : 'hide';
 
   return (
     <ModalSection type="carousel">
@@ -66,7 +66,11 @@ export const Import: React.FC = () => {
           }}
         >
           <div className={getShowClass('ledger')}>
-            <ImportLedger section={section} setSection={setSection} />
+            <ImportLedger
+              section={section}
+              setSection={setSection}
+              curSource={source}
+            />
           </div>
           <div className={getShowClass('vault')}>
             <ImportVault section={section} setSection={setSection} />

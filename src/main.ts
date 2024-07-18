@@ -60,7 +60,7 @@ if (isTest) {
 
 // Hide application menu (mac OS) if DEBUG env variable doesn't exist.
 // NOTE: Showing window on all workspaces disables the application menu.
-if (process.platform === 'darwin' && !process.env.DEBUG) {
+if (!process.env.DEBUG) {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 }
@@ -620,17 +620,19 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:do-loop', async (_, accountIndex, appName, tasks) => {
-    console.debug(accountIndex, appName, tasks);
+  ipcMain.on(
+    'app:ledger:do-loop',
+    async (_, accountIndex, chainName, tasks) => {
+      console.debug(accountIndex, chainName, tasks);
+      const importWindow = WindowsController.get('import');
 
-    const importWindow = WindowsController.get('import');
-
-    if (importWindow) {
-      await executeLedgerLoop(importWindow, appName, tasks, {
-        accountIndex,
-      });
+      if (importWindow) {
+        await executeLedgerLoop(importWindow, chainName, tasks, {
+          accountIndex,
+        });
+      }
     }
-  });
+  );
 
   /**
    * Data
