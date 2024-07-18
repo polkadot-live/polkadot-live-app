@@ -15,60 +15,6 @@ const CHAIN_ID = 'polkadot';
 const TX_METADATA_SRV_URL =
   'https://api.zondax.ch/polkadot/transaction/metadata';
 
-// Handle Ledger connection errors.
-const handleErrors = (window: BrowserWindow, err: AnyJson) => {
-  // Attempt to handle the error while the window still exists.
-  try {
-    const errStr = String(err);
-
-    if (errStr.startsWith('TypeError: cannot open device with path')) {
-      window.webContents.send(
-        'renderer:ledger:report:status',
-        JSON.stringify({
-          ack: 'failure',
-          statusCode: 'DeviceNotConnected',
-          body: { msg: 'No supported Ledger device connected.' },
-        })
-      );
-    } else if (errStr.startsWith('Error: LockedDeviceError')) {
-      window.webContents.send(
-        'renderer:ledger:report:status',
-        JSON.stringify({
-          ack: 'failure',
-          statusCode: 'DeviceLocked',
-          body: { msg: 'No supported Ledger device connected.' },
-        })
-      );
-    } else {
-      // handle other errors with a provided id.
-      switch (err?.id) {
-        case 'NoDevice':
-          window.webContents.send(
-            'renderer:ledger:report:status',
-            JSON.stringify({
-              ack: 'failure',
-              statusCode: 'DeviceNotConnected',
-              body: { msg: 'No supported Ledger device connected.' },
-            })
-          );
-          break;
-        default:
-          window.webContents.send(
-            'renderer:ledger:report:status',
-            JSON.stringify({
-              ack: 'failure',
-              statusCode: 'AppNotOpen',
-              body: { msg: 'Required Ledger app is not open' },
-            })
-          );
-      }
-    }
-  } catch (e) {
-    // window has been closed. exit process.
-    return;
-  }
-};
-
 // Connects to a Ledger device to perform a task.
 export const executeLedgerLoop = async (
   window: BrowserWindow,
@@ -181,5 +127,59 @@ export const handleGetAddress = async (
     console.log(JSON.stringify(err));
     console.log(err);
     return null;
+  }
+};
+
+/// Handle Ledger connection errors.
+const handleErrors = (window: BrowserWindow, err: AnyJson) => {
+  // Attempt to handle the error while the window still exists.
+  try {
+    const errStr = String(err);
+
+    if (errStr.startsWith('TypeError: cannot open device with path')) {
+      window.webContents.send(
+        'renderer:ledger:report:status',
+        JSON.stringify({
+          ack: 'failure',
+          statusCode: 'DeviceNotConnected',
+          body: { msg: 'No supported Ledger device connected.' },
+        })
+      );
+    } else if (errStr.startsWith('Error: LockedDeviceError')) {
+      window.webContents.send(
+        'renderer:ledger:report:status',
+        JSON.stringify({
+          ack: 'failure',
+          statusCode: 'DeviceLocked',
+          body: { msg: 'No supported Ledger device connected.' },
+        })
+      );
+    } else {
+      // handle other errors with a provided id.
+      switch (err?.id) {
+        case 'NoDevice':
+          window.webContents.send(
+            'renderer:ledger:report:status',
+            JSON.stringify({
+              ack: 'failure',
+              statusCode: 'DeviceNotConnected',
+              body: { msg: 'No supported Ledger device connected.' },
+            })
+          );
+          break;
+        default:
+          window.webContents.send(
+            'renderer:ledger:report:status',
+            JSON.stringify({
+              ack: 'failure',
+              statusCode: 'AppNotOpen',
+              body: { msg: 'Required Ledger app is not open' },
+            })
+          );
+      }
+    }
+  } catch (e) {
+    // window has been closed. exit process.
+    return;
   }
 };

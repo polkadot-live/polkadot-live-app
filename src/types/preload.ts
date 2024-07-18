@@ -100,7 +100,7 @@ type ApiDoLedgerLoop = (
   accountIndex: number,
   chainName: string,
   tasks: LedgerTask[]
-) => Promise<void>;
+) => void;
 
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void

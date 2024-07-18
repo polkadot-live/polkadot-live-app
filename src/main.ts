@@ -620,7 +620,7 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.handle(
+  ipcMain.on(
     'app:ledger:do-loop',
     async (_, accountIndex, chainName, tasks) => {
       console.debug(accountIndex, chainName, tasks);

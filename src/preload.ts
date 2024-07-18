@@ -222,7 +222,7 @@ export const API: PreloadAPI = {
 
   // Performs a Ledger loop.
   doLedgerLoop: (accountIndex, chainName, tasks) =>
-    ipcRenderer.invoke('app:ledger:do-loop', accountIndex, chainName, tasks),
+    ipcRenderer.send('app:ledger:do-loop', accountIndex, chainName, tasks),
 
   // Reports a Ledger device result to all open windows.
   reportLedgerStatus: (callback) =>

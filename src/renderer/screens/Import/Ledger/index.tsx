@@ -48,10 +48,7 @@ export const ImportLedger = ({
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
 
-  /// Handle an incoming new status code and persists to state.
-  ///
-  /// The most recent status code is stored at the start of the array at index 0. If total status
-  /// codes are larger than the maximum allowed, the status code array is popped.
+  /// Handle an incoming new status code and persist to state.
   const handleNewStatusCode = (ack: string, statusCode: string) => {
     const newStatusCodes = [{ ack, statusCode }, ...statusCodesRef.current];
 
@@ -62,10 +59,7 @@ export const ImportLedger = ({
     setStateWithRef(newStatusCodes, setStatusCodes, statusCodesRef);
   };
 
-  /// Connect to Ledger device and perform necessary tasks.
-  ///
-  /// The tasks sent to the device depend on the current state of the import process. The interval is
-  /// cleared once the address has been successfully fetched.
+  /// Start interval to poll Ledger device and perform necessary tasks.
   const handleLedgerLoop = () => {
     intervalRef.current = setInterval(() => {
       const tasks: LedgerTask[] = [];
@@ -149,7 +143,6 @@ export const ImportLedger = ({
 
     // Start the loop if no ledger accounts have been imported and splash page is shown.
     if (curSource && curSource === 'ledger' && !addresses.length) {
-      console.log('start loop...');
       setStateWithRef(true, setIsImporting, isImportingRef);
       handleLedgerLoop();
     } else {
