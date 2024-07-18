@@ -11,7 +11,7 @@ import {
   faCircleCheck,
   faInfo,
   faTriangleExclamation,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faArrowDownFromDottedLine,
   faListRadio,

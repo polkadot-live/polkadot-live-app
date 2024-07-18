@@ -8,12 +8,12 @@ import {
   faAngleDown,
   faAngleUp,
   faInfo,
-} from '@fortawesome/pro-solid-svg-icons';
+  faHashtag,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { formatChainUnits } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TrackRowProps } from '../types';
@@ -41,7 +41,7 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         <div className="left">
           <div className="stat-wrapper">
             <span>
-              <FontAwesomeIcon icon={faHashtag} transform={'shrink-1'} />
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-2'} />
               {track.trackId}
             </span>
             <h4>

@@ -14,9 +14,9 @@ import {
   faBell,
   faBellSlash,
   faCog,
+  faLinkSlash,
   faWifi,
-  faWifiSlash,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 
@@ -218,7 +218,7 @@ export const Menu = () => {
                         ? 'Abort'
                         : getConnectionButtonText()
                   }
-                  iconLeft={isOnline ? faWifiSlash : faWifi}
+                  iconLeft={isOnline ? faLinkSlash : faWifi}
                   iconTransform="shrink-4"
                   disabled={isAborting}
                   onClick={async () => await handleConnectButtonClick()}

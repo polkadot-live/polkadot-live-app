@@ -21,10 +21,8 @@ import {
   faChevronUp,
   faInfo,
   faMinus,
-  faMinusLarge,
   faPlus,
-  faPlusLarge,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
@@ -134,7 +132,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faPlusLarge}
+                    faIcon={faPlus}
                     onClick={() =>
                       addAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
@@ -153,7 +151,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faMinusLarge}
+                    faIcon={faMinus}
                     onClick={() =>
                       removeAllIntervalSubscriptions(
                         getIntervalSubscriptions(),

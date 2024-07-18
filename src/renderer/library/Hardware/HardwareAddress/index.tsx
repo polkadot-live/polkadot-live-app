@@ -1,9 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faMinusLarge, faTrash } from '@fortawesome/pro-solid-svg-icons';
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { faPlusLarge } from '@fortawesome/pro-light-svg-icons';
+import {
+  faCheck,
+  faXmark,
+  faPlus,
+  faMinus,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -164,8 +168,8 @@ export const HardwareAddress = ({
           >
             <ButtonMono
               className="account-action-btn orange-hover"
-              iconLeft={faMinusLarge}
-              iconTransform={'shrink-4'}
+              iconLeft={faMinus}
+              iconTransform={'grow-0'}
               text={''}
               onClick={() => openRemoveHandler()}
             />
@@ -183,7 +187,7 @@ export const HardwareAddress = ({
           >
             <ButtonMono
               disabled={!isConnected}
-              iconLeft={faPlusLarge}
+              iconLeft={faPlus}
               iconTransform="grow-0"
               text={''}
               onClick={() => !isProcessing() && openConfirmHandler()}

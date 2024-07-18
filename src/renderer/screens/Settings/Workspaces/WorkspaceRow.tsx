@@ -3,9 +3,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { WorkspaceRowWrapper } from '../Wrappers';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
+import { faHashtag, faTrash, faLink } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
-import { faLinkSimple, faTrash } from '@fortawesome/pro-solid-svg-icons';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
@@ -33,7 +32,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
       <>
         <div className="stat-wrapper">
           <span>
-            <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
+            <FontAwesomeIcon icon={faHashtag} transform={'shrink-2'} />
             {index}
           </span>
         </div>
@@ -50,7 +49,7 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
               <SortControlButton
                 isActive={true}
                 isDisabled={!isListening || true} // enable when developer console integrated
-                faIcon={faLinkSimple}
+                faIcon={faLink}
                 onClick={() => handleLaunch()}
                 fixedWidth={false}
               />,

@@ -3,9 +3,9 @@
 
 import { faPenToSquare, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ReactElement } from 'react';
 import { Wrapper } from './Wrapper';
 import { appendOrEmpty } from '@w3ux/utils';
+import type { ReactElement } from 'react';
 
 export type DisplayFor = 'default' | 'modal' | 'canvas';
 
