@@ -39,6 +39,12 @@ export interface Html5QrScannerProps {
   html5QrCode: Html5Qrcode | null;
 }
 
+export interface ImportLedgerProps {
+  section: number;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+  curSource: AccountSource | null;
+}
+
 export interface ImportLedgerManageProps {
   addresses: LedgerLocalAddress[];
   isImporting: boolean;

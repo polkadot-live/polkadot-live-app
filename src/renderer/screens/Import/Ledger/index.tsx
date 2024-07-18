@@ -8,13 +8,13 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import type { AnyFunction } from '@/types/misc';
 import type {
   GetAddressMessage,
   LedgerResponse,
   LedgerTask,
 } from '@/types/ledger';
-import type { AccountSource, LedgerLocalAddress } from '@/types/accounts';
+import type { LedgerLocalAddress } from '@/types/accounts';
+import type { ImportLedgerProps } from '../types';
 import type { IpcRendererEvent } from 'electron';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
@@ -23,11 +23,7 @@ export const ImportLedger = ({
   section,
   setSection,
   curSource,
-}: {
-  section: number;
-  setSection: AnyFunction;
-  curSource: AccountSource | null;
-}) => {
+}: ImportLedgerProps) => {
   /// Store whether import is in process
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
