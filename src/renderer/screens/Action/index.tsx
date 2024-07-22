@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ActionItem } from '@/renderer/library/ActionItem';
+import BigNumber from 'bignumber.js';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainCurrency, chainIcon } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
@@ -15,7 +16,6 @@ import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
-import BigNumber from 'bignumber.js';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
 
 export const Action = () => {

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
+import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonPrimaryInvertProps = ComponentBaseWithClassName &

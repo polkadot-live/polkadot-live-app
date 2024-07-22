@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { DragClose } from '../../../library/DragClose';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
@@ -16,7 +16,6 @@ import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import {
   ControlsWrapper,
   StatsFooter,

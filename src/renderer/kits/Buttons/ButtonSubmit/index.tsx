@@ -3,10 +3,10 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
-import type { ComponentBaseWithClassName } from '@/renderer/types';
-import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
+import type { ButtonCommonProps, ButtonIconProps } from '../types';
+import type { ComponentBaseWithClassName } from '@/renderer/types';
 
 export type ButtonSubmitProps = ComponentBaseWithClassName &
   ButtonIconProps &

@@ -24,7 +24,7 @@ import {
 } from '@app/utils/renderingUtils';
 import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';

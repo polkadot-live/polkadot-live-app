@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faInfo } from '@fortawesome/pro-solid-svg-icons';
+import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';

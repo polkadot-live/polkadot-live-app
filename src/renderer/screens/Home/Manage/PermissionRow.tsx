@@ -5,19 +5,19 @@ import { AccountWrapper } from './Wrappers';
 import { Switch } from '@app/library/Switch';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { PermissionRowProps } from './types';
 import {
-  faArrowDownFromDottedLine,
-  faListRadio,
-} from '@fortawesome/pro-light-svg-icons';
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
+  faInfo,
+  faAnglesDown,
+  faList,
+  faCircleCheck,
+} from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { faCircleCheck } from '@fortawesome/pro-solid-svg-icons';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
+import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({
   task,
@@ -82,8 +82,8 @@ export const PermissionRow = ({
               {!getDisabled(task) && !oneShotProcessing && (
                 <FontAwesomeIcon
                   className="enabled"
-                  icon={faArrowDownFromDottedLine}
-                  transform={'grow-8'}
+                  icon={faAnglesDown}
+                  transform={'grow-4'}
                   onClick={async () =>
                     await handleOneShot(
                       task,
@@ -99,8 +99,8 @@ export const PermissionRow = ({
                 <FontAwesomeIcon
                   className="processing"
                   fade
-                  icon={faArrowDownFromDottedLine}
-                  transform={'grow-8'}
+                  icon={faAnglesDown}
+                  transform={'grow-4'}
                 />
               )}
 
@@ -108,8 +108,8 @@ export const PermissionRow = ({
               {getDisabled(task) && (
                 <FontAwesomeIcon
                   className="disabled"
-                  icon={faArrowDownFromDottedLine}
-                  transform={'grow-8'}
+                  icon={faAnglesDown}
+                  transform={'grow-4'}
                 />
               )}
             </div>
@@ -139,8 +139,8 @@ export const PermissionRow = ({
                         : 'unchecked'
                       : 'disabled'
                   }
-                  icon={faListRadio}
-                  transform={'grow-8'}
+                  icon={faList}
+                  transform={'grow-4'}
                 />
 
                 {/* Check overlay icon when clicked */}

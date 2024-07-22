@@ -6,7 +6,6 @@ import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag } from '@fortawesome/pro-light-svg-icons';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
@@ -21,10 +20,9 @@ import {
   faChevronUp,
   faInfo,
   faMinus,
-  faMinusLarge,
   faPlus,
-  faPlusLarge,
-} from '@fortawesome/pro-solid-svg-icons';
+  faHashtag,
+} from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
@@ -134,7 +132,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faPlusLarge}
+                    faIcon={faPlus}
                     onClick={() =>
                       addAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
@@ -153,7 +151,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <SortControlButton
                     isActive={true}
                     isDisabled={false}
-                    faIcon={faMinusLarge}
+                    faIcon={faMinus}
                     onClick={() =>
                       removeAllIntervalSubscriptions(
                         getIntervalSubscriptions(),

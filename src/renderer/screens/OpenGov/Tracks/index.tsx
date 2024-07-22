@@ -11,7 +11,7 @@ import {
   faArrowDownShortWide,
   faCaretLeft,
   faInfo,
-} from '@fortawesome/pro-solid-svg-icons';
+} from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { DragClose } from '@/renderer/library/DragClose';
 import { StickyHeadings, TrackGroup } from './Wrappers';

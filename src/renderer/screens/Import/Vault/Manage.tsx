@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { faQrcode } from '@fortawesome/free-solid-svg-icons';
+import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { DragClose } from '@app/library/DragClose';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -24,7 +24,6 @@ import {
   SortControlLabel,
 } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { faCaretLeft } from '@fortawesome/pro-solid-svg-icons';
 import type { ManageVaultProps } from '../types';
 
 export const Manage = ({

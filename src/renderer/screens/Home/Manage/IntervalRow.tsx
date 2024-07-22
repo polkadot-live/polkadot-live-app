@@ -11,18 +11,16 @@ import {
   faCircleCheck,
   faInfo,
   faTriangleExclamation,
-} from '@fortawesome/pro-solid-svg-icons';
-import {
-  faArrowDownFromDottedLine,
-  faListRadio,
-  faTimer,
   faXmark,
-} from '@fortawesome/pro-light-svg-icons';
+  faAnglesDown,
+  faList,
+} from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch } from '@app/library/Switch';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 import type { AnyData } from '@/types/misc';
 import type { IntervalRowProps } from './types';
-import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 
 export const IntervalRow = ({
   task,
@@ -116,7 +114,7 @@ export const IntervalRow = ({
               <FontAwesomeIcon
                 className="enabled"
                 icon={faXmark}
-                transform={'grow-8'}
+                transform={'grow-6'}
                 onClick={() => {
                   removeTimeoutRef.current = setTimeout(() => {
                     removeTimeoutRef.current !== null &&
@@ -146,8 +144,8 @@ export const IntervalRow = ({
             {!isTaskDisabled() && !oneShotProcessing && (
               <FontAwesomeIcon
                 className="enabled"
-                icon={faArrowDownFromDottedLine}
-                transform={'grow-8'}
+                icon={faAnglesDown}
+                transform={'grow-4'}
                 onClick={async () =>
                   await handleIntervalOneShot(
                     task,
@@ -163,8 +161,8 @@ export const IntervalRow = ({
               <FontAwesomeIcon
                 className="processing"
                 fade
-                icon={faArrowDownFromDottedLine}
-                transform={'grow-8'}
+                icon={faAnglesDown}
+                transform={'grow-4'}
               />
             )}
 
@@ -172,8 +170,8 @@ export const IntervalRow = ({
             {isTaskDisabled() && (
               <FontAwesomeIcon
                 className="disabled"
-                icon={faArrowDownFromDottedLine}
-                transform={'grow-8'}
+                icon={faAnglesDown}
+                transform={'grow-4'}
               />
             )}
           </div>
@@ -203,8 +201,8 @@ export const IntervalRow = ({
                     opacity: isTaskDisabled() ? '0.3' : '1',
                   }}
                   className="enabled"
-                  icon={faTimer}
-                  transform={'grow-2'}
+                  icon={faClock}
+                  transform={'grow-0'}
                 />
               </div>
             ) : (
@@ -255,8 +253,8 @@ export const IntervalRow = ({
                       : 'unchecked'
                     : 'disabled'
                 }
-                icon={faListRadio}
-                transform={'grow-8'}
+                icon={faList}
+                transform={'grow-4'}
               />
 
               {/* Check overlay icon when clicked */}

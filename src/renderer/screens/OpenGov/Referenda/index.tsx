@@ -12,11 +12,12 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
   faCaretLeft,
-  faGripDots,
   faLayerGroup,
-  faLineHeight,
-  faTimer,
-} from '@fortawesome/pro-solid-svg-icons';
+  faUpDown,
+  faSort,
+  faArrowsRotate,
+  faEllipsisVertical,
+} from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
@@ -36,7 +37,6 @@ import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/Referenda
 import type { ReferendaProps } from '../types';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
@@ -322,7 +322,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <SortControlButton
               isActive={newestFirst}
               isDisabled={!isConnected || fetchingReferenda}
-              faIcon={faTimer}
+              faIcon={faSort}
               onClick={() => setNewestFirst(!newestFirst)}
               onLabel="Newest First"
               offLabel="Oldest First"
@@ -339,7 +339,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <SortControlButton
               isActive={isExpandActive()}
               isDisabled={!isConnected || fetchingReferenda || !groupingOn}
-              faIcon={faLineHeight}
+              faIcon={faUpDown}
               onClick={() => handleExpandAll()}
               onLabel="Expanded"
               offLabel="Collapsed"
@@ -378,7 +378,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               <SortControlButton
                 isActive={onlySubscribed}
                 isDisabled={!isConnected || fetchingReferenda}
-                faIcon={faGripDots}
+                faIcon={faEllipsisVertical}
                 onClick={() => handleToggleOnlySubscribed()}
                 fixedWidth={false}
               />

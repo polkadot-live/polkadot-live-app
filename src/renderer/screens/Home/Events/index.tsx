@@ -7,7 +7,7 @@ import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { EventGroup, Wrapper } from './Wrappers';
 import { Accordion } from '@/renderer/library/Accordion';
-import { faTimer, faLayerGroup } from '@fortawesome/pro-solid-svg-icons';
+import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
@@ -47,7 +47,7 @@ export const Events = () => {
         <SortControlButton
           isActive={newestFirst}
           isDisabled={false}
-          faIcon={faTimer}
+          faIcon={faSort}
           onClick={() => setNewestFirst(!newestFirst)}
           onLabel="Newest First"
           offLabel="Oldest First"

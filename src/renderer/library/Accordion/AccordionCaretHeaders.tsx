@@ -4,7 +4,7 @@
 import { AccordionHeader, useAccordion } from '@/renderer/library/Accordion';
 import { HeadingWrapper } from '@/renderer/screens/Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight } from '@fortawesome/pro-solid-svg-icons';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { HeadingWrapper as WideHeadingWrapper } from '@/renderer/screens/Home/Wrappers';
 import type {
   AccordionCaretHeaderProps,
