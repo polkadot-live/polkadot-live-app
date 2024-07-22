@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-import { Workspaces } from '@app/screens/Settings/Workspaces';
+//import { Workspaces } from '@app/screens/Settings/Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
 import type { OsPlatform, SettingItem } from './types';
 
@@ -129,7 +129,7 @@ export const Settings: React.FC = () => {
             )}
 
             {/* Workspaces Accordion Item */}
-            <Workspaces />
+            {/* <Workspaces /> */}
           </Accordion>
         </ContentWrapper>
       </Scrollable>
