@@ -6,7 +6,7 @@
   "main": ".vite/build/main.js",
   "contributors": [
     "Dane Bulat<dane.bulat@gmail.com>",
-    "Ross Bulat<ross@parity.io>"
+    "Ross Bulat<ross@jkrb.io>"
   ],
   "scripts": {
     "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
