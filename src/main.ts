@@ -44,6 +44,7 @@ import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
+import { version } from '../package.json';
 
 const debug = MainDebug;
 
@@ -106,6 +107,20 @@ unhandled({
 
 // Initialise Electron store.
 export const store = new Store();
+
+// Clear the store if it's the first time opening this version.
+// TODO: Implement data migration between versions.
+if (!store.has('version')) {
+  store.clear();
+  (store as Record<string, AnyJson>).set('version', version);
+} else {
+  const stored = (store as Record<string, AnyJson>).get('version') as string;
+
+  if (stored !== version) {
+    store.clear();
+    (store as Record<string, AnyJson>).set('version', version);
+  }
+}
 
 // Report dismissed event to renderer.
 // TODO: move to a Utils file.
