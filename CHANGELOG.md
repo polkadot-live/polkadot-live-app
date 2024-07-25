@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.2.0-alpha) (2024-07-25)
+
+
+### Features
+
+* dock icon toggle setting ([#584](https://github.com/polkadot-live/polkadot-live-app/issues/584)) ([9174655](https://github.com/polkadot-live/polkadot-live-app/commit/917465578aaae256067d62080ef089a7d20cd8e2))
+* generic ledger app support ([#588](https://github.com/polkadot-live/polkadot-live-app/issues/588)) ([9736404](https://github.com/polkadot-live/polkadot-live-app/commit/973640432b4c0b02ea86fc4064870a70c6516f1e))
+
+
+### Bug Fixes
+
+* **ci:** use pat ([dbef735](https://github.com/polkadot-live/polkadot-live-app/commit/dbef73585fd2839d7b798892c42b9049c2f1ced6))
+* debugging polish iteration ([#586](https://github.com/polkadot-live/polkadot-live-app/issues/586)) ([3457e00](https://github.com/polkadot-live/polkadot-live-app/commit/3457e00e9e563ca5ad502e2608c72eaa985027b6))
+* debugging tasks ([#591](https://github.com/polkadot-live/polkadot-live-app/issues/591)) ([a146b9b](https://github.com/polkadot-live/polkadot-live-app/commit/a146b9b4ad06f59871648f305939d3151557e82c))
+* platform fixes ([#585](https://github.com/polkadot-live/polkadot-live-app/issues/585)) ([0b3e44c](https://github.com/polkadot-live/polkadot-live-app/commit/0b3e44cda1b361f7311635e3bdf8d91727235b69))
+
 ## 0.1.0-alpha (2024-07-13)
 
 
