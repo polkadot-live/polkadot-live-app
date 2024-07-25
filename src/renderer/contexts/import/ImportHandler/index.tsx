@@ -7,6 +7,7 @@ import { getAddressChainId } from '@/renderer/Utils';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { ImportHandlerContextInterface } from './types';
 import type {
   AccountSource,
@@ -26,6 +27,7 @@ export const ImportHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
     useAddresses();
@@ -37,7 +39,7 @@ export const ImportHandlerProvider = ({
     accountName: string
   ) => {
     // Set processing flag for account.
-    setStatusForAccount(address, source, true);
+    setStatusForAccount(address, source, isConnected ? true : false);
 
     // Process account import in main renderer.
     if (source === 'vault') {
@@ -57,7 +59,9 @@ export const ImportHandlerProvider = ({
   ) => {
     setReadOnlyAddresses((prev: LocalAddress[]) => {
       const newAddresses: LocalAddress[] = prev.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: true } : a
+        a.address === address
+          ? { ...a, isImported: isConnected ? true : false }
+          : a
       );
 
       localStorage.setItem(
@@ -68,7 +72,9 @@ export const ImportHandlerProvider = ({
       return newAddresses;
     });
 
-    postAddressToMainWindow(address, source, accountName);
+    if (isConnected) {
+      postAddressToMainWindow(address, source, accountName);
+    }
   };
 
   /// Handle a vault address import.
@@ -80,7 +86,9 @@ export const ImportHandlerProvider = ({
     // Update import window's managed address state and local storage.
     setVaultAddresses((prev: LocalAddress[]) => {
       const newAddresses = prev.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: true } : a
+        a.address === address
+          ? { ...a, isImported: isConnected ? true : false }
+          : a
       );
 
       localStorage.setItem(
@@ -91,7 +99,9 @@ export const ImportHandlerProvider = ({
       return newAddresses;
     });
 
-    postAddressToMainWindow(address, source, accountName);
+    if (isConnected) {
+      postAddressToMainWindow(address, source, accountName);
+    }
   };
 
   /// Handle a ledger address import.
