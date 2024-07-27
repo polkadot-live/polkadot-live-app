@@ -59,10 +59,16 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
     new MakerDeb({}),
+    {
+      name: '@electron-forge/maker-squirrel',
+      config: {
+        authors: 'Polkadot Live Authors and Contributors',
+        icon: path.resolve(rootDir, 'public/assets/icons/icon.ico'),
+      },
+    },
     {
       name: "@electron-forge/maker-dmg",
       config: {
