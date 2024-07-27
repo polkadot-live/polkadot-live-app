@@ -143,13 +143,13 @@ export const Accounts = ({
     const tasks = getAccountSubscriptions(address);
     const copy = copyTasks(tasks);
 
-    setTypeClicked('account');
     setRenderedSubscriptions({
       type: 'account',
       address,
       tasks: copy,
     } as WrappedSubscriptionTasks);
 
+    setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
   };

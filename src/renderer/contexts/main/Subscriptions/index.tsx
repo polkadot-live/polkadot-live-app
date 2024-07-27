@@ -147,7 +147,7 @@ export const SubscriptionsProvider = ({
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
-        t.enableOsNotifications = false;
+        t.enableOsNotifications = t.status === 'enable' ? true : false;
         return t;
       })
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -224,7 +224,7 @@ export const SubscriptionsProvider = ({
     // Invert the task status.
     const task: SubscriptionTask = { ...cached.tasks[0] };
     task.status = task.status === 'enable' ? 'disable' : 'enable';
-    task.enableOsNotifications = false;
+    task.enableOsNotifications = task.status === 'enable' ? true : false;
 
     // Send task and its associated data to backend.
     switch (cached.type) {

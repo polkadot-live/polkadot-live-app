@@ -414,12 +414,10 @@ export const Permissions = ({
   /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
     flag: boolean,
-    task: SubscriptionTask,
-    setNativeChecked: AnyFunction
+    task: SubscriptionTask
   ) => {
     // Update checkbox state.
     const checked: boolean = flag;
-    setNativeChecked(checked);
 
     if (task.account) {
       // Update received task.
@@ -443,6 +441,9 @@ export const Permissions = ({
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
       }
+
+      // Update dynamic tasks.
+      updateRenderedSubscriptions(task);
     }
   };
 

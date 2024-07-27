@@ -293,7 +293,7 @@ export class QueryMultiWrapper {
   insert(task: SubscriptionTask) {
     // Return if API call already exists.
     if (this.actionExists(task.chainId, task.action)) {
-      debug('🟠 Action already exists.');
+      console.log('🟠 Action already exists.');
       return;
     }
 
