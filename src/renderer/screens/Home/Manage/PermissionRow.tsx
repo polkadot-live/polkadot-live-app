@@ -45,6 +45,10 @@ export const PermissionRow = ({
     }
   }, [task.status]);
 
+  useEffect(() => {
+    setNativeChecked(task.enableOsNotifications);
+  }, [task.enableOsNotifications]);
+
   /// Handle clicking on OS Notifications toggle button.
   const handleOsNotificationClick = async () => {
     await handleNativeCheckbox(!nativeChecked, task, setNativeChecked);
@@ -173,20 +177,17 @@ export const PermissionRow = ({
               disabled={getDisabled(task)}
               handleToggle={async () => {
                 // Send an account or chain subscription task.
-                await handleToggle(
-                  {
-                    type: getTaskType(task),
-                    tasks: [
-                      {
-                        ...task,
-                        actionArgs: task.actionArgs
-                          ? [...task.actionArgs]
-                          : undefined,
-                      },
-                    ],
-                  },
-                  setNativeChecked
-                );
+                await handleToggle({
+                  type: getTaskType(task),
+                  tasks: [
+                    {
+                      ...task,
+                      actionArgs: task.actionArgs
+                        ? [...task.actionArgs]
+                        : undefined,
+                    },
+                  ],
+                });
               }}
             />
           </div>

@@ -42,10 +42,7 @@ export interface PermissionRowProps {
     task: SubscriptionTask,
     setNativeChecked: AnyFunction
   ) => Promise<void>;
-  handleToggle: (
-    cached: WrappedSubscriptionTasks,
-    setNativeChecked: AnyFunction
-  ) => Promise<void>;
+  handleToggle: (cached: WrappedSubscriptionTasks) => Promise<void>;
 }
 
 export interface IntervalRowProps {
