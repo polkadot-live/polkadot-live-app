@@ -432,6 +432,9 @@ export const Permissions = ({
       // Update react state for tasks.
       updateTask('account', task, task.account.address);
 
+      // Update dynamic tasks.
+      updateRenderedSubscriptions(task);
+
       // Update cached task in account's query multi wrapper.
       const account = AccountsController.get(
         task.chainId,
@@ -441,9 +444,6 @@ export const Permissions = ({
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
       }
-
-      // Update dynamic tasks.
-      updateRenderedSubscriptions(task);
     }
   };
 
