@@ -42,7 +42,6 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
 export const Permissions = ({
@@ -125,12 +124,8 @@ export const Permissions = ({
   }, [activeChainId]);
 
   /// Handle a subscription toggle and update rendered subscription state.
-  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
-    await handleQueuedToggle(cached);
-
-    // Update rendererd subscription tasks state.
-    const task = cached.tasks[0];
-    task.status = task.status === 'enable' ? 'disable' : 'enable';
+  const handleToggle = async (task: SubscriptionTask) => {
+    await handleQueuedToggle(task);
     updateRenderedSubscriptions(task);
   };
 

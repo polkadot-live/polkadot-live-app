@@ -7,7 +7,6 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
   SubscriptionTaskType,
-  WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
 export interface ManageProps {
@@ -42,7 +41,7 @@ export interface PermissionRowProps {
     task: SubscriptionTask,
     setNativeChecked: AnyFunction
   ) => Promise<void>;
-  handleToggle: (cached: WrappedSubscriptionTasks) => Promise<void>;
+  handleToggle: (task: SubscriptionTask) => Promise<void>;
 }
 
 export interface IntervalRowProps {
