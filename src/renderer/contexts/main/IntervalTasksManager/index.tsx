@@ -54,10 +54,38 @@ export const IntervalTasksManagerProvider = ({
     await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
+  /// Handle clicking os notifications toggle for interval subscriptions.
+  const handleIntervalNativeCheckbox = async (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => {
+    const checked: boolean = flag;
+    task.enableOsNotifications = checked;
+
+    // Update task data in intervals controller.
+    IntervalsController.updateSubscription(task);
+
+    // Update main renderer state.
+    updateIntervalSubscription(task);
+    tryUpdateDynamicIntervalTask(task);
+
+    // Update OpenGov renderer state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+
+    // Update persisted task in store.
+    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+  };
+
   return (
     <IntervalTasksManagerContext.Provider
       value={{
         handleIntervalToggle,
+        handleIntervalNativeCheckbox,
       }}
     >
       {children}

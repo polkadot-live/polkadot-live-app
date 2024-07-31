@@ -5,4 +5,8 @@ import type { IntervalSubscription } from '@/types/subscriptions';
 
 export interface IntervalTasksManagerContextInterface {
   handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
+  handleIntervalNativeCheckbox: (
+    task: IntervalSubscription,
+    flag: boolean
+  ) => Promise<void>;
 }

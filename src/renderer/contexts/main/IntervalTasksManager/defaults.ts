@@ -7,4 +7,5 @@ import type { IntervalTasksManagerContextInterface } from './types';
 export const defaultIntervalTasksManagerContext: IntervalTasksManagerContextInterface =
   {
     handleIntervalToggle: async () => await new Promise(() => {}),
+    handleIntervalNativeCheckbox: async () => await new Promise(() => {}),
   };

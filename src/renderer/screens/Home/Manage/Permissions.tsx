@@ -409,33 +409,6 @@ export const Permissions = ({
     }
   };
 
-  /// Handle clicking native os notifications toggle for interval subscriptions.
-  const handleIntervalNativeCheckbox = async (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => {
-    const checked: boolean = flag;
-    task.enableOsNotifications = checked;
-
-    // Update task data in intervals controller.
-    IntervalsController.updateSubscription({ ...task });
-
-    // Update main renderer state.
-    updateIntervalSubscription({ ...task });
-    tryUpdateDynamicIntervalTask({ ...task });
-
-    // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
-  };
-
   /// Handle removing an interval subscription.
   const handleRemoveIntervalSubscription = async (
     task: IntervalSubscription
@@ -590,7 +563,6 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
-                    handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
                     handleChangeIntervalDuration={handleChangeIntervalDuration}
                     handleIntervalOneShot={handleIntervalOneShot}
                     handleRemoveIntervalSubscription={

@@ -46,10 +46,6 @@ export interface PermissionRowProps {
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  handleIntervalNativeCheckbox: (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => Promise<void>;
   handleChangeIntervalDuration: (
     event: React.ChangeEvent<HTMLSelectElement>,
     task: IntervalSubscription,
