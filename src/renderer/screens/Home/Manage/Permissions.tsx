@@ -37,6 +37,7 @@ import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubsc
 
 /// Type imports.
 import type { AnyFunction } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
@@ -141,40 +142,6 @@ export const Permissions = ({
     );
   };
 
-  /// Handle toggling an interval subscription.
-  const handleIntervalToggle = async (task: IntervalSubscription) => {
-    // Invert task status.
-    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
-    task.status = newStatus;
-
-    // Handle task in intervals controller.
-    switch (newStatus) {
-      case 'enable': {
-        IntervalsController.insertSubscription({ ...task });
-        break;
-      }
-      case 'disable': {
-        IntervalsController.removeSubscription({ ...task });
-        break;
-      }
-    }
-
-    // Update main renderer state.
-    updateIntervalSubscription({ ...task });
-    tryUpdateDynamicIntervalTask({ ...task });
-
-    // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
-  };
-
   /// TODO: Add `toggleable` field on subscription task type.
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
@@ -209,7 +176,7 @@ export const Permissions = ({
   const getKey = (
     type: string,
     action: string,
-    chainId: string,
+    chainId: ChainID,
     address: string | undefined
   ) =>
     address
@@ -503,6 +470,7 @@ export const Permissions = ({
     );
 
     if (settingObj) {
+      // TODO: call useEffect in row component.
       setIntervalSetting(newSetting);
 
       // Update task state.
@@ -622,7 +590,6 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
-                    handleIntervalToggle={handleIntervalToggle}
                     handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
                     handleChangeIntervalDuration={handleChangeIntervalDuration}
                     handleIntervalOneShot={handleIntervalOneShot}

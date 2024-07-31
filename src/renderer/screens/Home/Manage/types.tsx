@@ -46,7 +46,6 @@ export interface PermissionRowProps {
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
   handleIntervalNativeCheckbox: (
     task: IntervalSubscription,
     flag: boolean
