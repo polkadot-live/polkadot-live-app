@@ -27,14 +27,14 @@ export const PermissionRow = ({
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
+  const { openHelp } = useHelp();
+  const { setTooltipTextAndOpen } = useTooltip();
+
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
-
-  const { openHelp } = useHelp();
-  const { setTooltipTextAndOpen } = useTooltip();
 
   useEffect(() => {
     if (task.status === 'enable') {

@@ -157,7 +157,6 @@ export const SubscriptionsProvider = ({
       return;
     }
 
-    // Switch subscription type.
     switch (getTaskType(tasks[0])) {
       case 'chain': {
         // Update persisted state and React state for tasks.

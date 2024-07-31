@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { useIntervalTasksManager } from '@/renderer/contexts/main/IntervalTasksManager';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { AccountWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,18 +23,17 @@ import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 import type { AnyData } from '@/types/misc';
 import type { IntervalRowProps } from './types';
 
-export const IntervalRow = ({
-  task,
-  handleIntervalToggle,
-  handleIntervalNativeCheckbox,
-  handleChangeIntervalDuration,
-  handleIntervalOneShot,
-  handleRemoveIntervalSubscription,
-  isTaskDisabled,
-}: IntervalRowProps) => {
+export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
   const { online: isConnected } = useBootstrapping();
+  const {
+    handleIntervalToggle,
+    handleIntervalNativeCheckbox,
+    handleRemoveIntervalSubscription,
+    handleChangeIntervalDuration,
+    handleIntervalOneShot,
+  } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
@@ -147,11 +147,7 @@ export const IntervalRow = ({
                 icon={faAnglesDown}
                 transform={'grow-4'}
                 onClick={async () =>
-                  await handleIntervalOneShot(
-                    task,
-                    nativeChecked,
-                    setOneShotProcessing
-                  )
+                  await handleIntervalOneShot(task, setOneShotProcessing)
                 }
               />
             )}
