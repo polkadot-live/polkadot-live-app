@@ -27,14 +27,16 @@ export const IntervalRow = ({
   task,
   handleChangeIntervalDuration,
   handleIntervalOneShot,
-  handleRemoveIntervalSubscription,
   isTaskDisabled,
 }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
   const { online: isConnected } = useBootstrapping();
-  const { handleIntervalToggle, handleIntervalNativeCheckbox } =
-    useIntervalTasksManager();
+  const {
+    handleIntervalToggle,
+    handleIntervalNativeCheckbox,
+    handleRemoveIntervalSubscription,
+  } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);

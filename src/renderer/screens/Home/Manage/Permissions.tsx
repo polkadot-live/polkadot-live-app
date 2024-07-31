@@ -64,12 +64,10 @@ export const Permissions = ({
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
-    tryRemoveIntervalSubscription,
     getCategorizedDynamicIntervals,
   } = useManage();
 
-  const { updateIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
+  const { updateIntervalSubscription } = useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -409,28 +407,6 @@ export const Permissions = ({
     }
   };
 
-  /// Handle removing an interval subscription.
-  const handleRemoveIntervalSubscription = async (
-    task: IntervalSubscription
-  ) => {
-    // Remove task from interval controller.
-    task.status === 'enable' &&
-      IntervalsController.removeSubscription({ ...task }, isOnline);
-    // Set status to disable.
-    task.status = 'disable';
-    // Remove task from dynamic manage state if necessary.
-    tryRemoveIntervalSubscription({ ...task });
-    // Remove task from React state for rendering.
-    removeIntervalSubscription({ ...task });
-    // Remove task from store.
-    await window.myAPI.removeIntervalTask(JSON.stringify(task));
-    // Send message to OpenGov window to update its subscription state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:removed',
-      data: { serialized: JSON.stringify(task) },
-    });
-  };
-
   /// Handle setting a new interval duration for the subscription.
   const handleChangeIntervalDuration = async (
     event: React.ChangeEvent<HTMLSelectElement>,
@@ -565,9 +541,6 @@ export const Permissions = ({
                     key={`${j}_${task.referendumId}_${task.action}`}
                     handleChangeIntervalDuration={handleChangeIntervalDuration}
                     handleIntervalOneShot={handleIntervalOneShot}
-                    handleRemoveIntervalSubscription={
-                      handleRemoveIntervalSubscription
-                    }
                     isTaskDisabled={isIntervalTaskDisabled}
                     task={task}
                   />

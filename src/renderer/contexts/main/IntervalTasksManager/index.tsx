@@ -4,6 +4,7 @@
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { createContext, useContext } from 'react';
+import { useBootstrapping } from '../Bootstrapping';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import type { IntervalSubscription } from '@/types/subscriptions';
@@ -24,8 +25,11 @@ export const IntervalTasksManagerProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { updateIntervalSubscription } = useIntervalSubscriptions();
-  const { tryUpdateDynamicIntervalTask } = useManage();
+  const { online: isOnline } = useBootstrapping();
+  const { updateIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
+  const { tryUpdateDynamicIntervalTask, tryRemoveIntervalSubscription } =
+    useManage();
 
   /// Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
@@ -81,11 +85,37 @@ export const IntervalTasksManagerProvider = ({
     await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
+  /// Handle removing an interval subscription.
+  const handleRemoveIntervalSubscription = async (
+    task: IntervalSubscription
+  ) => {
+    // Remove task from interval controller.
+    task.status === 'enable' &&
+      IntervalsController.removeSubscription(task, isOnline);
+
+    // Set status to disable.
+    task.status = 'disable';
+
+    // Remove task from necessary React state.
+    tryRemoveIntervalSubscription(task);
+    removeIntervalSubscription(task);
+
+    // Remove task from store.
+    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+
+    // Send message to OpenGov window to update its subscription state.
+    ConfigRenderer.portToOpenGov.postMessage({
+      task: 'openGov:task:removed',
+      data: { serialized: JSON.stringify(task) },
+    });
+  };
+
   return (
     <IntervalTasksManagerContext.Provider
       value={{
         handleIntervalToggle,
         handleIntervalNativeCheckbox,
+        handleRemoveIntervalSubscription,
       }}
     >
       {children}

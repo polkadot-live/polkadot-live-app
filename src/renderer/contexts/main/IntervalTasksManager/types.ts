@@ -9,4 +9,7 @@ export interface IntervalTasksManagerContextInterface {
     task: IntervalSubscription,
     flag: boolean
   ) => Promise<void>;
+  handleRemoveIntervalSubscription: (
+    task: IntervalSubscription
+  ) => Promise<void>;
 }

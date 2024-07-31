@@ -56,8 +56,5 @@ export interface IntervalRowProps {
     nativeChecked: boolean,
     setOneShotProcessing: (processing: boolean) => void
   ) => Promise<void>;
-  handleRemoveIntervalSubscription: (
-    task: IntervalSubscription
-  ) => Promise<void>;
   isTaskDisabled: () => boolean;
 }
