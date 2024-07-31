@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
+import { Flip, toast } from 'react-toastify';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { createContext, useContext } from 'react';
 import { useBootstrapping } from '../Bootstrapping';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import type { AnyFunction } from '@/types/misc';
 import type { IntervalSubscription } from '@/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from './types';
 import type { ReactNode } from 'react';
@@ -146,6 +149,42 @@ export const IntervalTasksManagerProvider = ({
     }
   };
 
+  /// Handle a one-shot event for a subscription task.
+  const handleIntervalOneShot = async (
+    task: IntervalSubscription,
+    setOneShotProcessing: AnyFunction
+  ) => {
+    setOneShotProcessing(true);
+    const { success, message } = await executeIntervaledOneShot(
+      task,
+      'one-shot'
+    );
+
+    if (!success) {
+      setOneShotProcessing(false);
+
+      // Render error alert.
+      toast.error(message ? message : 'Error', {
+        position: 'bottom-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        closeButton: false,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        transition: Flip,
+        toastId: 'toast-connection',
+      });
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+    }
+  };
+
   return (
     <IntervalTasksManagerContext.Provider
       value={{
@@ -153,6 +192,7 @@ export const IntervalTasksManagerProvider = ({
         handleIntervalNativeCheckbox,
         handleRemoveIntervalSubscription,
         handleChangeIntervalDuration,
+        handleIntervalOneShot,
       }}
     >
       {children}

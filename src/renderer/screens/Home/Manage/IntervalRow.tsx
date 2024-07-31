@@ -23,11 +23,7 @@ import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 import type { AnyData } from '@/types/misc';
 import type { IntervalRowProps } from './types';
 
-export const IntervalRow = ({
-  task,
-  handleIntervalOneShot,
-  isTaskDisabled,
-}: IntervalRowProps) => {
+export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
   const { online: isConnected } = useBootstrapping();
@@ -36,6 +32,7 @@ export const IntervalRow = ({
     handleIntervalNativeCheckbox,
     handleRemoveIntervalSubscription,
     handleChangeIntervalDuration,
+    handleIntervalOneShot,
   } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
@@ -150,11 +147,7 @@ export const IntervalRow = ({
                 icon={faAnglesDown}
                 transform={'grow-4'}
                 onClick={async () =>
-                  await handleIntervalOneShot(
-                    task,
-                    nativeChecked,
-                    setOneShotProcessing
-                  )
+                  await handleIntervalOneShot(task, setOneShotProcessing)
                 }
               />
             )}

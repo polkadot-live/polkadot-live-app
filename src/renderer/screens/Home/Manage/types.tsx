@@ -46,10 +46,5 @@ export interface PermissionRowProps {
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  handleIntervalOneShot: (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: (processing: boolean) => void
-  ) => Promise<void>;
   isTaskDisabled: () => boolean;
 }

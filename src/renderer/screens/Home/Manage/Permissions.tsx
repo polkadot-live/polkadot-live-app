@@ -12,7 +12,6 @@ import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCare
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
-import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
@@ -333,44 +332,6 @@ export const Permissions = ({
     }
   };
 
-  /// Handle a one-shot event for a subscription task.
-  const handleIntervalOneShot = async (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: AnyFunction
-  ) => {
-    setOneShotProcessing(true);
-    task.enableOsNotifications = nativeChecked;
-    const { success, message } = await executeIntervaledOneShot(
-      task,
-      'one-shot'
-    );
-
-    if (!success) {
-      setOneShotProcessing(false);
-
-      // Render error alert.
-      toast.error(message ? message : 'Error', {
-        position: 'bottom-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: 'toast-connection',
-      });
-    } else {
-      // Wait some time to avoid the spinner snapping.
-      setTimeout(() => {
-        setOneShotProcessing(false);
-      }, 550);
-    }
-  };
-
   /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
     flag: boolean,
@@ -506,7 +467,6 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
-                    handleIntervalOneShot={handleIntervalOneShot}
                     isTaskDisabled={isIntervalTaskDisabled}
                     task={task}
                   />
