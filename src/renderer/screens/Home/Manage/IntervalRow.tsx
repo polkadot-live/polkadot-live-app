@@ -25,7 +25,6 @@ import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({
   task,
-  handleChangeIntervalDuration,
   handleIntervalOneShot,
   isTaskDisabled,
 }: IntervalRowProps) => {
@@ -36,6 +35,7 @@ export const IntervalRow = ({
     handleIntervalToggle,
     handleIntervalNativeCheckbox,
     handleRemoveIntervalSubscription,
+    handleChangeIntervalDuration,
   } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');

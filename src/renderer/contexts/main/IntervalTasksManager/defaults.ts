@@ -9,4 +9,5 @@ export const defaultIntervalTasksManagerContext: IntervalTasksManagerContextInte
     handleIntervalToggle: async () => await new Promise(() => {}),
     handleIntervalNativeCheckbox: async () => await new Promise(() => {}),
     handleRemoveIntervalSubscription: async () => await new Promise(() => {}),
+    handleChangeIntervalDuration: async () => await new Promise(() => {}),
   };

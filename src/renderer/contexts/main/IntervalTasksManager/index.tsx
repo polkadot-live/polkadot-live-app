@@ -110,12 +110,49 @@ export const IntervalTasksManagerProvider = ({
     });
   };
 
+  /// Handle setting a new interval duration for the subscription.
+  const handleChangeIntervalDuration = async (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => {
+    const newSetting: number = parseInt(event.target.value);
+    const settingObj = IntervalsController.durations.find(
+      (setting) => setting.ticksToWait === newSetting
+    );
+
+    if (settingObj) {
+      // TODO: call useEffect in row component.
+      setIntervalSetting(newSetting);
+
+      // Update task state.
+      task.intervalSetting = settingObj;
+      updateIntervalSubscription(task);
+      tryUpdateDynamicIntervalTask(task);
+
+      // Update managed task in intervals controller.
+      IntervalsController.updateSubscription(task);
+
+      // Update state in OpenGov window.
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
+
+      // Update persisted task in store.
+      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    }
+  };
+
   return (
     <IntervalTasksManagerContext.Provider
       value={{
         handleIntervalToggle,
         handleIntervalNativeCheckbox,
         handleRemoveIntervalSubscription,
+        handleChangeIntervalDuration,
       }}
     >
       {children}

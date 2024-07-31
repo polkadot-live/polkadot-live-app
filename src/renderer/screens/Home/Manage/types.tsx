@@ -46,11 +46,6 @@ export interface PermissionRowProps {
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  handleChangeIntervalDuration: (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
-  ) => void;
   handleIntervalOneShot: (
     task: IntervalSubscription,
     nativeChecked: boolean,

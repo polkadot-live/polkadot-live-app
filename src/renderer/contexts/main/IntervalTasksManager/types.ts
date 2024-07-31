@@ -12,4 +12,9 @@ export interface IntervalTasksManagerContextInterface {
   handleRemoveIntervalSubscription: (
     task: IntervalSubscription
   ) => Promise<void>;
+  handleChangeIntervalDuration: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    task: IntervalSubscription,
+    setIntervalSetting: (ticksToWait: number) => void
+  ) => Promise<void>;
 }
