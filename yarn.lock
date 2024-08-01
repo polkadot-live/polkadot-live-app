@@ -3267,17 +3267,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/mocha-framework@npm:^8.32.3":
-  version: 8.32.3
-  resolution: "@wdio/mocha-framework@npm:8.32.3"
+"@wdio/logger@npm:8.38.0":
+  version: 8.38.0
+  resolution: "@wdio/logger@npm:8.38.0"
+  dependencies:
+    chalk: "npm:^5.1.2"
+    loglevel: "npm:^1.6.0"
+    loglevel-plugin-prefix: "npm:^0.8.4"
+    strip-ansi: "npm:^7.1.0"
+  checksum: 79f16731c40a70b92ed531ddd9c8caff8348ab1399b041a64f30ace160ece8b459457d4b275709c8fa06a018fcd0cddc054e4536a1900001d9840a9819d0a182
+  languageName: node
+  linkType: hard
+
+"@wdio/mocha-framework@npm:^8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/mocha-framework@npm:8.39.0"
   dependencies:
     "@types/mocha": "npm:^10.0.0"
     "@types/node": "npm:^20.1.0"
-    "@wdio/logger": "npm:8.28.0"
-    "@wdio/types": "npm:8.32.2"
-    "@wdio/utils": "npm:8.32.3"
+    "@wdio/logger": "npm:8.38.0"
+    "@wdio/types": "npm:8.39.0"
+    "@wdio/utils": "npm:8.39.0"
     mocha: "npm:^10.0.0"
-  checksum: 6d64c3b3ba69d9478d68a4fc52b93adb2fc3d3706bf23e0928bb322a4a015fc8dbdca0b0205b590632028183ae6fe0449bf7170b92ed17eb728ba6832f9af444
+  checksum: 4d07631a34a4a79b71a19e847a93f7a276b2864d9e7b00951cb3d2cc3ce6cc4cf2b90c1578c9f8e56a6f6782b3a4edda87381bfd50421d5bc1c0b6103a2ac8c9
   languageName: node
   linkType: hard
 
@@ -3351,6 +3363,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/types@npm:8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/types@npm:8.39.0"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+  checksum: 38fc0da1ca930c3e62eb8205e7e325029604b0b251153bf728cc8df62f5e4a43935f6c096ad32ae453e918e02e5a21eacd829e1b7b873f59a330a94e90094e62
+  languageName: node
+  linkType: hard
+
 "@wdio/utils@npm:8.32.3":
   version: 8.32.3
   resolution: "@wdio/utils@npm:8.32.3"
@@ -3372,10 +3393,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/utils@npm:8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/utils@npm:8.39.0"
+  dependencies:
+    "@puppeteer/browsers": "npm:^1.6.0"
+    "@wdio/logger": "npm:8.38.0"
+    "@wdio/types": "npm:8.39.0"
+    decamelize: "npm:^6.0.0"
+    deepmerge-ts: "npm:^5.1.0"
+    edgedriver: "npm:^5.5.0"
+    geckodriver: "npm:^4.3.1"
+    get-port: "npm:^7.0.0"
+    import-meta-resolve: "npm:^4.0.0"
+    locate-app: "npm:^2.1.0"
+    safaridriver: "npm:^0.1.0"
+    split2: "npm:^4.2.0"
+    wait-port: "npm:^1.0.4"
+  checksum: 6cc6317928333cad17b0e3f72054af49c436dbeeb9482ec3d0757a42577183567f49b39c3cc614d6ce5c81a3baf30b3319d054714be41a1b713dad009f759a9c
+  languageName: node
+  linkType: hard
+
 "@xmldom/xmldom@npm:^0.8.8":
   version: 0.8.10
   resolution: "@xmldom/xmldom@npm:0.8.10"
   checksum: c7647c442502720182b0d65b17d45d2d95317c1c8c497626fe524bda79b4fb768a9aa4fae2da919f308e7abcff7d67c058b102a9d641097e9a57f0b80187851f
+  languageName: node
+  linkType: hard
+
+"@zip.js/zip.js@npm:^2.7.44":
+  version: 2.7.48
+  resolution: "@zip.js/zip.js@npm:2.7.48"
+  checksum: 1caad2114792b45e53f13845f45c120491b73df3e90547aa63bf40be1178b467e86b8813e8f1960e03d4c55a2f5f00013f380dfcb9a8f2407e9ba46070853f14
   languageName: node
   linkType: hard
 
@@ -5383,6 +5432,22 @@ __metadata:
   bin:
     edgedriver: bin/edgedriver.js
   checksum: 18fcb024fd4d21dbad0300735404559f9f8fc1c2c295e8f9ea888cc9b3729d5de361619788db87e946c50ab1594f9ec60436e19e929e6c36ac07f2a51f250739
+  languageName: node
+  linkType: hard
+
+"edgedriver@npm:^5.5.0":
+  version: 5.6.0
+  resolution: "edgedriver@npm:5.6.0"
+  dependencies:
+    "@wdio/logger": "npm:^8.28.0"
+    "@zip.js/zip.js": "npm:^2.7.44"
+    decamelize: "npm:^6.0.0"
+    edge-paths: "npm:^3.0.5"
+    node-fetch: "npm:^3.3.2"
+    which: "npm:^4.0.0"
+  bin:
+    edgedriver: bin/edgedriver.js
+  checksum: 3fb305662fd34cff72c2e6564dda87b8c64d9d778f277b398f9d307e80f350e3a3958ef20f013ba9105a8d3e080994d3698432d9663fe0d3cf983af4d789f99d
   languageName: node
   linkType: hard
 
@@ -10347,7 +10412,7 @@ __metadata:
     "@wdio/dot-reporter": "npm:^8.32.2"
     "@wdio/globals": "npm:^8.32.3"
     "@wdio/local-runner": "npm:^8.32.3"
-    "@wdio/mocha-framework": "npm:^8.32.3"
+    "@wdio/mocha-framework": "npm:^8.39.0"
     "@wdio/spec-reporter": "npm:^8.32.2"
     "@wdio/types": "npm:^8.32.2"
     "@zondax/ledger-substrate": "npm:^0.44.7"
