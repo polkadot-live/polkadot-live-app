@@ -3267,6 +3267,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/logger@npm:8.38.0":
+  version: 8.38.0
+  resolution: "@wdio/logger@npm:8.38.0"
+  dependencies:
+    chalk: "npm:^5.1.2"
+    loglevel: "npm:^1.6.0"
+    loglevel-plugin-prefix: "npm:^0.8.4"
+    strip-ansi: "npm:^7.1.0"
+  checksum: 79f16731c40a70b92ed531ddd9c8caff8348ab1399b041a64f30ace160ece8b459457d4b275709c8fa06a018fcd0cddc054e4536a1900001d9840a9819d0a182
+  languageName: node
+  linkType: hard
+
 "@wdio/mocha-framework@npm:^8.32.3":
   version: 8.32.3
   resolution: "@wdio/mocha-framework@npm:8.32.3"
@@ -3310,6 +3322,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wdio/reporter@npm:8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/reporter@npm:8.39.0"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+    "@wdio/logger": "npm:8.38.0"
+    "@wdio/types": "npm:8.39.0"
+    diff: "npm:^5.0.0"
+    object-inspect: "npm:^1.12.0"
+  checksum: 093d84f0275064658e01fb01b9b9ec217ad2165e8e9f618e40896253b7d7b84fa2bf3ed94722630b412ae8c514c759892a51fdd5104b10a9f1ada708a96e02a4
+  languageName: node
+  linkType: hard
+
 "@wdio/runner@npm:8.32.3":
   version: 8.32.3
   resolution: "@wdio/runner@npm:8.32.3"
@@ -3329,16 +3354,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/spec-reporter@npm:^8.32.2":
-  version: 8.32.2
-  resolution: "@wdio/spec-reporter@npm:8.32.2"
+"@wdio/spec-reporter@npm:^8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/spec-reporter@npm:8.39.0"
   dependencies:
-    "@wdio/reporter": "npm:8.32.2"
-    "@wdio/types": "npm:8.32.2"
+    "@wdio/reporter": "npm:8.39.0"
+    "@wdio/types": "npm:8.39.0"
     chalk: "npm:^5.1.2"
     easy-table: "npm:^1.2.0"
     pretty-ms: "npm:^7.0.0"
-  checksum: dead0376556413cd07a9d7b85c0360dc3f201bbce2bb46e107de1c648fef4dcff53ec62c5e347985267d9fd985e2b385f583909013a8d2ddcb9a4b154b63e0a6
+  checksum: fcba45c49afe93822d6edc492c269769e03ae3c6abd1ba279c1f370141d1c6876a5f60cfd74eb95abb3743e43e99dad03d89ebaa6be6bd680069d251730a112e
   languageName: node
   linkType: hard
 
@@ -3348,6 +3373,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:^20.1.0"
   checksum: a6fa5b083ab60059cdd5c80a90f62369486226196e48f9ee91c4dfca8226b6b28b611c059d599dd59c6c930f43612ddf58fcf77095119fb13a3abb95f7ba39f1
+  languageName: node
+  linkType: hard
+
+"@wdio/types@npm:8.39.0":
+  version: 8.39.0
+  resolution: "@wdio/types@npm:8.39.0"
+  dependencies:
+    "@types/node": "npm:^20.1.0"
+  checksum: 38fc0da1ca930c3e62eb8205e7e325029604b0b251153bf728cc8df62f5e4a43935f6c096ad32ae453e918e02e5a21eacd829e1b7b873f59a330a94e90094e62
   languageName: node
   linkType: hard
 
@@ -10348,7 +10382,7 @@ __metadata:
     "@wdio/globals": "npm:^8.32.3"
     "@wdio/local-runner": "npm:^8.32.3"
     "@wdio/mocha-framework": "npm:^8.32.3"
-    "@wdio/spec-reporter": "npm:^8.32.2"
+    "@wdio/spec-reporter": "npm:^8.39.0"
     "@wdio/types": "npm:^8.32.2"
     "@zondax/ledger-substrate": "npm:^0.44.7"
     auto-launch: "npm:^5.0.6"
