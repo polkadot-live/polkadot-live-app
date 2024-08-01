@@ -41,7 +41,7 @@
     "@types/auto-launch": "^5.0.2",
     "@types/debug": "^4.1.12",
     "@types/electron-localshortcut": "^3.1.0",
-    "@types/mocha": "^10.0.6",
+    "@types/mocha": "^10.0.7",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@types/styled-components": "^5.1.34",
