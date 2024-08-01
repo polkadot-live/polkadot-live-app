@@ -157,7 +157,6 @@ export const SubscriptionsProvider = ({
       return;
     }
 
-    // Switch subscription type.
     switch (getTaskType(tasks[0])) {
       case 'chain': {
         // Update persisted state and React state for tasks.
@@ -214,20 +213,20 @@ export const SubscriptionsProvider = ({
   };
 
   /// Execute queued subscription task.
-  const handleQueuedToggle = async (cached: WrappedSubscriptionTasks) => {
-    const p = async () => await toggleSubscription(cached);
+  const handleQueuedToggle = async (task: SubscriptionTask) => {
+    const p = async () => await toggleSubscription(task);
     TaskQueue.add(p);
   };
 
   /// Handle subscription task toggle.
-  const toggleSubscription = async (cached: WrappedSubscriptionTasks) => {
+  const toggleSubscription = async (task: SubscriptionTask) => {
     // Invert the task status.
-    const task: SubscriptionTask = { ...cached.tasks[0] };
-    task.status = task.status === 'enable' ? 'disable' : 'enable';
-    task.enableOsNotifications = task.status === 'enable' ? true : false;
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+    task.enableOsNotifications = newStatus === 'enable' ? true : false;
 
     // Send task and its associated data to backend.
-    switch (cached.type) {
+    switch (getTaskType(task)) {
       case 'chain': {
         // Subscribe to and persist task.
         await SubscriptionsController.subscribeChainTask(task);
@@ -258,7 +257,6 @@ export const SubscriptionsProvider = ({
 
         // Update react state.
         updateTask('account', task, task.account?.address);
-
         break;
       }
       default: {

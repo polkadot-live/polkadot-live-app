@@ -299,22 +299,35 @@ export class IntervalsController {
       return;
     }
 
-    if (taskQueue.length === 1) {
+    // Separate tasks depending on their OS notification flag.
+    const onTasks = taskQueue.filter((t) => t.enableOsNotifications === true);
+    const offTasks = taskQueue.filter((t) => t.enableOsNotifications === false);
+
+    // If there's only one task with OS notifications checked.
+    if (onTasks.length === 1) {
       // Execute callback as normal.
-      for (const task of taskQueue) {
-        await executeIntervaledOneShot(task);
+      for (const task of onTasks) {
+        await executeIntervaledOneShot(task, 'one-shot');
       }
-    } else {
+    } else if (onTasks.length > 1) {
       // Instruct callbacks to not show a notification.
-      for (const task of taskQueue) {
+      for (const task of onTasks) {
         await executeIntervaledOneShot(task, 'none');
       }
 
       // Render a single OS notification.
       window.myAPI.showNotification({
         title: 'Polkadot Live',
-        body: `Processed ${taskQueue.length} new events.`,
+        body: `Processed ${onTasks.length} new events.`,
       });
+    }
+
+    // Handle remaining tasks not requiring an OS notification.
+    if (offTasks.length) {
+      // Instruct callbacks to not show a notification.
+      for (const task of offTasks) {
+        await executeIntervaledOneShot(task, 'none');
+      }
     }
   }
 }

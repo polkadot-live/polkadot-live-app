@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useManage } from '@/renderer/contexts/main/Manage';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,
@@ -28,15 +27,14 @@ export const PermissionRow = ({
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
+  const { openHelp } = useHelp();
+  const { setTooltipTextAndOpen } = useTooltip();
+
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [nativeChecked, setNativeChecked] = useState(
     task.enableOsNotifications
   );
-
-  const { openHelp } = useHelp();
-  const { setTooltipTextAndOpen } = useTooltip();
-  const { renderedSubscriptions } = useManage();
 
   useEffect(() => {
     if (task.status === 'enable') {
@@ -47,11 +45,9 @@ export const PermissionRow = ({
     }
   }, [task.status]);
 
-  /// TODO: Optimize where native checkbox updates only when task's flag changes.
-  /// TODO: Remove dependency of `renderedSubscriptions` if possible.
   useEffect(() => {
     setNativeChecked(task.enableOsNotifications);
-  }, [renderedSubscriptions]);
+  }, [task.enableOsNotifications]);
 
   /// Handle clicking on OS Notifications toggle button.
   const handleOsNotificationClick = async () => {
@@ -181,17 +177,7 @@ export const PermissionRow = ({
               disabled={getDisabled(task)}
               handleToggle={async () => {
                 // Send an account or chain subscription task.
-                await handleToggle({
-                  type: getTaskType(task),
-                  tasks: [
-                    {
-                      ...task,
-                      actionArgs: task.actionArgs
-                        ? [...task.actionArgs]
-                        : undefined,
-                    },
-                  ],
-                });
+                await handleToggle(task);
               }}
             />
           </div>

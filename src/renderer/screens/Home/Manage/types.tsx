@@ -7,7 +7,6 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
   SubscriptionTaskType,
-  WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
 export interface ManageProps {
@@ -42,28 +41,10 @@ export interface PermissionRowProps {
     task: SubscriptionTask,
     setNativeChecked: AnyFunction
   ) => Promise<void>;
-  handleToggle: (cached: WrappedSubscriptionTasks) => Promise<void>;
+  handleToggle: (task: SubscriptionTask) => Promise<void>;
 }
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
-  handleIntervalNativeCheckbox: (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => Promise<void>;
-  handleChangeIntervalDuration: (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
-  ) => void;
-  handleIntervalOneShot: (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: (processing: boolean) => void
-  ) => Promise<void>;
-  handleRemoveIntervalSubscription: (
-    task: IntervalSubscription
-  ) => Promise<void>;
   isTaskDisabled: () => boolean;
 }

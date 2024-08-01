@@ -12,7 +12,6 @@ import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCare
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
-import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
@@ -37,12 +36,12 @@ import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubsc
 
 /// Type imports.
 import type { AnyFunction } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
   SubscriptionTask,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
 
 export const Permissions = ({
@@ -64,12 +63,10 @@ export const Permissions = ({
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
-    tryRemoveIntervalSubscription,
     getCategorizedDynamicIntervals,
   } = useManage();
 
-  const { updateIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
+  const { updateIntervalSubscription } = useIntervalSubscriptions();
 
   /// Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -125,12 +122,8 @@ export const Permissions = ({
   }, [activeChainId]);
 
   /// Handle a subscription toggle and update rendered subscription state.
-  const handleToggle = async (cached: WrappedSubscriptionTasks) => {
-    await handleQueuedToggle(cached);
-
-    // Update rendererd subscription tasks state.
-    const task = cached.tasks[0];
-    task.status = task.status === 'enable' ? 'disable' : 'enable';
+  const handleToggle = async (task: SubscriptionTask) => {
+    await handleQueuedToggle(task);
     updateRenderedSubscriptions(task);
   };
 
@@ -144,40 +137,6 @@ export const Permissions = ({
       renderedSubscriptions,
       updateRenderedSubscriptions
     );
-  };
-
-  /// Handle toggling an interval subscription.
-  const handleIntervalToggle = async (task: IntervalSubscription) => {
-    // Invert task status.
-    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
-    task.status = newStatus;
-
-    // Handle task in intervals controller.
-    switch (newStatus) {
-      case 'enable': {
-        IntervalsController.insertSubscription({ ...task });
-        break;
-      }
-      case 'disable': {
-        IntervalsController.removeSubscription({ ...task });
-        break;
-      }
-    }
-
-    // Update main renderer state.
-    updateIntervalSubscription({ ...task });
-    tryUpdateDynamicIntervalTask({ ...task });
-
-    // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -214,7 +173,7 @@ export const Permissions = ({
   const getKey = (
     type: string,
     action: string,
-    chainId: string,
+    chainId: ChainID,
     address: string | undefined
   ) =>
     address
@@ -373,44 +332,6 @@ export const Permissions = ({
     }
   };
 
-  /// Handle a one-shot event for a subscription task.
-  const handleIntervalOneShot = async (
-    task: IntervalSubscription,
-    nativeChecked: boolean,
-    setOneShotProcessing: AnyFunction
-  ) => {
-    setOneShotProcessing(true);
-    task.enableOsNotifications = nativeChecked;
-    const { success, message } = await executeIntervaledOneShot(
-      task,
-      'one-shot'
-    );
-
-    if (!success) {
-      setOneShotProcessing(false);
-
-      // Render error alert.
-      toast.error(message ? message : 'Error', {
-        position: 'bottom-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: 'toast-connection',
-      });
-    } else {
-      // Wait some time to avoid the spinner snapping.
-      setTimeout(() => {
-        setOneShotProcessing(false);
-      }, 550);
-    }
-  };
-
   /// Handle clicking the native checkbox.
   const handleNativeCheckbox = async (
     flag: boolean,
@@ -444,87 +365,6 @@ export const Permissions = ({
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
       }
-    }
-  };
-
-  /// Handle clicking native os notifications toggle for interval subscriptions.
-  const handleIntervalNativeCheckbox = async (
-    task: IntervalSubscription,
-    flag: boolean
-  ) => {
-    const checked: boolean = flag;
-    task.enableOsNotifications = checked;
-
-    // Update task data in intervals controller.
-    IntervalsController.updateSubscription({ ...task });
-
-    // Update main renderer state.
-    updateIntervalSubscription({ ...task });
-    tryUpdateDynamicIntervalTask({ ...task });
-
-    // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
-  };
-
-  /// Handle removing an interval subscription.
-  const handleRemoveIntervalSubscription = async (
-    task: IntervalSubscription
-  ) => {
-    // Remove task from interval controller.
-    task.status === 'enable' &&
-      IntervalsController.removeSubscription({ ...task }, isOnline);
-    // Set status to disable.
-    task.status = 'disable';
-    // Remove task from dynamic manage state if necessary.
-    tryRemoveIntervalSubscription({ ...task });
-    // Remove task from React state for rendering.
-    removeIntervalSubscription({ ...task });
-    // Remove task from store.
-    await window.myAPI.removeIntervalTask(JSON.stringify(task));
-    // Send message to OpenGov window to update its subscription state.
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:task:removed',
-      data: { serialized: JSON.stringify(task) },
-    });
-  };
-
-  /// Handle setting a new interval duration for the subscription.
-  const handleChangeIntervalDuration = async (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
-  ) => {
-    const newSetting: number = parseInt(event.target.value);
-    const settingObj = IntervalsController.durations.find(
-      (setting) => setting.ticksToWait === newSetting
-    );
-
-    if (settingObj) {
-      setIntervalSetting(newSetting);
-
-      // Update task state.
-      task.intervalSetting = settingObj;
-      updateIntervalSubscription({ ...task });
-      tryUpdateDynamicIntervalTask({ ...task });
-      // Update managed task in intervals controller.
-      IntervalsController.updateSubscription({ ...task });
-      // Update state in OpenGov window.
-      ConfigRenderer.portToOpenGov.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-      // Update persisted task in store.
-      await window.myAPI.updateIntervalTask(JSON.stringify(task));
     }
   };
 
@@ -627,13 +467,6 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
-                    handleIntervalToggle={handleIntervalToggle}
-                    handleIntervalNativeCheckbox={handleIntervalNativeCheckbox}
-                    handleChangeIntervalDuration={handleChangeIntervalDuration}
-                    handleIntervalOneShot={handleIntervalOneShot}
-                    handleRemoveIntervalSubscription={
-                      handleRemoveIntervalSubscription
-                    }
                     isTaskDisabled={isIntervalTaskDisabled}
                     task={task}
                   />
