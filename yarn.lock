@@ -3131,14 +3131,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/react-polkicon@npm:1.2.0-alpha.8":
-  version: 1.2.0-alpha.8
-  resolution: "@w3ux/react-polkicon@npm:1.2.0-alpha.8"
+"@w3ux/react-polkicon@npm:1.2.0":
+  version: 1.2.0
+  resolution: "@w3ux/react-polkicon@npm:1.2.0"
   dependencies:
     "@polkadot/util": "npm:^12.6.2"
-    "@w3ux/utils": "npm:^0.3.0"
+    "@w3ux/utils": "npm:^0.4.0"
     framer-motion: "npm:^11.2.10"
-  checksum: 8c7ea390b6b686c195f2d59b2d8a7255cb6c368d712ca65227b0aa4cd08fbddd203c3063464af141d9b6988d97c22eaeab5a8f0040215be6c4ceffedc7defa7e
+  checksum: 4610c4c804ed2b401b6f2109217932fa316751be707941c274dfe9bfc44b25dfae8613211b8e65e83a4c9d7b698cadc8697072d14d739a089a306193c434f77e
   languageName: node
   linkType: hard
 
@@ -3153,14 +3153,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/utils@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@w3ux/utils@npm:0.3.0"
+"@w3ux/utils@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@w3ux/utils@npm:0.4.0"
   dependencies:
     "@polkadot/keyring": "npm:^12.6.2"
     "@polkadot/util": "npm:^12.6.2"
     bignumber.js: "npm:^9.1.1"
-  checksum: 8e5b231d4d39c0c5fa88d81f2fdcdf7a8f5a4fd5e8047124c8953fe539bc120593d80801432837247911a0fcc6eb877867c545283d1bdb2b1a7103ebf24257cf
+  checksum: 4384bccedcd7bccdad928393ca419a7fabc685b735df68d48243d7f7e4663cc1101a9e81073a666549a843bc130952a016125092b9a138f321900f6909a13960
   languageName: node
   linkType: hard
 
@@ -10341,7 +10341,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.7.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@w3ux/extension-assets": "npm:^0.2.6"
-    "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
+    "@w3ux/react-polkicon": "npm:1.2.0"
     "@w3ux/utils": "npm:0.4.0-alpha.0"
     "@wdio/cli": "npm:8.32.3"
     "@wdio/dot-reporter": "npm:^8.32.2"
