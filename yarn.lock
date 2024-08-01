@@ -4527,10 +4527,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clean-stack@npm:^2.0.0, clean-stack@npm:^2.1.0":
+"clean-stack@npm:^2.0.0":
   version: 2.2.0
   resolution: "clean-stack@npm:2.2.0"
   checksum: 1f90262d5f6230a17e27d0c190b09d47ebe7efdd76a03b5a1127863f7b3c9aec4c3e6c8bb3a7bbf81d553d56a1fd35728f5a8ef4c63f867ac8d690109742a8c1
+  languageName: node
+  linkType: hard
+
+"clean-stack@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "clean-stack@npm:5.2.0"
+  dependencies:
+    escape-string-regexp: "npm:5.0.0"
+  checksum: 0de47a4152e49dcdeede5f47d7bb9a39a3ea748acb1cd2f0160dbee972d920be81390cb4c5566e6b795791b9efb12359e89fdd7c2e63b36025d59529558570f1
   languageName: node
   linkType: hard
 
@@ -5483,10 +5492,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-is-dev@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "electron-is-dev@npm:2.0.0"
-  checksum: aa540115f144f9c8c788e13fc581be7b0f9f83422eecb940af6367c67d63c3a656e03ad9c1138f17bcfbafc9edca8b83f655feff24dead2cc4866169c6e565f9
+"electron-is-dev@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "electron-is-dev@npm:3.0.1"
+  checksum: 80d37d61d44b8b7af0af90eab622b09e0f165afbc2560297c760356efa93fcb54dbbd13d4d6522da6474e261d630b76b804c86385564a1f3062d28fc59c340bd
   languageName: node
   linkType: hard
 
@@ -5528,16 +5537,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-unhandled@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "electron-unhandled@npm:4.0.1"
+"electron-unhandled@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "electron-unhandled@npm:5.0.0"
   dependencies:
-    clean-stack: "npm:^2.1.0"
-    electron-is-dev: "npm:^2.0.0"
-    ensure-error: "npm:^2.0.0"
+    clean-stack: "npm:^5.2.0"
+    electron-is-dev: "npm:^3.0.1"
+    ensure-error: "npm:^4.0.0"
     lodash.debounce: "npm:^4.0.8"
-    serialize-error: "npm:^8.1.0"
-  checksum: 647fa41832c69516f5ac9e895a8aa3cc91795d488124027bfa374ee03c1150d0db5821466d99154ae3fc31d4818b8cf24c06c36d9fd2333b1055074a1537ccab
+    serialize-error: "npm:^11.0.3"
+  checksum: 5d2d6698417103c7e684f73777d96f020f6d041912ee263162e94bdc13aac24b9881ec279f8c09c1b40489703d986f2700947f82fea26d87a16fae28ed9bce34
   languageName: node
   linkType: hard
 
@@ -5672,10 +5681,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ensure-error@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "ensure-error@npm:2.1.0"
-  checksum: 28f4405a1c49009eecbc20150e80d0b38b2de5fe5dc567d62d06d0c3820ee89b9a9a5f5d9574805f55f19223ed582c8e9bee519e00533b721d3c2f19829beaac
+"ensure-error@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "ensure-error@npm:4.0.0"
+  checksum: 79a986b54574c221923fafb00e25f86963a73195d5dd0d67d0c9ca9ab35a7cbc10b634e6954d1912206b9e18eabbc4ebd18af9200e521b2a603c3d388b98fa08
   languageName: node
   linkType: hard
 
@@ -6005,6 +6014,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"escape-string-regexp@npm:5.0.0, escape-string-regexp@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "escape-string-regexp@npm:5.0.0"
+  checksum: 6366f474c6f37a802800a435232395e04e9885919873e382b157ab7e8f0feb8fed71497f84a6f6a81a49aab41815522f5839112bd38026d203aea0c91622df95
+  languageName: node
+  linkType: hard
+
 "escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
@@ -6016,13 +6032,6 @@ __metadata:
   version: 2.0.0
   resolution: "escape-string-regexp@npm:2.0.0"
   checksum: 2530479fe8db57eace5e8646c9c2a9c80fa279614986d16dcc6bcaceb63ae77f05a851ba6c43756d816c61d7f4534baf56e3c705e3e0d884818a46808811c507
-  languageName: node
-  linkType: hard
-
-"escape-string-regexp@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "escape-string-regexp@npm:5.0.0"
-  checksum: 6366f474c6f37a802800a435232395e04e9885919873e382b157ab7e8f0feb8fed71497f84a6f6a81a49aab41815522f5839112bd38026d203aea0c91622df95
   languageName: node
   linkType: hard
 
@@ -10360,7 +10369,7 @@ __metadata:
     electron-localshortcut: "npm:^3.2.1"
     electron-squirrel-startup: "npm:^1.0.0"
     electron-store: "npm:^8.1.0"
-    electron-unhandled: "npm:^4.0.1"
+    electron-unhandled: "npm:^5.0.0"
     eslint: "npm:^8.57.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-import-resolver-typescript: "npm:^3.6.1"
@@ -11544,7 +11553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-error@npm:^11.0.1":
+"serialize-error@npm:^11.0.1, serialize-error@npm:^11.0.3":
   version: 11.0.3
   resolution: "serialize-error@npm:11.0.3"
   dependencies:
@@ -11559,15 +11568,6 @@ __metadata:
   dependencies:
     type-fest: "npm:^0.13.1"
   checksum: 7982937d578cd901276c8ab3e2c6ed8a4c174137730f1fb0402d005af209a0e84d04acc874e317c936724c7b5b26c7a96ff7e4b8d11a469f4924a4b0ea814c05
-  languageName: node
-  linkType: hard
-
-"serialize-error@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "serialize-error@npm:8.1.0"
-  dependencies:
-    type-fest: "npm:^0.20.2"
-  checksum: 8cfd89f43ca93e283c5f1d16178a536bdfac9bc6029f4a9df988610cc399bc4f2478d1f10ce40b9dff66b863a5158a19b438fbec929045c96d92174f6bca1e88
   languageName: node
   linkType: hard
 
