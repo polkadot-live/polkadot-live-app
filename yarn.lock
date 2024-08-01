@@ -5502,12 +5502,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-squirrel-startup@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "electron-squirrel-startup@npm:1.0.0"
+"electron-squirrel-startup@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "electron-squirrel-startup@npm:1.0.1"
   dependencies:
     debug: "npm:^2.2.0"
-  checksum: 5513a61f98be8d57f3b7f54fe38e2b3c42e0d02f62ee8f172d9d040863ee790b997f030328e79e454f5aaf51aa0b8908da8fb2ab9b18a8fdd29e88b3a0688c8d
+  checksum: eaff42844702321237b23f68ae2bff2eae17cb1251189e9a5397d94d1598a607e3cbedc60e130a0641798739019db44c37b2a8801e7a60f9261810bb8d07e9bf
   languageName: node
   linkType: hard
 
@@ -10358,7 +10358,7 @@ __metadata:
     debug: "npm:^4.3.4"
     electron: "npm:^30.1.2"
     electron-localshortcut: "npm:^3.2.1"
-    electron-squirrel-startup: "npm:^1.0.0"
+    electron-squirrel-startup: "npm:^1.0.1"
     electron-store: "npm:^8.1.0"
     electron-unhandled: "npm:^4.0.1"
     eslint: "npm:^8.57.0"
