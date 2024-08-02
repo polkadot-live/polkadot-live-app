@@ -105,7 +105,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     const referendumIds = new Set(
       dynamicIntervalTasksState
         .map(({ referendumId }) => referendumId || -1)
-        .sort()
+        .sort((a, b) => a - b)
         .reverse()
     );
 
