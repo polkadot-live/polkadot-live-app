@@ -413,7 +413,9 @@ export const useMainMessagePorts = () => {
       if (isObject(info) && 'Ongoing' in info) {
         // Instantiate and push next referenda to state.
         const next: ActiveReferendaInfo = {
-          referendaId: parseInt((storageKey.toHuman() as string[])[0]),
+          referendaId: parseInt(
+            rmCommas((storageKey.toHuman() as string[])[0])
+          ),
           Ongoing: {
             ...info.Ongoing,
           },
