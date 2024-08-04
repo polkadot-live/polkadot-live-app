@@ -385,7 +385,7 @@ export class EventsController {
               } as ActionMeta,
             },
             {
-              uri: `https://staking.polkadot.network/#/pools?n=${chainId}&a=${address}`,
+              uri: `https://staking.polkadot.cloud/#/pools?n=${chainId}&a=${address}`,
               text: 'Dashboard',
             },
           ],
@@ -580,8 +580,8 @@ export class EventsController {
           stale: false,
           actions: [
             {
-              uri: `https://staking.polkadot.network/#/nominate?n=${chainId}&a=${address}`,
-              text: 'Staking Dashboard',
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
             },
           ],
         };
