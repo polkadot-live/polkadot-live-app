@@ -17,6 +17,7 @@ import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
+import { WarningIcon } from '@/renderer/kits/Icons/IconWarning';
 import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({
@@ -71,6 +72,15 @@ export const PermissionRow = ({
                 />
               </div>
               {task.label}
+
+              {/* Warning if nominating pending payouts */}
+              {task.action ===
+                'subscribe:account:nominating:pendingPayouts' && (
+                <WarningIcon
+                  tooltip="Could Take Over 10 Seconds"
+                  iconColor="#b76438"
+                />
+              )}
             </h3>
           </div>
         </div>
