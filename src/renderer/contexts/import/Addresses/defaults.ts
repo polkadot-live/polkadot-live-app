@@ -12,4 +12,5 @@ export const defaultAddressesContext: AddressesContextInterface = {
   setReadOnlyAddresses: (a) => {},
   setVaultAddresses: (a) => {},
   importAccountJson: (a) => {},
+  isAlreadyImported: () => false,
 };

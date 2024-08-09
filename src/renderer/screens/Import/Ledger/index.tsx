@@ -8,6 +8,7 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
+import { renderToast } from '@/renderer/utils/ImportUtils';
 import type {
   GetAddressMessage,
   LedgerResponse,
@@ -16,6 +17,7 @@ import type {
 import type { LedgerLocalAddress } from '@/types/accounts';
 import type { ImportLedgerProps } from '../types';
 import type { IpcRendererEvent } from 'electron';
+import type { AnyData } from '@/types/misc';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
@@ -30,8 +32,20 @@ export const ImportLedger = ({
 
   /// Status entry is added for a newly imported account.
   const { insertAccountStatus } = useAccountStatuses();
-  const { ledgerAddresses: addresses, setLedgerAddresses: setAddresses } =
-    useAddresses();
+  const {
+    ledgerAddresses: addresses,
+    setLedgerAddresses: setAddresses,
+    isAlreadyImported,
+  } = useAddresses();
+
+  /// Used in effect for processing an import.
+  const [processImport, setProcessImport] = useState(false);
+  const bodyRef = useRef<{
+    address: string;
+    pubKey: string;
+    device: { id: string; productName: string };
+    options: AnyData;
+  } | null>(null);
 
   /// Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
@@ -81,29 +95,8 @@ export const ImportLedger = ({
       intervalRef.current && clearInterval(intervalRef.current);
 
       const { pubKey, address } = body[0];
-      const addressFormatted: LedgerLocalAddress = {
-        address,
-        device: { ...device },
-        index: options.accountIndex,
-        isImported: false,
-        name: ellipsisFn(address),
-        pubKey,
-      };
-
-      const newAddresses = addresses
-        .filter(
-          (a: LedgerLocalAddress) => a.address !== addressFormatted.address
-        )
-        .concat(addressFormatted);
-
-      const storageKey = ConfigImport.getStorageKey('ledger');
-      localStorage.setItem(storageKey, JSON.stringify(newAddresses));
-      setStateWithRef(false, setIsImporting, isImportingRef);
-      setAddresses(newAddresses);
-      setStateWithRef([], setStatusCodes, statusCodesRef);
-
-      // Insert account status entry.
-      insertAccountStatus(address, 'ledger');
+      bodyRef.current = { address, pubKey, device, options };
+      setProcessImport(true);
     }
   };
 
@@ -127,18 +120,19 @@ export const ImportLedger = ({
 
   /// Initialise listeners for Ledger IO.
   useEffect(() => {
-    window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
-      const parsed: GetAddressMessage | undefined = JSON.parse(result);
-
-      if (!parsed) {
-        throw new Error('Unable to parse GetAddressMessage');
-      }
-
-      handleLedgerStatusResponse(parsed);
-    });
-
     // Start the loop if no ledger accounts have been imported and splash page is shown.
     if (curSource && curSource === 'ledger' && !addresses.length) {
+      // Listen for messages from main process.
+      window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
+        const parsed: GetAddressMessage | undefined = JSON.parse(result);
+
+        if (!parsed) {
+          throw new Error('Unable to parse GetAddressMessage');
+        }
+
+        handleLedgerStatusResponse(parsed);
+      });
+
       setStateWithRef(true, setIsImporting, isImportingRef);
       handleLedgerLoop();
     } else {
@@ -149,6 +143,49 @@ export const ImportLedger = ({
       intervalRef.current && clearInterval(intervalRef.current);
     };
   }, [curSource]);
+
+  useEffect(() => {
+    if (processImport && bodyRef.current) {
+      const { address, pubKey, device, options } = bodyRef.current;
+
+      // Check if address is already imported.
+      if (isAlreadyImported(address)) {
+        renderToast(
+          'Address is already imported.',
+          'error',
+          `toast-${address}`
+        );
+        setSection(0);
+      } else {
+        const addressFormatted: LedgerLocalAddress = {
+          address,
+          device: { ...device },
+          index: options.accountIndex,
+          isImported: false,
+          name: ellipsisFn(address),
+          pubKey,
+        };
+
+        const newAddresses = addresses
+          .filter(
+            (a: LedgerLocalAddress) => a.address !== addressFormatted.address
+          )
+          .concat(addressFormatted);
+
+        const storageKey = ConfigImport.getStorageKey('ledger');
+        localStorage.setItem(storageKey, JSON.stringify(newAddresses));
+        setAddresses(newAddresses);
+
+        // Insert account status entry.
+        insertAccountStatus(address, 'ledger');
+      }
+
+      setStateWithRef(false, setIsImporting, isImportingRef);
+      setStateWithRef([], setStatusCodes, statusCodesRef);
+      setProcessImport(false);
+      bodyRef.current = null;
+    }
+  }, [processImport]);
 
   return !addresses.length ? (
     <Splash setSection={setSection} statusCodes={statusCodesRef.current} />

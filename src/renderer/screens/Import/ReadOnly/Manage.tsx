@@ -42,8 +42,11 @@ import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
-  const { readOnlyAddresses: addresses, setReadOnlyAddresses: setAddresses } =
-    useAddresses();
+  const {
+    readOnlyAddresses: addresses,
+    setReadOnlyAddresses: setAddresses,
+    isAlreadyImported,
+  } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -80,17 +83,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     return false;
   };
 
-  /// Verify that the address is not already imported.
-  const isAlreadyImported = (address: string): boolean => {
-    for (const next of addresses) {
-      if (next.address === address) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
@@ -115,7 +107,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
       renderToast('Address is already imported.', 'error', `toast-${trimmed}`);
       return;
     } else if (!validateAddress(trimmed)) {
-      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
+      renderToast('Invalid Address.', 'error', `toast-${trimmed}`);
       return;
     }
 

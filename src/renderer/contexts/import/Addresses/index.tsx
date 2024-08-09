@@ -52,6 +52,24 @@ export const AddressesProvider = ({
     return parsed;
   });
 
+  /// Check if an address has already been imported.
+  const isAlreadyImported = (address: string): boolean => {
+    const checkAll = <T extends { address: string }>(
+      items: T[],
+      target: string
+    ): boolean =>
+      items.reduce(
+        (acc, cur) => (acc ? acc : cur.address === target ? true : false),
+        false
+      );
+
+    return (
+      checkAll(ledgerAddresses, address) ||
+      checkAll(vaultAddresses, address) ||
+      checkAll(readOnlyAddresses, address)
+    );
+  };
+
   /// Add account from received AccountJson data.
   const importAccountJson = (json: LocalAddress) => {
     const { address, source } = json;
@@ -99,6 +117,7 @@ export const AddressesProvider = ({
         setReadOnlyAddresses,
         setVaultAddresses,
         importAccountJson,
+        isAlreadyImported,
       }}
     >
       {children}
