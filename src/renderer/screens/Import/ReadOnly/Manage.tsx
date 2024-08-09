@@ -42,8 +42,11 @@ import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
-  const { readOnlyAddresses: addresses, setReadOnlyAddresses: setAddresses } =
-    useAddresses();
+  const {
+    readOnlyAddresses: addresses,
+    setReadOnlyAddresses: setAddresses,
+    isAlreadyImported,
+  } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -74,17 +77,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
         if (isValid) {
           return true;
         }
-      }
-    }
-
-    return false;
-  };
-
-  /// Verify that the address is not already imported.
-  const isAlreadyImported = (address: string): boolean => {
-    for (const next of addresses) {
-      if (next.address === address) {
-        return true;
       }
     }
 

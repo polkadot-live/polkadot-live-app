@@ -13,4 +13,5 @@ export interface AddressesContextInterface {
   setReadOnlyAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
   setVaultAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
   importAccountJson: (a: LocalAddress) => void;
+  isAlreadyImported: (address: string) => boolean;
 }

@@ -12,15 +12,17 @@ import { checkValidAddress } from '@/renderer/Utils';
 import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import { createImgSize } from '@/renderer/library/QRCode/util';
 import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { LocalAddress } from '@/types/accounts';
 import type { ReaderVaultProps } from '../types';
-import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
+  const { isAlreadyImported } = useAddresses();
 
   // Check whether initial render.
   const initialRender = useRef<boolean>(true);
@@ -38,9 +40,6 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   // is clicked or when a valid address is imported.
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
 
-  const vaultAddressExists = (address: string) =>
-    addresses.find((a: LocalAddress) => a.address === address);
-
   const stopHtml5QrCode = () => {
     if (html5QrCodeRef.current !== null) {
       html5QrCodeRef.current.stop().catch(console.error);
@@ -54,25 +53,20 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
       return;
     }
 
-    const maybeAddress = signature.split(':')?.[1];
+    const maybeAddress: string = signature.split(':')?.[1];
+    const isValid = checkValidAddress(maybeAddress);
+    const isImported = isAlreadyImported(maybeAddress);
 
-    const newFeedback =
-      maybeAddress === undefined
-        ? 'Waiting for QR Code'
-        : checkValidAddress(maybeAddress)
-          ? vaultAddressExists(maybeAddress)
-            ? 'Account Already Added'
-            : 'Address Received:'
-          : 'Invalid Address';
+    const newFeedback = isValid
+      ? isImported
+        ? 'Account Already Added'
+        : 'Address Received'
+      : 'Invalid Address';
 
     setFeedback(newFeedback);
 
-    // Check if QR data has valid address.
-    const valid =
-      checkValidAddress(maybeAddress || '') &&
-      !vaultAddressExists(maybeAddress || '');
-
-    if (valid) {
+    // Import address if it's valid.
+    if (isValid && !isImported) {
       stopHtml5QrCode();
       handleVaultImport(maybeAddress);
     }
