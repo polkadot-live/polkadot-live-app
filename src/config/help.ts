@@ -32,7 +32,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:transfers',
-    title: 'Balances: Transfers Subscription',
+    title: 'Subscription: Free Balance',
     definition: [
       "Get notified when an account's free balance changes.",
       "An account's free balance can be used for on-chain activity like staking, participating in governance etc. but is not necessarily spendable (or transferrable).",
