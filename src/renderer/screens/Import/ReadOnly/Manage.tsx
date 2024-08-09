@@ -115,7 +115,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
       renderToast('Address is already imported.', 'error', `toast-${trimmed}`);
       return;
     } else if (!validateAddress(trimmed)) {
-      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
+      renderToast('Invalid Address.', 'error', `toast-${trimmed}`);
       return;
     }
 
