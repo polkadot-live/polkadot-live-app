@@ -8,6 +8,8 @@ import styled from 'styled-components';
 
 interface WarningIconProps {
   tooltip: string;
+  iconColor: string;
+  iconTransform?: string;
 }
 
 export const WarningIconWrapper = styled.div`
@@ -18,7 +20,11 @@ export const WarningIconWrapper = styled.div`
   }
 `;
 
-export const WarningIcon = ({ tooltip }: WarningIconProps) => {
+export const WarningIcon = ({
+  tooltip,
+  iconColor,
+  iconTransform,
+}: WarningIconProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
 
   return (
@@ -29,9 +35,9 @@ export const WarningIcon = ({ tooltip }: WarningIconProps) => {
     >
       <WarningIconWrapper>
         <FontAwesomeIcon
-          color="#b76438"
+          color={iconColor}
           icon={faWarning}
-          transform={'grow-0'}
+          transform={iconTransform ? iconTransform : 'grow-0'}
         />
       </WarningIconWrapper>
     </div>
