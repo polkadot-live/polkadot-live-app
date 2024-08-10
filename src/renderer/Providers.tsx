@@ -22,6 +22,7 @@ import { IntervalTasksManagerProvider } from './contexts/main/IntervalTasksManag
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
 import { AddressesProvider as ImportAddressesProvider } from '@app/contexts/import/Addresses';
 import { ImportHandlerProvider } from './contexts/import/ImportHandler';
+import { AddHandlerProvider } from './contexts/import/AddHandler';
 import { RemoveHandlerProvider } from './contexts/import/RemoveHandler';
 import { DeleteHandlerProvider } from './contexts/import/DeleteHandler';
 
@@ -75,6 +76,7 @@ const getProvidersForWindow = () => {
         ImportAddressesProvider,
         ImportAccountStatusesProvider,
         ImportHandlerProvider, // Requires useAccountStatuses + useAddresses
+        AddHandlerProvider, // Requires useAccountStatuses + useAddresses
         RemoveHandlerProvider, // Requires useAddresses
         DeleteHandlerProvider // Requires useAccountStatuses + useAddresses
       )(Theme);

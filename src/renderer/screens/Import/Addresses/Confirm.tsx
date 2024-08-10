@@ -6,23 +6,15 @@ import { Identicon } from '@app/library/Identicon';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
+import { useAddHandler } from '@/renderer/contexts/import/AddHandler';
 import type { ConfirmProps } from './types';
 
-export const Confirm = ({
-  address,
-  name,
-  source,
-  pubKey,
-  device,
-}: ConfirmProps) => {
+export const Confirm = ({ address, name, source }: ConfirmProps) => {
   const { setStatus } = useOverlay();
-  const { handleImportAddress } = useImportHandler();
+  const { handleAddAddress } = useAddHandler();
 
   const handleClickConfirm = async () => {
-    source === 'ledger'
-      ? await handleImportAddress(address, source, name, pubKey, device)
-      : await handleImportAddress(address, source, name);
+    await handleAddAddress(address, source, name);
     setStatus(0);
   };
 

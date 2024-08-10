@@ -287,6 +287,43 @@ app.whenReady().then(async () => {
             JSON.stringify(stored.filter((a) => a.address !== address))
           );
         }
+
+        break;
+      }
+      case 'raw-account:add': {
+        const { source, address } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        // Set isImported flag to true.
+        if (source === 'ledger') {
+          const stored: LedgerLocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, isImported: true } : a
+              )
+            )
+          );
+        } else {
+          // Add stored vault or read-only accounts.
+          const stored: LocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, isImported: true } : a
+              )
+            )
+          );
+        }
+
         break;
       }
       case 'raw-account:remove': {
@@ -366,6 +403,7 @@ app.whenReady().then(async () => {
             )
           );
         }
+
         break;
       }
     }
