@@ -73,9 +73,10 @@ export const HardwareAddress = ({
     renderToast('Account name updated.', 'success', `toast-${trimmed}`);
 
     // Otherwise rename account.
-    renameHandler(address, trimmed);
-    setEditName(trimmed);
-    setEditing(false);
+    renameHandler(address, trimmed).then(() => {
+      setEditName(trimmed);
+      setEditing(false);
+    });
   };
 
   // Input change handler.
@@ -133,7 +134,7 @@ export const HardwareAddress = ({
                       id="commit-btn"
                       type="button"
                       className="edit"
-                      onPointerDown={() => commitEdit()}
+                      onPointerDown={async () => commitEdit()}
                     >
                       <FontAwesomeIcon
                         icon={faCheck}

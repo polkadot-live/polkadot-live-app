@@ -18,7 +18,9 @@ export interface IpcTask {
   action:
     | 'raw-account:persist'
     | 'raw-account:delete'
+    | 'raw-account:add'
     | 'raw-account:remove'
-    | 'raw-account:get';
+    | 'raw-account:get'
+    | 'raw-account:rename';
   data: AnyData;
 }

@@ -5,7 +5,7 @@ import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
-  renameLocalAccount,
+  renameAccountInStore,
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
@@ -28,9 +28,11 @@ export const Address = ({
   const [accountNameState, setAccountNameState] = useState<string>(accountName);
 
   // Handler to rename an account.
-  const renameHandler = (who: string, newName: string) => {
+  const renameHandler = async (who: string, newName: string) => {
     setAccountNameState(newName);
-    renameLocalAccount(who, newName, 'vault');
+
+    // Update name in store in main process.
+    await renameAccountInStore(address, 'vault', newName);
 
     // Post message to main renderer to process the account rename.
     postRenameAccount(who, newName);

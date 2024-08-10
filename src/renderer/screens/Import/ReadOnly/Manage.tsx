@@ -10,7 +10,6 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
@@ -42,11 +41,7 @@ import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
-  const {
-    readOnlyAddresses: addresses,
-    setReadOnlyAddresses: setAddresses,
-    isAlreadyImported,
-  } = useAddresses();
+  const { readOnlyAddresses: addresses, isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -83,10 +78,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     return false;
   };
 
-  /// Gets the next non-imported address index.
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
-
   /// Cancel button clicked for address field.
   const onCancel = () => {
     setEditName('');
@@ -113,21 +104,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
     // The default account name.
     const accountName = ellipsisFn(trimmed);
-
-    // Update local storage.
-    const newAddresses = addresses
-      .filter((a: LocalAddress) => a.address !== trimmed)
-      .concat({
-        index: getNextAddressIndex(),
-        address: trimmed,
-        isImported: false,
-        name: accountName,
-        source: 'read-only',
-      });
-
-    const storageKey = ConfigImport.getStorageKey('read-only');
-    localStorage.setItem(storageKey, JSON.stringify(newAddresses));
-    setAddresses(newAddresses);
 
     // Reset read-only address input state.
     setEditName('');
