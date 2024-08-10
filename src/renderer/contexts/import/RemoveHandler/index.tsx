@@ -11,6 +11,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@/types/accounts';
+import type { IpcTask } from '@/types/communication';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -29,77 +30,57 @@ export const RemoveHandlerProvider = ({
     useAddresses();
 
   /// Exposed function to remove an address.
-  const handleRemoveAddress = (address: string, source: AccountSource) => {
+  const handleRemoveAddress = async (
+    address: string,
+    source: AccountSource
+  ) => {
     if (source === 'vault') {
-      handleRemoveVaultAddress(address, source);
+      handleRemoveVaultAddress(address);
     } else if (source === 'ledger') {
-      handleRemoveLedgerAddress(address, source);
+      handleRemoveLedgerAddress(address);
     } else if (source === 'read-only') {
-      handleRemoveReadOnlyAddress(address, source);
+      handleRemoveReadOnlyAddress(address);
     }
+
+    // Update address data in store in main process.
+    await updateAddressInStore(source, address);
+
+    // Process removed address in main renderer.
+    postAddressToMainWindow(address);
   };
 
-  // Handle removal of a read-only address.
-  const handleRemoveReadOnlyAddress = (
-    address: string,
-    source: AccountSource
+  /// Update import window read-only addresses state.
+  const handleRemoveReadOnlyAddress = (address: string) => {
+    setReadOnlyAddresses((prev: LocalAddress[]) =>
+      prev.map((a) => (a.address === address ? { ...a, isImported: false } : a))
+    );
+  };
+
+  /// Update import window vault addresses state.
+  const handleRemoveVaultAddress = (address: string) => {
+    setVaultAddresses((prev: LocalAddress[]) =>
+      prev.map((a) => (a.address === address ? { ...a, isImported: false } : a))
+    );
+  };
+
+  /// Update import window ledger addresses state.
+  const handleRemoveLedgerAddress = (address: string) => {
+    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
+      prev.map((a) => (a.address === address ? { ...a, isImported: false } : a))
+    );
+  };
+
+  /// Update address in store.
+  const updateAddressInStore = async (
+    source: AccountSource,
+    address: string
   ) => {
-    // Update import window's managed address state and local storage.
-    setReadOnlyAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
+    const ipcTask: IpcTask = {
+      action: 'raw-account:remove',
+      data: { source, address },
+    };
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address);
-  };
-
-  /// Handle removal of a vault address.
-  const handleRemoveVaultAddress = (address: string, source: AccountSource) => {
-    // Update import window's managed address state and local storage.
-    setVaultAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address);
-  };
-
-  /// Handle removal of a ledger address.
-  const handleRemoveLedgerAddress = (
-    address: string,
-    source: AccountSource
-  ) => {
-    // Update import window's managed address state and local storage.
-    setLedgerAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address);
+    await window.myAPI.rawAccountTask(ipcTask);
   };
 
   /// Send address data to main window to process removal.

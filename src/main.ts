@@ -289,6 +289,42 @@ app.whenReady().then(async () => {
         }
         break;
       }
+      case 'raw-account:remove': {
+        const { source, address } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        if (source === 'ledger') {
+          // Remove stored ledger accounts.
+          const stored: LedgerLocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, isImported: false } : a
+              )
+            )
+          );
+        } else {
+          // Remove stored vault or read-only accounts.
+          const stored: LocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, isImported: false } : a
+              )
+            )
+          );
+        }
+
+        break;
+      }
     }
   });
 

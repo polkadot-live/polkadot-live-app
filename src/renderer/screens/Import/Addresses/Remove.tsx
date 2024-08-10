@@ -13,8 +13,8 @@ export const Remove = ({ address, source }: RemoveProps) => {
   const { setStatus } = useOverlay();
   const { handleRemoveAddress } = useRemoveHandler();
 
-  const handleClickRemove = () => {
-    handleRemoveAddress(address, source);
+  const handleClickRemove = async () => {
+    await handleRemoveAddress(address, source);
     setStatus(0);
   };
 
@@ -29,7 +29,10 @@ export const Remove = ({ address, source }: RemoveProps) => {
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
-        <ButtonMono text="Remove Account" onClick={() => handleClickRemove()} />
+        <ButtonMono
+          text="Remove Account"
+          onClick={async () => await handleClickRemove()}
+        />
       </div>
     </ConfirmWrapper>
   );

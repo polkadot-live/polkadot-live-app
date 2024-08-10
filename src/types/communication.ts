@@ -15,6 +15,6 @@ export interface PortPair {
 }
 
 export interface IpcTask {
-  action: 'raw-account:persist' | 'raw-account:delete';
+  action: 'raw-account:persist' | 'raw-account:delete' | 'raw-account:remove';
   data: AnyData;
 }

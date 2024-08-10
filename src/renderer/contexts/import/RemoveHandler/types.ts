@@ -4,5 +4,8 @@
 import type { AccountSource } from '@/types/accounts';
 
 export interface RemoveHandlerContextInterface {
-  handleRemoveAddress: (address: string, source: AccountSource) => void;
+  handleRemoveAddress: (
+    address: string,
+    source: AccountSource
+  ) => Promise<void>;
 }
