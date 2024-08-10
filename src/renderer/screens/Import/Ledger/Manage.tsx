@@ -113,12 +113,16 @@ export const Manage = ({
                                 index,
                                 isImported,
                                 name,
+                                device,
+                                pubKey,
                               }: LedgerLocalAddress,
                               j
                             ) => (
                               <Address
                                 key={`address_${name}`}
                                 address={address}
+                                pubKey={pubKey}
+                                device={device}
                                 source={'ledger'}
                                 accountName={name}
                                 index={index || 0}

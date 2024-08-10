@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyData, AnyFunction, AnyJson } from '@/types/misc';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type {
   AccountSource,
@@ -65,6 +65,8 @@ export interface LedgerAddressProps {
     lastIndex: number;
   };
   setSection: AnyFunction;
+  pubKey: string;
+  device: AnyData;
 }
 
 export interface ManageReadOnlyProps {

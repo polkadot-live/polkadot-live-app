@@ -9,12 +9,20 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 import type { ConfirmProps } from './types';
 
-export const Confirm = ({ address, name, source }: ConfirmProps) => {
+export const Confirm = ({
+  address,
+  name,
+  source,
+  pubKey,
+  device,
+}: ConfirmProps) => {
   const { setStatus } = useOverlay();
   const { handleImportAddress } = useImportHandler();
 
   const handleClickConfirm = async () => {
-    await handleImportAddress(address, source, name);
+    source === 'ledger'
+      ? await handleImportAddress(address, source, name, pubKey, device)
+      : await handleImportAddress(address, source, name);
     setStatus(0);
   };
 

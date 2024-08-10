@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from '@/types/accounts';
-import type { AnyFunction } from '@/types/misc';
+import type { AnyData, AnyFunction } from '@/types/misc';
 
 export interface AddressProps {
   accountName: string;
@@ -21,6 +21,8 @@ export interface ConfirmProps {
   address: string;
   name: string;
   source: AccountSource;
+  pubKey?: string;
+  device?: AnyData;
 }
 
 export interface RemoveProps {

@@ -21,6 +21,8 @@ export const Address = ({
   isImported,
   orderData,
   setSection,
+  device,
+  pubKey,
 }: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
 
@@ -51,7 +53,13 @@ export const Address = ({
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={accountNameState} source="ledger" />,
+          <Confirm
+            address={address}
+            name={accountNameState}
+            source="ledger"
+            pubKey={pubKey}
+            device={device}
+          />,
           'small'
         )
       }
