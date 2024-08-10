@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
-import { ellipsisFn } from '@w3ux/utils';
 import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
@@ -127,39 +126,6 @@ export const validateAccountName = (accountName: string): boolean => {
   }
 
   return true;
-};
-
-/**
- * @name getLocalAccountName
- * @summary Returns an account's name by fetching it from local storage or returning the truncated address.
- * @deprecated This function is not currently used.
- */
-export const getLocalAccountName = (
-  address: string,
-  source: AccountSource
-): string => {
-  const defaultName = ellipsisFn(address);
-  const stored = localStorage.getItem(ConfigImport.getStorageKey(source));
-
-  // Return truncated address if no storage found.
-  if (!stored) {
-    return defaultName;
-  }
-
-  // Parse fetched addresses and see if this address has a custom name.
-  if (source === 'ledger') {
-    const parsed: LedgerLocalAddress[] = JSON.parse(stored);
-    const fetched = parsed.find(
-      (a: LedgerLocalAddress) => a.address === address
-    );
-    return fetched ? fetched.name : defaultName;
-  } else if (source === 'vault') {
-    const parsed: LocalAddress[] = JSON.parse(stored);
-    const fetched = parsed.find((a: LocalAddress) => a.address === address);
-    return fetched ? fetched.name : defaultName;
-  } else {
-    return 'System Account';
-  }
 };
 
 /**
