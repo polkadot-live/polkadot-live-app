@@ -134,7 +134,7 @@ export const HardwareAddress = ({
                       id="commit-btn"
                       type="button"
                       className="edit"
-                      onPointerDown={async () => commitEdit()}
+                      onPointerDown={() => commitEdit()}
                     >
                       <FontAwesomeIcon
                         icon={faCheck}
