@@ -5,5 +5,5 @@
 import type { DeleteHandlerContextInterface } from './types';
 
 export const defaultDeleteHandlerContext: DeleteHandlerContextInterface = {
-  handleDeleteAddress: () => false,
+  handleDeleteAddress: () => new Promise(() => {}),
 };

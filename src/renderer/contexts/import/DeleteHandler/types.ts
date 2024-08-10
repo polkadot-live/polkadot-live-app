@@ -4,5 +4,8 @@
 import type { AccountSource } from '@/types/accounts';
 
 export interface DeleteHandlerContextInterface {
-  handleDeleteAddress: (address: string, source: AccountSource) => boolean;
+  handleDeleteAddress: (
+    address: string,
+    source: AccountSource
+  ) => Promise<boolean>;
 }

@@ -248,7 +248,7 @@ app.whenReady().then(async () => {
             JSON.stringify([...stored, parsed])
           );
         } else {
-          // Update stored raw vault or read-only accounts.
+          // Update stored vault or read-only accounts.
           const parsed: LocalAddress = JSON.parse(serialized);
           const stored: LocalAddress[] = store.has(key)
             ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
@@ -260,6 +260,33 @@ app.whenReady().then(async () => {
           );
         }
 
+        break;
+      }
+      case 'raw-account:delete': {
+        const { source, address } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        if (source === 'ledger') {
+          // Update stored ledger accounts.
+          const stored: LedgerLocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(stored.filter((a) => a.address !== address))
+          );
+        } else {
+          // Update stored vault or read-only accounts.
+          const stored: LocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify(stored.filter((a) => a.address !== address))
+          );
+        }
         break;
       }
     }

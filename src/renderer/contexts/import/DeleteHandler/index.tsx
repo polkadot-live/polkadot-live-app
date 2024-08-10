@@ -13,6 +13,7 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
+import type { IpcTask } from '@/types/communication';
 
 export const DeleteHandlerContext =
   createContext<DeleteHandlerContextInterface>(
@@ -31,97 +32,73 @@ export const DeleteHandlerProvider = ({
     useAddresses();
 
   /// Exposed function to delete an address.
-  const handleDeleteAddress = (
+  const handleDeleteAddress = async (
     address: string,
     source: AccountSource
-  ): boolean => {
+  ): Promise<boolean> => {
     // Remove status entry from account statuses context.
     deleteAccountStatus(address, source);
 
     let goBack = false;
 
     if (source === 'vault') {
-      goBack = handleDeleteVaultAddress(address, source);
+      goBack = handleDeleteVaultAddress(address);
     } else if (source === 'ledger') {
-      goBack = handleDeleteLedgerAddress(address, source);
+      goBack = handleDeleteLedgerAddress(address);
     } else if (source === 'read-only') {
-      goBack = handleDeleteReadOnlyAddress(address, source);
+      goBack = handleDeleteReadOnlyAddress(address);
     }
+
+    // Update Electron store, delete address data
+    await removeAddressFromStore(source, address);
+
+    // Delete in main renderer.
+    postAddressDeleteMessage(address);
 
     return goBack;
   };
 
-  /// Handle deletion of a read-only address.
-  const handleDeleteReadOnlyAddress = (
-    address: string,
-    source: AccountSource
-  ): boolean => {
-    // Update import window's managed address state and local storage.
-    setReadOnlyAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.filter(
-        (a: LocalAddress) => a.address !== address
-      );
+  /// Update import window read-only addresses state.
+  const handleDeleteReadOnlyAddress = (address: string): boolean => {
+    setReadOnlyAddresses((prev: LocalAddress[]) =>
+      prev.filter((a) => a.address !== address)
+    );
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressDeleteMessage(address);
     return false;
   };
 
-  /// Handle deletion of a vault address.
-  const handleDeleteVaultAddress = (
-    address: string,
-    source: AccountSource
-  ): boolean => {
+  /// Update import window vault addresses state.
+  const handleDeleteVaultAddress = (address: string): boolean => {
     let goBack = false;
-
-    // Update import window's managed address state and local storage.
-    setVaultAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.filter(
-        (a: LocalAddress) => a.address !== address
-      );
-
-      newAddresses.length === 0 && (goBack = true);
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
+    setVaultAddresses((prev: LocalAddress[]) => {
+      const updated = prev.filter((a) => a.address !== address);
+      updated.length === 0 && (goBack = true);
+      return updated;
     });
 
-    postAddressDeleteMessage(address);
     return goBack;
   };
 
-  /// Handle deletion of a ledger address.
-  const handleDeleteLedgerAddress = (
-    address: string,
-    source: AccountSource
-  ): boolean => {
-    // Update import window's managed address state and local storage.
-    setLedgerAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.filter(
-        (a: LedgerLocalAddress) => a.address !== address
-      );
+  /// Update import window ledger addresses state.
+  const handleDeleteLedgerAddress = (address: string): boolean => {
+    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
+      prev.filter((a) => a.address !== address)
+    );
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressDeleteMessage(address);
     return true;
+  };
+
+  /// Remove address entry from store.
+  const removeAddressFromStore = async (
+    source: AccountSource,
+    address: string
+  ) => {
+    const ipcTask: IpcTask = {
+      action: 'raw-account:delete',
+      data: { source, address },
+    };
+
+    await window.myAPI.rawAccountTask(ipcTask);
   };
 
   /// Send address data to main window to process removal.

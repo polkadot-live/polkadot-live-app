@@ -14,8 +14,8 @@ export const Delete = ({ address, source, setSection }: DeleteProps) => {
   const { handleDeleteAddress } = useDeleteHandler();
 
   // Click handler function.
-  const handleDeleteClick = () => {
-    const goBack = handleDeleteAddress(address, source);
+  const handleDeleteClick = async () => {
+    const goBack = await handleDeleteAddress(address, source);
     setStatus(0);
     goBack && setSection(0);
   };
@@ -31,7 +31,10 @@ export const Delete = ({ address, source, setSection }: DeleteProps) => {
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
-        <ButtonMono text="Delete Account" onClick={() => handleDeleteClick()} />
+        <ButtonMono
+          text="Delete Account"
+          onClick={async () => await handleDeleteClick()}
+        />
       </div>
     </ConfirmWrapper>
   );
