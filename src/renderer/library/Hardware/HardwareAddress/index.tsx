@@ -52,7 +52,7 @@ export const HardwareAddress = ({
   };
 
   // Validate input and rename account.
-  const commitEdit = () => {
+  const commitEdit = async () => {
     const trimmed = editName.trim();
 
     // Return if account name hasn't changed.
@@ -73,7 +73,7 @@ export const HardwareAddress = ({
     renderToast('Account name updated.', 'success', `toast-${trimmed}`);
 
     // Otherwise rename account.
-    renameHandler(address, trimmed);
+    await renameHandler(address, trimmed);
     setEditName(trimmed);
     setEditing(false);
   };
@@ -118,9 +118,9 @@ export const HardwareAddress = ({
                   value={editing ? editName : accountName}
                   onChange={(e) => handleChange(e)}
                   onFocus={() => setEditing(true)}
-                  onKeyUp={(e) => {
+                  onKeyUp={async (e) => {
                     if (e.key === 'Enter') {
-                      commitEdit();
+                      await commitEdit();
                       e.currentTarget.blur();
                     }
                   }}
@@ -133,7 +133,7 @@ export const HardwareAddress = ({
                       id="commit-btn"
                       type="button"
                       className="edit"
-                      onPointerDown={() => commitEdit()}
+                      onPointerDown={async () => await commitEdit()}
                     >
                       <FontAwesomeIcon
                         icon={faCheck}

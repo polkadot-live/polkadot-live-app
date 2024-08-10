@@ -18,7 +18,7 @@ export type HardwareAddressProps = ComponentBase & {
   // current name of the account.
   accountName: string;
   // handle rename
-  renameHandler: (address: string, newName: string) => void;
+  renameHandler: (address: string, newName: string) => Promise<void>;
   // handle remove UI.
   openRemoveHandler: () => void;
   // handle confirm import UI.

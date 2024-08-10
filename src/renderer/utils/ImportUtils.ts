@@ -59,50 +59,21 @@ export const renderToast = (
   }
 };
 
-export const renameLedgerAccount = async (address: string, newName: string) => {
+/**
+ * @name renameAccountInStore
+ * @summary Updates a stored account's name in the main process.
+ */
+export const renameAccountInStore = async (
+  address: string,
+  source: AccountSource,
+  newName: string
+) => {
   const ipcTask: IpcTask = {
     action: 'raw-account:rename',
-    data: {
-      source: 'ledger' as AccountSource,
-      address,
-      newName,
-    },
+    data: { source, address, newName },
   };
 
   await window.myAPI.rawAccountTask(ipcTask);
-};
-
-/**
- * @name renameLocalAccount
- * @summary Sets an account's name in local storage.
- */
-export const renameLocalAccount = (
-  address: string,
-  newName: string,
-  source: AccountSource
-) => {
-  // Get serialized addresses from local storage.
-  const storageKey = ConfigImport.getStorageKey(source);
-  const stored = localStorage.getItem(storageKey);
-
-  if (!stored) {
-    return;
-  }
-
-  // Update local storage account data.
-  if (source === 'ledger') {
-    const parsed: LedgerLocalAddress[] = JSON.parse(stored);
-    const updated = parsed.map((a: LedgerLocalAddress) =>
-      a.address !== address ? a : { ...a, name: newName }
-    );
-    localStorage.setItem(storageKey, JSON.stringify(updated));
-  } else {
-    const parsed: LocalAddress[] = JSON.parse(stored);
-    const updated = parsed.map((a: LocalAddress) =>
-      a.address !== address ? a : { ...a, name: newName }
-    );
-    localStorage.setItem(storageKey, JSON.stringify(updated));
-  }
 };
 
 /**
