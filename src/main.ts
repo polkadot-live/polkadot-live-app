@@ -345,8 +345,10 @@ app.whenReady().then(async () => {
 
           (store as Record<string, AnyData>).set(
             key,
-            stored.map((a) =>
-              a.address === address ? { ...a, name: newName } : a
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, name: newName } : a
+              )
             )
           );
         } else {
@@ -357,8 +359,10 @@ app.whenReady().then(async () => {
 
           (store as Record<string, AnyData>).set(
             key,
-            stored.map((a) =>
-              a.address === address ? { ...a, name: newName } : a
+            JSON.stringify(
+              stored.map((a) =>
+                a.address === address ? { ...a, name: newName } : a
+              )
             )
           );
         }

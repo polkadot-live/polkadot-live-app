@@ -1,14 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useState } from 'react';
-import { Config as ConfigImport } from '@/config/processes/import';
 import * as defaults from './defaults';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import { createContext, useContext, useState } from 'react';
+import { useAddresses } from '../Addresses';
+import type { AccountSource } from '@/types/accounts';
 import type { AccountStatusesContextInterface } from './types';
 
 export const AccountStatusesContext =
@@ -32,33 +28,34 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Utility to fetch account statuses based on account data in local storage.
+  const { ledgerAddresses, readOnlyAddresses, vaultAddresses } = useAddresses();
+
+  /// Utility to initialize account statuses to false.
   const fetchAccountStatuses = (
     source: AccountSource
   ): Map<string, boolean> => {
     const map = new Map<string, boolean>();
-    const key: string = ConfigImport.getStorageKey(source);
-    const fetched: string | null = localStorage.getItem(key);
-
     switch (source) {
-      case 'read-only':
-      case 'vault': {
-        const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
-        for (const { address } of parsed) {
+      case 'ledger': {
+        for (const { address } of ledgerAddresses) {
           map.set(address, false);
         }
         return map;
       }
-      case 'ledger': {
-        const parsed: LedgerLocalAddress[] =
-          fetched !== null ? JSON.parse(fetched) : [];
-        for (const { address } of parsed) {
+      case 'read-only': {
+        for (const { address } of readOnlyAddresses) {
+          map.set(address, false);
+        }
+        return map;
+      }
+      case 'vault': {
+        for (const { address } of vaultAddresses) {
           map.set(address, false);
         }
         return map;
       }
       default: {
-        return map;
+        throw new Error('unreachable');
       }
     }
   };
