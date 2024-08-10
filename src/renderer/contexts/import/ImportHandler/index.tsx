@@ -8,7 +8,9 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
+import type { AnyData } from '@/types/misc';
 import type { ImportHandlerContextInterface } from './types';
+import type { IpcTask } from '@/types/communication';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -33,101 +35,102 @@ export const ImportHandlerProvider = ({
     useAddresses();
 
   /// Exposed function to import an address.
-  const handleImportAddress = (
+  const handleImportAddress = async (
     address: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    pubKey?: string,
+    device?: AnyData
   ) => {
     // Set processing flag for account.
     setStatusForAccount(address, source, isConnected ? true : false);
 
+    const local = constructRawAddress(
+      address,
+      source,
+      accountName,
+      device,
+      pubKey
+    );
+
     // Process account import in main renderer.
     if (source === 'vault') {
-      handleVaultImport(address, source, accountName);
+      handleVaultImport(local as LocalAddress);
     } else if (source === 'ledger') {
-      handleLedgerImport(address, source, accountName);
+      handleLedgerImport(local as LedgerLocalAddress);
     } else if (source === 'read-only') {
-      handleReadOnlyImport(address, source, accountName);
+      handleReadOnlyImport(local as LocalAddress);
     }
-  };
 
-  /// Handle a read-only address import.
-  const handleReadOnlyImport = (
-    address: string,
-    source: AccountSource,
-    accountName: string
-  ) => {
-    setReadOnlyAddresses((prev: LocalAddress[]) => {
-      const newAddresses: LocalAddress[] = prev.map((a: LocalAddress) =>
-        a.address === address
-          ? { ...a, isImported: isConnected ? true : false }
-          : a
-      );
+    // Persist account to store in main process.
+    await persistAddressToStore(source, local);
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    if (isConnected) {
-      postAddressToMainWindow(address, source, accountName);
-    }
-  };
-
-  /// Handle a vault address import.
-  const handleVaultImport = (
-    address: string,
-    source: AccountSource,
-    accountName: string
-  ) => {
-    // Update import window's managed address state and local storage.
-    setVaultAddresses((prev: LocalAddress[]) => {
-      const newAddresses = prev.map((a: LocalAddress) =>
-        a.address === address
-          ? { ...a, isImported: isConnected ? true : false }
-          : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    if (isConnected) {
-      postAddressToMainWindow(address, source, accountName);
-    }
-  };
-
-  /// Handle a ledger address import.
-  const handleLedgerImport = (
-    address: string,
-    source: AccountSource,
-    accountName: string
-  ) => {
-    // Update import window's managed address state and local storage.
-    setLedgerAddresses((prev: LedgerLocalAddress[]) => {
-      const newAddresses = prev.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: true } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
+    // Send data to main renderer for processing.
     postAddressToMainWindow(address, source, accountName);
   };
 
-  /// Send address data to main window to process.
+  /// Update import window read-only addresses state.
+  const handleReadOnlyImport = (local: LocalAddress) => {
+    setReadOnlyAddresses((prev: LocalAddress[]) =>
+      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
+    );
+  };
+
+  /// Update import window vault addresses state.
+  const handleVaultImport = (local: LocalAddress) => {
+    setVaultAddresses((prev: LocalAddress[]) =>
+      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
+    );
+  };
+
+  /// Update import window ledger addresses state.
+  const handleLedgerImport = (local: LedgerLocalAddress) => {
+    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
+      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
+    );
+  };
+
+  /// Construct raw address data structure.
+  const constructRawAddress = (
+    address: string,
+    source: AccountSource,
+    accountName: string,
+    device?: AnyData,
+    pubKey?: string
+  ) =>
+    source === 'ledger'
+      ? ({
+          address,
+          device: { ...device },
+          isImported: false,
+          name: accountName,
+          pubKey: pubKey || '',
+          source,
+        } as LedgerLocalAddress)
+      : ({
+          address,
+          isImported: isConnected ? true : false,
+          name: accountName,
+          source,
+        } as LocalAddress);
+
+  /// Send local address to main process for persisting to store.
+  const persistAddressToStore = async (
+    source: AccountSource,
+    local: LocalAddress | LedgerLocalAddress
+  ) => {
+    const ipcTask: IpcTask = {
+      action: 'raw-account:persist',
+      data: {
+        source,
+        serialized: JSON.stringify(local),
+      },
+    };
+
+    await window.myAPI.rawAccountTask(ipcTask);
+  };
+
+  /// Send address data to main renderer to process.
   const postAddressToMainWindow = (
     address: string,
     source: AccountSource,
@@ -136,10 +139,10 @@ export const ImportHandlerProvider = ({
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:import',
       data: {
-        chainId: getAddressChainId(address),
-        source,
         address,
+        chainId: getAddressChainId(address),
         name: accountName,
+        source,
       },
     });
   };

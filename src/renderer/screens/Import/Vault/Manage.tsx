@@ -26,11 +26,7 @@ import {
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import type { ManageVaultProps } from '../types';
 
-export const Manage = ({
-  setSection,
-  addresses,
-  setAddresses,
-}: ManageVaultProps) => {
+export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
 
   // Active accordion indices for account subscription tasks categories.
@@ -76,7 +72,7 @@ export const Manage = ({
             onClick={() => {
               openOverlayWith(
                 <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
-                  <Reader addresses={addresses} setAddresses={setAddresses} />
+                  <Reader addresses={addresses} />
                 </ErrorBoundary>,
                 'small',
                 true
@@ -115,7 +111,7 @@ export const Manage = ({
                                   accountName={name}
                                   source={'vault'}
                                   address={address}
-                                  index={index}
+                                  index={index || 0}
                                   isImported={isImported || false}
                                   setSection={setSection}
                                   orderData={{

@@ -13,8 +13,8 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
   const { setStatus } = useOverlay();
   const { handleImportAddress } = useImportHandler();
 
-  const handleClickConfirm = () => {
-    handleImportAddress(address, source, name);
+  const handleClickConfirm = async () => {
+    await handleImportAddress(address, source, name);
     setStatus(0);
   };
 

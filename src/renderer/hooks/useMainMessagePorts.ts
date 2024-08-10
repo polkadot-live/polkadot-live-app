@@ -19,6 +19,7 @@ import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -38,7 +39,6 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.

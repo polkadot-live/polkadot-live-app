@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from '@/types/accounts';
+import type { AnyData } from '@/types/misc';
 
 export interface ImportHandlerContextInterface {
   handleImportAddress: (
     address: string,
     source: AccountSource,
-    accountName: string
-  ) => void;
+    accountName: string,
+    pubKey?: string,
+    device?: AnyData
+  ) => Promise<void>;
 }

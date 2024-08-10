@@ -1,12 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { IpcRendererEvent } from 'electron';
-import type { ChainID } from './chains';
-import type { AnyJson } from './misc';
-import type { LedgerTask } from './ledger';
 import type { AccountSource, FlattenedAccountData } from './accounts';
+import type { AnyJson } from './misc';
+import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
+import type { LedgerTask } from './ledger';
+import type { IpcTask } from './communication';
+import type { IpcRendererEvent } from 'electron';
 import type { SubscriptionTask } from './subscriptions';
 import type {
   PersistedSettings,
@@ -15,6 +16,7 @@ import type {
 import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
+  rawAccountTask: (task: IpcTask) => Promise<void>;
   getOsPlatform: () => Promise<string>;
 
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;

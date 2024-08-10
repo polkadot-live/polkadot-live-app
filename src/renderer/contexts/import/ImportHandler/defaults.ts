@@ -5,5 +5,5 @@
 import type { ImportHandlerContextInterface } from './types';
 
 export const defaultImportHandlerContext: ImportHandlerContextInterface = {
-  handleImportAddress: () => {},
+  handleImportAddress: () => new Promise(() => {}),
 };

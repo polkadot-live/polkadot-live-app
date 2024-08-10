@@ -13,7 +13,7 @@ import { Reader } from './Reader';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 
-export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
+export const Splash = ({ setSection, addresses }: AnyJson) => {
   const { openOverlayWith } = useOverlay();
 
   return (
@@ -49,10 +49,7 @@ export const Splash = ({ setSection, addresses, setAddresses }: AnyJson) => {
                     <ErrorBoundary
                       fallback={<h2>Could not load QR Scanner</h2>}
                     >
-                      <Reader
-                        addresses={addresses}
-                        setAddresses={setAddresses}
-                      />
+                      <Reader addresses={addresses} />
                     </ErrorBoundary>,
                     'small'
                   );

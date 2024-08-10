@@ -7,7 +7,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { Config as ConfigImport } from '@/config/processes/import';
 import { checkValidAddress } from '@/renderer/Utils';
 import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import { createImgSize } from '@/renderer/library/QRCode/util';
@@ -15,10 +14,9 @@ import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 import type { Html5Qrcode } from 'html5-qrcode';
-import type { LocalAddress } from '@/types/accounts';
 import type { ReaderVaultProps } from '../types';
 
-export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
+export const Reader = ({ addresses }: ReaderVaultProps) => {
   const { setStatus: setOverlayStatus } = useOverlay();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
@@ -48,7 +46,7 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   };
 
   // Update QR feedback on QR data change.
-  const handleQrData = (signature: string) => {
+  const handleQrData = async (signature: string) => {
     if (imported) {
       return;
     }
@@ -68,39 +66,23 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
     // Import address if it's valid.
     if (isValid && !isImported) {
       stopHtml5QrCode();
-      handleVaultImport(maybeAddress);
+      await handleVaultImport(maybeAddress);
     }
   };
 
   // Handle new vault address to local storage and close overlay.
-  const handleVaultImport = (address: string) => {
+  const handleVaultImport = async (address: string) => {
     const accountName = ellipsisFn(address);
 
-    const newAddresses = addresses
-      .filter((a: LocalAddress) => a.address !== address)
-      .concat({
-        index: getNextAddressIndex(),
-        address,
-        isImported: false,
-        name: accountName,
-        source: 'vault',
-      });
-
-    const storageKey = ConfigImport.getStorageKey('vault');
-    localStorage.setItem(storageKey, JSON.stringify(newAddresses));
-    setAddresses(newAddresses);
-    setImported(true);
-
-    // Add account status entry.
     insertAccountStatus(address, 'vault');
-
-    // Set processing flag to true and import via main renderer.
-    handleImportAddress(address, 'vault', accountName);
+    await handleImportAddress(address, 'vault', accountName);
+    setImported(true);
   };
 
   // Gets the next non-imported address index.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
+    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
 
   // Close the overlay when import is successful, ignoring initial render state.
   useEffect(() => {
@@ -110,9 +92,9 @@ export const Reader = ({ addresses, setAddresses }: ReaderVaultProps) => {
   }, [imported]);
 
   // The success callback for the QR code scan plugin.
-  const onScan = (data: string | null) => {
+  const onScan = async (data: string | null) => {
     if (data) {
-      handleQrData(data);
+      handleQrData(data).catch((err) => console.log(err));
     }
   };
 

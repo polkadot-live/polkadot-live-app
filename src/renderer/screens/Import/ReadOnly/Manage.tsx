@@ -85,7 +85,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
   /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
+    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
 
   /// Cancel button clicked for address field.
   const onCancel = () => {
@@ -100,7 +100,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   };
 
   /// Handle import button click.
-  const onImport = () => {
+  const onImport = async () => {
     const trimmed = editName.trim();
 
     if (isAlreadyImported(trimmed)) {
@@ -136,7 +136,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     insertAccountStatus(trimmed, 'read-only');
 
     // Set processing flag to true if online and import via main renderer.
-    handleImportAddress(trimmed, 'read-only', accountName);
+    await handleImportAddress(trimmed, 'read-only', accountName);
   };
 
   return (
@@ -189,7 +189,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                   <div className="flex-inner-row">
                     <button
                       className="btn-mono lg"
-                      onPointerDown={() => onImport()}
+                      onPointerDown={async () => await onImport()}
                     >
                       Add
                     </button>
@@ -242,7 +242,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                                     accountName={name}
                                     source={'read-only'}
                                     address={address}
-                                    index={index}
+                                    index={index || 0}
                                     isImported={isImported || false}
                                     orderData={{
                                       curIndex: j,

@@ -29,7 +29,6 @@ export interface ManageVaultProps {
 
 export interface ReaderVaultProps {
   addresses: LocalAddress[];
-  setAddresses: AnyFunction;
 }
 
 export interface Html5QrScannerProps {

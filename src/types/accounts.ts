@@ -108,7 +108,7 @@ export interface FlattenedAccountData {
 export interface LocalAddress {
   address: string;
   isImported: boolean;
-  index: number;
+  index?: number;
   name: string;
   source: AccountSource;
 }
@@ -120,7 +120,7 @@ export interface LocalAddress {
 export interface LedgerLocalAddress {
   address: string;
   device: { id: string; productName: string };
-  index: number;
+  index?: number;
   isImported: boolean;
   name: string;
   pubKey: string;

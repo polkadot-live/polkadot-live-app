@@ -28,6 +28,7 @@ import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import { hideDockIcon, showDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';
+import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -37,14 +38,19 @@ import type {
   EventCallback,
   NotificationData,
 } from '@/types/reporter';
-import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
+import type {
+  FlattenedAccountData,
+  FlattenedAccounts,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
+import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
 import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
-import { version } from '../package.json';
 
 const debug = MainDebug;
 
@@ -219,6 +225,44 @@ app.whenReady().then(async () => {
   // Open clicked URL in a browser window.
   ipcMain.on('app:url:open', (_, url) => {
     shell.openExternal(url);
+  });
+
+  /**
+   * Raw Account management
+   */
+  ipcMain.handle('main:raw-account', async (_, task: IpcTask) => {
+    switch (task.action) {
+      case 'raw-account:persist': {
+        const { source, serialized } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        if (source === 'ledger') {
+          // Update stored ledger accounts.
+          const parsed: LedgerLocalAddress = JSON.parse(serialized);
+          const stored: LedgerLocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify([...stored, parsed])
+          );
+        } else {
+          // Update stored raw vault or read-only accounts.
+          const parsed: LocalAddress = JSON.parse(serialized);
+          const stored: LocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            JSON.stringify([...stored, parsed])
+          );
+        }
+
+        break;
+      }
+    }
   });
 
   /**

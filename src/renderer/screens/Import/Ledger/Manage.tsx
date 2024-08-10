@@ -121,7 +121,7 @@ export const Manage = ({
                                 address={address}
                                 source={'ledger'}
                                 accountName={name}
-                                index={index}
+                                index={index || 0}
                                 isImported={isImported}
                                 orderData={{
                                   curIndex: j,
