@@ -16,7 +16,7 @@ import type {
 } from '@/types/accounts';
 
 export const AddHandlerContext = createContext<AddHandlerContextInterface>(
-  defaults.defaultRemoveHandlerContext
+  defaults.defaultAddHandlerContext
 );
 
 export const useAddHandler = () => useContext(AddHandlerContext);
@@ -30,7 +30,7 @@ export const AddHandlerProvider = ({
   const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
     useAddresses();
 
-  /// Exposed function to remove an address.
+  /// Exposed function to add an address.
   const handleAddAddress = async (
     address: string,
     source: AccountSource,
@@ -50,7 +50,7 @@ export const AddHandlerProvider = ({
     // Update address data in store in main process.
     await updateAddressInStore(source, address);
 
-    // Process removed address in main renderer.
+    // Process added address in main renderer.
     postAddressToMainWindow(address, source, accountName);
   };
 
