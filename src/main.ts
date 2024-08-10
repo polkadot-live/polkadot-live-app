@@ -325,6 +325,14 @@ app.whenReady().then(async () => {
 
         break;
       }
+      case 'raw-account:get': {
+        const { source } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        return store.has(key)
+          ? ((store as Record<string, AnyData>).get(key) as string)
+          : '[]';
+      }
     }
   });
 

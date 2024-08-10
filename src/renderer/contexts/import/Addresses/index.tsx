@@ -2,10 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
+import type { IpcTask } from '@/types/communication';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -22,35 +27,41 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Ledger addresses state.
+  /// Addresses state.
   const [ledgerAddresses, setLedgerAddresses] = useState<LedgerLocalAddress[]>(
-    () => {
-      const key = ConfigImport.getStorageKey('ledger');
-      const fetched: string | null = localStorage.getItem(key);
-      const parsed: LedgerLocalAddress[] =
-        fetched !== null ? JSON.parse(fetched) : [];
-      return parsed;
-    }
+    []
   );
-
-  /// Read-only addresses state.
   const [readOnlyAddresses, setReadOnlyAddresses] = useState<LocalAddress[]>(
-    () => {
-      const key = ConfigImport.getStorageKey('read-only');
-      const fetched: string | null = localStorage.getItem(key);
-      const parsed: LocalAddress[] =
-        fetched !== null ? JSON.parse(fetched) : [];
-      return parsed;
-    }
+    []
   );
+  const [vaultAddresses, setVaultAddresses] = useState<LocalAddress[]>([]);
 
-  /// Vault addresses state.
-  const [vaultAddresses, setVaultAddresses] = useState<LocalAddress[]>(() => {
-    const key = ConfigImport.getStorageKey('vault');
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LocalAddress[] = fetched !== null ? JSON.parse(fetched) : [];
-    return parsed;
-  });
+  /// Fetch address data from store when component loads.
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const sources: AccountSource[] = ['ledger', 'read-only', 'vault'];
+      const tasks: IpcTask[] = [];
+
+      for (const source of sources) {
+        tasks.push({
+          action: 'raw-account:get',
+          data: { source },
+        });
+      }
+
+      const results = await Promise.all([
+        window.myAPI.rawAccountTask(tasks[0]),
+        window.myAPI.rawAccountTask(tasks[1]),
+        window.myAPI.rawAccountTask(tasks[2]),
+      ]);
+
+      setLedgerAddresses(JSON.parse(results[0] as string));
+      setReadOnlyAddresses(JSON.parse(results[1] as string));
+      setVaultAddresses(JSON.parse(results[2] as string));
+    };
+
+    fetchAccounts();
+  }, []);
 
   /// Check if an address has already been imported.
   const isAlreadyImported = (address: string): boolean => {

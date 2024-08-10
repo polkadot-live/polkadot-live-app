@@ -16,7 +16,8 @@ import type {
 import type { WorkspaceItem } from './developerConsole/workspaces';
 
 export interface PreloadAPI {
-  rawAccountTask: (task: IpcTask) => Promise<void>;
+  rawAccountTask: (task: IpcTask) => Promise<void | string>;
+
   getOsPlatform: () => Promise<string>;
 
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
