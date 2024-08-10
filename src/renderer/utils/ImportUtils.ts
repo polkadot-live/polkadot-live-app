@@ -10,6 +10,7 @@ import type {
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
 import type { ChainID } from '@/types/chains';
+import type { IpcTask } from '@/types/communication';
 
 type ToastType = 'success' | 'error';
 
@@ -56,6 +57,19 @@ export const renderToast = (
       break;
     }
   }
+};
+
+export const renameLedgerAccount = async (address: string, newName: string) => {
+  const ipcTask: IpcTask = {
+    action: 'raw-account:rename',
+    data: {
+      source: 'ledger' as AccountSource,
+      address,
+      newName,
+    },
+  };
+
+  await window.myAPI.rawAccountTask(ipcTask);
 };
 
 /**

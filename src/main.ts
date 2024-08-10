@@ -333,6 +333,37 @@ app.whenReady().then(async () => {
           ? ((store as Record<string, AnyData>).get(key) as string)
           : '[]';
       }
+      case 'raw-account:rename': {
+        const { source, address, newName } = task.data;
+        const key = ConfigMain.getStorageKey(source);
+
+        if (source === 'ledger') {
+          // Rename ledger address data in store.
+          const stored: LedgerLocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            stored.map((a) =>
+              a.address === address ? { ...a, name: newName } : a
+            )
+          );
+        } else {
+          // Rename vault and read-only address data in store.
+          const stored: LocalAddress[] = store.has(key)
+            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
+            : [];
+
+          (store as Record<string, AnyData>).set(
+            key,
+            stored.map((a) =>
+              a.address === address ? { ...a, name: newName } : a
+            )
+          );
+        }
+        break;
+      }
     }
   });
 
