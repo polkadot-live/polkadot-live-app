@@ -4,7 +4,7 @@
 import { Config as ConfigImport } from '@/config/processes/import';
 
 /// Import window contexts.
-import { useImportHandler } from '../contexts/import/ImportHandler';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect } from 'react';
