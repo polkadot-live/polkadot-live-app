@@ -244,7 +244,7 @@ export const useMainMessagePorts = () => {
   const postToImport = (json: LocalAddress) => {
     ConfigRenderer.portToImport.postMessage({
       task: 'import:account:add',
-      data: { json },
+      data: { json: JSON.stringify(json) },
     });
   };
 
@@ -320,14 +320,9 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         try {
+          // TODO: Support importing ledger addresses.
           const json: LocalAddress[] = JSON.parse(response.data.serialized);
-          for (const accountJson of json) {
-            // TODO: Support importing ledger addresses.
-            if (accountJson.source === 'ledger') {
-              continue;
-            }
-            postToImport(accountJson);
-          }
+          json.forEach((a) => a.source !== 'ledger' && postToImport(a));
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {
           postToSettings(false, 'Error parsing JSON.');

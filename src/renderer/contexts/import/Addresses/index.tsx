@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigImport } from '@/config/processes/import';
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
 import type { AddressesContextInterface } from './types';
@@ -81,43 +80,6 @@ export const AddressesProvider = ({
     );
   };
 
-  /// Add account from received AccountJson data.
-  const importAccountJson = (json: LocalAddress) => {
-    const { address, source } = json;
-    const key = ConfigImport.getStorageKey(source);
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
-
-    // Don't import address if it already exists.
-    const isNewAddress = parsed.every((a) => a.address !== address);
-    if (!isNewAddress) {
-      return;
-    }
-
-    // Calculate new address state.
-    const newAddresses = [...parsed, json];
-
-    // Update local storage.
-    localStorage.setItem(key, JSON.stringify(newAddresses));
-
-    // Update context state.
-    switch (source) {
-      case 'read-only': {
-        setReadOnlyAddresses(newAddresses);
-        break;
-      }
-      case 'vault': {
-        setVaultAddresses(newAddresses);
-        break;
-      }
-      default: {
-        throw new Error(
-          `Importing account via JSON with source ${source} not supported.`
-        );
-      }
-    }
-  };
-
   return (
     <AddressesContext.Provider
       value={{
@@ -127,7 +89,6 @@ export const AddressesProvider = ({
         setLedgerAddresses,
         setReadOnlyAddresses,
         setVaultAddresses,
-        importAccountJson,
         isAlreadyImported,
       }}
     >

@@ -30,9 +30,13 @@ export const ImportHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const { isConnected } = useConnections();
-  const { setStatusForAccount } = useAccountStatuses();
-  const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
-    useAddresses();
+  const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
+  const {
+    setReadOnlyAddresses,
+    setVaultAddresses,
+    setLedgerAddresses,
+    isAlreadyImported,
+  } = useAddresses();
 
   /// Exposed function to import an address.
   const handleImportAddress = async (
@@ -69,6 +73,29 @@ export const ImportHandlerProvider = ({
     if (isConnected) {
       postAddressToMainWindow(address, source, accountName);
     }
+  };
+
+  /// Import an "imported" account from a data file.
+  const handleImportAddressFromBackup = async (imported: LocalAddress) => {
+    const { address, source } = imported;
+
+    // Return if address is already imported.
+    if (isAlreadyImported(address)) {
+      return;
+    }
+
+    insertAccountStatus(address, source);
+    imported.isImported = false;
+
+    // TODO: support ledger accounts.
+    if (source === 'vault') {
+      handleVaultImport(imported);
+    } else if (source === 'read-only') {
+      handleReadOnlyImport(imported);
+    }
+
+    // Persist account to store in main process.
+    await persistAddressToStore(source, imported);
   };
 
   /// Update import window read-only addresses state.
@@ -153,6 +180,7 @@ export const ImportHandlerProvider = ({
     <ImportHandlerContext.Provider
       value={{
         handleImportAddress,
+        handleImportAddressFromBackup,
       }}
     >
       {children}
