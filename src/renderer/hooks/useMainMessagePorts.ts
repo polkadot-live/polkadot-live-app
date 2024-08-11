@@ -32,7 +32,7 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type { AccountSource, LocalAddress } from '@/types/accounts';
+import type { LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type {
@@ -249,42 +249,11 @@ export const useMainMessagePorts = () => {
   };
 
   /**
-   * @name getLocalAddresses
-   * @summary Utility to fetch local addresses from local storage.
-   */
-  const getLocalAddresses = (source: AccountSource) => {
-    const key =
-      source === 'vault'
-        ? 'vault_addresses'
-        : source === 'read-only'
-          ? 'read_only_addresses'
-          : '';
-
-    const fetched: string | null = localStorage.getItem(key);
-    return key === '' || !fetched
-      ? []
-      : (JSON.parse(fetched) as LocalAddress[]);
-  };
-
-  /**
    * @name handleDataExport
    * @summary Write Polkadot Live data to a file.
    */
   const handleDataExport = async () => {
-    // Get data to export.
-    let accountsJson: LocalAddress[] = [];
-    for (const source of ['vault', 'read-only'] as AccountSource[]) {
-      accountsJson = accountsJson.concat(
-        getLocalAddresses(source).map((a) => ({
-          ...a,
-          isImported: false,
-        }))
-      );
-    }
-
-    // Serialize and export data in main process.
-    const serialized = JSON.stringify(accountsJson);
-    const { result, msg } = await window.myAPI.exportAppData(serialized);
+    const { result, msg } = await window.myAPI.exportAppData();
 
     // Render toastify message in settings window.
     switch (msg) {

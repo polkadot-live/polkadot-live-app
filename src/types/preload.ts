@@ -141,9 +141,7 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiExportAppData = (
-  serialized: string
-) => Promise<{ result: boolean; msg: string }>;
+type ApiExportAppData = () => Promise<{ result: boolean; msg: string }>;
 
 type ApiImportAppData = () => Promise<{
   result: boolean;

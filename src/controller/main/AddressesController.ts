@@ -5,7 +5,11 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { store } from '@/main';
 import type { AnyData } from '@/types/misc';
 import type { IpcTask } from '@/types/communication';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 
 export class AddressesController {
   /**
@@ -74,6 +78,24 @@ export class AddressesController {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
     return store.has(key) ? this.getFromStore(key) : '[]';
+  }
+
+  /**
+   * @name getAll
+   * @summary Get all stored addresses in serialized form.
+   *
+   * @todo Support ledger accounts.
+   */
+  static getAll(): string {
+    let addresses: LocalAddress[] = [];
+
+    for (const source of ['read-only', 'vault'] as AccountSource[]) {
+      const key = ConfigMain.getStorageKey(source);
+      const fetched = this.getStoredAddresses(key) as LocalAddress[];
+      addresses = addresses.concat(fetched);
+    }
+
+    return JSON.stringify(addresses);
   }
 
   /**
