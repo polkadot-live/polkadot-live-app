@@ -18,32 +18,24 @@ export class AddressesController {
 
     if (source === 'ledger') {
       // Update ledger address.
-      const stored: LedgerLocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
-          )
+      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
+      const serialized = JSON.stringify(
+        stored.map((a) =>
+          a.address === address ? { ...a, isImported: true } : a
         )
       );
+
+      this.setInStore(key, serialized);
     } else {
       // Update stored vault or read-only accounts.
-      const stored: LocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
-          )
+      const stored = this.getStoredAddresses(key) as LocalAddress[];
+      const serialized = JSON.stringify(
+        stored.map((a) =>
+          a.address === address ? { ...a, isImported: true } : a
         )
       );
+
+      this.setInStore(key, serialized);
     }
   }
 
@@ -57,24 +49,20 @@ export class AddressesController {
 
     if (source === 'ledger') {
       // Update stored ledger accounts.
-      const stored: LedgerLocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(stored.filter((a) => a.address !== address))
+      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
+      const serialized = JSON.stringify(
+        stored.filter((a) => a.address !== address)
       );
+
+      this.setInStore(key, serialized);
     } else {
       // Update stored vault or read-only accounts.
-      const stored: LocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(stored.filter((a) => a.address !== address))
+      const stored = this.getStoredAddresses(key) as LocalAddress[];
+      const serialized = JSON.stringify(
+        stored.filter((a) => a.address !== address)
       );
+
+      this.setInStore(key, serialized);
     }
   }
 
@@ -85,7 +73,6 @@ export class AddressesController {
   static get(task: IpcTask): string {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
-
     return store.has(key) ? this.getFromStore(key) : '[]';
   }
 
@@ -100,18 +87,12 @@ export class AddressesController {
     if (source === 'ledger') {
       // Update stored ledger accounts.
       const parsed: LedgerLocalAddress = JSON.parse(serialized);
-      const stored: LedgerLocalAddress[] = store.has(key)
-        ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-        : [];
-
+      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       this.setInStore(key, JSON.stringify([...stored, parsed]));
     } else {
       // Update stored vault or read-only accounts.
       const parsed: LocalAddress = JSON.parse(serialized);
-      const stored: LocalAddress[] = store.has(key)
-        ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-        : [];
-
+      const stored = this.getStoredAddresses(key) as LocalAddress[];
       this.setInStore(key, JSON.stringify([...stored, parsed]));
     }
   }
@@ -126,32 +107,24 @@ export class AddressesController {
 
     if (source === 'ledger') {
       // Remove stored ledger accounts.
-      const stored: LedgerLocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
-          )
+      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
+      const serialised = JSON.stringify(
+        stored.map((a) =>
+          a.address === address ? { ...a, isImported: false } : a
         )
       );
+
+      this.setInStore(key, serialised);
     } else {
       // Remove stored vault or read-only accounts.
-      const stored: LocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
-          )
+      const stored = this.getStoredAddresses(key) as LocalAddress[];
+      const serialized = JSON.stringify(
+        stored.map((a) =>
+          a.address === address ? { ...a, isImported: false } : a
         )
       );
+
+      this.setInStore(key, serialized);
     }
   }
 
@@ -165,32 +138,20 @@ export class AddressesController {
 
     if (source === 'ledger') {
       // Rename ledger address data in store.
-      const stored: LedgerLocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, name: newName } : a
-          )
-        )
+      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
+      const serialized = JSON.stringify(
+        stored.map((a) => (a.address === address ? { ...a, name: newName } : a))
       );
+
+      this.setInStore(key, serialized);
     } else {
       // Rename vault and read-only address data in store.
-      const stored: LocalAddress[] = store.has(key)
-        ? JSON.parse(this.getFromStore(key))
-        : [];
-
-      this.setInStore(
-        key,
-        JSON.stringify(
-          stored.map((a) =>
-            a.address === address ? { ...a, name: newName } : a
-          )
-        )
+      const stored = this.getStoredAddresses(key) as LocalAddress[];
+      const serialized = JSON.stringify(
+        stored.map((a) => (a.address === address ? { ...a, name: newName } : a))
       );
+
+      this.setInStore(key, serialized);
     }
   }
 
@@ -200,5 +161,14 @@ export class AddressesController {
 
   static setInStore(key: string, serialized: string) {
     (store as Record<string, AnyData>).set(key, serialized);
+  }
+
+  static getStoredAddresses(
+    key: string,
+    ledger = false
+  ): LedgerLocalAddress[] | LocalAddress[] {
+    return ledger
+      ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
+      : (JSON.parse(this.getFromStore(key)) as LocalAddress[]);
   }
 }
