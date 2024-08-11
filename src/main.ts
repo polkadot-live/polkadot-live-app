@@ -18,6 +18,7 @@ import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
+import { AddressesController } from './controller/main/AddressesController';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
@@ -38,12 +39,7 @@ import type {
   EventCallback,
   NotificationData,
 } from '@/types/reporter';
-import type {
-  FlattenedAccountData,
-  FlattenedAccounts,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
@@ -230,180 +226,30 @@ app.whenReady().then(async () => {
   /**
    * Raw Account management
    */
+
   ipcMain.handle('main:raw-account', async (_, task: IpcTask) => {
     switch (task.action) {
-      case 'raw-account:persist': {
-        const { source, serialized } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        if (source === 'ledger') {
-          // Update stored ledger accounts.
-          const parsed: LedgerLocalAddress = JSON.parse(serialized);
-          const stored: LedgerLocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify([...stored, parsed])
-          );
-        } else {
-          // Update stored vault or read-only accounts.
-          const parsed: LocalAddress = JSON.parse(serialized);
-          const stored: LocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify([...stored, parsed])
-          );
-        }
-
+      case 'raw-account:add': {
+        AddressesController.add(task);
         break;
       }
       case 'raw-account:delete': {
-        const { source, address } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        if (source === 'ledger') {
-          // Update stored ledger accounts.
-          const stored: LedgerLocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(stored.filter((a) => a.address !== address))
-          );
-        } else {
-          // Update stored vault or read-only accounts.
-          const stored: LocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(stored.filter((a) => a.address !== address))
-          );
-        }
-
-        break;
-      }
-      case 'raw-account:add': {
-        const { source, address } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        // Set isImported flag to true.
-        if (source === 'ledger') {
-          const stored: LedgerLocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, isImported: true } : a
-              )
-            )
-          );
-        } else {
-          // Add stored vault or read-only accounts.
-          const stored: LocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, isImported: true } : a
-              )
-            )
-          );
-        }
-
-        break;
-      }
-      case 'raw-account:remove': {
-        const { source, address } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        if (source === 'ledger') {
-          // Remove stored ledger accounts.
-          const stored: LedgerLocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, isImported: false } : a
-              )
-            )
-          );
-        } else {
-          // Remove stored vault or read-only accounts.
-          const stored: LocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, isImported: false } : a
-              )
-            )
-          );
-        }
-
+        AddressesController.delete(task);
         break;
       }
       case 'raw-account:get': {
-        const { source } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        return store.has(key)
-          ? ((store as Record<string, AnyData>).get(key) as string)
-          : '[]';
+        return AddressesController.get(task);
+      }
+      case 'raw-account:persist': {
+        AddressesController.persist(task);
+        break;
+      }
+      case 'raw-account:remove': {
+        AddressesController.remove(task);
+        break;
       }
       case 'raw-account:rename': {
-        const { source, address, newName } = task.data;
-        const key = ConfigMain.getStorageKey(source);
-
-        if (source === 'ledger') {
-          // Rename ledger address data in store.
-          const stored: LedgerLocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, name: newName } : a
-              )
-            )
-          );
-        } else {
-          // Rename vault and read-only address data in store.
-          const stored: LocalAddress[] = store.has(key)
-            ? JSON.parse((store as Record<string, AnyData>).get(key) as string)
-            : [];
-
-          (store as Record<string, AnyData>).set(
-            key,
-            JSON.stringify(
-              stored.map((a) =>
-                a.address === address ? { ...a, name: newName } : a
-              )
-            )
-          );
-        }
-
+        AddressesController.rename(task);
         break;
       }
     }
