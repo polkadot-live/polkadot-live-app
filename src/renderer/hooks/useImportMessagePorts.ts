@@ -29,7 +29,7 @@ export const useImportMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'import:account:add': {
-              const { json } = ev.data.data.json;
+              const { json } = ev.data.data;
               await handleImportAddressFromBackup(JSON.parse(json));
               break;
             }
