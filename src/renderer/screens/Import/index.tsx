@@ -66,11 +66,7 @@ export const Import: React.FC = () => {
           }}
         >
           <div className={getShowClass('ledger')}>
-            <ImportLedger
-              section={section}
-              setSection={setSection}
-              curSource={source}
-            />
+            <ImportLedger setSection={setSection} curSource={source} />
           </div>
           <div className={getShowClass('vault')}>
             <ImportVault section={section} setSection={setSection} />

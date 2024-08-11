@@ -20,11 +20,7 @@ import type { AnyData } from '@/types/misc';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
-export const ImportLedger = ({
-  section,
-  setSection,
-  curSource,
-}: ImportLedgerProps) => {
+export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
   /// Status entry is added for a newly imported account.
   const { insertAccountStatus } = useAccountStatuses();
   const { ledgerAddresses: addresses, isAlreadyImported } = useAddresses();
@@ -188,7 +184,6 @@ export const ImportLedger = ({
       toggleImport={toggleImport}
       statusCodes={statusCodes}
       cancelImport={cancelImport}
-      section={section}
       setSection={setSection}
     />
   );

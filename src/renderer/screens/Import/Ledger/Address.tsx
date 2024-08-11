@@ -43,7 +43,6 @@ export const Address = ({
       key={index}
       source={source}
       address={address}
-      index={index}
       accountName={accountNameState}
       renameHandler={renameHandler}
       isImported={isImported}

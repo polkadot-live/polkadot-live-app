@@ -9,8 +9,6 @@ export type HardwareAddressProps = ComponentBase & {
   address: string;
   // The account's import source.
   source: AccountSource;
-  // the index of the address.
-  index: number;
   // Whether this address is imported in main window.
   isImported: boolean;
   // Index data for the current address.

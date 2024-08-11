@@ -205,12 +205,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                             <>
                               {chainAddresses.map(
                                 (
-                                  {
-                                    address,
-                                    index,
-                                    isImported,
-                                    name,
-                                  }: LocalAddress,
+                                  { address, isImported, name }: LocalAddress,
                                   j
                                 ) => (
                                   <Address
@@ -218,7 +213,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                                     accountName={name}
                                     source={'read-only'}
                                     address={address}
-                                    index={index || 0}
                                     isImported={isImported || false}
                                     orderData={{
                                       curIndex: j,
