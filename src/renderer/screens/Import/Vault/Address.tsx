@@ -16,7 +16,6 @@ import type { AddressProps } from '../Addresses/types';
 export const Address = ({
   address,
   source,
-  index,
   accountName,
   isImported,
   setSection,
@@ -40,12 +39,11 @@ export const Address = ({
 
   return (
     <HardwareAddress
-      key={index}
+      key={address}
       address={address}
       source={source}
       isImported={isImported}
       orderData={orderData}
-      index={index}
       accountName={accountNameState}
       renameHandler={renameHandler}
       openRemoveHandler={() =>

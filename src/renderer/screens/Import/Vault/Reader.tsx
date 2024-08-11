@@ -14,9 +14,8 @@ import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 import type { Html5Qrcode } from 'html5-qrcode';
-import type { ReaderVaultProps } from '../types';
 
-export const Reader = ({ addresses }: ReaderVaultProps) => {
+export const Reader = () => {
   const { setStatus: setOverlayStatus } = useOverlay();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
@@ -78,11 +77,6 @@ export const Reader = ({ addresses }: ReaderVaultProps) => {
     await handleImportAddress(address, 'vault', accountName);
     setImported(true);
   };
-
-  // Gets the next non-imported address index.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
 
   // Close the overlay when import is successful, ignoring initial render state.
   useEffect(() => {

@@ -1,19 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
-import type { AnyJson } from '@/types/misc';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { Header } from '@app/library/Header';
-import { ErrorBoundary } from 'react-error-boundary';
-import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
-import { SplashWrapper } from '../Wrappers';
-import { Reader } from './Reader';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
+import { ErrorBoundary } from 'react-error-boundary';
+import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
+import { Header } from '@app/library/Header';
+import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
+import { Reader } from './Reader';
+import { SplashWrapper } from '../Wrappers';
+import type { VaultSplashProps } from '../types';
 
-export const Splash = ({ setSection, addresses }: AnyJson) => {
+export const Splash = ({ setSection }: VaultSplashProps) => {
   const { openOverlayWith } = useOverlay();
 
   return (
@@ -49,7 +49,7 @@ export const Splash = ({ setSection, addresses }: AnyJson) => {
                     <ErrorBoundary
                       fallback={<h2>Could not load QR Scanner</h2>}
                     >
-                      <Reader addresses={addresses} />
+                      <Reader />
                     </ErrorBoundary>,
                     'small'
                   );

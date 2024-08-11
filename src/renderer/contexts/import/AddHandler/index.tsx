@@ -4,9 +4,10 @@
 import * as defaults from './defaults';
 import { Config as ConfigImport } from '@/config/processes/import';
 import { createContext, useContext } from 'react';
-import { useAccountStatuses } from '../AccountStatuses';
 import { getAddressChainId } from '@/renderer/Utils';
-import { useAddresses } from '../Addresses';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { AddHandlerContextInterface } from './types';
 import type { IpcTask } from '@/types/communication';
 import type {
@@ -26,6 +27,7 @@ export const AddHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
     useAddresses();
@@ -51,7 +53,9 @@ export const AddHandlerProvider = ({
     await updateAddressInStore(source, address);
 
     // Process added address in main renderer.
-    postAddressToMainWindow(address, source, accountName);
+    if (isConnected) {
+      postAddressToMainWindow(address, source, accountName);
+    }
   };
 
   /// Update import window read-only addresses state.

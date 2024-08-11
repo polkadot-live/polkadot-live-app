@@ -8,7 +8,6 @@ export interface AddressProps {
   accountName: string;
   source: AccountSource;
   address: string;
-  index: number;
   isImported: boolean;
   setSection: AnyFunction;
   orderData: {

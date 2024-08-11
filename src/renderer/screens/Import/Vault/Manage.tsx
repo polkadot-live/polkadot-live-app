@@ -72,7 +72,7 @@ export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
             onClick={() => {
               openOverlayWith(
                 <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
-                  <Reader addresses={addresses} />
+                  <Reader />
                 </ErrorBoundary>,
                 'small',
                 true
@@ -105,13 +105,12 @@ export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
                         <div className="items-wrapper">
                           <div className="items round-primary-border">
                             {chainAddresses.map(
-                              ({ address, index, isImported, name }, j) => (
+                              ({ address, isImported, name }, j) => (
                                 <Address
                                   key={`address_${name}`}
                                   accountName={name}
                                   source={'vault'}
                                   address={address}
-                                  index={index || 0}
                                   isImported={isImported || false}
                                   setSection={setSection}
                                   orderData={{

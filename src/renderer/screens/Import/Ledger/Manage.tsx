@@ -23,7 +23,6 @@ import {
   SortControlLabel,
 } from '@/renderer/utils/common';
 import type { ImportLedgerManageProps } from '../types';
-import type { LedgerLocalAddress } from '@/types/accounts';
 
 export const Manage = ({
   addresses,
@@ -32,7 +31,6 @@ export const Manage = ({
   toggleImport,
   cancelImport,
   setSection,
-  //section,
 }: ImportLedgerManageProps) => {
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -107,15 +105,7 @@ export const Manage = ({
                       <div className="items-wrapper">
                         <div className="items round-primary-border">
                           {chainAddresses.map(
-                            (
-                              {
-                                address,
-                                index,
-                                isImported,
-                                name,
-                              }: LedgerLocalAddress,
-                              j
-                            ) => (
+                            ({ address, index, isImported, name }, j) => (
                               <Address
                                 key={`address_${name}`}
                                 address={address}

@@ -20,14 +20,18 @@ export interface SplashProps {
   statusCodes?: AnyJson;
 }
 
-export interface ManageVaultProps {
-  setSection: AnyFunction;
+export interface ImportVaultProps {
   section: number;
-  addresses: LocalAddress[];
-  setAddresses: AnyFunction;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export interface ReaderVaultProps {
+export interface VaultSplashProps {
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface ManageVaultProps {
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+  section: number;
   addresses: LocalAddress[];
 }
 
@@ -39,7 +43,6 @@ export interface Html5QrScannerProps {
 }
 
 export interface ImportLedgerProps {
-  section: number;
   setSection: React.Dispatch<React.SetStateAction<number>>;
   curSource: AccountSource | null;
 }
@@ -48,7 +51,6 @@ export interface ImportLedgerManageProps {
   addresses: LedgerLocalAddress[];
   isImporting: boolean;
   statusCodes: LedgerResponse[];
-  section: number;
   toggleImport: AnyFunction;
   cancelImport: AnyFunction;
   setSection: AnyFunction;

@@ -66,7 +66,9 @@ export const ImportHandlerProvider = ({
     await persistAddressToStore(source, local);
 
     // Send data to main renderer for processing.
-    postAddressToMainWindow(address, source, accountName);
+    if (isConnected) {
+      postAddressToMainWindow(address, source, accountName);
+    }
   };
 
   /// Update import window read-only addresses state.
@@ -102,7 +104,7 @@ export const ImportHandlerProvider = ({
       ? ({
           address,
           device: { ...device },
-          isImported: false,
+          isImported: isConnected ? true : false,
           name: accountName,
           pubKey: pubKey || '',
           source,

@@ -4,25 +4,18 @@
 import { Manage } from './Manage';
 import { Splash } from './Splash';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
-import type { AnyFunction } from '@/types/misc';
+import type { ImportVaultProps } from '../types';
 
-export const ImportVault = ({
-  section,
-  setSection,
-}: {
-  section: number;
-  setSection: AnyFunction;
-}) => {
-  const { vaultAddresses, setVaultAddresses } = useAddresses();
+export const ImportVault = ({ section, setSection }: ImportVaultProps) => {
+  const { vaultAddresses } = useAddresses();
 
   return !vaultAddresses.length ? (
-    <Splash addresses={vaultAddresses} setSection={setSection} />
+    <Splash setSection={setSection} />
   ) : (
     <Manage
       section={section}
       setSection={setSection}
       addresses={vaultAddresses}
-      setAddresses={setVaultAddresses}
     />
   );
 };
