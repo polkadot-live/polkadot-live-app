@@ -10,7 +10,6 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Config as ConfigImport } from '@/config/processes/import';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
@@ -42,11 +41,7 @@ import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
-  const {
-    readOnlyAddresses: addresses,
-    setReadOnlyAddresses: setAddresses,
-    isAlreadyImported,
-  } = useAddresses();
+  const { readOnlyAddresses: addresses, isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -83,10 +78,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     return false;
   };
 
-  /// Gets the next non-imported address index.
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
-
   /// Cancel button clicked for address field.
   const onCancel = () => {
     setEditName('');
@@ -100,7 +91,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   };
 
   /// Handle import button click.
-  const onImport = () => {
+  const onImport = async () => {
     const trimmed = editName.trim();
 
     if (isAlreadyImported(trimmed)) {
@@ -114,21 +105,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     // The default account name.
     const accountName = ellipsisFn(trimmed);
 
-    // Update local storage.
-    const newAddresses = addresses
-      .filter((a: LocalAddress) => a.address !== trimmed)
-      .concat({
-        index: getNextAddressIndex(),
-        address: trimmed,
-        isImported: false,
-        name: accountName,
-        source: 'read-only',
-      });
-
-    const storageKey = ConfigImport.getStorageKey('read-only');
-    localStorage.setItem(storageKey, JSON.stringify(newAddresses));
-    setAddresses(newAddresses);
-
     // Reset read-only address input state.
     setEditName('');
 
@@ -136,7 +112,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     insertAccountStatus(trimmed, 'read-only');
 
     // Set processing flag to true if online and import via main renderer.
-    handleImportAddress(trimmed, 'read-only', accountName);
+    await handleImportAddress(trimmed, 'read-only', accountName);
   };
 
   return (
@@ -189,7 +165,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                   <div className="flex-inner-row">
                     <button
                       className="btn-mono lg"
-                      onPointerDown={() => onImport()}
+                      onPointerDown={async () => await onImport()}
                     >
                       Add
                     </button>
@@ -229,12 +205,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                             <>
                               {chainAddresses.map(
                                 (
-                                  {
-                                    address,
-                                    index,
-                                    isImported,
-                                    name,
-                                  }: LocalAddress,
+                                  { address, isImported, name }: LocalAddress,
                                   j
                                 ) => (
                                   <Address
@@ -242,7 +213,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                                     accountName={name}
                                     source={'read-only'}
                                     address={address}
-                                    index={index}
                                     isImported={isImported || false}
                                     orderData={{
                                       curIndex: j,

@@ -26,7 +26,6 @@ import type { HardwareAddressProps } from './types';
 export const HardwareAddress = ({
   address,
   source,
-  index,
   isImported,
   orderData,
   accountName,
@@ -73,9 +72,10 @@ export const HardwareAddress = ({
     renderToast('Account name updated.', 'success', `toast-${trimmed}`);
 
     // Otherwise rename account.
-    renameHandler(address, trimmed);
-    setEditName(trimmed);
-    setEditing(false);
+    renameHandler(address, trimmed).then(() => {
+      setEditName(trimmed);
+      setEditing(false);
+    });
   };
 
   // Input change handler.
@@ -102,7 +102,6 @@ export const HardwareAddress = ({
         <div className="inner">
           <div className="identicon">
             <Identicon value={address} size={36} />
-            <div className="index-icon ">{index + 1}</div>
           </div>
           <div>
             <section className="row">

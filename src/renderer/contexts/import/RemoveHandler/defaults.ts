@@ -5,5 +5,5 @@
 import type { RemoveHandlerContextInterface } from './types';
 
 export const defaultRemoveHandlerContext: RemoveHandlerContextInterface = {
-  handleRemoveAddress: () => {},
+  handleRemoveAddress: () => new Promise(() => {}),
 };

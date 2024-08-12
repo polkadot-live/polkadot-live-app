@@ -5,7 +5,7 @@ import { setStateWithRef, ellipsisFn } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
-import { Config as ConfigImport } from '@/config/processes/import';
+import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
 import { renderToast } from '@/renderer/utils/ImportUtils';
@@ -14,29 +14,23 @@ import type {
   LedgerResponse,
   LedgerTask,
 } from '@/types/ledger';
-import type { LedgerLocalAddress } from '@/types/accounts';
 import type { ImportLedgerProps } from '../types';
 import type { IpcRendererEvent } from 'electron';
 import type { AnyData } from '@/types/misc';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 
-export const ImportLedger = ({
-  section,
-  setSection,
-  curSource,
-}: ImportLedgerProps) => {
+export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
+  /// Status entry is added for a newly imported account.
+  const { insertAccountStatus } = useAccountStatuses();
+  const { ledgerAddresses: addresses, isAlreadyImported } = useAddresses();
+
+  /// Import handler.
+  const { handleImportAddress } = useImportHandler();
+
   /// Store whether import is in process
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
-
-  /// Status entry is added for a newly imported account.
-  const { insertAccountStatus } = useAccountStatuses();
-  const {
-    ledgerAddresses: addresses,
-    setLedgerAddresses: setAddresses,
-    isAlreadyImported,
-  } = useAddresses();
 
   /// Used in effect for processing an import.
   const [processImport, setProcessImport] = useState(false);
@@ -56,7 +50,7 @@ export const ImportLedger = ({
 
   /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index + 1;
+    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
 
   /// Handle an incoming new status code and persist to state.
   const handleNewStatusCode = (ack: string, statusCode: string) => {
@@ -144,47 +138,41 @@ export const ImportLedger = ({
     };
   }, [curSource]);
 
+  /// Effect to trigger a ledger account import process.
   useEffect(() => {
-    if (processImport && bodyRef.current) {
-      const { address, pubKey, device, options } = bodyRef.current;
+    const handleImportProcess = async () => {
+      if (processImport && bodyRef.current) {
+        const { address, pubKey, device /*, options*/ } = bodyRef.current;
 
-      // Check if address is already imported.
-      if (isAlreadyImported(address)) {
-        renderToast(
-          'Address is already imported.',
-          'error',
-          `toast-${address}`
-        );
-        setSection(0);
-      } else {
-        const addressFormatted: LedgerLocalAddress = {
-          address,
-          device: { ...device },
-          index: options.accountIndex,
-          isImported: false,
-          name: ellipsisFn(address),
-          pubKey,
-        };
+        // Check if address is already imported.
+        if (isAlreadyImported(address)) {
+          renderToast(
+            'Address is already imported.',
+            'error',
+            `toast-${address}`
+          );
+          setSection(0);
+        } else {
+          await handleImportAddress(
+            address,
+            'ledger',
+            ellipsisFn(address),
+            pubKey,
+            device
+          );
 
-        const newAddresses = addresses
-          .filter(
-            (a: LedgerLocalAddress) => a.address !== addressFormatted.address
-          )
-          .concat(addressFormatted);
+          // Insert account status entry.
+          insertAccountStatus(address, 'ledger');
+        }
 
-        const storageKey = ConfigImport.getStorageKey('ledger');
-        localStorage.setItem(storageKey, JSON.stringify(newAddresses));
-        setAddresses(newAddresses);
-
-        // Insert account status entry.
-        insertAccountStatus(address, 'ledger');
+        setStateWithRef(false, setIsImporting, isImportingRef);
+        setStateWithRef([], setStatusCodes, statusCodesRef);
+        setProcessImport(false);
+        bodyRef.current = null;
       }
+    };
 
-      setStateWithRef(false, setIsImporting, isImportingRef);
-      setStateWithRef([], setStatusCodes, statusCodesRef);
-      setProcessImport(false);
-      bodyRef.current = null;
-    }
+    handleImportProcess();
   }, [processImport]);
 
   return !addresses.length ? (
@@ -196,7 +184,6 @@ export const ImportLedger = ({
       toggleImport={toggleImport}
       statusCodes={statusCodes}
       cancelImport={cancelImport}
-      section={section}
       setSection={setSection}
     />
   );

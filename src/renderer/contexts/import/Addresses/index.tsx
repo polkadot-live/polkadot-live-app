@@ -1,11 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigImport } from '@/config/processes/import';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import * as defaults from './defaults';
+import { setStateWithRef } from '@w3ux/utils';
 import type { AddressesContextInterface } from './types';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
+import type { IpcTask } from '@/types/communication';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext
@@ -22,35 +27,59 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Ledger addresses state.
-  const [ledgerAddresses, setLedgerAddresses] = useState<LedgerLocalAddress[]>(
-    () => {
-      const key = ConfigImport.getStorageKey('ledger');
-      const fetched: string | null = localStorage.getItem(key);
-      const parsed: LedgerLocalAddress[] =
-        fetched !== null ? JSON.parse(fetched) : [];
-      return parsed;
-    }
-  );
+  type LLA = LedgerLocalAddress;
+  type LA = LocalAddress;
 
-  /// Read-only addresses state.
-  const [readOnlyAddresses, setReadOnlyAddresses] = useState<LocalAddress[]>(
-    () => {
-      const key = ConfigImport.getStorageKey('read-only');
-      const fetched: string | null = localStorage.getItem(key);
-      const parsed: LocalAddress[] =
-        fetched !== null ? JSON.parse(fetched) : [];
-      return parsed;
-    }
-  );
+  /// Addresses state.
+  const [ledgerAddresses, setLedgerAddresses] = useState<LLA[]>([]);
+  const [readOnlyAddresses, setReadOnlyAddresses] = useState<LA[]>([]);
+  const [vaultAddresses, setVaultAddresses] = useState<LA[]>([]);
 
-  /// Vault addresses state.
-  const [vaultAddresses, setVaultAddresses] = useState<LocalAddress[]>(() => {
-    const key = ConfigImport.getStorageKey('vault');
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LocalAddress[] = fetched !== null ? JSON.parse(fetched) : [];
-    return parsed;
-  });
+  /// References to addresses state.
+  const ledgerAddressesRef = useRef<LLA[]>([]);
+  const readOnlyAddressesRef = useRef<LA[]>([]);
+  const vaultAddressesRef = useRef<LA[]>([]);
+
+  /// Fetch address data from store when component loads.
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const sources: AccountSource[] = ['ledger', 'read-only', 'vault'];
+      const tasks: IpcTask[] = [];
+
+      for (const source of sources) {
+        tasks.push({
+          action: 'raw-account:get',
+          data: { source },
+        });
+      }
+
+      const results = await Promise.all([
+        window.myAPI.rawAccountTask(tasks[0]),
+        window.myAPI.rawAccountTask(tasks[1]),
+        window.myAPI.rawAccountTask(tasks[2]),
+      ]);
+
+      setStateWithRef(
+        JSON.parse(results[0] as string),
+        setLedgerAddresses,
+        ledgerAddressesRef
+      );
+
+      setStateWithRef(
+        JSON.parse(results[1] as string),
+        setReadOnlyAddresses,
+        readOnlyAddressesRef
+      );
+
+      setStateWithRef(
+        JSON.parse(results[2] as string),
+        setVaultAddresses,
+        vaultAddressesRef
+      );
+    };
+
+    fetchAccounts();
+  }, []);
 
   /// Check if an address has already been imported.
   const isAlreadyImported = (address: string): boolean => {
@@ -64,45 +93,169 @@ export const AddressesProvider = ({
       );
 
     return (
-      checkAll(ledgerAddresses, address) ||
-      checkAll(vaultAddresses, address) ||
-      checkAll(readOnlyAddresses, address)
+      checkAll(ledgerAddressesRef.current, address) ||
+      checkAll(vaultAddressesRef.current, address) ||
+      checkAll(readOnlyAddressesRef.current, address)
     );
   };
 
-  /// Add account from received AccountJson data.
-  const importAccountJson = (json: LocalAddress) => {
-    const { address, source } = json;
-    const key = ConfigImport.getStorageKey(source);
-    const fetched: string | null = localStorage.getItem(key);
-    const parsed: LocalAddress[] = fetched ? JSON.parse(fetched) : [];
-
-    // Don't import address if it already exists.
-    const isNewAddress = parsed.every((a) => a.address !== address);
-    if (!isNewAddress) {
-      return;
-    }
-
-    // Calculate new address state.
-    const newAddresses = [...parsed, json];
-
-    // Update local storage.
-    localStorage.setItem(key, JSON.stringify(newAddresses));
-
-    // Update context state.
+  /// Update import window read-only addresses state and reference upon address import.
+  const handleAddressImport = (
+    source: AccountSource,
+    local: LocalAddress | LedgerLocalAddress
+  ) => {
     switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LedgerLocalAddress) }]);
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
       case 'read-only': {
-        setReadOnlyAddresses(newAddresses);
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LocalAddress) }]);
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
         break;
       }
       case 'vault': {
-        setVaultAddresses(newAddresses);
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LocalAddress) }]);
+          vaultAddressesRef.current = updated;
+          return updated;
+        });
+
         break;
       }
+    }
+  };
+
+  /// Update import window read-only addresses state and reference upon address deletion.
+  const handleAddressDelete = (
+    source: AccountSource,
+    address: string
+  ): boolean => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev.filter((a) => a.address !== address);
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        return true;
+      }
+      case 'read-only': {
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev.filter((a) => a.address !== address);
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
+        return false;
+      }
+      case 'vault': {
+        let goBack = false;
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev.filter((a) => a.address !== address);
+          vaultAddressesRef.current = updated;
+          updated.length === 0 && (goBack = true);
+          return updated;
+        });
+
+        return goBack;
+      }
       default: {
-        throw new Error(
-          `Importing account via JSON with source ${source} not supported.`
-        );
+        return false;
+      }
+    }
+  };
+
+  /// Update import window read-only addresses state and reference upon address removal.
+  const handleAddressRemove = (source: AccountSource, address: string) => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'read-only': {
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'vault': {
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          vaultAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+    }
+  };
+
+  /// Update import window read-only addresses state and reference upon address addition.
+  const handleAddressAdd = (source: AccountSource, address: string) => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: true } : a
+          );
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'read-only': {
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: true } : a
+          );
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'vault': {
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: true } : a
+          );
+          vaultAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
       }
     }
   };
@@ -113,11 +266,11 @@ export const AddressesProvider = ({
         ledgerAddresses,
         readOnlyAddresses,
         vaultAddresses,
-        setLedgerAddresses,
-        setReadOnlyAddresses,
-        setVaultAddresses,
-        importAccountJson,
         isAlreadyImported,
+        handleAddressImport,
+        handleAddressDelete,
+        handleAddressRemove,
+        handleAddressAdd,
       }}
     >
       {children}

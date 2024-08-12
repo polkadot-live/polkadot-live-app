@@ -3,9 +3,10 @@
 
 import type { AccountSource } from '@/types/accounts';
 
-export interface RemoveHandlerContextInterface {
-  handleRemoveAddress: (
+export interface AddHandlerContextInterface {
+  handleAddAddress: (
     address: string,
-    source: AccountSource
+    source: AccountSource,
+    accountName: string
   ) => Promise<void>;
 }

@@ -6,11 +6,8 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { getAddressChainId } from '@/renderer/Utils';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { AccountSource } from '@/types/accounts';
+import type { IpcTask } from '@/types/communication';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -25,81 +22,34 @@ export const RemoveHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
-    useAddresses();
+  const { handleAddressRemove } = useAddresses();
 
   /// Exposed function to remove an address.
-  const handleRemoveAddress = (address: string, source: AccountSource) => {
-    if (source === 'vault') {
-      handleRemoveVaultAddress(address, source);
-    } else if (source === 'ledger') {
-      handleRemoveLedgerAddress(address, source);
-    } else if (source === 'read-only') {
-      handleRemoveReadOnlyAddress(address, source);
-    }
-  };
-
-  // Handle removal of a read-only address.
-  const handleRemoveReadOnlyAddress = (
+  const handleRemoveAddress = async (
     address: string,
     source: AccountSource
   ) => {
-    // Update import window's managed address state and local storage.
-    setReadOnlyAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
+    // Update addresses state and references.
+    handleAddressRemove(source, address);
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
+    // Update address data in store in main process.
+    await updateAddressInStore(source, address);
 
-      return newAddresses;
-    });
-
+    // Process removed address in main renderer.
     postAddressToMainWindow(address);
   };
 
-  /// Handle removal of a vault address.
-  const handleRemoveVaultAddress = (address: string, source: AccountSource) => {
-    // Update import window's managed address state and local storage.
-    setVaultAddresses((prevState: LocalAddress[]) => {
-      const newAddresses = prevState.map((a: LocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
-
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address);
-  };
-
-  /// Handle removal of a ledger address.
-  const handleRemoveLedgerAddress = (
-    address: string,
-    source: AccountSource
+  /// Update address in store.
+  const updateAddressInStore = async (
+    source: AccountSource,
+    address: string
   ) => {
-    // Update import window's managed address state and local storage.
-    setLedgerAddresses((prevState: LedgerLocalAddress[]) => {
-      const newAddresses = prevState.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: false } : a
-      );
+    const ipcTask: IpcTask = {
+      action: 'raw-account:remove',
+      data: { source, address },
+    };
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address);
+    await window.myAPI.rawAccountTask(ipcTask);
   };
 
   /// Send address data to main window to process removal.

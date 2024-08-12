@@ -11,11 +11,12 @@ import type {
   EventCallback,
   NotificationData,
 } from '@/types/reporter';
-import type { FlattenedAccountData } from './types/accounts';
-import type { SubscriptionTask } from './types/subscriptions';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
+import type { FlattenedAccountData } from './types/accounts';
+import type { IpcTask } from './types/communication';
 import type { SettingAction } from './renderer/screens/Settings/types';
+import type { SubscriptionTask } from './types/subscriptions';
 
 console.log(global.location.search);
 
@@ -58,6 +59,12 @@ export const API: PreloadAPI = {
     }
     return '';
   },
+
+  /**
+   * Raw Accounts
+   */
+  rawAccountTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:raw-account', task),
 
   /**
    * Platform
@@ -112,8 +119,7 @@ export const API: PreloadAPI = {
    * File import and export
    */
 
-  exportAppData: async (serialized: string) =>
-    await ipcRenderer.invoke('app:data:export', serialized),
+  exportAppData: async () => await ipcRenderer.invoke('app:data:export'),
 
   importAppData: async () => await ipcRenderer.invoke('app:data:import'),
 

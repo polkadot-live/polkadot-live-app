@@ -3,16 +3,22 @@
 
 import { MessageChannelMain } from 'electron';
 import { store } from '@/main';
+import type { AccountSource } from '@/types/accounts';
+import type { AnyData } from '@/types/misc';
+import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { PortPair, PortPairID } from '@/types/communication';
 import type { Rectangle, Tray } from 'electron';
-import type { PersistedSettings } from '@/renderer/screens/Settings/types';
-import type { AnyData } from '@/types/misc';
 
 export class Config {
   // Storage keys.
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
   private static _settingsStorageKey = 'app_settings';
   private static _workspacesStorageKey = 'developer_console_workspaces';
+
+  // Raw account storage keys.
+  private static _ledgerAddressesStorageKey = 'ledger_addresses';
+  private static _vaultAddressesStorageKey = 'vault_addresses';
+  private static _readOnlyAddressesStorageKey = 'read_only_addresses';
 
   // Main window's docked properties.
   private static _dockedWidth = 420;
@@ -32,6 +38,24 @@ export class Config {
 
   // Flags to handle data processes.
   private static _exportingData = false;
+
+  // Return the local storage key for corresponding source addresses.
+  static getStorageKey(source: AccountSource): string {
+    switch (source) {
+      case 'ledger': {
+        return Config._ledgerAddressesStorageKey;
+      }
+      case 'vault': {
+        return Config._vaultAddressesStorageKey;
+      }
+      case 'read-only': {
+        return Config._readOnlyAddressesStorageKey;
+      }
+      default: {
+        throw new Error('source not recognized');
+      }
+    }
+  }
 
   // Instantiate message port pairs to facilitate communication between the
   // main renderer and another renderer.

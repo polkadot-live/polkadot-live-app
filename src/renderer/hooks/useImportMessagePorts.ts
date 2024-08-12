@@ -4,13 +4,13 @@
 import { Config as ConfigImport } from '@/config/processes/import';
 
 /// Import window contexts.
-import { useAddresses as useImportAddresses } from '@app/contexts/import/Addresses';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect } from 'react';
 
 export const useImportMessagePorts = () => {
-  const { importAccountJson } = useImportAddresses();
+  const { handleImportAddressFromBackup } = useImportHandler();
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
 
@@ -25,11 +25,12 @@ export const useImportMessagePorts = () => {
       case 'main-import:import': {
         ConfigImport.portImport = e.ports[0];
 
-        ConfigImport.portImport.onmessage = (ev: MessageEvent) => {
+        ConfigImport.portImport.onmessage = async (ev: MessageEvent) => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'import:account:add': {
-              importAccountJson(ev.data.data.json);
+              const { json } = ev.data.data;
+              await handleImportAddressFromBackup(JSON.parse(json));
               break;
             }
             case 'import:account:processing': {

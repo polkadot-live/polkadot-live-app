@@ -8,7 +8,9 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
+import type { AnyData } from '@/types/misc';
 import type { ImportHandlerContextInterface } from './types';
+import type { IpcTask } from '@/types/communication';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -28,106 +30,100 @@ export const ImportHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const { isConnected } = useConnections();
-  const { setStatusForAccount } = useAccountStatuses();
-  const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
-    useAddresses();
+  const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
+  const { handleAddressImport, isAlreadyImported } = useAddresses();
 
   /// Exposed function to import an address.
-  const handleImportAddress = (
+  const handleImportAddress = async (
     address: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    pubKey?: string,
+    device?: AnyData
   ) => {
     // Set processing flag for account.
     setStatusForAccount(address, source, isConnected ? true : false);
 
-    // Process account import in main renderer.
-    if (source === 'vault') {
-      handleVaultImport(address, source, accountName);
-    } else if (source === 'ledger') {
-      handleLedgerImport(address, source, accountName);
-    } else if (source === 'read-only') {
-      handleReadOnlyImport(address, source, accountName);
-    }
-  };
+    const local = constructRawAddress(
+      address,
+      source,
+      accountName,
+      device,
+      pubKey
+    );
 
-  /// Handle a read-only address import.
-  const handleReadOnlyImport = (
-    address: string,
-    source: AccountSource,
-    accountName: string
-  ) => {
-    setReadOnlyAddresses((prev: LocalAddress[]) => {
-      const newAddresses: LocalAddress[] = prev.map((a: LocalAddress) =>
-        a.address === address
-          ? { ...a, isImported: isConnected ? true : false }
-          : a
-      );
+    // Update addresses state and references.
+    handleAddressImport(source, local);
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
+    // Persist account to store in main process.
+    await persistAddressToStore(source, local);
 
-      return newAddresses;
-    });
-
+    // Send data to main renderer for processing.
     if (isConnected) {
       postAddressToMainWindow(address, source, accountName);
     }
   };
 
-  /// Handle a vault address import.
-  const handleVaultImport = (
-    address: string,
-    source: AccountSource,
-    accountName: string
-  ) => {
-    // Update import window's managed address state and local storage.
-    setVaultAddresses((prev: LocalAddress[]) => {
-      const newAddresses = prev.map((a: LocalAddress) =>
-        a.address === address
-          ? { ...a, isImported: isConnected ? true : false }
-          : a
-      );
+  /// Import an "imported" account from a data file.
+  const handleImportAddressFromBackup = async (imported: LocalAddress) => {
+    const { address, source } = imported;
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    if (isConnected) {
-      postAddressToMainWindow(address, source, accountName);
+    // Return if address is already imported.
+    if (isAlreadyImported(address)) {
+      return;
     }
+
+    insertAccountStatus(address, source);
+    imported.isImported = false;
+
+    // Update addresses state and references.
+    handleAddressImport(source, imported); // TODO: support ledger accounts.
+
+    // Persist account to store in main process.
+    await persistAddressToStore(source, imported);
   };
 
-  /// Handle a ledger address import.
-  const handleLedgerImport = (
+  /// Construct raw address data structure.
+  const constructRawAddress = (
     address: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    device?: AnyData,
+    pubKey?: string
+  ) =>
+    source === 'ledger'
+      ? ({
+          address,
+          device: { ...device },
+          isImported: isConnected ? true : false,
+          name: accountName,
+          pubKey: pubKey || '',
+          source,
+        } as LedgerLocalAddress)
+      : ({
+          address,
+          isImported: isConnected ? true : false,
+          name: accountName,
+          source,
+        } as LocalAddress);
+
+  /// Send local address to main process for persisting to store.
+  const persistAddressToStore = async (
+    source: AccountSource,
+    local: LocalAddress | LedgerLocalAddress
   ) => {
-    // Update import window's managed address state and local storage.
-    setLedgerAddresses((prev: LedgerLocalAddress[]) => {
-      const newAddresses = prev.map((a: LedgerLocalAddress) =>
-        a.address === address ? { ...a, isImported: true } : a
-      );
+    const ipcTask: IpcTask = {
+      action: 'raw-account:persist',
+      data: {
+        source,
+        serialized: JSON.stringify(local),
+      },
+    };
 
-      localStorage.setItem(
-        ConfigImport.getStorageKey(source),
-        JSON.stringify(newAddresses)
-      );
-
-      return newAddresses;
-    });
-
-    postAddressToMainWindow(address, source, accountName);
+    await window.myAPI.rawAccountTask(ipcTask);
   };
 
-  /// Send address data to main window to process.
+  /// Send address data to main renderer to process.
   const postAddressToMainWindow = (
     address: string,
     source: AccountSource,
@@ -136,10 +132,10 @@ export const ImportHandlerProvider = ({
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:import',
       data: {
-        chainId: getAddressChainId(address),
-        source,
         address,
+        chainId: getAddressChainId(address),
         name: accountName,
+        source,
       },
     });
   };
@@ -148,6 +144,7 @@ export const ImportHandlerProvider = ({
     <ImportHandlerContext.Provider
       value={{
         handleImportAddress,
+        handleImportAddressFromBackup,
       }}
     >
       {children}

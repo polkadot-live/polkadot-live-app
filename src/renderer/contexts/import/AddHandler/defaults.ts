@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
-import type { DeleteHandlerContextInterface } from './types';
+import type { AddHandlerContextInterface } from './types';
 
-export const defaultDeleteHandlerContext: DeleteHandlerContextInterface = {
-  handleDeleteAddress: () => new Promise(() => {}),
+export const defaultAddHandlerContext: AddHandlerContextInterface = {
+  handleAddAddress: () => new Promise(() => {}),
 };

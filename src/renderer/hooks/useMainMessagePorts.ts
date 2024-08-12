@@ -19,6 +19,7 @@ import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -31,14 +32,13 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type { AccountSource, LocalAddress } from '@/types/accounts';
+import type { LocalAddress } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -244,26 +244,8 @@ export const useMainMessagePorts = () => {
   const postToImport = (json: LocalAddress) => {
     ConfigRenderer.portToImport.postMessage({
       task: 'import:account:add',
-      data: { json },
+      data: { json: JSON.stringify(json) },
     });
-  };
-
-  /**
-   * @name getLocalAddresses
-   * @summary Utility to fetch local addresses from local storage.
-   */
-  const getLocalAddresses = (source: AccountSource) => {
-    const key =
-      source === 'vault'
-        ? 'vault_addresses'
-        : source === 'read-only'
-          ? 'read_only_addresses'
-          : '';
-
-    const fetched: string | null = localStorage.getItem(key);
-    return key === '' || !fetched
-      ? []
-      : (JSON.parse(fetched) as LocalAddress[]);
   };
 
   /**
@@ -271,20 +253,7 @@ export const useMainMessagePorts = () => {
    * @summary Write Polkadot Live data to a file.
    */
   const handleDataExport = async () => {
-    // Get data to export.
-    let accountsJson: LocalAddress[] = [];
-    for (const source of ['vault', 'read-only'] as AccountSource[]) {
-      accountsJson = accountsJson.concat(
-        getLocalAddresses(source).map((a) => ({
-          ...a,
-          isImported: false,
-        }))
-      );
-    }
-
-    // Serialize and export data in main process.
-    const serialized = JSON.stringify(accountsJson);
-    const { result, msg } = await window.myAPI.exportAppData(serialized);
+    const { result, msg } = await window.myAPI.exportAppData();
 
     // Render toastify message in settings window.
     switch (msg) {
@@ -320,14 +289,9 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         try {
-          const json: LocalAddress[] = JSON.parse(response.data.serialized);
-          for (const accountJson of json) {
-            // TODO: Support importing ledger addresses.
-            if (accountJson.source === 'ledger') {
-              continue;
-            }
-            postToImport(accountJson);
-          }
+          // TODO: Support importing ledger addresses.
+          const parsed: LocalAddress[] = JSON.parse(response.data.serialized);
+          parsed.forEach((a) => a.source !== 'ledger' && postToImport(a));
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {
           postToSettings(false, 'Error parsing JSON.');

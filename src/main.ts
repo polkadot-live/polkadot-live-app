@@ -18,6 +18,7 @@ import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
+import { AddressesController } from './controller/main/AddressesController';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
@@ -28,6 +29,7 @@ import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
 import { hideDockIcon, showDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';
+import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -38,13 +40,13 @@ import type {
   NotificationData,
 } from '@/types/reporter';
 import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
+import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
 import type {
   SubscriptionTask,
   IntervalSubscription,
 } from '@/types/subscriptions';
-import { version } from '../package.json';
 
 const debug = MainDebug;
 
@@ -219,6 +221,38 @@ app.whenReady().then(async () => {
   // Open clicked URL in a browser window.
   ipcMain.on('app:url:open', (_, url) => {
     shell.openExternal(url);
+  });
+
+  /**
+   * Raw Account management
+   */
+
+  ipcMain.handle('main:raw-account', async (_, task: IpcTask) => {
+    switch (task.action) {
+      case 'raw-account:add': {
+        AddressesController.add(task);
+        break;
+      }
+      case 'raw-account:delete': {
+        AddressesController.delete(task);
+        break;
+      }
+      case 'raw-account:get': {
+        return AddressesController.get(task);
+      }
+      case 'raw-account:persist': {
+        AddressesController.persist(task);
+        break;
+      }
+      case 'raw-account:remove': {
+        AddressesController.remove(task);
+        break;
+      }
+      case 'raw-account:rename': {
+        AddressesController.rename(task);
+        break;
+      }
+    }
   });
 
   /**
@@ -650,11 +684,11 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Data
+   * Backup
    */
 
   // Export a data-file.
-  ipcMain.handle('app:data:export', async (_, serialized) => {
+  ipcMain.handle('app:data:export', async () => {
     if (!ConfigMain.exportingData) {
       ConfigMain.exportingData = true;
 
@@ -679,6 +713,7 @@ app.whenReady().then(async () => {
       // Handle save or cancel.
       if (!canceled && filePath) {
         try {
+          const serialized = AddressesController.getAll();
           await fsPromises.writeFile(filePath, serialized, {
             encoding: 'utf8',
           });
