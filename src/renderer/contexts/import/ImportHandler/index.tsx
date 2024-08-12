@@ -31,14 +31,7 @@ export const ImportHandlerProvider = ({
 }) => {
   const { isConnected } = useConnections();
   const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
-  const {
-    setReadOnlyAddresses,
-    setVaultAddresses,
-    setLedgerAddresses,
-    isAlreadyImported,
-    vaultAddresses,
-    readOnlyAddresses,
-  } = useAddresses();
+  const { handleAddressImport, isAlreadyImported } = useAddresses();
 
   /// Exposed function to import an address.
   const handleImportAddress = async (
@@ -59,14 +52,8 @@ export const ImportHandlerProvider = ({
       pubKey
     );
 
-    // Process account import in main renderer.
-    if (source === 'vault') {
-      handleVaultImport(local as LocalAddress);
-    } else if (source === 'ledger') {
-      handleLedgerImport(local as LedgerLocalAddress);
-    } else if (source === 'read-only') {
-      handleReadOnlyImport(local as LocalAddress);
-    }
+    // Update addresses state and references.
+    handleAddressImport(source, local);
 
     // Persist account to store in main process.
     await persistAddressToStore(source, local);
@@ -81,50 +68,20 @@ export const ImportHandlerProvider = ({
   const handleImportAddressFromBackup = async (imported: LocalAddress) => {
     const { address, source } = imported;
 
-    console.log('VAULT:');
-    console.log(vaultAddresses);
-
-    console.log('RO');
-    console.log(readOnlyAddresses);
-
     // Return if address is already imported.
     if (isAlreadyImported(address)) {
+      console.log(`Already Imported: ${address}`);
       return;
     }
 
     insertAccountStatus(address, source);
     imported.isImported = false;
 
-    // TODO: support ledger accounts.
-    if (source === 'vault') {
-      handleVaultImport(imported);
-    } else if (source === 'read-only') {
-      handleReadOnlyImport(imported);
-    }
+    // Update addresses state and references.
+    handleAddressImport(source, imported); // TODO: support ledger accounts.
 
     // Persist account to store in main process.
     await persistAddressToStore(source, imported);
-  };
-
-  /// Update import window read-only addresses state.
-  const handleReadOnlyImport = (local: LocalAddress) => {
-    setReadOnlyAddresses((prev: LocalAddress[]) =>
-      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
-    );
-  };
-
-  /// Update import window vault addresses state.
-  const handleVaultImport = (local: LocalAddress) => {
-    setVaultAddresses((prev: LocalAddress[]) =>
-      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
-    );
-  };
-
-  /// Update import window ledger addresses state.
-  const handleLedgerImport = (local: LedgerLocalAddress) => {
-    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
-      prev.filter((a) => a.address !== local.address).concat([{ ...local }])
-    );
   };
 
   /// Construct raw address data structure.

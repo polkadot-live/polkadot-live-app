@@ -1,8 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import * as defaults from './defaults';
+import { setStateWithRef } from '@w3ux/utils';
 import type { AddressesContextInterface } from './types';
 import type {
   AccountSource,
@@ -26,14 +27,18 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  type LLA = LedgerLocalAddress;
+  type LA = LocalAddress;
+
   /// Addresses state.
-  const [ledgerAddresses, setLedgerAddresses] = useState<LedgerLocalAddress[]>(
-    []
-  );
-  const [readOnlyAddresses, setReadOnlyAddresses] = useState<LocalAddress[]>(
-    []
-  );
-  const [vaultAddresses, setVaultAddresses] = useState<LocalAddress[]>([]);
+  const [ledgerAddresses, setLedgerAddresses] = useState<LLA[]>([]);
+  const [readOnlyAddresses, setReadOnlyAddresses] = useState<LA[]>([]);
+  const [vaultAddresses, setVaultAddresses] = useState<LA[]>([]);
+
+  /// References to addresses state.
+  const ledgerAddressesRef = useRef<LLA[]>([]);
+  const readOnlyAddressesRef = useRef<LA[]>([]);
+  const vaultAddressesRef = useRef<LA[]>([]);
 
   /// Fetch address data from store when component loads.
   useEffect(() => {
@@ -54,9 +59,23 @@ export const AddressesProvider = ({
         window.myAPI.rawAccountTask(tasks[2]),
       ]);
 
-      setLedgerAddresses(JSON.parse(results[0] as string));
-      setReadOnlyAddresses(JSON.parse(results[1] as string));
-      setVaultAddresses(JSON.parse(results[2] as string));
+      setStateWithRef(
+        JSON.parse(results[0] as string),
+        setLedgerAddresses,
+        ledgerAddressesRef
+      );
+
+      setStateWithRef(
+        JSON.parse(results[1] as string),
+        setReadOnlyAddresses,
+        readOnlyAddressesRef
+      );
+
+      setStateWithRef(
+        JSON.parse(results[2] as string),
+        setVaultAddresses,
+        vaultAddressesRef
+      );
     };
 
     fetchAccounts();
@@ -74,10 +93,72 @@ export const AddressesProvider = ({
       );
 
     return (
-      checkAll(ledgerAddresses, address) ||
-      checkAll(vaultAddresses, address) ||
-      checkAll(readOnlyAddresses, address)
+      checkAll(ledgerAddressesRef.current, address) ||
+      checkAll(vaultAddressesRef.current, address) ||
+      checkAll(readOnlyAddressesRef.current, address)
     );
+  };
+
+  /// Get addresses from appropriate reference.
+  const getAddressesOfSource = (
+    source: AccountSource
+  ): LedgerLocalAddress[] | LocalAddress[] => {
+    switch (source) {
+      case 'ledger': {
+        return ledgerAddressesRef.current;
+      }
+      case 'read-only': {
+        return readOnlyAddressesRef.current;
+      }
+      case 'vault': {
+        return vaultAddressesRef.current;
+      }
+      default: {
+        return [] as LocalAddress[];
+      }
+    }
+  };
+
+  /// Update import window read-only addresses state and reference.
+  const handleAddressImport = (
+    source: AccountSource,
+    local: LocalAddress | LedgerLocalAddress
+  ) => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LedgerLocalAddress) }]);
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'read-only': {
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LocalAddress) }]);
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'vault': {
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LocalAddress) }]);
+          vaultAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+    }
   };
 
   return (
@@ -90,6 +171,8 @@ export const AddressesProvider = ({
         setReadOnlyAddresses,
         setVaultAddresses,
         isAlreadyImported,
+        getAddressesOfSource,
+        handleAddressImport,
       }}
     >
       {children}
