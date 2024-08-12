@@ -12,13 +12,6 @@ export interface AddressesContextInterface {
   readOnlyAddresses: LocalAddress[];
   vaultAddresses: LocalAddress[];
 
-  setLedgerAddresses: React.Dispatch<
-    React.SetStateAction<LedgerLocalAddress[]>
-  >;
-  setReadOnlyAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
-  setVaultAddresses: React.Dispatch<React.SetStateAction<LocalAddress[]>>;
-  isAlreadyImported: (address: string) => boolean;
-
   handleAddressImport: (
     source: AccountSource,
     local: LedgerLocalAddress | LocalAddress
@@ -26,6 +19,8 @@ export interface AddressesContextInterface {
   handleAddressDelete: (source: AccountSource, address: string) => boolean;
   handleAddressRemove: (source: AccountSource, address: string) => void;
   handleAddressAdd: (source: AccountSource, address: string) => void;
+
+  isAlreadyImported: (address: string) => boolean;
   getAddressesOfSource: (
     source: AccountSource
   ) => LocalAddress[] | LedgerLocalAddress[];

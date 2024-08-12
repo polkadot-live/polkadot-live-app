@@ -119,8 +119,7 @@ export const API: PreloadAPI = {
    * File import and export
    */
 
-  exportAppData: async (serialized: string) =>
-    await ipcRenderer.invoke('app:data:export', serialized),
+  exportAppData: async () => await ipcRenderer.invoke('app:data:export'),
 
   importAppData: async () => await ipcRenderer.invoke('app:data:import'),
 
