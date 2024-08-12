@@ -17,4 +17,5 @@ export const defaultAddressesContext: AddressesContextInterface = {
   handleAddressImport: () => {},
   handleAddressDelete: () => false,
   handleAddressRemove: () => {},
+  handleAddressAdd: () => {},
 };
