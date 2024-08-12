@@ -290,8 +290,8 @@ export const useMainMessagePorts = () => {
       case 'success': {
         try {
           // TODO: Support importing ledger addresses.
-          const json: LocalAddress[] = JSON.parse(response.data.serialized);
-          json.forEach((a) => a.source !== 'ledger' && postToImport(a));
+          const parsed: LocalAddress[] = JSON.parse(response.data.serialized);
+          parsed.forEach((a) => a.source !== 'ledger' && postToImport(a));
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {
           postToSettings(false, 'Error parsing JSON.');

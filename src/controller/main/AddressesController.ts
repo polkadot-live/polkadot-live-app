@@ -190,7 +190,11 @@ export class AddressesController {
     ledger = false
   ): LedgerLocalAddress[] | LocalAddress[] {
     return ledger
-      ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
-      : (JSON.parse(this.getFromStore(key)) as LocalAddress[]);
+      ? store.has(key)
+        ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
+        : ([] as LedgerLocalAddress[])
+      : store.has(key)
+        ? (JSON.parse(this.getFromStore(key)) as LocalAddress[])
+        : ([] as LocalAddress[]);
   }
 }

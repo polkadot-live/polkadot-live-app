@@ -36,6 +36,8 @@ export const ImportHandlerProvider = ({
     setVaultAddresses,
     setLedgerAddresses,
     isAlreadyImported,
+    vaultAddresses,
+    readOnlyAddresses,
   } = useAddresses();
 
   /// Exposed function to import an address.
@@ -78,6 +80,12 @@ export const ImportHandlerProvider = ({
   /// Import an "imported" account from a data file.
   const handleImportAddressFromBackup = async (imported: LocalAddress) => {
     const { address, source } = imported;
+
+    console.log('VAULT:');
+    console.log(vaultAddresses);
+
+    console.log('RO');
+    console.log(readOnlyAddresses);
 
     // Return if address is already imported.
     if (isAlreadyImported(address)) {

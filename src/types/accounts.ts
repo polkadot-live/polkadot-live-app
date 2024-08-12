@@ -108,7 +108,6 @@ export interface FlattenedAccountData {
 export interface LocalAddress {
   address: string;
   isImported: boolean;
-  index?: number;
   name: string;
   source: AccountSource;
 }
