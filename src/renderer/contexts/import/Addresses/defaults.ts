@@ -14,4 +14,6 @@ export const defaultAddressesContext: AddressesContextInterface = {
   setVaultAddresses: (a) => {},
   isAlreadyImported: () => false,
   getAddressesOfSource: () => [] as LocalAddress[],
+  handleAddressImport: () => {},
+  handleAddressDelete: () => false,
 };

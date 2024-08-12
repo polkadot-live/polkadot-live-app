@@ -23,6 +23,7 @@ export interface AddressesContextInterface {
     source: AccountSource,
     local: LedgerLocalAddress | LocalAddress
   ) => void;
+  handleAddressDelete: (source: AccountSource, address: string) => boolean;
   getAddressesOfSource: (
     source: AccountSource
   ) => LocalAddress[] | LedgerLocalAddress[];
