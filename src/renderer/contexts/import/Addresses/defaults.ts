@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
 import type { AddressesContextInterface } from './types';
-import type { LocalAddress } from '@/types/accounts';
 
 export const defaultAddressesContext: AddressesContextInterface = {
   ledgerAddresses: [],
@@ -14,5 +13,4 @@ export const defaultAddressesContext: AddressesContextInterface = {
   handleAddressRemove: () => {},
   handleAddressAdd: () => {},
   isAlreadyImported: () => false,
-  getAddressesOfSource: () => [] as LocalAddress[],
 };

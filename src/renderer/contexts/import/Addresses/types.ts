@@ -19,9 +19,5 @@ export interface AddressesContextInterface {
   handleAddressDelete: (source: AccountSource, address: string) => boolean;
   handleAddressRemove: (source: AccountSource, address: string) => void;
   handleAddressAdd: (source: AccountSource, address: string) => void;
-
   isAlreadyImported: (address: string) => boolean;
-  getAddressesOfSource: (
-    source: AccountSource
-  ) => LocalAddress[] | LedgerLocalAddress[];
 }

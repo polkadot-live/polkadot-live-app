@@ -99,26 +99,6 @@ export const AddressesProvider = ({
     );
   };
 
-  /// Get addresses from appropriate reference.
-  const getAddressesOfSource = (
-    source: AccountSource
-  ): LedgerLocalAddress[] | LocalAddress[] => {
-    switch (source) {
-      case 'ledger': {
-        return ledgerAddressesRef.current;
-      }
-      case 'read-only': {
-        return readOnlyAddressesRef.current;
-      }
-      case 'vault': {
-        return vaultAddressesRef.current;
-      }
-      default: {
-        return [] as LocalAddress[];
-      }
-    }
-  };
-
   /// Update import window read-only addresses state and reference upon address import.
   const handleAddressImport = (
     source: AccountSource,
@@ -287,7 +267,6 @@ export const AddressesProvider = ({
         readOnlyAddresses,
         vaultAddresses,
         isAlreadyImported,
-        getAddressesOfSource,
         handleAddressImport,
         handleAddressDelete,
         handleAddressRemove,

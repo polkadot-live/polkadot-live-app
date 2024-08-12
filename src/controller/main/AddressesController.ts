@@ -108,6 +108,7 @@ export class AddressesController {
       const key = ConfigMain.getStorageKey(source);
 
       if (source === 'ledger') {
+        // Persist ledger account.
         const parsed: LedgerLocalAddress = JSON.parse(serialized);
         const stored = this.getStoredAddresses(
           key,
@@ -117,7 +118,7 @@ export class AddressesController {
         this.throwIfExists(parsed.address);
         this.setInStore(key, JSON.stringify([...stored, parsed]));
       } else {
-        // Update stored vault or read-only accounts.
+        // Persist vault or read-only account.
         const parsed: LocalAddress = JSON.parse(serialized);
         const stored = this.getStoredAddresses(key) as LocalAddress[];
 
@@ -138,7 +139,7 @@ export class AddressesController {
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
-      // Remove stored ledger accounts.
+      // Remove stored ledger accounts
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialised = JSON.stringify(
         stored.map((a) =>
@@ -148,7 +149,7 @@ export class AddressesController {
 
       this.setInStore(key, serialised);
     } else {
-      // Remove stored vault or read-only accounts.
+      // Remove stored vault or read-only account.
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
