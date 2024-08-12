@@ -103,19 +103,29 @@ export class AddressesController {
    * @summary Persist received address data to store.
    */
   static persist(task: IpcTask) {
-    const { source, serialized } = task.data;
-    const key = ConfigMain.getStorageKey(source);
+    try {
+      const { source, serialized } = task.data;
+      const key = ConfigMain.getStorageKey(source);
 
-    if (source === 'ledger') {
-      // Update stored ledger accounts.
-      const parsed: LedgerLocalAddress = JSON.parse(serialized);
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      this.setInStore(key, JSON.stringify([...stored, parsed]));
-    } else {
-      // Update stored vault or read-only accounts.
-      const parsed: LocalAddress = JSON.parse(serialized);
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      this.setInStore(key, JSON.stringify([...stored, parsed]));
+      if (source === 'ledger') {
+        const parsed: LedgerLocalAddress = JSON.parse(serialized);
+        const stored = this.getStoredAddresses(
+          key,
+          true
+        ) as LedgerLocalAddress[];
+
+        this.throwIfExists(parsed.address);
+        this.setInStore(key, JSON.stringify([...stored, parsed]));
+      } else {
+        // Update stored vault or read-only accounts.
+        const parsed: LocalAddress = JSON.parse(serialized);
+        const stored = this.getStoredAddresses(key) as LocalAddress[];
+
+        this.throwIfExists(parsed.address);
+        this.setInStore(key, JSON.stringify([...stored, parsed]));
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -196,5 +206,30 @@ export class AddressesController {
       : store.has(key)
         ? (JSON.parse(this.getFromStore(key)) as LocalAddress[])
         : ([] as LocalAddress[]);
+  }
+
+  static throwIfExists(address: string) {
+    if (this.isAlreadyPersisted(address)) {
+      throw new Error(`Persist Error: Account ${address} already exists.`);
+    }
+  }
+
+  static isAlreadyPersisted(address: string): boolean {
+    for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
+      const key = ConfigMain.getStorageKey(source);
+      if (source === 'ledger') {
+        const stored = this.getStoredAddresses(key, true);
+        if (stored.find((a) => a.address === address)) {
+          return true;
+        }
+      } else {
+        const stored = this.getStoredAddresses(key);
+        if (stored.find((a) => a.address === address)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
