@@ -70,7 +70,6 @@ export const ImportHandlerProvider = ({
 
     // Return if address is already imported.
     if (isAlreadyImported(address)) {
-      console.log(`Already Imported: ${address}`);
       return;
     }
 
