@@ -684,11 +684,11 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Data
+   * Backup
    */
 
   // Export a data-file.
-  ipcMain.handle('app:data:export', async (_, serialized) => {
+  ipcMain.handle('app:data:export', async () => {
     if (!ConfigMain.exportingData) {
       ConfigMain.exportingData = true;
 
@@ -713,6 +713,7 @@ app.whenReady().then(async () => {
       // Handle save or cancel.
       if (!canceled && filePath) {
         try {
+          const serialized = AddressesController.getAll();
           await fsPromises.writeFile(filePath, serialized, {
             encoding: 'utf8',
           });

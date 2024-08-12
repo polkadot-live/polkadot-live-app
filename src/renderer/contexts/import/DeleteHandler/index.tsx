@@ -7,11 +7,7 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { getAddressChainId } from '@/renderer/Utils';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { AccountSource } from '@/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@/types/communication';
 
@@ -28,8 +24,7 @@ export const DeleteHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const { deleteAccountStatus } = useAccountStatuses();
-  const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
-    useAddresses();
+  const { handleAddressDelete } = useAddresses();
 
   /// Exposed function to delete an address.
   const handleDeleteAddress = async (
@@ -39,15 +34,8 @@ export const DeleteHandlerProvider = ({
     // Remove status entry from account statuses context.
     deleteAccountStatus(address, source);
 
-    let goBack = false;
-
-    if (source === 'vault') {
-      goBack = handleDeleteVaultAddress(address);
-    } else if (source === 'ledger') {
-      goBack = handleDeleteLedgerAddress(address);
-    } else if (source === 'read-only') {
-      goBack = handleDeleteReadOnlyAddress(address);
-    }
+    // Update addresses state and references.
+    const goBack = handleAddressDelete(source, address);
 
     // Update Electron store, delete address data
     await removeAddressFromStore(source, address);
@@ -56,36 +44,6 @@ export const DeleteHandlerProvider = ({
     postAddressDeleteMessage(address);
 
     return goBack;
-  };
-
-  /// Update import window read-only addresses state.
-  const handleDeleteReadOnlyAddress = (address: string): boolean => {
-    setReadOnlyAddresses((prev: LocalAddress[]) =>
-      prev.filter((a) => a.address !== address)
-    );
-
-    return false;
-  };
-
-  /// Update import window vault addresses state.
-  const handleDeleteVaultAddress = (address: string): boolean => {
-    let goBack = false;
-    setVaultAddresses((prev: LocalAddress[]) => {
-      const updated = prev.filter((a) => a.address !== address);
-      updated.length === 0 && (goBack = true);
-      return updated;
-    });
-
-    return goBack;
-  };
-
-  /// Update import window ledger addresses state.
-  const handleDeleteLedgerAddress = (address: string): boolean => {
-    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
-      prev.filter((a) => a.address !== address)
-    );
-
-    return true;
   };
 
   /// Remove address entry from store.

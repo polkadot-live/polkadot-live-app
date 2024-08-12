@@ -5,7 +5,11 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { store } from '@/main';
 import type { AnyData } from '@/types/misc';
 import type { IpcTask } from '@/types/communication';
-import type { LedgerLocalAddress, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 
 export class AddressesController {
   /**
@@ -77,23 +81,52 @@ export class AddressesController {
   }
 
   /**
+   * @name getAll
+   * @summary Get all stored addresses in serialized form.
+   *
+   * @todo Support ledger accounts.
+   */
+  static getAll(): string {
+    let addresses: LocalAddress[] = [];
+
+    for (const source of ['read-only', 'vault'] as AccountSource[]) {
+      const key = ConfigMain.getStorageKey(source);
+      const fetched = this.getStoredAddresses(key) as LocalAddress[];
+      addresses = addresses.concat(fetched);
+    }
+
+    return JSON.stringify(addresses);
+  }
+
+  /**
    * @name persist
    * @summary Persist received address data to store.
    */
   static persist(task: IpcTask) {
-    const { source, serialized } = task.data;
-    const key = ConfigMain.getStorageKey(source);
+    try {
+      const { source, serialized } = task.data;
+      const key = ConfigMain.getStorageKey(source);
 
-    if (source === 'ledger') {
-      // Update stored ledger accounts.
-      const parsed: LedgerLocalAddress = JSON.parse(serialized);
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      this.setInStore(key, JSON.stringify([...stored, parsed]));
-    } else {
-      // Update stored vault or read-only accounts.
-      const parsed: LocalAddress = JSON.parse(serialized);
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      this.setInStore(key, JSON.stringify([...stored, parsed]));
+      if (source === 'ledger') {
+        // Persist ledger account.
+        const parsed: LedgerLocalAddress = JSON.parse(serialized);
+        const stored = this.getStoredAddresses(
+          key,
+          true
+        ) as LedgerLocalAddress[];
+
+        this.throwIfExists(parsed.address);
+        this.setInStore(key, JSON.stringify([...stored, parsed]));
+      } else {
+        // Persist vault or read-only account.
+        const parsed: LocalAddress = JSON.parse(serialized);
+        const stored = this.getStoredAddresses(key) as LocalAddress[];
+
+        this.throwIfExists(parsed.address);
+        this.setInStore(key, JSON.stringify([...stored, parsed]));
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -106,7 +139,7 @@ export class AddressesController {
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
-      // Remove stored ledger accounts.
+      // Remove stored ledger accounts
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialised = JSON.stringify(
         stored.map((a) =>
@@ -116,7 +149,7 @@ export class AddressesController {
 
       this.setInStore(key, serialised);
     } else {
-      // Remove stored vault or read-only accounts.
+      // Remove stored vault or read-only account.
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
@@ -168,7 +201,36 @@ export class AddressesController {
     ledger = false
   ): LedgerLocalAddress[] | LocalAddress[] {
     return ledger
-      ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
-      : (JSON.parse(this.getFromStore(key)) as LocalAddress[]);
+      ? store.has(key)
+        ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
+        : ([] as LedgerLocalAddress[])
+      : store.has(key)
+        ? (JSON.parse(this.getFromStore(key)) as LocalAddress[])
+        : ([] as LocalAddress[]);
+  }
+
+  static throwIfExists(address: string) {
+    if (this.isAlreadyPersisted(address)) {
+      throw new Error(`Persist Error: Account ${address} already exists.`);
+    }
+  }
+
+  static isAlreadyPersisted(address: string): boolean {
+    for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
+      const key = ConfigMain.getStorageKey(source);
+      if (source === 'ledger') {
+        const stored = this.getStoredAddresses(key, true);
+        if (stored.find((a) => a.address === address)) {
+          return true;
+        }
+      } else {
+        const stored = this.getStoredAddresses(key);
+        if (stored.find((a) => a.address === address)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }

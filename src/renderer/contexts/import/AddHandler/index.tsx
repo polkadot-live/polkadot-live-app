@@ -10,11 +10,7 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AddHandlerContextInterface } from './types';
 import type { IpcTask } from '@/types/communication';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { AccountSource } from '@/types/accounts';
 
 export const AddHandlerContext = createContext<AddHandlerContextInterface>(
   defaults.defaultAddHandlerContext
@@ -29,8 +25,7 @@ export const AddHandlerProvider = ({
 }) => {
   const { isConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
-  const { setReadOnlyAddresses, setVaultAddresses, setLedgerAddresses } =
-    useAddresses();
+  const { handleAddressAdd } = useAddresses();
 
   /// Exposed function to add an address.
   const handleAddAddress = async (
@@ -41,13 +36,8 @@ export const AddHandlerProvider = ({
     // Set processing flag for account.
     setStatusForAccount(address, source, true);
 
-    if (source === 'vault') {
-      handleAddVaultAddress(address);
-    } else if (source === 'ledger') {
-      handleAddLedgerAddress(address);
-    } else if (source === 'read-only') {
-      handleAddReadOnlyAddress(address);
-    }
+    // Update addresses state and references.
+    handleAddressAdd(source, address);
 
     // Update address data in store in main process.
     await updateAddressInStore(source, address);
@@ -56,27 +46,6 @@ export const AddHandlerProvider = ({
     if (isConnected) {
       postAddressToMainWindow(address, source, accountName);
     }
-  };
-
-  /// Update import window read-only addresses state.
-  const handleAddReadOnlyAddress = (address: string) => {
-    setReadOnlyAddresses((prev: LocalAddress[]) =>
-      prev.map((a) => (a.address === address ? { ...a, isImported: true } : a))
-    );
-  };
-
-  /// Update import window vault addresses state.
-  const handleAddVaultAddress = (address: string) => {
-    setVaultAddresses((prev: LocalAddress[]) =>
-      prev.map((a) => (a.address === address ? { ...a, isImported: true } : a))
-    );
-  };
-
-  /// Update import window ledger addresses state.
-  const handleAddLedgerAddress = (address: string) => {
-    setLedgerAddresses((prev: LedgerLocalAddress[]) =>
-      prev.map((a) => (a.address === address ? { ...a, isImported: true } : a))
-    );
   };
 
   /// Update address in store.
