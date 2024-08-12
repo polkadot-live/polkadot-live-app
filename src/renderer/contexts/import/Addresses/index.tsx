@@ -202,6 +202,45 @@ export const AddressesProvider = ({
     }
   };
 
+  /// Update import window read-only addresses state and reference upon address removal.
+  const handleAddressRemove = (source: AccountSource, address: string) => {
+    switch (source) {
+      case 'ledger': {
+        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          ledgerAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'read-only': {
+        setReadOnlyAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          readOnlyAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+      case 'vault': {
+        setVaultAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          vaultAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
+    }
+  };
+
   return (
     <AddressesContext.Provider
       value={{
@@ -215,6 +254,7 @@ export const AddressesProvider = ({
         getAddressesOfSource,
         handleAddressImport,
         handleAddressDelete,
+        handleAddressRemove,
       }}
     >
       {children}

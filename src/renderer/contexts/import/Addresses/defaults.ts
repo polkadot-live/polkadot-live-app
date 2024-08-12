@@ -16,4 +16,5 @@ export const defaultAddressesContext: AddressesContextInterface = {
   getAddressesOfSource: () => [] as LocalAddress[],
   handleAddressImport: () => {},
   handleAddressDelete: () => false,
+  handleAddressRemove: () => {},
 };
