@@ -7,7 +7,7 @@ import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 import type { ChainID } from '@/types/chains';
-import type { ValidatorData } from '@/types/accounts';
+import type { AccountNominatingData, ValidatorData } from '@/types/accounts';
 
 const MaxSupportedPayoutEras = 7;
 
@@ -617,4 +617,56 @@ export const getAccountExposed = async (
   }
 
   return exposed;
+};
+
+/**
+ * @name getAccountNominatingData
+ * @summary Get an account's live nominating data.
+ */
+export const getAccountNominatingData = async (
+  api: ApiPromise,
+  account: Account
+): Promise<AccountNominatingData | null> => {
+  // eslint-disable-next-line prettier/prettier
+  const nominatorData: AnyData = await api.query.staking.nominators(account.address);
+  const nominators = nominatorData.toHuman();
+
+  // Return early if account is not nominating.
+  if (nominators === null) {
+    return null;
+  }
+
+  // Get submitted in era.
+  const submittedIn: number = parseInt(
+    (nominators.submittedIn as string).replace(/,/g, '')
+  );
+
+  // Set account's nominating data.
+  const validators: ValidatorData[] = [];
+  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
+
+  for (const validatorId of nominators.targets as string[]) {
+    const prefs: AnyData = (
+      await api.query.staking.erasValidatorPrefs(era, validatorId)
+    ).toHuman();
+
+    const commission: string = prefs.commission as string;
+    validators.push({ validatorId, commission });
+  }
+
+  // Get exposed flag.
+  const exposed: boolean = await getAccountExposed(
+    api,
+    era,
+    account,
+    validators
+  );
+
+  return {
+    exposed,
+    lastCheckedEra: era,
+    submittedIn,
+    validators,
+  } as AccountNominatingData;
 };

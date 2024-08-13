@@ -11,14 +11,13 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import { getAccountExposed } from '@/renderer/callbacks/nominating';
+import { getAccountNominatingData } from '@/renderer/callbacks/nominating';
 import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
   FlattenedAccountData,
   NominationPoolCommission,
   NominationPoolRoles,
-  ValidatorData,
 } from '@/types/accounts';
 import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData, AnyJson } from '@/types/misc';
@@ -93,51 +92,11 @@ export const setNominatingDataForAccount = async (account: Account) => {
   const origin = 'setNominatingDataForAccount';
   const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
 
-  // Check if account is currently nominating.
-  const nominatorData: AnyData = await api.query.staking.nominators(
-    account.address
-  );
-  const nominators = nominatorData.toHuman();
-
-  // Return early if account is not nominating.
-  if (nominators === null) {
-    return;
-  }
-
-  // Get submitted in era.
-  const submittedIn: number = parseInt(
-    (nominators.submittedIn as string).replace(/,/g, '')
-  );
-
-  // Set account's nominating data.
-  const accumulated: ValidatorData[] = [];
-  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
-  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
-
-  for (const validatorId of nominators.targets as string[]) {
-    const prefs: AnyData = (
-      await api.query.staking.erasValidatorPrefs(era, validatorId)
-    ).toHuman();
-
-    const commission: string = prefs.commission as string;
-    accumulated.push({ validatorId, commission });
-  }
-
-  // Get exposed flag.
-  const exposed: boolean = await getAccountExposed(
-    api,
-    era,
-    account,
-    accumulated
-  );
-
   // Set account's nominator data.
-  account.nominatingData = {
-    exposed,
-    lastCheckedEra: era,
-    submittedIn,
-    validators: accumulated,
-  };
+  const maybeNominatingData = await getAccountNominatingData(api, account);
+  if (maybeNominatingData) {
+    account.nominatingData = { ...maybeNominatingData };
+  }
 
   // Update account data in controller.
   await AccountsController.set(account.chain, account);
