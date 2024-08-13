@@ -963,7 +963,7 @@ export class Callbacks {
         origin
       );
 
-      // Cache previous commissions.
+      // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);
       let hasChanged = false;
 
