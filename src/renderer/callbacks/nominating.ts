@@ -641,7 +641,7 @@ export const getAccountNominatingData = async (
     (nominators.submittedIn as string).replace(/,/g, '')
   );
 
-  // Set account's nominating data.
+  // Get account's nominations.
   const validators: ValidatorData[] = [];
   const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
   const era: number = parseInt((eraData.index as string).replace(/,/g, ''));

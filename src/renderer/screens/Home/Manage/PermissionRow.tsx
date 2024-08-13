@@ -76,7 +76,10 @@ export const PermissionRow = ({
               {/* Warning if nominating pending payouts */}
               {task.action ===
                 'subscribe:account:nominating:pendingPayouts' && (
-                <WarningIcon tooltip="Slow Operation" iconColor="#b76438" />
+                <WarningIcon
+                  tooltip="Potential Slow Operation"
+                  iconColor="#b76438"
+                />
               )}
             </h3>
           </div>

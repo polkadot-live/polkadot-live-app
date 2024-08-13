@@ -818,25 +818,20 @@ export class Callbacks {
         origin
       );
 
-      // Return if account is no longer nominating.
-      const maybeNominatingData = await getAccountNominatingData(api, account);
-      if (!maybeNominatingData) {
-        account.nominatingData = null;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
-        return;
-      }
-
       // Cache previous exposure.
       const { exposed: prevExposed } = account.nominatingData!;
 
-      // Update account data for this era.
-      account.nominatingData = { ...maybeNominatingData };
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
+
       await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
       // Return if exposure has not changed.
-      const { exposed } = maybeNominatingData;
+      const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
       if (!isOneShot && prevExposed === exposed) {
         return;
       }
