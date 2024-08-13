@@ -617,7 +617,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
         };
       }
       /**
@@ -650,7 +655,12 @@ export class EventsController {
           data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
         };
       }
       /**
@@ -683,7 +693,12 @@ export class EventsController {
           data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
         };
       }
       default: {
