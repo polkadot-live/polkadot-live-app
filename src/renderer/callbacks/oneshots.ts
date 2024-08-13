@@ -55,6 +55,10 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       const result = await oneShot_nominating_commission(task);
       return result;
     }
+    case 'subscribe:account:nominating:nominations': {
+      const result = await oneShot_nominating_nominations(task);
+      return result;
+    }
     default: {
       return false;
     }
@@ -255,5 +259,22 @@ const oneShot_nominating_commission = async (task: SubscriptionTask) => {
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   await Callbacks.callback_nominating_commission(data, entry, true);
+  return true;
+};
+
+/**
+ * @name oneShot_nominating_nominations
+ * @summary One-shot call to see a change in nominations.
+ */
+const oneShot_nominating_nominations = async (task: SubscriptionTask) => {
+  const instance = await getApiInstance(task.chainId);
+  if (!instance) {
+    return false;
+  }
+
+  const { api } = instance;
+  const data = await api.query.staking.activeEra();
+  const entry: ApiCallEntry = { curVal: null, task };
+  await Callbacks.callback_nominating_nominations(data, entry, true);
   return true;
 };

@@ -653,6 +653,39 @@ export class EventsController {
           actions: [],
         };
       }
+      /**
+       * subscribe:account:nominating:nominations
+       */
+      case 'subscribe:account:nominating:nominations': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { era, hasChanged }: { era: number; hasChanged: boolean } =
+          miscData;
+
+        const subtitle = hasChanged
+          ? 'A change has been detected in your nominated validator set.'
+          : 'No changes detected in your nominated validator set.';
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Commission Changed',
+          subtitle,
+          data: { era, hasChanged },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [],
+        };
+      }
       default: {
         throw new Error('getEvent: Subscription task action not recognized');
       }

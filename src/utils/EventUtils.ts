@@ -139,6 +139,10 @@ export const pushUniqueEvent = (
       push = filter_nominating_commission(events, event);
       break;
     }
+    case 'subscribe:account:nominating:nominations': {
+      push = filter_nominating_nominations(events, event);
+      break;
+    }
     /**
      * Interval Subscriptions
      */
@@ -527,9 +531,44 @@ const filter_nominating_exposure = (
 /**
  * @name filter_nominating_commission
  * @summary The new event is considered a duplicate if another event has
- * a matching address and changed validator data.
+ * a matching address and commission data.
  */
 const filter_nominating_commission = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { era, hasChanged }: { era: number; hasChanged: boolean } = event.data;
+
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const {
+        era: nextEra,
+        hasChanged: nextHasChanged,
+      }: { era: number; hasChanged: boolean } = e.data;
+
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        hasChanged === nextHasChanged
+      ) {
+        isUnique = false;
+      }
+    }
+  });
+
+  return isUnique;
+};
+
+/**
+ * @name filter_nominating_nominations
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and validator data.
+ */
+const filter_nominating_nominations = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {

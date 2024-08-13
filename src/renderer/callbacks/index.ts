@@ -934,6 +934,83 @@ export class Callbacks {
   }
 
   /**
+   * @name callback_nominating_nominations
+   * @summary Callback for 'subscribe:account:nominating:nominations'
+   *
+   * Dispatches an event and native OS notification if the account's nominated
+   * validator set has changed.
+   */
+  static async callback_nominating_nominations(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // eslint-disable-next-line prettier/prettier
+      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
+
+      // Exit early if nominator data for this era is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
+
+      // Get live nominator data and check to see if it has changed.
+      const origin = 'callback_nominating_nominations';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
+      // Cache previous commissions.
+      const prev = account.nominatingData!.validators.map((v) => v.validatorId);
+      let hasChanged = false;
+
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
+
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Return if commissions haven't changed.
+      if (maybeNominatingData) {
+        const cur = maybeNominatingData.validators.map((v) => v.validatorId);
+        const areEqual = areArraysEqual(prev, cur);
+
+        if (!areEqual) {
+          hasChanged = true;
+        } else if (!isOneShot && areEqual) {
+          return;
+        }
+      } else {
+        // Nominations have changed if account no longer nominating.
+        hasChanged = true;
+      }
+
+      // Get notification.
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            hasChanged,
+          })
+        : null;
+
+      //// Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { era, hasChanged }),
+        notification,
+        isOneShot
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
    * @name showNotificationFlag
    * @summary Determine if the task should show a native OS notification.
    */
