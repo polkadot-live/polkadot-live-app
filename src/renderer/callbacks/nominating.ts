@@ -9,15 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { ChainID } from '@/types/chains';
 import type { AccountNominatingData, ValidatorData } from '@/types/accounts';
 
-const MaxSupportedPayoutEras = 7;
-
-const NetworksWithPagedRewards: ChainID[] = ['Westend'];
-
-const PagedRewardsStartEra = new Map<ChainID, BigNumber | null>([
-  ['Polkadot', new BigNumber(1420)],
-  ['Kusama', new BigNumber(6514)],
-  ['Westend', new BigNumber(7167)],
-]);
+const MaxSupportedPayoutEras = 6;
 
 interface LocalValidatorExposure {
   staked: string;
@@ -25,19 +17,6 @@ interface LocalValidatorExposure {
   isValidator: boolean;
   exposedPage?: number;
 }
-
-/**
- * @name isPagedRewardsActive
- * @summary Given an era, determine whether paged rewards are active.
- */
-const isPagedRewardsActive = (era: BigNumber, chainId: ChainID): boolean => {
-  const networkStartEra = PagedRewardsStartEra.get(chainId) || null;
-
-  return !networkStartEra
-    ? false
-    : NetworksWithPagedRewards.includes(chainId) &&
-        era.isGreaterThanOrEqualTo(networkStartEra);
-};
 
 /**
  * @name getErasInterval
@@ -54,123 +33,54 @@ const getErasInterval = (era: BigNumber) => {
 };
 
 /**
- * @name getEraValidators
- * @summary Get list of validators that an account nominated during an era.
+ * @name getPagedErasStakers
+ * @summary Get an era validator and staker data.
  */
-const getEraValidatorsLegacy = async (
-  api: ApiPromise,
-  era: BigNumber,
-  accountAddress: string
-): Promise<string[]> => {
-  // Fetch array of exposure data for each validator in the era.
-  const result = await api.query.staking.erasStakers.entries(era.toNumber());
-  const validators: string[] = [];
+const getPagedErasStakers = async (api: ApiPromise, era: string) => {
+  const overview: AnyData =
+    await api.query.staking.erasStakersOverview.entries(era);
 
-  for (const item of result) {
-    // Check if account has nominated this validator during `era`.
-    let counter = 0;
+  const validators = overview.reduce(
+    (prev: Record<string, AnyData>, [keys, value]: AnyData) => {
+      const validator = keys.toHuman()[1];
+      const { own, total } = value.toHuman();
+      return { ...prev, [validator]: { own, total } };
+    },
+    {}
+  );
+  const validatorKeys = Object.keys(validators);
 
-    for (const { who } of (item[1].toHuman() as AnyData).others) {
-      if (counter >= 512) {
-        break;
-      } else {
-        // Add validator ID to outer array if it was nominated by account in `era`.
-        if ((who as string) === accountAddress) {
-          const validatorId: string = (item[0].toHuman() as AnyData)[1];
-          validators.push(validatorId);
-          break;
-        }
-      }
-      counter += 1;
-    }
-  }
-
-  return validators;
-};
-
-/**
- * @name getEraValidatorsWestend
- * @summary Get list of validators that an account nominated during an era using new paged API.
- */
-const getEraValidatorsPaged = async (
-  api: ApiPromise,
-  era: BigNumber,
-  accountAddress: string
-) => {
-  const validators: string[] = [];
-
-  // Get list of validators and pageCount for the era.
-  const results: AnyData = await api.query.staking.erasStakersOverview.entries(
-    era.toNumber()
+  const pagedResults = await Promise.all(
+    validatorKeys.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
   );
 
-  // Counter for how many validators account has nomiated (max 16).
-  let nominatedValidatorCount = 0;
-
-  // Iterate the validators.
-  validatorLoop: for (const item of results) {
-    const validator = item[0].toHuman()[1];
-
-    let counter = 0;
-    let addressFound = false;
-
-    // Use erasStakersPaged.entries() to iterate pages.
-    const pagesData: AnyData = await api.query.staking.erasStakersPaged.entries(
-      era.toNumber(),
-      validator
-    );
-
-    for (const paged of pagesData) {
-      for (const { who } of paged[1].toHuman().others) {
-        if (counter >= 512) {
-          continue validatorLoop;
-        } else if ((who as string) === accountAddress) {
-          validators.push(validator);
-          nominatedValidatorCount += 1;
-          addressFound = true;
-          break;
-        }
-
-        counter += 1;
+  const result: AnyData[] = [];
+  let i = 0;
+  for (const pagedResult of pagedResults) {
+    const validator = validatorKeys[i];
+    const { own, total } = validators[validator];
+    const others = pagedResult.reduce((prev: AnyData[], [, v]: AnyData) => {
+      const o = v.toHuman()?.others || [];
+      if (!o.length) {
+        return prev;
       }
+      return prev.concat(o);
+    }, []);
 
-      if (nominatedValidatorCount >= 16) {
-        break validatorLoop;
-      } else if (addressFound) {
-        continue validatorLoop;
-      }
-    }
+    result.push({
+      keys: [rmCommas(era), validator],
+      val: {
+        total: rmCommas(total),
+        own: rmCommas(own),
+        others: others.map(({ who, value }) => ({
+          who,
+          value: rmCommas(value),
+        })),
+      },
+    });
+    i++;
   }
-
-  return validators;
-};
-
-/**
- * @name getLocalEraExposure
- * @summary Get exposure data for an account.
- */
-const getLocalEraExposure = async (
-  api: ApiPromise,
-  era: string,
-  accountAddress: string,
-  validator: string
-): Promise<LocalValidatorExposure | null> => {
-  const result: AnyData = (
-    await api.query.staking.erasStakers(era, validator)
-  ).toHuman();
-
-  // total, own others: { who, value }
-  for (const { who, value } of result.others) {
-    if (who === accountAddress) {
-      return {
-        staked: value as string,
-        total: result.total as string,
-        isValidator: accountAddress === validator,
-      } as LocalValidatorExposure;
-    }
-  }
-
-  return null;
+  return result;
 };
 
 /**
@@ -228,9 +138,6 @@ export const getUnclaimedPayouts = async (
     parseInt((era_res.index as string).replace(/,/g, ''))
   );
 
-  // Flag to determine whether to use paged or legacy API.
-  const pagedRewardsActive: boolean = isPagedRewardsActive(activeEra, chainId);
-
   /**
    * Accumulate eras to check, and determine all validator ledgers to
    * fetch from exposures.
@@ -241,9 +148,26 @@ export const getUnclaimedPayouts = async (
   let currentEra = startEra;
 
   while (currentEra.isGreaterThanOrEqualTo(endEra)) {
-    const validators = pagedRewardsActive
-      ? await getEraValidatorsPaged(api, currentEra, address)
-      : await getEraValidatorsLegacy(api, currentEra, address);
+    const validators: string[] = [];
+    const estr: string = currentEra.toString();
+    const exposures: AnyData = await getPagedErasStakers(api, estr);
+
+    // `keys: [era, validatorId]`, `val: { total, own, others }`, `others: { who, value }`
+    for (const exposure of exposures) {
+      const vid = exposure.keys[1];
+      const { others } = exposure.val;
+      let i = 0;
+      for (const { who } of others) {
+        if (i >= 512) {
+          break;
+        }
+        if ((who as string) === address) {
+          validators.push(vid);
+          break;
+        }
+        ++i;
+      }
+    }
 
     erasValidators.push(...validators);
     erasToCheck.push(currentEra.toString());
@@ -267,29 +191,6 @@ export const getUnclaimedPayouts = async (
   }
 
   /**
-   * Helper function to check which eras a validator was exposed in.
-   */
-  const validatorExposedEras = async (validator: string): Promise<string[]> => {
-    const exposedEras: string[] = [];
-
-    for (const era of erasToCheck) {
-      // Get list of exposed validators in `era`.
-      const result = await api.query.staking.erasStakers.entries(era);
-
-      // Iterate exposed validators and check if the passed validator was exposed in `era`.
-      for (const item of result) {
-        const validatorId: string = (item[0].toHuman() as AnyData)[1];
-        if (validatorId === validator) {
-          exposedEras.push(era);
-          break;
-        }
-      }
-    }
-
-    return exposedEras;
-  };
-
-  /**
    * Fetch controllers in order to query ledgers (controllers of uniqueValidators array).
    */
   const bondedResults =
@@ -298,11 +199,10 @@ export const getUnclaimedPayouts = async (
   // Map of <ValidatorId, ValidatorControllerAccount>
   const validatorControllers = new Map<string, string>();
 
-  // eslint-disable-next-line @typescript-eslint/prefer-for-of
-  for (let i = 0; i < bondedResults.length; ++i) {
+  for (let i = 0; i < bondedResults.length; i++) {
     const controller = bondedResults[i].unwrapOr(null);
     if (controller) {
-      validatorControllers.set(uniqueValidators[i], controller.toHuman());
+      validatorControllers.set(uniqueValidators[i], controller);
     }
   }
 
@@ -317,83 +217,49 @@ export const getUnclaimedPayouts = async (
    */
   const unclaimedRewards = new Map<string, string[]>();
 
-  if (pagedRewardsActive) {
-    // Accumulate calls to fetch unclaimed rewards for each era for all validators.
-    const unclaimedRewardsEntries = erasToCheck
-      .map((era) => uniqueValidators.map((v) => [era, v]))
-      .flat();
+  // Accumulate calls to fetch unclaimed rewards for each era for all validators.
+  const unclaimedRewardsEntries = erasToCheck
+    .map((era) => uniqueValidators.map((v) => [era, v]))
+    .flat();
 
-    const results: AnyData = await Promise.all(
-      unclaimedRewardsEntries.map(([era, v]) =>
-        api.query.staking.claimedRewards<AnyData>(era, v)
-      )
+  const results: AnyData = await Promise.all(
+    unclaimedRewardsEntries.map(([era, v]) =>
+      api.query.staking.claimedRewards<AnyData>(era, v)
+    )
+  );
+
+  for (let i = 0; i < results.length; i++) {
+    const pages = results[i].toHuman() || [];
+    const era = unclaimedRewardsEntries[i][0];
+    const validator = unclaimedRewardsEntries[i][1];
+    const exposure: AnyData = await getLocalEraExposureWestend(
+      api,
+      era,
+      address,
+      validator
     );
 
-    for (let i = 0; i < results.length; i++) {
-      const pages = results[i].toHuman() || [];
-      const era = unclaimedRewardsEntries[i][0];
-      const validator = unclaimedRewardsEntries[i][1];
-      const exposure = await getLocalEraExposureWestend(
-        api,
-        era,
-        address,
-        validator
-      );
+    const exposedPage =
+      exposure?.[validator]?.exposedPage !== undefined
+        ? String(exposure[validator].exposedPage)
+        : undefined;
 
-      // Add to `unclaimedRewards` if payout page has not yet been claimed.
-      if (!pages.includes(exposure!.exposedPage)) {
-        const fetched = unclaimedRewards.get(validator);
+    // Add to `unclaimedRewards` if payout page has not yet been claimed.
+    if (!pages.includes(exposedPage)) {
+      const fetched = unclaimedRewards.get(validator);
 
-        if (fetched) {
-          unclaimedRewards.set(validator, [...fetched, era]);
-        } else {
-          unclaimedRewards.set(validator, [era]);
-        }
-      }
-    }
-  } else {
-    // DEPRECATION: Paged Rewards
-    //
-    // Use `staking.ledger` to get unclaimed reward eras. Read `LegacyClaimedRewards`.
-    // Use `claimedRewards`.
-    const ledgerResults = await api.query.staking.ledger.multi<AnyData>(
-      Array.from(validatorControllers.values())
-    );
-
-    // Fetch ledgers to determine which eras have not yet been claimed per validator.
-    // Only includes eras that are in `erasToCheck`.
-    for (const ledgerResult of ledgerResults) {
-      const ledger = ledgerResult.unwrapOr(null)?.toHuman();
-      if (ledger) {
-        // Get claimed eras within `erasToCheck`.
-        const erasClaimed: string[] = ledger[
-          pagedRewardsActive ? 'legacyClaimedRewards' : 'claimedRewards'
-        ]
-          .map((e: string) => rmCommas(e))
-          .filter(
-            (e: string) =>
-              new BigNumber(e).isLessThanOrEqualTo(startEra) &&
-              new BigNumber(e).isGreaterThanOrEqualTo(endEra)
-          );
-
-        // Filter eras yet to be claimed.
-        const valExposedEras = await validatorExposedEras(ledger.stash);
-
-        unclaimedRewards.set(
-          ledger.stash,
-          erasToCheck.filter(
-            (era) => valExposedEras.includes(era) && !erasClaimed.includes(era)
-          )
-        );
+      if (fetched) {
+        unclaimedRewards.set(validator, [...fetched, era]);
+      } else {
+        unclaimedRewards.set(validator, [era]);
       }
     }
   }
 
   // Sanity check,
   if (showDebug) {
-    console.log(
-      '> getUnclaimedPayouts: unclaimedRewards: <validatorId, erasUnclaimed>'
-    );
+    // eslint-disable-next-line prettier/prettier
+    console.log('> getUnclaimedPayouts: unclaimedRewards: <validatorId, erasUnclaimed>');
     console.log(unclaimedRewards);
   }
 
@@ -401,7 +267,6 @@ export const getUnclaimedPayouts = async (
    * Reformat `unclaimedRewards` to be <era: validators[]>
    */
   const unclaimedByEra = new Map<string, string[]>();
-
   erasToCheck.forEach((era) => {
     const eraValidators: string[] = [];
     for (const [validator, eras] of unclaimedRewards.entries()) {
@@ -433,11 +298,12 @@ export const getUnclaimedPayouts = async (
       ];
 
       // Calls to get validator commissions.
-      validators.map((validator) =>
+      //validators.map((validator) =>
+      for (const validator of validators) {
         subCalls.push(
           api.query.staking.erasValidatorPrefs<AnyData>(era, validator)
-        )
-      );
+        );
+      }
 
       // Push calls to outer array.
       calls.push(Promise.all(subCalls));
@@ -461,7 +327,7 @@ export const getUnclaimedPayouts = async (
     const era = Array.from(unclaimedByEra.keys())[i];
     const eraTotalPayout = new BigNumber(rmCommas(reward.toHuman()));
     const eraRewardPoints = points.toHuman();
-    const unclaimedValidators = Array.from(unclaimedByEra.values())[i];
+    const unclaimedValidators = unclaimedByEra.get(era)!;
 
     let j = 0;
     for (const pref of prefs) {
@@ -473,10 +339,9 @@ export const getUnclaimedPayouts = async (
       // Get validator from era exposure data (`null` if not found).
       const validator = unclaimedValidators[j] || '';
 
-      // Fetch exposure using the new paged or legacy API.
-      const localExposed: LocalValidatorExposure | null = pagedRewardsActive
-        ? await getLocalEraExposureWestend(api, era, address, validator)
-        : await getLocalEraExposure(api, era, address, validator);
+      // Fetch exposure using the new paged API.
+      const localExposed: LocalValidatorExposure | null =
+        await getLocalEraExposureWestend(api, era, address, validator);
 
       const staked = localExposed?.staked
         ? new BigNumber(rmCommas(localExposed.staked))
@@ -491,7 +356,6 @@ export const getUnclaimedPayouts = async (
 
       // Calculate the validator's share of total era payout.
       const totalRewardPoints = new BigNumber(rmCommas(eraRewardPoints.total));
-
       const validatorRewardPoints = new BigNumber(
         rmCommas(eraRewardPoints.individual?.[validator] || '0')
       );
