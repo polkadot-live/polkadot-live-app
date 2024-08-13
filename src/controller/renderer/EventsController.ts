@@ -678,7 +678,7 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Commission Changed',
+          title: 'Nominations Changed',
           subtitle,
           data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
