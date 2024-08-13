@@ -235,22 +235,9 @@ const oneShot_nominating_exposure = async (task: SubscriptionTask) => {
   }
 
   const { api } = instance;
-  const { chainId } = task;
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
-
-  switch (chainId) {
-    case 'Polkadot':
-    case 'Kusama': {
-      await Callbacks.callback_nominating_exposure(data, entry, true);
-      break;
-    }
-    case 'Westend': {
-      await Callbacks.callback_nominating_exposure_westend(data, entry, true);
-      break;
-    }
-  }
-
+  await Callbacks.callback_nominating_exposure(data, entry, true);
   return true;
 };
 

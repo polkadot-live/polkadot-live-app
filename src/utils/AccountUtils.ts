@@ -11,10 +11,7 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import {
-  getAccountExposed,
-  getAccountExposedWestend,
-} from '@/renderer/callbacks/nominating';
+import { getAccountExposed } from '@/renderer/callbacks/nominating';
 import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
@@ -126,11 +123,13 @@ export const setNominatingDataForAccount = async (account: Account) => {
     accumulated.push({ validatorId, commission });
   }
 
-  // Call correct exposure function.
-  const exposed: boolean =
-    account.chain === 'Westend'
-      ? await getAccountExposedWestend(api, era, account, accumulated)
-      : await getAccountExposed(api, era, account);
+  // Get exposed flag.
+  const exposed: boolean = await getAccountExposed(
+    api,
+    era,
+    account,
+    accumulated
+  );
 
   // Set account's nominator data.
   account.nominatingData = {

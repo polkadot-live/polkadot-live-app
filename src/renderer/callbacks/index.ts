@@ -8,7 +8,7 @@ import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
 import {
   getAccountExposed,
-  getAccountExposedWestend,
+  getAccountExposed_deprecated,
   getUnclaimedPayouts,
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
@@ -19,7 +19,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { ValidatorData } from '@/types/accounts';
+import type { AccountNominatingData, ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -737,8 +737,10 @@ export class Callbacks {
    *
    * The nominating account needs to be in the top 512 nominators (have
    * enough stake) to earn rewards from a particular validator.
+   *
+   * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
    */
-  static async callback_nominating_exposure(
+  static async callback_nominating_exposure_deprecated(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -760,7 +762,7 @@ export class Callbacks {
         account.chain,
         origin
       );
-      const exposed = await getAccountExposed(api, era, account);
+      const exposed = await getAccountExposed_deprecated(api, era, account);
 
       // Update account data.
       if (account.nominatingData!.lastCheckedEra < era) {
@@ -791,10 +793,10 @@ export class Callbacks {
   }
 
   /**
-   * @name callback_nominating_exposure_westend
-   * @summary Callback for 'subscribe:account:nominating:exposure' on 'Westend'
+   * @name callback_nominating_exposure
+   * @summary Callback for 'subscribe:account:nominating:exposure'
    */
-  static async callback_nominating_exposure_westend(
+  static async callback_nominating_exposure(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -816,12 +818,17 @@ export class Callbacks {
         origin
       );
       const vs = account.nominatingData!.validators;
-      const exposed = await getAccountExposedWestend(api, era, account, vs);
+      const exposed = await getAccountExposed(api, era, account, vs);
 
       // Update account data.
-      if (account.nominatingData!.lastCheckedEra < era) {
-        account.nominatingData!.exposed = exposed;
-        account.nominatingData!.lastCheckedEra = era;
+      // eslint-disable-next-line prettier/prettier
+      if (account.nominatingData && account.nominatingData.lastCheckedEra < era) {
+        account.nominatingData = {
+          ...account.nominatingData,
+          exposed,
+          lastCheckedEra: era,
+        } as AccountNominatingData;
+
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }

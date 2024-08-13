@@ -533,8 +533,9 @@ export const getUnclaimedPayouts = async (
 /**
  * @name getAccountExposed
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
+ * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
  */
-export const getAccountExposed = async (
+export const getAccountExposed_deprecated = async (
   api: ApiPromise,
   era: number,
   account: Account
@@ -574,7 +575,7 @@ export const getAccountExposed = async (
  * @name getAccountExposedWestend
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */
-export const getAccountExposedWestend = async (
+export const getAccountExposed = async (
   api: ApiPromise,
   era: number,
   account: Account,
