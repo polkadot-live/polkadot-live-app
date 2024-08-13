@@ -976,7 +976,7 @@ export class Callbacks {
       await AccountsController.set(account.chain, account);
       entry.task.account = account.flatten();
 
-      // Return if commissions haven't changed.
+      // Return if nominations haven't changed.
       if (maybeNominatingData) {
         const cur = maybeNominatingData.validators.map((v) => v.validatorId);
         const areEqual = areArraysEqual(prev, cur);
@@ -998,7 +998,7 @@ export class Callbacks {
           })
         : null;
 
-      //// Handle notification and events in main process.
+      // Handle notification and events in main process.
       window.myAPI.persistEvent(
         EventsController.getEvent(entry, { era, hasChanged }),
         notification,
