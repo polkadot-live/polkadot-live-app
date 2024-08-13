@@ -140,6 +140,10 @@ export class TaskOrchestrator {
             TaskOrchestrator.subscribe_nominating_commission(task, wrapper);
             break;
           }
+          case 'subscribe:account:nominating:nominations': {
+            TaskOrchestrator.subscribe_nominating_nominations(task, wrapper);
+            break;
+          }
           default: {
             throw new Error('Subscription action not found');
           }
@@ -211,6 +215,8 @@ export class TaskOrchestrator {
       case 'subscribe:account:nominating:exposure':
         return instance.api.query.staking.activeEra;
       case 'subscribe:account:nominating:commission':
+        return instance.api.query.staking.activeEra;
+      case 'subscribe:account:nominating:nominations':
         return instance.api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
@@ -418,6 +424,24 @@ export class TaskOrchestrator {
    * @summary Handle a task that subscribes to the API function api.query.activeEra and handles nominated validator commission changes.
    */
   private static subscribe_nominating_commission(
+    task: SubscriptionTask,
+    wrapper: QueryMultiWrapper
+  ) {
+    // Exit early if the account in question is not nominating.
+    if (!task.account?.nominatingData) {
+      console.log('🟠 Account is not nominating.');
+      return;
+    }
+
+    // Otherwise rebuild query.
+    TaskOrchestrator.handleTask(task, wrapper);
+  }
+
+  /**
+   * @name subscribe_nominating_nominations
+   * @summary Handle a task that subscribes to the API function api.query.activeEra and handles changes in nominated validators.
+   */
+  private static subscribe_nominating_nominations(
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {

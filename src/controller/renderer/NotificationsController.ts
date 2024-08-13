@@ -173,6 +173,19 @@ export class NotificationsController {
           subtitle: 'Commission Changed',
         };
       }
+      case 'subscribe:account:nominating:nominations': {
+        const { hasChanged }: { hasChanged: boolean } = miscData;
+
+        const body = hasChanged
+          ? 'A change has been detected in your nominated validator set.'
+          : 'No changes detected in your nominated validator set.';
+
+        return {
+          title: account.name,
+          body,
+          subtitle: 'Nominations Changed',
+        };
+      }
       default: {
         throw new Error(
           `getNotification: Not implemented for ${entry.task.action}`

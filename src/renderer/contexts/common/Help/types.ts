@@ -56,6 +56,7 @@ export type HelpItemKey =
   | 'help:subscription:nominating:commission'
   | 'help:subscription:nominating:exposure'
   | 'help:subscription:nominating:payouts'
+  | 'help:subscription:nominating:nominations'
   | 'help:subscription:chain:timestamp'
   | 'help:subscription:chain:currentSlot'
   | 'help:settings:dockedWindow'

@@ -135,6 +135,16 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Commission Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
+    status: 'disable',
+  },
   // Kusama
   {
     action: 'subscribe:account:balance:free',
@@ -256,6 +266,16 @@ export const accountTasks: SubscriptionTask[] = [
     label: 'Commission Changed',
     status: 'disable',
   },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
+    status: 'disable',
+  },
   // Westend
   {
     action: 'subscribe:account:balance:free',
@@ -375,6 +395,16 @@ export const accountTasks: SubscriptionTask[] = [
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:commission',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
     status: 'disable',
   },
 ];

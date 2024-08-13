@@ -223,6 +223,13 @@ export class QueryMultiWrapper {
         );
         break;
       }
+      case 'subscribe:account:nominating:nominations': {
+        await Callbacks.callback_nominating_nominations(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
     }
   }
 
