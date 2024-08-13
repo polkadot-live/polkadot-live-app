@@ -7,8 +7,8 @@ import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
 import {
-  getAccountExposed,
   getAccountExposed_deprecated,
+  getAccountNominatingData,
   getUnclaimedPayouts,
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
@@ -19,7 +19,7 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { AccountNominatingData, ValidatorData } from '@/types/accounts';
+import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -817,20 +817,28 @@ export class Callbacks {
         account.chain,
         origin
       );
-      const vs = account.nominatingData!.validators;
-      const exposed = await getAccountExposed(api, era, account, vs);
 
-      // Update account data.
-      // eslint-disable-next-line prettier/prettier
-      if (account.nominatingData && account.nominatingData.lastCheckedEra < era) {
-        account.nominatingData = {
-          ...account.nominatingData,
-          exposed,
-          lastCheckedEra: era,
-        } as AccountNominatingData;
-
+      // Return if account is no longer nominating.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      if (!maybeNominatingData) {
+        account.nominatingData = null;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
+        return;
+      }
+
+      // Cache previous exposure.
+      const { exposed: prevExposed } = account.nominatingData!;
+
+      // Update account data for this era.
+      account.nominatingData = { ...maybeNominatingData };
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Return if exposure has not changed.
+      const { exposed } = maybeNominatingData;
+      if (!isOneShot && prevExposed === exposed) {
+        return;
       }
 
       // Get notification.
