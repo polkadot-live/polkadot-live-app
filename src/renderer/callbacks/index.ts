@@ -7,6 +7,7 @@ import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
 import {
+  areArraysEqual,
   getAccountExposed_deprecated,
   getAccountNominatingData,
   getUnclaimedPayouts,
@@ -19,7 +20,6 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -886,92 +886,44 @@ export class Callbacks {
         origin
       );
 
-      const nominatorData: AnyData = (
-        await api.query.staking.nominators(account.address)
-      ).toHuman();
+      // Cache previous commissions.
+      const prev = account.nominatingData!.validators.map((v) => v.commission);
+      let hasChanged = false;
 
-      // Return if account is no longer nominating.
-      if (nominatorData === null) {
-        account.nominatingData = null;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
-      }
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
 
-      // Return if retrieved `submittedIn` matches account data.
-      const submittedIn: number = parseInt(
-        (nominatorData.submittedIn as string).replace(/,/g, '')
-      );
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
 
-      const isSame = account.nominatingData!.submittedIn === submittedIn;
-      if (!isOneShot && isSame) {
-        return;
-      }
+      // Return if commissions haven't changed.
+      if (maybeNominatingData) {
+        const cur = maybeNominatingData.validators.map((v) => v.commission);
+        const areEqual = areArraysEqual(prev, cur);
 
-      // Something may have changed, firstly get new validator info.
-      const accumulated: ValidatorData[] = [];
-
-      for (const validatorId of nominatorData.targets as string[]) {
-        const prefs: AnyData = (
-          await api.query.staking.erasValidatorPrefs(era, validatorId)
-        ).toHuman();
-
-        const commission: string = prefs.commission as string;
-        accumulated.push({ validatorId, commission });
-      }
-
-      // Get an array of changed validators.
-      const changedValidators: ValidatorData[] = [];
-
-      const validatorData = account.nominatingData!.validators;
-      const oldIds = validatorData.map((v) => v.validatorId);
-      const newIds = accumulated.map((v) => v.validatorId);
-
-      const idsInOld = newIds.filter((vid) => oldIds.includes(vid));
-      const idsNew = newIds.filter((vid) => !oldIds.includes(vid));
-
-      // Add old validators with commission changes.
-      for (const vid of idsInOld) {
-        const oldData = validatorData.find((v) => v.validatorId === vid);
-        const newData = accumulated.find((v) => v.validatorId === vid);
-
-        if (!oldData || !newData) {
-          continue;
-        } else if (oldData.commission !== newData.commission) {
-          changedValidators.push(newData);
+        if (!areEqual) {
+          hasChanged = true;
+        } else if (!isOneShot && areEqual) {
+          return;
         }
-      }
-
-      // Add new validator commissions.
-      for (const vid of idsNew) {
-        const vData = accumulated.find((v) => v.validatorId === vid);
-        if (vData) {
-          changedValidators.push(vData);
-        }
-      }
-
-      // Exit early if there are no commission changes.
-      if (!isOneShot && changedValidators.length === 0) {
-        return;
-      }
-
-      // Update account nominating data with new commissions.
-      if (changedValidators.length > 0) {
-        account.nominatingData!.validators = [...accumulated];
-        account.nominatingData!.submittedIn = submittedIn;
-        AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+      } else {
+        // Commission changes if account no longer nominating.
+        hasChanged = true;
       }
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            updated: [...changedValidators],
+            hasChanged,
           })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { updated: [...changedValidators] }),
+        EventsController.getEvent(entry, { era, hasChanged }),
         notification,
         isOneShot
       );
