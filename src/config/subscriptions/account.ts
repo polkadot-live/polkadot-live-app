@@ -112,7 +112,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Polkadot',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {
@@ -243,7 +243,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Kusama',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {
@@ -374,7 +374,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Westend',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {

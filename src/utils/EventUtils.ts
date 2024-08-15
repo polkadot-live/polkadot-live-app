@@ -469,12 +469,12 @@ const filter_nominating_era_rewards = (
   event: EventCallback
 ): boolean => {
   interface Target {
-    era: string;
     eraRewards: string;
+    era: string;
   }
 
   const { address } = event.who.data as EventAccountData;
-  const { era, eraRewards }: Target = event.data;
+  const { eraRewards, era }: Target = event.data;
 
   let isUnique = true;
 

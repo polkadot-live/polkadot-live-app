@@ -661,12 +661,10 @@ export class Callbacks {
   }
 
   /*
-   * @name callback_nominating_pending_payouts
+   * @name callback_nominating_era_rewards
    * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
-   *
-   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
    */
-  static async callback_nominating_pending_payouts(
+  static async callback_nominating_era_rewards(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -705,7 +703,7 @@ export class Callbacks {
         : null;
 
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { eraRewards, era }),
+        EventsController.getEvent(entry, { eraRewards, era: era.toString() }),
         notification,
         isOneShot
       );

@@ -203,7 +203,7 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        await Callbacks.callback_nominating_pending_payouts(
+        await Callbacks.callback_nominating_era_rewards(
           dataArr[entry.task.dataIndex!],
           entry
         );
