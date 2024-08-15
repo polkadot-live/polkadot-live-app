@@ -84,10 +84,10 @@ const getPagedErasStakers = async (api: ApiPromise, era: string) => {
 };
 
 /**
- * @name getLocalEraExposureWestend
+ * @name getLocalEraExposure
  * @summary Get exposure data for an account using the new paged API.
  */
-const getLocalEraExposureWestend = async (
+const getLocalEraExposure = async (
   api: ApiPromise,
   era: string,
   accountAddress: string,
@@ -98,14 +98,14 @@ const getLocalEraExposureWestend = async (
     validator
   );
 
+  const overview: AnyData = (
+    await api.query.staking.erasStakersOverview(era, validator)
+  ).toHuman();
+
   for (const item of result) {
     for (const { who, value } of item[1].toHuman().others) {
       if ((who as string) === accountAddress) {
         const exposedPage = parseInt(rmCommas(item[0].toHuman()[2] as string));
-
-        const overview: AnyData = (
-          await api.query.staking.erasStakersOverview(era, validator)
-        ).toHuman();
 
         return {
           staked: value as string,
@@ -118,6 +118,136 @@ const getLocalEraExposureWestend = async (
   }
 
   return null;
+};
+
+interface ValidatorOverviewData {
+  total: string;
+  own: string;
+  nominatorCount: string;
+  pageCount: string;
+}
+/**
+ * @name getEraRewards
+ * @summary Get an address' total nominating rewards in a given era.
+ */
+export const getEraRewards = async (address: string, api: ApiPromise) => {
+  const showDebug = true;
+  const eraResult: AnyData = (await api.query.staking.activeEra()).toHuman();
+  const era: BigNumber = new BigNumber(
+    parseInt((eraResult.index as string).replace(/,/g, ''))
+  );
+
+  const r1 = await api.query.staking.erasValidatorReward<AnyData>(era);
+  const r2 = await api.query.staking.erasRewardPoints<AnyData>(era);
+
+  const eraTotalPayout = new BigNumber(rmCommas(r1.toHuman()));
+  const eraRewardPoints = r2.toHuman(); // total, individual
+
+  // Cache the era's validator overviews.
+  const validators = new Map<string, ValidatorOverviewData>();
+  const overview = await api.query.staking.erasStakersOverview.entries(era);
+  for (const [keys, value] of overview) {
+    const vid = (keys.toHuman() as AnyData)[1] as string;
+    const { total, own, nominatorCount, pageCount }: AnyData = value.toHuman();
+    validators.set(vid, { total, own, nominatorCount, pageCount });
+  }
+
+  // Get address staking data for this era.
+  const validatorIds = Array.from(validators.keys());
+  const pagedResults = await Promise.all(
+    validatorIds.map((vid) =>
+      api.query.staking.erasStakersPaged.entries(era, vid)
+    )
+  );
+
+  // Map data is <validatorId, stakedAmount[]>
+  const addressStake = new Map<string, string[]>();
+  for (const pagedResult of pagedResults) {
+    if (pagedResult[0] === undefined) {
+      continue;
+    }
+
+    const [obj] = pagedResult;
+    const pageEra = (obj[0].toHuman() as AnyData)[0] || '0';
+    const pageValidator = (obj[0].toHuman() as AnyData)[1];
+    const page = (obj[0].toHuman() as AnyData)[2];
+    showDebug && console.log(pageEra, pageValidator, page);
+
+    const pageTotal = (obj[1].toHuman() as AnyData).pageTotal;
+    const others = (obj[1].toHuman() as AnyData).others;
+    showDebug && console.log(pageTotal);
+
+    for (const { who, value } of others) {
+      showDebug && console.log(who, value);
+      if ((who as string) === address) {
+        addressStake.has(pageValidator)
+          ? addressStake.set(pageValidator, [
+              ...addressStake.get(pageValidator)!,
+              value,
+            ])
+          : addressStake.set(pageValidator, [value]);
+      }
+    }
+  }
+
+  if (showDebug) {
+    console.log(`Stake for ${address}:`);
+    console.log(addressStake);
+  }
+
+  // Get nominated validator commissions.
+  const commissions = new Map<string, string>();
+  const vids = Array.from(addressStake.keys());
+  const prefResults = await Promise.all(
+    vids.map((vid) => api.query.staking.erasValidatorPrefs<AnyData>(era, vid))
+  );
+
+  for (let i = 0; i < prefResults.length; ++i) {
+    commissions.set(vids[i], prefResults[i].toHuman().commission);
+  }
+
+  // Calculate unclaimed rewards for each nominated validator.
+  let totalRewards = new BigNumber(0);
+  for (const vid of vids) {
+    // Parse commission to big number.
+    const commission = new BigNumber(
+      commissions.get(vid)!.replace(/%/g, '')
+    ).multipliedBy(0.01);
+
+    // Get total staked amount by the address.
+    const staked = addressStake
+      .get(vid)!
+      .reduce((acc, cur) => acc.plus(rmCommas(cur)), new BigNumber(0));
+
+    // Get validator's total stake.
+    const { total: vTotal } = validators.get(vid)!;
+    const total = new BigNumber(rmCommas(vTotal));
+
+    // Calculate available validator rewards for the era based on reward points.
+    const totalRewardPoints = new BigNumber(rmCommas(eraRewardPoints.total));
+    const validatorRewardPoints = new BigNumber(
+      rmCommas(eraRewardPoints.individual[String(vid)])
+    );
+
+    const avail = eraTotalPayout
+      .multipliedBy(validatorRewardPoints)
+      .dividedBy(totalRewardPoints);
+
+    // Calculate rewards for this era.
+    const valCut = commission.multipliedBy(avail);
+    const eraRewardsForValidator = total.isZero()
+      ? new BigNumber(0)
+      : avail
+          .minus(valCut)
+          .multipliedBy(staked)
+          .dividedBy(total)
+          .plus(address === vid ? valCut : 0);
+
+    showDebug && console.log(`${vid}: ${eraRewardsForValidator.toString()}`);
+    totalRewards = totalRewards.plus(eraRewardsForValidator);
+  }
+
+  return totalRewards;
 };
 
 /**
@@ -232,7 +362,7 @@ export const getUnclaimedPayouts = async (
     const pages = results[i].toHuman() || [];
     const era = unclaimedRewardsEntries[i][0];
     const validator = unclaimedRewardsEntries[i][1];
-    const exposure: AnyData = await getLocalEraExposureWestend(
+    const exposure: AnyData = await getLocalEraExposure(
       api,
       era,
       address,
@@ -341,7 +471,7 @@ export const getUnclaimedPayouts = async (
 
       // Fetch exposure using the new paged API.
       const localExposed: LocalValidatorExposure | null =
-        await getLocalEraExposureWestend(api, era, address, validator);
+        await getLocalEraExposure(api, era, address, validator);
 
       const staked = localExposed?.staked
         ? new BigNumber(rmCommas(localExposed.staked))
@@ -352,7 +482,7 @@ export const getUnclaimedPayouts = async (
         : new BigNumber(0);
 
       const isValidator = localExposed?.isValidator || false;
-      const exposedPage = localExposed?.exposedPage || 1;
+      const exposedPage = localExposed?.exposedPage || 0;
 
       // Calculate the validator's share of total era payout.
       const totalRewardPoints = new BigNumber(rmCommas(eraRewardPoints.total));
