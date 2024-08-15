@@ -44,7 +44,7 @@ export const executeOneShot = async (task: SubscriptionTask) => {
       return result;
     }
     case 'subscribe:account:nominating:pendingPayouts': {
-      const result = await oneShot_nominating_pending_payouts(task);
+      const result = await oneShot_nominating_era_rewards(task);
       return result;
     }
     case 'subscribe:account:nominating:exposure': {
@@ -215,7 +215,7 @@ const oneShot_nomination_pool_commission = async (task: SubscriptionTask) => {
  * @name oneShot_nominating_pending_payouts
  * @summary One-shot call to fetch an account's nominating pending paypouts.
  */
-const oneShot_nominating_pending_payouts = async (task: SubscriptionTask) => {
+const oneShot_nominating_era_rewards = async (task: SubscriptionTask) => {
   const instance = await getApiInstance(task.chainId);
   if (!instance) {
     return false;
@@ -224,7 +224,7 @@ const oneShot_nominating_pending_payouts = async (task: SubscriptionTask) => {
   const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_pending_payouts(data, entry, true);
+  await Callbacks.callback_nominating_era_rewards(data, entry, true);
   return true;
 };
 

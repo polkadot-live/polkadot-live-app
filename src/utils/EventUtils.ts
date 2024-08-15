@@ -128,7 +128,7 @@ export const pushUniqueEvent = (
       break;
     }
     case 'subscribe:account:nominating:pendingPayouts': {
-      push = filter_nominating_pending_payouts(events, event);
+      push = filter_nominating_era_rewards(events, event);
       break;
     }
     case 'subscribe:account:nominating:exposure': {
@@ -460,33 +460,33 @@ const filter_nomination_pool_commission = (
 };
 
 /**
- * @name filter_nominating_rewards
+ * @name filter_nominating_era_rewards
  * @summary The new event is considered a duplicate if another event has
  * a matching address, pending payout and era number.
  */
-const filter_nominating_pending_payouts = (
+const filter_nominating_era_rewards = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
   interface Target {
+    eraRewards: string;
     era: string;
-    pendingPayout: string;
   }
 
   const { address } = event.who.data as EventAccountData;
-  const { era, pendingPayout }: Target = event.data;
+  const { eraRewards, era }: Target = event.data;
 
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const { era: nextEra, pendingPayout: nextPendingPayout }: Target = e.data;
+      const { era: nextEra, eraRewards: nextEraRewards }: Target = e.data;
 
       if (
         address === nextAddress &&
         era === nextEra &&
-        pendingPayout === nextPendingPayout
+        eraRewards === nextEraRewards
       ) {
         isUnique = false;
       }

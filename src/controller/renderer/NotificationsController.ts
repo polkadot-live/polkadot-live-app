@@ -144,7 +144,7 @@ export class NotificationsController {
         return {
           title: account.name,
           body: getBalanceText(pendingPayout, chainId),
-          subtitle: 'Nominating Pending Payout',
+          subtitle: 'Nominating Rewards',
         };
       }
       case 'subscribe:account:nominating:exposure': {

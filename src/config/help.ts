@@ -119,10 +119,10 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominating:payouts',
-    title: 'Nominating: Pending Payouts Subscription',
+    title: 'Nominating: Era Rewards Subscription',
     definition: [
-      'Get notified when you have pending payouts from your nomiated validators.',
-      'Polkadot Live will process the last 7 eras in order to calculate any pending payouts. This calculation may take a minute, depending on your network connection speed.',
+      'Get notified of your nominating rewards from the previous era.',
+      'Polkadot Live will calculate your rewards in a decentralized way, fetching required state from the network.',
     ],
   },
   {

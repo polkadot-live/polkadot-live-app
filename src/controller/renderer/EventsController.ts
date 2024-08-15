@@ -553,7 +553,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:pendingPayouts': {
         // eslint-disable-next-line prettier/prettier
-        const { pendingPayout, era }: { pendingPayout: BigNumber; era: string } = miscData;
+        const { eraRewards, era }: { eraRewards: BigNumber; era: string } = miscData;
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
 
@@ -569,11 +569,11 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Nominating Pending Payout',
-          subtitle: getBalanceText(pendingPayout, chainId),
+          title: 'Nominating Rewards',
+          subtitle: getBalanceText(eraRewards, chainId),
           data: {
             era,
-            pendingPayout: pendingPayout.toString(), // string required
+            eraRewards: eraRewards.toString(), // string required
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -581,6 +581,10 @@ export class EventsController {
             {
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
               text: 'Dashboard',
+            },
+            {
+              uri: `https://${chainId}.subscan.io/nominator/${address}?tab=reward`,
+              text: 'Subscan',
             },
           ],
         };

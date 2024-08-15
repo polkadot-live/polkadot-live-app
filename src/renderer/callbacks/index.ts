@@ -10,7 +10,7 @@ import {
   areArraysEqual,
   getAccountExposed_deprecated,
   getAccountNominatingData,
-  getUnclaimedPayouts,
+  getEraRewards,
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
@@ -661,18 +661,16 @@ export class Callbacks {
   }
 
   /*
-   * @name callback_nominating_pending_payouts
+   * @name callback_nominating_era_rewards
    * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
-   *
-   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
    */
-  static async callback_nominating_pending_payouts(
+  static async callback_nominating_era_rewards(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
+      // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const origin = 'callback_nomination_pending_payouts';
       const { api } = await ApiUtils.getApiInstanceOrThrow(
@@ -680,44 +678,32 @@ export class Callbacks {
         origin
       );
 
-      // Map<era: string, Map<validator: string, payout: [number, string]>>
-      const unclaimed = await getUnclaimedPayouts(
+      // Fetch previous era.
+      const eraResult: AnyData = (
+        await api.query.staking.activeEra()
+      ).toHuman();
+
+      const era: BigNumber = new BigNumber(
+        parseInt((eraResult.index as string).replace(/,/g, ''))
+      ).minus(1);
+
+      // Calculate rewards.
+      const eraRewards = await getEraRewards(
         account.address,
         api,
-        account.chain,
-        true
+        era.toNumber()
       );
-
-      let pendingPayout = new BigNumber(0);
-
-      for (const validatorToPayout of unclaimed.values()) {
-        for (const payoutItem of validatorToPayout.values()) {
-          const payout = payoutItem[1];
-          pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
-        }
-      }
-
-      // Return if no pending payout.
-      if (!isOneShot && pendingPayout.isZero()) {
-        return;
-      }
-
-      // Handle notification and events in main process.
-      const era = data.toHuman().index as string;
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingPayout: new BigNumber(pendingPayout),
+            pendingPayout: new BigNumber(eraRewards),
             chainId: account.chain,
           })
         : null;
 
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {
-          pendingPayout: new BigNumber(pendingPayout),
-          era,
-        }),
+        EventsController.getEvent(entry, { eraRewards, era: era.toString() }),
         notification,
         isOneShot
       );
