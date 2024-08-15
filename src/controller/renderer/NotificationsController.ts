@@ -12,7 +12,6 @@ import type { Account } from '@/model/Account';
 import type { AnyData } from '@/types/misc';
 import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';
 import type { NotificationData } from '@/types/reporter';
-import type { ValidatorData } from '@/types/accounts';
 import type BigNumber from 'bignumber.js';
 
 export class NotificationsController {
@@ -145,7 +144,7 @@ export class NotificationsController {
         return {
           title: account.name,
           body: getBalanceText(pendingPayout, chainId),
-          subtitle: 'Nominating Pending Payout',
+          subtitle: 'Nominating Rewards',
         };
       }
       case 'subscribe:account:nominating:exposure': {
@@ -162,17 +161,29 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominating:commission': {
-        const { updated }: { updated: ValidatorData[] } = miscData;
+        const { hasChanged }: { hasChanged: boolean } = miscData;
 
-        const body =
-          updated.length === 1
-            ? `${updated.length} nominated validator has changed commission.`
-            : `${updated.length} nominated validators have changed commission.`;
+        const body = hasChanged
+          ? 'Commission change detected in your nominated validators.'
+          : 'No commission changes detected.';
 
         return {
           title: account.name,
           body,
           subtitle: 'Commission Changed',
+        };
+      }
+      case 'subscribe:account:nominating:nominations': {
+        const { hasChanged }: { hasChanged: boolean } = miscData;
+
+        const body = hasChanged
+          ? 'A change has been detected in your nominated validator set.'
+          : 'No changes detected in your nominated validator set.';
+
+        return {
+          title: account.name,
+          body,
+          subtitle: 'Nominations Changed',
         };
       }
       default: {

@@ -112,7 +112,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Polkadot',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {
@@ -133,6 +133,16 @@ export const accountTasks: SubscriptionTask[] = [
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:commission',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Polkadot',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
     status: 'disable',
   },
   // Kusama
@@ -233,7 +243,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Kusama',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {
@@ -254,6 +264,16 @@ export const accountTasks: SubscriptionTask[] = [
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:commission',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Kusama',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
     status: 'disable',
   },
   // Westend
@@ -354,7 +374,7 @@ export const accountTasks: SubscriptionTask[] = [
     chainId: 'Westend',
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:payouts',
-    label: 'Pending Payouts',
+    label: 'Era Rewards',
     status: 'disable',
   },
   {
@@ -375,6 +395,16 @@ export const accountTasks: SubscriptionTask[] = [
     enableOsNotifications: true,
     helpKey: 'help:subscription:nominating:commission',
     label: 'Commission Changed',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:account:nominating:nominations',
+    apiCallAsString: 'api.query.staking.activeEra',
+    category: 'Nominating',
+    chainId: 'Westend',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:nominating:nominations',
+    label: 'Nominations Changed',
     status: 'disable',
   },
 ];

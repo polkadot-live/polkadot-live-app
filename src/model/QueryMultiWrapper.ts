@@ -114,6 +114,7 @@ export class QueryMultiWrapper {
   private async handleCallback(
     entry: ApiCallEntry,
     dataArr: AnyData,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     chainId: ChainID
   ) {
     const { action, justBuilt } = entry.task;
@@ -202,47 +203,28 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        switch (chainId) {
-          case 'Polkadot':
-          case 'Kusama': {
-            await Callbacks.callback_nominating_pending_payouts(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'Westend': {
-            await Callbacks.callback_nominating_pending_payouts(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-        }
+        await Callbacks.callback_nominating_era_rewards(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        switch (chainId) {
-          case 'Polkadot':
-          case 'Kusama': {
-            await Callbacks.callback_nominating_exposure(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-          case 'Westend': {
-            await Callbacks.callback_nominating_exposure_westend(
-              dataArr[entry.task.dataIndex!],
-              entry
-            );
-            break;
-          }
-        }
+        await Callbacks.callback_nominating_exposure(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
         break;
       }
       case 'subscribe:account:nominating:commission': {
         await Callbacks.callback_nominating_commission(
+          dataArr[entry.task.dataIndex!],
+          entry
+        );
+        break;
+      }
+      case 'subscribe:account:nominating:nominations': {
+        await Callbacks.callback_nominating_nominations(
           dataArr[entry.task.dataIndex!],
           entry
         );

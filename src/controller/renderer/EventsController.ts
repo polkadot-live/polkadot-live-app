@@ -24,7 +24,6 @@ import type {
   EventCallback,
   EventChainData,
 } from '@/types/reporter';
-import type { ValidatorData } from '@/types/accounts';
 
 export class EventsController {
   /**
@@ -554,7 +553,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:pendingPayouts': {
         // eslint-disable-next-line prettier/prettier
-        const { pendingPayout, era }: { pendingPayout: BigNumber; era: string } = miscData;
+        const { eraRewards, era }: { eraRewards: BigNumber; era: string } = miscData;
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
 
@@ -570,11 +569,11 @@ export class EventsController {
               chainId,
             } as EventAccountData,
           },
-          title: 'Nominating Pending Payout',
-          subtitle: getBalanceText(pendingPayout, chainId),
+          title: 'Nominating Rewards',
+          subtitle: getBalanceText(eraRewards, chainId),
           data: {
             era,
-            pendingPayout: pendingPayout.toString(), // string required
+            eraRewards: eraRewards.toString(), // string required
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
@@ -582,6 +581,10 @@ export class EventsController {
             {
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
               text: 'Dashboard',
+            },
+            {
+              uri: `https://${chainId}.subscan.io/nominator/${address}?tab=reward`,
+              text: 'Subscan',
             },
           ],
         };
@@ -618,7 +621,12 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
         };
       }
       /**
@@ -627,12 +635,12 @@ export class EventsController {
       case 'subscribe:account:nominating:commission': {
         const { chainId } = entry.task;
         const { address, name: accountName } = entry.task.account!;
-        const { updated }: { updated: ValidatorData[] } = miscData;
+        const { era, hasChanged }: { era: number; hasChanged: boolean } =
+          miscData;
 
-        const subtitle =
-          updated.length === 1
-            ? `${updated.length} nominated validator has changed commission.`
-            : `${updated.length} nominated validators have changed commission.`;
+        const subtitle = hasChanged
+          ? 'Commission change detected in your nominated validators.'
+          : 'No commission changes detected.';
 
         return {
           uid: '',
@@ -648,12 +656,53 @@ export class EventsController {
           },
           title: 'Commission Changed',
           subtitle,
-          data: {
-            updated: [...updated],
-          },
+          data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
+        };
+      }
+      /**
+       * subscribe:account:nominating:nominations
+       */
+      case 'subscribe:account:nominating:nominations': {
+        const { chainId } = entry.task;
+        const { address, name: accountName } = entry.task.account!;
+        const { era, hasChanged }: { era: number; hasChanged: boolean } =
+          miscData;
+
+        const subtitle = hasChanged
+          ? 'A change has been detected in your nominated validator set.'
+          : 'No changes detected in your nominated validator set.';
+
+        return {
+          uid: '',
+          category: 'nominating',
+          taskAction: entry.task.action,
+          who: {
+            origin: 'account',
+            data: {
+              accountName,
+              address,
+              chainId,
+            } as EventAccountData,
+          },
+          title: 'Nominations Changed',
+          subtitle,
+          data: { era, hasChanged },
+          timestamp: getUnixTime(new Date()),
+          stale: false,
+          actions: [
+            {
+              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              text: 'Dashboard',
+            },
+          ],
         };
       }
       default: {

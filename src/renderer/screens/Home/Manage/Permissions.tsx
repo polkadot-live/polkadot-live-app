@@ -157,7 +157,8 @@ export const Permissions = ({
       }
       case 'subscribe:account:nominating:pendingPayouts':
       case 'subscribe:account:nominating:exposure':
-      case 'subscribe:account:nominating:commission': {
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:nominations': {
         return task.account?.nominatingData ? false : true;
       }
       default: {

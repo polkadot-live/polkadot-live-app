@@ -105,8 +105,8 @@ export const HelpConfig: HelpItems = [
     key: 'help:subscription:nominating:commission',
     title: 'Nominating: Commission Subscription',
     definition: [
-      'Get notified when any of your nominated validators have changed their commission setting, when a new era starts.',
-      'You will be notified when you are nominating new validators in the new era, and when any validators that you nominated in the previous era have changed their commision setting.',
+      'Get notified when a commission change is detected among your nominated validators, when a new era starts.',
+      'You will be notified when your cached commissions do not match the commissions fetched in the latest era.',
     ],
   },
   {
@@ -119,10 +119,18 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominating:payouts',
-    title: 'Nominating: Pending Payouts Subscription',
+    title: 'Nominating: Era Rewards Subscription',
     definition: [
-      'Get notified when you have pending payouts from your nomiated validators.',
-      'Polkadot Live will process the last 7 eras in order to calculate any pending payouts. This calculation may take a minute, depending on your network connection speed.',
+      'Get notified of your nominating rewards from the previous era.',
+      'Polkadot Live will calculate your rewards in a decentralized way, fetching required state from the network.',
+    ],
+  },
+  {
+    key: 'help:subscription:nominating:nominations',
+    title: 'Nominating: Nominations Subscription',
+    definition: [
+      'Get notified when any of your nominated validators have changed.',
+      'You will be notified when your cached nominations do not match the nominations fetched in the latest era.',
     ],
   },
   {

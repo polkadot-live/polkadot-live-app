@@ -7,9 +7,10 @@ import { checkAccountWithProperties } from '@/utils/AccountUtils';
 import { Config as RendererConfig } from '@/config/processes/renderer';
 import { EventsController } from '@/controller/renderer/EventsController';
 import {
-  getAccountExposed,
-  getAccountExposedWestend,
-  getUnclaimedPayouts,
+  areArraysEqual,
+  getAccountExposed_deprecated,
+  getAccountNominatingData,
+  getEraRewards,
 } from './nominating';
 import { NotificationsController } from '@/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
@@ -19,7 +20,6 @@ import type { ApiCallEntry } from '@/types/subscriptions';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { ValidatorData } from '@/types/accounts';
 
 export class Callbacks {
   /**
@@ -661,18 +661,16 @@ export class Callbacks {
   }
 
   /*
-   * @name callback_nominating_pending_payouts
+   * @name callback_nominating_era_rewards
    * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
-   *
-   * When an account's nominations receive rewards in previous era, dispatch an event and notificaiton.
    */
-  static async callback_nominating_pending_payouts(
+  static async callback_nominating_era_rewards(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
   ) {
     try {
-      // Check if account has any nominating rewards from the previous era (current era - 1).
+      // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const origin = 'callback_nomination_pending_payouts';
       const { api } = await ApiUtils.getApiInstanceOrThrow(
@@ -680,44 +678,32 @@ export class Callbacks {
         origin
       );
 
-      // Map<era: string, Map<validator: string, payout: [number, string]>>
-      const unclaimed = await getUnclaimedPayouts(
+      // Fetch previous era.
+      const eraResult: AnyData = (
+        await api.query.staking.activeEra()
+      ).toHuman();
+
+      const era: BigNumber = new BigNumber(
+        parseInt((eraResult.index as string).replace(/,/g, ''))
+      ).minus(1);
+
+      // Calculate rewards.
+      const eraRewards = await getEraRewards(
         account.address,
         api,
-        account.chain,
-        true
+        era.toNumber()
       );
-
-      let pendingPayout = new BigNumber(0);
-
-      for (const validatorToPayout of unclaimed.values()) {
-        for (const payoutItem of validatorToPayout.values()) {
-          const payout = payoutItem[1];
-          pendingPayout = pendingPayout.plus(new BigNumber(payout as string));
-        }
-      }
-
-      // Return if no pending payout.
-      if (!isOneShot && pendingPayout.isZero()) {
-        return;
-      }
-
-      // Handle notification and events in main process.
-      const era = data.toHuman().index as string;
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingPayout: new BigNumber(pendingPayout),
+            pendingPayout: new BigNumber(eraRewards),
             chainId: account.chain,
           })
         : null;
 
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {
-          pendingPayout: new BigNumber(pendingPayout),
-          era,
-        }),
+        EventsController.getEvent(entry, { eraRewards, era: era.toString() }),
         notification,
         isOneShot
       );
@@ -737,8 +723,10 @@ export class Callbacks {
    *
    * The nominating account needs to be in the top 512 nominators (have
    * enough stake) to earn rewards from a particular validator.
+   *
+   * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
    */
-  static async callback_nominating_exposure(
+  static async callback_nominating_exposure_deprecated(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -760,7 +748,7 @@ export class Callbacks {
         account.chain,
         origin
       );
-      const exposed = await getAccountExposed(api, era, account);
+      const exposed = await getAccountExposed_deprecated(api, era, account);
 
       // Update account data.
       if (account.nominatingData!.lastCheckedEra < era) {
@@ -791,10 +779,10 @@ export class Callbacks {
   }
 
   /**
-   * @name callback_nominating_exposure_westend
-   * @summary Callback for 'subscribe:account:nominating:exposure' on 'Westend'
+   * @name callback_nominating_exposure
+   * @summary Callback for 'subscribe:account:nominating:exposure'
    */
-  static async callback_nominating_exposure_westend(
+  static async callback_nominating_exposure(
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
@@ -815,15 +803,23 @@ export class Callbacks {
         account.chain,
         origin
       );
-      const vs = account.nominatingData!.validators;
-      const exposed = await getAccountExposedWestend(api, era, account, vs);
 
-      // Update account data.
-      if (account.nominatingData!.lastCheckedEra < era) {
-        account.nominatingData!.exposed = exposed;
-        account.nominatingData!.lastCheckedEra = era;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+      // Cache previous exposure.
+      const { exposed: prevExposed } = account.nominatingData!;
+
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
+
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Return if exposure has not changed.
+      const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
+      if (!isOneShot && prevExposed === exposed) {
+        return;
       }
 
       // Get notification.
@@ -876,92 +872,121 @@ export class Callbacks {
         origin
       );
 
-      const nominatorData: AnyData = (
-        await api.query.staking.nominators(account.address)
-      ).toHuman();
+      // Cache previous commissions.
+      const prev = account.nominatingData!.validators.map((v) => v.commission);
+      let hasChanged = false;
 
-      // Return if account is no longer nominating.
-      if (nominatorData === null) {
-        account.nominatingData = null;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
-      }
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
 
-      // Return if retrieved `submittedIn` matches account data.
-      const submittedIn: number = parseInt(
-        (nominatorData.submittedIn as string).replace(/,/g, '')
-      );
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
 
-      const isSame = account.nominatingData!.submittedIn === submittedIn;
-      if (!isOneShot && isSame) {
-        return;
-      }
+      // Return if commissions haven't changed.
+      if (maybeNominatingData) {
+        const cur = maybeNominatingData.validators.map((v) => v.commission);
+        const areEqual = areArraysEqual(prev, cur);
 
-      // Something may have changed, firstly get new validator info.
-      const accumulated: ValidatorData[] = [];
-
-      for (const validatorId of nominatorData.targets as string[]) {
-        const prefs: AnyData = (
-          await api.query.staking.erasValidatorPrefs(era, validatorId)
-        ).toHuman();
-
-        const commission: string = prefs.commission as string;
-        accumulated.push({ validatorId, commission });
-      }
-
-      // Get an array of changed validators.
-      const changedValidators: ValidatorData[] = [];
-
-      const validatorData = account.nominatingData!.validators;
-      const oldIds = validatorData.map((v) => v.validatorId);
-      const newIds = accumulated.map((v) => v.validatorId);
-
-      const idsInOld = newIds.filter((vid) => oldIds.includes(vid));
-      const idsNew = newIds.filter((vid) => !oldIds.includes(vid));
-
-      // Add old validators with commission changes.
-      for (const vid of idsInOld) {
-        const oldData = validatorData.find((v) => v.validatorId === vid);
-        const newData = accumulated.find((v) => v.validatorId === vid);
-
-        if (!oldData || !newData) {
-          continue;
-        } else if (oldData.commission !== newData.commission) {
-          changedValidators.push(newData);
+        if (!areEqual) {
+          hasChanged = true;
+        } else if (!isOneShot && areEqual) {
+          return;
         }
-      }
-
-      // Add new validator commissions.
-      for (const vid of idsNew) {
-        const vData = accumulated.find((v) => v.validatorId === vid);
-        if (vData) {
-          changedValidators.push(vData);
-        }
-      }
-
-      // Exit early if there are no commission changes.
-      if (!isOneShot && changedValidators.length === 0) {
-        return;
-      }
-
-      // Update account nominating data with new commissions.
-      if (changedValidators.length > 0) {
-        account.nominatingData!.validators = [...accumulated];
-        account.nominatingData!.submittedIn = submittedIn;
-        AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+      } else {
+        // Commission changes if account no longer nominating.
+        hasChanged = true;
       }
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            updated: [...changedValidators],
+            hasChanged,
           })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { updated: [...changedValidators] }),
+        EventsController.getEvent(entry, { era, hasChanged }),
+        notification,
+        isOneShot
+      );
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+
+  /**
+   * @name callback_nominating_nominations
+   * @summary Callback for 'subscribe:account:nominating:nominations'
+   *
+   * Dispatches an event and native OS notification if the account's nominated
+   * validator set has changed.
+   */
+  static async callback_nominating_nominations(
+    data: AnyData,
+    entry: ApiCallEntry,
+    isOneShot = false
+  ) {
+    try {
+      // eslint-disable-next-line prettier/prettier
+      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const account = checkAccountWithProperties(entry, ['nominatingData']);
+      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
+
+      // Exit early if nominator data for this era is already known for this account.
+      if (!isOneShot && alreadyKnown) {
+        return;
+      }
+
+      // Get live nominator data and check to see if it has changed.
+      const origin = 'callback_nominating_nominations';
+      const { api } = await ApiUtils.getApiInstanceOrThrow(
+        account.chain,
+        origin
+      );
+
+      // Cache previous nominations.
+      const prev = account.nominatingData!.validators.map((v) => v.validatorId);
+      let hasChanged = false;
+
+      // Update account nominating data.
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      maybeNominatingData
+        ? (account.nominatingData = { ...maybeNominatingData })
+        : (account.nominatingData = null);
+
+      await AccountsController.set(account.chain, account);
+      entry.task.account = account.flatten();
+
+      // Return if nominations haven't changed.
+      if (maybeNominatingData) {
+        const cur = maybeNominatingData.validators.map((v) => v.validatorId);
+        const areEqual = areArraysEqual(prev, cur);
+
+        if (!areEqual) {
+          hasChanged = true;
+        } else if (!isOneShot && areEqual) {
+          return;
+        }
+      } else {
+        // Nominations have changed if account no longer nominating.
+        hasChanged = true;
+      }
+
+      // Get notification.
+      const notification = this.getNotificationFlag(entry, isOneShot)
+        ? NotificationsController.getNotification(entry, account, {
+            hasChanged,
+          })
+        : null;
+
+      // Handle notification and events in main process.
+      window.myAPI.persistEvent(
+        EventsController.getEvent(entry, { era, hasChanged }),
         notification,
         isOneShot
       );

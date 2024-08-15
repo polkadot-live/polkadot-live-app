@@ -10,7 +10,6 @@ import type {
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
-  ValidatorData,
 } from '@/types/accounts';
 
 /**
@@ -129,7 +128,7 @@ export const pushUniqueEvent = (
       break;
     }
     case 'subscribe:account:nominating:pendingPayouts': {
-      push = filter_nominating_pending_payouts(events, event);
+      push = filter_nominating_era_rewards(events, event);
       break;
     }
     case 'subscribe:account:nominating:exposure': {
@@ -138,6 +137,10 @@ export const pushUniqueEvent = (
     }
     case 'subscribe:account:nominating:commission': {
       push = filter_nominating_commission(events, event);
+      break;
+    }
+    case 'subscribe:account:nominating:nominations': {
+      push = filter_nominating_nominations(events, event);
       break;
     }
     /**
@@ -457,33 +460,33 @@ const filter_nomination_pool_commission = (
 };
 
 /**
- * @name filter_nominating_rewards
+ * @name filter_nominating_era_rewards
  * @summary The new event is considered a duplicate if another event has
  * a matching address, pending payout and era number.
  */
-const filter_nominating_pending_payouts = (
+const filter_nominating_era_rewards = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
   interface Target {
+    eraRewards: string;
     era: string;
-    pendingPayout: string;
   }
 
   const { address } = event.who.data as EventAccountData;
-  const { era, pendingPayout }: Target = event.data;
+  const { eraRewards, era }: Target = event.data;
 
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const { era: nextEra, pendingPayout: nextPendingPayout }: Target = e.data;
+      const { era: nextEra, eraRewards: nextEraRewards }: Target = e.data;
 
       if (
         address === nextAddress &&
         era === nextEra &&
-        pendingPayout === nextPendingPayout
+        eraRewards === nextEraRewards
       ) {
         isUnique = false;
       }
@@ -528,38 +531,66 @@ const filter_nominating_exposure = (
 /**
  * @name filter_nominating_commission
  * @summary The new event is considered a duplicate if another event has
- * a matching address and changed validator data.
+ * a matching address and commission data.
  */
 const filter_nominating_commission = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
   const { address } = event.who.data as EventAccountData;
-  const { updated }: { updated: ValidatorData[] } = event.data;
+  const { era, hasChanged }: { era: number; hasChanged: boolean } = event.data;
 
   let isUnique = true;
 
   events.forEach((e) => {
     if (e.taskAction === event.taskAction && e.data) {
       const { address: nextAddress } = e.who.data as EventAccountData;
-      const { updated: nextUpdated }: { updated: ValidatorData[] } = e.data;
+      const {
+        era: nextEra,
+        hasChanged: nextHasChanged,
+      }: { era: number; hasChanged: boolean } = e.data;
 
-      if (address === nextAddress && updated.length === nextUpdated.length) {
-        let isSameData = true;
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        hasChanged === nextHasChanged
+      ) {
+        isUnique = false;
+      }
+    }
+  });
 
-        for (let i = 0; i < updated.length; ++i) {
-          const { validatorId: valId1, commission: com1 } = updated[i];
-          const { validatorId: valId2, commission: com2 } = nextUpdated[i];
+  return isUnique;
+};
 
-          if (valId1 !== valId2 || com1 !== com2) {
-            isSameData = false;
-            break;
-          }
-        }
+/**
+ * @name filter_nominating_nominations
+ * @summary The new event is considered a duplicate if another event has
+ * a matching address and validator data.
+ */
+const filter_nominating_nominations = (
+  events: EventCallback[],
+  event: EventCallback
+): boolean => {
+  const { address } = event.who.data as EventAccountData;
+  const { era, hasChanged }: { era: number; hasChanged: boolean } = event.data;
 
-        if (isSameData) {
-          isUnique = false;
-        }
+  let isUnique = true;
+
+  events.forEach((e) => {
+    if (e.taskAction === event.taskAction && e.data) {
+      const { address: nextAddress } = e.who.data as EventAccountData;
+      const {
+        era: nextEra,
+        hasChanged: nextHasChanged,
+      }: { era: number; hasChanged: boolean } = e.data;
+
+      if (
+        address === nextAddress &&
+        era === nextEra &&
+        hasChanged === nextHasChanged
+      ) {
+        isUnique = false;
       }
     }
   });

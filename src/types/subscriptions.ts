@@ -83,7 +83,8 @@ export type TaskAction =
   | 'subscribe:account:nominationPools:commission'
   | 'subscribe:account:nominating:pendingPayouts'
   | 'subscribe:account:nominating:exposure'
-  | 'subscribe:account:nominating:commission';
+  | 'subscribe:account:nominating:commission'
+  | 'subscribe:account:nominating:nominations';
 
 /// String literals to define task categories.
 export type TaskCategory =
