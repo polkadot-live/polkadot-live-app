@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.1.1-alpha) (2024-08-15)
+
+
+### Bug Fixes
+
+* debugging tasks ([#593](https://github.com/polkadot-live/polkadot-live-app/issues/593)) ([26e8b17](https://github.com/polkadot-live/polkadot-live-app/commit/26e8b177db06a0bb3a03641b7d65c1d868e4179d))
+* debugging tasks ([#595](https://github.com/polkadot-live/polkadot-live-app/issues/595)) ([4c8d390](https://github.com/polkadot-live/polkadot-live-app/commit/4c8d390e4addd6fcef6420c22985dd3842dbc6a6))
+* os notification toggle ([#596](https://github.com/polkadot-live/polkadot-live-app/issues/596)) ([d5feffc](https://github.com/polkadot-live/polkadot-live-app/commit/d5feffc388a3bee3842db2bca42ca8a49b4c6466))
+* referenda data parsing ([#630](https://github.com/polkadot-live/polkadot-live-app/issues/630)) ([0a36ecb](https://github.com/polkadot-live/polkadot-live-app/commit/0a36ecb61733d6bb0ce0cc419b69940785ffa96b))
+
 ## [0.1.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.1.0-alpha) (2024-07-26)
 
 
