@@ -83,8 +83,6 @@ export class AddressesController {
   /**
    * @name getAll
    * @summary Get all stored addresses in serialized form.
-   *
-   * @todo Support ledger accounts.
    */
   static getAll(): string {
     const map = new Map<string, string>();
