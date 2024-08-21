@@ -218,8 +218,7 @@ export const HelpConfig: HelpItems = [
     title: 'Import Data',
     definition: [
       'Import a data file that was exported from another Polkadot Live installation to restore your accounts.',
-      'Accounts in the data file that do not currently exist in Polkadot Live will be added to the import window. From there, you can import the account and turn on subscriptions in the normal manner.',
-      'This feature currently supports Vault and Read-Only accounts.',
+      'Accounts in the data file that do not currently exist in Polkadot Live will be added to the Accounts window. From there, you can import the account and turn on subscriptions in the normal manner.',
     ],
   },
   {
@@ -228,7 +227,6 @@ export const HelpConfig: HelpItems = [
     definition: [
       'Export account data to a text file, allowing you to backup your accounts managed by Polkadot Live.',
       'Use the corresponding "Import" button in the settings window to read the exported data file and restore your accounts in Polkadot Live.',
-      'This feature currently supports Vault and Read-Only accounts.',
     ],
   },
   {
