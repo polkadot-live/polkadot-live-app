@@ -8,6 +8,11 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useEffect } from 'react';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
@@ -29,8 +34,15 @@ export const useImportMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'import:account:add': {
-              const { json } = ev.data.data;
-              await handleImportAddressFromBackup(JSON.parse(json));
+              const { json, source }: { json: string; source: AccountSource } =
+                ev.data.data;
+
+              const parsed =
+                source === 'ledger'
+                  ? (JSON.parse(json) as LedgerLocalAddress)
+                  : (JSON.parse(json) as LocalAddress);
+
+              await handleImportAddressFromBackup(parsed, source);
               break;
             }
             case 'import:account:processing': {

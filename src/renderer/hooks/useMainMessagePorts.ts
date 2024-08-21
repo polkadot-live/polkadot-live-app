@@ -32,7 +32,11 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type { LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type {
@@ -241,10 +245,13 @@ export const useMainMessagePorts = () => {
   };
 
   /// Utility to post message to import window.
-  const postToImport = (json: LocalAddress) => {
+  const postToImport = (
+    json: LocalAddress | LedgerLocalAddress,
+    source: AccountSource
+  ) => {
     ConfigRenderer.portToImport.postMessage({
       task: 'import:account:add',
-      data: { json: JSON.stringify(json) },
+      data: { json: JSON.stringify(json), source },
     });
   };
 
@@ -289,9 +296,19 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         try {
-          // TODO: Support importing ledger addresses.
-          const parsed: LocalAddress[] = JSON.parse(response.data.serialized);
-          parsed.forEach((a) => a.source !== 'ledger' && postToImport(a));
+          const { serialized } = response.data;
+          const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
+          const parsedMap = new Map<AccountSource, string>(parsedArr);
+
+          for (const [source, str] of parsedMap.entries()) {
+            const parsed =
+              source === 'ledger'
+                ? (JSON.parse(str) as LedgerLocalAddress[])
+                : (JSON.parse(str) as LocalAddress[]);
+
+            parsed.forEach((a) => postToImport(a, source));
+          }
+
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {
           postToSettings(false, 'Error parsing JSON.');

@@ -1,7 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource, LocalAddress } from '@/types/accounts';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@/types/accounts';
 import type { AnyData } from '@/types/misc';
 
 export interface ImportHandlerContextInterface {
@@ -12,5 +16,8 @@ export interface ImportHandlerContextInterface {
     pubKey?: string,
     device?: AnyData
   ) => Promise<void>;
-  handleImportAddressFromBackup: (imported: LocalAddress) => Promise<void>;
+  handleImportAddressFromBackup: (
+    imported: LedgerLocalAddress | LocalAddress,
+    source: AccountSource
+  ) => Promise<void>;
 }
