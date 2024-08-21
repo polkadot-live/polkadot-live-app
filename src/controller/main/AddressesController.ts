@@ -87,15 +87,18 @@ export class AddressesController {
    * @todo Support ledger accounts.
    */
   static getAll(): string {
-    let addresses: LocalAddress[] = [];
+    const map = new Map<string, string>();
 
-    for (const source of ['read-only', 'vault'] as AccountSource[]) {
+    for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
-      const fetched = this.getStoredAddresses(key) as LocalAddress[];
-      addresses = addresses.concat(fetched);
+      const fetched =
+        source === 'ledger'
+          ? (this.getStoredAddresses(key) as LedgerLocalAddress[])
+          : (this.getStoredAddresses(key) as LocalAddress[]);
+      map.set(source, JSON.stringify(fetched));
     }
 
-    return JSON.stringify(addresses);
+    return JSON.stringify(Array.from(map.entries()));
   }
 
   /**
