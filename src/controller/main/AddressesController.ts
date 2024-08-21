@@ -85,7 +85,7 @@ export class AddressesController {
    * @summary Get all stored addresses in serialized form.
    */
   static getAll(): string {
-    const map = new Map<string, string>();
+    const map = new Map<AccountSource, string>();
 
     for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
