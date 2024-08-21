@@ -245,10 +245,13 @@ export const useMainMessagePorts = () => {
   };
 
   /// Utility to post message to import window.
-  const postToImport = (json: LocalAddress | LedgerLocalAddress) => {
+  const postToImport = (
+    json: LocalAddress | LedgerLocalAddress,
+    source: AccountSource
+  ) => {
     ConfigRenderer.portToImport.postMessage({
       task: 'import:account:add',
-      data: { json: JSON.stringify(json) },
+      data: { json: JSON.stringify(json), source },
     });
   };
 
@@ -293,7 +296,6 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         try {
-          // TODO: Support importing ledger addresses.
           const { serialized } = response.data;
           const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
           const parsedMap = new Map<AccountSource, string>(parsedArr);
@@ -304,7 +306,7 @@ export const useMainMessagePorts = () => {
                 ? (JSON.parse(str) as LedgerLocalAddress[])
                 : (JSON.parse(str) as LocalAddress[]);
 
-            parsed.forEach((a) => postToImport(a));
+            parsed.forEach((a) => postToImport(a, source));
           }
 
           postToSettings(response.result, 'Data imported successfully.');

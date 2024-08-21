@@ -65,8 +65,11 @@ export const ImportHandlerProvider = ({
   };
 
   /// Import an "imported" account from a data file.
-  const handleImportAddressFromBackup = async (imported: LocalAddress) => {
-    const { address, source } = imported;
+  const handleImportAddressFromBackup = async (
+    imported: LocalAddress | LedgerLocalAddress,
+    source: AccountSource
+  ) => {
+    const { address } = imported;
 
     // Return if address is already imported.
     if (isAlreadyImported(address)) {
@@ -77,7 +80,7 @@ export const ImportHandlerProvider = ({
     imported.isImported = false;
 
     // Update addresses state and references.
-    handleAddressImport(source, imported); // TODO: support ledger accounts.
+    handleAddressImport(source, imported);
 
     // Persist account to store in main process.
     await persistAddressToStore(source, imported);
