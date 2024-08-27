@@ -39,6 +39,7 @@ import type {
 } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
+import type { ExportResult, ImportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -260,7 +261,7 @@ export const useMainMessagePorts = () => {
    * @summary Write Polkadot Live data to a file.
    */
   const handleDataExport = async () => {
-    const { result, msg } = await window.myAPI.exportAppData();
+    const { result, msg }: ExportResult = await window.myAPI.exportAppData();
 
     // Render toastify message in settings window.
     switch (msg) {
@@ -291,11 +292,14 @@ export const useMainMessagePorts = () => {
    * @summary Import and process Polkadot Live data.
    */
   const handleDataImport = async () => {
-    const response = await window.myAPI.importAppData();
+    const response: ImportResult = await window.myAPI.importAppData();
 
     switch (response.msg) {
       case 'success': {
         try {
+          if (!response.data) {
+            throw new Error('No import data.');
+          }
           const { serialized } = response.data;
           const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
           const parsedMap = new Map<AccountSource, string>(parsedArr);

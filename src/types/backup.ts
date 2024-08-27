@@ -5,3 +5,11 @@ export interface ExportResult {
   result: boolean;
   msg: string;
 }
+
+export interface ImportResult {
+  result: boolean;
+  msg: string;
+  data?: {
+    serialized: string;
+  };
+}

@@ -14,6 +14,7 @@ import type {
   SettingAction,
 } from '@/renderer/screens/Settings/types';
 import type { WorkspaceItem } from './developerConsole/workspaces';
+import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<void | string>;
@@ -39,8 +40,8 @@ export interface PreloadAPI {
 
   getWindowId: () => string;
 
-  exportAppData: ApiExportAppData;
-  importAppData: ApiImportAppData;
+  exportAppData: () => Promise<ExportResult>;
+  importAppData: () => Promise<ImportResult>;
 
   toggleSetting: (action: SettingAction) => void;
   getAppSettings: ApiGetAppSettings;
@@ -141,14 +142,6 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiExportAppData = () => Promise<{ result: boolean; msg: string }>;
-
-type ApiImportAppData = () => Promise<{
-  result: boolean;
-  msg: string;
-  data?: AnyJson;
-}>;
-
 type ApiToggleWorkspaceVisibility = () => void;
 
 type ApiGetAppSettings = () => Promise<PersistedSettings>;

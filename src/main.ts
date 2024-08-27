@@ -3,7 +3,6 @@
 
 import {
   app,
-  dialog,
   ipcMain,
   powerMonitor,
   protocol,
@@ -16,7 +15,6 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { AddressesController } from './controller/main/AddressesController';
 import { BackupController } from './controller/main/BackupController';
@@ -695,34 +693,8 @@ app.whenReady().then(async () => {
   );
 
   // Import a data-file.
-  ipcMain.handle('app:data:import', async () => {
-    const window = WindowsController.get('settings');
-    if (!window) {
-      return { result: false, msg: 'error' };
-    }
-
-    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
-      title: 'Import Data',
-      filters: [
-        {
-          name: 'Text Files',
-          extensions: ['txt'],
-        },
-      ],
-      properties: ['openFile'],
-    });
-
-    if (!canceled && filePaths.length) {
-      try {
-        const serialized = await fsPromises.readFile(filePaths[0], {
-          encoding: 'utf-8',
-        });
-        return { result: true, msg: 'success', data: { serialized } };
-      } catch (err) {
-        return { result: false, msg: 'error' };
-      }
-    } else {
-      return { result: false, msg: 'canceled' };
-    }
-  });
+  ipcMain.handle(
+    'app:data:import',
+    async () => await BackupController.import()
+  );
 });
