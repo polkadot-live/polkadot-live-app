@@ -19,6 +19,7 @@ import unhandled from 'electron-unhandled';
 import { promises as fsPromises } from 'fs';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { AddressesController } from './controller/main/AddressesController';
+import { BackupController } from './controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
@@ -688,51 +689,10 @@ app.whenReady().then(async () => {
    */
 
   // Export a data-file.
-  ipcMain.handle('app:data:export', async () => {
-    if (!ConfigMain.exportingData) {
-      ConfigMain.exportingData = true;
-
-      // Get response from dialog.
-      const window = WindowsController.get('settings');
-      if (!window) {
-        return { result: false, msg: 'error' };
-      }
-
-      const { canceled, filePath } = await dialog.showSaveDialog(window, {
-        title: 'Export Data',
-        defaultPath: 'polkadot-live-data.txt',
-        filters: [
-          {
-            name: 'Text Files',
-            extensions: ['txt'],
-          },
-        ],
-        properties: [],
-      });
-
-      // Handle save or cancel.
-      if (!canceled && filePath) {
-        try {
-          const serialized = AddressesController.getAll();
-          await fsPromises.writeFile(filePath, serialized, {
-            encoding: 'utf8',
-          });
-
-          ConfigMain.exportingData = false;
-          return { result: true, msg: 'success' };
-        } catch (err) {
-          ConfigMain.exportingData = false;
-          return { result: false, msg: 'error' };
-        }
-      } else {
-        ConfigMain.exportingData = false;
-        return { result: false, msg: 'canceled' };
-      }
-    }
-
-    // Export dialog is already open.
-    return { result: false, msg: 'executing' };
-  });
+  ipcMain.handle(
+    'app:data:export',
+    async () => await BackupController.export()
+  );
 
   // Import a data-file.
   ipcMain.handle('app:data:import', async () => {
