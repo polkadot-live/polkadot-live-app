@@ -6842,26 +6842,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.1.1":
-  version: 11.1.1
-  resolution: "framer-motion@npm:11.1.1"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@emotion/is-prop-valid": "*"
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  peerDependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 0f80828f27ab18937a0dee55efacbd124f248f8eb869e581aeabbbbd755eb2cd42f70f5490edf1280abdef3d08c4c0d3f404db8fe6d32583d3842cb575f09cdb
-  languageName: node
-  linkType: hard
-
 "framer-motion@npm:^11.2.10":
   version: 11.2.11
   resolution: "framer-motion@npm:11.2.11"
@@ -6879,6 +6859,26 @@ __metadata:
     react-dom:
       optional: true
   checksum: 1ba86d3266a19beed99498a61002353498d9348a32175919ce9d1b50609be3d2af8a199596ca92db674398fbd38c1f1b131a38306972e8a588050aa0a572672d
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:^11.3.31":
+  version: 11.3.31
+  resolution: "framer-motion@npm:11.3.31"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 89e57c9a0f4439a9378461151be49ddf98ad628f21a7c89f0242c54c3f77876f65c574bb0fcac5e0ee5ab5153e9c4892115653b2f242646ab0b24ff24d25f087
   languageName: node
   linkType: hard
 
@@ -10371,7 +10371,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.0.0"
     expect: "npm:^29.7.0"
     expect-webdriverio: "npm:^4.11.9"
-    framer-motion: "npm:^11.1.1"
+    framer-motion: "npm:^11.3.31"
     html5-qrcode: "npm:^2.3.8"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
