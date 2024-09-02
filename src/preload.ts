@@ -103,9 +103,6 @@ export const API: PreloadAPI = {
   sendIntervalTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:interval', task),
 
-  clearPersistedIntervalTasks: async () =>
-    await ipcRenderer.invoke('app:interval:tasks:clear'),
-
   persistIntervalTask: async (serialized: string) =>
     await ipcRenderer.invoke('app:interval:task:add', serialized),
 

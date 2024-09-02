@@ -445,8 +445,12 @@ app.whenReady().then(async () => {
         const stored: string = storePointer.get(key) || '[]';
         return stored;
       }
+      // Clear interval subscriptions from store.
       case 'interval:task:clear': {
-        break;
+        const key = 'interval_subscriptions';
+        const storePointer: Record<string, AnyJson> = store;
+        storePointer.delete(key);
+        return 'done';
       }
       case 'interval:task:add': {
         break;
@@ -458,14 +462,6 @@ app.whenReady().then(async () => {
         break;
       }
     }
-  });
-
-  // Clear interval subscriptions from store.
-  ipcMain.handle('app:interval:tasks:clear', async () => {
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyJson> = store;
-    storePointer.delete(key);
-    return 'done';
   });
 
   // Add interval subscription to store.

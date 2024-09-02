@@ -32,8 +32,6 @@ export interface PreloadAPI {
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
 
-  clearPersistedIntervalTasks: () => Promise<string>;
-
   persistIntervalTask: ApiPersistIntervalTask;
   removeIntervalTask: ApiRemoveIntervalTask;
   updateIntervalTask: ApiUpdateIntervalTask;
