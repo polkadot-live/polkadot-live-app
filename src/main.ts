@@ -464,38 +464,35 @@ app.whenReady().then(async () => {
 
         stored.push(JSON.parse(serialized));
         storePointer.set(key, JSON.stringify(stored));
-        break;
+        return;
       }
+      // Remove interval subscription from store.
       case 'interval:task:remove': {
-        break;
+        const { serialized }: { serialized: string } = task.data;
+        const key = 'interval_subscriptions';
+        const storePointer: Record<string, AnyJson> = store;
+
+        const stored: IntervalSubscription[] = storePointer.get(key)
+          ? JSON.parse(storePointer.get(key) as string)
+          : [];
+
+        const target: IntervalSubscription = JSON.parse(serialized);
+        const filtered = stored.filter(
+          (t) =>
+            !(
+              t.action === target.action &&
+              t.chainId === target.chainId &&
+              t.referendumId === target.referendumId
+            )
+        );
+
+        storePointer.set(key, JSON.stringify(filtered));
+        return;
       }
       case 'interval:task:update': {
         break;
       }
     }
-  });
-
-  // Add interval subscription to store.
-  ipcMain.handle('app:interval:task:remove', async (_, serialized: string) => {
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyJson> = store;
-
-    const stored: IntervalSubscription[] = storePointer.get(key)
-      ? JSON.parse(storePointer.get(key) as string)
-      : [];
-
-    const task: IntervalSubscription = JSON.parse(serialized);
-    const { action, chainId, referendumId } = task;
-    const filtered = stored.filter(
-      (t) =>
-        !(
-          t.action === action &&
-          t.chainId === chainId &&
-          t.referendumId === referendumId
-        )
-    );
-
-    storePointer.set(key, JSON.stringify(filtered));
   });
 
   // Update an interval subscription in the store.

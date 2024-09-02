@@ -104,7 +104,10 @@ export const IntervalTasksManagerProvider = ({
     removeIntervalSubscription(task);
 
     // Remove task from store.
-    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:remove',
+      data: { serialized: JSON.stringify(task) },
+    });
 
     // Send message to OpenGov window to update its subscription state.
     ConfigRenderer.portToOpenGov.postMessage({

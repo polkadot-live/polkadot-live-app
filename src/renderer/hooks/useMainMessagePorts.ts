@@ -546,7 +546,10 @@ export const useMainMessagePorts = () => {
     removeIntervalSubscription({ ...task });
 
     // Remove task from store.
-    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:remove',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /**
@@ -596,7 +599,10 @@ export const useMainMessagePorts = () => {
       removeIntervalSubscription({ ...task });
 
       // Remove task from store.
-      await window.myAPI.removeIntervalTask(JSON.stringify(task));
+      await window.myAPI.sendIntervalTask({
+        action: 'interval:task:remove',
+        data: { serialized: JSON.stringify(task) },
+      });
     }
   };
 
