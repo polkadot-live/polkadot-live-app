@@ -294,7 +294,10 @@ export const Permissions = ({
         },
       });
 
-      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+      await window.myAPI.sendIntervalTask({
+        action: 'interval:task:update',
+        data: { serialized: JSON.stringify(task) },
+      });
     }
   };
 

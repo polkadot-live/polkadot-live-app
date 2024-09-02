@@ -32,8 +32,6 @@ export interface PreloadAPI {
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
 
-  updateIntervalTask: ApiUpdateIntervalTask;
-
   getWindowId: () => string;
 
   exportAppData: () => Promise<ExportResult>;
@@ -195,5 +193,3 @@ type ApiReportStaleEvent = (
 ) => Electron.IpcRenderer;
 
 type ApiInitOnlineStatus = () => Promise<void>;
-
-type ApiUpdateIntervalTask = (serialized: string) => Promise<void>;

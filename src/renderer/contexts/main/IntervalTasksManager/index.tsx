@@ -58,7 +58,10 @@ export const IntervalTasksManagerProvider = ({
     });
 
     // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:update',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -85,7 +88,10 @@ export const IntervalTasksManagerProvider = ({
     });
 
     // Update persisted task in store.
-    await window.myAPI.updateIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:update',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /// Handle removing an interval subscription.
@@ -148,7 +154,10 @@ export const IntervalTasksManagerProvider = ({
       });
 
       // Update persisted task in store.
-      await window.myAPI.updateIntervalTask(JSON.stringify(task));
+      await window.myAPI.sendIntervalTask({
+        action: 'interval:task:update',
+        data: { serialized: JSON.stringify(task) },
+      });
     }
   };
 
