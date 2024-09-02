@@ -18,6 +18,7 @@ import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<void | string>;
+  sendIntervalTask: (task: IpcTask) => Promise<void | string>;
 
   getOsPlatform: () => Promise<string>;
 
@@ -31,7 +32,6 @@ export interface PreloadAPI {
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
 
-  getPersistedIntervalTasks: () => Promise<string>;
   clearPersistedIntervalTasks: () => Promise<string>;
 
   persistIntervalTask: ApiPersistIntervalTask;

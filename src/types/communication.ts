@@ -15,12 +15,18 @@ export interface PortPair {
 }
 
 export interface IpcTask {
-  action:
-    | 'raw-account:persist'
+  action: // Addresses
+  | 'raw-account:persist'
     | 'raw-account:delete'
     | 'raw-account:add'
     | 'raw-account:remove'
     | 'raw-account:get'
-    | 'raw-account:rename';
+    | 'raw-account:rename'
+    // Interval Subscriptions
+    | 'interval:task:get'
+    | 'interval:task:clear'
+    | 'interval:task:add'
+    | 'interval:task:remove'
+    | 'interval:task:update';
   data: AnyData;
 }

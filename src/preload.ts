@@ -100,8 +100,8 @@ export const API: PreloadAPI = {
    * Interval subscriptions
    */
 
-  getPersistedIntervalTasks: async () =>
-    await ipcRenderer.invoke('app:interval:tasks:get'),
+  sendIntervalTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:interval', task),
 
   clearPersistedIntervalTasks: async () =>
     await ipcRenderer.invoke('app:interval:tasks:clear'),

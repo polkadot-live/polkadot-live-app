@@ -28,6 +28,7 @@ import { handleApiDisconnects } from '@/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';
 import type { IntervalSubscription } from '@/types/subscriptions';
+import type { IpcTask } from '@/types/communication';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -316,7 +317,8 @@ export const BootstrappingProvider = ({
 
   /// Utility.
   const initIntervalsController = async (isOnline: boolean) => {
-    const serialized = await window.myAPI.getPersistedIntervalTasks();
+    const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
+    const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.

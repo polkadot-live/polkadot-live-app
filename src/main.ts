@@ -435,13 +435,29 @@ app.whenReady().then(async () => {
   /**
    * Interval subscriptions
    */
-
-  // Get interval subscriptions from store.
-  ipcMain.handle('app:interval:tasks:get', async () => {
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyJson> = store;
-    const stored: string = storePointer.get(key) || '[]';
-    return stored;
+  ipcMain.handle('main:task:interval', async (_, task: IpcTask) => {
+    const { action } = task;
+    switch (action) {
+      // Get serialized interval subscriptions from store.
+      case 'interval:task:get': {
+        const key = 'interval_subscriptions';
+        const storePointer: Record<string, AnyJson> = store;
+        const stored: string = storePointer.get(key) || '[]';
+        return stored;
+      }
+      case 'interval:task:clear': {
+        break;
+      }
+      case 'interval:task:add': {
+        break;
+      }
+      case 'interval:task:remove': {
+        break;
+      }
+      case 'interval:task:update': {
+        break;
+      }
+    }
   });
 
   // Clear interval subscriptions from store.
