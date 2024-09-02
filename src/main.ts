@@ -19,6 +19,7 @@ import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { AddressesController } from './controller/main/AddressesController';
 import { BackupController } from './controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
+import { IntervalsController } from './controller/main/IntervalsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
@@ -42,10 +43,7 @@ import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
-import type {
-  SubscriptionTask,
-  IntervalSubscription,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 const debug = MainDebug;
 
@@ -226,33 +224,9 @@ app.whenReady().then(async () => {
    * Raw Account management
    */
 
-  ipcMain.handle('main:raw-account', async (_, task: IpcTask) => {
-    switch (task.action) {
-      case 'raw-account:add': {
-        AddressesController.add(task);
-        break;
-      }
-      case 'raw-account:delete': {
-        AddressesController.delete(task);
-        break;
-      }
-      case 'raw-account:get': {
-        return AddressesController.get(task);
-      }
-      case 'raw-account:persist': {
-        AddressesController.persist(task);
-        break;
-      }
-      case 'raw-account:remove': {
-        AddressesController.remove(task);
-        break;
-      }
-      case 'raw-account:rename': {
-        AddressesController.rename(task);
-        break;
-      }
-    }
-  });
+  ipcMain.handle('main:raw-account', async (_, task: IpcTask) =>
+    AddressesController.process(task)
+  );
 
   /**
    * Account management
@@ -435,84 +409,9 @@ app.whenReady().then(async () => {
   /**
    * Interval subscriptions
    */
-  ipcMain.handle('main:task:interval', async (_, task: IpcTask) => {
-    const { action } = task;
-    switch (action) {
-      // Get serialized interval subscriptions from store.
-      case 'interval:task:get': {
-        const key = 'interval_subscriptions';
-        const storePointer: Record<string, AnyJson> = store;
-        const stored: string = storePointer.get(key) || '[]';
-        return stored;
-      }
-      // Clear interval subscriptions from store.
-      case 'interval:task:clear': {
-        const key = 'interval_subscriptions';
-        const storePointer: Record<string, AnyJson> = store;
-        storePointer.delete(key);
-        return 'done';
-      }
-      // Add interval subscription to store.
-      case 'interval:task:add': {
-        const { serialized }: { serialized: string } = task.data;
-        const key = 'interval_subscriptions';
-        const storePointer: Record<string, AnyJson> = store;
-
-        const stored: IntervalSubscription[] = storePointer.get(key)
-          ? JSON.parse(storePointer.get(key) as string)
-          : [];
-
-        stored.push(JSON.parse(serialized));
-        storePointer.set(key, JSON.stringify(stored));
-        return;
-      }
-      // Remove interval subscription from store.
-      case 'interval:task:remove': {
-        const { serialized }: { serialized: string } = task.data;
-        const key = 'interval_subscriptions';
-        const storePointer: Record<string, AnyJson> = store;
-
-        const stored: IntervalSubscription[] = storePointer.get(key)
-          ? JSON.parse(storePointer.get(key) as string)
-          : [];
-
-        const target: IntervalSubscription = JSON.parse(serialized);
-        const filtered = stored.filter(
-          (t) =>
-            !(
-              t.action === target.action &&
-              t.chainId === target.chainId &&
-              t.referendumId === target.referendumId
-            )
-        );
-
-        storePointer.set(key, JSON.stringify(filtered));
-        return;
-      }
-      // Update an interval subscription in the store.
-      case 'interval:task:update': {
-        const { serialized }: { serialized: string } = task.data;
-        const key = 'interval_subscriptions';
-        const storePointer: Record<string, AnyJson> = store;
-
-        const target: IntervalSubscription = JSON.parse(serialized);
-        const stored: IntervalSubscription[] = storePointer.get(key)
-          ? JSON.parse(storePointer.get(key) as string)
-          : [];
-
-        const updated = stored.map((t) =>
-          t.action === target.action &&
-          t.chainId === target.chainId &&
-          t.referendumId === target.referendumId
-            ? target
-            : t
-        );
-
-        storePointer.set(key, JSON.stringify(updated));
-        return;
-      }
-    }
-  });
+  ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
+    IntervalsController.process(task)
+  );
 
   /**
    * Platform

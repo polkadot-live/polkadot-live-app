@@ -13,10 +13,42 @@ import type {
 
 export class AddressesController {
   /**
+   * @name process
+   * @summary Process an address IPC task.
+   */
+  static process(task: IpcTask): string | void {
+    switch (task.action) {
+      case 'raw-account:add': {
+        this.add(task);
+        break;
+      }
+      case 'raw-account:delete': {
+        this.delete(task);
+        break;
+      }
+      case 'raw-account:get': {
+        return this.get(task);
+      }
+      case 'raw-account:persist': {
+        this.persist(task);
+        break;
+      }
+      case 'raw-account:remove': {
+        this.remove(task);
+        break;
+      }
+      case 'raw-account:rename': {
+        this.rename(task);
+        break;
+      }
+    }
+  }
+
+  /**
    * @name add
    * @summary Set the import flag of an address to `true`.
    */
-  static add(task: IpcTask) {
+  private static add(task: IpcTask) {
     const { source, address } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
@@ -47,7 +79,7 @@ export class AddressesController {
    * @name delete
    * @summary Delete a received address' data from store.
    */
-  static delete(task: IpcTask) {
+  private static delete(task: IpcTask) {
     const { source, address } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
@@ -71,16 +103,6 @@ export class AddressesController {
   }
 
   /**
-   * @name get
-   * @summary Get all stored addresses for an account type.
-   */
-  static get(task: IpcTask): string {
-    const { source } = task.data;
-    const key = ConfigMain.getStorageKey(source);
-    return store.has(key) ? this.getFromStore(key) : '[]';
-  }
-
-  /**
    * @name getAll
    * @summary Get all stored addresses in serialized form.
    */
@@ -100,10 +122,20 @@ export class AddressesController {
   }
 
   /**
+   * @name get
+   * @summary Get all stored addresses for an account type.
+   */
+  private static get(task: IpcTask): string {
+    const { source } = task.data;
+    const key = ConfigMain.getStorageKey(source);
+    return store.has(key) ? this.getFromStore(key) : '[]';
+  }
+
+  /**
    * @name persist
    * @summary Persist received address data to store.
    */
-  static persist(task: IpcTask) {
+  private static persist(task: IpcTask) {
     try {
       const { source, serialized } = task.data;
       const key = ConfigMain.getStorageKey(source);
@@ -135,7 +167,7 @@ export class AddressesController {
    * @name remove
    * @summary Set the import flag of an address to `false`.
    */
-  static remove(task: IpcTask) {
+  private static remove(task: IpcTask) {
     const { source, address } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
@@ -166,7 +198,7 @@ export class AddressesController {
    * @name rename
    * @summary Update a stored address' name.
    */
-  static rename(task: IpcTask) {
+  private static rename(task: IpcTask) {
     const { source, address, newName } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
@@ -189,15 +221,15 @@ export class AddressesController {
     }
   }
 
-  static getFromStore(key: string) {
+  private static getFromStore(key: string) {
     return (store as Record<string, AnyData>).get(key) as string;
   }
 
-  static setInStore(key: string, serialized: string) {
+  private static setInStore(key: string, serialized: string) {
     (store as Record<string, AnyData>).set(key, serialized);
   }
 
-  static getStoredAddresses(
+  private static getStoredAddresses(
     key: string,
     ledger = false
   ): LedgerLocalAddress[] | LocalAddress[] {
@@ -210,13 +242,13 @@ export class AddressesController {
         : ([] as LocalAddress[]);
   }
 
-  static throwIfExists(address: string) {
+  private static throwIfExists(address: string) {
     if (this.isAlreadyPersisted(address)) {
       throw new Error(`Persist Error: Account ${address} already exists.`);
     }
   }
 
-  static isAlreadyPersisted(address: string): boolean {
+  private static isAlreadyPersisted(address: string): boolean {
     for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
       if (source === 'ledger') {
