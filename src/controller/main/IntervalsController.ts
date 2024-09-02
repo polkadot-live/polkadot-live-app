@@ -14,21 +14,21 @@ export class IntervalsController {
   static process(task: IpcTask): string | void {
     switch (task.action) {
       case 'interval:task:add': {
-        IntervalsController.add(task);
+        this.add(task);
         return;
       }
       case 'interval:task:clear': {
-        return IntervalsController.clear();
+        return this.clear();
       }
       case 'interval:task:get': {
-        return IntervalsController.get();
+        return this.get();
       }
       case 'interval:task:remove': {
-        IntervalsController.remove(task);
+        this.remove(task);
         return;
       }
       case 'interval:task:update': {
-        IntervalsController.update(task);
+        this.update(task);
         return;
       }
     }

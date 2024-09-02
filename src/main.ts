@@ -224,33 +224,9 @@ app.whenReady().then(async () => {
    * Raw Account management
    */
 
-  ipcMain.handle('main:raw-account', async (_, task: IpcTask) => {
-    switch (task.action) {
-      case 'raw-account:add': {
-        AddressesController.add(task);
-        break;
-      }
-      case 'raw-account:delete': {
-        AddressesController.delete(task);
-        break;
-      }
-      case 'raw-account:get': {
-        return AddressesController.get(task);
-      }
-      case 'raw-account:persist': {
-        AddressesController.persist(task);
-        break;
-      }
-      case 'raw-account:remove': {
-        AddressesController.remove(task);
-        break;
-      }
-      case 'raw-account:rename': {
-        AddressesController.rename(task);
-        break;
-      }
-    }
-  });
+  ipcMain.handle('main:raw-account', async (_, task: IpcTask) =>
+    AddressesController.process(task)
+  );
 
   /**
    * Account management
