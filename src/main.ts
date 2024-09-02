@@ -452,7 +452,18 @@ app.whenReady().then(async () => {
         storePointer.delete(key);
         return 'done';
       }
+      // Add interval subscription to store.
       case 'interval:task:add': {
+        const { serialized }: { serialized: string } = task.data;
+        const key = 'interval_subscriptions';
+        const storePointer: Record<string, AnyJson> = store;
+
+        const stored: IntervalSubscription[] = storePointer.get(key)
+          ? JSON.parse(storePointer.get(key) as string)
+          : [];
+
+        stored.push(JSON.parse(serialized));
+        storePointer.set(key, JSON.stringify(stored));
         break;
       }
       case 'interval:task:remove': {
@@ -462,19 +473,6 @@ app.whenReady().then(async () => {
         break;
       }
     }
-  });
-
-  // Add interval subscription to store.
-  ipcMain.handle('app:interval:task:add', async (_, serialized: string) => {
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyJson> = store;
-
-    const stored: IntervalSubscription[] = storePointer.get(key)
-      ? JSON.parse(storePointer.get(key) as string)
-      : [];
-
-    stored.push(JSON.parse(serialized));
-    storePointer.set(key, JSON.stringify(stored));
   });
 
   // Add interval subscription to store.
