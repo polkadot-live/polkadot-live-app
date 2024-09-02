@@ -504,7 +504,7 @@ app.whenReady().then(async () => {
           t.action === target.action &&
           t.chainId === target.chainId &&
           t.referendumId === target.referendumId
-            ? task
+            ? target
             : t
         );
 
