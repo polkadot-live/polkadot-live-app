@@ -18,6 +18,7 @@ import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<void | string>;
+  sendIntervalTask: (task: IpcTask) => Promise<void | string>;
 
   getOsPlatform: () => Promise<string>;
 
@@ -30,13 +31,6 @@ export interface PreloadAPI {
   reportWorkspace: (
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
-
-  getPersistedIntervalTasks: () => Promise<string>;
-  clearPersistedIntervalTasks: () => Promise<string>;
-
-  persistIntervalTask: ApiPersistIntervalTask;
-  removeIntervalTask: ApiRemoveIntervalTask;
-  updateIntervalTask: ApiUpdateIntervalTask;
 
   getWindowId: () => string;
 
@@ -199,7 +193,3 @@ type ApiReportStaleEvent = (
 ) => Electron.IpcRenderer;
 
 type ApiInitOnlineStatus = () => Promise<void>;
-
-type ApiPersistIntervalTask = (serialized: string) => Promise<void>;
-type ApiRemoveIntervalTask = (serialized: string) => Promise<void>;
-type ApiUpdateIntervalTask = (serialized: string) => Promise<void>;

@@ -522,7 +522,10 @@ export const useMainMessagePorts = () => {
     addIntervalSubscription({ ...task });
 
     // Persist task to store.
-    await window.myAPI.persistIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:add',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /**
@@ -543,7 +546,10 @@ export const useMainMessagePorts = () => {
     removeIntervalSubscription({ ...task });
 
     // Remove task from store.
-    await window.myAPI.removeIntervalTask(JSON.stringify(task));
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:task:remove',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /**
@@ -566,7 +572,10 @@ export const useMainMessagePorts = () => {
       addIntervalSubscription({ ...task });
 
       // Persist task to store.
-      await window.myAPI.persistIntervalTask(JSON.stringify(task));
+      await window.myAPI.sendIntervalTask({
+        action: 'interval:task:add',
+        data: { serialized: JSON.stringify(task) },
+      });
     }
   };
 
@@ -590,7 +599,10 @@ export const useMainMessagePorts = () => {
       removeIntervalSubscription({ ...task });
 
       // Remove task from store.
-      await window.myAPI.removeIntervalTask(JSON.stringify(task));
+      await window.myAPI.sendIntervalTask({
+        action: 'interval:task:remove',
+        data: { serialized: JSON.stringify(task) },
+      });
     }
   };
 
