@@ -127,10 +127,14 @@ export const useMainMessagePorts = () => {
 
       // Update persisted state and React state for tasks.
       for (const task of tasks) {
-        await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(task),
-          JSON.stringify(account.flatten())
-        );
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:account:update',
+          data: {
+            serAccount: JSON.stringify(account.flatten()),
+            serTask: JSON.stringify(task),
+          },
+        });
+
         updateTask('account', task, task.account?.address);
         updateRenderedSubscriptions(task);
       }

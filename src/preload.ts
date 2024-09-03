@@ -173,16 +173,6 @@ export const API: PreloadAPI = {
   updatePersistedChainTask: async (task: SubscriptionTask) =>
     await ipcRenderer.invoke('app:subscriptions:chain:update', task),
 
-  updatePersistedAccountTask: async (
-    serializedTask: string,
-    serializedAccount: string
-  ) =>
-    await ipcRenderer.invoke(
-      'app:subscriptions:account:update',
-      serializedTask,
-      serializedAccount
-    ),
-
   showNotification: (content: {
     title: string;
     body: string;

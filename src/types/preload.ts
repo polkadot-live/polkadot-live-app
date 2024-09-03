@@ -57,7 +57,6 @@ export interface PreloadAPI {
   markEventStale: ApiMarkEventStale;
   reportStaleEvent: ApiReportStaleEvent;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
-  updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -166,11 +165,6 @@ type ApiPersistEvent = (
 ) => void;
 
 type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
-
-type ApiUpdatePersistedAccountTask = (
-  serializedTask: string,
-  serializedAccount: string
-) => Promise<void>;
 
 type ApiShowNotification = (content: NotificationData) => void;
 

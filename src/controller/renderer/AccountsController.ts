@@ -148,10 +148,13 @@ export class AccountsController {
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(task),
-          JSON.stringify(account.flatten())
-        );
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:account:update',
+          data: {
+            serAccount: JSON.stringify(account.flatten()),
+            serTask: JSON.stringify(task),
+          },
+        });
       }
     }
   }
