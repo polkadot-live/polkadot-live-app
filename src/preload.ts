@@ -13,7 +13,6 @@ import type {
 } from '@/types/reporter';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
-import type { FlattenedAccountData } from './types/accounts';
 import type { IpcTask } from './types/communication';
 import type { SettingAction } from './renderer/screens/Settings/types';
 import type { SubscriptionTask } from './types/subscriptions';
@@ -97,6 +96,12 @@ export const API: PreloadAPI = {
     ipcRenderer.on('settings:workspace:receive', callback),
 
   /**
+   * Account subscriptions
+   */
+  sendSubscriptionTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:subscription', task),
+
+  /**
    * Interval subscriptions
    */
 
@@ -142,10 +147,6 @@ export const API: PreloadAPI = {
   // Get persisted accounts from state.
   getPersistedAccounts: async () =>
     await ipcRenderer.invoke('app:accounts:get'),
-
-  // Get persisted subscription tasks for account.
-  getPersistedAccountTasks: async (account: FlattenedAccountData) =>
-    await ipcRenderer.invoke('app:accounts:tasks:get', account),
 
   // Overwrite persisted accounts in store.
   setPersistedAccounts: (accounts: string) =>

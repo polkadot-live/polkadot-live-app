@@ -69,9 +69,11 @@ export class AccountsController {
 
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const stored = await window.myAPI.getPersistedAccountTasks(
-          account.flatten()
-        );
+        const stored =
+          (await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:tasks:getAll',
+            data: { address: account.address },
+          })) || '';
 
         const tasks: SubscriptionTask[] =
           stored !== '' ? JSON.parse(stored) : [];

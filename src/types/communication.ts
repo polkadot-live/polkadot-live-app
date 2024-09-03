@@ -22,6 +22,8 @@ export interface IpcTask {
     | 'raw-account:remove'
     | 'raw-account:get'
     | 'raw-account:rename'
+    // Account subscriptions
+    | 'subscriptions:tasks:getAll'
     // Interval Subscriptions
     | 'interval:task:get'
     | 'interval:task:clear'

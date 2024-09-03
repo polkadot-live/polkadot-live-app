@@ -363,15 +363,17 @@ app.whenReady().then(async () => {
    * Subscriptions
    */
 
-  // Send stringified persisted account tasks to frontend.
-  ipcMain.handle(
-    'app:accounts:tasks:get',
-    async (_, account: FlattenedAccountData) => {
-      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
-      const stored = (store as Record<string, AnyData>).get(key) as string;
-      return stored ? stored : '';
+  ipcMain.handle('main:task:subscription', async (_, task: IpcTask) => {
+    switch (task.action) {
+      // Get an account's persisted tasks in serialized form.
+      case 'subscriptions:tasks:getAll': {
+        const { address } = task.data;
+        const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+        const stored = (store as Record<string, AnyData>).get(key) as string;
+        return stored ? stored : '';
+      }
     }
-  );
+  });
 
   // Get persisted chain subscription tasks.
   ipcMain.handle('app:subscriptions:chain:get', async () => {

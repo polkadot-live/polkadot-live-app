@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource, FlattenedAccountData } from './accounts';
+import type { AccountSource } from './accounts';
 import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
@@ -17,8 +17,9 @@ import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
-  rawAccountTask: (task: IpcTask) => Promise<void | string>;
-  sendIntervalTask: (task: IpcTask) => Promise<void | string>;
+  rawAccountTask: (task: IpcTask) => Promise<string | void>;
+  sendIntervalTask: (task: IpcTask) => Promise<string | void>;
+  sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
 
   getOsPlatform: () => Promise<string>;
 
@@ -49,7 +50,6 @@ export interface PreloadAPI {
 
   getOnlineStatus: ApiGetOnlineStatus;
   getPersistedAccounts: ApiGetPersistedAccounts;
-  getPersistedAccountTasks: ApiGetPersistedAccountTasks;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
   persistEvent: ApiPersistEvent;
@@ -157,10 +157,6 @@ type ApiInitializeAppOffline = (
 type ApiGetOnlineStatus = () => Promise<boolean>;
 
 type ApiGetPersistedAccounts = () => Promise<string>;
-
-type ApiGetPersistedAccountTasks = (
-  account: FlattenedAccountData
-) => Promise<string>;
 
 type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
