@@ -69,9 +69,11 @@ export class AccountsController {
 
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const stored = await window.myAPI.getPersistedAccountTasks(
-          account.flatten()
-        );
+        const stored =
+          (await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:account:getAll',
+            data: { address: account.address },
+          })) || '';
 
         const tasks: SubscriptionTask[] =
           stored !== '' ? JSON.parse(stored) : [];
@@ -146,10 +148,13 @@ export class AccountsController {
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(task),
-          JSON.stringify(account.flatten())
-        );
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:account:update',
+          data: {
+            serAccount: JSON.stringify(account.flatten()),
+            serTask: JSON.stringify(task),
+          },
+        });
       }
     }
   }

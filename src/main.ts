@@ -39,11 +39,10 @@ import type {
   EventCallback,
   NotificationData,
 } from '@/types/reporter';
-import type { FlattenedAccountData, FlattenedAccounts } from '@/types/accounts';
+import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
-import type { SubscriptionTask } from '@/types/subscriptions';
 
 const debug = MainDebug;
 
@@ -363,42 +362,22 @@ app.whenReady().then(async () => {
    * Subscriptions
    */
 
-  // Send stringified persisted account tasks to frontend.
-  ipcMain.handle(
-    'app:accounts:tasks:get',
-    async (_, account: FlattenedAccountData) => {
-      const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
-      const stored = (store as Record<string, AnyData>).get(key) as string;
-      return stored ? stored : '';
-    }
+  ipcMain.handle('main:task:subscription', async (_, task: IpcTask) =>
+    SubscriptionsController.process(task)
   );
 
-  // Get persisted chain subscription tasks.
-  ipcMain.handle('app:subscriptions:chain:get', async () => {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
-    const tasks = (store as Record<string, AnyData>).get(key) as string;
-    return tasks ? tasks : '';
-  });
+  /**
+   * Interval subscriptions
+   */
 
-  // Update a persisted chain subscription task.
-  ipcMain.handle(
-    'app:subscriptions:chain:update',
-    async (_, task: SubscriptionTask) => {
-      SubscriptionsController.updateChainTaskInStore(task);
-    }
+  ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
+    IntervalsController.process(task)
   );
 
-  // Update a persisted account subscription task.
-  ipcMain.handle(
-    'app:subscriptions:account:update',
-    async (_, serializedTask: string, serializedAccount: string) => {
-      const task: SubscriptionTask = JSON.parse(serializedTask);
-      const account: FlattenedAccountData = JSON.parse(serializedAccount);
-      SubscriptionsController.updateAccountTaskInStore(task, account);
-    }
-  );
+  /**
+   * OS Notifications
+   */
 
-  // Show native notifications.
   ipcMain.on(
     'app:notification:show',
     (_, { title, body, subtitle }: NotificationData) => {
@@ -407,15 +386,9 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Interval subscriptions
-   */
-  ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
-    IntervalsController.process(task)
-  );
-
-  /**
    * Platform
    */
+
   ipcMain.handle('app:platform:get', async () => process.platform as string);
 
   /**

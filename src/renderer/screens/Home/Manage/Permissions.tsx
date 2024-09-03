@@ -349,10 +349,13 @@ export const Permissions = ({
       task.enableOsNotifications = checked;
 
       // Update persisted task data.
-      await window.myAPI.updatePersistedAccountTask(
-        JSON.stringify(task),
-        JSON.stringify(task.account!)
-      );
+      await window.myAPI.sendSubscriptionTask({
+        action: 'subscriptions:account:update',
+        data: {
+          serAccount: JSON.stringify(task.account!),
+          serTask: JSON.stringify(task),
+        },
+      });
 
       // Update react state for tasks.
       updateTask('account', task, task.account.address);

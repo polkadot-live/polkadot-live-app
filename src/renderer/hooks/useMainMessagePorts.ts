@@ -127,10 +127,14 @@ export const useMainMessagePorts = () => {
 
       // Update persisted state and React state for tasks.
       for (const task of tasks) {
-        await window.myAPI.updatePersistedAccountTask(
-          JSON.stringify(task),
-          JSON.stringify(account.flatten())
-        );
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:account:update',
+          data: {
+            serAccount: JSON.stringify(account.flatten()),
+            serTask: JSON.stringify(task),
+          },
+        });
+
         updateTask('account', task, task.account?.address);
         updateRenderedSubscriptions(task);
       }
@@ -630,7 +634,10 @@ export const useMainMessagePorts = () => {
 
       // Update state.
       for (const activeTask of active) {
-        await window.myAPI.updatePersistedChainTask(activeTask);
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:chain:update',
+          data: { serTask: JSON.stringify(activeTask) },
+        });
         updateTask('chain', activeTask);
         updateRenderedSubscriptions(activeTask);
       }
