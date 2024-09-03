@@ -4,8 +4,9 @@
 import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
 import type { AnyData, AnyJson } from '@/types/misc';
-import type { SubscriptionTask } from '@/types/subscriptions';
 import type { FlattenedAccountData } from '@/types/accounts';
+import type { IpcTask } from '@/types/communication';
+import type { SubscriptionTask } from '@/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -25,10 +26,45 @@ import type { FlattenedAccountData } from '@/types/accounts';
 
 export class SubscriptionsController {
   /**
+   * @name process
+   * @summary Process an address IPC task.
+   */
+  static process(task: IpcTask): string | void {
+    switch (task.action) {
+      // Get an account's persisted tasks in serialized form.
+      case 'subscriptions:account:getAll': {
+        const { address } = task.data;
+        const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+        const stored = (store as Record<string, AnyData>).get(key) as string;
+        return stored ? stored : '';
+      }
+      // Get persisted chain subscription tasks.
+      case 'subscriptions:chain:getAll': {
+        const key = ConfigMain.getChainSubscriptionsStorageKey();
+        const tasks = (store as Record<string, AnyData>).get(key) as string;
+        return tasks ? tasks : '';
+      }
+      // Update a persisted account subscription task.
+      case 'subscriptions:account:update': {
+        const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
+        const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
+        this.updateAccountTaskInStore(subTask, account);
+        return;
+      }
+      // Update a persisted chain subscription task.
+      case 'subscriptions:chain:update': {
+        const { serTask }: { serTask: string } = task.data;
+        this.updateChainTaskInStore(JSON.parse(serTask));
+        return;
+      }
+    }
+  }
+
+  /**
    * @name updateChainTaskInStore
    * @summary Called when a chain subscription task is received from renderer.
    */
-  static updateChainTaskInStore(task: SubscriptionTask) {
+  private static updateChainTaskInStore(task: SubscriptionTask) {
     const key = ConfigMain.getChainSubscriptionsStorageKey();
 
     // Deserialize all tasks from store.
@@ -45,7 +81,7 @@ export class SubscriptionsController {
    * @name updateAccountTaskInStore
    * @summary Called when an account subscription task is received from renderer.
    */
-  static updateAccountTaskInStore(
+  private static updateAccountTaskInStore(
     task: SubscriptionTask,
     account: FlattenedAccountData
   ) {
