@@ -170,9 +170,6 @@ export const API: PreloadAPI = {
   reportStaleEvent: (callback) =>
     ipcRenderer.on('renderer:event:stale', callback),
 
-  getChainSubscriptions: async () =>
-    await ipcRenderer.invoke('app:subscriptions:chain:get'),
-
   updatePersistedChainTask: async (task: SubscriptionTask) =>
     await ipcRenderer.invoke('app:subscriptions:chain:update', task),
 

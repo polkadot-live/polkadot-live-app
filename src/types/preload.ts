@@ -56,7 +56,6 @@ export interface PreloadAPI {
   updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
   markEventStale: ApiMarkEventStale;
   reportStaleEvent: ApiReportStaleEvent;
-  getChainSubscriptions: ApiGetChainSubscriptions;
   updatePersistedChainTask: ApiUpdatePersistedChainTask;
   updatePersistedAccountTask: ApiUpdatePersistedAccountTask;
   showNotification: ApiShowNotification;
@@ -165,8 +164,6 @@ type ApiPersistEvent = (
   notification: NotificationData | null,
   isOneShot?: boolean
 ) => void;
-
-type ApiGetChainSubscriptions = () => Promise<string>;
 
 type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
 

@@ -366,20 +366,19 @@ app.whenReady().then(async () => {
   ipcMain.handle('main:task:subscription', async (_, task: IpcTask) => {
     switch (task.action) {
       // Get an account's persisted tasks in serialized form.
-      case 'subscriptions:tasks:getAll': {
+      case 'subscriptions:account:getAll': {
         const { address } = task.data;
         const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
         const stored = (store as Record<string, AnyData>).get(key) as string;
         return stored ? stored : '';
       }
+      // Get persisted chain subscription tasks.
+      case 'subscriptions:chain:getAll': {
+        const key = ConfigMain.getChainSubscriptionsStorageKey();
+        const tasks = (store as Record<string, AnyData>).get(key) as string;
+        return tasks ? tasks : '';
+      }
     }
-  });
-
-  // Get persisted chain subscription tasks.
-  ipcMain.handle('app:subscriptions:chain:get', async () => {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
-    const tasks = (store as Record<string, AnyData>).get(key) as string;
-    return tasks ? tasks : '';
   });
 
   // Update a persisted chain subscription task.

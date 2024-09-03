@@ -71,7 +71,7 @@ export class AccountsController {
       for (const account of accounts) {
         const stored =
           (await window.myAPI.sendSubscriptionTask({
-            action: 'subscriptions:tasks:getAll',
+            action: 'subscriptions:account:getAll',
             data: { address: account.address },
           })) || '';
 

@@ -41,7 +41,11 @@ export class SubscriptionsController {
     this.chainSubscriptions = new QueryMultiWrapper();
 
     // Send IPC message to get chain tasks from store.
-    const serialized = await window.myAPI.getChainSubscriptions();
+    const serialized =
+      (await window.myAPI.sendSubscriptionTask({
+        action: 'subscriptions:chain:getAll',
+        data: null,
+      })) || '';
 
     // Deserialize fetched chain tasks.
     const tasks: SubscriptionTask[] =
