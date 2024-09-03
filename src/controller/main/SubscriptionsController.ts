@@ -27,7 +27,7 @@ import type { SubscriptionTask } from '@/types/subscriptions';
 export class SubscriptionsController {
   /**
    * @name process
-   * @summary Process an address IPC task.
+   * @summary Process a subscription IPC task.
    */
   static process(task: IpcTask): string | void {
     switch (task.action) {
@@ -61,13 +61,16 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name updateChainTaskInStore
-   * @summary Called when a chain subscription task is received from renderer.
+   * @name updateAccountTaskInStore
+   * @summary Update a persisted account task with the received data.
    */
-  private static updateChainTaskInStore(task: SubscriptionTask) {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
+  private static updateAccountTaskInStore(
+    task: SubscriptionTask,
+    account: FlattenedAccountData
+  ) {
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
 
-    // Deserialize all tasks from store.
+    // Deserialize the account's tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
       key
     )
@@ -78,16 +81,13 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name updateAccountTaskInStore
-   * @summary Called when an account subscription task is received from renderer.
+   * @name updateChainTaskInStore
+   * @summary Update a persisted chain task with the received data.
    */
-  private static updateAccountTaskInStore(
-    task: SubscriptionTask,
-    account: FlattenedAccountData
-  ) {
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
+  private static updateChainTaskInStore(task: SubscriptionTask) {
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
 
-    // Deserialize the account's tasks from store.
+    // Deserialize all tasks from store.
     const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
       key
     )
