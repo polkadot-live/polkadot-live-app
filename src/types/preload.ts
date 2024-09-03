@@ -8,7 +8,6 @@ import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { LedgerTask } from './ledger';
 import type { IpcTask } from './communication';
 import type { IpcRendererEvent } from 'electron';
-import type { SubscriptionTask } from './subscriptions';
 import type {
   PersistedSettings,
   SettingAction,
@@ -56,7 +55,6 @@ export interface PreloadAPI {
   updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
   markEventStale: ApiMarkEventStale;
   reportStaleEvent: ApiReportStaleEvent;
-  updatePersistedChainTask: ApiUpdatePersistedChainTask;
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -163,8 +161,6 @@ type ApiPersistEvent = (
   notification: NotificationData | null,
   isOneShot?: boolean
 ) => void;
-
-type ApiUpdatePersistedChainTask = (task: SubscriptionTask) => Promise<void>;
 
 type ApiShowNotification = (content: NotificationData) => void;
 

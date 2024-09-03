@@ -161,7 +161,10 @@ export const SubscriptionsProvider = ({
       case 'chain': {
         // Update persisted state and React state for tasks.
         for (const task of tasks) {
-          await window.myAPI.updatePersistedChainTask(task);
+          await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:chain:update',
+            data: { serTask: JSON.stringify(task) },
+          });
           updateTask('chain', task);
           updateRenderedSubscriptions(task);
         }
@@ -234,7 +237,10 @@ export const SubscriptionsProvider = ({
       case 'chain': {
         // Subscribe to and persist task.
         await SubscriptionsController.subscribeChainTask(task);
-        await window.myAPI.updatePersistedChainTask(task);
+        await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:chain:update',
+          data: { serTask: JSON.stringify(task) },
+        });
 
         // Update react state.
         updateTask('chain', task);

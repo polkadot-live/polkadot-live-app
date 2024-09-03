@@ -383,19 +383,21 @@ app.whenReady().then(async () => {
         const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
         SubscriptionsController.updateAccountTaskInStore(subTask, account);
+        return;
+      }
+      // Update a persisted chain subscription task.
+      case 'subscriptions:chain:update': {
+        const { serTask }: { serTask: string } = task.data;
+        SubscriptionsController.updateChainTaskInStore(JSON.parse(serTask));
+        return;
       }
     }
   });
 
-  // Update a persisted chain subscription task.
-  ipcMain.handle(
-    'app:subscriptions:chain:update',
-    async (_, task: SubscriptionTask) => {
-      SubscriptionsController.updateChainTaskInStore(task);
-    }
-  );
+  /**
+   * OS Notifications
+   */
 
-  // Show native notifications.
   ipcMain.on(
     'app:notification:show',
     (_, { title, body, subtitle }: NotificationData) => {
@@ -406,6 +408,7 @@ app.whenReady().then(async () => {
   /**
    * Interval subscriptions
    */
+
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
     IntervalsController.process(task)
   );
@@ -413,6 +416,7 @@ app.whenReady().then(async () => {
   /**
    * Platform
    */
+
   ipcMain.handle('app:platform:get', async () => process.platform as string);
 
   /**

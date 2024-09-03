@@ -15,7 +15,6 @@ import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
 import type { SettingAction } from './renderer/screens/Settings/types';
-import type { SubscriptionTask } from './types/subscriptions';
 
 console.log(global.location.search);
 
@@ -169,9 +168,6 @@ export const API: PreloadAPI = {
 
   reportStaleEvent: (callback) =>
     ipcRenderer.on('renderer:event:stale', callback),
-
-  updatePersistedChainTask: async (task: SubscriptionTask) =>
-    await ipcRenderer.invoke('app:subscriptions:chain:update', task),
 
   showNotification: (content: {
     title: string;
