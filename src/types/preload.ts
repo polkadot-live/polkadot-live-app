@@ -19,7 +19,7 @@ export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
-  sendEventTaskAsync: (task: IpcTask) => Promise<string | void>;
+  sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
 
   getOsPlatform: () => Promise<string>;

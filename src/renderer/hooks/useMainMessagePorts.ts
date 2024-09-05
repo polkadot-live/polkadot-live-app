@@ -232,11 +232,10 @@ export const useMainMessagePorts = () => {
     updateAccountNameInTasks(address, newName);
 
     // The updated events will be sent back to the renderer for updating React state.
-    const serialized =
-      (await window.myAPI.sendEventTaskAsync({
-        action: 'events:update:accountName',
-        data: { address, newName },
-      })) || '[]';
+    const serialized = (await window.myAPI.sendEventTaskAsync({
+      action: 'events:update:accountName',
+      data: { address, newName },
+    })) as string;
 
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);

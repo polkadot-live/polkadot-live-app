@@ -255,7 +255,7 @@ app.whenReady().then(async () => {
    * Events
    */
 
-  ipcMain.on('main:task:event', (_, task: IpcTask) => {
+  ipcMain.on('main:task:event', (_, task: IpcTask): void => {
     switch (task.action) {
       /**
        * Persist an event and show an OS notification if event was persisted.
@@ -295,34 +295,40 @@ app.whenReady().then(async () => {
     }
   });
 
-  ipcMain.handle('main:task:event:async', async (_, task: IpcTask) => {
-    switch (task.action) {
-      // Update a collection of event's associated account name.
-      case 'events:update:accountName': {
-        const { address, newName }: { address: string; newName: string } =
-          task.data;
+  ipcMain.handle(
+    'main:task:event:async',
+    async (_, task: IpcTask): Promise<string | boolean> => {
+      switch (task.action) {
+        // Update a collection of event's associated account name.
+        case 'events:update:accountName': {
+          const { address, newName }: { address: string; newName: string } =
+            task.data;
 
-        // Update events in storage.
-        const updated = EventsController.updateEventAccountName(
-          address,
-          newName
-        );
+          // Update events in storage.
+          const updated = EventsController.updateEventAccountName(
+            address,
+            newName
+          );
 
-        // Update account's subscription tasks in storage.
-        SubscriptionsController.updateCachedAccountNameForTasks(
-          address,
-          newName
-        );
+          // Update account's subscription tasks in storage.
+          SubscriptionsController.updateCachedAccountNameForTasks(
+            address,
+            newName
+          );
 
-        // Return updated events in serialized form.
-        return JSON.stringify(updated);
-      }
-      // Remove an event from the store.
-      case 'events:remove': {
-        return EventsController.removeEvent(task.data.event);
+          // Return updated events in serialized form.
+          return JSON.stringify(updated);
+        }
+        // Remove an event from the store.
+        case 'events:remove': {
+          return EventsController.removeEvent(task.data.event);
+        }
+        default: {
+          return false;
+        }
       }
     }
-  });
+  );
 
   // Mark event stale.
   ipcMain.on('app:event:stale', (_, uid: string, chainId: ChainID) => {

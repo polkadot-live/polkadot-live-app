@@ -34,7 +34,6 @@ export interface IpcTask {
     | 'interval:task:remove'
     | 'interval:task:update'
     // Events
-    | 'events:dismiss'
     | 'events:persist'
     | 'events:remove'
     | 'events:makeStale'
