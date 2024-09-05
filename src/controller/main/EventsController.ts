@@ -1,13 +1,22 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigMain } from '@/config/processes/main';
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
+import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@/types/misc';
-import type { EventAccountData, EventCallback } from '@/types/reporter';
+import type { ChainID } from '@/types/chains';
+import type {
+  EventAccountData,
+  EventCallback,
+  NotificationData,
+} from '@/types/reporter';
+import type { IpcTask } from '@/types/communication';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -50,10 +59,100 @@ export class EventsController {
   }
 
   /**
+   * @name process
+   * @summary Process an IPC task.
+   */
+  static process(task: IpcTask): void {
+    switch (task.action) {
+      // Persist an event and show an OS notification if event was persisted.
+      // Report event back to frontend after an event UID is assigned.
+      case 'events:persist': {
+        // Destructure received data.
+        interface Target {
+          event: EventCallback;
+          notification: NotificationData | null;
+          isOneShot: boolean;
+        }
+        const { event, notification, isOneShot }: Target = task.data;
+
+        // Remove any outdated events of the same type, if setting enabled.
+        if (!ConfigMain.getAppSettings().appKeepOutdatedEvents) {
+          this.removeOutdatedEvents(event);
+        }
+
+        // Persist new event to store.
+        const { event: eventWithUid, wasPersisted } = this.persistEvent(event);
+
+        // Show notification if event was added and notification data was received.
+        if ((wasPersisted || isOneShot) && notification) {
+          const { title, body, subtitle } = notification;
+          NotificationsController.showNotification(title, body, subtitle);
+        }
+
+        WindowsController.get('menu')?.webContents?.send(
+          'renderer:event:new',
+          eventWithUid
+        );
+
+        return;
+      }
+      // Mark event stale after extrinsic finalized.
+      case 'events:makeStale': {
+        const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
+
+        // Update event in store.
+        this.persistStaleEvent(uid);
+
+        // Update event react state.
+        WindowsController.get('menu')?.webContents?.send(
+          'renderer:event:stale',
+          uid,
+          chainId
+        );
+
+        return;
+      }
+    }
+  }
+
+  /**
+   * @name processAsync
+   * @summary Process an async IPC task.
+   */
+  static processAsync(task: IpcTask): string | boolean {
+    switch (task.action) {
+      // Update a collection of event's associated account name.
+      case 'events:update:accountName': {
+        const { address, newName }: { address: string; newName: string } =
+          task.data;
+
+        // Update events in storage.
+        const updated = this.updateEventAccountName(address, newName);
+
+        // Update account's subscription tasks in storage.
+        SubscriptionsController.updateCachedAccountNameForTasks(
+          address,
+          newName
+        );
+
+        // Return updated events in serialized form.
+        return JSON.stringify(updated);
+      }
+      // Remove an event from the store.
+      case 'events:remove': {
+        return this.removeEvent(task.data.event);
+      }
+      default: {
+        return false;
+      }
+    }
+  }
+
+  /**
    * @name persistEvent
    * @summary Persist an event to the store.
    */
-  static persistEvent(event: EventCallback): {
+  private static persistEvent(event: EventCallback): {
     event: EventCallback;
     wasPersisted: boolean;
   } {
@@ -75,7 +174,7 @@ export class EventsController {
    * @name updateEventAccountName
    * @summary Update the associated account name for a particular event.
    */
-  static updateEventAccountName(
+  private static updateEventAccountName(
     address: string,
     newName: string
   ): EventCallback[] {
@@ -121,7 +220,7 @@ export class EventsController {
    * @name removeEvent
    * @summary Remove an event from the store.
    */
-  static removeEvent(event: EventCallback): boolean {
+  private static removeEvent(event: EventCallback): boolean {
     const events = this.getEventsFromStore();
 
     // Filter out event to remove via its uid.
@@ -142,7 +241,7 @@ export class EventsController {
    * Currently only for nomination pool rewards and nominating pending payout events.
    * Will remove old matching events from the store.
    */
-  static removeOutdatedEvents(event: EventCallback) {
+  private static removeOutdatedEvents(event: EventCallback) {
     const all = this.getEventsFromStore();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
     updated && this.persistEventsToStore(events);
@@ -152,7 +251,7 @@ export class EventsController {
    * @name persistStaleEvent
    * @summary Mark an event stale and persist it to store.
    */
-  static persistStaleEvent(uid: string) {
+  private static persistStaleEvent(uid: string) {
     const stored = this.getEventsFromStore();
 
     const updated = stored.map((e) => {

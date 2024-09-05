@@ -34,7 +34,7 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { EventCallback, NotificationData } from '@/types/reporter';
+import type { NotificationData } from '@/types/reporter';
 import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
@@ -255,92 +255,12 @@ app.whenReady().then(async () => {
    * Events
    */
 
-  ipcMain.on('main:task:event', (_, task: IpcTask): void => {
-    switch (task.action) {
-      // Persist an event and show an OS notification if event was persisted.
-      // Report event back to frontend after an event UID is assigned.
-      case 'events:persist': {
-        // Destructure received data.
-        interface Target {
-          event: EventCallback;
-          notification: NotificationData | null;
-          isOneShot: boolean;
-        }
-        const { event, notification, isOneShot }: Target = task.data;
+  ipcMain.on('main:task:event', (_, task: IpcTask): void =>
+    EventsController.process(task)
+  );
 
-        // Remove any outdated events of the same type, if setting enabled.
-        if (!ConfigMain.getAppSettings().appKeepOutdatedEvents) {
-          EventsController.removeOutdatedEvents(event);
-        }
-
-        // Persist new event to store.
-        const { event: eventWithUid, wasPersisted } =
-          EventsController.persistEvent(event);
-
-        // Show notification if event was added and notification data was received.
-        if ((wasPersisted || isOneShot) && notification) {
-          const { title, body, subtitle } = notification;
-          NotificationsController.showNotification(title, body, subtitle);
-        }
-
-        WindowsController.get('menu')?.webContents?.send(
-          'renderer:event:new',
-          eventWithUid
-        );
-
-        return;
-      }
-      // Mark event stale after extrinsic finalized.
-      case 'events:makeStale': {
-        const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
-
-        // Update persisted event as stale.
-        EventsController.persistStaleEvent(uid);
-
-        // Send message to main renderer to update event in react state.
-        WindowsController.get('menu')?.webContents?.send(
-          'renderer:event:stale',
-          uid,
-          chainId
-        );
-        return;
-      }
-    }
-  });
-
-  ipcMain.handle(
-    'main:task:event:async',
-    async (_, task: IpcTask): Promise<string | boolean> => {
-      switch (task.action) {
-        // Update a collection of event's associated account name.
-        case 'events:update:accountName': {
-          const { address, newName }: { address: string; newName: string } =
-            task.data;
-
-          // Update events in storage.
-          const updated = EventsController.updateEventAccountName(
-            address,
-            newName
-          );
-
-          // Update account's subscription tasks in storage.
-          SubscriptionsController.updateCachedAccountNameForTasks(
-            address,
-            newName
-          );
-
-          // Return updated events in serialized form.
-          return JSON.stringify(updated);
-        }
-        // Remove an event from the store.
-        case 'events:remove': {
-          return EventsController.removeEvent(task.data.event);
-        }
-        default: {
-          return false;
-        }
-      }
-    }
+  ipcMain.handle('main:task:event:async', async (_, task: IpcTask) =>
+    EventsController.processAsync(task)
   );
 
   /**
