@@ -270,8 +270,10 @@ app.whenReady().then(async () => {
 
   ipcMain.on('main:task:event', (_, task: IpcTask) => {
     switch (task.action) {
-      // Persist an event and execute OS notification if event was persisted.
-      // Report event back to frontend after an event UID is assigned.
+      /**
+       * Persist an event and show an OS notification if event was persisted.
+       * Report event back to frontend after an event UID is assigned.
+       */
       case 'events:persist': {
         // Destructure received data.
         interface Target {

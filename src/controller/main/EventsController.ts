@@ -25,15 +25,15 @@ export class EventsController {
    * @summary Fetch persisted events from store and send to frontend.
    */
   static initialize() {
-    if (EventsController.isInitialized) {
+    if (this.isInitialized) {
       return;
     }
 
     // Set toggle to indicate stored events have been sent to renderer.
-    EventsController.isInitialized = true;
+    this.isInitialized = true;
 
     // Fetch events from store and send them to renderer.
-    const events = EventsController.getEventsFromStore();
+    const events = this.getEventsFromStore();
 
     // Return if no events are stored.
     if (events.length === 0) {
@@ -59,12 +59,12 @@ export class EventsController {
   } {
     // Set event UID and persist if it's unique.
     event.uid === '' && (event.uid = getUid());
-    const stored = EventsController.getEventsFromStore();
+    const stored = this.getEventsFromStore();
     const { events, updated } = pushUniqueEvent(event, stored);
 
     // Persist new array to store if event was pushed.
     if (updated) {
-      EventsController.persistEventsToStore(events);
+      this.persistEventsToStore(events);
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
@@ -79,7 +79,7 @@ export class EventsController {
     address: string,
     newName: string
   ): EventCallback[] {
-    const all = EventsController.getEventsFromStore();
+    const all = this.getEventsFromStore();
 
     const updated = all.map((e: EventCallback) => {
       if (e.who.origin === 'chain') {
@@ -102,7 +102,7 @@ export class EventsController {
     });
 
     // Persist updated events to store.
-    EventsController.persistEventsToStore(updated);
+    this.persistEventsToStore(updated);
 
     // Return the updated events.
     const filtered = updated.filter((e: EventCallback) => {
@@ -122,14 +122,14 @@ export class EventsController {
    * @summary Remove an event from the store.
    */
   static removeEvent(event: EventCallback): boolean {
-    const events = EventsController.getEventsFromStore();
+    const events = this.getEventsFromStore();
 
     // Filter out event to remove via its uid.
     const { uid } = event;
     const updated = events.filter((e) => e.uid !== uid);
 
     // Persist new array to store.
-    EventsController.persistEventsToStore(updated);
+    this.persistEventsToStore(updated);
     debug('🔷 Event removed (%o total in store)', updated.length);
 
     return true;
@@ -143,7 +143,7 @@ export class EventsController {
    * Will remove old matching events from the store.
    */
   static removeOutdatedEvents(event: EventCallback) {
-    const all = EventsController.getEventsFromStore();
+    const all = this.getEventsFromStore();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
     updated && this.persistEventsToStore(events);
   }
@@ -153,14 +153,14 @@ export class EventsController {
    * @summary Mark an event stale and persist it to store.
    */
   static persistStaleEvent(uid: string) {
-    const stored = EventsController.getEventsFromStore();
+    const stored = this.getEventsFromStore();
 
     const updated = stored.map((e) => {
       e.uid === uid && (e.stale = true);
       return e;
     });
 
-    EventsController.persistEventsToStore(updated);
+    this.persistEventsToStore(updated);
   }
 
   /**
@@ -169,14 +169,10 @@ export class EventsController {
    */
   private static getEventsFromStore = (): EventCallback[] => {
     const stored = (store as Record<string, AnyJson>).get(
-      EventsController.storeKey
+      this.storeKey
     ) as string;
 
-    if (!stored) {
-      return [];
-    }
-
-    return JSON.parse(stored);
+    return !stored ? [] : JSON.parse(stored);
   };
 
   /**
@@ -185,7 +181,7 @@ export class EventsController {
    */
   private static persistEventsToStore = (events: EventCallback[]) => {
     (store as Record<string, AnyJson>).set(
-      EventsController.storeKey,
+      this.storeKey,
       JSON.stringify(events)
     );
   };
