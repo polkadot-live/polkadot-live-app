@@ -6,13 +6,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type {
-  DismissEvent,
-  EventCallback,
-  NotificationData,
-} from '@/types/reporter';
 import type { AnyJson } from './types/misc';
-import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
 import type { SettingAction } from './renderer/screens/Settings/types';
 
@@ -63,6 +57,14 @@ export const API: PreloadAPI = {
    */
   rawAccountTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:raw-account', task),
+
+  /**
+   * Events
+   */
+  sendEventTask: (task: IpcTask) => ipcRenderer.send('main:task:event', task),
+
+  sendEventTaskAsync: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:event:async', task),
 
   /**
    * Platform
@@ -151,21 +153,6 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),
 
-  persistEvent: (
-    event: EventCallback,
-    notification: NotificationData | null,
-    isOneShot = false
-  ) => ipcRenderer.send('app:event:persist', event, notification, isOneShot),
-
-  updateAccountNameForEventsAndTasks: async (
-    address: string,
-    newName: string
-  ): Promise<EventCallback[]> =>
-    await ipcRenderer.invoke('app:events:update:accountName', address, newName),
-
-  markEventStale: (uid: string, chainId: ChainID) =>
-    ipcRenderer.send('app:event:stale', uid, chainId),
-
   reportStaleEvent: (callback) =>
     ipcRenderer.on('renderer:event:stale', callback),
 
@@ -225,10 +212,6 @@ export const API: PreloadAPI = {
   reportDismissEvent: (callback) =>
     ipcRenderer.on('renderer:event:dismiss', callback),
 
-  // Remove event from store.
-  removeEventFromStore: async (data: EventCallback) =>
-    await ipcRenderer.invoke('app:event:remove', data),
-
   /**
    * Online status
    */
@@ -238,14 +221,6 @@ export const API: PreloadAPI = {
 
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
-
-  /**
-   * Transactions
-   */
-
-  // Reports a dismissed event to the main process.
-  requestDismissEvent: (eventData: DismissEvent) =>
-    ipcRenderer.send('app:event:dismiss', eventData),
 
   /**
    * Miscellaneous

@@ -125,7 +125,15 @@ const oneShot_openGov_referendumVotes = async (
       })
     : null;
 
-  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
+  window.myAPI.sendEventTask({
+    action: 'events:persist',
+    data: {
+      event,
+      notification,
+      isOneShot: policy === 'one-shot',
+    },
+  });
+
   return { success: true };
 };
 
@@ -219,7 +227,15 @@ const oneShot_openGov_decisionPeriod = async (
     ? notificationData
     : null;
 
-  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
+  window.myAPI.sendEventTask({
+    action: 'events:persist',
+    data: {
+      event,
+      notification,
+      isOneShot: policy === 'one-shot',
+    },
+  });
+
   return { success: true };
 };
 
@@ -303,7 +319,15 @@ const oneShot_openGov_thresholds = async (
       })
     : null;
 
-  window.myAPI.persistEvent(event, notification, policy === 'one-shot');
+  window.myAPI.sendEventTask({
+    action: 'events:persist',
+    data: {
+      event,
+      notification,
+      isOneShot: policy === 'one-shot',
+    },
+  });
+
   return { success: true };
 };
 

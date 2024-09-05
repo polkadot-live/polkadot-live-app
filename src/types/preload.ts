@@ -16,11 +16,16 @@ import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
+  getWindowId: () => string;
+  getOsPlatform: () => Promise<string>;
+
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
 
-  getOsPlatform: () => Promise<string>;
+  sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
+  sendEventTask: (task: IpcTask) => void;
+  reportStaleEvent: ApiReportStaleEvent;
 
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
   deleteWorkspace: (serialised: string) => void;
@@ -31,8 +36,6 @@ export interface PreloadAPI {
   reportWorkspace: (
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
-
-  getWindowId: () => string;
 
   exportAppData: () => Promise<ExportResult>;
   importAppData: () => Promise<ImportResult>;
@@ -51,10 +54,6 @@ export interface PreloadAPI {
   getPersistedAccounts: ApiGetPersistedAccounts;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
-  persistEvent: ApiPersistEvent;
-  updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
-  markEventStale: ApiMarkEventStale;
-  reportStaleEvent: ApiReportStaleEvent;
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -71,9 +70,6 @@ export interface PreloadAPI {
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
-  removeEventFromStore: ApiRemoveEventFromStore;
-
-  requestDismissEvent: ApiRequestDismissEvent;
 
   initOnlineStatus: ApiInitOnlineStatus;
   handleConnectionStatus: ApiHandleConnectionStatus;
@@ -117,10 +113,6 @@ type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
 
-type ApiRemoveEventFromStore = (data: EventCallback) => Promise<boolean>;
-
-type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
-
 type ApiHandleConnectionStatus = () => void;
 
 type ApiReportOnlineStatus = (
@@ -156,20 +148,7 @@ type ApiGetPersistedAccounts = () => Promise<string>;
 
 type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
-type ApiPersistEvent = (
-  event: EventCallback,
-  notification: NotificationData | null,
-  isOneShot?: boolean
-) => void;
-
 type ApiShowNotification = (content: NotificationData) => void;
-
-type ApiUpdateAccountNameForEventsAndTasks = (
-  address: string,
-  newName: string
-) => Promise<EventCallback[]>;
-
-type ApiMarkEventStale = (uid: string, chainId: ChainID) => void;
 
 type ApiReportStaleEvent = (
   callback: (_: IpcRendererEvent, uid: string, chainId: ChainID) => void

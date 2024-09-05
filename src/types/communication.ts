@@ -32,6 +32,11 @@ export interface IpcTask {
     | 'interval:task:clear'
     | 'interval:task:add'
     | 'interval:task:remove'
-    | 'interval:task:update';
+    | 'interval:task:update'
+    // Events
+    | 'events:persist'
+    | 'events:remove'
+    | 'events:makeStale'
+    | 'events:update:accountName';
   data: AnyData;
 }

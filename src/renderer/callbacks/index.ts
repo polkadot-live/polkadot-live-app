@@ -60,7 +60,10 @@ export class Callbacks {
 
       // Send event and notification data to main process.
       const event = EventsController.getEvent(entry, String(newVal));
-      window.myAPI.persistEvent(event, null);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event, notification: null, isOneShot: false },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -97,7 +100,10 @@ export class Callbacks {
 
       // Send event and notification data to main process.
       const event = EventsController.getEvent(entry, String(newVal));
-      window.myAPI.persistEvent(event, null);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event, notification: null, isOneShot: false },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -155,7 +161,10 @@ export class Callbacks {
         : null;
 
       // Send event and notification data to main process.
-      window.myAPI.persistEvent(parsed, notification, isOneShot);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event: parsed, notification, isOneShot },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -213,7 +222,10 @@ export class Callbacks {
         : null;
 
       // Send event and notification data to main process.
-      window.myAPI.persistEvent(parsed, notification, isOneShot);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event: parsed, notification, isOneShot },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -266,12 +278,15 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
-      const notificaiton = this.getNotificationFlag(entry, isOneShot)
+      const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, { reserved })
         : null;
 
       // Send event and notification data to main process.
-      window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event: parsed, notification, isOneShot },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -361,12 +376,15 @@ export class Callbacks {
       const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
       // Get notification.
-      const notificaiton = this.getNotificationFlag(entry, isOneShot)
+      const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, { spendable })
         : null;
 
       // Send event and notification to main process.
-      window.myAPI.persistEvent(parsed, notificaiton, isOneShot);
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event: parsed, notification, isOneShot },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -427,13 +445,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, {
-          pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
-        }),
-        notification,
-        isOneShot
-      );
+      const event = EventsController.getEvent(entry, {
+        pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
+      });
+
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: { event, notification, isOneShot },
+      });
     } catch (err) {
       console.error(err);
     }
@@ -477,11 +496,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { prevState }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { prevState }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -526,11 +548,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { prevName }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { prevName }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -590,11 +615,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { poolRoles }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { poolRoles }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -649,11 +677,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { poolCommission }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { poolCommission }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -702,11 +733,17 @@ export class Callbacks {
           })
         : null;
 
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { eraRewards, era: era.toString() }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, {
+            eraRewards,
+            era: era.toString(),
+          }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -767,11 +804,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { era, exposed }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { era, exposed }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -831,11 +871,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { era, exposed }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { era, exposed }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -908,11 +951,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { era, hasChanged }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { era, hasChanged }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;
@@ -985,11 +1031,14 @@ export class Callbacks {
         : null;
 
       // Handle notification and events in main process.
-      window.myAPI.persistEvent(
-        EventsController.getEvent(entry, { era, hasChanged }),
-        notification,
-        isOneShot
-      );
+      window.myAPI.sendEventTask({
+        action: 'events:persist',
+        data: {
+          event: EventsController.getEvent(entry, { era, hasChanged }),
+          notification,
+          isOneShot,
+        },
+      });
     } catch (err) {
       console.error(err);
       return;

@@ -216,7 +216,10 @@ export class ExtrinsicsController {
 
     // Mark event as stale if status is finalized.
     if (status === 'finalized') {
-      window.myAPI.markEventStale(uid, chainId);
+      window.myAPI.sendEventTask({
+        action: 'events:makeStale',
+        data: { uid, chainId },
+      });
     }
   };
 }
