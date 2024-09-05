@@ -53,7 +53,6 @@ export interface PreloadAPI {
   getPersistedAccounts: ApiGetPersistedAccounts;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
-  updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
   markEventStale: ApiMarkEventStale;
   reportStaleEvent: ApiReportStaleEvent;
   showNotification: ApiShowNotification;
@@ -158,11 +157,6 @@ type ApiGetPersistedAccounts = () => Promise<string>;
 type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
 type ApiShowNotification = (content: NotificationData) => void;
-
-type ApiUpdateAccountNameForEventsAndTasks = (
-  address: string,
-  newName: string
-) => Promise<EventCallback[]>;
 
 type ApiMarkEventStale = (uid: string, chainId: ChainID) => void;
 

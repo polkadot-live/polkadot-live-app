@@ -308,20 +308,32 @@ app.whenReady().then(async () => {
     }
   });
 
-  // Update a collection of event's associated account name.
-  ipcMain.handle(
-    'app:events:update:accountName',
-    async (_, address, newName) => {
-      // Update events in storage.
-      const updated = EventsController.updateEventAccountName(address, newName);
+  ipcMain.handle('main:task:event:async', async (_, task: IpcTask) => {
+    switch (task.action) {
+      /**
+       * Update a collection of event's associated account name.
+       */
+      case 'events:update:accountName': {
+        const { address, newName }: { address: string; newName: string } =
+          task.data;
 
-      // Update account's subscription tasks in storage.
-      SubscriptionsController.updateCachedAccountNameForTasks(address, newName);
+        // Update events in storage.
+        const updated = EventsController.updateEventAccountName(
+          address,
+          newName
+        );
 
-      // Return updated events.
-      return updated;
+        // Update account's subscription tasks in storage.
+        SubscriptionsController.updateCachedAccountNameForTasks(
+          address,
+          newName
+        );
+
+        // Return updated events in serialized form.
+        return JSON.stringify(updated);
+      }
     }
-  );
+  });
 
   // Remove event from store.
   ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>

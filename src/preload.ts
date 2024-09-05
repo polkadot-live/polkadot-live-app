@@ -155,12 +155,6 @@ export const API: PreloadAPI = {
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),
 
-  updateAccountNameForEventsAndTasks: async (
-    address: string,
-    newName: string
-  ): Promise<EventCallback[]> =>
-    await ipcRenderer.invoke('app:events:update:accountName', address, newName),
-
   markEventStale: (uid: string, chainId: ChainID) =>
     ipcRenderer.send('app:event:stale', uid, chainId),
 

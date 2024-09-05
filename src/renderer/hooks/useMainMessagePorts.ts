@@ -39,6 +39,7 @@ import type {
 } from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
+import type { EventCallback } from '@/types/reporter';
 import type { ExportResult, ImportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
@@ -231,14 +232,15 @@ export const useMainMessagePorts = () => {
     updateAccountNameInTasks(address, newName);
 
     // The updated events will be sent back to the renderer for updating React state.
-    const updated = await window.myAPI.updateAccountNameForEventsAndTasks(
-      address,
-      newName
-    );
+    const serialized =
+      (await window.myAPI.sendEventTaskAsync({
+        action: 'events:update:accountName',
+        data: { address, newName },
+      })) || '[]';
 
-    if (updated && updated.length > 0) {
-      updateEventsOnAccountRename(updated, chainId);
-    }
+    // Update events state.
+    const updated: EventCallback[] = JSON.parse(serialized);
+    updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
   };
 
   /// Utility to post message to settings window.
