@@ -310,9 +310,7 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:task:event:async', async (_, task: IpcTask) => {
     switch (task.action) {
-      /**
-       * Update a collection of event's associated account name.
-       */
+      // Update a collection of event's associated account name.
       case 'events:update:accountName': {
         const { address, newName }: { address: string; newName: string } =
           task.data;
@@ -332,13 +330,12 @@ app.whenReady().then(async () => {
         // Return updated events in serialized form.
         return JSON.stringify(updated);
       }
+      // Remove an event from the store.
+      case 'events:remove': {
+        return EventsController.removeEvent(task.data.event);
+      }
     }
   });
-
-  // Remove event from store.
-  ipcMain.handle('app:event:remove', async (_, event: EventCallback) =>
-    EventsController.removeEvent(event)
-  );
 
   // Request dismiss event
   ipcMain.on('app:event:dismiss', (_, eventData: DismissEvent) => {

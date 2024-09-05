@@ -71,7 +71,6 @@ export interface PreloadAPI {
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
-  removeEventFromStore: ApiRemoveEventFromStore;
 
   requestDismissEvent: ApiRequestDismissEvent;
 
@@ -116,8 +115,6 @@ type ApiReportNewEvent = (
 type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
-
-type ApiRemoveEventFromStore = (data: EventCallback) => Promise<boolean>;
 
 type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
 

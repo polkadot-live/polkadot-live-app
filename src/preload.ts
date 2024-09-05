@@ -6,7 +6,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type { DismissEvent } from '@/types/reporter';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
@@ -216,10 +216,6 @@ export const API: PreloadAPI = {
   // Reports a dismiss event.
   reportDismissEvent: (callback) =>
     ipcRenderer.on('renderer:event:dismiss', callback),
-
-  // Remove event from store.
-  removeEventFromStore: async (data: EventCallback) =>
-    await ipcRenderer.invoke('app:event:remove', data),
 
   /**
    * Online status

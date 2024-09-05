@@ -69,7 +69,11 @@ export const Item = memo(function Item({ event }: ItemProps) {
     setDisplay('fade');
     setTimeout(() => setDisplay('out'), FADE_TRANSITION);
 
-    const result = await window.myAPI.removeEventFromStore(event);
+    const result = await window.myAPI.sendEventTaskAsync({
+      action: 'events:remove',
+      data: { event },
+    });
+
     console.log(`Remove result: ${result}`);
   };
 
