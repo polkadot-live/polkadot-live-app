@@ -34,11 +34,7 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type {
-  DismissEvent,
-  EventCallback,
-  NotificationData,
-} from '@/types/reporter';
+import type { EventCallback, NotificationData } from '@/types/reporter';
 import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
@@ -119,15 +115,6 @@ if (!store.has('version')) {
     (store as Record<string, AnyJson>).set('version', version);
   }
 }
-
-// Report dismissed event to renderer.
-// TODO: move to a Utils file.
-const reportDismissEvent = (eventData: DismissEvent) => {
-  WindowsController.get('menu')?.webContents?.send(
-    'renderer:event:dismiss',
-    eventData
-  );
-};
 
 app.whenReady().then(async () => {
   // Auto launch app on login.
@@ -335,11 +322,6 @@ app.whenReady().then(async () => {
         return EventsController.removeEvent(task.data.event);
       }
     }
-  });
-
-  // Request dismiss event
-  ipcMain.on('app:event:dismiss', (_, eventData: DismissEvent) => {
-    reportDismissEvent(eventData);
   });
 
   // Mark event stale.

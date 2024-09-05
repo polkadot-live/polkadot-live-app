@@ -72,8 +72,6 @@ export interface PreloadAPI {
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
 
-  requestDismissEvent: ApiRequestDismissEvent;
-
   initOnlineStatus: ApiInitOnlineStatus;
   handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
@@ -115,8 +113,6 @@ type ApiReportNewEvent = (
 type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
-
-type ApiRequestDismissEvent = (eventData: DismissEvent) => void;
 
 type ApiHandleConnectionStatus = () => void;
 

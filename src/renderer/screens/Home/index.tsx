@@ -15,7 +15,7 @@ import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type { EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 
@@ -24,8 +24,7 @@ export const Home = () => {
   useMainMessagePorts();
 
   const { getAddresses } = useAddresses();
-  const { addEvent, dismissEvent, markStaleEvent, removeOutdatedEvents } =
-    useEvents();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
 
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
@@ -54,13 +53,6 @@ export const Home = () => {
     window.myAPI.reportStaleEvent(
       (_: IpcRendererEvent, uid: string, chainId: ChainID) => {
         markStaleEvent(uid, chainId);
-      }
-    );
-
-    // Listen for dismiss callbacks.
-    window.myAPI.reportDismissEvent(
-      (_: IpcRendererEvent, eventData: DismissEvent) => {
-        dismissEvent(eventData);
       }
     );
   }, []);

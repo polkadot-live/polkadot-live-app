@@ -6,7 +6,6 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { DismissEvent } from '@/types/reporter';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
@@ -226,14 +225,6 @@ export const API: PreloadAPI = {
 
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
-
-  /**
-   * Transactions
-   */
-
-  // Reports a dismissed event to the main process.
-  requestDismissEvent: (eventData: DismissEvent) =>
-    ipcRenderer.send('app:event:dismiss', eventData),
 
   /**
    * Miscellaneous
