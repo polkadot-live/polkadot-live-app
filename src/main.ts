@@ -268,38 +268,43 @@ app.whenReady().then(async () => {
    * Events
    */
 
-  // Persist an event and execut OS notification if event was persisted.
-  // Report event back to frontend after an event UID is assigned.
-  ipcMain.on(
-    'app:event:persist',
-    (
-      _,
-      e: EventCallback,
-      notification: NotificationData | null,
-      isOneShot: boolean
-    ) => {
-      // Remove any outdated events of the same type, if setting enabled.
-      const { appKeepOutdatedEvents } = ConfigMain.getAppSettings();
-      if (!appKeepOutdatedEvents) {
-        EventsController.removeOutdatedEvents(e);
+  ipcMain.on('main:task:event', (_, task: IpcTask) => {
+    switch (task.action) {
+      // Persist an event and execute OS notification if event was persisted.
+      // Report event back to frontend after an event UID is assigned.
+      case 'events:persist': {
+        // Destructure received data.
+        interface Target {
+          event: EventCallback;
+          notification: NotificationData | null;
+          isOneShot: boolean;
+        }
+        const { event, notification, isOneShot }: Target = task.data;
+
+        // Remove any outdated events of the same type, if setting enabled.
+        if (!ConfigMain.getAppSettings().appKeepOutdatedEvents) {
+          EventsController.removeOutdatedEvents(event);
+        }
+
+        // Persist new event to store.
+        const { event: eventWithUid, wasPersisted } =
+          EventsController.persistEvent(event);
+
+        // Show notification if event was added and notification data was received.
+        if ((wasPersisted || isOneShot) && notification) {
+          const { title, body, subtitle } = notification;
+          NotificationsController.showNotification(title, body, subtitle);
+        }
+
+        WindowsController.get('menu')?.webContents?.send(
+          'renderer:event:new',
+          eventWithUid
+        );
+
+        return;
       }
-
-      // Persist new event to store.
-      const { event: eventWithUid, wasPersisted } =
-        EventsController.persistEvent(e);
-
-      // Show notification if event was added and notification data was received.
-      if ((wasPersisted || isOneShot) && notification !== null) {
-        const { title, body, subtitle } = notification;
-        NotificationsController.showNotification(title, body, subtitle);
-      }
-
-      WindowsController.get('menu')?.webContents?.send(
-        'renderer:event:new',
-        eventWithUid
-      );
     }
-  );
+  });
 
   // Update a collection of event's associated account name.
   ipcMain.handle(

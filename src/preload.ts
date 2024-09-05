@@ -6,11 +6,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type {
-  DismissEvent,
-  EventCallback,
-  NotificationData,
-} from '@/types/reporter';
+import type { DismissEvent, EventCallback } from '@/types/reporter';
 import type { AnyJson } from './types/misc';
 import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
@@ -63,6 +59,14 @@ export const API: PreloadAPI = {
    */
   rawAccountTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:raw-account', task),
+
+  /**
+   * Events
+   */
+  sendEventTask: (task: IpcTask) => ipcRenderer.send('main:task:event', task),
+
+  sendEventTaskAsync: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:event:async', task),
 
   /**
    * Platform
@@ -150,12 +154,6 @@ export const API: PreloadAPI = {
   // Overwrite persisted accounts in store.
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),
-
-  persistEvent: (
-    event: EventCallback,
-    notification: NotificationData | null,
-    isOneShot = false
-  ) => ipcRenderer.send('app:event:persist', event, notification, isOneShot),
 
   updateAccountNameForEventsAndTasks: async (
     address: string,

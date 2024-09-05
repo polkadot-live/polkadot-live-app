@@ -19,6 +19,8 @@ export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
+  sendEventTaskAsync: (task: IpcTask) => Promise<string | void>;
+  sendEventTask: (task: IpcTask) => void;
 
   getOsPlatform: () => Promise<string>;
 
@@ -51,7 +53,6 @@ export interface PreloadAPI {
   getPersistedAccounts: ApiGetPersistedAccounts;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
-  persistEvent: ApiPersistEvent;
   updateAccountNameForEventsAndTasks: ApiUpdateAccountNameForEventsAndTasks;
   markEventStale: ApiMarkEventStale;
   reportStaleEvent: ApiReportStaleEvent;
@@ -155,12 +156,6 @@ type ApiGetOnlineStatus = () => Promise<boolean>;
 type ApiGetPersistedAccounts = () => Promise<string>;
 
 type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
-
-type ApiPersistEvent = (
-  event: EventCallback,
-  notification: NotificationData | null,
-  isOneShot?: boolean
-) => void;
 
 type ApiShowNotification = (content: NotificationData) => void;
 
