@@ -16,13 +16,16 @@ import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
+  getWindowId: () => string;
+  getOsPlatform: () => Promise<string>;
+
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
+
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
-
-  getOsPlatform: () => Promise<string>;
+  reportStaleEvent: ApiReportStaleEvent;
 
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
   deleteWorkspace: (serialised: string) => void;
@@ -33,8 +36,6 @@ export interface PreloadAPI {
   reportWorkspace: (
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;
-
-  getWindowId: () => string;
 
   exportAppData: () => Promise<ExportResult>;
   importAppData: () => Promise<ImportResult>;
@@ -53,7 +54,6 @@ export interface PreloadAPI {
   getPersistedAccounts: ApiGetPersistedAccounts;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
-  reportStaleEvent: ApiReportStaleEvent;
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
