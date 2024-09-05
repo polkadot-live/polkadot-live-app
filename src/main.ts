@@ -257,10 +257,8 @@ app.whenReady().then(async () => {
 
   ipcMain.on('main:task:event', (_, task: IpcTask): void => {
     switch (task.action) {
-      /**
-       * Persist an event and show an OS notification if event was persisted.
-       * Report event back to frontend after an event UID is assigned.
-       */
+      // Persist an event and show an OS notification if event was persisted.
+      // Report event back to frontend after an event UID is assigned.
       case 'events:persist': {
         // Destructure received data.
         interface Target {
@@ -290,6 +288,21 @@ app.whenReady().then(async () => {
           eventWithUid
         );
 
+        return;
+      }
+      // Mark event stale after extrinsic finalized.
+      case 'events:makeStale': {
+        const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
+
+        // Update persisted event as stale.
+        EventsController.persistStaleEvent(uid);
+
+        // Send message to main renderer to update event in react state.
+        WindowsController.get('menu')?.webContents?.send(
+          'renderer:event:stale',
+          uid,
+          chainId
+        );
         return;
       }
     }
@@ -329,19 +342,6 @@ app.whenReady().then(async () => {
       }
     }
   );
-
-  // Mark event stale.
-  ipcMain.on('app:event:stale', (_, uid: string, chainId: ChainID) => {
-    // Update persisted event as stale.
-    EventsController.persistStaleEvent(uid);
-
-    // Send message to main renderer to update event in react state.
-    WindowsController.get('menu')?.webContents?.send(
-      'renderer:event:stale',
-      uid,
-      chainId
-    );
-  });
 
   /**
    * Online status

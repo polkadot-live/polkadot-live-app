@@ -7,7 +7,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { AnyJson } from './types/misc';
-import type { ChainID } from './types/chains';
 import type { IpcTask } from './types/communication';
 import type { SettingAction } from './renderer/screens/Settings/types';
 
@@ -153,9 +152,6 @@ export const API: PreloadAPI = {
   // Overwrite persisted accounts in store.
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),
-
-  markEventStale: (uid: string, chainId: ChainID) =>
-    ipcRenderer.send('app:event:stale', uid, chainId),
 
   reportStaleEvent: (callback) =>
     ipcRenderer.on('renderer:event:stale', callback),
