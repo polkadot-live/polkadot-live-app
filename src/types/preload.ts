@@ -23,6 +23,9 @@ export interface PreloadAPI {
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
   sendAccountTask: (task: IpcTask) => Promise<string | void>;
 
+  sendConnectionTask: (task: IpcTask) => void;
+  sendConnectionTaskAsync: (task: IpcTask) => Promise<boolean | void>;
+
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
   reportStaleEvent: ApiReportStaleEvent;
@@ -50,7 +53,6 @@ export interface PreloadAPI {
   initializeAppOnline: ApiInitializeAppOnline;
   initializeAppOffline: ApiInitializeAppOffline;
 
-  getOnlineStatus: ApiGetOnlineStatus;
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -66,8 +68,6 @@ export interface PreloadAPI {
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
 
-  initOnlineStatus: ApiInitOnlineStatus;
-  handleConnectionStatus: ApiHandleConnectionStatus;
   reportOnlineStatus: ApiReportOnlineStatus;
 
   openBrowserURL: ApiOpenBrowserWindow;
@@ -99,8 +99,6 @@ type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
 ) => Electron.IpcRenderer;
 
-type ApiHandleConnectionStatus = () => void;
-
 type ApiReportOnlineStatus = (
   callback: (_: IpcRendererEvent, status: boolean) => void
 ) => Electron.IpcRenderer;
@@ -128,12 +126,8 @@ type ApiInitializeAppOffline = (
   callback: (_: IpcRendererEvent) => Promise<void>
 ) => void;
 
-type ApiGetOnlineStatus = () => Promise<boolean>;
-
 type ApiShowNotification = (content: NotificationData) => void;
 
 type ApiReportStaleEvent = (
   callback: (_: IpcRendererEvent, uid: string, chainId: ChainID) => void
 ) => Electron.IpcRenderer;
-
-type ApiInitOnlineStatus = () => Promise<void>;

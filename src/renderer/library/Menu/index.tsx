@@ -89,7 +89,12 @@ export const Menu = () => {
       await handleInitializeAppOffline();
     } else {
       // Confirm online connection.
-      const status = await window.myAPI.getOnlineStatus();
+      const status: boolean =
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false;
+
       if (status) {
         // Handle going online.
         setIsConnecting(true);

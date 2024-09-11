@@ -237,23 +237,18 @@ app.whenReady().then(async () => {
    * Online status
    */
 
-  // Handle initializing online status controller.
-  ipcMain.handle('app:connection:init', async () => {
-    await OnlineStatusController.initialize();
-  });
+  ipcMain.on(
+    'main:task:connection',
+    async (_, task: IpcTask) => await OnlineStatusController.process(task)
+  );
 
-  // Handle switching between online and offline.
-  ipcMain.on('app:connection:status', async () => {
-    await OnlineStatusController.handleStatusChange();
-  });
-
-  // Send connection status to frontend.
-  ipcMain.handle('app:online:status', async () =>
-    OnlineStatusController.getStatus()
+  ipcMain.handle(
+    'main:task:connection:async',
+    async (_, task: IpcTask) => await OnlineStatusController.processAsync(task)
   );
 
   /**
-   * Subscriptions
+   * Subscriptions (Account)
    */
 
   ipcMain.handle('main:task:subscription', async (_, task: IpcTask) =>
@@ -261,7 +256,7 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Interval subscriptions
+   * Subscriptions (Interval)
    */
 
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>

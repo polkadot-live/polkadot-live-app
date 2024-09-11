@@ -55,12 +55,18 @@ export const BootstrappingProvider = ({
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
-    window.myAPI.handleConnectionStatus();
+    window.myAPI.sendConnectionTask({
+      action: 'connection:setStatus',
+      data: null,
+    });
   };
 
   /// Notify main process there may be a change in connection status.
   const handleOffline = () => {
-    window.myAPI.handleConnectionStatus();
+    window.myAPI.sendConnectionTask({
+      action: 'connection:setStatus',
+      data: null,
+    });
   };
 
   /// Handle event listeners.
@@ -98,8 +104,17 @@ export const BootstrappingProvider = ({
       }, 1000);
 
       // Initialise online status controller and set online state.
-      await window.myAPI.initOnlineStatus();
-      const isOnline = await window.myAPI.getOnlineStatus();
+      await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:init',
+        data: null,
+      });
+
+      const isOnline: boolean =
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false;
+
       setOnline(isOnline);
 
       // Initialize accounts from persisted state.
@@ -223,7 +238,13 @@ export const BootstrappingProvider = ({
     }, 1000);
 
     // Report online status to renderer.
-    !aborted && setOnline(await window.myAPI.getOnlineStatus());
+    !aborted &&
+      setOnline(
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false
+      );
 
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.

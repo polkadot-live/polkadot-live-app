@@ -3,10 +3,43 @@
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import http2 from 'http2';
+import type { IpcTask } from '@/types/communication';
 
 export class OnlineStatusController {
   private static onlineStatus = false;
   private static intervalId: NodeJS.Timeout | null = null;
+
+  /**
+   * @name process
+   * @summary Handle one-way connection tasks received from renderer.
+   */
+  static async process(task: IpcTask): Promise<void> {
+    switch (task.action) {
+      // Handle switching between online and offline.
+      case 'connection:setStatus': {
+        await this.handleStatusChange();
+        return;
+      }
+    }
+  }
+
+  /**
+   * @name processAsync
+   * @summary Handle connection tasks received from renderer and return a value.
+   */
+  static async processAsync(task: IpcTask): Promise<boolean | void> {
+    switch (task.action) {
+      // Handle initializing online status controller.
+      case 'connection:init': {
+        await this.initialize();
+        return;
+      }
+      // Get connection status and send to frontend.
+      case 'connection:getStatus': {
+        return this.getStatus();
+      }
+    }
+  }
 
   /**
    * @name getStatus
@@ -20,7 +53,7 @@ export class OnlineStatusController {
    * @name initialize
    * @summary Set connection status and start connection polling loop.
    */
-  static async initialize() {
+  private static async initialize() {
     this.onlineStatus = await this.isConnected();
     this.startPollLoop();
   }
@@ -30,7 +63,7 @@ export class OnlineStatusController {
    * @summary Checks for a change in connection status and calls the appropriate
    * app task depending on whether the app has gone offline or online.
    */
-  static handleStatusChange = async () => {
+  private static handleStatusChange = async () => {
     const status = await this.isConnected();
 
     if (status !== this.onlineStatus) {

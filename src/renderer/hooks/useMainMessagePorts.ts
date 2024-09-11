@@ -108,7 +108,11 @@ export const useMainMessagePorts = () => {
       return;
     }
 
-    const isOnline = await window.myAPI.getOnlineStatus();
+    const isOnline: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
 
     if (isOnline) {
       // Fetch account nonce and balance.

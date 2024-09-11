@@ -221,7 +221,13 @@ export class Api {
    */
   disconnect = async () => {
     // Web socket will disconnect automatically if status goes offline.
-    if (await window.myAPI.getOnlineStatus()) {
+    const isOnline: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+
+    if (isOnline) {
       this._api &&
         this._api.isConnected &&
         (await this._api.disconnect().catch(console.error));
