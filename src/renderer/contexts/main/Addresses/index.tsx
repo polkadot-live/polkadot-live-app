@@ -66,12 +66,15 @@ export const AddressesProvider = ({
   };
 
   // Removes an imported address.
-  const removeAddress = (chain: ChainID, address: string) => {
+  const removeAddress = async (chain: ChainID, address: string) => {
     // Set address state.
     setAddresses(AccountsController.getAllFlattenedAccountData());
 
     // Remove persisted account from store.
-    window.myAPI.removeImportedAccount(address);
+    await window.myAPI.sendAccountTask({
+      action: 'account:remove',
+      data: { address },
+    });
   };
 
   // Get current addresses

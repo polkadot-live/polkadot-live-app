@@ -220,6 +220,7 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:task:account', async (_, task: IpcTask) => {
     switch (task.action) {
+      // Import a new account from an address.
       case 'account:import': {
         const {
           chainId,
@@ -240,9 +241,16 @@ app.whenReady().then(async () => {
 
         return;
       }
+      // Remove a managed account.
       case 'account:remove': {
-        // TODO
-        break;
+        const { address }: { address: string } = task.data;
+
+        await AppOrchestrator.next({
+          task: 'app:account:remove',
+          data: { address },
+        });
+
+        return;
       }
       case 'account:getAll': {
         // TODO
@@ -253,14 +261,6 @@ app.whenReady().then(async () => {
         break;
       }
     }
-  });
-
-  // Attempt an account removal.
-  ipcMain.on('app:account:remove', async (_, address) => {
-    await AppOrchestrator.next({
-      task: 'app:account:remove',
-      data: { address },
-    });
   });
 
   // Send stringified persisted accounts to frontend.

@@ -186,7 +186,7 @@ export const useMainMessagePorts = () => {
     AccountsController.remove(chainId, address);
 
     // Remove address from context.
-    removeAddress(chainId, address);
+    await removeAddress(chainId, address);
 
     // Update account subscriptions data.
     setAccountSubscriptions(

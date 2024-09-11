@@ -10,6 +10,6 @@ export const defaultAddressesContext: AddressesContextInterface = {
   getAddresses: () => [],
   addressExists: (a) => false,
   importAddress: (n, a) => new Promise(() => {}),
-  removeAddress: (n, a) => {},
+  removeAddress: (n, a) => new Promise(() => {}),
   getAddress: (a) => null,
 };

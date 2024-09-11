@@ -65,7 +65,6 @@ export interface PreloadAPI {
   reportLedgerStatus: ApiReportLedgerStatus;
 
   requestImportedAccounts: ApiEmptyRequest;
-  removeImportedAccount: ApiRemoveImportedAccount;
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
@@ -94,8 +93,6 @@ type ApiDoLedgerLoop = (
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void
 ) => Electron.IpcRenderer;
-
-type ApiRemoveImportedAccount = (account: string) => void;
 
 type ApiReportNewEvent = (
   callback: (_: IpcRendererEvent, eventData: EventCallback) => void

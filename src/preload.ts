@@ -202,10 +202,6 @@ export const API: PreloadAPI = {
   // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => ipcRenderer.send('app:request:accounts'),
 
-  // Attempts to remove an imported account.
-  removeImportedAccount: (account) =>
-    ipcRenderer.send('app:account:remove', account),
-
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
 
