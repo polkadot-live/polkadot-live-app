@@ -17,7 +17,7 @@ export class OnlineStatusController {
     switch (task.action) {
       // Handle switching between online and offline.
       case 'connection:setStatus': {
-        await OnlineStatusController.handleStatusChange();
+        await this.handleStatusChange();
         return;
       }
     }
@@ -31,12 +31,12 @@ export class OnlineStatusController {
     switch (task.action) {
       // Handle initializing online status controller.
       case 'connection:init': {
-        await OnlineStatusController.initialize();
+        await this.initialize();
         return;
       }
       // Get connection status and send to frontend.
       case 'connection:getStatus': {
-        return OnlineStatusController.getStatus();
+        return this.getStatus();
       }
     }
   }
@@ -53,7 +53,7 @@ export class OnlineStatusController {
    * @name initialize
    * @summary Set connection status and start connection polling loop.
    */
-  static async initialize() {
+  private static async initialize() {
     this.onlineStatus = await this.isConnected();
     this.startPollLoop();
   }
@@ -63,7 +63,7 @@ export class OnlineStatusController {
    * @summary Checks for a change in connection status and calls the appropriate
    * app task depending on whether the app has gone offline or online.
    */
-  static handleStatusChange = async () => {
+  private static handleStatusChange = async () => {
     const status = await this.isConnected();
 
     if (status !== this.onlineStatus) {
