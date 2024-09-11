@@ -252,24 +252,19 @@ app.whenReady().then(async () => {
 
         return;
       }
+      // Send persisted accounts to frontend in serialized form.
       case 'account:getAll': {
-        // TODO
-        break;
+        const stored = (store as Record<string, AnyData>).get(
+          'imported_accounts'
+        ) as string;
+
+        return stored ? (stored as string) : '';
       }
       case 'account:updateAll': {
         // TODO
         break;
       }
     }
-  });
-
-  // Send stringified persisted accounts to frontend.
-  ipcMain.handle('app:accounts:get', async () => {
-    const stored = (store as Record<string, AnyData>).get(
-      'imported_accounts'
-    ) as string;
-
-    return stored ? stored : '';
   });
 
   // Set persisted accounts in store.

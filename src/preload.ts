@@ -151,10 +151,6 @@ export const API: PreloadAPI = {
   // Get online status from main.
   getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
 
-  // Get persisted accounts from state.
-  getPersistedAccounts: async () =>
-    await ipcRenderer.invoke('app:accounts:get'),
-
   // Overwrite persisted accounts in store.
   setPersistedAccounts: (accounts: string) =>
     ipcRenderer.invoke('app:accounts:set', accounts),

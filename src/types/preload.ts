@@ -21,7 +21,7 @@ export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
-  sendAccountTask: (task: IpcTask) => Promise<string | boolean>;
+  sendAccountTask: (task: IpcTask) => Promise<string | void>;
 
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
@@ -51,7 +51,6 @@ export interface PreloadAPI {
   initializeAppOffline: ApiInitializeAppOffline;
 
   getOnlineStatus: ApiGetOnlineStatus;
-  getPersistedAccounts: ApiGetPersistedAccounts;
   setPersistedAccounts: ApiSetPersistedAccounts;
 
   showNotification: ApiShowNotification;
@@ -132,8 +131,6 @@ type ApiInitializeAppOffline = (
 ) => void;
 
 type ApiGetOnlineStatus = () => Promise<boolean>;
-
-type ApiGetPersistedAccounts = () => Promise<string>;
 
 type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 

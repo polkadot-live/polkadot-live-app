@@ -30,7 +30,11 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static async initialize() {
-    const stored = await window.myAPI.getPersistedAccounts();
+    const stored: string =
+      (await window.myAPI.sendAccountTask({
+        action: 'account:getAll',
+        data: null,
+      })) || '';
 
     // Instantiate empty map if no accounts found in store.
     if (stored === '') {
