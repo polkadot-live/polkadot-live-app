@@ -73,6 +73,18 @@ export const API: PreloadAPI = {
     await ipcRenderer.invoke('main:task:event:async', task),
 
   /**
+   * Online status
+   */
+  sendConnectionTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:connection', task),
+
+  // Initialise the online status controller when app starts.
+  initOnlineStatus: async () => await ipcRenderer.invoke('app:connection:init'),
+
+  // Handle switching between online and offline.
+  handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
+
+  /**
    * Platform
    */
   getOsPlatform: async () => await ipcRenderer.invoke('app:platform:get'),
@@ -200,16 +212,6 @@ export const API: PreloadAPI = {
   // Reports a dismiss event.
   reportDismissEvent: (callback) =>
     ipcRenderer.on('renderer:event:dismiss', callback),
-
-  /**
-   * Online status
-   */
-
-  // Initialise the online status controller when app starts.
-  initOnlineStatus: async () => await ipcRenderer.invoke('app:connection:init'),
-
-  // Handle switching between online and offline.
-  handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
 
   /**
    * Miscellaneous

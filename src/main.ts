@@ -237,6 +237,20 @@ app.whenReady().then(async () => {
    * Online status
    */
 
+  ipcMain.handle('main:task:connection', async (_, task: IpcTask) => {
+    switch (task.action) {
+      case 'connection:init': {
+        break;
+      }
+      case 'connection:getStatus': {
+        break;
+      }
+      case 'connection:setStatus': {
+        break;
+      }
+    }
+  });
+
   // Handle initializing online status controller.
   ipcMain.handle('app:connection:init', async () => {
     await OnlineStatusController.initialize();

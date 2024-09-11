@@ -22,26 +22,30 @@ export interface IpcTask {
     | 'raw-account:remove'
     | 'raw-account:get'
     | 'raw-account:rename'
-    // Account subscriptions
-    | 'subscriptions:account:getAll'
-    | 'subscriptions:account:update'
-    | 'subscriptions:chain:getAll'
-    | 'subscriptions:chain:update'
-    // Interval Subscriptions
-    | 'interval:task:get'
-    | 'interval:task:clear'
-    | 'interval:task:add'
-    | 'interval:task:remove'
-    | 'interval:task:update'
     // Accounts
     | 'account:import'
     | 'account:remove'
     | 'account:getAll'
     | 'account:updateAll'
+    // Connection
+    | 'connection:init'
+    | 'connection:getStatus'
+    | 'connection:setStatus'
     // Events
     | 'events:persist'
     | 'events:remove'
     | 'events:makeStale'
-    | 'events:update:accountName';
+    | 'events:update:accountName'
+    // Subscriptions (Account)
+    | 'subscriptions:account:getAll'
+    | 'subscriptions:account:update'
+    | 'subscriptions:chain:getAll'
+    | 'subscriptions:chain:update'
+    // Subscriptions (Interval)
+    | 'interval:task:get'
+    | 'interval:task:clear'
+    | 'interval:task:add'
+    | 'interval:task:remove'
+    | 'interval:task:update';
   data: AnyData;
 }
