@@ -44,7 +44,7 @@ export const AddressesProvider = ({
   };
 
   // Saves received address as an imported address.
-  const importAddress = (
+  const importAddress = async (
     chain: ChainID,
     source: AccountSource,
     address: string,
@@ -54,7 +54,15 @@ export const AddressesProvider = ({
     setAddresses(AccountsController.getAllFlattenedAccountData());
 
     // Have main process send OS notification.
-    window.myAPI.newAddressImported(chain, source, address, name);
+    await window.myAPI.sendAccountTask({
+      action: 'account:import',
+      data: {
+        chainId: chain,
+        source,
+        address,
+        name,
+      },
+    });
   };
 
   // Removes an imported address.

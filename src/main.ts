@@ -35,7 +35,7 @@ import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { NotificationData } from '@/types/reporter';
-import type { FlattenedAccounts } from '@/types/accounts';
+import type { AccountSource, FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
@@ -221,8 +221,24 @@ app.whenReady().then(async () => {
   ipcMain.handle('main:task:account', async (_, task: IpcTask) => {
     switch (task.action) {
       case 'account:import': {
-        // TODO
-        break;
+        const {
+          chainId,
+          source,
+          address,
+          name,
+        }: {
+          chainId: ChainID;
+          source: AccountSource;
+          address: string;
+          name: string;
+        } = task.data;
+
+        await AppOrchestrator.next({
+          task: 'app:account:import',
+          data: { chainId, source, address, name },
+        });
+
+        return;
       }
       case 'account:remove': {
         // TODO
@@ -238,17 +254,6 @@ app.whenReady().then(async () => {
       }
     }
   });
-
-  // Attempt an account import.
-  ipcMain.on(
-    'app:account:import',
-    async (_, chain: ChainID, source, address, name) => {
-      await AppOrchestrator.next({
-        task: 'app:account:import',
-        data: { chain, source, address, name },
-      });
-    }
-  );
 
   // Attempt an account removal.
   ipcMain.on('app:account:remove', async (_, address) => {

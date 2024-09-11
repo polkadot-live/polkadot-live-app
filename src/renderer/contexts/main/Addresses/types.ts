@@ -13,7 +13,12 @@ export interface AddressesContextInterface {
   setAddresses: (a: FlattenedAccounts) => void;
   getAddresses: () => FlattenedAccountData[];
   addressExists: (a: string) => boolean;
-  importAddress: (n: ChainID, s: AccountSource, a: string, b: string) => void;
+  importAddress: (
+    n: ChainID,
+    s: AccountSource,
+    a: string,
+    b: string
+  ) => Promise<void>;
   removeAddress: (n: ChainID, a: string) => void;
   getAddress: (a: string) => FlattenedAccountData | null;
 }

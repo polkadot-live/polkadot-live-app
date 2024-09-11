@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource } from './accounts';
 import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
@@ -66,7 +65,6 @@ export interface PreloadAPI {
   reportLedgerStatus: ApiReportLedgerStatus;
 
   requestImportedAccounts: ApiEmptyRequest;
-  newAddressImported: ApiNewAddressImported;
   removeImportedAccount: ApiRemoveImportedAccount;
 
   reportNewEvent: ApiReportNewEvent;
@@ -96,13 +94,6 @@ type ApiDoLedgerLoop = (
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void
 ) => Electron.IpcRenderer;
-
-export type ApiNewAddressImported = (
-  chain: ChainID,
-  source: AccountSource,
-  address: string,
-  name: string
-) => void;
 
 type ApiRemoveImportedAccount = (account: string) => void;
 
