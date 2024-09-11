@@ -51,8 +51,6 @@ export interface PreloadAPI {
   initializeAppOffline: ApiInitializeAppOffline;
 
   getOnlineStatus: ApiGetOnlineStatus;
-  setPersistedAccounts: ApiSetPersistedAccounts;
-
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -131,8 +129,6 @@ type ApiInitializeAppOffline = (
 ) => void;
 
 type ApiGetOnlineStatus = () => Promise<boolean>;
-
-type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
 type ApiShowNotification = (content: NotificationData) => void;
 

@@ -35,7 +35,7 @@ import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { NotificationData } from '@/types/reporter';
-import type { AccountSource, FlattenedAccounts } from '@/types/accounts';
+import type { AccountSource } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
@@ -260,16 +260,13 @@ app.whenReady().then(async () => {
 
         return stored ? (stored as string) : '';
       }
+      // Set persisted accounts in store.
       case 'account:updateAll': {
-        // TODO
-        break;
+        const { accounts }: { accounts: string } = task.data;
+        (store as Record<string, AnyData>).set('imported_accounts', accounts);
+        return;
       }
     }
-  });
-
-  // Set persisted accounts in store.
-  ipcMain.handle('app:accounts:set', async (_, accounts: FlattenedAccounts) => {
-    (store as Record<string, AnyData>).set('imported_accounts', accounts);
   });
 
   /**
