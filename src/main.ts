@@ -385,9 +385,6 @@ app.whenReady().then(async () => {
       case 'settings:execute:showDebuggingSubscriptions': {
         const flag = !settings.appShowDebuggingSubscriptions;
         settings.appShowDebuggingSubscriptions = flag;
-
-        const key = ConfigMain.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
         break;
       }
       case 'settings:execute:silenceOsNotifications': {
