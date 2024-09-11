@@ -239,8 +239,10 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:task:connection', async (_, task: IpcTask) => {
     switch (task.action) {
+      // Handle initializing online status controller.
       case 'connection:init': {
-        break;
+        await OnlineStatusController.initialize();
+        return;
       }
       case 'connection:getStatus': {
         break;
@@ -249,11 +251,6 @@ app.whenReady().then(async () => {
         break;
       }
     }
-  });
-
-  // Handle initializing online status controller.
-  ipcMain.handle('app:connection:init', async () => {
-    await OnlineStatusController.initialize();
   });
 
   // Handle switching between online and offline.

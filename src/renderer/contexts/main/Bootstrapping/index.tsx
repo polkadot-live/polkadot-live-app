@@ -98,7 +98,11 @@ export const BootstrappingProvider = ({
       }, 1000);
 
       // Initialise online status controller and set online state.
-      await window.myAPI.initOnlineStatus();
+      await window.myAPI.sendConnectionTask({
+        action: 'connection:init',
+        data: null,
+      });
+
       const isOnline = await window.myAPI.getOnlineStatus();
       setOnline(isOnline);
 

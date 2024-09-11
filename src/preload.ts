@@ -78,9 +78,6 @@ export const API: PreloadAPI = {
   sendConnectionTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:connection', task),
 
-  // Initialise the online status controller when app starts.
-  initOnlineStatus: async () => await ipcRenderer.invoke('app:connection:init'),
-
   // Handle switching between online and offline.
   handleConnectionStatus: () => ipcRenderer.send('app:connection:status'),
 
