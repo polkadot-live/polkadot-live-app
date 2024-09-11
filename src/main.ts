@@ -37,6 +37,7 @@ import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
 import { AccountsController } from './controller/main/AccountsController';
+import { SettingsController } from './controller/main/SettingsController';
 
 const debug = MainDebug;
 
@@ -136,7 +137,7 @@ app.whenReady().then(async () => {
   }
 
   // Hide dock icon if we're on mac OS.
-  const { appHideDockIcon } = ConfigMain.getAppSettings();
+  const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();
 
   // ------------------------------
@@ -344,7 +345,7 @@ app.whenReady().then(async () => {
   // Get application docked flag.
   ipcMain.handle(
     'app:docked:get',
-    async () => ConfigMain.getAppSettings().appDocked
+    async () => SettingsController.getAppSettings().appDocked
   );
 
   // Set application docked flag.
@@ -353,7 +354,9 @@ app.whenReady().then(async () => {
   });
 
   // Get app settings.
-  ipcMain.handle('app:settings:get', async () => ConfigMain.getAppSettings());
+  ipcMain.handle('app:settings:get', async () =>
+    SettingsController.getAppSettings()
+  );
 
   ipcMain.on('app:set:workspaceVisibility', () => {
     if (!['darwin', 'linux'].includes(process.platform)) {
@@ -361,7 +364,7 @@ app.whenReady().then(async () => {
     }
 
     // Get new flag.
-    const settings = ConfigMain.getAppSettings();
+    const settings = SettingsController.getAppSettings();
     const flag = !settings.appShowOnAllWorkspaces;
 
     // Update windows.
@@ -379,7 +382,7 @@ app.whenReady().then(async () => {
 
   // Toggle an app setting.
   ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {
-    const settings = ConfigMain.getAppSettings();
+    const settings = SettingsController.getAppSettings();
 
     switch (action) {
       case 'settings:execute:showDebuggingSubscriptions': {

@@ -18,6 +18,7 @@ import path from 'path';
 import { store } from '@/main';
 import { hideDockIcon, reportOnlineStatus } from '@/utils/SystemUtils';
 import { EventsController } from '@/controller/main/EventsController';
+import { SettingsController } from '@/controller/main/SettingsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
@@ -155,8 +156,7 @@ export const createMainWindow = (isTest: boolean) => {
     sendMainWindowPorts(mainWindow);
 
     // Freeze window if in docked mode.
-    const { appDocked } = ConfigMain.getAppSettings();
-    if (appDocked) {
+    if (SettingsController.getAppSettings().appDocked) {
       mainWindow.setMovable(false);
       mainWindow.setResizable(false);
     }
@@ -313,7 +313,7 @@ export const handleWindowOnIPC = (
     setAllWorkspaceVisibilityForWindow(name);
 
     // Hide dock icon.
-    const { appHideDockIcon } = ConfigMain.getAppSettings();
+    const { appHideDockIcon } = SettingsController.getAppSettings();
     appHideDockIcon && hideDockIcon();
   });
 };
@@ -429,7 +429,7 @@ export const handleNewDockFlag = (isDocked: boolean) => {
   }
 
   // Update storage.
-  const settings = ConfigMain.getAppSettings();
+  const settings = SettingsController.getAppSettings();
   settings.appDocked = isDocked;
 
   const key = ConfigMain.settingsStorageKey;
@@ -462,7 +462,7 @@ export const handleNewDockFlag = (isDocked: boolean) => {
  */
 export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
   const window = WindowsController.get(windowId);
-  const { appShowOnAllWorkspaces } = ConfigMain.getAppSettings();
+  const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
   window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };
 

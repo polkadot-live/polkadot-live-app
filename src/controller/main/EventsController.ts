@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '@/config/processes/main';
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
@@ -17,6 +16,7 @@ import type {
   NotificationData,
 } from '@/types/reporter';
 import type { IpcTask } from '@/types/communication';
+import { SettingsController } from './SettingsController';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -76,7 +76,7 @@ export class EventsController {
         const { event, notification, isOneShot }: Target = task.data;
 
         // Remove any outdated events of the same type, if setting enabled.
-        if (!ConfigMain.getAppSettings().appKeepOutdatedEvents) {
+        if (!SettingsController.getAppSettings().appKeepOutdatedEvents) {
           this.removeOutdatedEvents(event);
         }
 
