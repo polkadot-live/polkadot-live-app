@@ -9,7 +9,7 @@ export const defaultAddressesContext: AddressesContextInterface = {
   setAddresses: (a) => {},
   getAddresses: () => [],
   addressExists: (a) => false,
-  importAddress: (n, a) => {},
-  removeAddress: (n, a) => {},
+  importAddress: (n, a) => new Promise(() => {}),
+  removeAddress: (n, a) => new Promise(() => {}),
   getAddress: (a) => null,
 };

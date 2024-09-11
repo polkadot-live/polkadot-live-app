@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MainDebug } from '@/utils/DebugUtils';
 import { Account } from '@/model/Account';
 import type { ImportedAccounts } from '@/model/Account';
 import type { ChainID } from '@/types/chains';
@@ -12,8 +11,6 @@ import type {
 } from '@/types/accounts';
 import type { SubscriptionTask } from '@/types/subscriptions';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
-
-const debug = MainDebug.extend('Accounts');
 
 /**
  * A static class to provide an interface for managing imported accounts.
@@ -30,7 +27,11 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static async initialize() {
-    const stored = await window.myAPI.getPersistedAccounts();
+    const stored: string =
+      (await window.myAPI.sendAccountTask({
+        action: 'account:getAll',
+        data: null,
+      })) || '';
 
     // Instantiate empty map if no accounts found in store.
     if (stored === '') {
@@ -202,7 +203,10 @@ export class AccountsController {
     );
 
     // Send IPC message to update persisted accounts in store.
-    await window.myAPI.setPersistedAccounts(this.serializeAccounts());
+    await window.myAPI.sendAccountTask({
+      action: 'account:updateAll',
+      data: { accounts: this.serializeAccounts() },
+    });
   };
 
   /**
@@ -288,9 +292,14 @@ export class AccountsController {
     this.accounts = accounts;
 
     // Send IPC message to update persisted imported accounts.
-    window.myAPI.setPersistedAccounts(this.serializeAccounts());
-
-    debug('🆕 Accounts updated: %o', accounts);
+    window.myAPI
+      .sendAccountTask({
+        action: 'account:updateAll',
+        data: { accounts: this.serializeAccounts() },
+      })
+      .then(() => {
+        console.log('🆕 Accounts updated');
+      });
   };
 
   /**

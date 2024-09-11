@@ -15,7 +15,6 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { AddressesController } from './controller/main/AddressesController';
 import { BackupController } from './controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
@@ -33,12 +32,11 @@ import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 import type { NotificationData } from '@/types/reporter';
-import type { FlattenedAccounts } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
+import { AccountsController } from './controller/main/AccountsController';
 
 const debug = MainDebug;
 
@@ -207,7 +205,7 @@ app.whenReady().then(async () => {
   });
 
   /**
-   * Raw Account management
+   * Addresses
    */
 
   ipcMain.handle('main:raw-account', async (_, task: IpcTask) =>
@@ -215,41 +213,13 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Account management
+   * Accounts
    */
 
-  // Attempt an account import.
-  ipcMain.on(
-    'app:account:import',
-    async (_, chain: ChainID, source, address, name) => {
-      await AppOrchestrator.next({
-        task: 'app:account:import',
-        data: { chain, source, address, name },
-      });
-    }
+  ipcMain.handle(
+    'main:task:account',
+    async (_, task: IpcTask) => await AccountsController.process(task)
   );
-
-  // Attempt an account removal.
-  ipcMain.on('app:account:remove', async (_, address) => {
-    await AppOrchestrator.next({
-      task: 'app:account:remove',
-      data: { address },
-    });
-  });
-
-  // Send stringified persisted accounts to frontend.
-  ipcMain.handle('app:accounts:get', async () => {
-    const stored = (store as Record<string, AnyData>).get(
-      'imported_accounts'
-    ) as string;
-
-    return stored ? stored : '';
-  });
-
-  // Set persisted accounts in store.
-  ipcMain.handle('app:accounts:set', async (_, accounts: FlattenedAccounts) => {
-    (store as Record<string, AnyData>).set('imported_accounts', accounts);
-  });
 
   /**
    * Events

@@ -59,6 +59,12 @@ export const API: PreloadAPI = {
     await ipcRenderer.invoke('main:raw-account', task),
 
   /**
+   * Accounts
+   */
+  sendAccountTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:account', task),
+
+  /**
    * Events
    */
   sendEventTask: (task: IpcTask) => ipcRenderer.send('main:task:event', task),
@@ -145,14 +151,6 @@ export const API: PreloadAPI = {
   // Get online status from main.
   getOnlineStatus: async () => await ipcRenderer.invoke('app:online:status'),
 
-  // Get persisted accounts from state.
-  getPersistedAccounts: async () =>
-    await ipcRenderer.invoke('app:accounts:get'),
-
-  // Overwrite persisted accounts in store.
-  setPersistedAccounts: (accounts: string) =>
-    ipcRenderer.invoke('app:accounts:set', accounts),
-
   reportStaleEvent: (callback) =>
     ipcRenderer.on('renderer:event:stale', callback),
 
@@ -195,15 +193,6 @@ export const API: PreloadAPI = {
 
   // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => ipcRenderer.send('app:request:accounts'),
-
-  // Attempts to import a new account.
-  newAddressImported: (chain, source, address, name) => {
-    ipcRenderer.send('app:account:import', chain, source, address, name);
-  },
-
-  // Attempts to remove an imported account.
-  removeImportedAccount: (account) =>
-    ipcRenderer.send('app:account:remove', account),
 
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),

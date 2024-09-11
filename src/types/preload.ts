@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource } from './accounts';
 import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
@@ -22,6 +21,7 @@ export interface PreloadAPI {
   rawAccountTask: (task: IpcTask) => Promise<string | void>;
   sendIntervalTask: (task: IpcTask) => Promise<string | void>;
   sendSubscriptionTask: (task: IpcTask) => Promise<string | void>;
+  sendAccountTask: (task: IpcTask) => Promise<string | void>;
 
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
@@ -51,9 +51,6 @@ export interface PreloadAPI {
   initializeAppOffline: ApiInitializeAppOffline;
 
   getOnlineStatus: ApiGetOnlineStatus;
-  getPersistedAccounts: ApiGetPersistedAccounts;
-  setPersistedAccounts: ApiSetPersistedAccounts;
-
   showNotification: ApiShowNotification;
 
   quitApp: ApiEmptyPromiseRequest;
@@ -65,8 +62,6 @@ export interface PreloadAPI {
   reportLedgerStatus: ApiReportLedgerStatus;
 
   requestImportedAccounts: ApiEmptyRequest;
-  newAddressImported: ApiNewAddressImported;
-  removeImportedAccount: ApiRemoveImportedAccount;
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
@@ -95,15 +90,6 @@ type ApiDoLedgerLoop = (
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void
 ) => Electron.IpcRenderer;
-
-export type ApiNewAddressImported = (
-  chain: ChainID,
-  source: AccountSource,
-  address: string,
-  name: string
-) => void;
-
-type ApiRemoveImportedAccount = (account: string) => void;
 
 type ApiReportNewEvent = (
   callback: (_: IpcRendererEvent, eventData: EventCallback) => void
@@ -143,10 +129,6 @@ type ApiInitializeAppOffline = (
 ) => void;
 
 type ApiGetOnlineStatus = () => Promise<boolean>;
-
-type ApiGetPersistedAccounts = () => Promise<string>;
-
-type ApiSetPersistedAccounts = (accounts: string) => Promise<void>;
 
 type ApiShowNotification = (content: NotificationData) => void;
 

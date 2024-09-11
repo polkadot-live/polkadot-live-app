@@ -149,7 +149,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Add account to address context state.
-    importAddress(chainId, source, address, name);
+    await importAddress(chainId, source, address, name);
 
     // Send message back to import window to reset account's processing flag.
     ConfigRenderer.portToImport.postMessage({
@@ -186,7 +186,7 @@ export const useMainMessagePorts = () => {
     AccountsController.remove(chainId, address);
 
     // Remove address from context.
-    removeAddress(chainId, address);
+    await removeAddress(chainId, address);
 
     // Update account subscriptions data.
     setAccountSubscriptions(
