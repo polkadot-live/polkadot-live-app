@@ -218,6 +218,27 @@ app.whenReady().then(async () => {
    * Account management
    */
 
+  ipcMain.handle('main:task:account', async (_, task: IpcTask) => {
+    switch (task.action) {
+      case 'account:import': {
+        // TODO
+        break;
+      }
+      case 'account:remove': {
+        // TODO
+        break;
+      }
+      case 'account:getAll': {
+        // TODO
+        break;
+      }
+      case 'account:updateAll': {
+        // TODO
+        break;
+      }
+    }
+  });
+
   // Attempt an account import.
   ipcMain.on(
     'app:account:import',

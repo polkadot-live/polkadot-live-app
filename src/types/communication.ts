@@ -33,6 +33,11 @@ export interface IpcTask {
     | 'interval:task:add'
     | 'interval:task:remove'
     | 'interval:task:update'
+    // Accounts
+    | 'account:import'
+    | 'account:remove'
+    | 'account:getAll'
+    | 'account:updateAll'
     // Events
     | 'events:persist'
     | 'events:remove'

@@ -59,6 +59,12 @@ export const API: PreloadAPI = {
     await ipcRenderer.invoke('main:raw-account', task),
 
   /**
+   * Accounts
+   */
+  sendAccountTask: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:account', task),
+
+  /**
    * Events
    */
   sendEventTask: (task: IpcTask) => ipcRenderer.send('main:task:event', task),
