@@ -3,10 +3,43 @@
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import http2 from 'http2';
+import type { IpcTask } from '@/types/communication';
 
 export class OnlineStatusController {
   private static onlineStatus = false;
   private static intervalId: NodeJS.Timeout | null = null;
+
+  /**
+   * @name process
+   * @summary Handle one-way connection tasks received from renderer.
+   */
+  static async process(task: IpcTask): Promise<void> {
+    switch (task.action) {
+      // Handle switching between online and offline.
+      case 'connection:setStatus': {
+        await OnlineStatusController.handleStatusChange();
+        return;
+      }
+    }
+  }
+
+  /**
+   * @name processAsync
+   * @summary Handle connection tasks received from renderer and return a value.
+   */
+  static async processAsync(task: IpcTask): Promise<boolean | void> {
+    switch (task.action) {
+      // Handle initializing online status controller.
+      case 'connection:init': {
+        await OnlineStatusController.initialize();
+        return;
+      }
+      // Get connection status and send to frontend.
+      case 'connection:getStatus': {
+        return OnlineStatusController.getStatus();
+      }
+    }
+  }
 
   /**
    * @name getStatus
