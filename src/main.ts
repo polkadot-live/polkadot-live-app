@@ -15,7 +15,6 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import { AddressesController } from './controller/main/AddressesController';
 import { BackupController } from './controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
@@ -33,12 +32,11 @@ import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 import type { NotificationData } from '@/types/reporter';
-import type { AccountSource } from '@/types/accounts';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { SettingAction } from './renderer/screens/Settings/types';
+import { AccountsController } from './controller/main/AccountsController';
 
 const debug = MainDebug;
 
@@ -207,7 +205,7 @@ app.whenReady().then(async () => {
   });
 
   /**
-   * Raw Account management
+   * Addresses
    */
 
   ipcMain.handle('main:raw-account', async (_, task: IpcTask) =>
@@ -215,59 +213,13 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Account management
+   * Accounts
    */
 
-  ipcMain.handle('main:task:account', async (_, task: IpcTask) => {
-    switch (task.action) {
-      // Import a new account from an address.
-      case 'account:import': {
-        const {
-          chainId,
-          source,
-          address,
-          name,
-        }: {
-          chainId: ChainID;
-          source: AccountSource;
-          address: string;
-          name: string;
-        } = task.data;
-
-        await AppOrchestrator.next({
-          task: 'app:account:import',
-          data: { chainId, source, address, name },
-        });
-
-        return;
-      }
-      // Remove a managed account.
-      case 'account:remove': {
-        const { address }: { address: string } = task.data;
-
-        await AppOrchestrator.next({
-          task: 'app:account:remove',
-          data: { address },
-        });
-
-        return;
-      }
-      // Send persisted accounts to frontend in serialized form.
-      case 'account:getAll': {
-        const stored = (store as Record<string, AnyData>).get(
-          'imported_accounts'
-        ) as string;
-
-        return stored ? (stored as string) : '';
-      }
-      // Set persisted accounts in store.
-      case 'account:updateAll': {
-        const { accounts }: { accounts: string } = task.data;
-        (store as Record<string, AnyData>).set('imported_accounts', accounts);
-        return;
-      }
-    }
-  });
+  ipcMain.handle(
+    'main:task:account',
+    async (_, task: IpcTask) => await AccountsController.process(task)
+  );
 
   /**
    * Events
