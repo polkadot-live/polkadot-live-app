@@ -235,7 +235,7 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Online status
+   * Online Status
    */
 
   ipcMain.on(
@@ -329,7 +329,7 @@ app.whenReady().then(async () => {
   });
 
   /**
-   * Window management
+   * Window Management
    */
 
   // Hides a window by its key.
@@ -342,11 +342,9 @@ app.whenReady().then(async () => {
     WindowsController.close(id);
   });
 
-  // Get application docked flag.
-  ipcMain.handle(
-    'app:docked:get',
-    async () => SettingsController.getAppSettings().appDocked
-  );
+  /**
+   * Settings
+   */
 
   // Set application docked flag.
   ipcMain.on('app:docked:set', (_, flag) => {

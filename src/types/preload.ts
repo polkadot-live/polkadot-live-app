@@ -45,7 +45,6 @@ export interface PreloadAPI {
 
   toggleSetting: (action: SettingAction) => void;
   getAppSettings: ApiGetAppSettings;
-  getDockedFlag: ApiGetDockedFlag;
   setDockedFlag: ApiSetDockedFlag;
   toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
@@ -111,8 +110,6 @@ type ApiOpenBrowserWindow = (url: string) => void;
 type ApiToggleWorkspaceVisibility = () => void;
 
 type ApiGetAppSettings = () => Promise<PersistedSettings>;
-
-type ApiGetDockedFlag = () => Promise<boolean>;
 
 type ApiSetDockedFlag = (flag: boolean) => void;
 
