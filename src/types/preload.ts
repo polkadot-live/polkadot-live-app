@@ -28,8 +28,8 @@ export interface PreloadAPI {
   sendEventTask: (task: IpcTask) => void;
   reportStaleEvent: ApiReportStaleEvent;
 
+  sendWorkspaceTask: (task: IpcTask) => void;
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
-  deleteWorkspace: (serialised: string) => void;
   launchWorkspace: (serialised: string) => void;
 
   startWebsocketServer: () => Promise<boolean>;

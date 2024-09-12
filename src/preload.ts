@@ -108,11 +108,11 @@ export const API: PreloadAPI = {
    * Workspaces (Developer Console)
    */
 
+  sendWorkspaceTask: (task: IpcTask) =>
+    ipcRenderer.send('main:task:workspace', task),
+
   fetchPersistedWorkspaces: async () =>
     await ipcRenderer.invoke('app:workspaces:fetch'),
-
-  deleteWorkspace: (serialised: string) =>
-    ipcRenderer.send('app:workspace:delete', serialised),
 
   launchWorkspace: (serialised: string) =>
     ipcRenderer.send('app:workspace:launch', serialised),

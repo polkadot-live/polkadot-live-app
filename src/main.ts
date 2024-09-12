@@ -295,21 +295,30 @@ app.whenReady().then(async () => {
    * Workspaces
    */
 
+  ipcMain.on('sendWorkspaceTask', (_, task: IpcTask) => {
+    switch (task.action) {
+      // Handle deleting a workspace from Electron store.
+      case 'workspaces:delete': {
+        try {
+          const { serialized }: { serialized: string } = task.data;
+          WorkspacesController.removeWorkspace(JSON.parse(serialized));
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
+        break;
+      }
+      case 'workspaces:launch': {
+        break;
+      }
+    }
+  });
+
   // Handle fetching workspaces from Electron store.
   ipcMain.handle('app:workspaces:fetch', async () =>
     WorkspacesController.fetchPersistedWorkspaces()
   );
-
-  // Handle deleting a workspace from Electron store.
-  ipcMain.on('app:workspace:delete', (_, serialised: string) => {
-    try {
-      WorkspacesController.removeWorkspace(JSON.parse(serialised));
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.error(error.message);
-      }
-    }
-  });
 
   // Handle emitting workspace to developer console.
   ipcMain.on('app:workspace:launch', (_, serialised: string) => {
