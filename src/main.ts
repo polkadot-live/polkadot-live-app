@@ -346,9 +346,13 @@ app.whenReady().then(async () => {
    * Settings
    */
 
-  // Set application docked flag.
-  ipcMain.on('app:docked:set', (_, flag) => {
-    WindowUtils.handleNewDockFlag(flag);
+  ipcMain.on('main:task:settings', (_, task: IpcTask) => {
+    switch (task.action) {
+      case 'settings:set:docked': {
+        WindowUtils.handleNewDockFlag(task.data.flag);
+        break;
+      }
+    }
   });
 
   // Get app settings.

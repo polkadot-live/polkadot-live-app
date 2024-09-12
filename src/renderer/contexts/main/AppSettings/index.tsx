@@ -75,7 +75,12 @@ export const AppSettingsProvider = ({
   const handleDockedToggle = () => {
     setDockToggled((prev) => {
       const docked = !prev;
-      window.myAPI.setDockedFlag(docked);
+
+      window.myAPI.sendSettingTask({
+        action: 'settings:set:docked',
+        data: { flag: docked },
+      });
+
       return docked;
     });
   };

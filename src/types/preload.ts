@@ -43,9 +43,9 @@ export interface PreloadAPI {
   exportAppData: () => Promise<ExportResult>;
   importAppData: () => Promise<ImportResult>;
 
+  sendSettingTask: (task: IpcTask) => void;
   toggleSetting: (action: SettingAction) => void;
   getAppSettings: ApiGetAppSettings;
-  setDockedFlag: ApiSetDockedFlag;
   toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
   initializeApp: ApiInitializeApp;
@@ -110,8 +110,6 @@ type ApiOpenBrowserWindow = (url: string) => void;
 type ApiToggleWorkspaceVisibility = () => void;
 
 type ApiGetAppSettings = () => Promise<PersistedSettings>;
-
-type ApiSetDockedFlag = (flag: boolean) => void;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 

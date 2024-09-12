@@ -137,6 +137,13 @@ export const API: PreloadAPI = {
   importAppData: async () => await ipcRenderer.invoke('app:data:import'),
 
   /**
+   * Settings
+   */
+
+  sendSettingTask: (task: IpcTask) =>
+    ipcRenderer.send('main:task:settings', task),
+
+  /**
    * New handlers
    */
 
@@ -147,8 +154,6 @@ export const API: PreloadAPI = {
     ipcRenderer.send('app:set:workspaceVisibility'),
 
   getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
-
-  setDockedFlag: (flag: boolean) => ipcRenderer.send('app:docked:set', flag),
 
   initializeApp: (callback) =>
     ipcRenderer.on('renderer:app:initialize', callback),
