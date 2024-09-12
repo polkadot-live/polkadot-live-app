@@ -30,7 +30,6 @@ export interface PreloadAPI {
 
   sendWorkspaceTask: (task: IpcTask) => void;
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
-  launchWorkspace: (serialised: string) => void;
 
   startWebsocketServer: () => Promise<boolean>;
   stopWebsocketServer: () => Promise<boolean>;

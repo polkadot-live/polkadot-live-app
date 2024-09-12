@@ -309,7 +309,16 @@ app.whenReady().then(async () => {
         }
         break;
       }
+      // Handle emitting workspace to developer console.
       case 'workspaces:launch': {
+        try {
+          const { serialized }: { serialized: string } = task.data;
+          WebsocketsController.launchWorkspace(JSON.parse(serialized));
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            console.error(error.message);
+          }
+        }
         break;
       }
     }
@@ -319,17 +328,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:workspaces:fetch', async () =>
     WorkspacesController.fetchPersistedWorkspaces()
   );
-
-  // Handle emitting workspace to developer console.
-  ipcMain.on('app:workspace:launch', (_, serialised: string) => {
-    try {
-      WebsocketsController.launchWorkspace(JSON.parse(serialised));
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.error(error.message);
-      }
-    }
-  });
 
   /**
    * Window Management

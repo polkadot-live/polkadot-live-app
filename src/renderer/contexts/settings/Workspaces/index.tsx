@@ -42,7 +42,10 @@ export const WorkspacesProvider = ({
 
   /// Instruct main process to launch workspace.
   const launchWorkspace = (workspace: WorkspaceItem) => {
-    window.myAPI.launchWorkspace(JSON.stringify(workspace));
+    window.myAPI.sendWorkspaceTask({
+      action: 'workspaces:launch',
+      data: { serialized: JSON.stringify(workspace) },
+    });
   };
 
   return (

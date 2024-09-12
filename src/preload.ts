@@ -114,9 +114,6 @@ export const API: PreloadAPI = {
   fetchPersistedWorkspaces: async () =>
     await ipcRenderer.invoke('app:workspaces:fetch'),
 
-  launchWorkspace: (serialised: string) =>
-    ipcRenderer.send('app:workspace:launch', serialised),
-
   /**
    * Websocket Server
    */
