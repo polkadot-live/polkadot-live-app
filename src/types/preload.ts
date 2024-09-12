@@ -31,8 +31,7 @@ export interface PreloadAPI {
   sendWorkspaceTask: (task: IpcTask) => void;
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
 
-  startWebsocketServer: () => Promise<boolean>;
-  stopWebsocketServer: () => Promise<boolean>;
+  sendWebsocketTask: (task: IpcTask) => Promise<boolean>;
   reportWorkspace: (
     callback: (_: IpcRendererEvent, serialised: string) => void
   ) => Electron.IpcRenderer;

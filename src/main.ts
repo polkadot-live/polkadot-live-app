@@ -279,17 +279,26 @@ app.whenReady().then(async () => {
    * Websockets
    */
 
-  // Handle starting the websocket server and return a success flag.
-  ipcMain.handle('app:websockets:start', async () => {
-    WebsocketsController.startServer();
-    return true;
-  });
-
-  // Handle stopping the websocket server and return a success flag.
-  ipcMain.handle('app:websockets:stop', async () => {
-    WebsocketsController.stopServer();
-    return true;
-  });
+  ipcMain.handle(
+    'main:task:websockets',
+    async (_, task: IpcTask): Promise<boolean> => {
+      switch (task.action) {
+        // Handle starting the websocket server and return a success flag.
+        case 'websockets:server:start': {
+          WebsocketsController.startServer();
+          return true;
+        }
+        // Handle stopping the websocket server and return a success flag.
+        case 'websockets:server:stop': {
+          WebsocketsController.stopServer();
+          return true;
+        }
+        default: {
+          return false;
+        }
+      }
+    }
+  );
 
   /**
    * Workspaces

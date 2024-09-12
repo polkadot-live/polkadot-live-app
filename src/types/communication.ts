@@ -54,6 +54,9 @@ export interface IpcTask {
     // Workspaces
     | 'workspaces:getAll'
     | 'workspaces:delete'
-    | 'workspaces:launch';
+    | 'workspaces:launch'
+    // Websockets
+    | 'websockets:server:start'
+    | 'websockets:server:stop';
   data: AnyData;
 }

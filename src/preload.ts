@@ -114,18 +114,15 @@ export const API: PreloadAPI = {
   fetchPersistedWorkspaces: async () =>
     await ipcRenderer.invoke('app:workspaces:fetch'),
 
+  reportWorkspace: (callback) =>
+    ipcRenderer.on('settings:workspace:receive', callback),
+
   /**
    * Websocket Server
    */
 
-  startWebsocketServer: async () =>
-    await ipcRenderer.invoke('app:websockets:start'),
-
-  stopWebsocketServer: async () =>
-    await ipcRenderer.invoke('app:websockets:stop'),
-
-  reportWorkspace: (callback) =>
-    ipcRenderer.on('settings:workspace:receive', callback),
+  sendWebsocketTask: async (task: IpcTask) =>
+    ipcRenderer.invoke('main:task:websockets', task),
 
   /**
    * Subscriptions
