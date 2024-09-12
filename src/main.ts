@@ -10,23 +10,24 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import { Config as ConfigMain } from './config/processes/main';
 import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import { AccountsController } from './controller/main/AccountsController';
 import { AddressesController } from './controller/main/AddressesController';
 import { BackupController } from './controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from './controller/main/IntervalsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { NotificationsController } from './controller/main/NotificationsController';
+import { SettingsController } from './controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WebsocketsController } from './controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { WorkspacesController } from './controller/main/WorkspacesController';
 import { MainDebug } from './utils/DebugUtils';
-import { hideDockIcon, showDockIcon } from './utils/SystemUtils';
+import { hideDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
@@ -35,8 +36,6 @@ import type { AnyData, AnyJson } from '@/types/misc';
 import type { NotificationData } from '@/types/reporter';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
-import { AccountsController } from './controller/main/AccountsController';
-import { SettingsController } from './controller/main/SettingsController';
 
 const debug = MainDebug;
 
@@ -345,85 +344,10 @@ app.whenReady().then(async () => {
    * Settings
    */
 
-  ipcMain.on('main:task:settings', (_, task: IpcTask) => {
-    switch (task.action) {
-      case 'settings:set:docked': {
-        WindowUtils.handleNewDockFlag(task.data.flag);
-        break;
-      }
-      case 'settings:toggle:allWorkspaces': {
-        if (!['darwin', 'linux'].includes(process.platform)) {
-          return;
-        }
+  ipcMain.on('main:task:settings', (_, task: IpcTask) =>
+    SettingsController.process(task)
+  );
 
-        // Get new flag.
-        const settings = SettingsController.getAppSettings();
-        const flag = !settings.appShowOnAllWorkspaces;
-
-        // Update windows.
-        settings.appShowOnAllWorkspaces = flag;
-        WindowsController.setVisibleOnAllWorkspaces(flag);
-
-        // Update storage.
-        const key = ConfigMain.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
-
-        // Re-hide dock if we're on macOS.
-        // Electron will show the dock icon after calling the workspaces API.
-        settings.appHideDockIcon && hideDockIcon();
-        break;
-      }
-      // Toggle an app setting.
-      case 'settings:toggle': {
-        const settings = SettingsController.getAppSettings();
-
-        switch (task.data.settingAction) {
-          case 'settings:execute:showDebuggingSubscriptions': {
-            const flag = !settings.appShowDebuggingSubscriptions;
-            settings.appShowDebuggingSubscriptions = flag;
-            break;
-          }
-          case 'settings:execute:silenceOsNotifications': {
-            const flag = !settings.appSilenceOsNotifications;
-            settings.appSilenceOsNotifications = flag;
-            break;
-          }
-          case 'settings:execute:enableAutomaticSubscriptions': {
-            const flag = !settings.appEnableAutomaticSubscriptions;
-            settings.appEnableAutomaticSubscriptions = flag;
-            break;
-          }
-          case 'settings:execute:enablePolkassembly': {
-            const flag = !settings.appEnablePolkassemblyApi;
-            settings.appEnablePolkassemblyApi = flag;
-            break;
-          }
-          case 'settings:execute:keepOutdatedEvents': {
-            const flag = !settings.appKeepOutdatedEvents;
-            settings.appKeepOutdatedEvents = flag;
-            break;
-          }
-          case 'settings:execute:hideDockIcon': {
-            const flag = !settings.appHideDockIcon;
-            settings.appHideDockIcon = flag;
-
-            // Hide or show dock icon.
-            flag ? hideDockIcon() : showDockIcon();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-
-        const key = ConfigMain.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
-        break;
-      }
-    }
-  });
-
-  // Get app settings.
   ipcMain.handle('app:settings:get', async () =>
     SettingsController.getAppSettings()
   );
