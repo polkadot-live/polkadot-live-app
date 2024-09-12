@@ -5,6 +5,7 @@ import { Config as RendererConfig } from '@/config/processes/renderer';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { defaultAppSettingsContext } from './defaults';
 import type { AppSettingsContextInterface } from './types';
+import type { SettingAction } from '@/renderer/screens/Settings/types';
 
 export const AppSettingsContext = createContext<AppSettingsContextInterface>(
   defaultAppSettingsContext
@@ -39,7 +40,7 @@ export const AppSettingsProvider = ({
   /// Hide dock icon.
   const [hideDockIcon, setHideDockIcon] = useState<boolean>(false);
 
-  // Get settings from main and initialise state.
+  /// Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
       const {
@@ -71,11 +72,24 @@ export const AppSettingsProvider = ({
     initSettings();
   }, []);
 
+  /// Handle toggling a setting.
+  const handleToggleSetting = (settingAction: SettingAction) => {
+    window.myAPI.sendSettingTask({
+      action: 'settings:toggle',
+      data: { settingAction },
+    });
+  };
+
   /// Handle toggling the docked window state.
   const handleDockedToggle = () => {
     setDockToggled((prev) => {
       const docked = !prev;
-      window.myAPI.setDockedFlag(docked);
+
+      window.myAPI.sendSettingTask({
+        action: 'settings:set:docked',
+        data: { flag: docked },
+      });
+
       return docked;
     });
   };
@@ -88,7 +102,7 @@ export const AppSettingsProvider = ({
       return newFlag;
     });
 
-    window.myAPI.toggleSetting('settings:execute:silenceOsNotifications');
+    handleToggleSetting('settings:execute:silenceOsNotifications');
   };
 
   /// Handle toggling show debugging subscriptions.
@@ -99,7 +113,7 @@ export const AppSettingsProvider = ({
       return newFlag;
     });
 
-    window.myAPI.toggleSetting('settings:execute:showDebuggingSubscriptions');
+    handleToggleSetting('settings:execute:showDebuggingSubscriptions');
   };
 
   /// Handle toggling enable automatic subscriptions.
@@ -110,26 +124,26 @@ export const AppSettingsProvider = ({
       return newFlag;
     });
 
-    window.myAPI.toggleSetting('settings:execute:enableAutomaticSubscriptions');
+    handleToggleSetting('settings:execute:enableAutomaticSubscriptions');
   };
 
   /// Handle toggling enable Polkassembly API.
   const handleToggleEnablePolkassemblyApi = () => {
     setEnablePolkassemblyApi(!enablePolkassemblyApi);
-    window.myAPI.toggleSetting('settings:execute:enablePolkassembly');
+    handleToggleSetting('settings:execute:enablePolkassembly');
   };
 
   /// Handle toggling keep outdated events setting.
   const handleToggleKeepOutdatedEvents = () => {
     const newFlag = !RendererConfig.keepOutdatedEvents;
     RendererConfig.keepOutdatedEvents = newFlag;
-    window.myAPI.toggleSetting('settings:execute:keepOutdatedEvents');
+    handleToggleSetting('settings:execute:keepOutdatedEvents');
   };
 
   /// Handle toggling hide dock icon setting.
   const handleToggleHideDockIcon = () => {
     setHideDockIcon(!hideDockIcon);
-    window.myAPI.toggleSetting('settings:execute:hideDockIcon');
+    handleToggleSetting('settings:execute:hideDockIcon');
   };
 
   return (

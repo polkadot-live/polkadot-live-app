@@ -4,15 +4,12 @@
 import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
+import type { ExportResult, ImportResult } from './backup';
 import type { LedgerTask } from './ledger';
 import type { IpcTask } from './communication';
 import type { IpcRendererEvent } from 'electron';
-import type {
-  PersistedSettings,
-  SettingAction,
-} from '@/renderer/screens/Settings/types';
+import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { WorkspaceItem } from './developerConsole/workspaces';
-import type { ExportResult, ImportResult } from './backup';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -25,6 +22,7 @@ export interface PreloadAPI {
 
   sendConnectionTask: (task: IpcTask) => void;
   sendConnectionTaskAsync: (task: IpcTask) => Promise<boolean | void>;
+  reportOnlineStatus: ApiReportOnlineStatus;
 
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
@@ -43,11 +41,8 @@ export interface PreloadAPI {
   exportAppData: () => Promise<ExportResult>;
   importAppData: () => Promise<ImportResult>;
 
-  toggleSetting: (action: SettingAction) => void;
+  sendSettingTask: (task: IpcTask) => void;
   getAppSettings: ApiGetAppSettings;
-  getDockedFlag: ApiGetDockedFlag;
-  setDockedFlag: ApiSetDockedFlag;
-  toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
@@ -67,9 +62,6 @@ export interface PreloadAPI {
 
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
-
-  reportOnlineStatus: ApiReportOnlineStatus;
-
   openBrowserURL: ApiOpenBrowserWindow;
 }
 
@@ -108,13 +100,7 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiToggleWorkspaceVisibility = () => void;
-
 type ApiGetAppSettings = () => Promise<PersistedSettings>;
-
-type ApiGetDockedFlag = () => Promise<boolean>;
-
-type ApiSetDockedFlag = (flag: boolean) => void;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 

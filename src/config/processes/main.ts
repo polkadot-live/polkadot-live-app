@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MessageChannelMain } from 'electron';
-import { store } from '@/main';
 import type { AccountSource } from '@/types/accounts';
-import type { AnyData } from '@/types/misc';
-import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { PortPair, PortPairID } from '@/types/communication';
 import type { Rectangle, Tray } from 'electron';
 
@@ -69,31 +66,6 @@ export class Config {
 
     for (const id of ids) {
       Config.initPorts(id);
-    }
-  };
-
-  // Initialise default settings.
-  static getAppSettings = (): PersistedSettings => {
-    const key = Config._settingsStorageKey;
-
-    if (store.has(key)) {
-      // Return persisted settings.
-      return (store as Record<string, AnyData>).get(key);
-    } else {
-      const settings: PersistedSettings = {
-        appDocked: false,
-        appSilenceOsNotifications: false,
-        appShowOnAllWorkspaces: true,
-        appShowDebuggingSubscriptions: false,
-        appEnableAutomaticSubscriptions: true,
-        appEnablePolkassemblyApi: true,
-        appKeepOutdatedEvents: true,
-        appHideDockIcon: false,
-      };
-
-      // Persist default settings to store and return them.
-      (store as Record<string, AnyData>).set(key, settings);
-      return settings;
     }
   };
 
