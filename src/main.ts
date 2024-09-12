@@ -14,28 +14,28 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { AccountsController } from './controller/main/AccountsController';
-import { AddressesController } from './controller/main/AddressesController';
-import { BackupController } from './controller/main/BackupController';
+import { AccountsController } from '@/controller/main/AccountsController';
+import { AddressesController } from '@/controller/main/AddressesController';
+import { BackupController } from '@/controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
-import { IntervalsController } from './controller/main/IntervalsController';
+import { IntervalsController } from '@/controller/main/IntervalsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
-import { NotificationsController } from './controller/main/NotificationsController';
-import { SettingsController } from './controller/main/SettingsController';
+import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
-import { WebsocketsController } from './controller/main/WebsocketsController';
+import { WebsocketsController } from '@/controller/main/WebsocketsController';
 import { WindowsController } from '@/controller/main/WindowsController';
-import { WorkspacesController } from './controller/main/WorkspacesController';
-import { MainDebug } from './utils/DebugUtils';
-import { hideDockIcon } from './utils/SystemUtils';
-import { menuTemplate } from './utils/MenuUtils';
+import { WorkspacesController } from '@/controller/main/WorkspacesController';
+import { MainDebug } from '@/utils/DebugUtils';
+import { hideDockIcon } from '@/utils/SystemUtils';
+import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import * as WdioUtils from '@/utils/WdioUtils';
 import type { AnyData, AnyJson } from '@/types/misc';
-import type { NotificationData } from '@/types/reporter';
-import type { IpcTask } from './types/communication';
+import type { IpcTask } from '@/types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
+import type { NotificationData } from '@/types/reporter';
 
 const debug = MainDebug;
 
@@ -247,16 +247,12 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Subscriptions (Account)
+   * Subscriptions
    */
 
   ipcMain.handle('main:task:subscription', async (_, task: IpcTask) =>
     SubscriptionsController.process(task)
   );
-
-  /**
-   * Subscriptions (Interval)
-   */
 
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
     IntervalsController.process(task)
@@ -283,48 +279,23 @@ app.whenReady().then(async () => {
    * Websockets
    */
 
-  // Handle starting the websocket server and return a success flag.
-  ipcMain.handle('app:websockets:start', async () => {
-    WebsocketsController.startServer();
-    return true;
-  });
-
-  // Handle stopping the websocket server and return a success flag.
-  ipcMain.handle('app:websockets:stop', async () => {
-    WebsocketsController.stopServer();
-    return true;
-  });
+  ipcMain.handle(
+    'main:task:websockets',
+    async (_, task: IpcTask): Promise<boolean> =>
+      WebsocketsController.process(task)
+  );
 
   /**
    * Workspaces
    */
 
-  // Handle fetching workspaces from Electron store.
+  ipcMain.on('main:task:workspace', (_, task: IpcTask) =>
+    WorkspacesController.process(task)
+  );
+
   ipcMain.handle('app:workspaces:fetch', async () =>
     WorkspacesController.fetchPersistedWorkspaces()
   );
-
-  // Handle deleting a workspace from Electron store.
-  ipcMain.on('app:workspace:delete', (_, serialised: string) => {
-    try {
-      WorkspacesController.removeWorkspace(JSON.parse(serialised));
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.error(error.message);
-      }
-    }
-  });
-
-  // Handle emitting workspace to developer console.
-  ipcMain.on('app:workspace:launch', (_, serialised: string) => {
-    try {
-      WebsocketsController.launchWorkspace(JSON.parse(serialised));
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.error(error.message);
-      }
-    }
-  });
 
   /**
    * Window Management

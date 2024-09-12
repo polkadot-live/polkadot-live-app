@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
 import { WorkspacesController } from './WorkspacesController';
+import type { IpcTask } from '@/types/communication';
 import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 const debug = MainDebug.extend('WebsocketsController');
@@ -22,8 +23,27 @@ export class WebsocketsController {
     this._io = new Server(this._server);
   }
 
+  /// Process a websocket IPC task.
+  static process(task: IpcTask): boolean {
+    switch (task.action) {
+      // Handle starting the websocket server and return a success flag.
+      case 'websockets:server:start': {
+        this.startServer();
+        return true;
+      }
+      // Handle stopping the websocket server and return a success flag.
+      case 'websockets:server:stop': {
+        this.stopServer();
+        return true;
+      }
+      default: {
+        return false;
+      }
+    }
+  }
+
   /// Start socket server.
-  static startServer() {
+  private static startServer() {
     if (!this._io) {
       this.initialise();
     }
@@ -36,7 +56,7 @@ export class WebsocketsController {
   }
 
   /// Stop socket server.
-  static stopServer() {
+  private static stopServer() {
     if (!this._io) {
       return;
     }
@@ -47,7 +67,7 @@ export class WebsocketsController {
   }
 
   /// Setup socket communication.
-  static setupHandlers() {
+  private static setupHandlers() {
     if (!this._io) {
       throw new Error('Server should not be null.');
     }

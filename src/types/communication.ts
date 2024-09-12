@@ -50,6 +50,13 @@ export interface IpcTask {
     // Settings
     | 'settings:set:docked'
     | 'settings:toggle'
-    | 'settings:toggle:allWorkspaces';
+    | 'settings:toggle:allWorkspaces'
+    // Workspaces
+    | 'workspaces:getAll'
+    | 'workspaces:delete'
+    | 'workspaces:launch'
+    // Websockets
+    | 'websockets:server:start'
+    | 'websockets:server:stop';
   data: AnyData;
 }

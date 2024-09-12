@@ -21,14 +21,20 @@ export const WebsocketServerProvider = ({
 
   /// Post IPC message to main process to start listening.
   const startServer = async () => {
-    const result = await window.myAPI.startWebsocketServer();
+    const result = await window.myAPI.sendWebsocketTask({
+      action: 'websockets:server:start',
+      data: null,
+    });
     console.log(`Websocket start response: ${result}`);
     setIsListening(result);
   };
 
   /// Post IPC message to main process to stop listening.
   const stopServer = async () => {
-    const result = await window.myAPI.stopWebsocketServer();
+    const result = await window.myAPI.sendWebsocketTask({
+      action: 'websockets:server:stop',
+      data: null,
+    });
     console.log(`Websocket stop response: ${result}`);
     result && setIsListening(false);
   };

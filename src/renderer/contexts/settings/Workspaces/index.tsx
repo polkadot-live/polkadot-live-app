@@ -33,13 +33,19 @@ export const WorkspacesProvider = ({
 
   /// Remove a workspace (identified by label).
   const removeWorkspace = (workspace: WorkspaceItem) => {
-    window.myAPI.deleteWorkspace(JSON.stringify(workspace));
+    window.myAPI.sendWorkspaceTask({
+      action: 'workspaces:delete',
+      data: { serialized: JSON.stringify(workspace) },
+    });
     setWorkspaces((prev) => prev.filter((ws) => ws.label !== workspace.label));
   };
 
   /// Instruct main process to launch workspace.
   const launchWorkspace = (workspace: WorkspaceItem) => {
-    window.myAPI.launchWorkspace(JSON.stringify(workspace));
+    window.myAPI.sendWorkspaceTask({
+      action: 'workspaces:launch',
+      data: { serialized: JSON.stringify(workspace) },
+    });
   };
 
   return (
