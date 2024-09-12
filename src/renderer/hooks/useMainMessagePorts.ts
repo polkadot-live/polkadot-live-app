@@ -741,7 +741,10 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'settings:execute:showOnAllWorkspaces': {
-              window.myAPI.toggleWindowWorkspaceVisibility();
+              window.myAPI.sendSettingTask({
+                action: 'settings:toggle:allWorkspaces',
+                data: null,
+              });
               break;
             }
             case 'settings:execute:silenceOsNotifications': {

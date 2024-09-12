@@ -150,9 +150,6 @@ export const API: PreloadAPI = {
   toggleSetting: (action: SettingAction) =>
     ipcRenderer.send('app:setting:toggle', action),
 
-  toggleWindowWorkspaceVisibility: () =>
-    ipcRenderer.send('app:set:workspaceVisibility'),
-
   getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
 
   initializeApp: (callback) =>

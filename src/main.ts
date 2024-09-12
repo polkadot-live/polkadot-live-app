@@ -348,6 +348,28 @@ app.whenReady().then(async () => {
 
   ipcMain.on('main:task:settings', (_, task: IpcTask) => {
     switch (task.action) {
+      case 'settings:toggle:allWorkspaces': {
+        if (!['darwin', 'linux'].includes(process.platform)) {
+          return;
+        }
+
+        // Get new flag.
+        const settings = SettingsController.getAppSettings();
+        const flag = !settings.appShowOnAllWorkspaces;
+
+        // Update windows.
+        settings.appShowOnAllWorkspaces = flag;
+        WindowsController.setVisibleOnAllWorkspaces(flag);
+
+        // Update storage.
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
+
+        // Re-hide dock if we're on macOS.
+        // Electron will show the dock icon after calling the workspaces API.
+        settings.appHideDockIcon && hideDockIcon();
+        break;
+      }
       case 'settings:set:docked': {
         WindowUtils.handleNewDockFlag(task.data.flag);
         break;
@@ -359,28 +381,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:settings:get', async () =>
     SettingsController.getAppSettings()
   );
-
-  ipcMain.on('app:set:workspaceVisibility', () => {
-    if (!['darwin', 'linux'].includes(process.platform)) {
-      return;
-    }
-
-    // Get new flag.
-    const settings = SettingsController.getAppSettings();
-    const flag = !settings.appShowOnAllWorkspaces;
-
-    // Update windows.
-    settings.appShowOnAllWorkspaces = flag;
-    WindowsController.setVisibleOnAllWorkspaces(flag);
-
-    // Update storage.
-    const key = ConfigMain.settingsStorageKey;
-    (store as Record<string, AnyData>).set(key, settings);
-
-    // Re-hide dock if we're on macOS.
-    // Electron will show the dock icon after calling the workspaces API.
-    settings.appHideDockIcon && hideDockIcon();
-  });
 
   // Toggle an app setting.
   ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {

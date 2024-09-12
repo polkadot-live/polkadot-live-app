@@ -46,7 +46,6 @@ export interface PreloadAPI {
   sendSettingTask: (task: IpcTask) => void;
   toggleSetting: (action: SettingAction) => void;
   getAppSettings: ApiGetAppSettings;
-  toggleWindowWorkspaceVisibility: ApiToggleWorkspaceVisibility;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
@@ -107,8 +106,6 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiToggleWorkspaceVisibility = () => void;
-
 type ApiGetAppSettings = () => Promise<PersistedSettings>;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;

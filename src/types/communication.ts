@@ -48,6 +48,7 @@ export interface IpcTask {
     | 'interval:task:remove'
     | 'interval:task:update'
     // Settings
-    | 'settings:set:docked';
+    | 'settings:set:docked'
+    | 'settings:toggle:allWorkspaces';
   data: AnyData;
 }
