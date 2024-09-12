@@ -56,7 +56,6 @@ export class SettingsController {
         this.toggleAllWorkspaces();
         break;
       }
-      // Toggle an app setting.
       case 'settings:toggle': {
         this.toggleSetting(task.data.settingAction as SettingAction);
         break;
@@ -66,7 +65,7 @@ export class SettingsController {
 
   /**
    * @name toggleAllWorkspaces
-   * @summary enable or disable showing the app on all workspaces (macos and linux).
+   * @summary Enable or disable showing the app on all workspaces (macos and linux).
    */
   private static toggleAllWorkspaces() {
     if (!['darwin', 'linux'].includes(process.platform)) {
