@@ -281,23 +281,8 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     'main:task:websockets',
-    async (_, task: IpcTask): Promise<boolean> => {
-      switch (task.action) {
-        // Handle starting the websocket server and return a success flag.
-        case 'websockets:server:start': {
-          WebsocketsController.startServer();
-          return true;
-        }
-        // Handle stopping the websocket server and return a success flag.
-        case 'websockets:server:stop': {
-          WebsocketsController.stopServer();
-          return true;
-        }
-        default: {
-          return false;
-        }
-      }
-    }
+    async (_, task: IpcTask): Promise<boolean> =>
+      WebsocketsController.process(task)
   );
 
   /**
