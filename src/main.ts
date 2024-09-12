@@ -35,7 +35,6 @@ import type { AnyData, AnyJson } from '@/types/misc';
 import type { NotificationData } from '@/types/reporter';
 import type { IpcTask } from './types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
-import type { SettingAction } from './renderer/screens/Settings/types';
 import { AccountsController } from './controller/main/AccountsController';
 import { SettingsController } from './controller/main/SettingsController';
 
@@ -348,6 +347,10 @@ app.whenReady().then(async () => {
 
   ipcMain.on('main:task:settings', (_, task: IpcTask) => {
     switch (task.action) {
+      case 'settings:set:docked': {
+        WindowUtils.handleNewDockFlag(task.data.flag);
+        break;
+      }
       case 'settings:toggle:allWorkspaces': {
         if (!['darwin', 'linux'].includes(process.platform)) {
           return;
@@ -370,8 +373,51 @@ app.whenReady().then(async () => {
         settings.appHideDockIcon && hideDockIcon();
         break;
       }
-      case 'settings:set:docked': {
-        WindowUtils.handleNewDockFlag(task.data.flag);
+      // Toggle an app setting.
+      case 'settings:toggle': {
+        const settings = SettingsController.getAppSettings();
+
+        switch (task.data.settingAction) {
+          case 'settings:execute:showDebuggingSubscriptions': {
+            const flag = !settings.appShowDebuggingSubscriptions;
+            settings.appShowDebuggingSubscriptions = flag;
+            break;
+          }
+          case 'settings:execute:silenceOsNotifications': {
+            const flag = !settings.appSilenceOsNotifications;
+            settings.appSilenceOsNotifications = flag;
+            break;
+          }
+          case 'settings:execute:enableAutomaticSubscriptions': {
+            const flag = !settings.appEnableAutomaticSubscriptions;
+            settings.appEnableAutomaticSubscriptions = flag;
+            break;
+          }
+          case 'settings:execute:enablePolkassembly': {
+            const flag = !settings.appEnablePolkassemblyApi;
+            settings.appEnablePolkassemblyApi = flag;
+            break;
+          }
+          case 'settings:execute:keepOutdatedEvents': {
+            const flag = !settings.appKeepOutdatedEvents;
+            settings.appKeepOutdatedEvents = flag;
+            break;
+          }
+          case 'settings:execute:hideDockIcon': {
+            const flag = !settings.appHideDockIcon;
+            settings.appHideDockIcon = flag;
+
+            // Hide or show dock icon.
+            flag ? hideDockIcon() : showDockIcon();
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+
+        const key = ConfigMain.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
         break;
       }
     }
@@ -381,53 +427,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:settings:get', async () =>
     SettingsController.getAppSettings()
   );
-
-  // Toggle an app setting.
-  ipcMain.on('app:setting:toggle', (_, action: SettingAction) => {
-    const settings = SettingsController.getAppSettings();
-
-    switch (action) {
-      case 'settings:execute:showDebuggingSubscriptions': {
-        const flag = !settings.appShowDebuggingSubscriptions;
-        settings.appShowDebuggingSubscriptions = flag;
-        break;
-      }
-      case 'settings:execute:silenceOsNotifications': {
-        const flag = !settings.appSilenceOsNotifications;
-        settings.appSilenceOsNotifications = flag;
-        break;
-      }
-      case 'settings:execute:enableAutomaticSubscriptions': {
-        const flag = !settings.appEnableAutomaticSubscriptions;
-        settings.appEnableAutomaticSubscriptions = flag;
-        break;
-      }
-      case 'settings:execute:enablePolkassembly': {
-        const flag = !settings.appEnablePolkassemblyApi;
-        settings.appEnablePolkassemblyApi = flag;
-        break;
-      }
-      case 'settings:execute:keepOutdatedEvents': {
-        const flag = !settings.appKeepOutdatedEvents;
-        settings.appKeepOutdatedEvents = flag;
-        break;
-      }
-      case 'settings:execute:hideDockIcon': {
-        const flag = !settings.appHideDockIcon;
-        settings.appHideDockIcon = flag;
-
-        // Hide or show dock icon.
-        flag ? hideDockIcon() : showDockIcon();
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-    const key = ConfigMain.settingsStorageKey;
-    (store as Record<string, AnyData>).set(key, settings);
-  });
 
   /**
    * Ledger

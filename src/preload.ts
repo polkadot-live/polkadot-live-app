@@ -8,7 +8,6 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
 import type { AnyJson } from './types/misc';
 import type { IpcTask } from './types/communication';
-import type { SettingAction } from './renderer/screens/Settings/types';
 
 console.log(global.location.search);
 
@@ -146,9 +145,6 @@ export const API: PreloadAPI = {
   /**
    * New handlers
    */
-
-  toggleSetting: (action: SettingAction) =>
-    ipcRenderer.send('app:setting:toggle', action),
 
   getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
 
