@@ -54,26 +54,40 @@ export const API: PreloadAPI = {
   /**
    * Raw Accounts
    */
+
   rawAccountTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:raw-account', task),
 
   /**
    * Accounts
    */
+
   sendAccountTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:account', task),
 
   /**
    * Events
    */
+
   sendEventTask: (task: IpcTask) => ipcRenderer.send('main:task:event', task),
 
   sendEventTaskAsync: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:event:async', task),
 
+  reportStaleEvent: (callback) =>
+    ipcRenderer.on('renderer:event:stale', callback),
+
+  // Reports a new event to all open windows.
+  reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
+
+  // Reports a dismiss event.
+  reportDismissEvent: (callback) =>
+    ipcRenderer.on('renderer:event:dismiss', callback),
+
   /**
    * Online status
    */
+
   sendConnectionTask: (task: IpcTask) =>
     ipcRenderer.send('main:task:connection', task),
 
@@ -87,11 +101,13 @@ export const API: PreloadAPI = {
   /**
    * Platform
    */
+
   getOsPlatform: async () => await ipcRenderer.invoke('app:platform:get'),
 
   /**
    * Workspaces (Developer Console)
    */
+
   fetchPersistedWorkspaces: async () =>
     await ipcRenderer.invoke('app:workspaces:fetch'),
 
@@ -115,14 +131,11 @@ export const API: PreloadAPI = {
     ipcRenderer.on('settings:workspace:receive', callback),
 
   /**
-   * Account subscriptions
+   * Subscriptions
    */
+
   sendSubscriptionTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:subscription', task),
-
-  /**
-   * Interval subscriptions
-   */
 
   sendIntervalTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:interval', task),
@@ -142,11 +155,11 @@ export const API: PreloadAPI = {
   sendSettingTask: (task: IpcTask) =>
     ipcRenderer.send('main:task:settings', task),
 
-  /**
-   * New handlers
-   */
-
   getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
+
+  /**
+   * Initialization
+   */
 
   initializeApp: (callback) =>
     ipcRenderer.on('renderer:app:initialize', callback),
@@ -156,15 +169,6 @@ export const API: PreloadAPI = {
 
   initializeAppOffline: (callback) =>
     ipcRenderer.on('renderer:app:initialize:offline', callback),
-
-  reportStaleEvent: (callback) =>
-    ipcRenderer.on('renderer:event:stale', callback),
-
-  showNotification: (content: {
-    title: string;
-    body: string;
-    subtitle?: string;
-  }) => ipcRenderer.send('app:notification:show', content),
 
   /**
    * Window lifecycle
@@ -178,12 +182,11 @@ export const API: PreloadAPI = {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
+  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
+
   /**
    * Chain management
    */
-
-  // Opens a window.
-  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
 
   // Performs a Ledger loop.
   doLedgerLoop: (accountIndex, chainName, tasks) =>
@@ -196,16 +199,15 @@ export const API: PreloadAPI = {
   // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => ipcRenderer.send('app:request:accounts'),
 
-  // Reports a new event to all open windows.
-  reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
-
-  // Reports a dismiss event.
-  reportDismissEvent: (callback) =>
-    ipcRenderer.on('renderer:event:dismiss', callback),
-
   /**
    * Miscellaneous
    */
+
+  showNotification: (content: {
+    title: string;
+    body: string;
+    subtitle?: string;
+  }) => ipcRenderer.send('app:notification:show', content),
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),

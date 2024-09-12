@@ -247,16 +247,12 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Subscriptions (Account)
+   * Subscriptions
    */
 
   ipcMain.handle('main:task:subscription', async (_, task: IpcTask) =>
     SubscriptionsController.process(task)
   );
-
-  /**
-   * Subscriptions (Interval)
-   */
 
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
     IntervalsController.process(task)
