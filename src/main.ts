@@ -145,6 +145,7 @@ app.whenReady().then(async () => {
   // Create menu bar and tray.
   WindowUtils.createTray();
   WindowUtils.createMainWindow(isTest);
+  // TODO: WindowUtils.createBaseWindow();
 
   // Handle import window.
   WindowUtils.handleWindowOnIPC('import', isTest);

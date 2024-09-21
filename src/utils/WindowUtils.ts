@@ -9,6 +9,7 @@ import {
   ipcMain,
   shell,
   screen,
+  BaseWindow,
 } from 'electron';
 import {
   register as registerLocalShortcut,
@@ -207,6 +208,66 @@ export const createMainWindow = (isTest: boolean) => {
   } catch (e) {
     console.error(e);
   }
+};
+
+/**
+ * @name createBaseWindow
+ * @summary Creates the base window that will contain tabs and child views.
+ */
+export const createBaseWindow = () => {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth, height: screenHeight } =
+    primaryDisplay.workAreaSize;
+
+  const baseWidth = ConfigMain.childWidth;
+  const baseHeight = 475;
+
+  const defaultX = screenWidth / 2 - baseWidth / 2;
+  const defaultY = screenHeight / 2 - baseHeight / 2;
+
+  const baseWindow = new BaseWindow({
+    x: defaultX,
+    y: defaultY,
+    frame: false,
+    show: true,
+    resizable: true,
+    height: baseHeight,
+    minHeight: 475,
+    maxHeight: 900,
+    width: baseWidth,
+    minWidth: ConfigMain.childWidth,
+    maxWidth: ConfigMain.childWidth,
+    minimizable: false,
+    maximizable: false,
+    alwaysOnTop: true,
+    closable: true,
+    fullscreen: false,
+    center: true,
+    backgroundColor: '#2b2b2b',
+  });
+
+  // Hide menu bar on Linux and Windows.
+  setWindowMenuVisibility(baseWindow);
+
+  // TODO: Register local shortcut Ctrl+Q and Ctrl+W
+
+  // Have windows controller manage window.
+  WindowsController.setBaseWindow(baseWindow);
+
+  // Event handlers.
+  baseWindow.on('focus', () => {
+    WindowsController.focus('base');
+  });
+  baseWindow.on('blur', () => {
+    WindowsController.blur('base');
+  });
+  baseWindow.on('close', () => {
+    WindowsController.close('base');
+  });
+
+  // Hide dock icon.
+  const { appHideDockIcon } = SettingsController.getAppSettings();
+  appHideDockIcon && hideDockIcon();
 };
 
 /**
@@ -470,7 +531,7 @@ export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
  * @name setWindowMenuVisibility
  * @summary Hide the window menu on Linux and Windows.
  */
-const setWindowMenuVisibility = (window: BrowserWindow) => {
+const setWindowMenuVisibility = (window: BrowserWindow | BaseWindow) => {
   if (process.platform !== 'darwin') {
     window.setAutoHideMenuBar(false);
     window.setMenuBarVisibility(false);

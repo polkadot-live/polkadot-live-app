@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@/types/chains';
-import type { AnyJson } from '@/types/misc';
-import type { BrowserWindow } from 'electron';
 import { store } from '@/main';
+import type { AnyJson } from '@/types/misc';
+import type { BaseWindow, BrowserWindow, WebContentsView } from 'electron';
+import type { ChainID } from '@/types/chains';
 
 // A window helper to manage which windows are open and their current state.
 interface StoredWindow {
@@ -13,13 +13,58 @@ interface StoredWindow {
   focused: boolean;
 }
 
+interface StoredView {
+  view: WebContentsView;
+  id: string;
+  focused: boolean;
+}
+
+interface StoredBase {
+  window: BaseWindow;
+  id: string;
+  focused: boolean;
+}
+
 export class WindowsController {
-  // The currently active (showing) windows.
+  // Managed windows.
   static active: StoredWindow[] = [];
+  static base: StoredBase | null = null;
+  static views: StoredView[] = [];
+
+  /* ---------------------------------------- */
+  /* Base Window                              */
+  /* ---------------------------------------- */
+
+  static setBaseWindow = (window: BaseWindow) => {
+    this.base = { window, id: 'base', focused: false };
+  };
+
+  /* ---------------------------------------- */
+  /* Stored Views                             */
+  /* ---------------------------------------- */
+
+  // Adds a view to the `active` set.
+  static addView = (view: WebContentsView, id: string) => {
+    const newWindow: StoredView = { view, id, focused: false };
+
+    this.views = this.views.reduceRight(
+      (acc, curr) => (curr.id === id ? acc : [curr, ...acc]),
+      [newWindow]
+    );
+  };
+
+  // Removes a view from the `active` set via its id.
+  static removeView = (id: string) => {
+    this.views = this.views.filter((a: StoredView) => a.id !== id);
+  };
+
+  /* ---------------------------------------- */
+  /* Stored Windows                           */
+  /* ---------------------------------------- */
 
   static all = () => this.active;
 
-  // Adds a window to the `active` set.
+  // Adds a view to the `active` set.
   static add = (window: BrowserWindow, id: string) => {
     const newWindow: StoredWindow = { window, id, focused: false };
 
@@ -40,16 +85,24 @@ export class WindowsController {
 
   // A window is in focus.
   static focus = (id: string) => {
-    this.active = this.active.map((a: StoredWindow) =>
-      a.id === id ? { ...a, focused: true } : a
-    );
+    if (id === 'base' && this.base) {
+      this.base = { ...this.base, focused: true };
+    } else if (id !== 'base') {
+      this.active = this.active.map((a: StoredWindow) =>
+        a.id === id ? { ...a, focused: true } : a
+      );
+    }
   };
 
   // A window has been blurred.
   static blur = (id: string) => {
-    this.active = this.active.map((a: StoredWindow) =>
-      a.id === id ? { ...a, focused: false } : a
-    );
+    if (this.base && id === 'base') {
+      this.base = { ...this.base, focused: false };
+    } else if (id !== 'base') {
+      this.active = this.active.map((a: StoredWindow) =>
+        a.id === id ? { ...a, focused: false } : a
+      );
+    }
   };
 
   // At least one window is in focus.
@@ -78,19 +131,23 @@ export class WindowsController {
 
   // Close window of a id and remove from active.
   static close = (id: string) => {
-    for (const { window, id: currId } of this.active) {
-      if (currId !== id) {
-        continue;
-      }
+    if (this.base && id === 'base') {
+      this.base.window.hide();
+    } else if (id !== 'base') {
+      for (const { window, id: currId } of this.active) {
+        if (currId !== id) {
+          continue;
+        }
 
-      if (id === 'menu') {
-        window.hide();
-      } else {
-        window.close();
-        this.remove(id);
-      }
+        if (id === 'menu') {
+          window.hide();
+        } else {
+          window.close();
+          this.remove(id);
+        }
 
-      break;
+        break;
+      }
     }
   };
 
@@ -118,6 +175,8 @@ export class WindowsController {
   // Toggle a window's visibility.
   static toggleVisible = (id: string) => {
     const window = this.get(id);
+
+    // TODO: Apply to base window.
 
     if (!window) {
       throw new Error(
@@ -168,5 +227,7 @@ export class WindowsController {
     for (const { window } of this.active) {
       window.setVisibleOnAllWorkspaces(flag);
     }
+
+    // TODO: Apply setting to base window.
   };
 }
