@@ -1,10 +1,42 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  arrayMove,
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { useState } from 'react';
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
 import styled from 'styled-components';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+
+/* -------------------- */
+/* Tabs Container       */
+/* -------------------- */
+
+const DragRow = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #1a1a1a;
+  -webkit-app-region: drag;
+`;
 
 const TabsWrapper = styled.div`
-  -webkit-app-region: drag;
   user-select: none;
   width: 100%;
   height: 50px;
@@ -14,17 +46,141 @@ const TabsWrapper = styled.div`
   .inner {
     display: flex;
     align-items: center;
-    column-gap: 0.5rem;
+    column-gap: 1rem;
     height: 100%;
-    color: red;
-    padding: 0 0.5rem;
+    padding: 0 1.25rem;
   }
 `;
 
-export const Tabs: React.FC = () => (
-  <TabsWrapper>
-    <div className="inner">
-      <p>Tabs</p>
+export const Tabs: React.FC = () => {
+  const [activeId, setActiveId] = useState<number | null>(null);
+  const [clickedId, setClickedId] = useState<number | null>(null);
+  const [items, setItems] = useState<number[]>(
+    Array.from({ length: 3 }, (_, index) => index + 1)
+  );
+
+  /// Dnd
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 4,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    if (active) {
+      setActiveId(Number(active.id));
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.indexOf(Number(active.id));
+        const newIndex = prev.indexOf(Number(over.id));
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  };
+
+  return (
+    <>
+      <DragRow />
+      <TabsWrapper>
+        <div className="inner">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
+            modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+          >
+            <SortableContext
+              items={items}
+              strategy={horizontalListSortingStrategy}
+            >
+              {items.map((id) => (
+                <Tab
+                  key={String(id)}
+                  id={id}
+                  label={`Tab ${id}`}
+                  activeId={activeId}
+                  setClickedId={setClickedId}
+                  clickedId={clickedId}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </div>
+      </TabsWrapper>
+    </>
+  );
+};
+
+/* -------------------- */
+/* Tab Component        */
+/* -------------------- */
+
+interface TabProps {
+  id: number;
+  label: string;
+  activeId: number | null;
+  clickedId: number | null;
+  setClickedId: React.Dispatch<React.SetStateAction<number | null>>;
+}
+
+const Tab: React.FC<TabProps> = ({
+  id,
+  label,
+  activeId,
+  clickedId,
+  setClickedId,
+}: TabProps) => {
+  /// Dnd
+  const { attributes, listeners, transform, transition, setNodeRef } =
+    useSortable({
+      id,
+      transition: { duration: 250, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' },
+    });
+
+  /// Styles
+  const parentStyle: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    backgroundColor: clickedId === id ? '#202020' : '#333',
+    border: `1px solid ${clickedId === id ? '#aaa' : '#777'}`,
+    borderRadius: '0.25rem',
+    zIndex: activeId === id ? '20' : '1',
+  };
+
+  const outerStyle: React.CSSProperties = {
+    padding: '0.4rem 2rem',
+    fontSize: '1rem',
+    fontWeight: '500',
+    color: 'grey',
+  };
+
+  /// Click
+  const handleClick = () => {
+    if (clickedId !== id) {
+      setClickedId(id);
+      console.log(`Tab ${id} clicked...`);
+      //TODO: window.myAPI.changeTab(id);
+    }
+  };
+
+  return (
+    <div ref={setNodeRef} style={parentStyle} {...attributes} {...listeners}>
+      <div style={outerStyle} onClick={handleClick}>
+        <span role="button">{label}</span>
+      </div>
     </div>
-  </TabsWrapper>
-);
+  );
+};

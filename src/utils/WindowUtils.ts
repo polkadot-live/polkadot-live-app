@@ -255,7 +255,7 @@ export const createBaseWindow = () => {
   // Create tabbed WebContentsView and add to base window.
   const webPreferences = { preload: path.join(__dirname, 'preload.js') };
   const tabsView = new WebContentsView({ webPreferences });
-  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: 50 });
+  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: 60 });
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
