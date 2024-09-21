@@ -50,6 +50,9 @@ const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();
 
   switch (windowId) {
+    case 'tabs': {
+      return withProviders()(Theme);
+    }
     case 'main': {
       return withProviders(
         HelpProvider,

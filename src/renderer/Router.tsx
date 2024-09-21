@@ -4,9 +4,10 @@
 import { MainInterfaceWrapper } from '@app/Wrappers';
 import { Overlay } from '@app/library/Overlay';
 import { Tooltip } from '@app/library/Tooltip';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
+import { Tabs } from './screens/Tabs';
 import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
@@ -60,9 +61,20 @@ export const RouterInner = () => {
   );
 };
 
-export const Router = () => (
-  <HashRouter basename="/">
-    <RouterInner />
-  </HashRouter>
-);
+export const Router = () => {
+  const [windowId] = useState<string>(window.myAPI.getWindowId());
+
+  return (
+    <HashRouter basename="/">
+      {windowId === 'tabs' ? (
+        <Routes>
+          <Route path={'/tabs'} element={<Tabs />} />
+        </Routes>
+      ) : (
+        <RouterInner />
+      )}
+    </HashRouter>
+  );
+};
+
 export default Router;

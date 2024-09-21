@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { Rectangle } from 'electron';
 import {
   BrowserWindow,
   Tray,
@@ -10,6 +9,7 @@ import {
   shell,
   screen,
   BaseWindow,
+  WebContentsView,
 } from 'electron';
 import {
   register as registerLocalShortcut,
@@ -25,6 +25,7 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
 import type { PortPairID } from '@/types/communication';
+import type { Rectangle } from 'electron';
 
 const debug = MainDebug.extend('WindowUtils');
 
@@ -251,6 +252,15 @@ export const createBaseWindow = () => {
 
   // TODO: Register local shortcut Ctrl+Q and Ctrl+W
 
+  // Create tabbed WebContentsView and add to base window.
+  const webPreferences = { preload: path.join(__dirname, 'preload.js') };
+  const tabsView = new WebContentsView({ webPreferences });
+  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: 50 });
+  loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
+  baseWindow.contentView.addChildView(tabsView);
+
+  // TODO: Resize tabs view on base window resize.
+
   // Have windows controller manage window.
   WindowsController.setBaseWindow(baseWindow);
 
@@ -264,6 +274,9 @@ export const createBaseWindow = () => {
   baseWindow.on('close', () => {
     WindowsController.close('base');
   });
+
+  // Open developer tools.
+  tabsView.webContents.openDevTools();
 
   // Hide dock icon.
   const { appHideDockIcon } = SettingsController.getAppSettings();
@@ -384,7 +397,7 @@ export const handleWindowOnIPC = (
  * @summary Contructs a window's route and loads its HTML file.
  */
 const loadUrlWithRoute = (
-  window: BrowserWindow,
+  window: BrowserWindow | WebContentsView,
   options: { uri?: string; args?: Record<string, string> }
 ) => {
   // Dev server routes start with /#/
@@ -394,12 +407,14 @@ const loadUrlWithRoute = (
     options.args ? `?${new URLSearchParams(options.args).toString()}` : ''
   }`;
 
-  // Development: load from vite dev server.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    window.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${route}`);
+    // Development: load from vite dev server.
+    const cont = window instanceof BrowserWindow ? window : window.webContents;
+    cont.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${route}`);
   } else {
     // Production: load from app build.
-    window.loadURL(
+    const cont = window instanceof BrowserWindow ? window : window.webContents;
+    cont.loadURL(
       `file://${path.join(
         __dirname,
         `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#${route}`
