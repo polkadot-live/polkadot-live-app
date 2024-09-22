@@ -81,6 +81,8 @@ export class WindowsController {
   // Render a managed view inside the base window.
   static renderView = (viewId: string) => {
     const { view } = this.views.find(({ id }) => id === viewId)!;
+    this.initViewBounds(view);
+
     const children = this.base!.window.contentView.children;
     let added = false;
 
@@ -96,7 +98,7 @@ export class WindowsController {
   };
 
   // Set view bounds correctly.
-  static initViewBounds = (view: WebContentsView) => {
+  private static initViewBounds = (view: WebContentsView) => {
     const Y_OFFSET = 60;
     const { width, height } = this.base!.window.getContentBounds()!;
 

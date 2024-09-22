@@ -284,7 +284,6 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     };
 
     const view = new WebContentsView({ webPreferences });
-    WindowsController.initViewBounds(view);
     loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
 
     // Open links with target="_blank" in default browser.
