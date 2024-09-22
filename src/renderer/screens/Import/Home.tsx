@@ -25,162 +25,151 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   const { openHelp } = useHelp();
 
   return (
-    <>
-      {/* Header
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="import" />
-          <h3>Manage Accounts</h3>
-        </div>
-      </HeaderWrapper>
-      */}
+    <ContentWrapper>
+      {/* Hardware */}
+      <ActionItem
+        text={'Hardware or Read Only'}
+        style={{ marginTop: '1.75rem' }}
+      />
+      <div className="grid-wrapper">
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    openHelp('help:import:vault');
+                  }}
+                />
+              </div>
+              <div className="row">
+                <PolkadotVaultSVG className="logo vault" />
+              </div>
+              <div className="row">
+                <VaultLogoSVG className="svg-title" />
+              </div>
+              <div className="row margin">
+                <ButtonMonoInvert
+                  text="Manage"
+                  onClick={() => {
+                    setSource('vault');
+                    setSection(1);
+                  }}
+                  iconLeft={faQrcode}
+                  iconTransform="shrink-1"
+                />
+              </div>
+            </div>
+            <div className="foot">
+              <a
+                className="link"
+                href={`https://signer.parity.io/`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                signer.parity.io
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
+            </div>
+          </ModalHardwareItem>
+        </ModalConnectItem>
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    openHelp('help:import:ledger');
+                  }}
+                />
+              </div>
+              <div className="row">
+                <LedgerLogoSVG className="logo mono" />
+              </div>
+              <div className="row">
+                <ButtonText
+                  text="BETA"
+                  disabled
+                  marginRight
+                  style={{ opacity: 0.5 }}
+                />
+                <ButtonText
+                  text="Chrome / Brave"
+                  disabled
+                  iconLeft={faChrome}
+                  style={{ opacity: 0.5 }}
+                />
+              </div>
+              <div className="row margin">
+                <ButtonMonoInvert
+                  text="USB"
+                  onClick={() => {
+                    setSource('ledger');
+                    setSection(1);
+                  }}
+                  iconLeft={faUsb}
+                  iconTransform="shrink-1"
+                />
+              </div>
+            </div>
+            <div className="foot">
+              <a
+                className="link"
+                href={`https://ledger.com`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                ledger.com
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
+            </div>
+          </ModalHardwareItem>
+        </ModalConnectItem>
 
-      <ContentWrapper>
-        {/* Hardware */}
-        <ActionItem
-          text={'Hardware or Read Only'}
-          style={{ marginTop: '1.75rem' }}
-        />
-        <div className="grid-wrapper">
-          <ModalConnectItem>
-            <ModalHardwareItem>
-              <div className="body">
-                <div className="status">
-                  <ButtonHelp
-                    onClick={() => {
-                      openHelp('help:import:vault');
-                    }}
-                  />
-                </div>
-                <div className="row">
-                  <PolkadotVaultSVG className="logo vault" />
-                </div>
-                <div className="row">
-                  <VaultLogoSVG className="svg-title" />
-                </div>
-                <div className="row margin">
-                  <ButtonMonoInvert
-                    text="Manage"
-                    onClick={() => {
-                      setSource('vault');
-                      setSection(1);
-                    }}
-                    iconLeft={faQrcode}
-                    iconTransform="shrink-1"
-                  />
-                </div>
+        {/* Read-only*/}
+        <ModalConnectItem>
+          <ModalHardwareItem>
+            <div className="body">
+              <div className="status">
+                <ButtonHelp
+                  onClick={() => {
+                    openHelp('help:import:readOnly');
+                  }}
+                />
               </div>
-              <div className="foot">
-                <a
-                  className="link"
-                  href={`https://signer.parity.io/`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  signer.parity.io
-                  <FontAwesomeIcon
-                    icon={faExternalLinkAlt}
-                    transform="shrink-6"
-                  />
-                </a>
+              <div className="row">
+                <FontAwesomeIcon icon={faReadme} className="logo mono" />
               </div>
-            </ModalHardwareItem>
-          </ModalConnectItem>
-          <ModalConnectItem>
-            <ModalHardwareItem>
-              <div className="body">
-                <div className="status">
-                  <ButtonHelp
-                    onClick={() => {
-                      openHelp('help:import:ledger');
-                    }}
-                  />
-                </div>
-                <div className="row">
-                  <LedgerLogoSVG className="logo mono" />
-                </div>
-                <div className="row">
-                  <ButtonText
-                    text="BETA"
-                    disabled
-                    marginRight
-                    style={{ opacity: 0.5 }}
-                  />
-                  <ButtonText
-                    text="Chrome / Brave"
-                    disabled
-                    iconLeft={faChrome}
-                    style={{ opacity: 0.5 }}
-                  />
-                </div>
-                <div className="row margin">
-                  <ButtonMonoInvert
-                    text="USB"
-                    onClick={() => {
-                      setSource('ledger');
-                      setSection(1);
-                    }}
-                    iconLeft={faUsb}
-                    iconTransform="shrink-1"
-                  />
-                </div>
+              <div className="row">
+                <ButtonText
+                  text="Read Only"
+                  disabled
+                  marginRight
+                  style={{ opacity: 0.5 }}
+                />
               </div>
-              <div className="foot">
-                <a
-                  className="link"
-                  href={`https://ledger.com`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  ledger.com
-                  <FontAwesomeIcon
-                    icon={faExternalLinkAlt}
-                    transform="shrink-6"
-                  />
-                </a>
+              <div className="row margin" style={{ marginBottom: '0.75rem' }}>
+                <ButtonMonoInvert
+                  text="Manage"
+                  onClick={() => {
+                    setSource('read-only');
+                    setSection(1);
+                  }}
+                  iconLeft={faKeyboard}
+                  iconTransform="shrink-1"
+                />
               </div>
-            </ModalHardwareItem>
-          </ModalConnectItem>
-
-          {/* Read-only*/}
-          <ModalConnectItem>
-            <ModalHardwareItem>
-              <div className="body">
-                <div className="status">
-                  <ButtonHelp
-                    onClick={() => {
-                      openHelp('help:import:readOnly');
-                    }}
-                  />
-                </div>
-                <div className="row">
-                  <FontAwesomeIcon icon={faReadme} className="logo mono" />
-                </div>
-                <div className="row">
-                  <ButtonText
-                    text="Read Only"
-                    disabled
-                    marginRight
-                    style={{ opacity: 0.5 }}
-                  />
-                </div>
-                <div className="row margin" style={{ marginBottom: '0.75rem' }}>
-                  <ButtonMonoInvert
-                    text="Manage"
-                    onClick={() => {
-                      setSource('read-only');
-                      setSection(1);
-                    }}
-                    iconLeft={faKeyboard}
-                    iconTransform="shrink-1"
-                  />
-                </div>
-                <div className="foot"></div>
-              </div>
-            </ModalHardwareItem>
-          </ModalConnectItem>
-        </div>
-      </ContentWrapper>
-    </>
+              <div className="foot"></div>
+            </div>
+          </ModalHardwareItem>
+        </ModalConnectItem>
+      </div>
+    </ContentWrapper>
   );
 };
