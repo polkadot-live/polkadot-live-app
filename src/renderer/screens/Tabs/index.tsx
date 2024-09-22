@@ -1,29 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
-  arrayMove,
   horizontalListSortingStrategy,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
 } from '@dnd-kit/sortable';
-import { useState } from 'react';
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
 import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
+import { useTabs } from '@/renderer/contexts/tabs/Tabs';
 import { CSS } from '@dnd-kit/utilities';
 import styled from 'styled-components';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 
 /* -------------------- */
 /* Tabs Container       */
@@ -53,42 +43,7 @@ const TabsWrapper = styled.div`
 `;
 
 export const Tabs: React.FC = () => {
-  const [activeId, setActiveId] = useState<number | null>(null);
-  const [clickedId, setClickedId] = useState<number | null>(null);
-  const [items, setItems] = useState<number[]>(
-    Array.from({ length: 3 }, (_, index) => index + 1)
-  );
-
-  /// Dnd
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 4,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    if (active) {
-      setActiveId(Number(active.id));
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setItems((prev) => {
-        const oldIndex = prev.indexOf(Number(active.id));
-        const newIndex = prev.indexOf(Number(over.id));
-        return arrayMove(prev, oldIndex, newIndex);
-      });
-    }
-  };
+  const { handleDragStart, handleDragEnd, items, sensors } = useTabs();
 
   return (
     <>
@@ -107,14 +62,7 @@ export const Tabs: React.FC = () => {
               strategy={horizontalListSortingStrategy}
             >
               {items.map((id) => (
-                <Tab
-                  key={String(id)}
-                  id={id}
-                  label={`Tab ${id}`}
-                  activeId={activeId}
-                  setClickedId={setClickedId}
-                  clickedId={clickedId}
-                />
+                <Tab key={String(id)} id={id} label={`Tab ${id}`} />
               ))}
             </SortableContext>
           </DndContext>
@@ -131,18 +79,11 @@ export const Tabs: React.FC = () => {
 interface TabProps {
   id: number;
   label: string;
-  activeId: number | null;
-  clickedId: number | null;
-  setClickedId: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-const Tab: React.FC<TabProps> = ({
-  id,
-  label,
-  activeId,
-  clickedId,
-  setClickedId,
-}: TabProps) => {
+const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
+  const { activeId, clickedId, setClickedId } = useTabs();
+
   /// Dnd
   const { attributes, listeners, transform, transition, setNodeRef } =
     useSortable({
