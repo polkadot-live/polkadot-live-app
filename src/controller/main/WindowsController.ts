@@ -30,6 +30,7 @@ export class WindowsController {
   static active: StoredWindow[] = [];
   static base: StoredBase | null = null;
   static views: StoredView[] = [];
+  static tabsView: WebContentsView | null = null;
 
   /* ---------------------------------------- */
   /* Base Window                              */
@@ -39,23 +40,55 @@ export class WindowsController {
     this.base = { window, id: 'base', focused: false };
   };
 
+  static setTabsView = (view: WebContentsView) => {
+    this.tabsView = view;
+  };
+
   /* ---------------------------------------- */
   /* Stored Views                             */
   /* ---------------------------------------- */
 
-  // Adds a view to the `active` set.
+  // Adds a view to the `active` set and append to base window.
   static addView = (view: WebContentsView, id: string) => {
+    // TODO: Remove focused field.
     const newWindow: StoredView = { view, id, focused: false };
 
     this.views = this.views.reduceRight(
       (acc, curr) => (curr.id === id ? acc : [curr, ...acc]),
       [newWindow]
     );
+
+    // Render this view in base window.
+    this.renderView(id);
   };
 
   // Removes a view from the `active` set via its id.
   static removeView = (id: string) => {
     this.views = this.views.filter((a: StoredView) => a.id !== id);
+  };
+
+  // Check if view is already created.
+  static viewExists = (viewId: string): boolean =>
+    this.views.find(({ id }) => id === viewId) ? true : false;
+
+  // Render a managed view inside the base window.
+  static renderView = (viewId: string) => {
+    const { view } = this.views.find(({ id }) => id === viewId)!;
+
+    if (view) {
+      const children = this.base!.window.contentView.children;
+      let added = false;
+
+      for (const child of children) {
+        if (child !== this.tabsView) {
+          child === view
+            ? (added = true)
+            : this.base?.window.contentView.removeChildView(child);
+        }
+      }
+
+      !added && this.base?.window.contentView.addChildView(view);
+    }
   };
 
   /* ---------------------------------------- */

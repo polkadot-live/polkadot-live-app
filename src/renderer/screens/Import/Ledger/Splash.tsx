@@ -3,12 +3,12 @@
 
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { Header } from '@app/library/Header';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
-import type { SplashProps } from '../types';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { Header } from '@/renderer/library/Header';
+import type { SplashProps } from '../types';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (
   <>

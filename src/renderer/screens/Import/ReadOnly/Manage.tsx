@@ -13,7 +13,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
 import { useState } from 'react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';

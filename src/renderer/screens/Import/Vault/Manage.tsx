@@ -8,13 +8,13 @@ import {
 } from '@/renderer/library/Accordion';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { DragClose } from '@app/library/DragClose';
+import { DragClose } from '@/renderer/library/DragClose';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Address } from './Address';
 import { Reader } from './Reader';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
-import { HeaderWrapper, ContentWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import {

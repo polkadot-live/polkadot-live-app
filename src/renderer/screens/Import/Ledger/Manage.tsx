@@ -7,11 +7,11 @@ import {
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { DragClose } from '../../../library/DragClose';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { HeaderWrapper, ContentWrapper } from '../../Wrappers';
+import { ContentWrapper, HeaderWrapper } from '../../Wrappers';
+import { DragClose } from '@/renderer/library/DragClose';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';

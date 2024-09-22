@@ -147,21 +147,11 @@ app.whenReady().then(async () => {
   WindowUtils.createMainWindow(isTest);
   WindowUtils.createBaseWindow();
 
-  // Handle import window.
-  WindowUtils.handleWindowOnIPC('import', isTest);
-
-  // Handle action window.
-  WindowUtils.handleWindowOnIPC('action', isTest, {
-    height: 375,
-    minHeight: 375,
-    maxHeight: 375,
-  });
-
-  // Handle settings window.
-  WindowUtils.handleWindowOnIPC('settings', isTest);
-
-  // Handle open gov window.
-  WindowUtils.handleWindowOnIPC('openGov', isTest);
+  // Handle child windows.
+  WindowUtils.handleViewOnIPC('import', isTest);
+  WindowUtils.handleViewOnIPC('action', isTest);
+  WindowUtils.handleViewOnIPC('settings', isTest);
+  WindowUtils.handleViewOnIPC('openGov', isTest);
 
   // ------------------------------
   // Handle Power Changes

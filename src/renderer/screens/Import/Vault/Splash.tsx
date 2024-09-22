@@ -6,7 +6,7 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 import { ErrorBoundary } from 'react-error-boundary';
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { Header } from '@app/library/Header';
+import { Header } from '@/renderer/library/Header';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { Reader } from './Reader';

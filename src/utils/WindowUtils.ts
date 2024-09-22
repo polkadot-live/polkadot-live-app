@@ -263,6 +263,7 @@ export const createBaseWindow = () => {
 
   // Have windows controller manage window.
   WindowsController.setBaseWindow(baseWindow);
+  WindowsController.setTabsView(tabsView);
 
   // Event handlers.
   baseWindow.on('focus', () => {
@@ -284,15 +285,53 @@ export const createBaseWindow = () => {
 };
 
 /**
+ * @name handleViewOnIPC
+ * @summary Opens a view under a new tab in the base window.
+ */
+export const handleViewOnIPC = (name: string, isTest: boolean) => {
+  ipcMain.on(`${name}:open`, () => {
+    // Show view in base window if it's already created.
+    if (WindowsController.viewExists(name)) {
+      WindowsController.renderView(name);
+      return;
+    }
+
+    // Create the view and add it to the base window.
+    const webPreferences = {
+      sandbox: !isTest,
+      preload: path.join(__dirname, 'preload.js'),
+    };
+
+    const view = new WebContentsView({ webPreferences });
+    view.setBounds({ x: 0, y: 60, width: ConfigMain.childWidth, height: 415 });
+    loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
+
+    // Open links with target="_blank" in default browser.
+    view.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
+
+    // Add view to active set and render.
+    WindowsController.addView(view, name);
+
+    // Send port to view after DOM is ready.
+    view.webContents.on('dom-ready', () => {
+      debug(`🔷 Send port to ${name} window`);
+      view.webContents.postMessage('port', { target: `main-${name}:${name}` }, [
+        ConfigMain.getPortPair(`main-${name}` as PortPairID).port2,
+      ]);
+    });
+
+    // Open developer tools.
+    view.webContents.openDevTools();
+  });
+};
+
+/**
  * @name handleWindowOnIPC
  * @summary Prepares a window to be setup when main receives a given IPC message
- *
- * - Instantiates or loads an existing browser window
- * - Loads the correct URL and HTML file
- * - Defines event listeners for the window
- * - Adds the browser window to WindowsController
- *
- * TODO: replace AnyJson with currently used options.
+ * @deprecated Replaced by handleViewOnIPC
  */
 export const handleWindowOnIPC = (
   name: string,
@@ -301,7 +340,7 @@ export const handleWindowOnIPC = (
 ) => {
   // Create a call for the window to open.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ipcMain.on(`${name}:open`, (_, _args?: AnyJson) => {
+  ipcMain.on(`${name}:open`, () => {
     // Show window if it already exists.
     if (WindowsController.get(name)) {
       WindowsController.show(name);
