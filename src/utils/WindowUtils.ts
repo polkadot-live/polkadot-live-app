@@ -227,6 +227,7 @@ export const createBaseWindow = () => {
   const defaultY = screenHeight / 2 - baseHeight / 2;
 
   const baseWindow = new BaseWindow({
+    alwaysOnTop: false,
     x: defaultX,
     y: defaultY,
     frame: false,
@@ -240,7 +241,6 @@ export const createBaseWindow = () => {
     maxWidth: ConfigMain.childWidth,
     minimizable: false,
     maximizable: false,
-    alwaysOnTop: true,
     closable: true,
     fullscreen: false,
     center: true,

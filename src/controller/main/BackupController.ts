@@ -5,7 +5,6 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/main/AddressesController';
-import { WindowsController } from '@/controller/main/WindowsController';
 import type { ExportResult, ImportResult } from '@/types/backup';
 
 export class BackupController {
@@ -21,13 +20,8 @@ export class BackupController {
 
     ConfigMain.exportingData = true;
 
-    // Get response from dialog.
-    const window = WindowsController.get('settings');
-    if (!window) {
-      return { result: false, msg: 'error' };
-    }
-
-    const { canceled, filePath } = await dialog.showSaveDialog(window, {
+    // TODO: Pass BaseWindow when supported.
+    const { canceled, filePath } = await dialog.showSaveDialog({
       title: 'Export Data',
       defaultPath: 'polkadot-live-data.txt',
       filters: [
@@ -64,12 +58,8 @@ export class BackupController {
    * @summary Import a Polkadot Live data file.
    */
   static async import(): Promise<ImportResult> {
-    const window = WindowsController.get('settings');
-    if (!window) {
-      return { result: false, msg: 'error' };
-    }
-
-    const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+    // TODO: Pass BaseWindow when supported.
+    const { canceled, filePaths } = await dialog.showOpenDialog({
       title: 'Import Data',
       filters: [
         {
