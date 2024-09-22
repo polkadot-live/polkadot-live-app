@@ -46,7 +46,7 @@ export const createTray = () => {
 
   tray.addListener('click', () => {
     try {
-      WindowsController.toggleVisible('menu');
+      WindowsController.toggleWindowVisible('menu');
     } catch (e) {
       console.error(e);
     }
@@ -144,7 +144,9 @@ export const createMainWindow = (isTest: boolean) => {
     setAllWorkspaceVisibilityForWindow('menu');
 
     // Send IPC message to renderer for app Initialization.
-    WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:app:initialize'
+    );
 
     // Report online status to renderer.
     reportOnlineStatus('menu');
@@ -321,7 +323,7 @@ export const handleWindowOnIPC = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ipcMain.on(`${name}:open`, () => {
     // Show window if it already exists.
-    if (WindowsController.get(name)) {
+    if (WindowsController.getWindow(name)) {
       WindowsController.show(name);
       return;
     }
@@ -516,7 +518,7 @@ const fixMainWindow = (mainWindow: BrowserWindow, windowBounds: Rectangle) => {
  * @summary Handle docking or un-docking the main window.
  */
 export const handleNewDockFlag = (isDocked: boolean) => {
-  const mainWindow = WindowsController.get('menu');
+  const mainWindow = WindowsController.getWindow('menu');
 
   if (!mainWindow) {
     throw new Error('Main window not found.');
@@ -555,7 +557,7 @@ export const handleNewDockFlag = (isDocked: boolean) => {
  * @summary Sets windows all workspace visibiltiy flag.
  */
 export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
-  const window = WindowsController.get(windowId);
+  const window = WindowsController.getWindow(windowId);
   const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
   window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };

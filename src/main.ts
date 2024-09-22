@@ -323,10 +323,10 @@ app.whenReady().then(async () => {
     'app:ledger:do-loop',
     async (_, accountIndex, chainName, tasks) => {
       console.debug(accountIndex, chainName, tasks);
-      const importWindow = WindowsController.get('import');
+      const importView = WindowsController.getView('import');
 
-      if (importWindow) {
-        await executeLedgerLoop(importWindow, chainName, tasks, {
+      if (importView) {
+        await executeLedgerLoop(importView!, chainName, tasks, {
           accountIndex,
         });
       }

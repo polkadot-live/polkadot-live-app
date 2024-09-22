@@ -51,7 +51,7 @@ export class EventsController {
 
     // TODO: Put in utils file to decouple WindowsController, and return `events`.
     for (const event of events) {
-      WindowsController.get('menu')?.webContents?.send(
+      WindowsController.getWindow('menu')?.webContents?.send(
         'renderer:event:new',
         event
       );
@@ -89,7 +89,7 @@ export class EventsController {
           NotificationsController.showNotification(title, body, subtitle);
         }
 
-        WindowsController.get('menu')?.webContents?.send(
+        WindowsController.getWindow('menu')?.webContents?.send(
           'renderer:event:new',
           eventWithUid
         );
@@ -104,7 +104,7 @@ export class EventsController {
         this.persistStaleEvent(uid);
 
         // Update event react state.
-        WindowsController.get('menu')?.webContents?.send(
+        WindowsController.getWindow('menu')?.webContents?.send(
           'renderer:event:stale',
           uid,
           chainId
