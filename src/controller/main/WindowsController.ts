@@ -132,8 +132,6 @@ export class WindowsController {
   /* Stored Windows                           */
   /* ---------------------------------------- */
 
-  static all = () => this.active;
-
   // A window is in focus.
   // NOTE: Called for `menu` and `base` windows.
   static focus = (id: string) => {
