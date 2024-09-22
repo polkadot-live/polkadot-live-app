@@ -79,29 +79,6 @@ export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
 };
 
 /**
- * @name sendMainWindowPorts
- * @summary Send ports to child windows to facilitate communication with the main window.
- *
- * Currently unused.
- */
-export const sendChildWindowPorts = () => {
-  const childWindowIds = ['import', 'action', 'main'];
-
-  for (const windowId of childWindowIds) {
-    const childWindow = WindowsController.get(windowId);
-
-    if (childWindow) {
-      const target = `main-${windowId}:${windowId}`;
-      const portId = `main-${windowId}` as PortPairID;
-
-      childWindow.webContents.postMessage('port', { target }, [
-        ConfigMain.getPortPair(portId).port2,
-      ]);
-    }
-  }
-};
-
-/**
  * @name createMainWindow
  * @summary Set up the main window:
  *
