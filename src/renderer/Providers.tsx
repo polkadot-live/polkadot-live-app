@@ -7,6 +7,9 @@ import { OverlayProvider } from '@/renderer/contexts/common/Overlay';
 import { TooltipProvider } from '@/renderer/contexts/common/Tooltip';
 import { ConnectionsProvider } from '@/renderer/contexts/common/Connections';
 
+// Tabs contexts.
+import { TabsProvider } from '@/renderer/contexts/tabs/Tabs';
+
 // Main window contexts.
 import { AddressesProvider } from '@/renderer/contexts/main/Addresses';
 import { AppSettingsProvider } from '@/renderer/contexts/main/AppSettings';
@@ -51,7 +54,7 @@ const getProvidersForWindow = () => {
 
   switch (windowId) {
     case 'tabs': {
-      return withProviders()(Theme);
+      return withProviders(TabsProvider)(Theme);
     }
     case 'main': {
       return withProviders(
