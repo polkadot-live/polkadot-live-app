@@ -259,12 +259,10 @@ export const createBaseWindow = () => {
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
-  // TODO: Resize tabs view on base window resize.
-
-  // Have windows controller manage window.
-  WindowsController.setBaseWindow(baseWindow);
-  WindowsController.setTabsView(tabsView);
-
+  // Resize views when base window is resized.
+  baseWindow.on('resize', () => {
+    WindowsController.resizeViews();
+  });
   // Event handlers.
   baseWindow.on('focus', () => {
     WindowsController.focus('base');
@@ -275,6 +273,10 @@ export const createBaseWindow = () => {
   baseWindow.on('close', () => {
     WindowsController.close('base');
   });
+
+  // Have windows controller manage window.
+  WindowsController.setBaseWindow(baseWindow);
+  WindowsController.setTabsView(tabsView);
 
   // Open developer tools.
   tabsView.webContents.openDevTools();
@@ -303,7 +305,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     };
 
     const view = new WebContentsView({ webPreferences });
-    view.setBounds({ x: 0, y: 60, width: ConfigMain.childWidth, height: 415 });
+    WindowsController.initViewBounds(view);
     loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
 
     // Open links with target="_blank" in default browser.

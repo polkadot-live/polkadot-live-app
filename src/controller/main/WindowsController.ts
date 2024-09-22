@@ -74,20 +74,50 @@ export class WindowsController {
   // Render a managed view inside the base window.
   static renderView = (viewId: string) => {
     const { view } = this.views.find(({ id }) => id === viewId)!;
+    const children = this.base!.window.contentView.children;
+    let added = false;
 
-    if (view) {
-      const children = this.base!.window.contentView.children;
-      let added = false;
-
-      for (const child of children) {
-        if (child !== this.tabsView) {
-          child === view
-            ? (added = true)
-            : this.base?.window.contentView.removeChildView(child);
-        }
+    for (const child of children) {
+      if (child !== this.tabsView) {
+        child === view
+          ? (added = true)
+          : this.base?.window.contentView.removeChildView(child);
       }
+    }
 
-      !added && this.base?.window.contentView.addChildView(view);
+    !added && this.base?.window.contentView.addChildView(view);
+  };
+
+  // Set view bounds correctly.
+  static initViewBounds = (view: WebContentsView) => {
+    const Y_OFFSET = 60;
+    const { width, height } = this.base!.window.getContentBounds()!;
+
+    view.setBounds({
+      x: 0,
+      y: 60,
+      width,
+      height: Math.max(height - Y_OFFSET, 0),
+    });
+  };
+
+  // Resize views when base window resized.
+  static resizeViews = () => {
+    const Y_OFFSET = 60;
+    const { width, height } = this.base!.window.getContentBounds()!;
+
+    this.tabsView?.setBounds({ x: 0, y: 0, width, height: Y_OFFSET });
+
+    const children = this.base!.window.contentView.children;
+    for (const child of children) {
+      if (child !== this.tabsView) {
+        child.setBounds({
+          x: 0,
+          y: Y_OFFSET,
+          width,
+          height: Math.max(height - Y_OFFSET, 0),
+        });
+      }
     }
   };
 
