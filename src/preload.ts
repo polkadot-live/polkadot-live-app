@@ -176,7 +176,7 @@ export const API: PreloadAPI = {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
-  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
+  openWindow: async (id) => ipcRenderer.send(`${id}:open`),
 
   /**
    * Chain management
