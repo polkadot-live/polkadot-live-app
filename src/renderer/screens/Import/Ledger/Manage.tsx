@@ -10,8 +10,7 @@ import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { ContentWrapper, HeaderWrapper } from '../../Wrappers';
-import { DragClose } from '@/renderer/library/DragClose';
+import { ContentWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
@@ -48,14 +47,6 @@ export const Manage = ({
 
   return (
     <>
-      {/* Header */}
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="import" />
-          <h4>Manage Accounts</h4>
-        </div>
-      </HeaderWrapper>
-
       <Scrollable style={{ paddingTop: 0 }}>
         {/* Top Controls */}
         <ControlsWrapper

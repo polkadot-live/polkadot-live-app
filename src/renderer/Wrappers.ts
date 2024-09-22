@@ -9,7 +9,7 @@ export const MainInterfaceWrapper = styled.div`
   background: var(--background-modal);
   color: var(--text-color-primary);
   align-items: center;
-  border-radius: 10px;
+  //border-radius: 10px;
   display: flex;
   flex-flow: column nowrap;
   flex-grow: 1;

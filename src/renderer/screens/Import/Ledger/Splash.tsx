@@ -7,36 +7,32 @@ import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { Header } from '@/renderer/library/Header';
 import type { SplashProps } from '../types';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (
-  <>
-    <Header showMenu={false} />
-    <BodyInterfaceWrapper $maxHeight>
-      <SplashWrapper>
-        <div className="icon">
-          <LedgerLogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />
-        </div>
+  <BodyInterfaceWrapper $maxHeight>
+    <SplashWrapper>
+      <div className="icon">
+        <LedgerLogoSVG style={{ transform: 'scale(0.7)' }} opacity={0.25} />
+      </div>
 
-        <div className="content">
-          <h1>
-            {!statusCodes.length
-              ? 'Checking...'
-              : determineStatusFromCodes(statusCodes, false).title}
-          </h1>
-          <h4>{determineStatusFromCodes(statusCodes, false).subtitle}</h4>
+      <div className="content">
+        <h1>
+          {!statusCodes.length
+            ? 'Checking...'
+            : determineStatusFromCodes(statusCodes, false).title}
+        </h1>
+        <h4>{determineStatusFromCodes(statusCodes, false).subtitle}</h4>
 
-          <div className="btns">
-            <ButtonMonoInvert
-              lg
-              text="Back"
-              iconLeft={faAngleLeft}
-              onClick={() => setSection(0)}
-            />
-          </div>
+        <div className="btns">
+          <ButtonMonoInvert
+            lg
+            text="Back"
+            iconLeft={faAngleLeft}
+            onClick={() => setSection(0)}
+          />
         </div>
-      </SplashWrapper>
-    </BodyInterfaceWrapper>
-  </>
+      </div>
+    </SplashWrapper>
+  </BodyInterfaceWrapper>
 );

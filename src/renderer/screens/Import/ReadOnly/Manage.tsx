@@ -10,10 +10,9 @@ import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCare
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
-import { DragClose } from '@/renderer/library/DragClose';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import { Identicon } from '@/renderer/library/Identicon';
 import { useState } from 'react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
@@ -117,14 +116,6 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
   return (
     <>
-      {/* Header */}
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="import" />
-          <h4>Manage Accounts</h4>
-        </div>
-      </HeaderWrapper>
-
       <Scrollable style={{ paddingTop: 0 }}>
         {/* Top Controls */}
         <ControlsWrapper

@@ -335,7 +335,7 @@ export const Scrollable = styled.div<{
 }>`
   --footer-height: ${(props) => {
     const height = props.$footerHeight;
-    return height ? `${height}px` : '42.06px';
+    return height ? `${height}px` : '40px';
   }};
 
   --header-height: ${(props) => {
@@ -344,7 +344,7 @@ export const Scrollable = styled.div<{
   }};
 
   // height = window height - (header height + footer height)
-  height: calc(100vh - var(--footer-height) - var(--header-height));
+  height: calc(100vh - var(--footer-height));
   width: 100%;
   padding: 1.5rem 0 1rem;
   overflow-y: auto;

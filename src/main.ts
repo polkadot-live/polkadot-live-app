@@ -150,8 +150,8 @@ app.whenReady().then(async () => {
   // Handle child windows.
   WindowUtils.handleViewOnIPC('import', isTest);
   WindowUtils.handleViewOnIPC('action', isTest);
-  WindowUtils.handleViewOnIPC('settings', isTest);
   WindowUtils.handleViewOnIPC('openGov', isTest);
+  WindowUtils.handleWindowOnIPC('settings', isTest);
 
   // ------------------------------
   // Handle Power Changes
