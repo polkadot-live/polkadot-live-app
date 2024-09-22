@@ -310,109 +310,6 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
 };
 
 /**
- * @name handleWindowOnIPC
- * @summary Prepares a window to be setup when main receives a given IPC message
- * @deprecated Replaced by handleViewOnIPC
- */
-export const handleWindowOnIPC = (
-  name: string,
-  isTest: boolean,
-  options?: AnyJson
-) => {
-  // Create a call for the window to open.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ipcMain.on(`${name}:open`, () => {
-    // Show window if it already exists.
-    if (WindowsController.getWindow(name)) {
-      WindowsController.show(name);
-      return;
-    }
-
-    // Otherwise set up the window.
-    const window = new BrowserWindow({
-      frame: false,
-      show: false,
-      resizable: true,
-      height: options?.height || 475,
-      minHeight: options?.minHeight || 475,
-      maxHeight: options?.maxHeight || 900,
-      width: ConfigMain.childWidth,
-      minWidth: ConfigMain.childWidth,
-      maxWidth: ConfigMain.childWidth,
-      minimizable: false,
-      maximizable: false,
-      alwaysOnTop: true,
-      closable: true,
-      movable: true,
-      fullscreenable: false,
-      center: true,
-      backgroundColor: '#2b2b2b',
-      webPreferences: {
-        sandbox: !isTest,
-        preload: path.join(__dirname, 'preload.js'),
-      },
-    });
-
-    // Hide menu bar on Linux and Windows.
-    setWindowMenuVisibility(window);
-
-    registerLocalShortcut(window, 'CmdOrCtrl+Q', () =>
-      WindowsController.close(name)
-    );
-    registerLocalShortcut(window, 'CmdOrCtrl+W', () =>
-      WindowsController.close(name)
-    );
-
-    // Load correct URL with window ID and HTML file.
-    loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
-
-    // Send port to respective renderer using its name.
-    window.once('ready-to-show', () => {
-      debug(`🔷 Send port to ${name} window`);
-
-      window.webContents.postMessage(
-        'port',
-        { target: `main-${name}:${name}` },
-        [ConfigMain.getPortPair(`main-${name}` as PortPairID).port2]
-      );
-    });
-
-    window.on('focus', () => {
-      WindowsController.focus(name);
-    });
-
-    window.on('blur', () => {
-      WindowsController.blur(name);
-    });
-
-    window.on('close', () => {
-      unregisterAllLocalShortcut(window);
-    });
-
-    window.on('closed', () => {
-      WindowsController.remove(name);
-    });
-
-    // Open links with target="_blank" in default browser.
-    window.webContents.setWindowOpenHandler(({ url }) => {
-      shell.openExternal(url);
-      return { action: 'deny' };
-    });
-
-    // Have windows controller handle window.
-    WindowsController.add(window, name);
-    WindowsController.show(name);
-
-    // Set all workspaces visibility.
-    setAllWorkspaceVisibilityForWindow(name);
-
-    // Hide dock icon.
-    const { appHideDockIcon } = SettingsController.getAppSettings();
-    appHideDockIcon && hideDockIcon();
-  });
-};
-
-/**
  * @name loadUrlWithRoute
  * @summary Contructs a window's route and loads its HTML file.
  */
@@ -571,4 +468,108 @@ const setWindowMenuVisibility = (window: BrowserWindow | BaseWindow) => {
     window.setAutoHideMenuBar(false);
     window.setMenuBarVisibility(false);
   }
+};
+
+/**
+ * @name handleWindowOnIPC
+ * @summary Prepares a window to be setup when main receives a given IPC message.
+ * @deprecated Replaced by handleViewOnIPC.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleWindowOnIPC = (
+  name: string,
+  isTest: boolean,
+  options?: AnyJson
+) => {
+  // Create a call for the window to open.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ipcMain.on(`${name}:open`, () => {
+    // Show window if it already exists.
+    if (WindowsController.getWindow(name)) {
+      WindowsController.show(name);
+      return;
+    }
+
+    // Otherwise set up the window.
+    const window = new BrowserWindow({
+      frame: false,
+      show: false,
+      resizable: true,
+      height: options?.height || 475,
+      minHeight: options?.minHeight || 475,
+      maxHeight: options?.maxHeight || 900,
+      width: ConfigMain.childWidth,
+      minWidth: ConfigMain.childWidth,
+      maxWidth: ConfigMain.childWidth,
+      minimizable: false,
+      maximizable: false,
+      alwaysOnTop: true,
+      closable: true,
+      movable: true,
+      fullscreenable: false,
+      center: true,
+      backgroundColor: '#2b2b2b',
+      webPreferences: {
+        sandbox: !isTest,
+        preload: path.join(__dirname, 'preload.js'),
+      },
+    });
+
+    // Hide menu bar on Linux and Windows.
+    setWindowMenuVisibility(window);
+
+    registerLocalShortcut(window, 'CmdOrCtrl+Q', () =>
+      WindowsController.close(name)
+    );
+    registerLocalShortcut(window, 'CmdOrCtrl+W', () =>
+      WindowsController.close(name)
+    );
+
+    // Load correct URL with window ID and HTML file.
+    loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
+
+    // Send port to respective renderer using its name.
+    window.once('ready-to-show', () => {
+      debug(`🔷 Send port to ${name} window`);
+
+      window.webContents.postMessage(
+        'port',
+        { target: `main-${name}:${name}` },
+        [ConfigMain.getPortPair(`main-${name}` as PortPairID).port2]
+      );
+    });
+
+    window.on('focus', () => {
+      WindowsController.focus(name);
+    });
+
+    window.on('blur', () => {
+      WindowsController.blur(name);
+    });
+
+    window.on('close', () => {
+      unregisterAllLocalShortcut(window);
+    });
+
+    window.on('closed', () => {
+      WindowsController.remove(name);
+    });
+
+    // Open links with target="_blank" in default browser.
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
+
+    // Have windows controller handle window.
+    WindowsController.add(window, name);
+    WindowsController.show(name);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow(name);
+
+    // Hide dock icon.
+    const { appHideDockIcon } = SettingsController.getAppSettings();
+    appHideDockIcon && hideDockIcon();
+  });
 };
