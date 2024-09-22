@@ -291,6 +291,7 @@ export class WindowsController {
       window.setVisibleOnAllWorkspaces(flag);
     }
 
-    // TODO: Apply setting to base window.
+    // Apply setting to base window.
+    this.base?.window.setVisibleOnAllWorkspaces(flag);
   };
 }
