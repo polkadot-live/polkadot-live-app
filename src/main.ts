@@ -299,7 +299,16 @@ app.whenReady().then(async () => {
 
   // Closes a window by its key.
   ipcMain.on('app:window:close', (_, id) => {
-    WindowsController.close(id);
+    // TODO: Make main window id `main` instead of `menu` and sync with windowId.
+    const windowId = id === 'main' ? 'menu' : id;
+    WindowsController.close(windowId);
+  });
+
+  // Show the base window after clicking the restore button.
+  ipcMain.on('app:window:restore', (_, windowId) => {
+    if (windowId === 'base') {
+      WindowsController.show(windowId);
+    }
   });
 
   /**

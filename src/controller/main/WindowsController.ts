@@ -31,6 +31,9 @@ export class WindowsController {
   static views: StoredView[] = [];
   static tabsView: WebContentsView | null = null;
 
+  // Height of tabs view in pixels (tabs height + header height)
+  static Y_OFFSET = 49 + 35.0938;
+
   // Gets a browser window from the `active` set via its id.
   static getWindow = (id: string) =>
     this.active.find((a: StoredWindow) => a.id === id)?.window ?? undefined;
@@ -99,32 +102,30 @@ export class WindowsController {
 
   // Set view bounds correctly.
   private static initViewBounds = (view: WebContentsView) => {
-    const Y_OFFSET = 60;
     const { width, height } = this.base!.window.getContentBounds()!;
 
     view.setBounds({
       x: 0,
-      y: 60,
+      y: this.Y_OFFSET,
       width,
-      height: Math.max(height - Y_OFFSET, 0),
+      height: Math.max(height - this.Y_OFFSET, 0),
     });
   };
 
   // Resize views when base window resized.
   static resizeViews = () => {
-    const Y_OFFSET = 60;
     const { width, height } = this.base!.window.getContentBounds()!;
 
-    this.tabsView?.setBounds({ x: 0, y: 0, width, height: Y_OFFSET });
+    this.tabsView?.setBounds({ x: 0, y: 0, width, height: this.Y_OFFSET });
 
     const children = this.base!.window.contentView.children;
     for (const child of children) {
       if (child !== this.tabsView) {
         child.setBounds({
           x: 0,
-          y: Y_OFFSET,
+          y: this.Y_OFFSET,
           width,
-          height: Math.max(height - Y_OFFSET, 0),
+          height: Math.max(height - this.Y_OFFSET, 0),
         });
       }
     }
@@ -188,18 +189,23 @@ export class WindowsController {
   // Show a window
   // TODO: Remove or refactor to `showView`.
   static show = (id: string) => {
-    const window = this.active.find((w) => w.id === id)?.window;
-    if (window) {
-      window.show();
-      this.focus(id);
+    if (id === 'base' && this.base?.window) {
+      const window = this.base.window;
+      !window.isVisible() ? window.show() : window.focus();
+    } else if (id !== 'base') {
+      const window = this.active.find((w) => w.id === id)?.window;
+      if (window) {
+        window.show();
+        this.focus(id);
+      }
     }
   };
 
   // Close window of a id and remove from active.
   static close = (id: string) => {
-    if (this.base && id === 'base') {
+    if (this.base && id === 'tabs') {
       this.base.window.hide();
-    } else if (id !== 'base') {
+    } else if (id !== 'tabs') {
       for (const { window, id: currId } of this.active) {
         if (currId !== id) {
           continue;

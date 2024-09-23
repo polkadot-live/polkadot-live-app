@@ -3,27 +3,21 @@
 
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
 import { Config as RendererConfig } from '@/config/processes/renderer';
-import { faTimes, faUnlock, faLock } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTimes,
+  faUnlock,
+  faLock,
+  faWindowRestore,
+} from '@fortawesome/free-solid-svg-icons';
 import { HeaderWrapper } from './Wrapper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
-import { useLocation } from 'react-router-dom';
 import type { HeaderProps } from './types';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
-  const { pathname } = useLocation();
   const { dockToggled, handleDockedToggle } = useAppSettings();
-
-  /// Determine active window by pathname.
-  let activeWindow: string;
-  switch (pathname) {
-    case '/import':
-      activeWindow = 'import';
-      break;
-    default:
-      activeWindow = 'menu';
-  }
+  const windowId = window.myAPI.getWindowId();
 
   /// Handle clicking the docked button.
   const handleDocked = () => {
@@ -43,7 +37,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="grab" />
         <span className="alpha">alpha</span>
         <div className="right">
-          {showMenu || activeWindow === 'menu' ? (
+          {showMenu || windowId === 'main' ? (
             <div className="controls-wrapper">
               {/* Dock window */}
               <ButtonSecondary
@@ -54,6 +48,17 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 onClick={() => handleDocked()}
               />
 
+              {/* Restore base window */}
+              <button
+                type="button"
+                onClick={() => window.myAPI.restoreWindow('base')}
+              >
+                <FontAwesomeIcon
+                  transform={'shrink-1'}
+                  icon={faWindowRestore}
+                />
+              </button>
+
               {/* Cog menu*/}
               <Menu />
             </div>
@@ -61,7 +66,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <button
               type="button"
               disabled={appLoading}
-              onClick={() => window.myAPI.closeWindow(activeWindow)}
+              onClick={() => window.myAPI.closeWindow(windowId)}
             >
               <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
             </button>

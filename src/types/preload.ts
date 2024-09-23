@@ -48,9 +48,10 @@ export interface PreloadAPI {
   showNotification: ApiShowNotification;
 
   openWindow: (id: string) => void;
-  quitApp: ApiEmptyPromiseRequest;
+  restoreWindow: (windowId: string) => void;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
+  quitApp: ApiEmptyPromiseRequest;
 
   doLedgerLoop: ApiDoLedgerLoop;
   reportLedgerStatus: ApiReportLedgerStatus;
