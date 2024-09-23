@@ -5,8 +5,7 @@
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "main": ".vite/build/main.js",
   "contributors": [
-    "Dane Bulat<dane.bulat@gmail.com>",
-    "Ross Bulat<ross@jkrb.io>"
+    "Dane Bulat<dane.bulat@gmail.com>"
   ],
   "scripts": {
     "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
