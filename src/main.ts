@@ -304,6 +304,13 @@ app.whenReady().then(async () => {
     WindowsController.close(windowId);
   });
 
+  // Show the base window after clicking the restore button.
+  ipcMain.on('app:window:restore', (_, windowId) => {
+    if (windowId === 'base') {
+      WindowsController.show(windowId);
+    }
+  });
+
   /**
    * Settings
    */

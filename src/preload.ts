@@ -178,6 +178,9 @@ export const API: PreloadAPI = {
 
   openWindow: async (id) => ipcRenderer.send(`${id}:open`),
 
+  restoreWindow: (windowId: string) =>
+    ipcRenderer.send('app:window:restore', windowId),
+
   /**
    * Chain management
    */

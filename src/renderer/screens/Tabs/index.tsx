@@ -14,22 +14,17 @@ import {
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
 import { CSS } from '@dnd-kit/utilities';
 import styled from 'styled-components';
+import { Header } from '@/renderer/library/Header';
 
 /* -------------------- */
 /* Tabs Container       */
 /* -------------------- */
 
-const DragRow = styled.div`
-  width: 100%;
-  height: 10px;
-  background-color: #1a1a1a;
-  -webkit-app-region: drag;
-`;
-
 const TabsWrapper = styled.div`
+  margin-top: 3rem; // header height offset
   user-select: none;
   width: 100%;
-  height: 50px;
+  height: 49px;
   background-color: black;
   border-bottom: 1px solid #222;
 
@@ -47,7 +42,7 @@ export const Tabs: React.FC = () => {
 
   return (
     <>
-      <DragRow />
+      <Header showMenu={false} appLoading={false} />
       <TabsWrapper>
         <div className="inner">
           <DndContext

@@ -198,7 +198,7 @@ export const createBaseWindow = () => {
     primaryDisplay.workAreaSize;
 
   const baseWidth = ConfigMain.childWidth;
-  const baseHeight = 475;
+  const baseHeight = 500;
 
   const defaultX = screenWidth / 2 - baseWidth / 2;
   const defaultY = screenHeight / 2 - baseHeight / 2;
@@ -232,7 +232,8 @@ export const createBaseWindow = () => {
   // Create tabbed WebContentsView and add to base window.
   const webPreferences = { preload: path.join(__dirname, 'preload.js') };
   const tabsView = new WebContentsView({ webPreferences });
-  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: 60 });
+  const viewHeight = WindowsController.Y_OFFSET;
+  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: viewHeight });
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
