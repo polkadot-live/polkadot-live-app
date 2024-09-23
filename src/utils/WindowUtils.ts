@@ -86,8 +86,6 @@ export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
  * - Loads the correct URL and HTML file
  * - Defines event listeners for the window
  * - Adds the browser window to WindowsController
- *
- * TODO: replace AnyJson with concrete type.
  */
 export const createMainWindow = (isTest: boolean) => {
   const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
