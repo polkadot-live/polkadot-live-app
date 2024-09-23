@@ -311,6 +311,11 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Show a tab.
+  ipcMain.on('app:view:show', (_, viewId: string) => {
+    WindowsController.renderView(viewId);
+  });
+
   /**
    * Settings
    */

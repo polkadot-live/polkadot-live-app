@@ -181,6 +181,9 @@ export const API: PreloadAPI = {
   restoreWindow: (windowId: string) =>
     ipcRenderer.send('app:window:restore', windowId),
 
+  handleOpenTab: (callback) => ipcRenderer.on('renderer:tab:open', callback),
+  showTab: (viewId: string) => ipcRenderer.send('app:view:show', viewId),
+
   /**
    * Chain management
    */

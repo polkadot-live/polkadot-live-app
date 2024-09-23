@@ -55,6 +55,31 @@ export class WindowsController {
   };
 
   /* ---------------------------------------- */
+  /* Tabs                                     */
+  /* ---------------------------------------- */
+
+  static addTab = (viewId: string) => {
+    const getTabLabel = () => {
+      switch (viewId) {
+        case 'action':
+          return 'Extrinsics';
+        case 'import':
+          return 'Accounts';
+        case 'openGov':
+          return 'OpenGov';
+        case 'settings':
+          return 'Settings';
+        default:
+          return 'Unknown';
+      }
+    };
+
+    const channel = 'renderer:tab:open';
+    const label = getTabLabel();
+    this.tabsView?.webContents.send(channel, { id: -1, label, viewId });
+  };
+
+  /* ---------------------------------------- */
   /* Stored Views                             */
   /* ---------------------------------------- */
 

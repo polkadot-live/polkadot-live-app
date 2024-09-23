@@ -38,7 +38,8 @@ const TabsWrapper = styled.div`
 `;
 
 export const Tabs: React.FC = () => {
-  const { handleDragStart, handleDragEnd, items, sensors } = useTabs();
+  const { handleDragStart, handleDragEnd, items, sensors, tabsData } =
+    useTabs();
 
   return (
     <>
@@ -56,8 +57,8 @@ export const Tabs: React.FC = () => {
               items={items}
               strategy={horizontalListSortingStrategy}
             >
-              {items.map((id) => (
-                <Tab key={String(id)} id={id} label={`Tab ${id}`} />
+              {tabsData.map(({ id, label }) => (
+                <Tab key={String(id)} id={id} label={label} />
               ))}
             </SortableContext>
           </DndContext>
@@ -77,7 +78,7 @@ interface TabProps {
 }
 
 const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
-  const { activeId, clickedId, setClickedId } = useTabs();
+  const { activeId, clickedId, handleTabClick } = useTabs();
 
   /// Dnd
   const { attributes, listeners, transform, transition, setNodeRef } =
@@ -106,9 +107,7 @@ const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
   /// Click
   const handleClick = () => {
     if (clickedId !== id) {
-      setClickedId(id);
-      console.log(`Tab ${id} clicked...`);
-      //TODO: window.myAPI.changeTab(id);
+      handleTabClick(id);
     }
   };
 

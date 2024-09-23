@@ -273,26 +273,28 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     // Show view in base window if it's already created.
     if (WindowsController.viewExists(name)) {
       WindowsController.renderView(name);
+      WindowsController.addTab(name);
       return;
     }
 
     // Create the view and add it to the base window.
-    const webPreferences = {
-      sandbox: !isTest,
-      preload: path.join(__dirname, 'preload.js'),
-    };
+    const view = new WebContentsView({
+      webPreferences: {
+        sandbox: !isTest,
+        preload: path.join(__dirname, 'preload.js'),
+      },
+    });
 
-    const view = new WebContentsView({ webPreferences });
+    // Add view to active set and render.
     loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
+    WindowsController.addView(view, name);
+    WindowsController.addTab(name);
 
     // Open links with target="_blank" in default browser.
     view.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
       return { action: 'deny' };
     });
-
-    // Add view to active set and render.
-    WindowsController.addView(view, name);
 
     // Send port to view after DOM is ready.
     view.webContents.on('dom-ready', () => {
