@@ -7,11 +7,10 @@ import {
   AccordionPanel,
 } from '@/renderer/library/Accordion';
 import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { DragClose } from '../../../library/DragClose';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { HeaderWrapper, ContentWrapper } from '../../Wrappers';
+import { ContentWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
@@ -48,14 +47,6 @@ export const Manage = ({
 
   return (
     <>
-      {/* Header */}
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="import" />
-          <h4>Manage Accounts</h4>
-        </div>
-      </HeaderWrapper>
-
       <Scrollable style={{ paddingTop: 0 }}>
         {/* Top Controls */}
         <ControlsWrapper

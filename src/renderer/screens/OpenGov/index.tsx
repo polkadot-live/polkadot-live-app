@@ -3,9 +3,8 @@
 
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
-import { DragClose } from '@/renderer/library/DragClose';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
@@ -146,13 +145,6 @@ export const OpenGov: React.FC = () => {
       >
         {/* Section 1 */}
         <section className="carousel-section-wrapper">
-          <HeaderWrapper>
-            <div className="content">
-              <DragClose windowName="openGov" />
-              <h3>OpenGov</h3>
-            </div>
-          </HeaderWrapper>
-
           <TreasuryStats $chainId={treasuryChainId}>
             {fetchingTreasuryData && isConnected ? (
               <div className="loading-wrapper">

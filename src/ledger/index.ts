@@ -5,7 +5,7 @@ import { MainDebug } from '@/utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import type { AnyFunction, AnyJson } from '@/types/misc';
-import type { BrowserWindow } from 'electron';
+import type { WebContentsView } from 'electron';
 import type { LedgerGetAddressResult, LedgerTask } from '@/types/ledger';
 import type Transport from '@ledgerhq/hw-transport';
 
@@ -17,7 +17,7 @@ const TX_METADATA_SRV_URL =
 
 /// Connects to a Ledger device to perform a task.
 export const executeLedgerLoop = async (
-  window: BrowserWindow,
+  view: WebContentsView,
   chainName: string,
   tasks: LedgerTask[],
   options?: AnyJson
@@ -27,13 +27,13 @@ export const executeLedgerLoop = async (
       debug('🔷 Get address');
 
       const result = await handleGetAddress(
-        window,
+        view,
         chainName,
         options.accountIndex ?? 0
       );
 
       if (result) {
-        window.webContents.send(
+        view.webContents.send(
           'renderer:ledger:report:status',
           JSON.stringify({
             ack: 'success',
@@ -44,13 +44,13 @@ export const executeLedgerLoop = async (
       }
     }
   } catch (error) {
-    handleErrors(window, error);
+    handleErrors(view, error);
   }
 };
 
 /// Gets a Polkadot addresses on the device.
 export const handleGetAddress = async (
-  window: BrowserWindow,
+  view: WebContentsView,
   chainName: string,
   index: number
 ) => {
@@ -81,7 +81,7 @@ export const handleGetAddress = async (
   debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
   // Send in progress message to window.
-  window.webContents.send(
+  view.webContents.send(
     'renderer:ledger:report:status',
     JSON.stringify({
       ack: 'success',
@@ -122,7 +122,7 @@ export const handleGetAddress = async (
 };
 
 /// Handle Ledger connection errors.
-const handleErrors = (window: BrowserWindow, err: AnyJson) => {
+const handleErrors = (view: WebContentsView, err: AnyJson) => {
   // Attempt to handle the error while the window still exists.
   try {
     let errorFound = false;
@@ -133,7 +133,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
         // Handle ledger device locked.
         case 'Device Locked': {
           errorFound = true;
-          window.webContents.send(
+          view.webContents.send(
             'renderer:ledger:report:status',
             JSON.stringify({
               ack: 'failure',
@@ -147,7 +147,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
         // Handle ledger app not open.
         case 'App does not seem to be open': {
           errorFound = true;
-          window.webContents.send(
+          view.webContents.send(
             'renderer:ledger:report:status',
             JSON.stringify({
               ack: 'failure',
@@ -164,7 +164,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
       switch (err.id) {
         case 'ListenTimeout': {
           errorFound = true;
-          window.webContents.send(
+          view.webContents.send(
             'renderer:ledger:report:status',
             JSON.stringify({
               ack: 'failure',
@@ -178,7 +178,7 @@ const handleErrors = (window: BrowserWindow, err: AnyJson) => {
     }
     // Send default error status.
     else if (!errorFound) {
-      window.webContents.send(
+      view.webContents.send(
         'renderer:ledger:report:status',
         JSON.stringify({
           ack: 'failure',

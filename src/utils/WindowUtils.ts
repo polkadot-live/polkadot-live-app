@@ -46,7 +46,7 @@ export const createTray = () => {
 
   tray.addListener('click', () => {
     try {
-      WindowsController.toggleVisible('menu');
+      WindowsController.toggleWindowVisible('menu');
     } catch (e) {
       console.error(e);
     }
@@ -76,29 +76,6 @@ export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
   mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
     ConfigMain.getPortPair('main-openGov').port1,
   ]);
-};
-
-/**
- * @name sendMainWindowPorts
- * @summary Send ports to child windows to facilitate communication with the main window.
- *
- * Currently unused.
- */
-export const sendChildWindowPorts = () => {
-  const childWindowIds = ['import', 'action', 'main'];
-
-  for (const windowId of childWindowIds) {
-    const childWindow = WindowsController.get(windowId);
-
-    if (childWindow) {
-      const target = `main-${windowId}:${windowId}`;
-      const portId = `main-${windowId}` as PortPairID;
-
-      childWindow.webContents.postMessage('port', { target }, [
-        ConfigMain.getPortPair(portId).port2,
-      ]);
-    }
-  }
 };
 
 /**
@@ -167,7 +144,9 @@ export const createMainWindow = (isTest: boolean) => {
     setAllWorkspaceVisibilityForWindow('menu');
 
     // Send IPC message to renderer for app Initialization.
-    WindowsController.get('menu')?.webContents?.send('renderer:app:initialize');
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:app:initialize'
+    );
 
     // Report online status to renderer.
     reportOnlineStatus('menu');
@@ -227,6 +206,7 @@ export const createBaseWindow = () => {
   const defaultY = screenHeight / 2 - baseHeight / 2;
 
   const baseWindow = new BaseWindow({
+    alwaysOnTop: false,
     x: defaultX,
     y: defaultY,
     frame: false,
@@ -240,7 +220,6 @@ export const createBaseWindow = () => {
     maxWidth: ConfigMain.childWidth,
     minimizable: false,
     maximizable: false,
-    alwaysOnTop: true,
     closable: true,
     fullscreen: false,
     center: true,
@@ -259,11 +238,10 @@ export const createBaseWindow = () => {
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
-  // TODO: Resize tabs view on base window resize.
-
-  // Have windows controller manage window.
-  WindowsController.setBaseWindow(baseWindow);
-
+  // Resize views when base window is resized.
+  baseWindow.on('resize', () => {
+    WindowsController.resizeViews();
+  });
   // Event handlers.
   baseWindow.on('focus', () => {
     WindowsController.focus('base');
@@ -275,6 +253,10 @@ export const createBaseWindow = () => {
     WindowsController.close('base');
   });
 
+  // Have windows controller manage window.
+  WindowsController.setBaseWindow(baseWindow);
+  WindowsController.setTabsView(tabsView);
+
   // Open developer tools.
   tabsView.webContents.openDevTools();
 
@@ -284,111 +266,45 @@ export const createBaseWindow = () => {
 };
 
 /**
- * @name handleWindowOnIPC
- * @summary Prepares a window to be setup when main receives a given IPC message
- *
- * - Instantiates or loads an existing browser window
- * - Loads the correct URL and HTML file
- * - Defines event listeners for the window
- * - Adds the browser window to WindowsController
- *
- * TODO: replace AnyJson with currently used options.
+ * @name handleViewOnIPC
+ * @summary Opens a view under a new tab in the base window.
  */
-export const handleWindowOnIPC = (
-  name: string,
-  isTest: boolean,
-  options?: AnyJson
-) => {
-  // Create a call for the window to open.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ipcMain.on(`${name}:open`, (_, _args?: AnyJson) => {
-    // Show window if it already exists.
-    if (WindowsController.get(name)) {
-      WindowsController.show(name);
+export const handleViewOnIPC = (name: string, isTest: boolean) => {
+  ipcMain.on(`${name}:open`, () => {
+    // Show view in base window if it's already created.
+    if (WindowsController.viewExists(name)) {
+      WindowsController.renderView(name);
       return;
     }
 
-    // Otherwise set up the window.
-    const window = new BrowserWindow({
-      frame: false,
-      show: false,
-      resizable: true,
-      height: options?.height || 475,
-      minHeight: options?.minHeight || 475,
-      maxHeight: options?.maxHeight || 900,
-      width: ConfigMain.childWidth,
-      minWidth: ConfigMain.childWidth,
-      maxWidth: ConfigMain.childWidth,
-      minimizable: false,
-      maximizable: false,
-      alwaysOnTop: true,
-      closable: true,
-      movable: true,
-      fullscreenable: false,
-      center: true,
-      backgroundColor: '#2b2b2b',
-      webPreferences: {
-        sandbox: !isTest,
-        preload: path.join(__dirname, 'preload.js'),
-      },
-    });
+    // Create the view and add it to the base window.
+    const webPreferences = {
+      sandbox: !isTest,
+      preload: path.join(__dirname, 'preload.js'),
+    };
 
-    // Hide menu bar on Linux and Windows.
-    setWindowMenuVisibility(window);
-
-    registerLocalShortcut(window, 'CmdOrCtrl+Q', () =>
-      WindowsController.close(name)
-    );
-    registerLocalShortcut(window, 'CmdOrCtrl+W', () =>
-      WindowsController.close(name)
-    );
-
-    // Load correct URL with window ID and HTML file.
-    loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
-
-    // Send port to respective renderer using its name.
-    window.once('ready-to-show', () => {
-      debug(`🔷 Send port to ${name} window`);
-
-      window.webContents.postMessage(
-        'port',
-        { target: `main-${name}:${name}` },
-        [ConfigMain.getPortPair(`main-${name}` as PortPairID).port2]
-      );
-    });
-
-    window.on('focus', () => {
-      WindowsController.focus(name);
-    });
-
-    window.on('blur', () => {
-      WindowsController.blur(name);
-    });
-
-    window.on('close', () => {
-      unregisterAllLocalShortcut(window);
-    });
-
-    window.on('closed', () => {
-      WindowsController.remove(name);
-    });
+    const view = new WebContentsView({ webPreferences });
+    loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
 
     // Open links with target="_blank" in default browser.
-    window.webContents.setWindowOpenHandler(({ url }) => {
+    view.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
       return { action: 'deny' };
     });
 
-    // Have windows controller handle window.
-    WindowsController.add(window, name);
-    WindowsController.show(name);
+    // Add view to active set and render.
+    WindowsController.addView(view, name);
 
-    // Set all workspaces visibility.
-    setAllWorkspaceVisibilityForWindow(name);
+    // Send port to view after DOM is ready.
+    view.webContents.on('dom-ready', () => {
+      debug(`🔷 Send port to ${name} window`);
+      view.webContents.postMessage('port', { target: `main-${name}:${name}` }, [
+        ConfigMain.getPortPair(`main-${name}` as PortPairID).port2,
+      ]);
+    });
 
-    // Hide dock icon.
-    const { appHideDockIcon } = SettingsController.getAppSettings();
-    appHideDockIcon && hideDockIcon();
+    // Open developer tools.
+    view.webContents.openDevTools();
   });
 };
 
@@ -498,7 +414,7 @@ const fixMainWindow = (mainWindow: BrowserWindow, windowBounds: Rectangle) => {
  * @summary Handle docking or un-docking the main window.
  */
 export const handleNewDockFlag = (isDocked: boolean) => {
-  const mainWindow = WindowsController.get('menu');
+  const mainWindow = WindowsController.getWindow('menu');
 
   if (!mainWindow) {
     throw new Error('Main window not found.');
@@ -537,7 +453,7 @@ export const handleNewDockFlag = (isDocked: boolean) => {
  * @summary Sets windows all workspace visibiltiy flag.
  */
 export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
-  const window = WindowsController.get(windowId);
+  const window = WindowsController.getWindow(windowId);
   const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
   window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
 };
@@ -551,4 +467,108 @@ const setWindowMenuVisibility = (window: BrowserWindow | BaseWindow) => {
     window.setAutoHideMenuBar(false);
     window.setMenuBarVisibility(false);
   }
+};
+
+/**
+ * @name handleWindowOnIPC
+ * @summary Prepares a window to be setup when main receives a given IPC message.
+ * @deprecated Replaced by handleViewOnIPC.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleWindowOnIPC = (
+  name: string,
+  isTest: boolean,
+  options?: AnyJson
+) => {
+  // Create a call for the window to open.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ipcMain.on(`${name}:open`, () => {
+    // Show window if it already exists.
+    if (WindowsController.getWindow(name)) {
+      WindowsController.show(name);
+      return;
+    }
+
+    // Otherwise set up the window.
+    const window = new BrowserWindow({
+      frame: false,
+      show: false,
+      resizable: true,
+      height: options?.height || 475,
+      minHeight: options?.minHeight || 475,
+      maxHeight: options?.maxHeight || 900,
+      width: ConfigMain.childWidth,
+      minWidth: ConfigMain.childWidth,
+      maxWidth: ConfigMain.childWidth,
+      minimizable: false,
+      maximizable: false,
+      alwaysOnTop: true,
+      closable: true,
+      movable: true,
+      fullscreenable: false,
+      center: true,
+      backgroundColor: '#2b2b2b',
+      webPreferences: {
+        sandbox: !isTest,
+        preload: path.join(__dirname, 'preload.js'),
+      },
+    });
+
+    // Hide menu bar on Linux and Windows.
+    setWindowMenuVisibility(window);
+
+    registerLocalShortcut(window, 'CmdOrCtrl+Q', () =>
+      WindowsController.close(name)
+    );
+    registerLocalShortcut(window, 'CmdOrCtrl+W', () =>
+      WindowsController.close(name)
+    );
+
+    // Load correct URL with window ID and HTML file.
+    loadUrlWithRoute(window, { uri: name, args: { windowId: name } });
+
+    // Send port to respective renderer using its name.
+    window.once('ready-to-show', () => {
+      debug(`🔷 Send port to ${name} window`);
+
+      window.webContents.postMessage(
+        'port',
+        { target: `main-${name}:${name}` },
+        [ConfigMain.getPortPair(`main-${name}` as PortPairID).port2]
+      );
+    });
+
+    window.on('focus', () => {
+      WindowsController.focus(name);
+    });
+
+    window.on('blur', () => {
+      WindowsController.blur(name);
+    });
+
+    window.on('close', () => {
+      unregisterAllLocalShortcut(window);
+    });
+
+    window.on('closed', () => {
+      WindowsController.remove(name);
+    });
+
+    // Open links with target="_blank" in default browser.
+    window.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
+
+    // Have windows controller handle window.
+    WindowsController.add(window, name);
+    WindowsController.show(name);
+
+    // Set all workspaces visibility.
+    setAllWorkspaceVisibilityForWindow(name);
+
+    // Hide dock icon.
+    const { appHideDockIcon } = SettingsController.getAppSettings();
+    appHideDockIcon && hideDockIcon();
+  });
 };

@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
@@ -48,10 +47,10 @@ export interface PreloadAPI {
 
   showNotification: ApiShowNotification;
 
+  openWindow: (id: string) => void;
   quitApp: ApiEmptyPromiseRequest;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
-  openWindow: ApiOpenWindow;
 
   doLedgerLoop: ApiDoLedgerLoop;
   reportLedgerStatus: ApiReportLedgerStatus;
@@ -69,7 +68,6 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-type ApiOpenWindow = (id: string, args?: AnyJson) => void;
 
 type ApiDoLedgerLoop = (
   accountIndex: number,

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { WindowsController } from '@/controller/main/WindowsController';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { app } from 'electron';
 import type { AnyFunction } from '@/types/misc';
@@ -27,23 +26,13 @@ export const showDockIcon = () => {
   }
 };
 
-// Report online status to renderer.
+// Report online status to a managed browser window renderer.
 export const reportOnlineStatus = (id: string) => {
   const status = OnlineStatusController.getStatus();
 
-  WindowsController.get(id)?.webContents?.send(
+  WindowsController.getWindow(id)?.webContents?.send(
     'renderer:broadcast:onlineStatus',
     status
-  );
-};
-
-// Report chain subscription tasks to renderer.
-export const reportChainSubscriptions = (id: string) => {
-  const map = SubscriptionsController.getChainSubscriptions();
-
-  WindowsController.get(id)?.webContents?.send(
-    'renderer:broadcast:subscriptions:chains',
-    JSON.stringify(Array.from(map))
   );
 };
 

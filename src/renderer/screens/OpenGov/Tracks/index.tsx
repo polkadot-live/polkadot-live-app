@@ -12,8 +12,7 @@ import {
   faCaretLeft,
   faInfo,
 } from '@fortawesome/free-solid-svg-icons';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
-import { DragClose } from '@/renderer/library/DragClose';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import { StickyHeadings, TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
@@ -70,12 +69,6 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   return (
     <>
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="openGov" />
-          <h3>{chainId} Tracks</h3>
-        </div>
-      </HeaderWrapper>
       <Scrollable>
         <ContentWrapper>
           {/* Sorting controls */}

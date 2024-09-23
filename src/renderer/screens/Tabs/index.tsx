@@ -31,7 +31,7 @@ const TabsWrapper = styled.div`
   width: 100%;
   height: 50px;
   background-color: black;
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid #222;
 
   .inner {
     display: flex;
