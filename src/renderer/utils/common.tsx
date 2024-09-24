@@ -335,12 +335,12 @@ export const Scrollable = styled.div<{
 }>`
   --footer-height: ${(props) => {
     const height = props.$footerHeight;
-    return height ? `${height}px` : '40px';
+    return height !== undefined ? `${height}px` : '40px';
   }};
 
   --header-height: ${(props) => {
     const height = props.$headerHeight;
-    return height ? `${height}px` : '38.6px';
+    return height !== undefined ? `${height}px` : '38.6px';
   }};
 
   // height = window height - (header height + footer height)
