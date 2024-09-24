@@ -23,7 +23,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const handleDocked = () => {
     handleDockedToggle();
 
-    RendererConfig.portToSettings.postMessage({
+    RendererConfig.portToSettings?.postMessage({
       task: 'settings:set:dockedWindow',
       data: {
         docked: !dockToggled,

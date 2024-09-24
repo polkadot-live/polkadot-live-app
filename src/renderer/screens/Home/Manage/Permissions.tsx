@@ -287,7 +287,7 @@ export const Permissions = ({
       updateIntervalSubscription({ ...task });
       tryUpdateDynamicIntervalTask({ ...task });
 
-      ConfigRenderer.portToOpenGov.postMessage({
+      ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:task:update',
         data: {
           serialized: JSON.stringify(task),

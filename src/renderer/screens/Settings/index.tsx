@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-//import { Workspaces } from '@app/screens/Settings/Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
 import type { OsPlatform, SettingItem } from './types';
 
@@ -22,10 +21,8 @@ export const Settings: React.FC = () => {
   useSettingsMessagePorts();
 
   /// Active accordion indices for settings panels.
-  // TEMP: Show workspaces item.
   const [accordionActiveIndices, setAccordionActiveIndices] =
     useState<number>(0);
-
   const [osPlatform, setOsPlatform] = useState<OsPlatform | null>(null);
 
   useEffect(() => {

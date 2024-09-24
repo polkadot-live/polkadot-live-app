@@ -67,7 +67,7 @@ export class ExtrinsicsController {
       await this.buildPayload(chainId, from, accountNonce);
 
       // Report Tx to Action UI.
-      ConfigRenderer.portToAction.postMessage({
+      ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:report:data',
         data: {
           estimatedFee: estimatedFee.toString(),
@@ -207,7 +207,7 @@ export class ExtrinsicsController {
     chainId: ChainID
   ) => {
     // Report status in actions window.
-    ConfigRenderer.portToAction.postMessage({
+    ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',
       data: {
         status,

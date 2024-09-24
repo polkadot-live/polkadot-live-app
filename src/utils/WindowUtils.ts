@@ -57,28 +57,6 @@ export const createTray = () => {
 };
 
 /**
- * @name sendMainWindowPorts
- * @summary Send ports to main window to facilitate communication with other windows.
- */
-export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
-  mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
-    ConfigMain.getPortPair('main-import').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
-    ConfigMain.getPortPair('main-action').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
-    ConfigMain.getPortPair('main-settings').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
-    ConfigMain.getPortPair('main-openGov').port1,
-  ]);
-};
-
-/**
  * @name createMainWindow
  * @summary Set up the main window:
  *
@@ -129,9 +107,6 @@ export const createMainWindow = (isTest: boolean) => {
   loadUrlWithRoute(mainWindow, { args: { windowId: 'main' } });
 
   mainWindow.once('ready-to-show', () => {
-    // Send ports to main window to facilitate communication with other windows.
-    sendMainWindowPorts(mainWindow);
-
     // Freeze window if in docked mode.
     if (SettingsController.getAppSettings().appDocked) {
       mainWindow.setMovable(false);
@@ -298,9 +273,22 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
 
     // Send port to view after DOM is ready.
     view.webContents.on('dom-ready', () => {
-      debug(`🔷 Send port to ${name} window`);
+      // Initialise a new port pair.
+      const pairId: PortPairID = `main-${name}` as PortPairID;
+      ConfigMain.initPorts(pairId);
+      const { port1, port2 } = ConfigMain.getPortPair(pairId);
+
+      // Send ports to main window and corresponding view.
+      debug(`🔷 Send port ${pairId} to main`);
+      WindowsController.getWindow('menu')?.webContents.postMessage(
+        'port',
+        { target: `main-${name}:main` },
+        [port1]
+      );
+
+      debug(`🔷 Send port ${pairId} to ${name}`);
       view.webContents.postMessage('port', { target: `main-${name}:${name}` }, [
-        ConfigMain.getPortPair(`main-${name}` as PortPairID).port2,
+        port2,
       ]);
     });
 
@@ -572,4 +560,27 @@ const handleWindowOnIPC = (
     const { appHideDockIcon } = SettingsController.getAppSettings();
     appHideDockIcon && hideDockIcon();
   });
+};
+
+/**
+ * @name sendMainWindowPorts
+ * @summary Send ports to main window to facilitate communication with other windows.
+ * @deprecated Port pairs now initialised when view window is created.
+ */
+export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
+    ConfigMain.getPortPair('main-import').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
+    ConfigMain.getPortPair('main-action').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
+    ConfigMain.getPortPair('main-settings').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
+    ConfigMain.getPortPair('main-openGov').port1,
+  ]);
 };
