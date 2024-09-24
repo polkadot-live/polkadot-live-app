@@ -9,7 +9,10 @@ export const defaultTabsContext: TabsContextInterface = {
   clickedId: null,
   items: [],
   sensors: [],
+  tabsData: [],
   setClickedId: () => {},
   handleDragStart: () => {},
   handleDragEnd: () => {},
+  handleTabClick: () => {},
+  handleTabClose: () => {},
 };

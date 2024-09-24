@@ -3,13 +3,17 @@
 
 import type { AnyData } from '@/types/misc';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import type { TabData } from '@/types/communication';
 
 export interface TabsContextInterface {
   activeId: number | null;
   clickedId: number | null;
   items: number[];
   sensors: AnyData;
+  tabsData: TabData[];
   setClickedId: React.Dispatch<React.SetStateAction<number | null>>;
   handleDragStart: (event: DragStartEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
+  handleTabClick: (id: number) => void;
+  handleTabClose: (id: number) => void;
 }

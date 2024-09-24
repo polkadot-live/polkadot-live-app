@@ -55,6 +55,31 @@ export class WindowsController {
   };
 
   /* ---------------------------------------- */
+  /* Tabs                                     */
+  /* ---------------------------------------- */
+
+  static addTab = (viewId: string) => {
+    const getTabLabel = () => {
+      switch (viewId) {
+        case 'action':
+          return 'Extrinsics';
+        case 'import':
+          return 'Accounts';
+        case 'openGov':
+          return 'OpenGov';
+        case 'settings':
+          return 'Settings';
+        default:
+          return 'Unknown';
+      }
+    };
+
+    const channel = 'renderer:tab:open';
+    const label = getTabLabel();
+    this.tabsView?.webContents.send(channel, { id: -1, label, viewId });
+  };
+
+  /* ---------------------------------------- */
   /* Stored Views                             */
   /* ---------------------------------------- */
 
@@ -72,9 +97,17 @@ export class WindowsController {
     this.renderView(id);
   };
 
-  // Removes a view from the `active` set via its id.
+  // Removes a view from the base window.
   static removeView = (id: string) => {
-    this.views = this.views.filter((a: StoredView) => a.id !== id);
+    const maybeStoredView = this.views.find((s) => s.id === id);
+
+    if (this.base && maybeStoredView) {
+      const { view } = maybeStoredView;
+      this.base.window.contentView.removeChildView(view);
+
+      // TODO: Re-initialize communication ports when re-creating a view.
+      //this.views = this.views.filter((s) => s.id !== id);
+    }
   };
 
   // Check if view is already created.

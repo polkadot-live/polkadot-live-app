@@ -311,6 +311,24 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Show a tab.
+  ipcMain.on('app:view:show', (_, viewId: string) => {
+    WindowsController.renderView(viewId);
+  });
+
+  // Destroy a view and its associated tab.
+  ipcMain.on(
+    'app:view:close',
+    (_, destroyViewId: string, showViewId: string | null) => {
+      if (showViewId) {
+        WindowsController.renderView(showViewId);
+      }
+
+      // TODO: Destroy view to optimize memory.
+      WindowsController.removeView(destroyViewId);
+    }
+  );
+
   /**
    * Settings
    */
