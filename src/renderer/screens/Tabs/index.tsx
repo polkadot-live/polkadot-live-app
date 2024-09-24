@@ -13,8 +13,10 @@ import {
 } from '@dnd-kit/modifiers';
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
 import { CSS } from '@dnd-kit/utilities';
-import styled from 'styled-components';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Header } from '@/renderer/library/Header';
+import styled from 'styled-components';
 
 /* -------------------- */
 /* Tabs Container       */
@@ -33,7 +35,7 @@ const TabsWrapper = styled.div`
     align-items: center;
     column-gap: 1rem;
     height: 100%;
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
   }
 `;
 
@@ -77,6 +79,15 @@ interface TabProps {
   label: string;
 }
 
+const CloseButtonWrapper = styled.div`
+  &:hover {
+    svg {
+      color: #5a5a5a;
+      cursor: pointer;
+    }
+  }
+`;
+
 const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
   const { activeId, clickedId, handleTabClick } = useTabs();
 
@@ -95,26 +106,44 @@ const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
     border: `1px solid ${clickedId === id ? '#aaa' : '#777'}`,
     borderRadius: '0.25rem',
     zIndex: activeId === id ? '20' : '1',
+    minWidth: '115px',
   };
 
   const outerStyle: React.CSSProperties = {
-    padding: '0.4rem 2rem',
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: '0.25rem',
+    padding: '0.4rem 1.25rem',
     fontSize: '1rem',
     fontWeight: '500',
     color: 'grey',
   };
 
-  /// Click
-  const handleClick = () => {
+  /// Handle tab click.
+  const handleClick = (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
     if (clickedId !== id) {
       handleTabClick(id);
     }
   };
 
+  /// Handle close tab.
+  const handleClose = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    // TODO: Handle close.
+  };
+
   return (
     <div ref={setNodeRef} style={parentStyle} {...attributes} {...listeners}>
       <div style={outerStyle} onClick={handleClick}>
-        <span role="button">{label}</span>
+        <span role="button" style={{ flexGrow: '1' }}>
+          {label}
+        </span>
+        <CloseButtonWrapper onClick={handleClose}>
+          <FontAwesomeIcon icon={faCircleXmark} />
+        </CloseButtonWrapper>
       </div>
     </div>
   );
