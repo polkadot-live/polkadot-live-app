@@ -97,14 +97,16 @@ export class WindowsController {
     this.renderView(id);
   };
 
-  // Removes a view from the `active` set via its id.
+  // Removes a view from the base window.
   static removeView = (id: string) => {
     const maybeStoredView = this.views.find((s) => s.id === id);
 
     if (this.base && maybeStoredView) {
       const { view } = maybeStoredView;
       this.base.window.contentView.removeChildView(view);
-      this.views = this.views.filter((s) => s.id !== id);
+
+      // TODO: Re-initialize communication ports when re-creating a view.
+      //this.views = this.views.filter((s) => s.id !== id);
     }
   };
 
