@@ -258,12 +258,10 @@ export const Item = memo(function Item({ event }: ItemProps) {
                               );
                             }
 
-                            if (ConfigRenderer._portToAction) {
-                              ConfigRenderer.portToAction.postMessage({
-                                task: 'action:init',
-                                data: JSON.stringify(action.txMeta),
-                              });
-                            }
+                            ConfigRenderer.portToAction?.postMessage({
+                              task: 'action:init',
+                              data: JSON.stringify(action.txMeta),
+                            });
                           }}
                         />
                       );

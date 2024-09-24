@@ -376,21 +376,17 @@ export const BootstrappingProvider = ({
   ) => {
     switch (windowId) {
       case 'import': {
-        if (RendererConfig._portToImport !== undefined) {
-          RendererConfig.portToImport.postMessage({
-            task: 'import:connection:status',
-            data: { status },
-          });
-        }
+        RendererConfig.portToImport?.postMessage({
+          task: 'import:connection:status',
+          data: { status },
+        });
         break;
       }
       case 'openGov': {
-        if (RendererConfig._portToOpenGov !== undefined) {
-          RendererConfig.portToOpenGov.postMessage({
-            task: 'openGov:connection:status',
-            data: { status },
-          });
-        }
+        RendererConfig.portToOpenGov?.postMessage({
+          task: 'openGov:connection:status',
+          data: { status },
+        });
         break;
       }
     }
@@ -406,7 +402,7 @@ export const BootstrappingProvider = ({
 
     switch (windowId) {
       case 'import': {
-        RendererConfig.portToImport.postMessage({
+        RendererConfig.portToImport?.postMessage({
           task: 'import:connection:status',
           data: { status },
         });
@@ -414,7 +410,7 @@ export const BootstrappingProvider = ({
         break;
       }
       case 'openGov': {
-        RendererConfig.portToOpenGov.postMessage({
+        RendererConfig.portToOpenGov?.postMessage({
           task: 'openGov:connection:status',
           data: { status },
         });
@@ -434,7 +430,7 @@ export const BootstrappingProvider = ({
 
     // Add tasks to React state in main and open gov window.
     for (const task of tasks) {
-      RendererConfig.portToOpenGov.postMessage({
+      RendererConfig.portToOpenGov?.postMessage({
         task: 'openGov:task:add',
         data: {
           serialized: JSON.stringify({ ...task }),

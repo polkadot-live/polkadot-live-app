@@ -67,17 +67,15 @@ export class ExtrinsicsController {
       await this.buildPayload(chainId, from, accountNonce);
 
       // Report Tx to Action UI.
-      if (ConfigRenderer._portToAction) {
-        ConfigRenderer.portToAction.postMessage({
-          task: 'action:tx:report:data',
-          data: {
-            estimatedFee: estimatedFee.toString(),
-            txId: this.txId,
-            payload: this.payload.toU8a(),
-            genesisHash: this.payload.genesisHash,
-          },
-        });
-      }
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:tx:report:data',
+        data: {
+          estimatedFee: estimatedFee.toString(),
+          txId: this.txId,
+          payload: this.payload.toU8a(),
+          genesisHash: this.payload.genesisHash,
+        },
+      });
     } catch (e) {
       console.log('Error:');
       console.log(e);
@@ -208,15 +206,13 @@ export class ExtrinsicsController {
     uid: string,
     chainId: ChainID
   ) => {
-    if (ConfigRenderer._portToAction) {
-      // Report status in actions window.
-      ConfigRenderer.portToAction.postMessage({
-        task: 'action:tx:report:status',
-        data: {
-          status,
-        },
-      });
-    }
+    // Report status in actions window.
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:tx:report:status',
+      data: {
+        status,
+      },
+    });
 
     // Mark event as stale if status is finalized.
     if (status === 'finalized') {

@@ -50,14 +50,12 @@ export const IntervalTasksManagerProvider = ({
     tryUpdateDynamicIntervalTask(task);
 
     // Update OpenGov renderer state.
-    if (ConfigRenderer._portToOpenGov) {
-      ConfigRenderer.portToOpenGov.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-    }
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
 
     // Update persisted task in store.
     await window.myAPI.sendIntervalTask({
@@ -82,14 +80,12 @@ export const IntervalTasksManagerProvider = ({
     tryUpdateDynamicIntervalTask(task);
 
     // Update OpenGov renderer state.
-    if (ConfigRenderer._portToOpenGov) {
-      ConfigRenderer.portToOpenGov.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-    }
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
 
     // Update persisted task in store.
     await window.myAPI.sendIntervalTask({
@@ -120,12 +116,10 @@ export const IntervalTasksManagerProvider = ({
     });
 
     // Send message to OpenGov window to update its subscription state.
-    if (ConfigRenderer._portToOpenGov) {
-      ConfigRenderer.portToOpenGov.postMessage({
-        task: 'openGov:task:removed',
-        data: { serialized: JSON.stringify(task) },
-      });
-    }
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:task:removed',
+      data: { serialized: JSON.stringify(task) },
+    });
   };
 
   /// Handle setting a new interval duration for the subscription.
@@ -152,14 +146,12 @@ export const IntervalTasksManagerProvider = ({
       IntervalsController.updateSubscription(task);
 
       // Update state in OpenGov window.
-      if (ConfigRenderer._portToOpenGov) {
-        ConfigRenderer.portToOpenGov.postMessage({
-          task: 'openGov:task:update',
-          data: {
-            serialized: JSON.stringify(task),
-          },
-        });
-      }
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(task),
+        },
+      });
 
       // Update persisted task in store.
       await window.myAPI.sendIntervalTask({
