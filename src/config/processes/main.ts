@@ -54,21 +54,6 @@ export class Config {
     }
   }
 
-  // Instantiate message port pairs to facilitate communication between the
-  // main renderer and another renderer.
-  static initialize = (): void => {
-    const ids: PortPairID[] = [
-      'main-import',
-      'main-action',
-      'main-settings',
-      'main-openGov',
-    ];
-
-    for (const id of ids) {
-      Config.initPorts(id);
-    }
-  };
-
   // Return port pair to facilitate window communication.
   static getPortPair = (id: PortPairID): PortPair => {
     switch (id) {

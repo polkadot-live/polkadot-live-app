@@ -57,29 +57,6 @@ export const createTray = () => {
 };
 
 /**
- * @name sendMainWindowPorts
- * @summary Send ports to main window to facilitate communication with other windows.
- * @deprecated Port pairs now initialised when view window is created.
- */
-export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
-  mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
-    ConfigMain.getPortPair('main-import').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
-    ConfigMain.getPortPair('main-action').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
-    ConfigMain.getPortPair('main-settings').port1,
-  ]);
-
-  mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
-    ConfigMain.getPortPair('main-openGov').port1,
-  ]);
-};
-
-/**
  * @name createMainWindow
  * @summary Set up the main window:
  *
@@ -583,4 +560,27 @@ const handleWindowOnIPC = (
     const { appHideDockIcon } = SettingsController.getAppSettings();
     appHideDockIcon && hideDockIcon();
   });
+};
+
+/**
+ * @name sendMainWindowPorts
+ * @summary Send ports to main window to facilitate communication with other windows.
+ * @deprecated Port pairs now initialised when view window is created.
+ */
+export const sendMainWindowPorts = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.postMessage('port', { target: 'main-import:main' }, [
+    ConfigMain.getPortPair('main-import').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-action:main' }, [
+    ConfigMain.getPortPair('main-action').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-settings:main' }, [
+    ConfigMain.getPortPair('main-settings').port1,
+  ]);
+
+  mainWindow.webContents.postMessage('port', { target: 'main-openGov:main' }, [
+    ConfigMain.getPortPair('main-openGov').port1,
+  ]);
 };
