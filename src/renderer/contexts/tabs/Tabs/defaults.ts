@@ -14,4 +14,5 @@ export const defaultTabsContext: TabsContextInterface = {
   handleDragStart: () => {},
   handleDragEnd: () => {},
   handleTabClick: () => {},
+  handleTabClose: () => {},
 };

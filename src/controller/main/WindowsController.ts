@@ -99,7 +99,13 @@ export class WindowsController {
 
   // Removes a view from the `active` set via its id.
   static removeView = (id: string) => {
-    this.views = this.views.filter((a: StoredView) => a.id !== id);
+    const maybeStoredView = this.views.find((s) => s.id === id);
+
+    if (this.base && maybeStoredView) {
+      const { view } = maybeStoredView;
+      this.base.window.contentView.removeChildView(view);
+      this.views = this.views.filter((s) => s.id !== id);
+    }
   };
 
   // Check if view is already created.

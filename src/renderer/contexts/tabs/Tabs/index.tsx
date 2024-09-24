@@ -38,8 +38,18 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       if (found !== undefined) {
         setClickedId(found.id);
       } else {
+        let tabId = tabsDataRef.current.length;
+        const takenIds = tabsDataRef.current.reduce(
+          (acc, item) => [...acc, item.id],
+          [] as number[]
+        );
+
+        while (takenIds.includes(tabId)) {
+          tabId += 1;
+        }
+
+        tabData.id = tabId;
         tabsDataRef.current = [...tabsDataRef.current, tabData];
-        tabData.id = tabsDataRef.current.length;
 
         setItems((prev) => [...prev, tabData.id]);
         setTabsData((prev) => [...prev, tabData]);
@@ -77,7 +87,11 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       const newIndex = items.indexOf(Number(over.id));
 
       setItems((prev) => arrayMove(prev, oldIndex, newIndex));
-      setTabsData((prev) => arrayMove(prev, oldIndex, newIndex));
+      setTabsData((prev) => {
+        const moved = arrayMove(prev, oldIndex, newIndex);
+        tabsDataRef.current = [...moved];
+        return moved;
+      });
     }
   };
 
@@ -86,6 +100,41 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
     setClickedId(id);
     const { viewId } = tabsData.find((t) => t.id === id)!;
     window.myAPI.showTab(viewId);
+  };
+
+  /// Close handler.
+  const handleTabClose = (id: number) => {
+    const itemIndex = items.indexOf(id);
+    let showIndex: number | null = null;
+
+    if (items.length > 1) {
+      showIndex = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1;
+    }
+
+    // Get view ids to destroy and show.
+    const { viewId: destroyViewId } = tabsData.at(itemIndex)!;
+    const maybeShowViewId: string | null =
+      showIndex !== null ? tabsData.at(showIndex)!.viewId : null;
+
+    // Remove destroyed tab's item and data.
+    setItems((prev) => prev.filter((n) => n !== id));
+    setTabsData((prev) => {
+      const filtered = prev.filter((t) => t.id !== id);
+
+      // If the destroyed tab is in focus, give focus to the next tab to show.
+      if (maybeShowViewId !== null && clickedId === id) {
+        const { id: showId } = filtered.find(
+          (t) => t.viewId === maybeShowViewId
+        )!;
+
+        setClickedId(showId);
+      }
+
+      tabsDataRef.current = [...filtered];
+      return filtered;
+    });
+
+    window.myAPI.closeTab(destroyViewId, maybeShowViewId);
   };
 
   return (
@@ -100,6 +149,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
         handleDragStart,
         handleDragEnd,
         handleTabClick,
+        handleTabClose,
       }}
     >
       {children}

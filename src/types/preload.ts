@@ -57,6 +57,7 @@ export interface PreloadAPI {
     callback: (_: IpcRendererEvent, tabData: TabData) => void
   ) => void;
   showTab: (viewId: string) => void;
+  closeTab: (destroyViewId: string, showViewId: string | null) => void;
 
   doLedgerLoop: ApiDoLedgerLoop;
   reportLedgerStatus: ApiReportLedgerStatus;

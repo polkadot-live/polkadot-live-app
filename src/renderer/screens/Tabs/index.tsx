@@ -89,7 +89,7 @@ const CloseButtonWrapper = styled.div`
 `;
 
 const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
-  const { activeId, clickedId, handleTabClick } = useTabs();
+  const { activeId, clickedId, handleTabClick, handleTabClose } = useTabs();
 
   /// Dnd
   const { attributes, listeners, transform, transition, setNodeRef } =
@@ -132,7 +132,7 @@ const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
   /// Handle close tab.
   const handleClose = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
-    // TODO: Handle close.
+    handleTabClose(id);
   };
 
   return (
