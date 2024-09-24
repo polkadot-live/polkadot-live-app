@@ -73,31 +73,15 @@ export class Config {
   static getPortPair = (id: PortPairID): PortPair => {
     switch (id) {
       case 'main-import': {
-        if (!Config._main_import_ports) {
-          Config.initPorts('main-import');
-        }
-
         return Config._main_import_ports;
       }
       case 'main-action': {
-        if (!Config._main_action_ports) {
-          Config.initPorts('main-action');
-        }
-
         return Config._main_action_ports;
       }
       case 'main-settings': {
-        if (!Config._main_settings_ports) {
-          Config.initPorts('main-settings');
-        }
-
         return Config._main_settings_ports;
       }
       case 'main-openGov': {
-        if (!Config._main_openGov_ports) {
-          Config.initPorts('main-openGov');
-        }
-
         return Config._main_openGov_ports;
       }
       default: {
@@ -117,7 +101,7 @@ export class Config {
   }
 
   // Initialize ports to facilitate communication between the main and other renderers.
-  private static initPorts(id: PortPairID): void {
+  static initPorts(id: PortPairID): void {
     switch (id) {
       case 'main-import': {
         const { port1, port2 } = new MessageChannelMain();

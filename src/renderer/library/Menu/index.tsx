@@ -60,12 +60,14 @@ export const Menu = () => {
   const handleSilenceOsNotifications = () => {
     handleToggleSilenceOsNotifications();
 
-    RendererConfig.portToSettings.postMessage({
-      task: 'settings:set:silenceOsNotifications',
-      data: {
-        silenced: !silenceOsNotifications,
-      },
-    });
+    if (RendererConfig._portToSettings) {
+      RendererConfig.portToSettings.postMessage({
+        task: 'settings:set:silenceOsNotifications',
+        data: {
+          silenced: !silenceOsNotifications,
+        },
+      });
+    }
   };
 
   /// Get text for connection button.

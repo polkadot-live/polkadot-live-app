@@ -287,12 +287,14 @@ export const Permissions = ({
       updateIntervalSubscription({ ...task });
       tryUpdateDynamicIntervalTask({ ...task });
 
-      ConfigRenderer.portToOpenGov.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
+      if (ConfigRenderer._portToOpenGov) {
+        ConfigRenderer.portToOpenGov.postMessage({
+          task: 'openGov:task:update',
+          data: {
+            serialized: JSON.stringify(task),
+          },
+        });
+      }
 
       await window.myAPI.sendIntervalTask({
         action: 'interval:task:update',

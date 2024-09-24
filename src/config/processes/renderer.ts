@@ -7,10 +7,10 @@
  */
 export class Config {
   // Cache the main window's message ports to communicate with child windows.
-  private static _portToImport: MessagePort;
-  private static _portToAction: MessagePort;
-  private static _portToSettings: MessagePort;
-  private static _portToOpenGov: MessagePort;
+  static _portToImport: MessagePort;
+  static _portToAction: MessagePort;
+  static _portToSettings: MessagePort;
+  static _portToOpenGov: MessagePort;
 
   // App settings handled by main renderer (use in callbacks).
   private static _silenceNotifications = false;

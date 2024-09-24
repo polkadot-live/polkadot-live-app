@@ -24,6 +24,7 @@ import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '../contexts/main/AppSettings';
+import { useBootstrapping } from '../contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
@@ -51,6 +52,8 @@ export const useMainMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
+
+  const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
 
   const {
     updateRenderedSubscriptions,
@@ -156,14 +159,16 @@ export const useMainMessagePorts = () => {
     await importAddress(chainId, source, address, name);
 
     // Send message back to import window to reset account's processing flag.
-    ConfigRenderer.portToImport.postMessage({
-      task: 'import:account:processing',
-      data: {
-        address,
-        source,
-        status: false,
-      },
-    });
+    if (ConfigRenderer._portToImport) {
+      ConfigRenderer.portToImport.postMessage({
+        task: 'import:account:processing',
+        data: {
+          address,
+          source,
+          status: false,
+        },
+      });
+    }
   };
 
   /**
@@ -248,10 +253,12 @@ export const useMainMessagePorts = () => {
 
   /// Utility to post message to settings window.
   const postToSettings = (res: boolean, text: string) => {
-    ConfigRenderer.portToSettings.postMessage({
-      task: 'settings:render:toast',
-      data: { success: res, text },
-    });
+    if (ConfigRenderer._portToSettings) {
+      ConfigRenderer.portToSettings.postMessage({
+        task: 'settings:render:toast',
+        data: { success: res, text },
+      });
+    }
   };
 
   /// Utility to post message to import window.
@@ -259,10 +266,12 @@ export const useMainMessagePorts = () => {
     json: LocalAddress | LedgerLocalAddress,
     source: AccountSource
   ) => {
-    ConfigRenderer.portToImport.postMessage({
-      task: 'import:account:add',
-      data: { json: JSON.stringify(json), source },
-    });
+    if (ConfigRenderer._portToImport) {
+      ConfigRenderer.portToImport.postMessage({
+        task: 'import:account:add',
+        data: { json: JSON.stringify(json), source },
+      });
+    }
   };
 
   /**
@@ -382,10 +391,12 @@ export const useMainMessagePorts = () => {
     const { api } = await getApiInstanceOrThrow(chainId, 'Error');
     const result = api.consts.referenda.tracks.toHuman();
 
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:tracks:receive',
-      data: { result },
-    });
+    if (ConfigRenderer._portToOpenGov) {
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:tracks:receive',
+        data: { result },
+      });
+    }
   };
 
   /**
@@ -425,10 +436,12 @@ export const useMainMessagePorts = () => {
     // Serialize data before sending to open gov window.
     const json = JSON.stringify(activeReferenda);
 
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:referenda:receive',
-      data: { json },
-    });
+    if (ConfigRenderer._portToOpenGov) {
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:referenda:receive',
+        data: { json },
+      });
+    }
   };
 
   /**
@@ -500,17 +513,19 @@ export const useMainMessagePorts = () => {
       .mod(spendPeriodBn)
       .toString();
 
-    ConfigRenderer.portToOpenGov.postMessage({
-      task: 'openGov:treasury:set',
-      data: {
-        publicKey,
-        freeBalance,
-        nextBurn,
-        toBeAwardedAsStr,
-        spendPeriodAsStr,
-        spendPeriodElapsedBlocksAsStr,
-      },
-    });
+    if (ConfigRenderer._portToOpenGov) {
+      ConfigRenderer.portToOpenGov.postMessage({
+        task: 'openGov:treasury:set',
+        data: {
+          publicKey,
+          freeBalance,
+          nextBurn,
+          toBeAwardedAsStr,
+          spendPeriodAsStr,
+          spendPeriodElapsedBlocksAsStr,
+        },
+      });
+    }
   };
 
   /**
@@ -665,7 +680,7 @@ export const useMainMessagePorts = () => {
    * @summary Determines whether the received port is for the `main` or `import` window and
    * sets up message handlers accordingly.
    */
-  const handleReceivedPort = (e: MessageEvent) => {
+  const handleReceivedPort = async (e: MessageEvent) => {
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
@@ -698,6 +713,7 @@ export const useMainMessagePorts = () => {
         };
 
         ConfigRenderer.portToImport.start();
+        await syncImportWindow();
         break;
       }
       case 'main-action:main': {
@@ -829,6 +845,7 @@ export const useMainMessagePorts = () => {
         };
 
         ConfigRenderer.portToOpenGov.start();
+        await syncOpenGovWindow();
         break;
       }
       default: {

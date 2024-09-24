@@ -345,16 +345,10 @@ export const BootstrappingProvider = ({
     // Insert subscriptions and start interval if online.
     IntervalsController.insertSubscriptions(tasks, isOnline);
 
-    // Add tasks to React state in main and open gov window.
+    // Add tasks to React state in main window.
+    // When the OpenGov view is open, the task state is synced in a separate function.
     for (const task of tasks) {
       addIntervalSubscription({ ...task });
-
-      RendererConfig.portToOpenGov.postMessage({
-        task: 'openGov:task:add',
-        data: {
-          serialized: JSON.stringify({ ...task }),
-        },
-      });
     }
   };
 
@@ -382,19 +376,75 @@ export const BootstrappingProvider = ({
   ) => {
     switch (windowId) {
       case 'import': {
+        if (RendererConfig._portToImport !== undefined) {
+          RendererConfig.portToImport.postMessage({
+            task: 'import:connection:status',
+            data: { status },
+          });
+        }
+        break;
+      }
+      case 'openGov': {
+        if (RendererConfig._portToOpenGov !== undefined) {
+          RendererConfig.portToOpenGov.postMessage({
+            task: 'openGov:connection:status',
+            data: { status },
+          });
+        }
+        break;
+      }
+    }
+  };
+
+  /// Called when initializing a new port pair.
+  const reportCurrentConnectionStatusToWIndow = async (windowId: string) => {
+    const status: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+
+    switch (windowId) {
+      case 'import': {
         RendererConfig.portToImport.postMessage({
           task: 'import:connection:status',
           data: { status },
         });
+
         break;
       }
-      case 'openGov':
+      case 'openGov': {
         RendererConfig.portToOpenGov.postMessage({
           task: 'openGov:connection:status',
           data: { status },
         });
+
         break;
+      }
     }
+  };
+
+  /// Called when initializing a new port pair.
+  const syncOpenGovWindow = async () => {
+    await reportCurrentConnectionStatusToWIndow('openGov');
+
+    const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
+    const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
+    const tasks: IntervalSubscription[] = JSON.parse(serialized);
+
+    // Add tasks to React state in main and open gov window.
+    for (const task of tasks) {
+      RendererConfig.portToOpenGov.postMessage({
+        task: 'openGov:task:add',
+        data: {
+          serialized: JSON.stringify({ ...task }),
+        },
+      });
+    }
+  };
+
+  const syncImportWindow = async () => {
+    await reportCurrentConnectionStatusToWIndow('import');
   };
 
   return (
@@ -412,6 +462,8 @@ export const BootstrappingProvider = ({
         handleInitializeAppOffline,
         handleInitializeAppOnline,
         handleNewEndpointForChain,
+        syncImportWindow,
+        syncOpenGovWindow,
       }}
     >
       {children}

@@ -106,7 +106,7 @@ export class WindowsController {
       this.base.window.contentView.removeChildView(view);
 
       // TODO: Re-initialize communication ports when re-creating a view.
-      //this.views = this.views.filter((s) => s.id !== id);
+      this.views = this.views.filter((s) => s.id !== id);
     }
   };
 
