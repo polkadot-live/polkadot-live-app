@@ -28,7 +28,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   const [tabsData, setTabsData] = useState<TabData[]>([]);
   const tabsDataRef = useRef<TabData[]>(tabsData);
 
-  /// Callback.
+  /// Open tab callback.
   useEffect(() => {
     window.myAPI.handleOpenTab((_, tabData) => {
       const found = tabsDataRef.current.find(
@@ -105,14 +105,14 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Close handler.
   const handleTabClose = (id: number) => {
     const itemIndex = items.indexOf(id);
+
+    // Get index of tab to show.
     let showIndex: number | null = null;
+    items.length > 1 &&
+      (showIndex = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1);
 
-    if (items.length > 1) {
-      showIndex = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1;
-    }
-
-    // Get view ids to destroy and show.
-    const { viewId: destroyViewId } = tabsData.at(itemIndex)!;
+    // Get IDs for views to destroy and show.
+    const destroyViewId = tabsData.at(itemIndex)!.viewId;
     const maybeShowViewId: string | null =
       showIndex !== null ? tabsData.at(showIndex)!.viewId : null;
 
