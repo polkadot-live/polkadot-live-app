@@ -232,9 +232,6 @@ export const createBaseWindow = () => {
   WindowsController.setBaseWindow(baseWindow);
   WindowsController.setTabsView(tabsView);
 
-  // Open developer tools.
-  tabsView.webContents.openDevTools();
-
   // Hide dock icon.
   const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();
