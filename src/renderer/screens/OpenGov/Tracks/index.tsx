@@ -107,7 +107,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
           ) : (
             <div>
               {fetchingTracks ? (
-                <>{renderPlaceholders(4)}</>
+                <div style={{ marginTop: '2rem' }}>{renderPlaceholders(4)}</div>
               ) : (
                 <>
                   {/* Sticky Headings */}

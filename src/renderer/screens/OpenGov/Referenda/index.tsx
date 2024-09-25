@@ -418,7 +418,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             ) : (
               <div>
                 {fetchingReferenda ? (
-                  <>{renderPlaceholders(4)}</>
+                  <div style={{ marginTop: '2rem' }}>
+                    {renderPlaceholders(4)}
+                  </div>
                 ) : (
                   <>
                     {renderCategorised()}
