@@ -119,18 +119,20 @@ export class WindowsController {
     const { view } = this.views.find(({ id }) => id === viewId)!;
     this.initViewBounds(view);
 
-    const children = this.base!.window.contentView.children;
+    const baseWindow = this.base!.window;
+    const children = baseWindow.contentView.children;
     let added = false;
 
     for (const child of children) {
       if (child !== this.tabsView) {
         child === view
           ? (added = true)
-          : this.base?.window.contentView.removeChildView(child);
+          : baseWindow.contentView.removeChildView(child);
       }
     }
 
-    !added && this.base?.window.contentView.addChildView(view);
+    !added && baseWindow.contentView.addChildView(view);
+    !baseWindow.isVisible() && baseWindow.show();
   };
 
   // Set view bounds correctly.

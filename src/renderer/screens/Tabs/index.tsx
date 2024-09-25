@@ -30,6 +30,8 @@ const TabsWrapper = styled.div`
   height: 49px;
   background-color: black;
   border-bottom: 1px solid #222;
+  border-left: 1px solid rgba(70, 70, 70, 0.3);
+  border-right: 1px solid rgba(70, 70, 70, 0.3);
 
   .inner {
     display: flex;
