@@ -196,7 +196,7 @@ export const createBaseWindow = () => {
     closable: true,
     fullscreen: false,
     center: true,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: '#101010',
   });
 
   // Hide menu bar on Linux and Windows.
@@ -209,6 +209,7 @@ export const createBaseWindow = () => {
   const tabsView = new WebContentsView({ webPreferences });
   const viewHeight = WindowsController.Y_OFFSET;
   tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: viewHeight });
+  tabsView.setBackgroundColor('#181818');
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
@@ -230,9 +231,6 @@ export const createBaseWindow = () => {
   // Have windows controller manage window.
   WindowsController.setBaseWindow(baseWindow);
   WindowsController.setTabsView(tabsView);
-
-  // Open developer tools.
-  tabsView.webContents.openDevTools();
 
   // Hide dock icon.
   const { appHideDockIcon } = SettingsController.getAppSettings();
@@ -261,6 +259,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     });
 
     // Add view to active set and render.
+    view.setBackgroundColor('#101010');
     loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
     WindowsController.addView(view, name);
     WindowsController.addTab(name);
@@ -291,9 +290,6 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
         port2,
       ]);
     });
-
-    // Open developer tools.
-    view.webContents.openDevTools();
   });
 };
 

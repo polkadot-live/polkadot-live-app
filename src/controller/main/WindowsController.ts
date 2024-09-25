@@ -164,6 +164,20 @@ export class WindowsController {
     }
   };
 
+  // Open a view's devTools if in DEBUG mode.
+  static openDevTools = (viewId: string) => {
+    if (!process.env['DEBUG']) {
+      return;
+    }
+
+    const view =
+      viewId === 'tabs'
+        ? this.tabsView
+        : this.views.find(({ id }) => id === viewId)?.view;
+
+    view?.webContents.openDevTools();
+  };
+
   /* ---------------------------------------- */
   /* Stored Windows                           */
   /* ---------------------------------------- */

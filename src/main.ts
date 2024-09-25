@@ -329,6 +329,11 @@ app.whenReady().then(async () => {
     }
   );
 
+  // Open devTools for a view.
+  ipcMain.on('app:view:devTools', (_, windowId: string) => {
+    WindowsController.openDevTools(windowId);
+  });
+
   /**
    * Settings
    */
