@@ -38,7 +38,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       if (found !== undefined) {
         setClickedId(found.id);
       } else {
-        let tabId = tabsDataRef.current.length;
+        let tabId = Number(tabsDataRef.current.length) + 1;
         const takenIds = tabsDataRef.current.reduce(
           (acc, item) => [...acc, item.id],
           [] as number[]
