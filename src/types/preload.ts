@@ -48,6 +48,7 @@ export interface PreloadAPI {
   showNotification: ApiShowNotification;
 
   openWindow: (id: string) => void;
+  openDevTools: (windowId: string) => void;
   restoreWindow: (windowId: string) => void;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;

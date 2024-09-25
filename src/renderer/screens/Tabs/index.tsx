@@ -17,6 +17,7 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Header } from '@/renderer/library/Header';
 import styled from 'styled-components';
+import { useDebug } from '@/renderer/hooks/useDebug';
 
 /* -------------------- */
 /* Tabs Container       */
@@ -40,6 +41,8 @@ const TabsWrapper = styled.div`
 `;
 
 export const Tabs: React.FC = () => {
+  useDebug(window.myAPI.getWindowId());
+
   const { handleDragStart, handleDragEnd, items, sensors, tabsData } =
     useTabs();
 

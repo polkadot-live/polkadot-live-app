@@ -16,10 +16,12 @@ import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
+import { useDebug } from '@/renderer/hooks/useDebug';
 
 export const Action = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
+  useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
   const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =

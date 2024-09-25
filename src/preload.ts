@@ -178,6 +178,9 @@ export const API: PreloadAPI = {
 
   openWindow: async (id) => ipcRenderer.send(`${id}:open`),
 
+  openDevTools: (windowId: string) =>
+    ipcRenderer.send('app:view:devTools', windowId),
+
   restoreWindow: (windowId: string) =>
     ipcRenderer.send('app:window:restore', windowId),
 

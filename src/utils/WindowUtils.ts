@@ -293,9 +293,6 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
         port2,
       ]);
     });
-
-    // Open developer tools.
-    view.webContents.openDevTools();
   });
 };
 

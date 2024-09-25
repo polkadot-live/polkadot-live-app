@@ -164,6 +164,18 @@ export class WindowsController {
     }
   };
 
+  // Open a view's devTools if in DEBUG mode.
+  static openDevTools = (viewId: string) => {
+    if (process.env['DEBUG'] !== undefined) {
+      if (viewId === 'tabs') {
+        this.tabsView?.webContents.openDevTools();
+      } else {
+        const stored = this.views.find(({ id }) => id === viewId);
+        stored !== undefined && stored.view.webContents.openDevTools();
+      }
+    }
+  };
+
   /* ---------------------------------------- */
   /* Stored Windows                           */
   /* ---------------------------------------- */
