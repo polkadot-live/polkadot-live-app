@@ -199,7 +199,8 @@ export const createBaseWindow = () => {
     backgroundColor: '#101010',
   });
 
-  // Hide menu bar on Linux and Windows.
+  // Hide base window and menu bar on Linux and Windows.
+  baseWindow.hide();
   setWindowMenuVisibility(baseWindow);
 
   // TODO: Register local shortcut Ctrl+Q and Ctrl+W
