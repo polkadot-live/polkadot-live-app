@@ -6,28 +6,25 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { DragClose } from '@/renderer/library/DragClose';
-import { HeaderWrapper } from '@app/screens/Wrappers';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@/config/settings';
 import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
+import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
-//import { Workspaces } from '@app/screens/Settings/Workspaces';
 import { Scrollable } from '@/renderer/utils/common';
 import type { OsPlatform, SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
   useSettingsMessagePorts();
+  useDebug(window.myAPI.getWindowId());
 
   /// Active accordion indices for settings panels.
-  // TEMP: Show workspaces item.
   const [accordionActiveIndices, setAccordionActiveIndices] =
     useState<number>(0);
-
   const [osPlatform, setOsPlatform] = useState<OsPlatform | null>(null);
 
   useEffect(() => {
@@ -88,51 +85,42 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <>
-      {/* Header */}
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="settings" />
-          <h3>Settings</h3>
-        </div>
-      </HeaderWrapper>
-      <Scrollable $footerHeight={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
-        <ContentWrapper>
-          <Accordion
-            defaultIndex={accordionActiveIndices}
-            setExternalIndices={setAccordionActiveIndices}
-          >
-            {Array.from(getSortedSettings().entries()).map(
-              ([category, settings], i) => (
-                <AccordionItem key={`${category}_settings`}>
-                  <AccordionCaretHeader
-                    title={category}
-                    itemIndex={i}
-                    wide={true}
-                  />
-                  <AccordionPanel>
-                    <div
-                      className="flex-column"
-                      style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
-                    >
-                      {settings.map((setting, j) => (
-                        <Setting
-                          key={j}
-                          setting={setting}
-                          handleSetting={handleSetting}
-                        />
-                      ))}
-                    </div>
-                  </AccordionPanel>
-                </AccordionItem>
-              )
-            )}
+    <Scrollable $footerHeight={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
+      <ContentWrapper>
+        <Accordion
+          defaultIndex={accordionActiveIndices}
+          setExternalIndices={setAccordionActiveIndices}
+        >
+          {Array.from(getSortedSettings().entries()).map(
+            ([category, settings], i) => (
+              <AccordionItem key={`${category}_settings`}>
+                <AccordionCaretHeader
+                  title={category}
+                  itemIndex={i}
+                  wide={true}
+                />
+                <AccordionPanel>
+                  <div
+                    className="flex-column"
+                    style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
+                  >
+                    {settings.map((setting, j) => (
+                      <Setting
+                        key={j}
+                        setting={setting}
+                        handleSetting={handleSetting}
+                      />
+                    ))}
+                  </div>
+                </AccordionPanel>
+              </AccordionItem>
+            )
+          )}
 
-            {/* Workspaces Accordion Item */}
-            {/* <Workspaces /> */}
-          </Accordion>
-        </ContentWrapper>
-      </Scrollable>
-    </>
+          {/* Workspaces Accordion Item */}
+          {/* <Workspaces /> */}
+        </Accordion>
+      </ContentWrapper>
+    </Scrollable>
   );
 };

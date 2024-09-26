@@ -1,12 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
 import type { LedgerTask } from './ledger';
-import type { IpcTask } from './communication';
+import type { IpcTask, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { WorkspaceItem } from './developerConsole/workspaces';
@@ -48,10 +47,18 @@ export interface PreloadAPI {
 
   showNotification: ApiShowNotification;
 
-  quitApp: ApiEmptyPromiseRequest;
+  openWindow: (id: string) => void;
+  openDevTools: (windowId: string) => void;
+  restoreWindow: (windowId: string) => void;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
-  openWindow: ApiOpenWindow;
+  quitApp: ApiEmptyPromiseRequest;
+
+  handleOpenTab: (
+    callback: (_: IpcRendererEvent, tabData: TabData) => void
+  ) => void;
+  showTab: (viewId: string) => void;
+  closeTab: (destroyViewId: string, showViewId: string | null) => void;
 
   doLedgerLoop: ApiDoLedgerLoop;
   reportLedgerStatus: ApiReportLedgerStatus;
@@ -69,7 +76,6 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-type ApiOpenWindow = (id: string, args?: AnyJson) => void;
 
 type ApiDoLedgerLoop = (
   accountIndex: number,

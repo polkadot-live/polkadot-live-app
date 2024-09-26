@@ -14,7 +14,7 @@ export function handleWdioApi(cmd: string, params?: AnyData) {
     //--------------------------------------------------
 
     case 'toggleMainWindow': {
-      WindowsController.toggleVisible('menu');
+      WindowsController.toggleWindowVisible('menu');
       break;
     }
 

@@ -145,22 +145,13 @@ app.whenReady().then(async () => {
   // Create menu bar and tray.
   WindowUtils.createTray();
   WindowUtils.createMainWindow(isTest);
+  WindowUtils.createBaseWindow();
 
-  // Handle import window.
-  WindowUtils.handleWindowOnIPC('import', isTest);
-
-  // Handle action window.
-  WindowUtils.handleWindowOnIPC('action', isTest, {
-    height: 375,
-    minHeight: 375,
-    maxHeight: 375,
-  });
-
-  // Handle settings window.
-  WindowUtils.handleWindowOnIPC('settings', isTest);
-
-  // Handle open gov window.
-  WindowUtils.handleWindowOnIPC('openGov', isTest);
+  // Handle child windows.
+  WindowUtils.handleViewOnIPC('import', isTest);
+  WindowUtils.handleViewOnIPC('action', isTest);
+  WindowUtils.handleViewOnIPC('openGov', isTest);
+  WindowUtils.handleViewOnIPC('settings', isTest);
 
   // ------------------------------
   // Handle Power Changes
@@ -308,7 +299,39 @@ app.whenReady().then(async () => {
 
   // Closes a window by its key.
   ipcMain.on('app:window:close', (_, id) => {
-    WindowsController.close(id);
+    // TODO: Make main window id `main` instead of `menu` and sync with windowId.
+    const windowId = id === 'main' ? 'menu' : id;
+    WindowsController.close(windowId);
+  });
+
+  // Show the base window after clicking the restore button.
+  ipcMain.on('app:window:restore', (_, windowId) => {
+    if (windowId === 'base') {
+      WindowsController.show(windowId);
+    }
+  });
+
+  // Show a tab.
+  ipcMain.on('app:view:show', (_, viewId: string) => {
+    WindowsController.renderView(viewId);
+  });
+
+  // Destroy a view and its associated tab.
+  ipcMain.on(
+    'app:view:close',
+    (_, destroyViewId: string, showViewId: string | null) => {
+      if (showViewId) {
+        WindowsController.renderView(showViewId);
+      }
+
+      // TODO: Destroy view to optimize memory.
+      WindowsController.removeView(destroyViewId);
+    }
+  );
+
+  // Open devTools for a view.
+  ipcMain.on('app:view:devTools', (_, windowId: string) => {
+    WindowsController.openDevTools(windowId);
   });
 
   /**
@@ -332,10 +355,10 @@ app.whenReady().then(async () => {
     'app:ledger:do-loop',
     async (_, accountIndex, chainName, tasks) => {
       console.debug(accountIndex, chainName, tasks);
-      const importWindow = WindowsController.get('import');
+      const importView = WindowsController.getView('import');
 
-      if (importWindow) {
-        await executeLedgerLoop(importWindow, chainName, tasks, {
+      if (importView) {
+        await executeLedgerLoop(importView!, chainName, tasks, {
           accountIndex,
         });
       }

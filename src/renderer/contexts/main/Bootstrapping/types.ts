@@ -19,4 +19,6 @@ export interface BootstrappingInterface {
     chainId: ChainID,
     newEndpoint: string
   ) => Promise<void>;
+  syncImportWindow: () => Promise<void>;
+  syncOpenGovWindow: () => Promise<void>;
 }

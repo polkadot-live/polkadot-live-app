@@ -176,7 +176,18 @@ export const API: PreloadAPI = {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
-  openWindow: async (id, args) => ipcRenderer.send(`${id}:open`, args),
+  openWindow: async (id) => ipcRenderer.send(`${id}:open`),
+
+  openDevTools: (windowId: string) =>
+    ipcRenderer.send('app:view:devTools', windowId),
+
+  restoreWindow: (windowId: string) =>
+    ipcRenderer.send('app:window:restore', windowId),
+
+  handleOpenTab: (callback) => ipcRenderer.on('renderer:tab:open', callback),
+  showTab: (viewId: string) => ipcRenderer.send('app:view:show', viewId),
+  closeTab: (destroyViewId: string, showViewId: string | null) =>
+    ipcRenderer.send('app:view:close', destroyViewId, showViewId),
 
   /**
    * Chain management

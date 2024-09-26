@@ -40,7 +40,7 @@ export class AppOrchestrator {
    * @summary Sets the app's state correctly for offline mode.
    */
   private static async initializeOffline() {
-    WindowsController.get('menu')?.webContents?.send(
+    WindowsController.getWindow('menu')?.webContents?.send(
       'renderer:app:initialize:offline'
     );
   }
@@ -50,7 +50,7 @@ export class AppOrchestrator {
    * @summary Sets the app's state correctly for online mode.
    */
   private static async initializeOnline() {
-    WindowsController.get('menu')?.webContents?.send(
+    WindowsController.getWindow('menu')?.webContents?.send(
       'renderer:app:initialize:online'
     );
   }

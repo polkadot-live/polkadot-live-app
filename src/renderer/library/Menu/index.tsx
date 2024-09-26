@@ -60,7 +60,7 @@ export const Menu = () => {
   const handleSilenceOsNotifications = () => {
     handleToggleSilenceOsNotifications();
 
-    RendererConfig.portToSettings.postMessage({
+    RendererConfig.portToSettings?.postMessage({
       task: 'settings:set:silenceOsNotifications',
       data: {
         silenced: !silenceOsNotifications,

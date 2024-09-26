@@ -82,7 +82,7 @@ export class WebsocketsController {
           WorkspacesController.addWorkspace(workspace);
 
           // Send to settings window.
-          WindowsController.get('settings')?.webContents?.send(
+          WindowsController.getView('settings')?.webContents?.send(
             'settings:workspace:receive',
             serialised
           );
@@ -99,7 +99,7 @@ export class WebsocketsController {
           const workspaces: WorkspaceItem[] = JSON.parse(serialised);
           for (const workspace of workspaces) {
             WorkspacesController.addWorkspace(workspace);
-            WindowsController.get('settings')?.webContents?.send(
+            WindowsController.getView('settings')?.webContents?.send(
               'settings:workspace:receive',
               JSON.stringify(workspace)
             );

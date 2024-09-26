@@ -8,8 +8,7 @@ import {
   faQrcode,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DragClose } from '@app/library/DragClose';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import VaultLogoSVG from '@app/svg/polkadotVaultLogo.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
@@ -20,21 +19,18 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { Scrollable } from '@/renderer/utils/common';
 import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {
   const { openHelp } = useHelp();
 
   return (
-    <>
-      {/* Header */}
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="import" />
-          <h3>Manage Accounts</h3>
-        </div>
-      </HeaderWrapper>
-
+    <Scrollable
+      $footerHeight={0}
+      $headerHeight={0}
+      style={{ paddingTop: 0, paddingBottom: 20 }}
+    >
       <ContentWrapper>
         {/* Hardware */}
         <ActionItem
@@ -181,6 +177,6 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           </ModalConnectItem>
         </div>
       </ContentWrapper>
-    </>
+    </Scrollable>
   );
 };

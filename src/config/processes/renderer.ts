@@ -7,10 +7,10 @@
  */
 export class Config {
   // Cache the main window's message ports to communicate with child windows.
-  private static _portToImport: MessagePort;
-  private static _portToAction: MessagePort;
-  private static _portToSettings: MessagePort;
-  private static _portToOpenGov: MessagePort;
+  static _portToImport: MessagePort;
+  static _portToAction: MessagePort;
+  static _portToSettings: MessagePort;
+  static _portToOpenGov: MessagePort;
 
   // App settings handled by main renderer (use in callbacks).
   private static _silenceNotifications = false;
@@ -27,113 +27,87 @@ export class Config {
   // Time in seconds app should wait for processing a one-shot and API connection.
   private static _processingTimeout = 10;
 
-  // Accessors for `import` port.
-  static get portToImport(): MessagePort {
-    if (!Config._portToImport) {
-      throw new Error('_portMain still undefined.');
-    }
-
-    return Config._portToImport;
-  }
-
-  static set portToImport(port: MessagePort) {
-    Config._portToImport = port;
-  }
-
   // Accessors for `action` port.
-  static get portToAction(): MessagePort {
-    if (!Config._portToAction) {
-      throw new Error('_portMainB still undefined');
-    }
-
-    return Config._portToAction;
+  static get portToAction(): MessagePort | null {
+    return this._portToAction ? this._portToAction : null;
   }
-
   static set portToAction(port: MessagePort) {
-    Config._portToAction = port;
+    this._portToAction = port;
   }
 
-  // Accessors for `settings` port.
-  static get portToSettings(): MessagePort {
-    if (!Config._portToSettings) {
-      throw new Error('_portToSettings still undefined');
-    }
-
-    return Config._portToSettings;
+  // Accessors for `import` port.
+  static get portToImport(): MessagePort | null {
+    return this._portToImport ? this._portToImport : null;
   }
-
-  static set portToSettings(port: MessagePort) {
-    Config._portToSettings = port;
+  static set portToImport(port: MessagePort) {
+    this._portToImport = port;
   }
 
   // Accessors for `openGov` port.
-  static get portToOpenGov(): MessagePort {
-    if (!Config._portToOpenGov) {
-      throw new Error('_portToOpenGov still undefined');
-    }
-
-    return Config._portToOpenGov;
+  static get portToOpenGov(): MessagePort | null {
+    return this._portToOpenGov ? this._portToOpenGov : null;
+  }
+  static set portToOpenGov(port: MessagePort) {
+    this._portToOpenGov = port;
   }
 
-  static set portToOpenGov(port: MessagePort) {
-    Config._portToOpenGov = port;
+  // Accessors for `settings` port.
+  static get portToSettings(): MessagePort | null {
+    return this._portToSettings ? this._portToSettings : null;
+  }
+  static set portToSettings(port: MessagePort) {
+    this._portToSettings = port;
   }
 
   // Accessors for `_silenceNotifications` flag.
   static get silenceNotifications(): boolean {
-    return Config._silenceNotifications;
+    return this._silenceNotifications;
   }
-
   static set silenceNotifications(flag: boolean) {
-    Config._silenceNotifications = flag;
+    this._silenceNotifications = flag;
   }
 
   // Accessors for `_showDebuggingSubscriptions` flag.
   static get showDebuggingSubscriptions(): boolean {
-    return Config._showDebuggingSubscriptions;
+    return this._showDebuggingSubscriptions;
   }
-
   static set showDebuggingSubscriptions(flag: boolean) {
-    Config._showDebuggingSubscriptions = flag;
+    this._showDebuggingSubscriptions = flag;
   }
 
   // Accessors for `_enableAutomaticSubscriptions` flag.
   static get enableAutomaticSubscriptions(): boolean {
-    return Config._enableAutomaticSubscriptions;
+    return this._enableAutomaticSubscriptions;
   }
-
   static set enableAutomaticSubscriptions(flag: boolean) {
-    Config._enableAutomaticSubscriptions = flag;
+    this._enableAutomaticSubscriptions = flag;
   }
 
   // Accessors for `_enableAutomaticSubscriptions` flag.
   static get keepOutdatedEvents(): boolean {
-    return Config._keepOutdatedEvents;
+    return this._keepOutdatedEvents;
   }
-
   static set keepOutdatedEvents(flag: boolean) {
-    Config._keepOutdatedEvents = flag;
+    this._keepOutdatedEvents = flag;
   }
 
   // Accessors for `_switchingToOnlineMode` flag.
   static get switchingToOnlineMode(): boolean {
-    return Config._switchingToOnlineMode;
+    return this._switchingToOnlineMode;
   }
-
   static set switchingToOnlineMode(flag: boolean) {
-    Config._switchingToOnlineMode = flag;
+    this._switchingToOnlineMode = flag;
   }
 
   // Accessors for `_abortConnecting` flag.
   static get abortConnecting(): boolean {
-    return Config._abortConnecting;
+    return this._abortConnecting;
   }
-
   static set abortConnecting(flag: boolean) {
-    Config._abortConnecting = flag;
+    this._abortConnecting = flag;
   }
 
   static get processingTimeout(): number {
-    return Config._processingTimeout;
+    return this._processingTimeout;
   }
 }

@@ -3,6 +3,12 @@
 
 import type { AnyData } from './misc';
 
+export interface TabData {
+  id: number;
+  label: string;
+  viewId: string;
+}
+
 export type PortPairID =
   | 'main-import'
   | 'main-action'

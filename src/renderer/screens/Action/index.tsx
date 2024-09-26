@@ -4,10 +4,9 @@
 import { ActionItem } from '@/renderer/library/ActionItem';
 import BigNumber from 'bignumber.js';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { chainCurrency, chainIcon } from '@/config/chains';
+import { chainCurrency } from '@/config/chains';
 import { Config as ConfigAction } from '@/config/processes/action';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
-import { DragClose } from '@app/library/DragClose';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,16 +16,16 @@ import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
+import { useDebug } from '@/renderer/hooks/useDebug';
 
 export const Action = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
+  useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
   const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
     useTxMeta();
-
-  const ChainIcon = chainIcon('Polkadot');
 
   // Tx metadata.
   const action = actionMeta?.action || '';
@@ -122,18 +121,6 @@ export const Action = () => {
 
   return (
     <>
-      {/* Header */}
-      <HeaderWrapper>
-        <DragClose windowName="action" />
-        <div className="content">
-          <DragClose windowName="action" />
-          <h4>
-            <ChainIcon className="icon" />
-            Nomination Pools
-          </h4>
-        </div>
-      </HeaderWrapper>
-
       {txStatus !== 'pending' && (
         <SubmittedTxWrapper>
           <div>
@@ -157,7 +144,7 @@ export const Action = () => {
         <ContentWrapper>
           {action === 'nominationPools_pendingRewards_bond' && (
             <>
-              <h3>Compound Rewards</h3>
+              <h3>Nomination Pools: Compound Rewards</h3>
               <div className="body">
                 <ActionItem
                   text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
@@ -173,7 +160,7 @@ export const Action = () => {
 
           {action === 'nominationPools_pendingRewards_withdraw' && (
             <>
-              <h3>Claim Rewards</h3>
+              <h3>Nomination Pools: Claim Rewards</h3>
               <div className="body">
                 <ActionItem
                   text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}

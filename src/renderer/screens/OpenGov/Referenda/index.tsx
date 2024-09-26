@@ -6,8 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
 } from '@/renderer/library/Accordion';
-import { ContentWrapper, HeaderWrapper } from '@app/screens/Wrappers';
-import { DragClose } from '@/renderer/library/DragClose';
+import { ContentWrapper } from '@app/screens/Wrappers';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import {
@@ -293,12 +292,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   return (
     <>
-      <HeaderWrapper>
-        <div className="content">
-          <DragClose windowName="openGov" />
-          <h3>{chainId} Referenda</h3>
-        </div>
-      </HeaderWrapper>
       <Scrollable>
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
           {/* Sorting controls */}
@@ -425,7 +418,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             ) : (
               <div>
                 {fetchingReferenda ? (
-                  <>{renderPlaceholders(4)}</>
+                  <div style={{ marginTop: '2rem' }}>
+                    {renderPlaceholders(4)}
+                  </div>
                 ) : (
                   <>
                     {renderCategorised()}

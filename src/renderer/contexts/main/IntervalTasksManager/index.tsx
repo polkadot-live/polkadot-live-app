@@ -50,7 +50,7 @@ export const IntervalTasksManagerProvider = ({
     tryUpdateDynamicIntervalTask(task);
 
     // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
+    ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:task:update',
       data: {
         serialized: JSON.stringify(task),
@@ -80,7 +80,7 @@ export const IntervalTasksManagerProvider = ({
     tryUpdateDynamicIntervalTask(task);
 
     // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov.postMessage({
+    ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:task:update',
       data: {
         serialized: JSON.stringify(task),
@@ -116,7 +116,7 @@ export const IntervalTasksManagerProvider = ({
     });
 
     // Send message to OpenGov window to update its subscription state.
-    ConfigRenderer.portToOpenGov.postMessage({
+    ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:task:removed',
       data: { serialized: JSON.stringify(task) },
     });
@@ -146,7 +146,7 @@ export const IntervalTasksManagerProvider = ({
       IntervalsController.updateSubscription(task);
 
       // Update state in OpenGov window.
-      ConfigRenderer.portToOpenGov.postMessage({
+      ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:task:update',
         data: {
           serialized: JSON.stringify(task),
