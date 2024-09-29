@@ -95,43 +95,76 @@ export const SettingFlagsProvider = ({
   /// Handle toggling a setting switch.
   const handleSwitchToggle = (setting: SettingItem) => {
     const { action } = setting;
+    let umamiData = { settingId: '', toggledOn: false };
 
     switch (action) {
       case 'settings:execute:dockedWindow': {
+        umamiData = { settingId: 'dock-window', toggledOn: !windowDocked };
         setWindowDocked(!windowDocked);
         break;
       }
       case 'settings:execute:silenceOsNotifications': {
+        umamiData = {
+          settingId: 'silence-notifications',
+          toggledOn: !silenceOsNotifications,
+        };
         setSilenceOsNotifications(!silenceOsNotifications);
         break;
       }
       case 'settings:execute:showOnAllWorkspaces': {
+        umamiData = {
+          settingId: 'all-workspaces',
+          toggledOn: !showOnAllWorkspaces,
+        };
         setShowOnAllWorkspaces(!showOnAllWorkspaces);
         break;
       }
       case 'settings:execute:showDebuggingSubscriptions': {
+        umamiData = {
+          settingId: 'debugging-subscriptions',
+          toggledOn: !showDebuggingSubscriptions,
+        };
         setShowDebuggingSubscriptions(!showDebuggingSubscriptions);
         break;
       }
       case 'settings:execute:enableAutomaticSubscriptions': {
+        umamiData = {
+          settingId: 'automatic-subscriptions',
+          toggledOn: !enableAutomaticSubscriptions,
+        };
         setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
         break;
       }
       case 'settings:execute:enablePolkassembly': {
+        umamiData = {
+          settingId: 'polkassembly-api',
+          toggledOn: !enablePolkassemblyApi,
+        };
         setEnablePolkassemblyApi(!enablePolkassemblyApi);
         break;
       }
       case 'settings:execute:keepOutdatedEvents': {
+        umamiData = {
+          settingId: 'outdated-events',
+          toggledOn: !keepOutdatedEvents,
+        };
         setKeepOutdatedEvents(!keepOutdatedEvents);
         break;
       }
       case 'settings:execute:hideDockIcon': {
+        umamiData = { settingId: 'hide-dock-icon', toggledOn: !hideDockIcon };
         setHideDockIcon(!hideDockIcon);
         break;
       }
       default: {
         break;
       }
+    }
+
+    if (window.umami !== undefined) {
+      const { settingId, toggledOn } = umamiData;
+      const eventName = `setting-toggle-${toggledOn ? 'on' : 'off'}`;
+      window.umami.track(eventName, { setting: settingId });
     }
   };
 

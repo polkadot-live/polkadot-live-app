@@ -324,7 +324,7 @@ app.whenReady().then(async () => {
         WindowsController.renderView(showViewId);
       }
 
-      // TODO: Destroy view to optimize memory.
+      // Destroy view to optimize memory.
       WindowsController.removeView(destroyViewId);
     }
   );
