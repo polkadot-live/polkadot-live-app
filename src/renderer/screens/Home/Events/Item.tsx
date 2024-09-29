@@ -307,6 +307,12 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         iconTransform="shrink-2"
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
+
+                          if (window.umami !== undefined) {
+                            window.umami.track(
+                              `link-open-${text?.toLowerCase() || 'unknown'}`
+                            );
+                          }
                         }}
                       />
                     );
