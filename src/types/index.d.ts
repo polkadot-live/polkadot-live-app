@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { API } from '@/preload';
+import type { AnyData } from './misc';
 
 declare global {
   interface Window {
     myAPI: typeof API;
+    umami: AnyData;
   }
 }
 

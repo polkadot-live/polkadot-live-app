@@ -262,6 +262,14 @@ export const Item = memo(function Item({ event }: ItemProps) {
                               task: 'action:init',
                               data: JSON.stringify(action.txMeta),
                             });
+
+                            if (window.umami !== undefined) {
+                              window.umami.track('window-open-extrinsics', {
+                                action:
+                                  `${event.category}-${text?.toLowerCase()}` ||
+                                  'unknown',
+                              });
+                            }
                           }}
                         />
                       );

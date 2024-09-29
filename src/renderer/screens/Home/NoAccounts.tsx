@@ -14,6 +14,12 @@ export const NoAccounts = () => (
       iconLeft={faLink}
       onClick={() => {
         window.myAPI.openWindow('import');
+
+        if (window.umami !== undefined) {
+          window.umami.track('window-open-accounts', {
+            source: 'subscriptions',
+          });
+        }
       }}
     />
   </NoAccountsWrapper>
@@ -28,6 +34,12 @@ export const NoOpenGov = () => (
       iconLeft={faLink}
       onClick={() => {
         window.myAPI.openWindow('openGov');
+
+        if (window.umami !== undefined) {
+          window.umami.track('window-open-openGov', {
+            source: 'subscriptions',
+          });
+        }
       }}
     />
   </NoAccountsWrapper>
