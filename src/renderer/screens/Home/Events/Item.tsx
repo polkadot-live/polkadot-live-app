@@ -309,9 +309,8 @@ export const Item = memo(function Item({ event }: ItemProps) {
                           window.myAPI.openBrowserURL(uri);
 
                           if (window.umami !== undefined) {
-                            window.umami.track(
-                              `link-open-${text?.toLowerCase() || 'unknown'}`
-                            );
+                            const dest = text?.toLowerCase() || 'unknown';
+                            window.umami.track('link-open', { dest });
                           }
                         }}
                       />
