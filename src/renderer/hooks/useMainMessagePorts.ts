@@ -167,6 +167,11 @@ export const useMainMessagePorts = () => {
         status: false,
       },
     });
+
+    // Send analytics event.
+    if (window.umami !== undefined) {
+      window.umami.track('account-import', { source, chainId });
+    }
   };
 
   /**
@@ -212,6 +217,12 @@ export const useMainMessagePorts = () => {
 
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
+
+    // Send analytics event.
+    if (window.umami !== undefined) {
+      const { source } = account;
+      window.umami.track('account-remove', { source, chainId });
+    }
   };
 
   /**
