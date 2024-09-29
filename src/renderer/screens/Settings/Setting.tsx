@@ -25,6 +25,20 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
   /// Handle a setting button click.
   const handleButtonClick = () => {
     handleSetting(setting);
+
+    // Handle analytics.
+    switch (setting.action) {
+      case 'settings:execute:exportData': {
+        if (window.umami !== undefined) {
+          window.umami.track('backup-export');
+        }
+        break;
+      }
+      case 'settings:execute:importData': {
+        window.umami.track('backup-import');
+        break;
+      }
+    }
   };
 
   return (
