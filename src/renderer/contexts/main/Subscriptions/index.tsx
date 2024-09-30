@@ -203,6 +203,12 @@ export const SubscriptionsProvider = ({
         account.queryMulti &&
           (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
+        // Analytics.
+        if (window.umami !== undefined) {
+          const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+          const { chain: chainId } = account;
+          window.umami.track(event, { category, chainId });
+        }
         break;
       }
       default: {

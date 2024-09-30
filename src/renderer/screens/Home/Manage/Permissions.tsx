@@ -299,6 +299,13 @@ export const Permissions = ({
         data: { serialized: JSON.stringify(task) },
       });
     }
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+      const { category, chainId } = tasks[0];
+      window.umami.track(event, { category, chainId });
+    }
   };
 
   /// Handle a one-shot event for a subscription task.
