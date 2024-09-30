@@ -16,9 +16,7 @@ export const NoAccounts = () => (
       onClick={() => {
         window.myAPI.openWindow('import');
 
-        AnalyticsController.umamiTrack('window-open-accounts', {
-          source: 'subscriptions',
-        });
+        AnalyticsController.umamiTrack('window-open-accounts');
       }}
     />
   </NoAccountsWrapper>
@@ -34,9 +32,7 @@ export const NoOpenGov = () => (
       onClick={() => {
         window.myAPI.openWindow('openGov');
 
-        AnalyticsController.umamiTrack('window-open-openGov', {
-          source: 'subscriptions',
-        });
+        AnalyticsController.umamiTrack('window-open-openGov');
       }}
     />
   </NoAccountsWrapper>

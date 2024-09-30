@@ -147,7 +147,6 @@ export const Menu = () => {
           <button
             type="button"
             data-umami-event="window-open-accounts"
-            data-umami-event-source="menu"
             onClick={() => {
               window.myAPI.openWindow('import');
               toggleMenu(false);
@@ -158,7 +157,6 @@ export const Menu = () => {
           <button
             type="button"
             data-umami-event="window-open-openGov"
-            data-umami-event-source="menu"
             onClick={() => {
               window.myAPI.openWindow('openGov');
               toggleMenu(false);
@@ -169,7 +167,6 @@ export const Menu = () => {
           <button
             type="button"
             data-umami-event="window-open-settings"
-            data-umami-event-source="menu"
             onClick={() => {
               window.myAPI.openWindow('settings');
               toggleMenu(false);
