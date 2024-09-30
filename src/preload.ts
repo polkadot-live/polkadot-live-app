@@ -216,6 +216,9 @@ export const API: PreloadAPI = {
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
+
+  analyticsDisabled: async (): Promise<boolean> =>
+    await ipcRenderer.invoke('app:analytics:disabled'),
 };
 
 contextBridge.exposeInMainWorld('myAPI', API);

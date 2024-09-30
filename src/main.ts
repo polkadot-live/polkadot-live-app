@@ -380,4 +380,12 @@ app.whenReady().then(async () => {
     'app:data:import',
     async () => await BackupController.import()
   );
+
+  /**
+   * Analytics
+   */
+  ipcMain.handle(
+    'app:analytics:disabled',
+    async () => process.env.DISABLE_ANALYTICS !== undefined
+  );
 });

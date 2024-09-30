@@ -68,6 +68,8 @@ export interface PreloadAPI {
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
   openBrowserURL: ApiOpenBrowserWindow;
+
+  analyticsDisabled: () => Promise<boolean>;
 }
 
 // Types of MyAPI methods.
