@@ -70,6 +70,12 @@ export const TaskHandlerProvider = ({
     const text = `Subscription added for referendum ${referendumId}.`;
     const toastId = `add-${task.chainId}-${referendumId}-${task.action}`;
     showToastSuccess(text, toastId);
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      const { action } = task;
+      window.umami.track('referenda-subscribe', { action });
+    }
   };
 
   /// Handles removing an interval subscription for a referendum.
@@ -95,6 +101,12 @@ export const TaskHandlerProvider = ({
     const text = `Subscription removed for referendum ${referendumId}.`;
     const toastId = `remove-${task.chainId}-${referendumId}-${task.action}`;
     showToastSuccess(text, toastId);
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      const { action } = task;
+      window.umami.track('referenda-unsubscribe', { action });
+    }
   };
 
   /// Handles adding all available subscriptions for a referendum.
@@ -128,6 +140,11 @@ export const TaskHandlerProvider = ({
     const text = `Subscriptions added for referendum ${referendumId}.`;
     const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
     showToastSuccess(text, toastId);
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      window.umami.track('referenda-subscribe-all');
+    }
   };
 
   /// Handles removing all addde subscriptions for a referendum.
@@ -161,6 +178,11 @@ export const TaskHandlerProvider = ({
     const text = `Subscriptions removed for referendum ${referendumId}.`;
     const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
     showToastSuccess(text, toastId);
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      window.umami.track('referenda-unsubscribe-all');
+    }
   };
 
   return (
