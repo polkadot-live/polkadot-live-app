@@ -277,9 +277,9 @@ export const SubscriptionsProvider = ({
         updateTask('account', task, task.account?.address);
 
         // Analytics.
-        const { action, category, chainId } = task;
+        const { action, category } = task;
         const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
-        AnalyticsController.umamiTrack(event, { action, category, chainId });
+        AnalyticsController.umamiTrack(event, { action, category });
         break;
       }
       default: {

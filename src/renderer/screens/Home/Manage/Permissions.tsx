@@ -341,9 +341,8 @@ export const Permissions = ({
       }, 550);
 
       // Analytics.
-      const { action, chainId, category } = task;
-      const event = 'oneshot-account';
-      AnalyticsController.umamiTrack(event, { action, chainId, category });
+      const { action, category } = task;
+      AnalyticsController.umamiTrack('oneshot-account', { action, category });
     }
   };
 

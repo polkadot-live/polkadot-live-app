@@ -65,9 +65,9 @@ export const IntervalTasksManagerProvider = ({
     });
 
     // Analytics.
-    const { action, category, chainId } = task;
+    const { action, category } = task;
     const event = `subscription-interval-${newStatus === 'enable' ? 'on' : 'off'}`;
-    AnalyticsController.umamiTrack(event, { action, category, chainId });
+    AnalyticsController.umamiTrack(event, { action, category });
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -202,9 +202,8 @@ export const IntervalTasksManagerProvider = ({
       }, 550);
 
       // Analytics.
-      const { action, chainId, category } = task;
-      const event = 'oneshot-interval';
-      AnalyticsController.umamiTrack(event, { action, category, chainId });
+      const { action, category } = task;
+      AnalyticsController.umamiTrack('oneshot-interval', { action, category });
     }
   };
 
