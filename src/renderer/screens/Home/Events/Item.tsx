@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
@@ -263,13 +264,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
                               data: JSON.stringify(action.txMeta),
                             });
 
-                            if (window.umami !== undefined) {
-                              window.umami.track('window-open-extrinsics', {
+                            // Analytics.
+                            AnalyticsController.umamiTrack(
+                              'window-open-extrinsics',
+                              {
                                 action:
                                   `${event.category}-${text?.toLowerCase()}` ||
                                   'unknown',
-                              });
-                            }
+                              }
+                            );
                           }}
                         />
                       );
@@ -308,10 +311,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
 
-                          if (window.umami !== undefined) {
-                            const dest = text?.toLowerCase() || 'unknown';
-                            window.umami.track('link-open', { dest });
-                          }
+                          AnalyticsController.umamiTrack('link-open', {
+                            dest: text?.toLowerCase() || 'unknown',
+                          });
                         }}
                       />
                     );

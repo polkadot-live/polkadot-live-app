@@ -1,9 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
+import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { NoAccountsWrapper } from './Wrappers';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 
 export const NoAccounts = () => (
   <NoAccountsWrapper>
@@ -15,11 +16,9 @@ export const NoAccounts = () => (
       onClick={() => {
         window.myAPI.openWindow('import');
 
-        if (window.umami !== undefined) {
-          window.umami.track('window-open-accounts', {
-            source: 'subscriptions',
-          });
-        }
+        AnalyticsController.umamiTrack('window-open-accounts', {
+          source: 'subscriptions',
+        });
       }}
     />
   </NoAccountsWrapper>
@@ -35,11 +34,9 @@ export const NoOpenGov = () => (
       onClick={() => {
         window.myAPI.openWindow('openGov');
 
-        if (window.umami !== undefined) {
-          window.umami.track('window-open-openGov', {
-            source: 'subscriptions',
-          });
-        }
+        AnalyticsController.umamiTrack('window-open-openGov', {
+          source: 'subscriptions',
+        });
       }}
     />
   </NoAccountsWrapper>

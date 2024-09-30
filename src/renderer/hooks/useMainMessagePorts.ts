@@ -46,6 +46,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -168,10 +169,8 @@ export const useMainMessagePorts = () => {
       },
     });
 
-    // Send analytics event.
-    if (window.umami !== undefined) {
-      window.umami.track('account-import', { source, chainId });
-    }
+    // Analytics.
+    AnalyticsController.umamiTrack('account-import', { source, chainId });
   };
 
   /**
@@ -218,11 +217,9 @@ export const useMainMessagePorts = () => {
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
 
-    // Send analytics event.
-    if (window.umami !== undefined) {
-      const { source } = account;
-      window.umami.track('account-remove', { source, chainId });
-    }
+    // Analytics.
+    const { source } = account;
+    AnalyticsController.umamiTrack('account-remove', { source, chainId });
   };
 
   /**

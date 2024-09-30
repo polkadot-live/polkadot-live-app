@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
@@ -29,13 +30,11 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
     // Handle analytics.
     switch (setting.action) {
       case 'settings:execute:exportData': {
-        if (window.umami !== undefined) {
-          window.umami.track('backup-export');
-        }
+        AnalyticsController.umamiTrack('backup-export');
         break;
       }
       case 'settings:execute:importData': {
-        window.umami.track('backup-import');
+        AnalyticsController.umamiTrack('backup-import');
         break;
       }
     }

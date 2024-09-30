@@ -15,6 +15,7 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { useChains } from '@app/contexts/main/Chains';
@@ -204,11 +205,9 @@ export const SubscriptionsProvider = ({
           (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
         // Analytics.
-        if (window.umami !== undefined) {
-          const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
-          const { chain: chainId } = account;
-          window.umami.track(event, { category, chainId });
-        }
+        const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+        const { chain: chainId } = account;
+        AnalyticsController.umamiTrack(event, { category, chainId });
         break;
       }
       default: {
@@ -278,11 +277,9 @@ export const SubscriptionsProvider = ({
         updateTask('account', task, task.account?.address);
 
         // Analytics.
-        if (window.umami !== undefined) {
-          const { action, category, chainId } = task;
-          const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
-          window.umami.track(event, { action, category, chainId });
-        }
+        const { action, category, chainId } = task;
+        const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
+        AnalyticsController.umamiTrack(event, { action, category, chainId });
         break;
       }
       default: {

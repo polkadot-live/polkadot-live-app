@@ -43,6 +43,7 @@ import type {
   SubscriptionTask,
   TaskCategory,
 } from '@/types/subscriptions';
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 
 export const Permissions = ({
   breadcrumb,
@@ -301,11 +302,9 @@ export const Permissions = ({
     }
 
     // Analytics.
-    if (window.umami !== undefined) {
-      const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
-      const { category, chainId } = tasks[0];
-      window.umami.track(event, { category, chainId });
-    }
+    const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+    const { category, chainId } = tasks[0];
+    AnalyticsController.umamiTrack(event, { category, chainId });
   };
 
   /// Handle a one-shot event for a subscription task.
@@ -342,10 +341,9 @@ export const Permissions = ({
       }, 550);
 
       // Analytics.
-      if (window.umami !== undefined) {
-        const { action, chainId, category } = task;
-        window.umami.track('oneshot-account', { action, chainId, category });
-      }
+      const { action, chainId, category } = task;
+      const event = 'oneshot-account';
+      AnalyticsController.umamiTrack(event, { action, chainId, category });
     }
   };
 

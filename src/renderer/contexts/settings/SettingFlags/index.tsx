@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Flip, toast } from 'react-toastify';
 import type { SettingFlagsContextInterface } from './types';
@@ -161,11 +162,9 @@ export const SettingFlagsProvider = ({
       }
     }
 
-    if (window.umami !== undefined) {
-      const { settingId, toggledOn } = umamiData;
-      const eventName = `setting-toggle-${toggledOn ? 'on' : 'off'}`;
-      window.umami.track(eventName, { setting: settingId });
-    }
+    const { settingId, toggledOn } = umamiData;
+    const event = `setting-toggle-${toggledOn ? 'on' : 'off'}`;
+    AnalyticsController.umamiTrack(event, { setting: settingId });
   };
 
   /// Render a toastify message.
