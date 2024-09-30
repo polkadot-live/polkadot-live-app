@@ -201,6 +201,12 @@ export const IntervalTasksManagerProvider = ({
       setTimeout(() => {
         setOneShotProcessing(false);
       }, 550);
+
+      // Analytics.
+      if (window.umami !== undefined) {
+        const { action, chainId, category } = task;
+        window.umami.track('oneshot-interval', { action, chainId, category });
+      }
     }
   };
 

@@ -316,9 +316,9 @@ export const Permissions = ({
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
-    const result = await executeOneShot(task);
+    const success = await executeOneShot(task);
 
-    if (!result) {
+    if (!success) {
       setOneShotProcessing(false);
 
       // Render error alert.
@@ -340,6 +340,12 @@ export const Permissions = ({
       setTimeout(() => {
         setOneShotProcessing(false);
       }, 550);
+
+      // Analytics.
+      if (window.umami !== undefined) {
+        const { action, chainId, category } = task;
+        window.umami.track('oneshot-account', { action, chainId, category });
+      }
     }
   };
 
