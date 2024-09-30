@@ -270,6 +270,13 @@ export const SubscriptionsProvider = ({
 
         // Update react state.
         updateTask('account', task, task.account?.address);
+
+        // Analytics.
+        if (window.umami !== undefined) {
+          const { action, category, chainId } = task;
+          const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
+          window.umami.track(event, { action, category, chainId });
+        }
         break;
       }
       default: {

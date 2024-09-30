@@ -62,6 +62,13 @@ export const IntervalTasksManagerProvider = ({
       action: 'interval:task:update',
       data: { serialized: JSON.stringify(task) },
     });
+
+    // Analytics.
+    if (window.umami !== undefined) {
+      const { action, category, chainId } = task;
+      const event = `subscription-interval-${newStatus === 'enable' ? 'on' : 'off'}`;
+      window.umami.track(event, { action, category, chainId });
+    }
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
