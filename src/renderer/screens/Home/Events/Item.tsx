@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
@@ -265,14 +264,11 @@ export const Item = memo(function Item({ event }: ItemProps) {
                             });
 
                             // Analytics.
-                            AnalyticsController.umamiTrack(
-                              'window-open-extrinsics',
-                              {
-                                action:
-                                  `${event.category}-${text?.toLowerCase()}` ||
-                                  'unknown',
-                              }
-                            );
+                            window.myAPI.umamiEvent('window-open-extrinsics', {
+                              action:
+                                `${event.category}-${text?.toLowerCase()}` ||
+                                'unknown',
+                            });
                           }}
                         />
                       );
@@ -310,8 +306,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         iconTransform="shrink-2"
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
-
-                          AnalyticsController.umamiTrack('link-open', {
+                          window.myAPI.umamiEvent('link-open', {
                             dest: text?.toLowerCase() || 'unknown',
                           });
                         }}

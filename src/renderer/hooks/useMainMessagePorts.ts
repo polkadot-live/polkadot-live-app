@@ -46,7 +46,6 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -170,7 +169,7 @@ export const useMainMessagePorts = () => {
     });
 
     // Analytics.
-    AnalyticsController.umamiTrack('account-import', { source, chainId });
+    window.myAPI.umamiEvent('account-import', { source, chainId });
   };
 
   /**
@@ -219,7 +218,7 @@ export const useMainMessagePorts = () => {
 
     // Analytics.
     const { source } = account;
-    AnalyticsController.umamiTrack('account-remove', { source, chainId });
+    window.myAPI.umamiEvent('account-remove', { source, chainId });
   };
 
   /**

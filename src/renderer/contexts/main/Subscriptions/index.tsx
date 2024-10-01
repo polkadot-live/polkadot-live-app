@@ -15,7 +15,6 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@/types/subscriptions';
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { useChains } from '@app/contexts/main/Chains';
@@ -207,7 +206,7 @@ export const SubscriptionsProvider = ({
         // Analytics.
         const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
         const { chain: chainId } = account;
-        AnalyticsController.umamiTrack(event, { category, chainId });
+        window.myAPI.umamiEvent(event, { category, chainId });
         break;
       }
       default: {
@@ -279,7 +278,7 @@ export const SubscriptionsProvider = ({
         // Analytics.
         const { action, category } = task;
         const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
-        AnalyticsController.umamiTrack(event, { action, category });
+        window.myAPI.umamiEvent(event, { action, category });
         break;
       }
       default: {

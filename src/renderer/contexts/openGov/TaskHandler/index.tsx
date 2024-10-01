@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
@@ -74,7 +73,7 @@ export const TaskHandlerProvider = ({
 
     // Analytics.
     const { action } = task;
-    AnalyticsController.umamiTrack('referenda-subscribe', { action });
+    window.myAPI.umamiEvent('referenda-subscribe', { action });
   };
 
   /// Handles removing an interval subscription for a referendum.
@@ -103,7 +102,7 @@ export const TaskHandlerProvider = ({
 
     // Analytics.
     const { action } = task;
-    AnalyticsController.umamiTrack('referenda-unsubscribe', { action });
+    window.myAPI.umamiEvent('referenda-unsubscribe', { action });
   };
 
   /// Handles adding all available subscriptions for a referendum.
@@ -139,7 +138,7 @@ export const TaskHandlerProvider = ({
     showToastSuccess(text, toastId);
 
     // Analytics.
-    AnalyticsController.umamiTrack('referenda-subscribe-all');
+    window.myAPI.umamiEvent('referenda-subscribe-all', null);
   };
 
   /// Handles removing all addde subscriptions for a referendum.
@@ -175,7 +174,7 @@ export const TaskHandlerProvider = ({
     showToastSuccess(text, toastId);
 
     // Analytics.
-    AnalyticsController.umamiTrack('referenda-unsubscribe-all');
+    window.myAPI.umamiEvent('referenda-unsubscribe-all', null);
   };
 
   return (

@@ -36,6 +36,7 @@ import type { AnyData, AnyJson } from '@/types/misc';
 import type { IpcTask } from '@/types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { NotificationData } from '@/types/reporter';
+import { AnalyticsController } from './controller/main/AnalyticsController';
 
 const debug = MainDebug;
 
@@ -137,6 +138,9 @@ app.whenReady().then(async () => {
   // Hide dock icon if we're on mac OS.
   const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();
+
+  // Initialize umami analytics.
+  AnalyticsController.initUmami();
 
   // ------------------------------
   // Create windows
@@ -384,8 +388,9 @@ app.whenReady().then(async () => {
   /**
    * Analytics
    */
-  ipcMain.handle(
-    'app:analytics:disabled',
-    async () => process.env.DISABLE_ANALYTICS !== undefined
-  );
+  ipcMain.on('app:umami:event', async (_, event: string, data: AnyData) => {
+    data === null
+      ? AnalyticsController.umamiTrack(event)
+      : AnalyticsController.umamiTrack(event, data);
+  });
 });

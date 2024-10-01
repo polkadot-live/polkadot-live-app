@@ -146,9 +146,9 @@ export const Menu = () => {
         <MenuWrapper ref={alerterRf}>
           <button
             type="button"
-            data-umami-event="window-open-accounts"
             onClick={() => {
               window.myAPI.openWindow('import');
+              window.myAPI.umamiEvent('window-open-accounts', null);
               toggleMenu(false);
             }}
           >
@@ -156,9 +156,9 @@ export const Menu = () => {
           </button>
           <button
             type="button"
-            data-umami-event="window-open-openGov"
             onClick={() => {
               window.myAPI.openWindow('openGov');
+              window.myAPI.umamiEvent('window-open-openGov', null);
               toggleMenu(false);
             }}
           >
@@ -166,9 +166,9 @@ export const Menu = () => {
           </button>
           <button
             type="button"
-            data-umami-event="window-open-settings"
             onClick={() => {
               window.myAPI.openWindow('settings');
+              window.myAPI.umamiEvent('window-open-settings', null);
               toggleMenu(false);
             }}
           >

@@ -18,7 +18,6 @@ import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@/types/misc';
 import type { IpcRendererEvent } from 'electron';
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
@@ -64,18 +63,6 @@ export const RouterInner = () => {
 
 export const Router = () => {
   const [windowId] = useState<string>(window.myAPI.getWindowId());
-
-  // Check DISABLE_ANALYTICS env variable.
-  useEffect(() => {
-    const checkDisableAnalytics = async () => {
-      const disabled = await window.myAPI.analyticsDisabled();
-      disabled
-        ? AnalyticsController.disableUmami()
-        : AnalyticsController.enableUmami();
-    };
-
-    checkDisableAnalytics();
-  }, []);
 
   return (
     <HashRouter basename="/">

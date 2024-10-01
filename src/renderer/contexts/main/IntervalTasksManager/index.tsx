@@ -4,7 +4,6 @@
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
-import { AnalyticsController } from '@/controller/renderer/AnalyticsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { createContext, useContext } from 'react';
 import { useBootstrapping } from '../Bootstrapping';
@@ -67,7 +66,7 @@ export const IntervalTasksManagerProvider = ({
     // Analytics.
     const { action, category } = task;
     const event = `subscription-interval-${newStatus === 'enable' ? 'on' : 'off'}`;
-    AnalyticsController.umamiTrack(event, { action, category });
+    window.myAPI.umamiEvent(event, { action, category });
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -203,7 +202,7 @@ export const IntervalTasksManagerProvider = ({
 
       // Analytics.
       const { action, category } = task;
-      AnalyticsController.umamiTrack('oneshot-interval', { action, category });
+      window.myAPI.umamiEvent('oneshot-interval', { action, category });
     }
   };
 

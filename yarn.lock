@@ -3155,6 +3155,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@umami/node@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@umami/node@npm:0.4.0"
+  checksum: 4b01da65143b5ecc39e7875a3e9e77bb68701f174ea963ef7b2f815b2973b01303e17b9f9271d91b1154ad151b0831434cc31b27bac88f7bbcd2215c0268eeeb
+  languageName: node
+  linkType: hard
+
 "@ungap/structured-clone@npm:^1.2.0":
   version: 1.2.0
   resolution: "@ungap/structured-clone@npm:1.2.0"
@@ -10405,6 +10412,7 @@ __metadata:
     "@types/styled-components": "npm:^5.1.34"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.0"
     "@typescript-eslint/parser": "npm:^7.7.0"
+    "@umami/node": "npm:^0.4.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@w3ux/extension-assets": "npm:^0.2.6"
     "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
