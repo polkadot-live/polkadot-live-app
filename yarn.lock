@@ -3184,12 +3184,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/extension-assets@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "@w3ux/extension-assets@npm:0.2.6"
+"@w3ux/extension-assets@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@w3ux/extension-assets@npm:0.3.1"
   peerDependencies:
     react: ^18
-  checksum: e789249b579c8786669cbeb13e0835bd790a092b61964f7714ec758b6d8b211287e09b934b02890991ffa660ba8bc18626364f5d7bf111e42ae640bb48258691
+  checksum: 2fccfde2b3a0e30047ea88be9b066124d8915042a7bb1a2bc679f325143377b2671daee3b5798e72f19098b789670a27bb85a10b3d73f4e624b9cada8944f3ad
   languageName: node
   linkType: hard
 
@@ -10406,7 +10406,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.7.0"
     "@typescript-eslint/parser": "npm:^7.7.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
-    "@w3ux/extension-assets": "npm:^0.2.6"
+    "@w3ux/extension-assets": "npm:^0.3.1"
     "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
     "@w3ux/utils": "npm:0.4.0-alpha.0"
     "@wdio/cli": "npm:8.32.3"
