@@ -219,6 +219,9 @@ export const API: PreloadAPI = {
 
   umamiEvent: (event: string, data: AnyData) =>
     ipcRenderer.send('app:umami:event', event, data),
+
+  umamiInit: (agent: string, windowId: string, lang: string) =>
+    ipcRenderer.send('app:umami:init', agent, windowId, lang),
 };
 
 contextBridge.exposeInMainWorld('myAPI', API);

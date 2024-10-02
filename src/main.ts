@@ -139,9 +139,6 @@ app.whenReady().then(async () => {
   const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();
 
-  // Initialize umami analytics.
-  AnalyticsController.initUmami();
-
   // ------------------------------
   // Create windows
   // ------------------------------
@@ -388,9 +385,15 @@ app.whenReady().then(async () => {
   /**
    * Analytics
    */
+
+  ipcMain.on(
+    'app:umami:init',
+    (_, agent: string, windowId: string, lang: string) => {
+      AnalyticsController.initUmami(agent, windowId, lang);
+    }
+  );
+
   ipcMain.on('app:umami:event', async (_, event: string, data: AnyData) => {
-    data === null
-      ? AnalyticsController.umamiTrack(event)
-      : AnalyticsController.umamiTrack(event, data);
+    AnalyticsController.umamiTrack(event, data ? data : undefined);
   });
 });

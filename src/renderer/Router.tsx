@@ -64,6 +64,15 @@ export const RouterInner = () => {
 export const Router = () => {
   const [windowId] = useState<string>(window.myAPI.getWindowId());
 
+  /// Initialize analytics.
+  useEffect(() => {
+    window.myAPI.umamiInit(
+      navigator.userAgent,
+      window.myAPI.getWindowId(),
+      navigator.language
+    );
+  });
+
   return (
     <HashRouter basename="/">
       {windowId === 'tabs' ? (
