@@ -308,7 +308,7 @@ export const useMainMessagePorts = () => {
 
   /**
    * @name handleDataImport
-   * @summary Import and process Polkadot Live data.
+   * @summary Import and process Polkadot Live data from a backup.
    */
   const handleDataImport = async () => {
     const response: ImportResult = await window.myAPI.importAppData();
@@ -322,14 +322,24 @@ export const useMainMessagePorts = () => {
           const { serialized } = response.data;
           const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
           const parsedMap = new Map<AccountSource, string>(parsedArr);
+          const importWindowOpen = await window.myAPI.isViewOpen('import');
 
-          for (const [source, str] of parsedMap.entries()) {
+          for (const [source, ser] of parsedMap.entries()) {
             const parsed =
               source === 'ledger'
-                ? (JSON.parse(str) as LedgerLocalAddress[])
-                : (JSON.parse(str) as LocalAddress[]);
+                ? (JSON.parse(ser) as LedgerLocalAddress[])
+                : (JSON.parse(ser) as LocalAddress[]);
 
-            parsed.forEach((a) => postToImport(a, source));
+            parsed.forEach(async (a) => {
+              // Persist addresses to Electron store.
+              await window.myAPI.rawAccountTask({
+                action: 'raw-account:persist',
+                data: { source, serialized: JSON.stringify(a) },
+              });
+
+              // Update import window state only if it's open.
+              importWindowOpen && postToImport(a, source);
+            });
           }
 
           postToSettings(response.result, 'Data imported successfully.');

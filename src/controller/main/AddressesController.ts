@@ -148,15 +148,15 @@ export class AddressesController {
           true
         ) as LedgerLocalAddress[];
 
-        this.throwIfExists(parsed.address);
-        this.setInStore(key, JSON.stringify([...stored, parsed]));
+        !this.isAlreadyPersisted(parsed.address) &&
+          this.setInStore(key, JSON.stringify([...stored, parsed]));
       } else {
         // Persist vault or read-only account.
         const parsed: LocalAddress = JSON.parse(serialized);
         const stored = this.getStoredAddresses(key) as LocalAddress[];
 
-        this.throwIfExists(parsed.address);
-        this.setInStore(key, JSON.stringify([...stored, parsed]));
+        !this.isAlreadyPersisted(parsed.address) &&
+          this.setInStore(key, JSON.stringify([...stored, parsed]));
       }
     } catch (err) {
       console.log(err);
@@ -242,6 +242,7 @@ export class AddressesController {
         : ([] as LocalAddress[]);
   }
 
+  /// Currently not used.
   private static throwIfExists(address: string) {
     if (this.isAlreadyPersisted(address)) {
       throw new Error(`Persist Error: Account ${address} already exists.`);

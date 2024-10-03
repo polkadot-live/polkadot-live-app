@@ -81,9 +81,6 @@ export const ImportHandlerProvider = ({
 
     // Update addresses state and references.
     handleAddressImport(source, imported);
-
-    // Persist account to store in main process.
-    await persistAddressToStore(source, imported);
   };
 
   /// Construct raw address data structure.

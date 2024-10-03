@@ -420,7 +420,7 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Called when initializing a new port pair.
+  /// Called when initializing the openGov window.
   const syncOpenGovWindow = async () => {
     await reportCurrentConnectionStatusToWIndow('openGov');
 
@@ -439,6 +439,7 @@ export const BootstrappingProvider = ({
     }
   };
 
+  /// Called when initializing the accounts window.
   const syncImportWindow = async () => {
     await reportCurrentConnectionStatusToWIndow('import');
   };
