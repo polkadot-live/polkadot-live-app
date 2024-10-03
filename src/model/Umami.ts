@@ -46,7 +46,7 @@ export class Umami {
 
   /**
    * @name view
-   * @summary Track a page view by passing the path to the function:
+   * @summary Track a page view by passing the path to the function.
    */
   async view(url: string, options: AnyData) {
     return this.send({

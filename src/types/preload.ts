@@ -70,7 +70,7 @@ export interface PreloadAPI {
   reportDismissEvent: ApiReportDismissEvent;
   openBrowserURL: ApiOpenBrowserWindow;
 
-  umamiInit: (agent: string, windowId: string, lang: string) => void;
+  initAnalytics: (agent: string, windowId: string, lang: string) => void;
   umamiEvent: (event: string, data: AnyData | null) => void;
 }
 

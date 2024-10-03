@@ -66,7 +66,7 @@ export const Router = () => {
 
   /// Initialize analytics.
   useEffect(() => {
-    window.myAPI.umamiInit(
+    window.myAPI.initAnalytics(
       navigator.userAgent,
       window.myAPI.getWindowId(),
       navigator.language

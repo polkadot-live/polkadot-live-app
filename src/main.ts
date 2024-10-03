@@ -387,7 +387,7 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.on(
-    'app:umami:init',
+    'app:analytics:init',
     (_, agent: string, windowId: string, lang: string) => {
       AnalyticsController.initialize(agent, windowId, lang);
     }

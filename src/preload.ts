@@ -217,11 +217,11 @@ export const API: PreloadAPI = {
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
 
+  initAnalytics: (agent: string, windowId: string, lang: string) =>
+    ipcRenderer.send('app:analytics:init', agent, windowId, lang),
+
   umamiEvent: (event: string, data: AnyData) =>
     ipcRenderer.send('app:umami:event', event, data),
-
-  umamiInit: (agent: string, windowId: string, lang: string) =>
-    ipcRenderer.send('app:umami:init', agent, windowId, lang),
 };
 
 contextBridge.exposeInMainWorld('myAPI', API);
