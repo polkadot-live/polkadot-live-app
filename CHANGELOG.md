@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.1-alpha...v0.2.0-alpha) (2024-10-03)
+
+
+### Features
+
+* tabbed child windows ([#668](https://github.com/polkadot-live/polkadot-live-app/issues/668)) ([5afa843](https://github.com/polkadot-live/polkadot-live-app/commit/5afa843448e8dbdcacdd5ad35527f6ff386461dc))
+* umami analytics integration ([#680](https://github.com/polkadot-live/polkadot-live-app/issues/680)) ([4ddc8ed](https://github.com/polkadot-live/polkadot-live-app/commit/4ddc8ed8d03f0b27a981df2ac95529a166206fb7))
+
+
+### Bug Fixes
+
+* debugging iteration ([#701](https://github.com/polkadot-live/polkadot-live-app/issues/701)) ([0aa3a4a](https://github.com/polkadot-live/polkadot-live-app/commit/0aa3a4af666c986ccca581b9815d887fb81606e0))
+
 ## [0.1.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.1.1-alpha) (2024-08-15)
 
 
