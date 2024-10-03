@@ -6913,9 +6913,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.1.1":
-  version: 11.1.1
-  resolution: "framer-motion@npm:11.1.1"
+"framer-motion@npm:^11.10.0":
+  version: 11.10.0
+  resolution: "framer-motion@npm:11.10.0"
   dependencies:
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6929,7 +6929,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 0f80828f27ab18937a0dee55efacbd124f248f8eb869e581aeabbbbd755eb2cd42f70f5490edf1280abdef3d08c4c0d3f404db8fe6d32583d3842cb575f09cdb
+  checksum: 06ead52252f30d180f0594999d877a882b6892c334053881b47decfad946b9ea68d84404cb91757cf707aac2c5f2d3d87197e0f43732a6a0eabfea4b75ecac13
   languageName: node
   linkType: hard
 
@@ -10454,7 +10454,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.0.0"
     expect: "npm:^29.7.0"
     expect-webdriverio: "npm:^4.11.9"
-    framer-motion: "npm:^11.1.1"
+    framer-motion: "npm:^11.10.0"
     html5-qrcode: "npm:^2.3.8"
     ip: "npm:^2.0.1"
     prettier: "npm:^3.2.5"
