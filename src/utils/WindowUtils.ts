@@ -233,6 +233,10 @@ export const createBaseWindow = () => {
   WindowsController.setBaseWindow(baseWindow);
   WindowsController.setTabsView(tabsView);
 
+  // Show base window on all workspaces if setting is enabled.
+  const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
+  appShowOnAllWorkspaces && baseWindow.setVisibleOnAllWorkspaces(true);
+
   // Hide dock icon.
   const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();

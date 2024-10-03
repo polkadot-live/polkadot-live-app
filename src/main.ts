@@ -312,6 +312,11 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Check if a view is currently open.
+  ipcMain.handle('app:view:isOpen', (_, viewId: string) =>
+    WindowsController.viewExists(viewId)
+  );
+
   // Show a tab.
   ipcMain.on('app:view:show', (_, viewId: string) => {
     WindowsController.renderView(viewId);

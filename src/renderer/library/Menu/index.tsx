@@ -133,12 +133,7 @@ export const Menu = () => {
         </button>
       ) : null}
       {!menuOpenRef.current ? (
-        <button
-          type="button"
-          disabled={appLoading}
-          onClick={() => !appLoading && toggleMenu(true)}
-          style={{ opacity: appLoading ? '0.3' : '1' }}
-        >
+        <button type="button" onClick={() => toggleMenu(true)}>
           <FontAwesomeIcon icon={faCog} transform="grow-1" />
         </button>
       ) : null}
@@ -146,6 +141,7 @@ export const Menu = () => {
         <MenuWrapper ref={alerterRf}>
           <button
             type="button"
+            disabled={appLoading}
             onClick={() => {
               window.myAPI.openWindow('import');
               window.myAPI.umamiEvent('window-open-accounts', null);
@@ -156,6 +152,7 @@ export const Menu = () => {
           </button>
           <button
             type="button"
+            disabled={appLoading}
             onClick={() => {
               window.myAPI.openWindow('openGov');
               window.myAPI.umamiEvent('window-open-openGov', null);
@@ -166,6 +163,7 @@ export const Menu = () => {
           </button>
           <button
             type="button"
+            disabled={appLoading}
             onClick={() => {
               window.myAPI.openWindow('settings');
               window.myAPI.umamiEvent('window-open-settings', null);

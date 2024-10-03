@@ -188,6 +188,7 @@ export const API: PreloadAPI = {
   showTab: (viewId: string) => ipcRenderer.send('app:view:show', viewId),
   closeTab: (destroyViewId: string, showViewId: string | null) =>
     ipcRenderer.send('app:view:close', destroyViewId, showViewId),
+  isViewOpen: (viewId) => ipcRenderer.invoke('app:view:isOpen', viewId),
 
   /**
    * Chain management
