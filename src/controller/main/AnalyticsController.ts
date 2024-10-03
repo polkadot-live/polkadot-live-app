@@ -1,51 +1,38 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Umami } from '@umami/node';
+import { address as ipAddress } from 'ip';
+import { Umami } from '@/model/Umami';
 import type { AnyData } from '@/types/misc';
 
 export class AnalyticsController {
-  private static websiteId = 'c2062938-358a-4a4a-9f27-ab9d6c0fc4be';
-  private static hostUrl = 'https://cloud.umami.is';
-
-  private static enabled = false;
   private static umami: Umami | null = null;
+  private static enabled = false;
 
   /**
-   * @name initUmami
+   * @name initialize
    * @summary Initialize umami analytics instance.
    */
-  static initUmami() {
+  static initialize(agent: string, windowId: string, language: string) {
     if (process.env.DISABLE_ANALYTICS !== undefined) {
       this.enabled = false;
       return;
     }
 
-    try {
-      this.umami = new Umami({
-        websiteId: this.websiteId,
-        hostUrl: this.hostUrl,
-      });
-
-      this.enabled = true;
-    } catch (e) {
-      this.enabled = false;
-      console.error(e);
-    }
+    this.umami = new Umami(ipAddress(), agent, language);
+    this.enabled = true;
+    this.umami.view(`/${windowId}`, { data: {} });
   }
 
   /**
-   * @name umamiTrack
+   * @name track
    * @summary Send an umami tracking event.
    */
-  static async umamiTrack(event: string, data?: AnyData) {
+  static async track(event: string, data?: AnyData) {
     if (!this.enabled || !this.umami) {
       return;
     }
 
-    // Response object is returned.
-    data === undefined
-      ? await this.umami.track(event)
-      : await this.umami.track(event, data);
+    this.umami.event(event, { data: data ? data : {} });
   }
 }
