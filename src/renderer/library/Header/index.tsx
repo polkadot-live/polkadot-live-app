@@ -29,6 +29,10 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         docked: !dockToggled,
       },
     });
+
+    // Analytics.
+    const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
+    window.myAPI.umamiEvent(event, { setting: 'dock-window' });
   };
 
   return (

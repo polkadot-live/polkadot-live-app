@@ -262,6 +262,13 @@ export const Item = memo(function Item({ event }: ItemProps) {
                               task: 'action:init',
                               data: JSON.stringify(action.txMeta),
                             });
+
+                            // Analytics.
+                            window.myAPI.umamiEvent('window-open-extrinsics', {
+                              action:
+                                `${event.category}-${text?.toLowerCase()}` ||
+                                'unknown',
+                            });
                           }}
                         />
                       );
@@ -299,6 +306,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         iconTransform="shrink-2"
                         onClick={() => {
                           window.myAPI.openBrowserURL(uri);
+                          window.myAPI.umamiEvent('link-open', {
+                            dest: text?.toLowerCase() || 'unknown',
+                          });
                         }}
                       />
                     );

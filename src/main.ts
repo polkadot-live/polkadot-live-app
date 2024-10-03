@@ -16,6 +16,7 @@ import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { AccountsController } from '@/controller/main/AccountsController';
 import { AddressesController } from '@/controller/main/AddressesController';
+import { AnalyticsController } from './controller/main/AnalyticsController';
 import { BackupController } from '@/controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';
@@ -324,7 +325,7 @@ app.whenReady().then(async () => {
         WindowsController.renderView(showViewId);
       }
 
-      // TODO: Destroy view to optimize memory.
+      // Destroy view to optimize memory.
       WindowsController.removeView(destroyViewId);
     }
   );
@@ -380,4 +381,19 @@ app.whenReady().then(async () => {
     'app:data:import',
     async () => await BackupController.import()
   );
+
+  /**
+   * Analytics
+   */
+
+  ipcMain.on(
+    'app:analytics:init',
+    (_, agent: string, windowId: string, lang: string) => {
+      AnalyticsController.initialize(agent, windowId, lang);
+    }
+  );
+
+  ipcMain.on('app:umami:event', async (_, event: string, data: AnyData) => {
+    AnalyticsController.track(event, data ? data : undefined);
+  });
 });

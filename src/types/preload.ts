@@ -9,6 +9,7 @@ import type { IpcTask, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { WorkspaceItem } from './developerConsole/workspaces';
+import type { AnyData } from './misc';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -68,6 +69,9 @@ export interface PreloadAPI {
   reportNewEvent: ApiReportNewEvent;
   reportDismissEvent: ApiReportDismissEvent;
   openBrowserURL: ApiOpenBrowserWindow;
+
+  initAnalytics: (agent: string, windowId: string, lang: string) => void;
+  umamiEvent: (event: string, data: AnyData | null) => void;
 }
 
 // Types of MyAPI methods.

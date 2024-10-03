@@ -6,7 +6,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 import type { PreloadAPI } from '@/types/preload';
-import type { AnyJson } from './types/misc';
+import type { AnyData, AnyJson } from './types/misc';
 import type { IpcTask } from './types/communication';
 
 console.log(global.location.search);
@@ -216,6 +216,12 @@ export const API: PreloadAPI = {
 
   // Request to open a URL in the browser.
   openBrowserURL: (url) => ipcRenderer.send('app:url:open', url),
+
+  initAnalytics: (agent: string, windowId: string, lang: string) =>
+    ipcRenderer.send('app:analytics:init', agent, windowId, lang),
+
+  umamiEvent: (event: string, data: AnyData) =>
+    ipcRenderer.send('app:umami:event', event, data),
 };
 
 contextBridge.exposeInMainWorld('myAPI', API);

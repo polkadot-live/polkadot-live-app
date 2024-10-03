@@ -108,14 +108,20 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             {/* Polkassembly */}
             <button
               className="btn-polkassembly"
-              onClick={() => window.myAPI.openBrowserURL(uriPolkassembly)}
+              onClick={() => {
+                window.myAPI.openBrowserURL(uriPolkassembly);
+                window.myAPI.umamiEvent('link-open', { dest: 'polkassembly' });
+              }}
             >
               Polkassembly
             </button>
             {/* Subsquare */}
             <button
               className="btn-subsquare"
-              onClick={() => window.myAPI.openBrowserURL(uriSubsquare)}
+              onClick={() => {
+                window.myAPI.openBrowserURL(uriSubsquare);
+                window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
+              }}
             >
               Subsquare
             </button>

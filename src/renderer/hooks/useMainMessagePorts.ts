@@ -167,6 +167,9 @@ export const useMainMessagePorts = () => {
         status: false,
       },
     });
+
+    // Analytics.
+    window.myAPI.umamiEvent('account-import', { source, chainId });
   };
 
   /**
@@ -212,6 +215,10 @@ export const useMainMessagePorts = () => {
 
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
+
+    // Analytics.
+    const { source } = account;
+    window.myAPI.umamiEvent('account-remove', { source, chainId });
   };
 
   /**

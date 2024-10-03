@@ -299,6 +299,11 @@ export const Permissions = ({
         data: { serialized: JSON.stringify(task) },
       });
     }
+
+    // Analytics.
+    const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+    const { category, chainId } = tasks[0];
+    window.myAPI.umamiEvent(event, { category, chainId });
   };
 
   /// Handle a one-shot event for a subscription task.
@@ -309,9 +314,9 @@ export const Permissions = ({
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
-    const result = await executeOneShot(task);
+    const success = await executeOneShot(task);
 
-    if (!result) {
+    if (!success) {
       setOneShotProcessing(false);
 
       // Render error alert.
@@ -333,6 +338,10 @@ export const Permissions = ({
       setTimeout(() => {
         setOneShotProcessing(false);
       }, 550);
+
+      // Analytics.
+      const { action, category } = task;
+      window.myAPI.umamiEvent('oneshot-account', { action, category });
     }
   };
 

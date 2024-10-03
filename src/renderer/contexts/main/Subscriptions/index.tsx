@@ -203,6 +203,10 @@ export const SubscriptionsProvider = ({
         account.queryMulti &&
           (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
+        // Analytics.
+        const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
+        const { chain: chainId } = account;
+        window.myAPI.umamiEvent(event, { category, chainId });
         break;
       }
       default: {
@@ -270,6 +274,11 @@ export const SubscriptionsProvider = ({
 
         // Update react state.
         updateTask('account', task, task.account?.address);
+
+        // Analytics.
+        const { action, category } = task;
+        const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
+        window.myAPI.umamiEvent(event, { action, category });
         break;
       }
       default: {

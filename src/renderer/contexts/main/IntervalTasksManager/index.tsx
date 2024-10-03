@@ -62,6 +62,11 @@ export const IntervalTasksManagerProvider = ({
       action: 'interval:task:update',
       data: { serialized: JSON.stringify(task) },
     });
+
+    // Analytics.
+    const { action, category } = task;
+    const event = `subscription-interval-${newStatus === 'enable' ? 'on' : 'off'}`;
+    window.myAPI.umamiEvent(event, { action, category });
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -194,6 +199,10 @@ export const IntervalTasksManagerProvider = ({
       setTimeout(() => {
         setOneShotProcessing(false);
       }, 550);
+
+      // Analytics.
+      const { action, category } = task;
+      window.myAPI.umamiEvent('oneshot-interval', { action, category });
     }
   };
 
