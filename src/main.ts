@@ -389,11 +389,11 @@ app.whenReady().then(async () => {
   ipcMain.on(
     'app:umami:init',
     (_, agent: string, windowId: string, lang: string) => {
-      AnalyticsController.initUmami(agent, windowId, lang);
+      AnalyticsController.initialize(agent, windowId, lang);
     }
   );
 
   ipcMain.on('app:umami:event', async (_, event: string, data: AnyData) => {
-    AnalyticsController.umamiTrack(event, data ? data : undefined);
+    AnalyticsController.track(event, data ? data : undefined);
   });
 });

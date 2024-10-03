@@ -10,10 +10,10 @@ export class AnalyticsController {
   private static enabled = false;
 
   /**
-   * @name initUmami
+   * @name initialize
    * @summary Initialize umami analytics instance.
    */
-  static initUmami(agent: string, windowId: string, language: string) {
+  static initialize(agent: string, windowId: string, language: string) {
     if (process.env.DISABLE_ANALYTICS !== undefined) {
       this.enabled = false;
       return;
@@ -25,10 +25,10 @@ export class AnalyticsController {
   }
 
   /**
-   * @name umamiTrack
+   * @name track
    * @summary Send an umami tracking event.
    */
-  static async umamiTrack(event: string, data?: AnyData) {
+  static async track(event: string, data?: AnyData) {
     if (!this.enabled || !this.umami) {
       return;
     }
