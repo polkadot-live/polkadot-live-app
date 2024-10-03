@@ -16,6 +16,7 @@ import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { AccountsController } from '@/controller/main/AccountsController';
 import { AddressesController } from '@/controller/main/AddressesController';
+import { AnalyticsController } from './controller/main/AnalyticsController';
 import { BackupController } from '@/controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';
@@ -36,7 +37,6 @@ import type { AnyData, AnyJson } from '@/types/misc';
 import type { IpcTask } from '@/types/communication';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { NotificationData } from '@/types/reporter';
-import { AnalyticsController } from './controller/main/AnalyticsController';
 
 const debug = MainDebug;
 
