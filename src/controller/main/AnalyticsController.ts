@@ -4,7 +4,6 @@
 import { address as ipAddress } from 'ip';
 import type { AnyData } from '@/types/misc';
 
-//const defaultTracker = 'https://cloud.umami.is/';
 // From https://www.whatismybrowser.com/guides/the-latest-user-agent/chrome
 const defaultAgent = `Mozilla/5.0 Umami/${process?.version || 1.0}`;
 
@@ -60,7 +59,7 @@ class Umami {
 
   /**
    * @name identify
-   * @summary Track a pageview by passing the path to the function:
+   * @summary Sends custom metadata to identify users.
    */
   async identify(url: string, options: AnyData) {
     return this.send({
@@ -148,7 +147,6 @@ export class AnalyticsController {
     this.umami = new Umami(ipAddress(), agent, language);
     this.enabled = true;
     this.umami.view(`/${windowId}`, { data: {} });
-    this.umami.identify(`/${windowId}`, { data: {} });
   }
 
   /**
