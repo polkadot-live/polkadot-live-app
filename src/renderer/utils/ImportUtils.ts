@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
@@ -155,4 +156,54 @@ export const getSortedLocalLedgerAddresses = (
   }
 
   return sorted;
+};
+
+/**
+ * @name importAddresses
+ * @summary Extract address data from imported serialized data and send to application.
+ * (main renderer)
+ */
+export const importAddresses = async (serialized: string) => {
+  const s_array: [string, string][] = JSON.parse(serialized);
+  const s_map = new Map<string, string>(s_array);
+  const s_addresses = s_map.get('addresses');
+
+  if (s_addresses) {
+    const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
+    const p_map = new Map<AccountSource, string>(p_array);
+    const importWindowOpen = await window.myAPI.isViewOpen('import');
+
+    for (const [source, ser] of p_map.entries()) {
+      const parsed =
+        source === 'ledger'
+          ? (JSON.parse(ser) as LedgerLocalAddress[])
+          : (JSON.parse(ser) as LocalAddress[]);
+
+      parsed.forEach(async (a) => {
+        // Persist addresses to Electron store.
+        await window.myAPI.rawAccountTask({
+          action: 'raw-account:persist',
+          data: { source, serialized: JSON.stringify(a) },
+        });
+
+        // Update import window state only if it's open.
+        importWindowOpen && postToImport(a, source);
+      });
+    }
+  }
+};
+
+/**
+ * @name postToImport
+ * @summary Utility to post message to import window.
+ * (main renderer)
+ */
+const postToImport = (
+  json: LocalAddress | LedgerLocalAddress,
+  source: AccountSource
+) => {
+  ConfigRenderer.portToImport?.postMessage({
+    task: 'import:account:add',
+    data: { json: JSON.stringify(json), source },
+  });
 };

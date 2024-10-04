@@ -14,6 +14,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
+import { importAddresses } from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -23,21 +24,16 @@ import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useAppSettings } from '../contexts/main/AppSettings';
-import { useBootstrapping } from '../contexts/main/Bootstrapping';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
@@ -264,17 +260,6 @@ export const useMainMessagePorts = () => {
     });
   };
 
-  /// Utility to post message to import window.
-  const postToImport = (
-    json: LocalAddress | LedgerLocalAddress,
-    source: AccountSource
-  ) => {
-    ConfigRenderer.portToImport?.postMessage({
-      task: 'import:account:add',
-      data: { json: JSON.stringify(json), source },
-    });
-  };
-
   /**
    * @name handleDataExport
    * @summary Write Polkadot Live data to a file.
@@ -319,28 +304,9 @@ export const useMainMessagePorts = () => {
           if (!response.data) {
             throw new Error('No import data.');
           }
+
           const { serialized } = response.data;
-          const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
-          const parsedMap = new Map<AccountSource, string>(parsedArr);
-          const importWindowOpen = await window.myAPI.isViewOpen('import');
-
-          for (const [source, ser] of parsedMap.entries()) {
-            const parsed =
-              source === 'ledger'
-                ? (JSON.parse(ser) as LedgerLocalAddress[])
-                : (JSON.parse(ser) as LocalAddress[]);
-
-            parsed.forEach(async (a) => {
-              // Persist addresses to Electron store.
-              await window.myAPI.rawAccountTask({
-                action: 'raw-account:persist',
-                data: { source, serialized: JSON.stringify(a) },
-              });
-
-              // Update import window state only if it's open.
-              importWindowOpen && postToImport(a, source);
-            });
-          }
+          await importAddresses(serialized);
 
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {

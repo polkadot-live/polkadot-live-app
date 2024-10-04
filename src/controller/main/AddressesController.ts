@@ -115,7 +115,14 @@ export class AddressesController {
         source === 'ledger'
           ? (this.getStoredAddresses(key) as LedgerLocalAddress[])
           : (this.getStoredAddresses(key) as LocalAddress[]);
-      map.set(source, JSON.stringify(fetched));
+
+      if (fetched.length === 0) {
+        continue;
+      }
+
+      // Set imported flag to false.
+      const updated = fetched.map((a) => ({ ...a, isImported: false }));
+      map.set(source, JSON.stringify(updated));
     }
 
     return JSON.stringify(Array.from(map.entries()));

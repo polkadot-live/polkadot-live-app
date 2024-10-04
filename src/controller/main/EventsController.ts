@@ -235,6 +235,14 @@ export class EventsController {
   }
 
   /**
+   * @name getBackupData
+   * @summary Get all stored events in serialized form.
+   */
+  static getBackupData(): string {
+    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
+
+  /**
    * @name removeOutdatedEvents
    * @summary Remove outdated events from the store.
    *

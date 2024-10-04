@@ -76,10 +76,8 @@ export const ImportHandlerProvider = ({
       return;
     }
 
-    insertAccountStatus(address, source);
-    imported.isImported = false;
-
     // Update addresses state and references.
+    insertAccountStatus(address, source);
     handleAddressImport(source, imported);
   };
 
