@@ -14,7 +14,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { importAddresses } from '@app/utils/ImportUtils';
+import { importAddresses, importEvents } from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -47,7 +47,7 @@ export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
-  const { updateEventsOnAccountRename } = useEvents();
+  const { setEvents, updateEventsOnAccountRename } = useEvents();
 
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
 
@@ -305,8 +305,10 @@ export const useMainMessagePorts = () => {
             throw new Error('No import data.');
           }
 
+          // TODO: Promise.all
           const { serialized } = response.data;
           await importAddresses(serialized);
+          await importEvents(serialized, setEvents);
 
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {

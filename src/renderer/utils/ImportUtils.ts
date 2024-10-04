@@ -11,6 +11,7 @@ import type {
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
 import type { ChainID } from '@/types/chains';
+import type { EventCallback } from '@/types/reporter';
 import type { IpcTask } from '@/types/communication';
 
 type ToastType = 'success' | 'error';
@@ -160,7 +161,7 @@ export const getSortedLocalLedgerAddresses = (
 
 /**
  * @name importAddresses
- * @summary Extract address data from imported serialized data and send to application.
+ * @summary Extract address data from an imported text file and send to application.
  * (main renderer)
  */
 export const importAddresses = async (serialized: string) => {
@@ -206,4 +207,27 @@ const postToImport = (
     task: 'import:account:add',
     data: { json: JSON.stringify(json), source },
   });
+};
+
+/**
+ * @name importEvents
+ * @summary Extract event data from an imported text file and send to application.
+ * (main renderer)
+ */
+export const importEvents = async (
+  serialized: string,
+  setEvents: (events: EventCallback[]) => void
+): Promise<void> => {
+  const s_array: [string, string][] = JSON.parse(serialized);
+  const s_map = new Map<string, string>(s_array);
+  const s_events = s_map.get('events');
+
+  // Send '[]' if no events received.
+  const updated = (await window.myAPI.sendEventTaskAsync({
+    action: 'events:import',
+    data: { events: s_events ? s_events : '[]' },
+  })) as string;
+
+  const parsed: EventCallback[] = JSON.parse(updated);
+  setEvents(parsed);
 };

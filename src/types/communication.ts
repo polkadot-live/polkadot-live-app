@@ -42,6 +42,7 @@ export interface IpcTask {
     | 'events:remove'
     | 'events:makeStale'
     | 'events:update:accountName'
+    | 'events:import'
     // Subscriptions (Account)
     | 'subscriptions:account:getAll'
     | 'subscriptions:account:update'
