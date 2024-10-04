@@ -5,6 +5,7 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/main/AddressesController';
+import { EventsController } from '@/controller/main/EventsController';
 import type { ExportResult, ImportResult } from '@/types/backup';
 
 export class BackupController {
@@ -36,7 +37,7 @@ export class BackupController {
     // Handle save or cancel.
     if (!canceled && filePath) {
       try {
-        const serialized = AddressesController.getBackupData();
+        const serialized = this.getExportData();
         await fsPromises.writeFile(filePath, serialized, {
           encoding: 'utf8',
         });
@@ -82,5 +83,20 @@ export class BackupController {
     } else {
       return { result: false, msg: 'canceled' };
     }
+  }
+
+  /**
+   * @name getExportData
+   * @summary Return serialized backup data which should be written to a text file.
+   */
+  private static getExportData(): string {
+    const map = new Map<string, string>();
+    const addresses = AddressesController.getBackupData();
+    const events = EventsController.getBackupData();
+
+    map.set('addresses', addresses);
+    map.set('events', events);
+
+    return JSON.stringify(Array.from(map));
   }
 }
