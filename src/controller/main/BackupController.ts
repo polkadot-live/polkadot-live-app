@@ -36,7 +36,7 @@ export class BackupController {
     // Handle save or cancel.
     if (!canceled && filePath) {
       try {
-        const serialized = AddressesController.getAll();
+        const serialized = AddressesController.getBackupData();
         await fsPromises.writeFile(filePath, serialized, {
           encoding: 'utf8',
         });

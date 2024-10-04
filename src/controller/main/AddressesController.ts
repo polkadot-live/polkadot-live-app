@@ -103,10 +103,10 @@ export class AddressesController {
   }
 
   /**
-   * @name getAll
+   * @name getBackupData
    * @summary Get all stored addresses in serialized form.
    */
-  static getAll(): string {
+  static getBackupData(): string {
     const map = new Map<AccountSource, string>();
 
     for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
