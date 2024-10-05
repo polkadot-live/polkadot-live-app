@@ -5,7 +5,9 @@ import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
+import { AddressesController } from '@/controller/main/AddressesController';
 import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@/types/misc';
@@ -16,7 +18,6 @@ import type {
   NotificationData,
 } from '@/types/reporter';
 import type { IpcTask } from '@/types/communication';
-import { SettingsController } from './SettingsController';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -182,7 +183,7 @@ export class EventsController {
 
     for (const event of parsed) {
       // Update event's account name if it has since been changed.
-      const synced = this.syncAccountName(event, stored);
+      const synced = this.syncAccountName(event);
       const { events, updated } = pushUniqueEvent(synced, stored);
 
       if (updated) {
@@ -204,26 +205,18 @@ export class EventsController {
    * @summary Sets an event's associated account name if it has since been updated.
    * (receives an event that was just imported)
    */
-  private static syncAccountName(
-    event: EventCallback,
-    stored: EventCallback[]
-  ): EventCallback {
+  private static syncAccountName(event: EventCallback): EventCallback {
     if (event.who.origin !== 'account') {
       return event;
     }
 
-    // Find any events with the same address and chainID.
-    for (const ev of stored) {
-      if (ev.who.origin !== 'account') {
-        continue;
-      }
+    // Find any imported accounts with the same address and sync the event's account name.
+    const { address: targetAddress, source: s } = event.who
+      .data as EventAccountData;
 
-      const { chainId, address, accountName } = ev.who.data as EventAccountData;
-      const target = event.who.data as EventAccountData;
-
-      // Update the target's associated account name if there's a match.
-      if (target.chainId === chainId && target.address === address) {
-        target.accountName = accountName;
+    for (const { address, name } of AddressesController.getAllBySource(s)) {
+      if (address === targetAddress) {
+        (event.who.data as EventAccountData).accountName = name;
         break;
       }
     }
