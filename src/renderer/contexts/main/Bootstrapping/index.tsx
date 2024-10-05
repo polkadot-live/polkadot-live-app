@@ -21,9 +21,9 @@ import React, {
   useState,
 } from 'react';
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useChains } from '../Chains';
-import { useSubscriptions } from '../Subscriptions';
-import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { useChains } from '@app/contexts/main/Chains';
+import { useSubscriptions } from '@app/contexts/main/Subscriptions';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@/types/chains';

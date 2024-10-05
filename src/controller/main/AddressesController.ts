@@ -129,7 +129,7 @@ export class AddressesController {
   }
 
   /**
-   * @name getBySourceAndChain
+   * @name getAllBySource
    * @summary Get all addresses from a particular source.
    */
   static getAllBySource(
