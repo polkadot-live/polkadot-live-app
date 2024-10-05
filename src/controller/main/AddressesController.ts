@@ -129,6 +129,17 @@ export class AddressesController {
   }
 
   /**
+   * @name getBySourceAndChain
+   * @summary Get all addresses from a particular source.
+   */
+  static getAllBySource(
+    source: AccountSource
+  ): LedgerLocalAddress[] | LocalAddress[] {
+    const key = ConfigMain.getStorageKey(source);
+    return this.getStoredAddresses(key, source === 'ledger');
+  }
+
+  /**
    * @name get
    * @summary Get all stored addresses for an account type.
    */

@@ -26,6 +26,20 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
 
+  /// Set events (on event import).
+  const setEvents = (newEvents: EventCallback[]) => {
+    const map: EventsState = new Map();
+
+    for (const event of newEvents) {
+      const chainId = getEventChainId(event);
+      map.has(chainId)
+        ? map.set(chainId, [...map.get(chainId)!, event])
+        : map.set(chainId, [event]);
+    }
+
+    setEventsState(map);
+  };
+
   /// Removes an event item on a specified chain; compares event uid.
   const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
     setEventsState((prev) => {
@@ -214,6 +228,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         events,
         addEvent,
+        setEvents,
         dismissEvent,
         sortAllEvents,
         sortAllGroupedEvents,

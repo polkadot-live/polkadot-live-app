@@ -5,7 +5,9 @@ import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
+import { AddressesController } from '@/controller/main/AddressesController';
 import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@/types/misc';
@@ -16,7 +18,6 @@ import type {
   NotificationData,
 } from '@/types/reporter';
 import type { IpcTask } from '@/types/communication';
-import { SettingsController } from './SettingsController';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -121,7 +122,6 @@ export class EventsController {
    */
   static processAsync(task: IpcTask): string | boolean {
     switch (task.action) {
-      // Update a collection of event's associated account name.
       case 'events:update:accountName': {
         const { address, newName }: { address: string; newName: string } =
           task.data;
@@ -138,9 +138,11 @@ export class EventsController {
         // Return updated events in serialized form.
         return JSON.stringify(updated);
       }
-      // Remove an event from the store.
       case 'events:remove': {
         return this.removeEvent(task.data.event);
+      }
+      case 'events:import': {
+        return this.persistImportedEvents(task.data.events);
       }
       default: {
         return false;
@@ -168,6 +170,58 @@ export class EventsController {
     }
 
     return { event, wasPersisted: updated };
+  }
+
+  /**
+   * @name persistImportedEvents
+   * @summary Persists unique imported events to the store.
+   */
+  static persistImportedEvents(serialized: string): string {
+    const parsed: EventCallback[] = JSON.parse(serialized);
+    let stored = this.getEventsFromStore();
+    let persist = false;
+
+    for (const event of parsed) {
+      // Update event's account name if it has since been changed.
+      const synced = this.syncAccountName(event);
+      const { events, updated } = pushUniqueEvent(synced, stored);
+
+      if (updated) {
+        stored = events;
+        persist = true;
+      }
+    }
+
+    if (persist) {
+      this.persistEventsToStore(stored);
+      debug('🔷 Event persisted (%o total in store)', stored.length);
+    }
+
+    return JSON.stringify(stored);
+  }
+
+  /**
+   * @name syncAccountName
+   * @summary Sets an event's associated account name if it has since been updated.
+   * (receives an event that was just imported)
+   */
+  private static syncAccountName(event: EventCallback): EventCallback {
+    if (event.who.origin !== 'account') {
+      return event;
+    }
+
+    // Find any imported accounts with the same address and sync the event's account name.
+    const { address: targetAddress, source: s } = event.who
+      .data as EventAccountData;
+
+    for (const { address, name } of AddressesController.getAllBySource(s)) {
+      if (address === targetAddress) {
+        (event.who.data as EventAccountData).accountName = name;
+        break;
+      }
+    }
+
+    return event;
   }
 
   /**
