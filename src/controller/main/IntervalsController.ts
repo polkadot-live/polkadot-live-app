@@ -97,6 +97,14 @@ export class IntervalsController {
   }
 
   /**
+   * @name getBackupData
+   * @summary Get stored serialized tasks for writing to a backup text file.
+   */
+  static getBackupData(): string {
+    return this.get();
+  }
+
+  /**
    * @name remove
    * @summary Remove interval subscription from store.
    */
