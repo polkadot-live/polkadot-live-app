@@ -305,7 +305,6 @@ export const useMainMessagePorts = () => {
             throw new Error('No import data.');
           }
 
-          // TODO: Promise.all
           const { serialized } = response.data;
           await importAddresses(serialized);
           await importEvents(serialized, setEvents);
