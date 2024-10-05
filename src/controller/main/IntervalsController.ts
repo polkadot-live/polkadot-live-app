@@ -37,12 +37,32 @@ export class IntervalsController {
   }
 
   /**
+   * @name compare
+   * @summary Compare data of two tasks to determine if they're the same task.
+   */
+  private static compare(
+    left: IntervalSubscription,
+    right: IntervalSubscription
+  ): boolean {
+    return left.action === right.action &&
+      left.chainId === right.chainId &&
+      left.referendumId === right.referendumId
+      ? true
+      : false;
+  }
+
+  /**
    * @name exists
    * @summary Check if a given interval subscription task exists in the store.
    */
   static exists(task: IntervalSubscription): boolean {
-    console.log(task);
-    return true;
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    for (const item of stored) {
+      if (this.compare(task, item)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
