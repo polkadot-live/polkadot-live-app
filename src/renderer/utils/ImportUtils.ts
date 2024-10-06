@@ -195,21 +195,6 @@ export const importAddresses = async (serialized: string) => {
 };
 
 /**
- * @name postToImport
- * @summary Utility to post message to import window.
- * (main renderer)
- */
-const postToImport = (
-  json: LocalAddress | LedgerLocalAddress,
-  source: AccountSource
-) => {
-  ConfigRenderer.portToImport?.postMessage({
-    task: 'import:account:add',
-    data: { json: JSON.stringify(json), source },
-  });
-};
-
-/**
  * @name importEvents
  * @summary Extract event data from an imported text file and send to application.
  * (main renderer)
@@ -294,4 +279,19 @@ const getFromBackupFile = (
   const s_array: [string, string][] = JSON.parse(serialized);
   const s_map = new Map<string, string>(s_array);
   return s_map.get(key);
+};
+
+/**
+ * @name postToImport
+ * @summary Utility to post message to import window.
+ * (main renderer)
+ */
+const postToImport = (
+  json: LocalAddress | LedgerLocalAddress,
+  source: AccountSource
+) => {
+  ConfigRenderer.portToImport?.postMessage({
+    task: 'import:account:add',
+    data: { json: JSON.stringify(json), source },
+  });
 };
