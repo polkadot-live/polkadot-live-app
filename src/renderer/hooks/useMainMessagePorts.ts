@@ -14,7 +14,11 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { importAddresses, importEvents } from '@app/utils/ImportUtils';
+import {
+  importAddresses,
+  importEvents,
+  importIntervalTasks,
+} from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -56,6 +60,7 @@ export const useMainMessagePorts = () => {
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
+    tryUpdateDynamicIntervalTask,
   } = useManage();
 
   const {
@@ -71,8 +76,11 @@ export const useMainMessagePorts = () => {
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
     useSubscriptions();
 
-  const { addIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
+  const {
+    addIntervalSubscription,
+    removeIntervalSubscription,
+    updateIntervalSubscription,
+  } = useIntervalSubscriptions();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -308,6 +316,13 @@ export const useMainMessagePorts = () => {
           const { serialized } = response.data;
           await importAddresses(serialized);
           await importEvents(serialized, setEvents);
+          await importIntervalTasks(
+            serialized,
+            tryAddIntervalSubscription,
+            tryUpdateDynamicIntervalTask,
+            addIntervalSubscription,
+            updateIntervalSubscription
+          );
 
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {

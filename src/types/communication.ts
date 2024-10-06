@@ -49,11 +49,12 @@ export interface IpcTask {
     | 'subscriptions:chain:getAll'
     | 'subscriptions:chain:update'
     // Subscriptions (Interval)
-    | 'interval:task:get'
-    | 'interval:task:clear'
     | 'interval:task:add'
+    | 'interval:task:clear'
+    | 'interval:task:get'
     | 'interval:task:remove'
     | 'interval:task:update'
+    | 'interval:tasks:import'
     // Settings
     | 'settings:set:docked'
     | 'settings:toggle'

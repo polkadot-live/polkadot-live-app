@@ -65,7 +65,7 @@ export class IntervalsController {
   }
 
   /**
-   * @name insertInterval
+   * @name insertSubscription
    * @summary Insert an interval subscription into this controller's map.
    */
   static insertSubscription(
@@ -160,9 +160,13 @@ export class IntervalsController {
 
   /**
    * @name updateSubscription
-   * @summary Updae data of a managed interval subscription task.
+   * @summary Update data of a managed interval subscription task.
    */
   static updateSubscription(task: IntervalSubscription) {
+    if (task.status === 'disable') {
+      return;
+    }
+
     console.log('UPDATE SUBSCRIPTION:');
     console.log(task);
 
