@@ -55,6 +55,14 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
   }, [task.status]);
 
   useEffect(() => {
+    setIntervalSetting(task.intervalSetting.ticksToWait);
+  }, [task.intervalSetting]);
+
+  useEffect(() => {
+    setNativeChecked(task.enableOsNotifications);
+  }, [task.enableOsNotifications]);
+
+  useEffect(() => {
     if (!isConnected) {
       setIntervalClicked(false);
     }
