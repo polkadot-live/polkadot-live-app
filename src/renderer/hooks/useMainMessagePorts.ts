@@ -60,6 +60,7 @@ export const useMainMessagePorts = () => {
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
+    tryUpdateDynamicIntervalTask,
   } = useManage();
 
   const {
@@ -75,8 +76,11 @@ export const useMainMessagePorts = () => {
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
     useSubscriptions();
 
-  const { addIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
+  const {
+    addIntervalSubscription,
+    removeIntervalSubscription,
+    updateIntervalSubscription,
+  } = useIntervalSubscriptions();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -315,7 +319,9 @@ export const useMainMessagePorts = () => {
           await importIntervalTasks(
             serialized,
             tryAddIntervalSubscription,
-            addIntervalSubscription
+            tryUpdateDynamicIntervalTask,
+            addIntervalSubscription,
+            updateIntervalSubscription
           );
 
           postToSettings(response.result, 'Data imported successfully.');

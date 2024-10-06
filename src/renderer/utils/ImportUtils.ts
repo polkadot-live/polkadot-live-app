@@ -167,32 +167,30 @@ export const getSortedLocalLedgerAddresses = (
  * (main renderer)
  */
 export const importAddresses = async (serialized: string) => {
-  const s_array: [string, string][] = JSON.parse(serialized);
-  const s_map = new Map<string, string>(s_array);
-  const s_addresses = s_map.get('addresses');
+  const s_addresses = getFromBackupFile('addresses', serialized);
+  if (!s_addresses) {
+    return;
+  }
 
-  if (s_addresses) {
-    const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
-    const p_map = new Map<AccountSource, string>(p_array);
-    const importWindowOpen = await window.myAPI.isViewOpen('import');
+  const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
+  const p_map = new Map<AccountSource, string>(p_array);
+  const importWindowOpen = await window.myAPI.isViewOpen('import');
 
-    for (const [source, ser] of p_map.entries()) {
-      const parsed =
-        source === 'ledger'
-          ? (JSON.parse(ser) as LedgerLocalAddress[])
-          : (JSON.parse(ser) as LocalAddress[]);
+  for (const [source, ser] of p_map.entries()) {
+    const parsed =
+      source === 'ledger'
+        ? (JSON.parse(ser) as LedgerLocalAddress[])
+        : (JSON.parse(ser) as LocalAddress[]);
 
-      parsed.forEach(async (a) => {
-        // Persist addresses to Electron store.
-        await window.myAPI.rawAccountTask({
-          action: 'raw-account:persist',
-          data: { source, serialized: JSON.stringify(a) },
-        });
-
-        // Update import window state only if it's open.
-        importWindowOpen && postToImport(a, source);
+    // Persist addresses to Electron store and update import window.
+    parsed.forEach(async (a) => {
+      await window.myAPI.rawAccountTask({
+        action: 'raw-account:persist',
+        data: { source, serialized: JSON.stringify(a) },
       });
-    }
+
+      importWindowOpen && postToImport(a, source);
+    });
   }
 };
 
@@ -220,14 +218,15 @@ export const importEvents = async (
   serialized: string,
   setEvents: (events: EventCallback[]) => void
 ): Promise<void> => {
-  const s_array: [string, string][] = JSON.parse(serialized);
-  const s_map = new Map<string, string>(s_array);
-  const s_events = s_map.get('events');
+  const s_events = getFromBackupFile('events', serialized);
+  if (!s_events) {
+    return;
+  }
 
-  // Send '[]' if no events received.
+  // Send serialized events to main for processing.
   const updated = (await window.myAPI.sendEventTaskAsync({
     action: 'events:import',
-    data: { events: s_events ? s_events : '[]' },
+    data: { events: s_events },
   })) as string;
 
   const parsed: EventCallback[] = JSON.parse(updated);
@@ -242,31 +241,57 @@ export const importEvents = async (
 export const importIntervalTasks = async (
   serialized: string,
   tryAddIntervalSubscription: (t: IntervalSubscription) => void,
-  addIntervalSubscription: (t: IntervalSubscription) => void
+  tryUpdateDynamicIntervalTask: (t: IntervalSubscription) => void,
+  addIntervalSubscription: (t: IntervalSubscription) => void,
+  updateIntervalSubscription: (t: IntervalSubscription) => void
 ): Promise<void> => {
-  const s_array: [string, string][] = JSON.parse(serialized);
-  const s_map = new Map<string, string>(s_array);
-  const s_tasks = s_map.get('intervals');
+  const s_tasks = getFromBackupFile('intervals', serialized);
+  if (!s_tasks) {
+    return;
+  }
 
   // Receive new tasks after persisting them to store.
-  const s_newTasks =
+  const s_taskMap =
     (await window.myAPI.sendIntervalTask({
       action: 'interval:tasks:import',
       data: { serialized: s_tasks },
     })) || '[]';
 
-  // Insert subscriptions into controller.
-  const newTasks: IntervalSubscription[] = JSON.parse(s_newTasks);
-  IntervalsController.insertSubscriptions(newTasks);
+  // Parse received tasks to insert and update.
+  const p_array: [string, string][] = JSON.parse(s_taskMap);
+  const p_map = new Map<string, string>(p_array);
+  const newTasks: IntervalSubscription[] = JSON.parse(p_map.get('insert')!);
+  const updatedTasks: IntervalSubscription[] = JSON.parse(p_map.get('update')!);
 
-  // Update React state.
-  for (const newTask of newTasks) {
-    tryAddIntervalSubscription(newTask);
-    addIntervalSubscription(newTask);
-  }
+  // Insert subscriptions into controller and update React state.
+  IntervalsController.insertSubscriptions(newTasks);
+  newTasks.forEach((t) => {
+    tryAddIntervalSubscription(t);
+    addIntervalSubscription(t);
+  });
+
+  updatedTasks.forEach((t) => {
+    IntervalsController.updateSubscription(t);
+    tryUpdateDynamicIntervalTask(t);
+    updateIntervalSubscription(t);
+  });
 
   // Update state in OpenGov window.
   if (await window.myAPI.isViewOpen('openGov')) {
     // TODO: Update referenda state in OpenGov window.
   }
+};
+
+/**
+ * @name getFromBackupFile
+ * @summary Get some serialized data from backup files.
+ * Key may be `addresses`, `events` or `intervals`.
+ */
+const getFromBackupFile = (
+  key: string,
+  serialized: string
+): string | undefined => {
+  const s_array: [string, string][] = JSON.parse(serialized);
+  const s_map = new Map<string, string>(s_array);
+  return s_map.get(key);
 };

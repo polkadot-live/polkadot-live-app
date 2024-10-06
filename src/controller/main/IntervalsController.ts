@@ -95,12 +95,20 @@ export class IntervalsController {
     const received: IntervalSubscription[] = JSON.parse(serialized);
     const stored: IntervalSubscription[] = JSON.parse(this.get());
 
-    // Filter new tasks and persist them to store.
-    const filtered = received.filter((t) => !this.exists(t, stored));
-    filtered.length !== 0 && this.addMulti(filtered);
+    // Persist imported tasks to store.
+    const newTasks = received.filter((t) => !this.exists(t, stored));
+    const updatedTasks = received.filter((t) => this.exists(t, stored));
 
-    // Return new tasks in serialized form.
-    return JSON.stringify(filtered);
+    newTasks.length !== 0 && this.addMulti(newTasks);
+    updatedTasks.forEach((t) => this.updateTask(t));
+
+    // Serialize new and updated tasks in a map structure.
+    const map = new Map<string, string>();
+    map.set('insert', JSON.stringify(newTasks));
+    map.set('update', JSON.stringify(updatedTasks));
+
+    // Return tasks in serialized form.
+    return JSON.stringify(Array.from(map.entries()));
   }
 
   /**
@@ -173,13 +181,17 @@ export class IntervalsController {
     const { serialized }: { serialized: string } = task.data;
     const target: IntervalSubscription = JSON.parse(serialized);
     const stored: IntervalSubscription[] = JSON.parse(this.get());
-    const updated = stored.map((t) =>
-      t.action === target.action &&
-      t.chainId === target.chainId &&
-      t.referendumId === target.referendumId
-        ? target
-        : t
-    );
+    const updated = stored.map((t) => (this.compare(target, t) ? target : t));
+    this.set(updated);
+  }
+
+  /**
+   * @name updateTask
+   * @summary Update data for an existing task persisted in the store.
+   */
+  private static updateTask(task: IntervalSubscription) {
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    const updated = stored.map((t) => (this.compare(task, t) ? task : t));
     this.set(updated);
   }
 }

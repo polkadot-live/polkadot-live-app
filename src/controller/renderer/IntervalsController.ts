@@ -160,7 +160,7 @@ export class IntervalsController {
 
   /**
    * @name updateSubscription
-   * @summary Updae data of a managed interval subscription task.
+   * @summary Update data of a managed interval subscription task.
    */
   static updateSubscription(task: IntervalSubscription) {
     console.log('UPDATE SUBSCRIPTION:');
