@@ -10,8 +10,10 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
+import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
+import type { IntervalSubscription } from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
 
 type ToastType = 'success' | 'error';
@@ -238,7 +240,33 @@ export const importEvents = async (
  * (main renderer)
  */
 export const importIntervalTasks = async (
-  serialized: string
+  serialized: string,
+  tryAddIntervalSubscription: (t: IntervalSubscription) => void,
+  addIntervalSubscription: (t: IntervalSubscription) => void
 ): Promise<void> => {
-  console.log(`TODO: ${serialized}`);
+  const s_array: [string, string][] = JSON.parse(serialized);
+  const s_map = new Map<string, string>(s_array);
+  const s_tasks = s_map.get('intervals');
+
+  // Receive new tasks after persisting them to store.
+  const s_newTasks =
+    (await window.myAPI.sendIntervalTask({
+      action: 'interval:tasks:import',
+      data: { serialized: s_tasks },
+    })) || '[]';
+
+  // Insert subscriptions into controller.
+  const newTasks: IntervalSubscription[] = JSON.parse(s_newTasks);
+  IntervalsController.insertSubscriptions(newTasks);
+
+  // Update React state.
+  for (const newTask of newTasks) {
+    tryAddIntervalSubscription(newTask);
+    addIntervalSubscription(newTask);
+  }
+
+  // Update state in OpenGov window.
+  if (await window.myAPI.isViewOpen('openGov')) {
+    // TODO: Update referenda state in OpenGov window.
+  }
 };

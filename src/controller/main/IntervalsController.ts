@@ -34,41 +34,9 @@ export class IntervalsController {
         return;
       }
       case 'interval:tasks:import': {
-        this.doImport(task);
-        return;
+        return this.doImport(task);
       }
     }
-  }
-
-  /**
-   * @name compare
-   * @summary Compare data of two tasks to determine if they're the same task.
-   */
-  private static compare(
-    left: IntervalSubscription,
-    right: IntervalSubscription
-  ): boolean {
-    return left.action === right.action &&
-      left.chainId === right.chainId &&
-      left.referendumId === right.referendumId
-      ? true
-      : false;
-  }
-
-  /**
-   * @name exists
-   * @summary Check if a given interval subscription task exists in the store.
-   */
-  private static exists(
-    task: IntervalSubscription,
-    stored: IntervalSubscription[]
-  ): boolean {
-    for (const item of stored) {
-      if (this.compare(task, item)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -103,6 +71,21 @@ export class IntervalsController {
   }
 
   /**
+   * @name compare
+   * @summary Compare data of two tasks to determine if they're the same task.
+   */
+  private static compare(
+    left: IntervalSubscription,
+    right: IntervalSubscription
+  ): boolean {
+    return left.action === right.action &&
+      left.chainId === right.chainId &&
+      left.referendumId === right.referendumId
+      ? true
+      : false;
+  }
+
+  /**
    * @name doImport
    * @summary Persist new tasks to store and return them to renderer to process.
    * Receives serialized tasks from an exported backup file.
@@ -114,10 +97,26 @@ export class IntervalsController {
 
     // Filter new tasks and persist them to store.
     const filtered = received.filter((t) => !this.exists(t, stored));
-    this.addMulti(filtered);
+    filtered.length !== 0 && this.addMulti(filtered);
 
     // Return new tasks in serialized form.
     return JSON.stringify(filtered);
+  }
+
+  /**
+   * @name exists
+   * @summary Check if a given interval subscription task exists in the store.
+   */
+  private static exists(
+    task: IntervalSubscription,
+    stored: IntervalSubscription[]
+  ): boolean {
+    for (const item of stored) {
+      if (this.compare(task, item)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
