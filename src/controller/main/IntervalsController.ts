@@ -96,16 +96,16 @@ export class IntervalsController {
     const stored: IntervalSubscription[] = JSON.parse(this.get());
 
     // Persist imported tasks to store.
-    const newTasks = received.filter((t) => !this.exists(t, stored));
-    const updatedTasks = received.filter((t) => this.exists(t, stored));
+    const inserts = received.filter((t) => !this.exists(t, stored));
+    const updates = received.filter((t) => this.exists(t, stored));
 
-    newTasks.length !== 0 && this.addMulti(newTasks);
-    updatedTasks.forEach((t) => this.updateTask(t));
+    inserts.length !== 0 && this.addMulti(inserts);
+    updates.forEach((t) => this.updateTask(t));
 
     // Serialize new and updated tasks in a map structure.
     const map = new Map<string, string>();
-    map.set('insert', JSON.stringify(newTasks));
-    map.set('update', JSON.stringify(updatedTasks));
+    map.set('insert', JSON.stringify(inserts));
+    map.set('update', JSON.stringify(updates));
 
     // Return tasks in serialized form.
     return JSON.stringify(Array.from(map.entries()));

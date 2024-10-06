@@ -223,12 +223,14 @@ export const importEvents = async (
  * @summary Extract interval task data from an imported text file and send to application.
  * (main renderer)
  */
+type IntervalFunc = (t: IntervalSubscription) => void;
+
 export const importIntervalTasks = async (
   serialized: string,
-  tryAddIntervalSubscription: (t: IntervalSubscription) => void,
-  tryUpdateDynamicIntervalTask: (t: IntervalSubscription) => void,
-  addIntervalSubscription: (t: IntervalSubscription) => void,
-  updateIntervalSubscription: (t: IntervalSubscription) => void
+  tryAddIntervalSubscription: IntervalFunc,
+  tryUpdateDynamicIntervalTask: IntervalFunc,
+  addIntervalSubscription: IntervalFunc,
+  updateIntervalSubscription: IntervalFunc
 ): Promise<void> => {
   const s_tasks = getFromBackupFile('intervals', serialized);
   if (!s_tasks) {
@@ -236,34 +238,56 @@ export const importIntervalTasks = async (
   }
 
   // Receive new tasks after persisting them to store.
-  const s_taskMap =
+  const s_data =
     (await window.myAPI.sendIntervalTask({
       action: 'interval:tasks:import',
       data: { serialized: s_tasks },
     })) || '[]';
 
   // Parse received tasks to insert and update.
-  const p_array: [string, string][] = JSON.parse(s_taskMap);
-  const p_map = new Map<string, string>(p_array);
-  const newTasks: IntervalSubscription[] = JSON.parse(p_map.get('insert')!);
-  const updatedTasks: IntervalSubscription[] = JSON.parse(p_map.get('update')!);
+  const s_array: [string, string][] = JSON.parse(s_data);
+  const map = new Map<string, string>(s_array);
+
+  const inserts: IntervalSubscription[] = JSON.parse(map.get('insert') || '[]');
+  const updates: IntervalSubscription[] = JSON.parse(map.get('update') || '[]');
 
   // Insert subscriptions into controller and update React state.
-  IntervalsController.insertSubscriptions(newTasks);
-  newTasks.forEach((t) => {
-    tryAddIntervalSubscription(t);
-    addIntervalSubscription(t);
-  });
+  if (inserts.length > 0) {
+    IntervalsController.insertSubscriptions(inserts);
+    inserts.forEach((t) => {
+      tryAddIntervalSubscription(t);
+      addIntervalSubscription(t);
+    });
+  }
 
-  updatedTasks.forEach((t) => {
-    IntervalsController.updateSubscription(t);
-    tryUpdateDynamicIntervalTask(t);
-    updateIntervalSubscription(t);
-  });
+  if (updates.length > 0) {
+    IntervalsController.removeSubscriptions(updates);
+    updates.forEach((t) => {
+      t.status === 'enable' && IntervalsController.insertSubscription(t);
+      tryUpdateDynamicIntervalTask(t);
+      updateIntervalSubscription(t);
+    });
+  }
 
   // Update state in OpenGov window.
   if (await window.myAPI.isViewOpen('openGov')) {
-    // TODO: Update referenda state in OpenGov window.
+    inserts.forEach((t) => {
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:task:add',
+        data: {
+          serialized: JSON.stringify(t),
+        },
+      });
+    });
+
+    updates.forEach((t) => {
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:task:update',
+        data: {
+          serialized: JSON.stringify(t),
+        },
+      });
+    });
   }
 };
 
