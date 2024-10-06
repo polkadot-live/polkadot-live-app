@@ -231,3 +231,14 @@ export const importEvents = async (
   const parsed: EventCallback[] = JSON.parse(updated);
   setEvents(parsed);
 };
+
+/**
+ * @name importIntervalTasks
+ * @summary Extract interval task data from an imported text file and send to application.
+ * (main renderer)
+ */
+export const importIntervalTasks = async (
+  serialized: string
+): Promise<void> => {
+  console.log(`TODO: ${serialized}`);
+};

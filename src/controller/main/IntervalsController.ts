@@ -33,6 +33,10 @@ export class IntervalsController {
         this.update(task);
         return;
       }
+      case 'interval:tasks:import': {
+        this.doImport(task);
+        return;
+      }
     }
   }
 
@@ -55,8 +59,10 @@ export class IntervalsController {
    * @name exists
    * @summary Check if a given interval subscription task exists in the store.
    */
-  static exists(task: IntervalSubscription): boolean {
-    const stored: IntervalSubscription[] = JSON.parse(this.get());
+  private static exists(
+    task: IntervalSubscription,
+    stored: IntervalSubscription[]
+  ): boolean {
     for (const item of stored) {
       if (this.compare(task, item)) {
         return true;
@@ -77,6 +83,16 @@ export class IntervalsController {
   }
 
   /**
+   * @name addMulti
+   * @summary Add multiple interval subscription to store.
+   */
+  private static addMulti(tasks: IntervalSubscription[]) {
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    tasks.forEach((t) => stored.push(t));
+    this.set(stored);
+  }
+
+  /**
    * @name clear
    * @summary Clear interval subscriptions from store.
    */
@@ -84,6 +100,24 @@ export class IntervalsController {
     const storePointer: Record<string, AnyData> = store;
     storePointer.delete(this.key);
     return 'done';
+  }
+
+  /**
+   * @name doImport
+   * @summary Persist new tasks to store and return them to renderer to process.
+   * Receives serialized tasks from an exported backup file.
+   */
+  private static doImport(ipcTask: IpcTask): string {
+    const { serialized }: { serialized: string } = ipcTask.data;
+    const received: IntervalSubscription[] = JSON.parse(serialized);
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+
+    // Filter new tasks and persist them to store.
+    const filtered = received.filter((t) => !this.exists(t, stored));
+    this.addMulti(filtered);
+
+    // Return new tasks in serialized form.
+    return JSON.stringify(filtered);
   }
 
   /**
