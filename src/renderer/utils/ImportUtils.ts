@@ -251,7 +251,7 @@ export const importIntervalTasks = async (
   const inserts: IntervalSubscription[] = JSON.parse(map.get('insert') || '[]');
   const updates: IntervalSubscription[] = JSON.parse(map.get('update') || '[]');
 
-  // Insert subscriptions into controller and update React state.
+  // Update manage subscriptions in controller and update React state.
   if (inserts.length > 0) {
     IntervalsController.insertSubscriptions(inserts);
     inserts.forEach((t) => {
