@@ -120,9 +120,7 @@ export class AddressesController {
         continue;
       }
 
-      // Set imported flag to false.
-      const updated = fetched.map((a) => ({ ...a, isImported: false }));
-      map.set(source, JSON.stringify(updated));
+      map.set(source, JSON.stringify(fetched));
     }
 
     return JSON.stringify(Array.from(map.entries()));
