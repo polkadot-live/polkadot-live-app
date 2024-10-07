@@ -215,21 +215,13 @@ export const importAddresses = async (
       if (a.isImported) {
         const data = { data: { data: { address, chainId, name, source } } };
         await handleImportAddress(new MessageEvent('message', data), true);
-
         // Update account isImported in import window.
-        ConfigRenderer.portToImport?.postMessage({
-          task: 'import:address:update',
-          data: { address: a, source },
-        });
+        postToImport('import:address:update', { address: a, source });
       } else {
         const data = { data: { data: { address, chainId } } };
         await handleRemoveAddress(new MessageEvent('message', data));
-
         // Update account isImported in import window.
-        ConfigRenderer.portToImport?.postMessage({
-          task: 'import:address:update',
-          data: { address: a, source },
-        });
+        postToImport('import:address:update', { address: a, source });
       }
     }
   }
