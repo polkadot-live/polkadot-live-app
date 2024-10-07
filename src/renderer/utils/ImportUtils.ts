@@ -183,17 +183,29 @@ export const importAddresses = async (serialized: string) => {
         ? (JSON.parse(ser) as LedgerLocalAddress[])
         : (JSON.parse(ser) as LocalAddress[]);
 
+    // Check connection status and set isImported to `false` if app is offline.
+    const isOnline: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+
     // Persist addresses to Electron store and update import window.
     parsed.forEach(async (a) => {
+      a.isImported && !isOnline && (a.isImported = false);
+
       await window.myAPI.rawAccountTask({
         action: 'raw-account:persist',
         data: { source, serialized: JSON.stringify(a) },
       });
 
+      // Add address and its status to import window state.
       importWindowOpen &&
         postToImport('import:account:add', { json: JSON.stringify(a), source });
     });
   }
+
+  // TODO: Call `handleImportAddress` for addresses that need adding to the main window.
 };
 
 /**
