@@ -106,7 +106,6 @@ export const useMainMessagePorts = () => {
    */
   const handleImportAddress = async (ev: MessageEvent) => {
     const { chainId, source, address, name } = ev.data.data;
-
     // Add address to accounts controller.
     const account = AccountsController.add(chainId, source, address, name);
 
@@ -314,7 +313,7 @@ export const useMainMessagePorts = () => {
           }
 
           const { serialized } = response.data;
-          await importAddresses(serialized);
+          await importAddresses(serialized, handleImportAddress);
           await importEvents(serialized, setEvents);
           await importIntervalTasks(
             serialized,

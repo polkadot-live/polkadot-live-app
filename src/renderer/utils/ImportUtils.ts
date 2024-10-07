@@ -167,7 +167,19 @@ export const getSortedLocalLedgerAddresses = (
  * @summary Extract address data from an imported text file and send to application.
  * (main renderer)
  */
-export const importAddresses = async (serialized: string) => {
+interface QueueData {
+  data: {
+    address: string;
+    chainId: ChainID;
+    name: string;
+    source: AccountSource;
+  };
+}
+
+export const importAddresses = async (
+  serialized: string,
+  handleImportAddress: (ev: MessageEvent) => Promise<void>
+) => {
   const s_addresses = getFromBackupFile('addresses', serialized);
   if (!s_addresses) {
     return;
@@ -176,6 +188,7 @@ export const importAddresses = async (serialized: string) => {
   const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
   const p_map = new Map<AccountSource, string>(p_array);
   const importWindowOpen = await window.myAPI.isViewOpen('import');
+  const importQueue: QueueData[] = [];
 
   for (const [source, ser] of p_map.entries()) {
     const parsed =
@@ -191,7 +204,7 @@ export const importAddresses = async (serialized: string) => {
       })) || false;
 
     // Persist addresses to Electron store and update import window.
-    parsed.forEach(async (a) => {
+    for (const a of parsed) {
       a.isImported && !isOnline && (a.isImported = false);
 
       await window.myAPI.rawAccountTask({
@@ -202,10 +215,20 @@ export const importAddresses = async (serialized: string) => {
       // Add address and its status to import window state.
       importWindowOpen &&
         postToImport('import:account:add', { json: JSON.stringify(a), source });
-    });
+
+      // Queue address for adding to main window.
+      if (a.isImported) {
+        const { address, name } = a;
+        const chainId = getAddressChainId(a.address);
+        importQueue.push({ data: { address, chainId, name, source } });
+      }
+    }
   }
 
-  // TODO: Call `handleImportAddress` for addresses that need adding to the main window.
+  // Synchronously import marked addresses to the main window.
+  for (const dataObj of importQueue) {
+    await handleImportAddress(new MessageEvent('message', { data: dataObj }));
+  }
 };
 
 /**
