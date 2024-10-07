@@ -106,14 +106,43 @@ export const useMainMessagePorts = () => {
    */
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     const { chainId, source, address, name } = ev.data.data;
-    // Add address to accounts controller.
-    const account = AccountsController.add(chainId, source, address, name);
 
+    // Add address to accounts controller.
+    let account =
+      AccountsController.add(chainId, source, address, name) || undefined;
+
+    // Unsubscribe all tasks if the account exists and is being re-imported.
+    if (fromBackup && !account) {
+      account = AccountsController.get(chainId, address);
+
+      if (account) {
+        await AccountsController.removeAllSubscriptions(account);
+        const allTasks = SubscriptionsController.getAllSubscriptionsForAccount(
+          account,
+          'disable'
+        );
+
+        for (const task of allTasks) {
+          updateTask('account', task, task.account?.address);
+          updateRenderedSubscriptions(task);
+
+          await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:account:update',
+            data: {
+              serAccount: JSON.stringify(account.flatten()),
+              serTask: JSON.stringify(task),
+            },
+          });
+        }
+      }
+    }
+
+    // Return if account already exists and isn't being re-imported.
     if (!account) {
-      // Account could not be added, probably already added.
       return;
     }
 
+    // Fetch account data from network.
     const isOnline: boolean =
       (await window.myAPI.sendConnectionTaskAsync({
         action: 'connection:getStatus',
@@ -121,20 +150,17 @@ export const useMainMessagePorts = () => {
       })) || false;
 
     if (isOnline) {
-      // Fetch account nonce and balance.
       await fetchBalanceForAccount(account);
-
-      // Initialize nomination pool data for account if necessary.
       await fetchNominationPoolDataForAccount(account);
-
-      // Initialize nominating data for account if necessary.
       await fetchNominatingDataForAccount(account);
     }
 
-    // Subscribe account to all possible subscriptions if setting enabled.
-    if (account.queryMulti !== null) {
-      const tasks =
-        SubscriptionsController.getAllSubscriptionsForAccount(account);
+    // Subscribe new account to all possible subscriptions if setting enabled.
+    if (account.queryMulti !== null && !fromBackup) {
+      const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        account,
+        'enable'
+      );
 
       // Update persisted state and React state for tasks.
       for (const task of tasks) {
@@ -160,7 +186,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Add account to address context state.
-    await importAddress(chainId, source, address, name);
+    await importAddress(chainId, source, address, name, fromBackup);
 
     // Send message back to import window to reset account's processing flag.
     ConfigRenderer.portToImport?.postMessage({

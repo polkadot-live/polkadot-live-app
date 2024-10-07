@@ -212,11 +212,14 @@ export class SubscriptionsController {
    * @name enableAllSubscriptionsForAccount
    * @summary Activate all subscriptions when an account is imported.
    */
-  static getAllSubscriptionsForAccount = (account: Account) =>
+  static getAllSubscriptionsForAccount = (
+    account: Account,
+    status: 'enable' | 'disable'
+  ) =>
     allAccountTasks
       .filter((t) => t.chainId === account.chain)
       .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
-      .map((t) => ({ ...t, status: 'enable' }) as SubscriptionTask);
+      .map((t) => ({ ...t, status }) as SubscriptionTask);
 
   /**
    * @name getTaskArgsForAccount
