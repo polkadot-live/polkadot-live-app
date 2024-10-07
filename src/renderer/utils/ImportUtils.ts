@@ -167,18 +167,10 @@ export const getSortedLocalLedgerAddresses = (
  * @summary Extract address data from an imported text file and send to application.
  * (main renderer)
  */
-interface QueueData {
-  data: {
-    address: string;
-    chainId: ChainID;
-    name: string;
-    source: AccountSource;
-  };
-}
-
 export const importAddresses = async (
   serialized: string,
-  handleImportAddress: (ev: MessageEvent, fromBackup: boolean) => Promise<void>
+  handleImportAddress: (ev: MessageEvent, fromBackup: boolean) => Promise<void>,
+  handleRemoveAddress: (ev: MessageEvent) => Promise<void>
 ) => {
   const s_addresses = getFromBackupFile('addresses', serialized);
   if (!s_addresses) {
@@ -188,7 +180,6 @@ export const importAddresses = async (
   const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
   const p_map = new Map<AccountSource, string>(p_array);
   const importWindowOpen = await window.myAPI.isViewOpen('import');
-  const importQueue: QueueData[] = [];
 
   for (const [source, ser] of p_map.entries()) {
     const parsed =
@@ -203,34 +194,44 @@ export const importAddresses = async (
         data: null,
       })) || false;
 
-    // Persist addresses to Electron store and update import window.
+    // Process parsed addresses.
     for (const a of parsed) {
       a.isImported && !isOnline && (a.isImported = false);
 
+      // Persist address to Electron store.
       await window.myAPI.rawAccountTask({
         action: 'raw-account:persist',
         data: { source, serialized: JSON.stringify(a) },
       });
 
-      // Add address and its status to import window state.
+      // Add address and its status to import window's state.
       importWindowOpen &&
         postToImport('import:account:add', { json: JSON.stringify(a), source });
 
-      // Queue address for adding to main window.
+      // Handle importing or removing account from main window.
+      const { address, name } = a;
+      const chainId = getAddressChainId(address);
+
       if (a.isImported) {
-        const { address, name } = a;
-        const chainId = getAddressChainId(a.address);
-        importQueue.push({ data: { address, chainId, name, source } });
+        const data = { data: { data: { address, chainId, name, source } } };
+        await handleImportAddress(new MessageEvent('message', data), true);
+
+        // Update account isImported in import window.
+        ConfigRenderer.portToImport?.postMessage({
+          task: 'import:address:update',
+          data: { address: a, source },
+        });
+      } else {
+        const data = { data: { data: { address, chainId } } };
+        await handleRemoveAddress(new MessageEvent('message', data));
+
+        // Update account isImported in import window.
+        ConfigRenderer.portToImport?.postMessage({
+          task: 'import:address:update',
+          data: { address: a, source },
+        });
       }
     }
-  }
-
-  // Synchronously import marked addresses to the main window.
-  for (const dataObj of importQueue) {
-    await handleImportAddress(
-      new MessageEvent('message', { data: dataObj }),
-      true
-    );
   }
 };
 

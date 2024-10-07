@@ -340,7 +340,11 @@ export const useMainMessagePorts = () => {
           }
 
           const { serialized } = response.data;
-          await importAddresses(serialized, handleImportAddress);
+          await importAddresses(
+            serialized,
+            handleImportAddress,
+            handleRemoveAddress
+          );
           await importEvents(serialized, setEvents);
           await importIntervalTasks(
             serialized,
