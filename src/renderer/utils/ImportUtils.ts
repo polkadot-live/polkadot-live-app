@@ -198,9 +198,9 @@ export const importAddresses = async (
     for (const a of parsed) {
       a.isImported && !isOnline && (a.isImported = false);
 
-      // Persist address to Electron store.
+      // Persist or update address in Electron store.
       await window.myAPI.rawAccountTask({
-        action: 'raw-account:persist',
+        action: 'raw-account:import',
         data: { source, serialized: JSON.stringify(a) },
       });
 

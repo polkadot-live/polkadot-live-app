@@ -33,6 +33,10 @@ export class AddressesController {
         this.persist(task);
         break;
       }
+      case 'raw-account:import': {
+        this.doImport(task);
+        break;
+      }
       case 'raw-account:remove': {
         this.remove(task);
         break;
@@ -145,6 +149,33 @@ export class AddressesController {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
     return store.has(key) ? this.getFromStore(key) : '[]';
+  }
+
+  /**
+   * @name doImport
+   * @summary Persist an address to store being imported from a backup file.
+   */
+  private static doImport(task: IpcTask) {
+    const { source, serialized } = task.data;
+    const parsed: LocalAddress | LedgerLocalAddress = JSON.parse(serialized);
+    const { address, isImported } = parsed;
+
+    if (this.isAlreadyPersisted(address)) {
+      isImported
+        ? this.add({
+            action: 'raw-account:add',
+            data: { source, address },
+          })
+        : this.remove({
+            action: 'raw-account:remove',
+            data: { source, address },
+          });
+    } else {
+      this.persist({
+        action: 'raw-account:persist',
+        data: { source, serialized },
+      });
+    }
   }
 
   /**
