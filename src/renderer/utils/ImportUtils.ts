@@ -11,6 +11,7 @@ import type {
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 import type { IntervalSubscription } from '@/types/subscriptions';
@@ -189,7 +190,8 @@ export const importAddresses = async (serialized: string) => {
         data: { source, serialized: JSON.stringify(a) },
       });
 
-      importWindowOpen && postToImport(a, source);
+      importWindowOpen &&
+        postToImport('import:account:add', { json: JSON.stringify(a), source });
     });
   }
 };
@@ -307,15 +309,9 @@ const getFromBackupFile = (
 
 /**
  * @name postToImport
- * @summary Utility to post message to import window.
+ * @summary Utility to post a message to the import window.
  * (main renderer)
  */
-const postToImport = (
-  json: LocalAddress | LedgerLocalAddress,
-  source: AccountSource
-) => {
-  ConfigRenderer.portToImport?.postMessage({
-    task: 'import:account:add',
-    data: { json: JSON.stringify(json), source },
-  });
+const postToImport = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
 };
