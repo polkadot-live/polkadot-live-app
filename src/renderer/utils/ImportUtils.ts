@@ -178,7 +178,7 @@ interface QueueData {
 
 export const importAddresses = async (
   serialized: string,
-  handleImportAddress: (ev: MessageEvent) => Promise<void>
+  handleImportAddress: (ev: MessageEvent, fromBackup: boolean) => Promise<void>
 ) => {
   const s_addresses = getFromBackupFile('addresses', serialized);
   if (!s_addresses) {
@@ -227,7 +227,10 @@ export const importAddresses = async (
 
   // Synchronously import marked addresses to the main window.
   for (const dataObj of importQueue) {
-    await handleImportAddress(new MessageEvent('message', { data: dataObj }));
+    await handleImportAddress(
+      new MessageEvent('message', { data: dataObj }),
+      true
+    );
   }
 };
 

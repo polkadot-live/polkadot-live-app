@@ -104,7 +104,7 @@ export const useMainMessagePorts = () => {
    * @name handleImportAddress
    * @summary Imports a new account when a message is received from `import` window.
    */
-  const handleImportAddress = async (ev: MessageEvent) => {
+  const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     const { chainId, source, address, name } = ev.data.data;
     // Add address to accounts controller.
     const account = AccountsController.add(chainId, source, address, name);
@@ -151,7 +151,8 @@ export const useMainMessagePorts = () => {
       }
 
       // Subscribe to tasks if app setting enabled.
-      ConfigRenderer.enableAutomaticSubscriptions &&
+      !fromBackup &&
+        ConfigRenderer.enableAutomaticSubscriptions &&
         (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
@@ -677,7 +678,7 @@ export const useMainMessagePorts = () => {
           // Message received from `import`.
           switch (ev.data.task) {
             case 'renderer:address:import': {
-              await handleImportAddress(ev);
+              await handleImportAddress(ev, false);
               break;
             }
             case 'renderer:address:remove': {
