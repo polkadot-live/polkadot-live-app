@@ -34,31 +34,67 @@ export class SubscriptionsController {
     switch (task.action) {
       // Get an account's persisted tasks in serialized form.
       case 'subscriptions:account:getAll': {
-        const { address } = task.data;
-        const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
-        const stored = (store as Record<string, AnyData>).get(key) as string;
-        return stored ? stored : '';
+        return this.get(task.data.address);
       }
       // Get persisted chain subscription tasks.
       case 'subscriptions:chain:getAll': {
-        const key = ConfigMain.getChainSubscriptionsStorageKey();
-        const tasks = (store as Record<string, AnyData>).get(key) as string;
-        return tasks ? tasks : '';
+        const ser = this.getChainTasks();
+        return ser === '[]' ? '' : ser;
       }
       // Update a persisted account subscription task.
       case 'subscriptions:account:update': {
         const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
-        this.updateAccountTaskInStore(subTask, account);
+        this.update(subTask, account);
         return;
+      }
+      // Import tasks from a backup text file.
+      case 'subscriptions:account:import': {
+        return this.doImport(task);
       }
       // Update a persisted chain subscription task.
       case 'subscriptions:chain:update': {
         const { serTask }: { serTask: string } = task.data;
-        this.updateChainTaskInStore(JSON.parse(serTask));
+        this.updateChainTask(JSON.parse(serTask));
         return;
       }
     }
+  }
+
+  /**
+   * @name get
+   * @summary Get serialized subscriptions from store for an address.
+   */
+  private static get(address: string): string {
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+    const stored = (store as Record<string, AnyData>).get(key) as string;
+    return stored ? stored : '';
+  }
+
+  /**
+   * @name getChainTasks
+   * @summary Return serialized chain tasks in the store.
+   */
+  private static getChainTasks(): string {
+    const key = ConfigMain.getChainSubscriptionsStorageKey();
+    const stored = (store as Record<string, AnyData>).get(key) as string;
+    return stored ? stored : '[]';
+  }
+
+  /**
+   * @name doImport
+   * @summary Persist new tasks to store and return them to renderer to process.
+   * Receives serialized tasks from an exported backup file.
+   */
+  private static doImport(ipcTask: IpcTask): string {
+    const { serialized }: { serialized: string } = ipcTask.data;
+    const s_array: [string, string][] = JSON.parse(serialized);
+    const s_map = new Map<string, string>(s_array);
+
+    // Key = address, value = serialized tasks.
+    console.log(s_map);
+
+    return 'todo';
   }
 
   /**
@@ -89,40 +125,24 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name updateAccountTaskInStore
+   * @name update
    * @summary Update a persisted account task with the received data.
    */
-  private static updateAccountTaskInStore(
-    task: SubscriptionTask,
-    account: FlattenedAccountData
-  ) {
+  private static update(task: SubscriptionTask, account: FlattenedAccountData) {
+    const ser = this.get(account.address);
+    const tasks: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
     const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
-
-    // Deserialize the account's tasks from store.
-    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
-      key
-    )
-      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-      : [];
-
-    this.updateTaskInStore(tasks, task, key);
+    this.updateTask(tasks, task, key);
   }
 
   /**
-   * @name updateChainTaskInStore
+   * @name updateChainTask
    * @summary Update a persisted chain task with the received data.
    */
-  private static updateChainTaskInStore(task: SubscriptionTask) {
+  private static updateChainTask(task: SubscriptionTask) {
     const key = ConfigMain.getChainSubscriptionsStorageKey();
-
-    // Deserialize all tasks from store.
-    const tasks: SubscriptionTask[] = (store as Record<string, AnyJson>).get(
-      key
-    )
-      ? JSON.parse((store as Record<string, AnyJson>).get(key) as string)
-      : [];
-
-    this.updateTaskInStore(tasks, task, key);
+    const tasks: SubscriptionTask[] = JSON.parse(this.getChainTasks());
+    this.updateTask(tasks, task, key);
   }
 
   /**
@@ -140,14 +160,9 @@ export class SubscriptionsController {
    * @summary Called when an account is renamed.
    */
   static updateCachedAccountNameForTasks(address: string, newName: string) {
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
-    const stored = (store as Record<string, AnyData>).get(key) as string;
+    const ser = this.get(address);
+    const parsed: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
 
-    if (!stored) {
-      return;
-    }
-
-    const parsed: SubscriptionTask[] = JSON.parse(stored);
     if (parsed.length === 0) {
       return;
     }
@@ -157,6 +172,7 @@ export class SubscriptionsController {
       account: { ...task.account, name: newName },
     }));
 
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
     (store as Record<string, AnyJson>).set(key, JSON.stringify(updated));
   }
 
@@ -164,14 +180,24 @@ export class SubscriptionsController {
    * Utilities
    *------------------------------------------------------------*/
 
-  static updateTaskInStore(
+  /**
+   * @name exists
+   * @summary Check if a given subscription task exists in the given array.
+   */
+  private static exists(tasks: SubscriptionTask[], task: SubscriptionTask) {
+    return tasks.some(
+      (t) => t.action === task.action && t.chainId === t.chainId
+    );
+  }
+
+  static updateTask(
     tasks: SubscriptionTask[],
     task: SubscriptionTask,
     key: string
   ) {
     if (task.status === 'enable') {
       // Remove task from array if it already exists.
-      this.taskExistsInArray(tasks, task) &&
+      this.exists(tasks, task) &&
         (tasks = this.removeTaskFromArray(tasks, task));
 
       tasks.push(task);
@@ -184,15 +210,6 @@ export class SubscriptionsController {
 
     // Persist new array to store.
     (store as Record<string, AnyJson>).set(key, JSON.stringify(tasks));
-  }
-
-  private static taskExistsInArray(
-    tasks: SubscriptionTask[],
-    task: SubscriptionTask
-  ) {
-    return tasks.some(
-      (t) => t.action === task.action && t.chainId === t.chainId
-    );
   }
 
   private static removeTaskFromArray(

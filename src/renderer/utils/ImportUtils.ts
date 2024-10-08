@@ -323,6 +323,35 @@ export const importIntervalTasks = async (
 };
 
 /**
+ * @name importAccountSubscriptions
+ * @summary Extract account subscription data from an imported text file and send to application.
+ */
+export const importAccountSubscriptions = async (
+  serialized: string
+): Promise<void> => {
+  const s_tasks = getFromBackupFile('accountTasks', serialized);
+  if (!s_tasks) {
+    return;
+  }
+
+  // TODO: Persist tasks to store in main process.
+  // Receive new tasks after persisting them to store.
+  const s_data =
+    (await window.myAPI.sendSubscriptionTask({
+      action: 'subscriptions:account:import',
+      data: { serialized: s_tasks },
+    })) || '[]';
+
+  // TODO: Parse received tasks to insert and update.
+
+  // TODO: Subscribe to tasks using orchestrator.
+
+  // TODO: Update React state.
+
+  console.log(s_data);
+};
+
+/**
  * @name getFromBackupFile
  * @summary Get some serialized data from backup files.
  * Key may be `addresses`, `events` or `intervals`.

@@ -47,6 +47,7 @@ export interface IpcTask {
     // Subscriptions (Account)
     | 'subscriptions:account:getAll'
     | 'subscriptions:account:update'
+    | 'subscriptions:account:import'
     | 'subscriptions:chain:getAll'
     | 'subscriptions:chain:update'
     // Subscriptions (Interval)
