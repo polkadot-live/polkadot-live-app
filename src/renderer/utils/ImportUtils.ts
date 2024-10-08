@@ -208,19 +208,17 @@ export const importAddresses = async (
       importWindowOpen &&
         postToImport('import:account:add', { json: JSON.stringify(a), source });
 
-      // Handle importing or removing account from main window.
+      // Handle importing or removing account from main window and setting `isImported` flag state.
       const { address, name } = a;
       const chainId = getAddressChainId(address);
 
       if (a.isImported) {
         const data = { data: { data: { address, chainId, name, source } } };
         await handleImportAddress(new MessageEvent('message', data), true);
-        // Update account isImported in import window.
         postToImport('import:address:update', { address: a, source });
       } else {
         const data = { data: { data: { address, chainId } } };
         await handleRemoveAddress(new MessageEvent('message', data));
-        // Update account isImported in import window.
         postToImport('import:address:update', { address: a, source });
       }
     }
