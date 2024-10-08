@@ -5,7 +5,7 @@ import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { FlattenedAccountData, StoredAccountExt } from '@/types/accounts';
+import type { FlattenedAccountData, StoredAccount } from '@/types/accounts';
 import type { IpcTask } from '@/types/communication';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -69,8 +69,8 @@ export class SubscriptionsController {
   static getBackupData(): string {
     // Get imported accounts from store.
     const ser = (store as Record<string, AnyData>).get('imported_accounts');
-    const ser_array: [ChainID, StoredAccountExt[]][] = JSON.parse(ser);
-    const map_accounts = new Map<ChainID, StoredAccountExt[]>(ser_array);
+    const ser_array: [ChainID, StoredAccount[]][] = JSON.parse(ser);
+    const map_accounts = new Map<ChainID, StoredAccount[]>(ser_array);
 
     // Address as key and its serialized subscription tasks as value.
     const map = new Map<string, string>();

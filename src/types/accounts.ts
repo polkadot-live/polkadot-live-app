@@ -73,19 +73,12 @@ export interface ValidatorData {
 
 /*
  * Account data saved in Electron store.
- * TODO: Replace with `StoredAccountExt`.
  */
 export interface StoredAccount {
-  _source: AccountSource;
   _address: string;
-  _name: string;
-}
-
-/*
- * Account data saved in Electron store.
- */
-export interface StoredAccountExt extends StoredAccount {
   _chain: ChainID;
+  _name: string;
+  _source: AccountSource;
 }
 
 /**
