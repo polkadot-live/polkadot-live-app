@@ -45,7 +45,7 @@ export class SubscriptionsController {
       case 'subscriptions:account:update': {
         const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
-        this.update(subTask, account);
+        this.update(subTask, account.address);
         return;
       }
       // Import tasks from a backup text file.
@@ -86,15 +86,20 @@ export class SubscriptionsController {
    * @summary Persist new tasks to store and return them to renderer to process.
    * Receives serialized tasks from an exported backup file.
    */
-  private static doImport(ipcTask: IpcTask): string {
+  private static doImport(ipcTask: IpcTask): void {
     const { serialized }: { serialized: string } = ipcTask.data;
     const s_array: [string, string][] = JSON.parse(serialized);
     const s_map = new Map<string, string>(s_array);
 
-    // Key = address, value = serialized tasks.
-    console.log(s_map);
+    // Iterate map of serialized tasks keyed by an account address.
+    for (const [address, serTasks] of s_map.entries()) {
+      // Clear persisted tasks for an account.
+      this.clearAccountTasksInStore(address);
 
-    return 'todo';
+      // Persist backed up tasks to store.
+      const received: SubscriptionTask[] = JSON.parse(serTasks);
+      received.forEach((t) => this.update(t, address));
+    }
   }
 
   /**
@@ -128,10 +133,10 @@ export class SubscriptionsController {
    * @name update
    * @summary Update a persisted account task with the received data.
    */
-  private static update(task: SubscriptionTask, account: FlattenedAccountData) {
-    const ser = this.get(account.address);
+  private static update(task: SubscriptionTask, address: string) {
+    const ser = this.get(address);
     const tasks: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(account.address);
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
     this.updateTask(tasks, task, key);
   }
 

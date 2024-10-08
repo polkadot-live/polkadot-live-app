@@ -14,8 +14,13 @@ import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
+import { AccountsController } from '@/controller/renderer/AccountsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 type ToastType = 'success' | 'error';
 
@@ -327,28 +332,46 @@ export const importIntervalTasks = async (
  * @summary Extract account subscription data from an imported text file and send to application.
  */
 export const importAccountSubscriptions = async (
-  serialized: string
+  serialized: string,
+  updateRenderedSubscriptions: (task: SubscriptionTask) => void,
+  setAccountSubscriptions: (m: Map<string, SubscriptionTask[]>) => void
 ): Promise<void> => {
   const s_tasks = getFromBackupFile('accountTasks', serialized);
   if (!s_tasks) {
     return;
   }
 
-  // TODO: Persist tasks to store in main process.
-  // Receive new tasks after persisting them to store.
-  const s_data =
-    (await window.myAPI.sendSubscriptionTask({
-      action: 'subscriptions:account:import',
-      data: { serialized: s_tasks },
-    })) || '[]';
+  // Persist tasks to store in main process and get them back.
+  await window.myAPI.sendSubscriptionTask({
+    action: 'subscriptions:account:import',
+    data: { serialized: s_tasks },
+  });
 
-  // TODO: Parse received tasks to insert and update.
+  const s_array: [string, string][] = JSON.parse(s_tasks);
+  const s_map = new Map<string, string>(s_array);
 
-  // TODO: Subscribe to tasks using orchestrator.
+  // Iterate map of serialized tasks keyed by an account address.
+  for (const [address, serTasks] of s_map.entries()) {
+    const parsed: SubscriptionTask[] = JSON.parse(serTasks);
+    if (parsed.length === 0) {
+      continue;
+    }
 
-  // TODO: Update React state.
+    const account = AccountsController.get(parsed[0].chainId, address);
+    if (!account) {
+      continue;
+    }
 
-  console.log(s_data);
+    for (const t of parsed) {
+      await account?.subscribeToTask(t);
+      updateRenderedSubscriptions(t);
+    }
+  }
+
+  // Set subscriptions React state.
+  setAccountSubscriptions(
+    SubscriptionsController.getAccountSubscriptions(AccountsController.accounts)
+  );
 };
 
 /**

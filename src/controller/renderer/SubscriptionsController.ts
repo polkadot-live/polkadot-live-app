@@ -190,7 +190,7 @@ export class SubscriptionsController {
           // Get all possible tasks for account's chain ID.
           .filter((t) => t.chainId === a.chain)
           // Populate tasks with correct arguments.
-          .map((t) => SubscriptionsController.getTaskArgsForAccount(a, t))
+          .map((t) => this.getTaskArgsForAccount(a, t))
           // Merge active tasks in the array.
           .map((t) => {
             for (const active of a.getSubscriptionTasks() || []) {
