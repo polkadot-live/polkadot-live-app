@@ -4,7 +4,8 @@
 import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
 import type { AnyData, AnyJson } from '@/types/misc';
-import type { FlattenedAccountData } from '@/types/accounts';
+import type { ChainID } from '@/types/chains';
+import type { FlattenedAccountData, StoredAccountExt } from '@/types/accounts';
 import type { IpcTask } from '@/types/communication';
 import type { SubscriptionTask } from '@/types/subscriptions';
 
@@ -58,6 +59,33 @@ export class SubscriptionsController {
         return;
       }
     }
+  }
+
+  /**
+   * @name getBackupData
+   * @summary Return a serialized map of account subscription tasks for backup.
+   */
+
+  static getBackupData(): string {
+    // Get imported accounts from store.
+    const ser = (store as Record<string, AnyData>).get('imported_accounts');
+    const ser_array: [ChainID, StoredAccountExt[]][] = JSON.parse(ser);
+    const map_accounts = new Map<ChainID, StoredAccountExt[]>(ser_array);
+
+    // Address as key and its serialized subscription tasks as value.
+    const map = new Map<string, string>();
+
+    // Copy stored account's serialized tasks into map.
+    for (const accounts of map_accounts.values()) {
+      for (const { _address } of accounts) {
+        const key = ConfigMain.getSubscriptionsStorageKeyFor(_address);
+        const ser_tasks: string =
+          (store as Record<string, AnyData>).get(key) || '[]';
+        map.set(_address, ser_tasks);
+      }
+    }
+
+    return JSON.stringify(Array.from(map.entries()));
   }
 
   /**

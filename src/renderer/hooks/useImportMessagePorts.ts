@@ -36,6 +36,7 @@ export const useImportMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'import:account:add': {
+              // Import an address from a backup file.
               const { json, source }: { json: string; source: AccountSource } =
                 ev.data.data;
 
@@ -58,6 +59,7 @@ export const useImportMessagePorts = () => {
               break;
             }
             case 'import:address:update': {
+              // Update state for an address.
               const { address, source } = ev.data.data;
               handleAddressImport(source, address);
               break;
