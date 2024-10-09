@@ -358,13 +358,11 @@ export const importAccountSubscriptions = async (
     }
 
     const account = AccountsController.get(parsed[0].chainId, address);
-    if (!account) {
-      continue;
-    }
-
-    for (const t of parsed) {
-      await account?.subscribeToTask(t);
-      updateRenderedSubscriptions(t);
+    if (account) {
+      for (const t of parsed) {
+        await account?.subscribeToTask(t);
+        updateRenderedSubscriptions(t);
+      }
     }
   }
 
