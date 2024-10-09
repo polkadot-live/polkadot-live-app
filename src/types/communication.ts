@@ -22,11 +22,12 @@ export interface PortPair {
 
 export interface IpcTask {
   action: // Addresses
-  | 'raw-account:persist'
+  | 'raw-account:add'
     | 'raw-account:delete'
-    | 'raw-account:add'
-    | 'raw-account:remove'
     | 'raw-account:get'
+    | 'raw-account:import'
+    | 'raw-account:persist'
+    | 'raw-account:remove'
     | 'raw-account:rename'
     // Accounts
     | 'account:import'
@@ -46,6 +47,7 @@ export interface IpcTask {
     // Subscriptions (Account)
     | 'subscriptions:account:getAll'
     | 'subscriptions:account:update'
+    | 'subscriptions:account:import'
     | 'subscriptions:chain:getAll'
     | 'subscriptions:chain:update'
     // Subscriptions (Interval)

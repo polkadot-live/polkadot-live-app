@@ -11,10 +11,16 @@ import type {
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
+import { AccountsController } from '@/controller/renderer/AccountsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 type ToastType = 'success' | 'error';
 
@@ -166,7 +172,11 @@ export const getSortedLocalLedgerAddresses = (
  * @summary Extract address data from an imported text file and send to application.
  * (main renderer)
  */
-export const importAddresses = async (serialized: string) => {
+export const importAddresses = async (
+  serialized: string,
+  handleImportAddress: (ev: MessageEvent, fromBackup: boolean) => Promise<void>,
+  handleRemoveAddress: (ev: MessageEvent) => Promise<void>
+) => {
   const s_addresses = getFromBackupFile('addresses', serialized);
   if (!s_addresses) {
     return;
@@ -182,15 +192,41 @@ export const importAddresses = async (serialized: string) => {
         ? (JSON.parse(ser) as LedgerLocalAddress[])
         : (JSON.parse(ser) as LocalAddress[]);
 
-    // Persist addresses to Electron store and update import window.
-    parsed.forEach(async (a) => {
+    // Check connection status and set isImported to `false` if app is offline.
+    const isOnline: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+
+    // Process parsed addresses.
+    for (const a of parsed) {
+      a.isImported && !isOnline && (a.isImported = false);
+
+      // Persist or update address in Electron store.
       await window.myAPI.rawAccountTask({
-        action: 'raw-account:persist',
+        action: 'raw-account:import',
         data: { source, serialized: JSON.stringify(a) },
       });
 
-      importWindowOpen && postToImport(a, source);
-    });
+      // Add address and its status to import window's state.
+      importWindowOpen &&
+        postToImport('import:account:add', { json: JSON.stringify(a), source });
+
+      // Handle importing or removing account from main window and setting `isImported` flag state.
+      const { address, name } = a;
+      const chainId = getAddressChainId(address);
+
+      if (a.isImported) {
+        const data = { data: { data: { address, chainId, name, source } } };
+        await handleImportAddress(new MessageEvent('message', data), true);
+        postToImport('import:address:update', { address: a, source });
+      } else {
+        const data = { data: { data: { address, chainId } } };
+        await handleRemoveAddress(new MessageEvent('message', data));
+        postToImport('import:address:update', { address: a, source });
+      }
+    }
   }
 };
 
@@ -292,6 +328,51 @@ export const importIntervalTasks = async (
 };
 
 /**
+ * @name importAccountSubscriptions
+ * @summary Extract account subscription data from an imported text file and send to application.
+ */
+export const importAccountSubscriptions = async (
+  serialized: string,
+  updateRenderedSubscriptions: (task: SubscriptionTask) => void,
+  setAccountSubscriptions: (m: Map<string, SubscriptionTask[]>) => void
+): Promise<void> => {
+  const s_tasks = getFromBackupFile('accountTasks', serialized);
+  if (!s_tasks) {
+    return;
+  }
+
+  // Persist tasks to store in main process and get them back.
+  await window.myAPI.sendSubscriptionTask({
+    action: 'subscriptions:account:import',
+    data: { serialized: s_tasks },
+  });
+
+  const s_array: [string, string][] = JSON.parse(s_tasks);
+  const s_map = new Map<string, string>(s_array);
+
+  // Iterate map of serialized tasks keyed by an account address.
+  for (const [address, serTasks] of s_map.entries()) {
+    const parsed: SubscriptionTask[] = JSON.parse(serTasks);
+    if (parsed.length === 0) {
+      continue;
+    }
+
+    const account = AccountsController.get(parsed[0].chainId, address);
+    if (account) {
+      for (const t of parsed) {
+        await account?.subscribeToTask(t);
+        updateRenderedSubscriptions(t);
+      }
+    }
+  }
+
+  // Set subscriptions React state.
+  setAccountSubscriptions(
+    SubscriptionsController.getAccountSubscriptions(AccountsController.accounts)
+  );
+};
+
+/**
  * @name getFromBackupFile
  * @summary Get some serialized data from backup files.
  * Key may be `addresses`, `events` or `intervals`.
@@ -307,15 +388,9 @@ const getFromBackupFile = (
 
 /**
  * @name postToImport
- * @summary Utility to post message to import window.
+ * @summary Utility to post a message to the import window.
  * (main renderer)
  */
-const postToImport = (
-  json: LocalAddress | LedgerLocalAddress,
-  source: AccountSource
-) => {
-  ConfigRenderer.portToImport?.postMessage({
-    task: 'import:account:add',
-    data: { json: JSON.stringify(json), source },
-  });
+const postToImport = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
 };
