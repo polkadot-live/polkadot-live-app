@@ -14,8 +14,13 @@ import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
+import { AccountsController } from '@/controller/renderer/AccountsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 type ToastType = 'success' | 'error';
 
@@ -320,6 +325,51 @@ export const importIntervalTasks = async (
       });
     });
   }
+};
+
+/**
+ * @name importAccountSubscriptions
+ * @summary Extract account subscription data from an imported text file and send to application.
+ */
+export const importAccountSubscriptions = async (
+  serialized: string,
+  updateRenderedSubscriptions: (task: SubscriptionTask) => void,
+  setAccountSubscriptions: (m: Map<string, SubscriptionTask[]>) => void
+): Promise<void> => {
+  const s_tasks = getFromBackupFile('accountTasks', serialized);
+  if (!s_tasks) {
+    return;
+  }
+
+  // Persist tasks to store in main process and get them back.
+  await window.myAPI.sendSubscriptionTask({
+    action: 'subscriptions:account:import',
+    data: { serialized: s_tasks },
+  });
+
+  const s_array: [string, string][] = JSON.parse(s_tasks);
+  const s_map = new Map<string, string>(s_array);
+
+  // Iterate map of serialized tasks keyed by an account address.
+  for (const [address, serTasks] of s_map.entries()) {
+    const parsed: SubscriptionTask[] = JSON.parse(serTasks);
+    if (parsed.length === 0) {
+      continue;
+    }
+
+    const account = AccountsController.get(parsed[0].chainId, address);
+    if (account) {
+      for (const t of parsed) {
+        await account?.subscribeToTask(t);
+        updateRenderedSubscriptions(t);
+      }
+    }
+  }
+
+  // Set subscriptions React state.
+  setAccountSubscriptions(
+    SubscriptionsController.getAccountSubscriptions(AccountsController.accounts)
+  );
 };
 
 /**

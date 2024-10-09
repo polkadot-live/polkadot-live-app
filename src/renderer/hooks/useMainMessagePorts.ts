@@ -15,6 +15,7 @@ import {
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import {
+  importAccountSubscriptions,
   importAddresses,
   importEvents,
   importIntervalTasks,
@@ -340,18 +341,31 @@ export const useMainMessagePorts = () => {
           }
 
           const { serialized } = response.data;
+
+          // Addresses.
           await importAddresses(
             serialized,
             handleImportAddress,
             handleRemoveAddress
           );
+
+          // Events.
           await importEvents(serialized, setEvents);
+
+          // Interval subscriptions.
           await importIntervalTasks(
             serialized,
             tryAddIntervalSubscription,
             tryUpdateDynamicIntervalTask,
             addIntervalSubscription,
             updateIntervalSubscription
+          );
+
+          // Account subscriptions.
+          await importAccountSubscriptions(
+            serialized,
+            updateRenderedSubscriptions,
+            setAccountSubscriptions
           );
 
           postToSettings(response.result, 'Data imported successfully.');

@@ -132,11 +132,8 @@ export const BootstrappingProvider = ({
         );
 
         await Promise.all([
-          // Fetch account nonce and balance.
           fetchAccountBalances(),
-          // Use API instance to initialize account nomination pool data.
           fetchAccountNominationPoolData(),
-          // Initialize account nominating data.
           fetchAccountNominatingData(),
         ]);
       }
@@ -259,11 +256,8 @@ export const BootstrappingProvider = ({
     // Fetch up-to-date account data.
     if (!aborted) {
       await Promise.all([
-        // Fetch account nonce and balance.
         fetchAccountBalances(),
-        // Use API instance to initialize account nomination pool data.
         fetchAccountNominationPoolData(),
-        // Initialize account nominating data.
         fetchAccountNominatingData(),
       ]);
     }
