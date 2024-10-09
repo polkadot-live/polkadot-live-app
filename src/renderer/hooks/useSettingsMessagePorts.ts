@@ -4,10 +4,12 @@
 import { Config as ConfigSettings } from '@/config/processes/settings';
 
 /// Settings window contexts.
-import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
+import { useConnections } from '../contexts/common/Connections';
 import { useEffect } from 'react';
+import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
 
 export const useSettingsMessagePorts = () => {
+  const { setIsImporting } = useConnections();
   const { setWindowDocked, setSilenceOsNotifications, renderToastify } =
     useSettingFlags();
 
@@ -38,6 +40,11 @@ export const useSettingsMessagePorts = () => {
             case 'settings:render:toast': {
               const { success, text } = ev.data.data;
               renderToastify(success, text);
+              break;
+            }
+            case 'settings:set:isImporting': {
+              const { flag } = ev.data.data;
+              setIsImporting(flag);
               break;
             }
             default: {
