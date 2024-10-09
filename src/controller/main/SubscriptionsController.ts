@@ -3,6 +3,7 @@
 
 import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
+import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import type { AnyData, AnyJson } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { FlattenedAccountData, StoredAccount } from '@/types/accounts';
@@ -96,9 +97,11 @@ export class SubscriptionsController {
       // Clear persisted tasks for an account.
       this.clearAccountTasksInStore(address);
 
-      // Persist backed up tasks to store.
-      const received: SubscriptionTask[] = JSON.parse(serTasks);
-      received.forEach((t) => this.update(t, address));
+      // Persist backed up tasks to store if online.
+      if (OnlineStatusController.getStatus()) {
+        const received: SubscriptionTask[] = JSON.parse(serTasks);
+        received.forEach((t) => this.update(t, address));
+      }
     }
   }
 
