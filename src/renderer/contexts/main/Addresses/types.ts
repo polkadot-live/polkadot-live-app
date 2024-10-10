@@ -17,7 +17,8 @@ export interface AddressesContextInterface {
     n: ChainID,
     s: AccountSource,
     a: string,
-    b: string
+    b: string,
+    fromBackup: boolean
   ) => Promise<void>;
   removeAddress: (n: ChainID, a: string) => Promise<void>;
   getAddress: (a: string) => FlattenedAccountData | null;

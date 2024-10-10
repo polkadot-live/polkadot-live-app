@@ -6,6 +6,7 @@ import type { DismissEvent, EventCallback } from '@/types/reporter';
 
 export interface EventsContextInterface {
   events: EventsState;
+  setEvents: (events: EventCallback[]) => void;
   addEvent: (e: EventCallback) => void;
   dismissEvent: (e: DismissEvent) => void;
   sortAllEvents: (newestFirst: boolean) => EventCallback[];

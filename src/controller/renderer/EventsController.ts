@@ -192,6 +192,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const address = account.address;
+        const source = account.source;
         const accountName = entry.task.account!.name;
 
         return {
@@ -204,6 +205,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Free Balance',
@@ -224,6 +226,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const address = account.address;
+        const source = account.source;
         const accountName = entry.task.account!.name;
 
         return {
@@ -236,6 +239,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Frozen Balance',
@@ -256,6 +260,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const address = account.address;
+        const source = account.source;
         const accountName = entry.task.account!.name;
 
         return {
@@ -268,6 +273,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Reserved Balance',
@@ -288,6 +294,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const address = account.address;
+        const source = account.source;
         const accountName = entry.task.account!.name;
 
         return {
@@ -300,6 +307,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Spendable Balance',
@@ -399,7 +407,7 @@ export class EventsController {
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName } = flattenedAccount;
+        const { address, name: accountName, source } = flattenedAccount;
         const { poolState, poolId } = flattenedAccount.nominationPoolData!;
         const { prevState } = miscData;
 
@@ -413,6 +421,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nomination Pool State',
@@ -439,7 +448,7 @@ export class EventsController {
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName } = flattenedAccount;
+        const { address, name: accountName, source } = flattenedAccount;
         const { poolName, poolId } = flattenedAccount.nominationPoolData!;
         const { prevName } = miscData;
 
@@ -453,6 +462,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nomination Pool Name',
@@ -479,7 +489,7 @@ export class EventsController {
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName } = flattenedAccount;
+        const { address, name: accountName, source } = flattenedAccount;
         const { poolRoles, poolId } = flattenedAccount.nominationPoolData!;
         const { poolRoles: prevRoles } = miscData;
 
@@ -493,6 +503,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
@@ -519,7 +530,7 @@ export class EventsController {
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName } = flattenedAccount;
+        const { address, name: accountName, source } = flattenedAccount;
         const { poolCommission } = flattenedAccount.nominationPoolData!;
         const { poolCommission: prevCommission } = miscData;
 
@@ -533,6 +544,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nomination Pool Commission',
@@ -555,7 +567,7 @@ export class EventsController {
         // eslint-disable-next-line prettier/prettier
         const { eraRewards, era }: { eraRewards: BigNumber; era: string } = miscData;
         const { chainId } = entry.task;
-        const { address, name: accountName } = entry.task.account!;
+        const { address, name: accountName, source } = entry.task.account!;
 
         return {
           uid: '',
@@ -567,6 +579,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nominating Rewards',
@@ -594,7 +607,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:exposure': {
         const { chainId } = entry.task;
-        const { address, name: accountName } = entry.task.account!;
+        const { address, name: accountName, source } = entry.task.account!;
         const { era, exposed }: { era: number; exposed: boolean } = miscData;
 
         const subtitle = exposed
@@ -611,6 +624,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Era Exposure',
@@ -634,7 +648,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:commission': {
         const { chainId } = entry.task;
-        const { address, name: accountName } = entry.task.account!;
+        const { address, name: accountName, source } = entry.task.account!;
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
 
@@ -652,6 +666,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Commission Changed',
@@ -672,7 +687,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:nominations': {
         const { chainId } = entry.task;
-        const { address, name: accountName } = entry.task.account!;
+        const { address, name: accountName, source } = entry.task.account!;
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
 
@@ -690,6 +705,7 @@ export class EventsController {
               accountName,
               address,
               chainId,
+              source,
             } as EventAccountData,
           },
           title: 'Nominations Changed',

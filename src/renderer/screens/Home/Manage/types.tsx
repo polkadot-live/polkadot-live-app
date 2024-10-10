@@ -46,5 +46,4 @@ export interface PermissionRowProps {
 
 export interface IntervalRowProps {
   task: IntervalSubscription;
-  isTaskDisabled: () => boolean;
 }

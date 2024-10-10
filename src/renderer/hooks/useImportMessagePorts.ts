@@ -4,6 +4,7 @@
 import { Config as ConfigImport } from '@/config/processes/import';
 
 /// Import window contexts.
+import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
@@ -18,6 +19,7 @@ export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
+  const { handleAddressImport } = useAddresses();
 
   /**
    * @name handleReceivedPort
@@ -34,6 +36,7 @@ export const useImportMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'import:account:add': {
+              // Import an address from a backup file.
               const { json, source }: { json: string; source: AccountSource } =
                 ev.data.data;
 
@@ -53,6 +56,12 @@ export const useImportMessagePorts = () => {
             case 'import:connection:status': {
               const { status } = ev.data.data;
               setIsConnected(status);
+              break;
+            }
+            case 'import:address:update': {
+              // Update state for an address.
+              const { address, source } = ev.data.data;
+              handleAddressImport(source, address);
               break;
             }
             default: {

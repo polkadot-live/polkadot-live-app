@@ -35,6 +35,7 @@ export class Config {
 
   // Flags to handle data processes.
   private static _exportingData = false;
+  private static _importingData = false;
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -153,6 +154,14 @@ export class Config {
 
   static set exportingData(flag: boolean) {
     Config._exportingData = flag;
+  }
+
+  static get importingData(): boolean {
+    return Config._importingData;
+  }
+
+  static set importingData(flag: boolean) {
+    Config._importingData = flag;
   }
 
   // Setter for app's tray object.

@@ -21,7 +21,7 @@ export class AnalyticsController {
 
     this.umami = new Umami(ipAddress(), agent, language);
     this.enabled = true;
-    this.umami.view(`/${windowId}`, { data: {} });
+    windowId !== 'tabs' && this.umami.view(`/${windowId}`, { data: {} });
   }
 
   /**

@@ -69,15 +69,17 @@ export const ImportHandlerProvider = ({
     imported: LocalAddress | LedgerLocalAddress,
     source: AccountSource
   ) => {
-    const { address } = imported;
+    const { address, isImported } = imported;
 
     // Return if address is already imported.
     if (isAlreadyImported(address)) {
       return;
     }
 
-    insertAccountStatus(address, source);
-    imported.isImported = false;
+    // Set processing flag for account if it needs importing.
+    isImported
+      ? setStatusForAccount(address, source, true)
+      : insertAccountStatus(address, source);
 
     // Update addresses state and references.
     handleAddressImport(source, imported);

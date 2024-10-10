@@ -43,6 +43,7 @@ import type {
   SubscriptionTask,
   TaskCategory,
 } from '@/types/subscriptions';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 
 export const Permissions = ({
   breadcrumb,
@@ -52,6 +53,7 @@ export const Permissions = ({
 }: PermissionsProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
+  const { isImporting } = useConnections();
   const { online: isOnline, isConnecting } = useBootstrapping();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
@@ -143,7 +145,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline || isConnecting) {
+    if (!isOnline || isConnecting || isImporting) {
       return true;
     }
 
@@ -168,7 +170,7 @@ export const Permissions = ({
   };
 
   /// Determines if interval task should be disabled.
-  const isIntervalTaskDisabled = () => !isOnline || isConnecting;
+  const isIntervalTaskDisabled = () => !isOnline || isConnecting || isImporting;
 
   /// Get unique key for the task row component.
   const getKey = (
@@ -483,7 +485,6 @@ export const Permissions = ({
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
-                    isTaskDisabled={isIntervalTaskDisabled}
                     task={task}
                   />
                 ))}

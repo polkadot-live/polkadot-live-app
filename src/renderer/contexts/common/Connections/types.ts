@@ -3,5 +3,7 @@
 
 export interface ConnectionsContextInterface {
   isConnected: boolean;
-  setIsConnected: (flag: boolean) => void;
+  isImporting: boolean;
+  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
 }

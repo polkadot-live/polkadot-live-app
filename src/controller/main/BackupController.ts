@@ -5,6 +5,9 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/main/AddressesController';
+import { EventsController } from '@/controller/main/EventsController';
+import { IntervalsController } from '@/controller/main/IntervalsController';
+import { SubscriptionsController } from './SubscriptionsController';
 import type { ExportResult, ImportResult } from '@/types/backup';
 
 export class BackupController {
@@ -36,7 +39,7 @@ export class BackupController {
     // Handle save or cancel.
     if (!canceled && filePath) {
       try {
-        const serialized = AddressesController.getAll();
+        const serialized = this.getExportData();
         await fsPromises.writeFile(filePath, serialized, {
           encoding: 'utf8',
         });
@@ -82,5 +85,24 @@ export class BackupController {
     } else {
       return { result: false, msg: 'canceled' };
     }
+  }
+
+  /**
+   * @name getExportData
+   * @summary Return serialized backup data which should be written to a text file.
+   */
+  private static getExportData(): string {
+    const map = new Map<string, string>();
+    const addresses = AddressesController.getBackupData();
+    const events = EventsController.getBackupData();
+    const intervals = IntervalsController.getBackupData();
+    const accountTasks = SubscriptionsController.getBackupData();
+
+    map.set('addresses', addresses);
+    map.set('events', events);
+    map.set('intervals', intervals);
+    map.set('accountTasks', accountTasks);
+
+    return JSON.stringify(Array.from(map));
   }
 }

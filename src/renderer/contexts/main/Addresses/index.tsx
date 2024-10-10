@@ -48,21 +48,24 @@ export const AddressesProvider = ({
     chain: ChainID,
     source: AccountSource,
     address: string,
-    name: string
+    name: string,
+    fromBackup = false
   ) => {
     // Update accounts state.
     setAddresses(AccountsController.getAllFlattenedAccountData());
 
-    // Have main process send OS notification.
-    await window.myAPI.sendAccountTask({
-      action: 'account:import',
-      data: {
-        chainId: chain,
-        source,
-        address,
-        name,
-      },
-    });
+    // Show OS notification for new address imports.
+    if (!fromBackup) {
+      await window.myAPI.sendAccountTask({
+        action: 'account:import',
+        data: {
+          chainId: chain,
+          source,
+          address,
+          name,
+        },
+      });
+    }
   };
 
   // Removes an imported address.

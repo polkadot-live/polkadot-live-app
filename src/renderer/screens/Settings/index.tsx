@@ -15,11 +15,13 @@ import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Scrollable } from '@/renderer/utils/common';
+import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { OsPlatform, SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
   useSettingsMessagePorts();
+  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   /// Active accordion indices for settings panels.
@@ -32,7 +34,6 @@ export const Settings: React.FC = () => {
       const platform = await window.myAPI.getOsPlatform();
       setOsPlatform(platform as OsPlatform);
     };
-
     initOsPlatform();
   }, []);
 

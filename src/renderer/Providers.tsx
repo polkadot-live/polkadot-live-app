@@ -61,6 +61,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         AddressesProvider,
         AppSettingsProvider,
         ChainsProvider,
@@ -92,6 +93,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         SettingFlagsProvider,
         WebsocketServerProvider,
         WorkspacesProvider

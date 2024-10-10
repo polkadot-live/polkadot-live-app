@@ -7,6 +7,8 @@ import type { IntervalSubscription } from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
 
 export class IntervalsController {
+  private static key = 'interval_subscriptions';
+
   /**
    * @name process
    * @summary Process an interval subscription IPC task.
@@ -31,6 +33,9 @@ export class IntervalsController {
         this.update(task);
         return;
       }
+      case 'interval:tasks:import': {
+        return this.doImport(task);
+      }
     }
   }
 
@@ -40,15 +45,19 @@ export class IntervalsController {
    */
   private static add(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyData> = store;
-
-    const stored: IntervalSubscription[] = storePointer.get(key)
-      ? JSON.parse(storePointer.get(key) as string)
-      : [];
-
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
     stored.push(JSON.parse(serialized));
-    storePointer.set(key, JSON.stringify(stored));
+    this.set(stored);
+  }
+
+  /**
+   * @name addMulti
+   * @summary Add multiple interval subscription to store.
+   */
+  private static addMulti(tasks: IntervalSubscription[]) {
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    tasks.forEach((t) => stored.push(t));
+    this.set(stored);
   }
 
   /**
@@ -56,10 +65,66 @@ export class IntervalsController {
    * @summary Clear interval subscriptions from store.
    */
   private static clear(): string {
-    const key = 'interval_subscriptions';
     const storePointer: Record<string, AnyData> = store;
-    storePointer.delete(key);
+    storePointer.delete(this.key);
     return 'done';
+  }
+
+  /**
+   * @name compare
+   * @summary Compare data of two tasks to determine if they're the same task.
+   */
+  private static compare(
+    left: IntervalSubscription,
+    right: IntervalSubscription
+  ): boolean {
+    return left.action === right.action &&
+      left.chainId === right.chainId &&
+      left.referendumId === right.referendumId
+      ? true
+      : false;
+  }
+
+  /**
+   * @name doImport
+   * @summary Persist new tasks to store and return them to renderer to process.
+   * Receives serialized tasks from an exported backup file.
+   */
+  private static doImport(ipcTask: IpcTask): string {
+    const { serialized }: { serialized: string } = ipcTask.data;
+    const received: IntervalSubscription[] = JSON.parse(serialized);
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+
+    // Persist imported tasks to store.
+    const inserts = received.filter((t) => !this.exists(t, stored));
+    const updates = received.filter((t) => this.exists(t, stored));
+
+    inserts.length !== 0 && this.addMulti(inserts);
+    updates.forEach((t) => this.updateTask(t));
+
+    // Serialize new and updated tasks in a map structure.
+    const map = new Map<string, string>();
+    map.set('insert', JSON.stringify(inserts));
+    map.set('update', JSON.stringify(updates));
+
+    // Return tasks in serialized form.
+    return JSON.stringify(Array.from(map.entries()));
+  }
+
+  /**
+   * @name exists
+   * @summary Check if a given interval subscription task exists in the store.
+   */
+  private static exists(
+    task: IntervalSubscription,
+    stored: IntervalSubscription[]
+  ): boolean {
+    for (const item of stored) {
+      if (this.compare(task, item)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -67,10 +132,17 @@ export class IntervalsController {
    * @summary Get serialized interval subscriptions from store.
    */
   private static get(): string {
-    const key = 'interval_subscriptions';
     const storePointer: Record<string, AnyData> = store;
-    const stored: string = storePointer.get(key) || '[]';
+    const stored: string = storePointer.get(this.key) || '[]';
     return stored;
+  }
+
+  /**
+   * @name getBackupData
+   * @summary Get stored serialized tasks for writing to a backup text file.
+   */
+  static getBackupData(): string {
+    return this.get();
   }
 
   /**
@@ -79,14 +151,8 @@ export class IntervalsController {
    */
   private static remove(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyData> = store;
-
-    const stored: IntervalSubscription[] = storePointer.get(key)
-      ? JSON.parse(storePointer.get(key) as string)
-      : [];
-
     const target: IntervalSubscription = JSON.parse(serialized);
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
     const filtered = stored.filter(
       (t) =>
         !(
@@ -95,8 +161,16 @@ export class IntervalsController {
           t.referendumId === target.referendumId
         )
     );
+    this.set(filtered);
+  }
 
-    storePointer.set(key, JSON.stringify(filtered));
+  /**
+   * @name set
+   * @summary Updates stored interval subscriptions.
+   */
+  private static set(tasks: IntervalSubscription[]) {
+    const storePointer: Record<string, AnyData> = store;
+    storePointer.set(this.key, JSON.stringify(tasks));
   }
 
   /**
@@ -105,22 +179,19 @@ export class IntervalsController {
    */
   private static update(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
-    const key = 'interval_subscriptions';
-    const storePointer: Record<string, AnyData> = store;
-
     const target: IntervalSubscription = JSON.parse(serialized);
-    const stored: IntervalSubscription[] = storePointer.get(key)
-      ? JSON.parse(storePointer.get(key) as string)
-      : [];
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    const updated = stored.map((t) => (this.compare(target, t) ? target : t));
+    this.set(updated);
+  }
 
-    const updated = stored.map((t) =>
-      t.action === target.action &&
-      t.chainId === target.chainId &&
-      t.referendumId === target.referendumId
-        ? target
-        : t
-    );
-
-    storePointer.set(key, JSON.stringify(updated));
+  /**
+   * @name updateTask
+   * @summary Update data for an existing task persisted in the store.
+   */
+  private static updateTask(task: IntervalSubscription) {
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    const updated = stored.map((t) => (this.compare(task, t) ? task : t));
+    this.set(updated);
   }
 }
