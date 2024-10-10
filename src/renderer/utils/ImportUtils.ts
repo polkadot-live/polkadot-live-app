@@ -394,34 +394,3 @@ const getFromBackupFile = (
 const postToImport = (task: string, dataObj: AnyData) => {
   ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
 };
-
-/**
- * @name broadcastImportingFlag
- * @summary Set `isImporting` flag for all windows.
- */
-
-// TODO: Set importing flag when window initially opens.
-export const broadcastImportingFlag = async (flag: boolean): Promise<void> => {
-  for (const viewId of ['import', 'settings']) {
-    if (!(await window.myAPI.isViewOpen(viewId))) {
-      continue;
-    }
-
-    const task = `${viewId}:set:isImporting`;
-    const data = { flag };
-
-    switch (viewId) {
-      case 'import': {
-        ConfigRenderer.portToImport?.postMessage({ task, data });
-        break;
-      }
-      case 'settings': {
-        ConfigRenderer.portToSettings?.postMessage({ task, data });
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
-};

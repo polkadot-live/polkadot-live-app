@@ -17,7 +17,7 @@ import type {
 
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
-  const { setIsConnected, setIsImporting } = useConnections();
+  const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
 
@@ -62,11 +62,6 @@ export const useImportMessagePorts = () => {
               // Update state for an address.
               const { address, source } = ev.data.data;
               handleAddressImport(source, address);
-              break;
-            }
-            case 'import:set:isImporting': {
-              const { flag } = ev.data.data;
-              setIsImporting(flag);
               break;
             }
             default: {

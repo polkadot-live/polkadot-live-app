@@ -15,7 +15,6 @@ import {
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
 import {
-  broadcastImportingFlag,
   importAccountSubscriptions,
   importAddresses,
   importEvents,
@@ -32,7 +31,6 @@ import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useConnections } from '../contexts/common/Connections';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
@@ -54,7 +52,6 @@ export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
-  const { setIsImporting } = useConnections();
   const { setEvents, updateEventsOnAccountRename } = useEvents();
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
 
@@ -338,8 +335,7 @@ export const useMainMessagePorts = () => {
     switch (response.msg) {
       case 'success': {
         // Broadcast importing flag.
-        setIsImporting(true);
-        broadcastImportingFlag(true);
+        window.myAPI.relayModeFlag('isImporting', true);
 
         try {
           if (!response.data) {
@@ -380,8 +376,7 @@ export const useMainMessagePorts = () => {
         }
 
         // Broadcast importing flag.
-        setIsImporting(false);
-        broadcastImportingFlag(false);
+        window.myAPI.relayModeFlag('isImporting', false);
         break;
       }
       case 'canceled': {

@@ -14,6 +14,7 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import { Config as ConfigMain } from '@/config/processes/main';
 import { AccountsController } from '@/controller/main/AccountsController';
 import { AddressesController } from '@/controller/main/AddressesController';
 import { AnalyticsController } from './controller/main/AnalyticsController';
@@ -351,6 +352,44 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:settings:get', async () =>
     SettingsController.getAppSettings()
   );
+
+  ipcMain.on('app:modeFlag:relay', (_, settingId: string, flag: boolean) => {
+    switch (settingId) {
+      case 'isImporting': {
+        ConfigMain.importingData = flag;
+
+        // Send to main window.
+        WindowsController.getWindow('menu')?.webContents.send(
+          'renderer:setting:set',
+          settingId,
+          flag
+        );
+
+        // Send to open views.
+        for (const viewId of ['import', 'settings']) {
+          const view = WindowsController.getView(viewId);
+          view &&
+            view.webContents.send(`renderer:modeFlag:set`, settingId, flag);
+        }
+
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
+
+  ipcMain.handle('app:modeFlag:get', async (_, modeId: string) => {
+    switch (modeId) {
+      case 'isImporting': {
+        return ConfigMain.importingData;
+      }
+      default: {
+        return false;
+      }
+    }
+  });
 
   /**
    * Ledger

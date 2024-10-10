@@ -55,6 +55,12 @@ export interface PreloadAPI {
   closeWindow: ApiCloseWindow;
   quitApp: ApiEmptyPromiseRequest;
 
+  getModeFlag: (modeId: string) => Promise<boolean>;
+  syncModeFlags: (
+    callback: (_: IpcRendererEvent, settingId: string, flag: boolean) => void
+  ) => void;
+  relayModeFlag: (modeId: string, flag: boolean) => void;
+
   handleOpenTab: (
     callback: (_: IpcRendererEvent, tabData: TabData) => void
   ) => void;

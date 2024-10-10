@@ -190,6 +190,16 @@ export const API: PreloadAPI = {
     ipcRenderer.send('app:view:close', destroyViewId, showViewId),
   isViewOpen: (viewId) => ipcRenderer.invoke('app:view:isOpen', viewId),
 
+  // Returns a mode flag cached in the main process to the requesting renderer.
+  getModeFlag: async (modeId: string): Promise<boolean> =>
+    await ipcRenderer.invoke('app:modeFlag:get', modeId),
+  // Called when a mode flag changes in any renderer to broadcast it to every renderer.
+  relayModeFlag: (modeId: string, flag: boolean) =>
+    ipcRenderer.send('app:modeFlag:relay', modeId, flag),
+  // Callback provided in useModeFlagsSyncing hook to sync state between renderers.
+  syncModeFlags: (callback) =>
+    ipcRenderer.on('renderer:modeFlag:set', callback),
+
   /**
    * Chain management
    */

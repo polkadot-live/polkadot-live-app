@@ -14,20 +14,22 @@ import { Manage } from './Manage';
 import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
+import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
-import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 
 export const Home = () => {
   // Set up port communication for the `main` renderer.
   useMainMessagePorts();
-
-  const { getAddresses } = useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
+  useAppModesSyncing();
 
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
+
+  const { getAddresses } = useAddresses();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
 
   // Get app loading flag.
   const { appLoading } = useBootstrapping();
