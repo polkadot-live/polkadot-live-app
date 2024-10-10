@@ -145,7 +145,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline || isConnecting) {
+    if (!isOnline || isConnecting || isImporting) {
       return true;
     }
 
