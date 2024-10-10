@@ -359,8 +359,8 @@ app.whenReady().then(async () => {
         ConfigMain.importingData = flag;
 
         // Send to main window.
-        WindowsController.getWindow('menu')?.webContents.send(
-          'renderer:setting:set',
+        WindowsController.getWindow('menu')?.webContents?.send(
+          'renderer:modeFlag:set',
           modeId,
           flag
         );
