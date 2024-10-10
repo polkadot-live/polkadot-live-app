@@ -353,23 +353,22 @@ app.whenReady().then(async () => {
     SettingsController.getAppSettings()
   );
 
-  ipcMain.on('app:modeFlag:relay', (_, settingId: string, flag: boolean) => {
-    switch (settingId) {
+  ipcMain.on('app:modeFlag:relay', (_, modeId: string, flag: boolean) => {
+    switch (modeId) {
       case 'isImporting': {
         ConfigMain.importingData = flag;
 
         // Send to main window.
         WindowsController.getWindow('menu')?.webContents.send(
           'renderer:setting:set',
-          settingId,
+          modeId,
           flag
         );
 
         // Send to open views.
         for (const viewId of ['import', 'settings']) {
           const view = WindowsController.getView(viewId);
-          view &&
-            view.webContents.send(`renderer:modeFlag:set`, settingId, flag);
+          view && view.webContents.send(`renderer:modeFlag:set`, modeId, flag);
         }
 
         break;
