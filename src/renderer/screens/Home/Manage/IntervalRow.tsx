@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping } from '@/renderer/contexts/main/Bootstrapping';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useIntervalTasksManager } from '@/renderer/contexts/main/IntervalTasksManager';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
@@ -23,10 +24,12 @@ import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 import type { AnyData } from '@/types/misc';
 import type { IntervalRowProps } from './types';
 
-export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
+export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
-  const { online: isConnected } = useBootstrapping();
+  const { online: isConnected, isConnecting } = useBootstrapping();
+  const { isImporting } = useConnections();
+
   const {
     handleIntervalToggle,
     handleIntervalNativeCheckbox,
@@ -48,6 +51,14 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
   const [intervalSetting, setIntervalSetting] = useState(
     task.intervalSetting.ticksToWait
   );
+
+  const [isDisabled, setIsDisabled] = useState<boolean>(
+    isConnecting || !isConnected || isImporting
+  );
+
+  useEffect(() => {
+    setIsDisabled(isConnecting || !isConnected || isImporting);
+  }, [isConnecting, isConnected, isImporting]);
 
   useEffect(() => {
     const newStatusToBoolean = task.status === 'enable';
@@ -74,7 +85,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
   };
 
   const handleNativeCheckbox = async () => {
-    if (!isTaskDisabled() && task.status === 'enable') {
+    if (!isDisabled && task.status === 'enable') {
       const flag = !nativeChecked;
       await handleIntervalNativeCheckbox(task, flag);
       setNativeChecked(flag);
@@ -149,7 +160,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
             onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
           >
             {/* One-shot is enabled and not processing. */}
-            {!isTaskDisabled() && !oneShotProcessing && (
+            {!isDisabled && !oneShotProcessing && (
               <FontAwesomeIcon
                 className="enabled"
                 icon={faAnglesDown}
@@ -161,7 +172,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
             )}
 
             {/* One-shot is enabled and processing */}
-            {!isTaskDisabled() && oneShotProcessing && (
+            {!isDisabled && oneShotProcessing && (
               <FontAwesomeIcon
                 className="processing"
                 fade
@@ -171,7 +182,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
             )}
 
             {/* One-shot disabled */}
-            {isTaskDisabled() && (
+            {isDisabled && (
               <FontAwesomeIcon
                 className="disabled"
                 icon={faAnglesDown}
@@ -186,13 +197,11 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
             data-tooltip-text={'Set Interval'}
             onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
           >
-            {!intervalClicked || isTaskDisabled() ? (
+            {!intervalClicked || isDisabled ? (
               <div
                 className="badge-container"
                 onClick={() =>
-                  setIntervalClicked((prev) =>
-                    isTaskDisabled() ? prev : !prev
-                  )
+                  setIntervalClicked((prev) => (isDisabled ? prev : !prev))
                 }
               >
                 <div className="interval-badge">
@@ -202,7 +211,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
                   style={{
                     position: 'absolute',
                     top: '-4px',
-                    opacity: isTaskDisabled() ? '0.3' : '1',
+                    opacity: isDisabled ? '0.3' : '1',
                   }}
                   className="enabled"
                   icon={faClock}
@@ -212,7 +221,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
             ) : (
               <div className="select-wrapper">
                 <select
-                  disabled={isTaskDisabled()}
+                  disabled={isDisabled}
                   className="select-interval"
                   id="select-interval"
                   value={intervalSetting}
@@ -251,7 +260,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
               {/* Main icon */}
               <FontAwesomeIcon
                 className={
-                  !isTaskDisabled() && task.status === 'enable'
+                  !isDisabled && task.status === 'enable'
                     ? nativeChecked
                       ? 'checked'
                       : 'unchecked'
@@ -276,7 +285,7 @@ export const IntervalRow = ({ task, isTaskDisabled }: IntervalRowProps) => {
 
           {/* Toggle Switch */}
           <Switch
-            disabled={isTaskDisabled()}
+            disabled={isDisabled}
             size="sm"
             type="primary"
             isOn={isToggled}

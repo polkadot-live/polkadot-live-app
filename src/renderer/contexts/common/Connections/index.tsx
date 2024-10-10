@@ -16,11 +16,16 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  // Connection flag set to `true` when app is in online mode.
+  // Flag set to `true` when app is in online mode.
   const [isConnected, setIsConnected] = useState(false);
 
+  // Flag set to `true` when app is importing data from backup file.
+  const [isImporting, setIsImporting] = useState(false);
+
   return (
-    <ConnectionsContext.Provider value={{ isConnected, setIsConnected }}>
+    <ConnectionsContext.Provider
+      value={{ isConnected, setIsConnected, isImporting, setIsImporting }}
+    >
       {children}
     </ConnectionsContext.Provider>
   );

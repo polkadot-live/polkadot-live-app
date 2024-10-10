@@ -9,18 +9,19 @@ import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { ImportReadOnly } from './ReadOnly';
 import { useImportMessagePorts } from '@/renderer/hooks/useImportMessagePorts';
-import type { AccountSource } from '@/types/accounts';
 import { useDebug } from '@/renderer/hooks/useDebug';
+import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
+import type { AccountSource } from '@/types/accounts';
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
+  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
-
-  const [source, setSource] = useState<AccountSource | null>(null);
 
   // Active section
   const [section, setSection] = useState<number>(0);
+  const [source, setSource] = useState<AccountSource | null>(null);
 
   useEffect(() => {
     if (section === 0) {

@@ -3,18 +3,20 @@
 
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SettingWrapper } from './Wrappers';
+import { SettingWrapper, SpinnerWrapper } from './Wrappers';
 import { Switch } from '@/renderer/library/Switch';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { useSettingFlags } from '@/renderer/contexts/settings/SettingFlags';
-import type { SettingProps } from './types';
+import { ButtonMonoInvert } from '@app/kits/Buttons/ButtonMonoInvert';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
+import type { SettingAction, SettingProps } from './types';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;
 
   const { openHelp } = useHelp();
   const { getSwitchState, handleSwitchToggle } = useSettingFlags();
+  const { isImporting } = useConnections();
 
   /// Handle a setting switch toggle.
   const handleSwitchToggleOuter = () => {
@@ -39,6 +41,10 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
     }
   };
 
+  /// Determine if switch should be disabled.
+  const getDisabled = (action: SettingAction): boolean =>
+    action === 'settings:execute:importData' ? isImporting : false;
+
   return (
     <SettingWrapper>
       <div className="left">
@@ -56,12 +62,32 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
             handleToggle={() => handleSwitchToggleOuter()}
           />
         ) : (
-          <ButtonMonoInvert
-            iconLeft={setting.buttonIcon}
-            text={setting.buttonText || ''}
-            iconTransform="shrink-2"
-            onClick={() => handleButtonClick()}
-          />
+          <SpinnerWrapper>
+            {getDisabled(setting.action) && (
+              <div
+                style={{ position: 'absolute', left: '26px', top: '10px' }}
+                className="lds-ellipsis"
+              >
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
+
+            <ButtonMonoInvert
+              style={{
+                minWidth: '100px',
+                minHeight: '26px',
+                border: '1px solid var(--text-color-primary) !important',
+              }}
+              disabled={getDisabled(setting.action)}
+              iconLeft={setting.buttonIcon}
+              text={getDisabled(setting.action) ? '' : setting.buttonText || ''}
+              iconTransform="shrink-2"
+              onClick={() => handleButtonClick()}
+            />
+          </SpinnerWrapper>
         )}
       </div>
     </SettingWrapper>

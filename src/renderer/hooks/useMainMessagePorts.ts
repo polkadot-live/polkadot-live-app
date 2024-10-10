@@ -53,7 +53,6 @@ export const useMainMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { setEvents, updateEventsOnAccountRename } = useEvents();
-
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
 
   const {
@@ -335,6 +334,9 @@ export const useMainMessagePorts = () => {
 
     switch (response.msg) {
       case 'success': {
+        // Broadcast importing flag.
+        window.myAPI.relayModeFlag('isImporting', true);
+
         try {
           if (!response.data) {
             throw new Error('No import data.');
@@ -373,6 +375,8 @@ export const useMainMessagePorts = () => {
           postToSettings(false, 'Error parsing JSON.');
         }
 
+        // Broadcast importing flag.
+        window.myAPI.relayModeFlag('isImporting', false);
         break;
       }
       case 'canceled': {

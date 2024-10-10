@@ -4,8 +4,8 @@
 import { Config as ConfigSettings } from '@/config/processes/settings';
 
 /// Settings window contexts.
-import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
 import { useEffect } from 'react';
+import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
 
 export const useSettingsMessagePorts = () => {
   const { setWindowDocked, setSilenceOsNotifications, renderToastify } =

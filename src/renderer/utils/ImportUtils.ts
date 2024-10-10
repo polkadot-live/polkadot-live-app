@@ -341,14 +341,11 @@ export const importAccountSubscriptions = async (
     return;
   }
 
-  // Persist tasks to store in main process and get them back.
-  await window.myAPI.sendSubscriptionTask({
-    action: 'subscriptions:account:import',
-    data: { serialized: s_tasks },
-  });
-
   const s_array: [string, string][] = JSON.parse(s_tasks);
   const s_map = new Map<string, string>(s_array);
+
+  // Store tasks to persist to store.
+  const s_persistMap = new Map<string, string>();
 
   // Iterate map of serialized tasks keyed by an account address.
   for (const [address, serTasks] of s_map.entries()) {
@@ -358,18 +355,39 @@ export const importAccountSubscriptions = async (
     }
 
     const account = AccountsController.get(parsed[0].chainId, address);
+    const valid: SubscriptionTask[] = [];
+
     if (account) {
       for (const t of parsed) {
+        if (
+          (t.category === 'Nomination Pools' && !account.nominationPoolData) ||
+          (t.category === 'Nominating' && !account.nominatingData)
+        ) {
+          // Throw away task if necessary.
+          continue;
+        }
+
+        // Otherwise subscribe to task.
         await account?.subscribeToTask(t);
         updateRenderedSubscriptions(t);
+        valid.push(t);
       }
     }
+
+    // Serialize the account's subscribed tasks.
+    valid.length > 0 && s_persistMap.set(address, JSON.stringify(valid));
   }
 
   // Set subscriptions React state.
   setAccountSubscriptions(
     SubscriptionsController.getAccountSubscriptions(AccountsController.accounts)
   );
+
+  // Send successfully imported tasks to main process.
+  await window.myAPI.sendSubscriptionTask({
+    action: 'subscriptions:account:import',
+    data: { serialized: JSON.stringify(Array.from(s_persistMap.entries())) },
+  });
 };
 
 /**
