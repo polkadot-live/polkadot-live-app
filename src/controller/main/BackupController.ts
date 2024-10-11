@@ -5,6 +5,7 @@ import { Config as ConfigMain } from '@/config/processes/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/main/AddressesController';
+import { WindowsController } from './WindowsController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
@@ -22,10 +23,14 @@ export class BackupController {
       return { result: false, msg: 'executing' };
     }
 
+    // Render transparent browser window over base window.
     ConfigMain.exportingData = true;
+    const overlay = WindowsController.getOverlay();
+    if (!overlay) {
+      return { result: false, msg: 'error' };
+    }
 
-    // TODO: Pass BaseWindow when supported.
-    const { canceled, filePath } = await dialog.showSaveDialog({
+    const { canceled, filePath } = await dialog.showSaveDialog(overlay, {
       title: 'Export Data',
       defaultPath: 'polkadot-live-data.txt',
       filters: [
@@ -38,6 +43,7 @@ export class BackupController {
     });
 
     // Handle save or cancel.
+    WindowsController.destroyOverlay();
     if (!canceled && filePath) {
       try {
         const serialized = this.getExportData();
@@ -62,8 +68,13 @@ export class BackupController {
    * @summary Import a Polkadot Live data file.
    */
   static async import(): Promise<ImportResult> {
-    // TODO: Pass BaseWindow when supported.
-    const { canceled, filePaths } = await dialog.showOpenDialog({
+    // Render transparent browser window over base window.
+    const overlay = WindowsController.getOverlay();
+    if (!overlay) {
+      return { result: false, msg: 'error' };
+    }
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(overlay, {
       title: 'Import Data',
       filters: [
         {
@@ -74,6 +85,7 @@ export class BackupController {
       properties: ['openFile'],
     });
 
+    WindowsController.destroyOverlay();
     if (!canceled && filePaths.length) {
       try {
         const serialized = await fsPromises.readFile(filePaths[0], {
