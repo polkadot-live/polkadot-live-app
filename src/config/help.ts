@@ -217,16 +217,16 @@ export const HelpConfig: HelpItems = [
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [
-      'Import a data file that was exported from another Polkadot Live installation to restore your accounts.',
-      'Accounts in the data file that do not currently exist in Polkadot Live will be added to the Accounts window. From there, you can import the account and turn on subscriptions in the normal manner.',
+      'Import a text file that was exported from another Polkadot Live installation to restore your state. Polkadot Live will import accounts, events and subscriptions that are read from the backup file.',
+      "Data read from the backup file will take precedence over the application's current state. This means that accounts will be added or removed from the main window to reflect the imported data. Account names will also update to reflect what is specified in the backup file.",
     ],
   },
   {
     key: 'help:settings:exportData',
     title: 'Export Data',
     definition: [
-      'Export account data to a text file, allowing you to backup your accounts managed by Polkadot Live.',
-      'Use the corresponding "Import" button in the settings window to read the exported data file and restore your accounts in Polkadot Live.',
+      'Export your Polkadot Live state to a backup file. Your imported addresses, event items, and enabled subscriptions will be written to the backup file.',
+      'Use the corresponding "Import" button in the settings window to read the exported backup file and restore your state in Polkadot Live.',
     ],
   },
   {

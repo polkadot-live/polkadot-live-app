@@ -348,7 +348,8 @@ export const useMainMessagePorts = () => {
           await importAddresses(
             serialized,
             handleImportAddress,
-            handleRemoveAddress
+            handleRemoveAddress,
+            setAddresses
           );
 
           // Events.
