@@ -8,6 +8,7 @@ import { AddressesController } from '@/controller/main/AddressesController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
+import { version } from '../../../package.json';
 import type { ExportResult, ImportResult } from '@/types/backup';
 
 export class BackupController {
@@ -98,6 +99,7 @@ export class BackupController {
     const intervals = IntervalsController.getBackupData();
     const accountTasks = SubscriptionsController.getBackupData();
 
+    map.set('version', version);
     map.set('addresses', addresses);
     map.set('events', events);
     map.set('intervals', intervals);
