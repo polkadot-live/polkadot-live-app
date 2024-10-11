@@ -53,7 +53,7 @@ export class AddressesController {
    * @summary Set the import flag of an address to `true`.
    */
   private static add(task: IpcTask) {
-    const { source, address } = task.data;
+    const { address, source, name } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
@@ -61,7 +61,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: true } : a
+          a.address === address ? { ...a, name, isImported: true } : a
         )
       );
 
@@ -71,7 +71,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: true } : a
+          a.address === address ? { ...a, name, isImported: true } : a
         )
       );
 
@@ -153,22 +153,22 @@ export class AddressesController {
 
   /**
    * @name doImport
-   * @summary Persist an address to store being imported from a backup file.
+   * @summary Persist an address to store that's being imported from a backup file.
    */
   private static doImport(task: IpcTask) {
     const { source, serialized } = task.data;
     const parsed: LocalAddress | LedgerLocalAddress = JSON.parse(serialized);
-    const { address, isImported } = parsed;
+    const { address, isImported, name } = parsed;
 
     if (this.isAlreadyPersisted(address)) {
       isImported
         ? this.add({
             action: 'raw-account:add',
-            data: { source, address },
+            data: { source, address, name },
           })
         : this.remove({
             action: 'raw-account:remove',
-            data: { source, address },
+            data: { source, address, name },
           });
     } else {
       this.persist({
@@ -215,7 +215,7 @@ export class AddressesController {
    * @summary Set the import flag of an address to `false`.
    */
   private static remove(task: IpcTask) {
-    const { source, address } = task.data;
+    const { address, source, name } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
@@ -223,7 +223,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialised = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: false } : a
+          a.address === address ? { ...a, name, isImported: false } : a
         )
       );
 
@@ -233,7 +233,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: false } : a
+          a.address === address ? { ...a, name, isImported: false } : a
         )
       );
 

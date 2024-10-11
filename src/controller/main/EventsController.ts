@@ -5,7 +5,6 @@ import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
-import { AddressesController } from '@/controller/main/AddressesController';
 import { NotificationsController } from '@/controller/main/NotificationsController';
 import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
@@ -142,7 +141,7 @@ export class EventsController {
         return this.removeEvent(task.data.event);
       }
       case 'events:import': {
-        return this.persistImportedEvents(task.data.events);
+        return this.doImport(task.data.events);
       }
       default: {
         return false;
@@ -173,18 +172,32 @@ export class EventsController {
   }
 
   /**
-   * @name persistImportedEvents
+   * @name doImport
    * @summary Persists unique imported events to the store.
    */
-  static persistImportedEvents(serialized: string): string {
+  private static doImport(serialized: string): string {
     const parsed: EventCallback[] = JSON.parse(serialized);
+
+    // Update persisted event account names.
+    const addressesChecked: string[] = [];
+    for (const event of parsed) {
+      if (event.who.origin !== 'account') {
+        continue;
+      }
+
+      const who = event.who.data as EventAccountData;
+      if (!addressesChecked.find((a) => a === who.address)) {
+        addressesChecked.push(who.address);
+        this.syncAccountName(event);
+      }
+    }
+
+    // Add imported event if it's not a duplicate.
     let stored = this.getEventsFromStore();
     let persist = false;
 
     for (const event of parsed) {
-      // Update event's account name if it has since been changed.
-      const synced = this.syncAccountName(event);
-      const { events, updated } = pushUniqueEvent(synced, stored);
+      const { events, updated } = pushUniqueEvent(event, stored);
 
       if (updated) {
         stored = events;
@@ -202,26 +215,27 @@ export class EventsController {
 
   /**
    * @name syncAccountName
-   * @summary Sets an event's associated account name if it has since been updated.
+   * @summary Updates the associated account names of persisted events.
    * (receives an event that was just imported)
    */
-  private static syncAccountName(event: EventCallback): EventCallback {
+  private static syncAccountName(event: EventCallback) {
     if (event.who.origin !== 'account') {
       return event;
     }
 
     // Find any imported accounts with the same address and sync the event's account name.
-    const { address: targetAddress, source: s } = event.who
-      .data as EventAccountData;
-
-    for (const { address, name } of AddressesController.getAllBySource(s)) {
-      if (address === targetAddress) {
-        (event.who.data as EventAccountData).accountName = name;
-        break;
+    const { address, accountName } = event.who.data as EventAccountData;
+    const updated = this.getEventsFromStore().map((e: EventCallback) => {
+      if (e.who.origin !== 'account') {
+        return e;
       }
-    }
+      const who = e.who.data as EventAccountData;
+      who.address === address && (who.accountName = accountName);
+      return e;
+    });
 
-    return event;
+    // Persist updated events to store.
+    this.persistEventsToStore(updated);
   }
 
   /**

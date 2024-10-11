@@ -184,8 +184,6 @@ export class AccountsController {
   /**
    * @name set
    * @summary Updates an Account in the `accounts` property.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {Account} account - the account to set.
    */
   static set = async (chain: ChainID, account: Account) => {
     this.accounts.set(
@@ -200,6 +198,19 @@ export class AccountsController {
       action: 'account:updateAll',
       data: { accounts: this.serializeAccounts() },
     });
+  };
+
+  /**
+   * @name update
+   * @summary Update an existing account.
+   */
+  static update = (chain: ChainID, account: Account) => {
+    this.accounts.set(
+      chain,
+      this.accounts
+        .get(chain)
+        ?.map((a) => (a.address === account.address ? account : a)) || []
+    );
   };
 
   /**

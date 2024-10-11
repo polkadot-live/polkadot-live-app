@@ -6,6 +6,7 @@ import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
+  FlattenedAccounts,
   LedgerLocalAddress,
   LocalAddress,
 } from '@/types/accounts';
@@ -175,7 +176,8 @@ export const getSortedLocalLedgerAddresses = (
 export const importAddresses = async (
   serialized: string,
   handleImportAddress: (ev: MessageEvent, fromBackup: boolean) => Promise<void>,
-  handleRemoveAddress: (ev: MessageEvent) => Promise<void>
+  handleRemoveAddress: (ev: MessageEvent) => Promise<void>,
+  setAddresses: (a: FlattenedAccounts) => void
 ) => {
   const s_addresses = getFromBackupFile('addresses', serialized);
   if (!s_addresses) {
@@ -226,7 +228,17 @@ export const importAddresses = async (
         await handleRemoveAddress(new MessageEvent('message', data));
         postToImport('import:address:update', { address: a, source });
       }
+
+      // Update managed account names.
+      const account = AccountsController.get(chainId, address);
+      if (account) {
+        account.name = name;
+        AccountsController.update(chainId, account);
+      }
     }
+
+    // Update account list state.
+    setAddresses(AccountsController.getAllFlattenedAccountData());
   }
 };
 
