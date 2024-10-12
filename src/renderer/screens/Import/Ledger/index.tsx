@@ -179,7 +179,6 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
     <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
   ) : (
     <Manage
-      addresses={addresses}
       isImporting={isImporting}
       toggleImport={toggleImport}
       statusCodes={statusCodes}

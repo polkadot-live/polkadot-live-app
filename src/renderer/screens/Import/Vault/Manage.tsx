@@ -24,9 +24,11 @@ import {
 } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import type { ManageVaultProps } from '../types';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 
-export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
+export const Manage = ({ setSection }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
+  const { vaultAddresses: addresses } = useAddresses();
 
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -74,7 +76,7 @@ export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
 
         {/* Address List */}
         <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
-          {addresses.length ? (
+          {addresses.length && (
             <Accordion
               multiple
               defaultIndex={accordionActiveIndices}
@@ -95,22 +97,17 @@ export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
                       <AccordionPanel>
                         <div className="items-wrapper">
                           <div className="items round-primary-border">
-                            {chainAddresses.map(
-                              ({ address, isImported, name }, j) => (
-                                <Address
-                                  key={`address_${name}`}
-                                  accountName={name}
-                                  source={'vault'}
-                                  address={address}
-                                  isImported={isImported || false}
-                                  setSection={setSection}
-                                  orderData={{
-                                    curIndex: j,
-                                    lastIndex: chainAddresses.length - 1,
-                                  }}
-                                />
-                              )
-                            )}
+                            {chainAddresses.map((localAddress, j) => (
+                              <Address
+                                key={`address_${localAddress.name}`}
+                                localAddress={localAddress}
+                                setSection={setSection}
+                                orderData={{
+                                  curIndex: j,
+                                  lastIndex: chainAddresses.length - 1,
+                                }}
+                              />
+                            ))}
                           </div>
                         </div>
                       </AccordionPanel>
@@ -119,7 +116,7 @@ export const Manage = ({ setSection, addresses }: ManageVaultProps) => {
                 )
               )}
             </Accordion>
-          ) : null}
+          )}
         </ContentWrapper>
       </Scrollable>
 

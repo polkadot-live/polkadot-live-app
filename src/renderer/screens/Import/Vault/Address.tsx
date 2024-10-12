@@ -14,17 +14,13 @@ import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({
-  address,
-  source,
-  accountName,
-  isImported,
+  localAddress: { address, isImported, name, source },
   setSection,
   orderData,
 }: AddressProps) => {
   const { openOverlayWith } = useOverlay();
-
   // State for account name.
-  const [accountNameState, setAccountNameState] = useState<string>(accountName);
+  const [accountNameState, setAccountNameState] = useState<string>(name);
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {

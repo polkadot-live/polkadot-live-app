@@ -36,7 +36,6 @@ import {
 
 /// Type imports.
 import type { FormEvent } from 'react';
-import type { LocalAddress } from '@/types/accounts';
 import type { ManageReadOnlyProps } from '../types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
@@ -194,25 +193,17 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                         <div className="items round-primary-border">
                           {addresses.length ? (
                             <>
-                              {chainAddresses.map(
-                                (
-                                  { address, isImported, name }: LocalAddress,
-                                  j
-                                ) => (
-                                  <Address
-                                    key={`address_${name}`}
-                                    accountName={name}
-                                    source={'read-only'}
-                                    address={address}
-                                    isImported={isImported || false}
-                                    orderData={{
-                                      curIndex: j,
-                                      lastIndex: chainAddresses.length - 1,
-                                    }}
-                                    setSection={setSection}
-                                  />
-                                )
-                              )}
+                              {chainAddresses.map((localAddress, j) => (
+                                <Address
+                                  key={`address_${localAddress.name}`}
+                                  localAddress={localAddress}
+                                  orderData={{
+                                    curIndex: j,
+                                    lastIndex: chainAddresses.length - 1,
+                                  }}
+                                  setSection={setSection}
+                                />
+                              ))}
                             </>
                           ) : (
                             <p>No read only addresses imported.</p>

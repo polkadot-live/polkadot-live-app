@@ -14,18 +14,14 @@ import { useState } from 'react';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({
-  address,
-  accountName,
-  source,
-  index,
-  isImported,
+  localAddress: { address, index, isImported, name },
   orderData,
   setSection,
 }: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
 
   // State for account name.
-  const [accountNameState, setAccountNameState] = useState<string>(accountName);
+  const [accountNameState, setAccountNameState] = useState<string>(name);
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
@@ -40,8 +36,8 @@ export const Address = ({
 
   return (
     <HardwareAddress
-      key={index}
-      source={source}
+      key={index || 0}
+      source={'ledger'}
       address={address}
       accountName={accountNameState}
       renameHandler={renameHandler}

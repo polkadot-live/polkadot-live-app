@@ -1,14 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource, LocalAddress } from '@/types/accounts';
 import type { AnyFunction } from '@/types/misc';
 
 export interface AddressProps {
-  accountName: string;
-  source: AccountSource;
-  address: string;
-  isImported: boolean;
+  localAddress: LocalAddress;
   setSection: AnyFunction;
   orderData: {
     curIndex: number;

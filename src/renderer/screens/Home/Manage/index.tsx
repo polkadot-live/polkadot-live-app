@@ -10,7 +10,7 @@ import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
-  // Store the currently active maange tab.
+  // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
 
   // Outermost breadcrumb title.

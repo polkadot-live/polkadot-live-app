@@ -12,6 +12,7 @@ import { determineStatusFromCodes } from './Utils';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ContentWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
@@ -24,13 +25,14 @@ import {
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({
-  addresses,
   isImporting,
   statusCodes,
   toggleImport,
   cancelImport,
   setSection,
 }: ImportLedgerManageProps) => {
+  const { ledgerAddresses: addresses } = useAddresses();
+
   // Active accordion indices for account subscription tasks categories.
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
@@ -95,23 +97,17 @@ export const Manage = ({
                     <AccordionPanel>
                       <div className="items-wrapper">
                         <div className="items round-primary-border">
-                          {chainAddresses.map(
-                            ({ address, index, isImported, name }, j) => (
-                              <Address
-                                key={`address_${name}`}
-                                address={address}
-                                source={'ledger'}
-                                accountName={name}
-                                index={index || 0}
-                                isImported={isImported}
-                                orderData={{
-                                  curIndex: j,
-                                  lastIndex: chainAddresses.length - 1,
-                                }}
-                                setSection={setSection}
-                              />
-                            )
-                          )}
+                          {chainAddresses.map((localAddress, j) => (
+                            <Address
+                              key={`address_${localAddress.name}`}
+                              localAddress={localAddress}
+                              orderData={{
+                                curIndex: j,
+                                lastIndex: chainAddresses.length - 1,
+                              }}
+                              setSection={setSection}
+                            />
+                          ))}
                         </div>
                       </div>
                     </AccordionPanel>
