@@ -12,10 +12,7 @@ import type {
 import { getAddressChainId } from '../Utils';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
-import { AccountsController } from '@/controller/renderer/AccountsController';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 
 type ToastType = 'success' | 'error';
 
@@ -160,69 +157,6 @@ export const getSortedLocalLedgerAddresses = (
   }
 
   return sorted;
-};
-
-/**
- * @name importAccountSubscriptions
- * @summary Extract account subscription data from an imported text file and send to application.
- */
-export const importAccountSubscriptions = async (
-  serialized: string,
-  updateRenderedSubscriptions: (task: SubscriptionTask) => void,
-  setAccountSubscriptions: (m: Map<string, SubscriptionTask[]>) => void
-): Promise<void> => {
-  const s_tasks = getFromBackupFile('accountTasks', serialized);
-  if (!s_tasks) {
-    return;
-  }
-
-  const s_array: [string, string][] = JSON.parse(s_tasks);
-  const s_map = new Map<string, string>(s_array);
-
-  // Store tasks to persist to store.
-  const s_persistMap = new Map<string, string>();
-
-  // Iterate map of serialized tasks keyed by an account address.
-  for (const [address, serTasks] of s_map.entries()) {
-    const parsed: SubscriptionTask[] = JSON.parse(serTasks);
-    if (parsed.length === 0) {
-      continue;
-    }
-
-    const account = AccountsController.get(parsed[0].chainId, address);
-    const valid: SubscriptionTask[] = [];
-
-    if (account) {
-      for (const t of parsed) {
-        if (
-          (t.category === 'Nomination Pools' && !account.nominationPoolData) ||
-          (t.category === 'Nominating' && !account.nominatingData)
-        ) {
-          // Throw away task if necessary.
-          continue;
-        }
-
-        // Otherwise subscribe to task.
-        await account?.subscribeToTask(t);
-        updateRenderedSubscriptions(t);
-        valid.push(t);
-      }
-    }
-
-    // Serialize the account's subscribed tasks.
-    valid.length > 0 && s_persistMap.set(address, JSON.stringify(valid));
-  }
-
-  // Set subscriptions React state.
-  setAccountSubscriptions(
-    SubscriptionsController.getAccountSubscriptions(AccountsController.accounts)
-  );
-
-  // Send successfully imported tasks to main process.
-  await window.myAPI.sendSubscriptionTask({
-    action: 'subscriptions:account:import',
-    data: { serialized: JSON.stringify(Array.from(s_persistMap.entries())) },
-  });
 };
 
 /**

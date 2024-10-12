@@ -14,7 +14,6 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import { importAccountSubscriptions } from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -74,8 +73,12 @@ export const useMainMessagePorts = () => {
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 
-  const { importAddressData, importEventData, importIntervalData } =
-    useDataBackup();
+  const {
+    importAddressData,
+    importEventData,
+    importIntervalData,
+    importAccountTaskData,
+  } = useDataBackup();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -342,13 +345,7 @@ export const useMainMessagePorts = () => {
           await importAddressData(s, handleImportAddress, handleRemoveAddress);
           await importEventData(s);
           await importIntervalData(s);
-
-          // Account subscriptions.
-          await importAccountSubscriptions(
-            s,
-            updateRenderedSubscriptions,
-            setAccountSubscriptions
-          );
+          await importAccountTaskData(s);
 
           postToSettings(response.result, 'Data imported successfully.');
         } catch (err) {

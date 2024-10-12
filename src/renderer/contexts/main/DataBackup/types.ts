@@ -20,4 +20,5 @@ export interface DataBackupContextInterface {
   ) => Promise<void>;
   importEventData: (serialized: string) => Promise<void>;
   importIntervalData: (serialized: string) => Promise<void>;
+  importAccountTaskData: (serialized: string) => Promise<void>;
 }

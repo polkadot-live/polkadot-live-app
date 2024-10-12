@@ -5,6 +5,7 @@ import { defaultDataBackupContext } from './default';
 import { createContext, useContext } from 'react';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { getAddressChainId } from '@/renderer/Utils';
 import {
   getFromBackupFile,
@@ -15,6 +16,7 @@ import { useAddresses } from '@app/contexts/main/Addresses';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { useSubscriptions } from '../Subscriptions';
 import type {
   DataBackupContextInterface,
   ImportFunc,
@@ -26,7 +28,10 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import type { EventCallback } from '@/types/reporter';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@/types/subscriptions';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -42,9 +47,13 @@ export const DataBackupProvider = ({
   const { setAddresses } = useAddresses();
   const { setEvents } = useEvents();
 
-  const { tryAddIntervalSubscription, tryUpdateDynamicIntervalTask } =
-    useManage();
+  const {
+    updateRenderedSubscriptions,
+    tryAddIntervalSubscription,
+    tryUpdateDynamicIntervalTask,
+  } = useManage();
 
+  const { setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -191,9 +200,73 @@ export const DataBackupProvider = ({
     }
   };
 
+  /// Extract account subscription data from an imported text file and send to application.
+  const importAccountTaskData = async (serialized: string) => {
+    const s_tasks = getFromBackupFile('accountTasks', serialized);
+    if (!s_tasks) {
+      return;
+    }
+
+    const s_array: [string, string][] = JSON.parse(s_tasks);
+    const s_map = new Map<string, string>(s_array);
+
+    // Store tasks to persist to store.
+    const s_persistMap = new Map<string, string>();
+
+    // Iterate map of serialized tasks keyed by an account address.
+    for (const [address, serTasks] of s_map.entries()) {
+      const parsed: SubscriptionTask[] = JSON.parse(serTasks);
+      if (parsed.length === 0) {
+        continue;
+      }
+
+      const account = AccountsController.get(parsed[0].chainId, address);
+      const valid: SubscriptionTask[] = [];
+
+      if (account) {
+        for (const t of parsed) {
+          if (
+            (t.category === 'Nomination Pools' &&
+              !account.nominationPoolData) ||
+            (t.category === 'Nominating' && !account.nominatingData)
+          ) {
+            // Throw away task if necessary.
+            continue;
+          }
+
+          // Otherwise subscribe to task.
+          await account?.subscribeToTask(t);
+          updateRenderedSubscriptions(t);
+          valid.push(t);
+        }
+      }
+
+      // Serialize the account's subscribed tasks.
+      valid.length > 0 && s_persistMap.set(address, JSON.stringify(valid));
+    }
+
+    // Set subscriptions React state.
+    setAccountSubscriptions(
+      SubscriptionsController.getAccountSubscriptions(
+        AccountsController.accounts
+      )
+    );
+
+    // Send successfully imported tasks to main process.
+    await window.myAPI.sendSubscriptionTask({
+      action: 'subscriptions:account:import',
+      data: { serialized: JSON.stringify(Array.from(s_persistMap.entries())) },
+    });
+  };
+
   return (
     <DataBackupContext.Provider
-      value={{ importAddressData, importEventData, importIntervalData }}
+      value={{
+        importAddressData,
+        importEventData,
+        importIntervalData,
+        importAccountTaskData,
+      }}
     >
       {children}
     </DataBackupContext.Provider>
