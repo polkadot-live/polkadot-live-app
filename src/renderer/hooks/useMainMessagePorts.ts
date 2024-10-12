@@ -16,7 +16,6 @@ import {
 } from '@/utils/AccountUtils';
 import {
   importAccountSubscriptions,
-  importEvents,
   importIntervalTasks,
 } from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
@@ -52,7 +51,7 @@ export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
-  const { setEvents, updateEventsOnAccountRename } = useEvents();
+  const { updateEventsOnAccountRename } = useEvents();
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
 
   const {
@@ -82,7 +81,7 @@ export const useMainMessagePorts = () => {
     updateIntervalSubscription,
   } = useIntervalSubscriptions();
 
-  const { importAddressData } = useDataBackup();
+  const { importAddressData, importEventData } = useDataBackup();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -347,9 +346,7 @@ export const useMainMessagePorts = () => {
           // Import serialized data.
           const { serialized: s } = response.data;
           await importAddressData(s, handleImportAddress, handleRemoveAddress);
-
-          // Events.
-          await importEvents(s, setEvents);
+          await importEventData(s);
 
           // Interval subscriptions.
           await importIntervalTasks(

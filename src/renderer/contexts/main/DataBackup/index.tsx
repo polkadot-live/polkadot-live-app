@@ -7,6 +7,7 @@ import { AccountsController } from '@/controller/renderer/AccountsController';
 import { getAddressChainId } from '@/renderer/Utils';
 import { getFromBackupFile, postToImport } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/main/Addresses';
+import { useEvents } from '@app/contexts/main/Events';
 import type {
   DataBackupContextInterface,
   ImportFunc,
@@ -17,6 +18,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@/types/accounts';
+import type { EventCallback } from '@/types/reporter';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -30,6 +32,7 @@ export const DataBackupProvider = ({
   children: React.ReactNode;
 }) => {
   const { setAddresses } = useAddresses();
+  const { setEvents } = useEvents();
 
   /// Extract address data from an imported text file and send to application.
   const importAddressData = async (
@@ -103,8 +106,25 @@ export const DataBackupProvider = ({
     }
   };
 
+  /// Extract event data from an imported text file and send to application.
+  const importEventData = async (serialized: string): Promise<void> => {
+    const s_events = getFromBackupFile('events', serialized);
+    if (!s_events) {
+      return;
+    }
+
+    // Send serialized events to main for processing.
+    const updated = (await window.myAPI.sendEventTaskAsync({
+      action: 'events:import',
+      data: { events: s_events },
+    })) as string;
+
+    const parsed: EventCallback[] = JSON.parse(updated);
+    setEvents(parsed);
+  };
+
   return (
-    <DataBackupContext.Provider value={{ importAddressData }}>
+    <DataBackupContext.Provider value={{ importAddressData, importEventData }}>
       {children}
     </DataBackupContext.Provider>
   );

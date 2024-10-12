@@ -13,7 +13,6 @@ import { getAddressChainId } from '../Utils';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type { EventCallback } from '@/types/reporter';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -165,30 +164,6 @@ export const getSortedLocalLedgerAddresses = (
   }
 
   return sorted;
-};
-
-/**
- * @name importEvents
- * @summary Extract event data from an imported text file and send to application.
- * (main renderer)
- */
-export const importEvents = async (
-  serialized: string,
-  setEvents: (events: EventCallback[]) => void
-): Promise<void> => {
-  const s_events = getFromBackupFile('events', serialized);
-  if (!s_events) {
-    return;
-  }
-
-  // Send serialized events to main for processing.
-  const updated = (await window.myAPI.sendEventTaskAsync({
-    action: 'events:import',
-    data: { events: s_events },
-  })) as string;
-
-  const parsed: EventCallback[] = JSON.parse(updated);
-  setEvents(parsed);
 };
 
 /**

@@ -14,4 +14,5 @@ export interface DataBackupContextInterface {
     handleImportAddress: ImportFunc,
     handleRemoveAddress: RemoveFunc
   ) => Promise<void>;
+  importEventData: (serialized: string) => Promise<void>;
 }
