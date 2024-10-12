@@ -16,7 +16,6 @@ import {
 } from '@/utils/AccountUtils';
 import {
   importAccountSubscriptions,
-  importAddresses,
   importEvents,
   importIntervalTasks,
 } from '@app/utils/ImportUtils';
@@ -37,6 +36,7 @@ import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
+import { useDataBackup } from '@app/contexts/main/DataBackup';
 
 /// Type imports.
 import type { ActiveReferendaInfo } from '@/types/openGov';
@@ -81,6 +81,8 @@ export const useMainMessagePorts = () => {
     removeIntervalSubscription,
     updateIntervalSubscription,
   } = useIntervalSubscriptions();
+
+  const { importAddressData } = useDataBackup();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -342,22 +344,16 @@ export const useMainMessagePorts = () => {
             throw new Error('No import data.');
           }
 
-          const { serialized } = response.data;
-
-          // Addresses.
-          await importAddresses(
-            serialized,
-            handleImportAddress,
-            handleRemoveAddress,
-            setAddresses
-          );
+          // Import serialized data.
+          const { serialized: s } = response.data;
+          await importAddressData(s, handleImportAddress, handleRemoveAddress);
 
           // Events.
-          await importEvents(serialized, setEvents);
+          await importEvents(s, setEvents);
 
           // Interval subscriptions.
           await importIntervalTasks(
-            serialized,
+            s,
             tryAddIntervalSubscription,
             tryUpdateDynamicIntervalTask,
             addIntervalSubscription,
@@ -366,7 +362,7 @@ export const useMainMessagePorts = () => {
 
           // Account subscriptions.
           await importAccountSubscriptions(
-            serialized,
+            s,
             updateRenderedSubscriptions,
             setAccountSubscriptions
           );
