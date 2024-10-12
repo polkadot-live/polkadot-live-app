@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Required imports.
+/// Dependencies.
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import BigNumber from 'bignumber.js';
@@ -14,12 +14,6 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@/utils/AccountUtils';
-import {
-  importAccountSubscriptions,
-  importAddresses,
-  importEvents,
-  importIntervalTasks,
-} from '@app/utils/ImportUtils';
 import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -37,12 +31,12 @@ import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
+import { useDataBackup } from '@app/contexts/main/DataBackup';
 
-/// Type imports.
+/// Types.
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { ExportResult, ImportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -52,15 +46,15 @@ export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
-  const { setEvents, updateEventsOnAccountRename } = useEvents();
+  const { updateEventsOnAccountRename } = useEvents();
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
+  const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
   const {
     updateRenderedSubscriptions,
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
-    tryUpdateDynamicIntervalTask,
   } = useManage();
 
   const {
@@ -76,11 +70,8 @@ export const useMainMessagePorts = () => {
   const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
     useSubscriptions();
 
-  const {
-    addIntervalSubscription,
-    removeIntervalSubscription,
-    updateIntervalSubscription,
-  } = useIntervalSubscriptions();
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -284,114 +275,6 @@ export const useMainMessagePorts = () => {
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
-  };
-
-  /// Utility to post message to settings window.
-  const postToSettings = (res: boolean, text: string) => {
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:render:toast',
-      data: { success: res, text },
-    });
-  };
-
-  /**
-   * @name handleDataExport
-   * @summary Write Polkadot Live data to a file.
-   */
-  const handleDataExport = async () => {
-    const { result, msg }: ExportResult = await window.myAPI.exportAppData();
-
-    // Render toastify message in settings window.
-    switch (msg) {
-      case 'success': {
-        postToSettings(result, 'Data exported successfully.');
-        break;
-      }
-      case 'error': {
-        postToSettings(result, 'Data export error.');
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'executing': {
-        postToSettings(result, 'Export dialog is already open.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
-  };
-
-  /**
-   * @name handleDataImport
-   * @summary Import and process Polkadot Live data from a backup.
-   */
-  const handleDataImport = async () => {
-    const response: ImportResult = await window.myAPI.importAppData();
-
-    switch (response.msg) {
-      case 'success': {
-        // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', true);
-
-        try {
-          if (!response.data) {
-            throw new Error('No import data.');
-          }
-
-          const { serialized } = response.data;
-
-          // Addresses.
-          await importAddresses(
-            serialized,
-            handleImportAddress,
-            handleRemoveAddress,
-            setAddresses
-          );
-
-          // Events.
-          await importEvents(serialized, setEvents);
-
-          // Interval subscriptions.
-          await importIntervalTasks(
-            serialized,
-            tryAddIntervalSubscription,
-            tryUpdateDynamicIntervalTask,
-            addIntervalSubscription,
-            updateIntervalSubscription
-          );
-
-          // Account subscriptions.
-          await importAccountSubscriptions(
-            serialized,
-            updateRenderedSubscriptions,
-            setAccountSubscriptions
-          );
-
-          postToSettings(response.result, 'Data imported successfully.');
-        } catch (err) {
-          postToSettings(false, 'Error parsing JSON.');
-        }
-
-        // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', false);
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'error': {
-        postToSettings(response.result, 'Data import error.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
   };
 
   /**
@@ -824,11 +707,14 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'settings:execute:exportData': {
-              await handleDataExport();
+              await exportDataToBackup();
               break;
             }
             case 'settings:execute:importData': {
-              await handleDataImport();
+              await importDataFromBackup(
+                handleImportAddress,
+                handleRemoveAddress
+              );
               break;
             }
             default: {
