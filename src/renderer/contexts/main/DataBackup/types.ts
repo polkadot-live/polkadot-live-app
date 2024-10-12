@@ -13,12 +13,8 @@ export type RemoveFunc = (ev: MessageEvent) => Promise<void>;
 export type IntervalFunc = (t: IntervalSubscription) => void;
 
 export interface DataBackupContextInterface {
-  importAddressData: (
-    serialized: string,
+  importDataFromBackup: (
     handleImportAddress: ImportFunc,
     handleRemoveAddress: RemoveFunc
   ) => Promise<void>;
-  importEventData: (serialized: string) => Promise<void>;
-  importIntervalData: (serialized: string) => Promise<void>;
-  importAccountTaskData: (serialized: string) => Promise<void>;
 }

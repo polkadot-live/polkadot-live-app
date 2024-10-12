@@ -11,6 +11,7 @@ import {
   getFromBackupFile,
   postToImport,
   postToOpenGov,
+  postToSettings,
 } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useEvents } from '@app/contexts/main/Events';
@@ -32,6 +33,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
+import type { ImportResult } from '@/types/backup';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -56,6 +58,62 @@ export const DataBackupProvider = ({
   const { setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
+
+  /// Exported function for importing data from a backup file.
+  const importDataFromBackup = async (
+    handleImportAddress: ImportFunc,
+    handleRemoveAddress: RemoveFunc
+  ) => {
+    const response: ImportResult = await window.myAPI.importAppData();
+
+    switch (response.msg) {
+      case 'success': {
+        // Broadcast importing flag.
+        window.myAPI.relayModeFlag('isImporting', true);
+
+        try {
+          if (!response.data) {
+            throw new Error('No import data.');
+          }
+
+          // Import serialized data.
+          const { serialized: s } = response.data;
+          await importAddressData(s, handleImportAddress, handleRemoveAddress);
+          await importEventData(s);
+          await importIntervalData(s);
+          await importAccountTaskData(s);
+
+          postToSettings('settings:render:toast', {
+            success: response.result,
+            text: 'Data imported successfully.',
+          });
+        } catch (err) {
+          postToSettings('settings:render:toast', {
+            success: false,
+            text: 'Error parsing JSON.',
+          });
+        }
+
+        // Broadcast importing flag.
+        window.myAPI.relayModeFlag('isImporting', false);
+        break;
+      }
+      case 'canceled': {
+        // Don't do anything on cancel.
+        break;
+      }
+      case 'error': {
+        postToSettings('settings:render:toast', {
+          success: response.result,
+          text: 'Data import error.',
+        });
+        break;
+      }
+      default: {
+        throw new Error('Message not recognized');
+      }
+    }
+  };
 
   /// Extract address data from an imported text file and send to application.
   const importAddressData = async (
@@ -262,10 +320,7 @@ export const DataBackupProvider = ({
   return (
     <DataBackupContext.Provider
       value={{
-        importAddressData,
-        importEventData,
-        importIntervalData,
-        importAccountTaskData,
+        importDataFromBackup,
       }}
     >
       {children}

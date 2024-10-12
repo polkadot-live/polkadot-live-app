@@ -190,3 +190,12 @@ export const postToImport = (task: string, dataObj: AnyData) => {
 export const postToOpenGov = (task: string, dataObj: AnyData) => {
   ConfigRenderer.portToOpenGov?.postMessage({ task, data: dataObj });
 };
+
+/**
+ * @name postToSettings
+ * @summary Utility to post a message to the Settings window.
+ * (main renderer)
+ */
+export const postToSettings = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToSettings?.postMessage({ task, data: dataObj });
+};

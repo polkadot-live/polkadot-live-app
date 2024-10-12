@@ -5,8 +5,5 @@
 import type { DataBackupContextInterface } from './types';
 
 export const defaultDataBackupContext: DataBackupContextInterface = {
-  importAddressData: () => new Promise(() => {}),
-  importEventData: () => new Promise(() => {}),
-  importIntervalData: () => new Promise(() => {}),
-  importAccountTaskData: () => new Promise(() => {}),
+  importDataFromBackup: () => new Promise(() => {}),
 };

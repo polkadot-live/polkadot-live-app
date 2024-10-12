@@ -37,7 +37,7 @@ import { useDataBackup } from '@app/contexts/main/DataBackup';
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { ExportResult, ImportResult } from '@/types/backup';
+import type { ExportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -49,6 +49,7 @@ export const useMainMessagePorts = () => {
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
+  const { importDataFromBackup } = useDataBackup();
 
   const {
     updateRenderedSubscriptions,
@@ -72,13 +73,6 @@ export const useMainMessagePorts = () => {
 
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
-
-  const {
-    importAddressData,
-    importEventData,
-    importIntervalData,
-    importAccountTaskData,
-  } = useDataBackup();
 
   /**
    * @name setSubscriptionsAndChainConnections
@@ -328,46 +322,7 @@ export const useMainMessagePorts = () => {
    * @summary Import and process Polkadot Live data from a backup.
    */
   const handleDataImport = async () => {
-    const response: ImportResult = await window.myAPI.importAppData();
-
-    switch (response.msg) {
-      case 'success': {
-        // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', true);
-
-        try {
-          if (!response.data) {
-            throw new Error('No import data.');
-          }
-
-          // Import serialized data.
-          const { serialized: s } = response.data;
-          await importAddressData(s, handleImportAddress, handleRemoveAddress);
-          await importEventData(s);
-          await importIntervalData(s);
-          await importAccountTaskData(s);
-
-          postToSettings(response.result, 'Data imported successfully.');
-        } catch (err) {
-          postToSettings(false, 'Error parsing JSON.');
-        }
-
-        // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', false);
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'error': {
-        postToSettings(response.result, 'Data import error.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
+    await importDataFromBackup(handleImportAddress, handleRemoveAddress);
   };
 
   /**
