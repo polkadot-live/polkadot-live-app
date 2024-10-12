@@ -10,13 +10,9 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
-import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
-import type {
-  IntervalSubscription,
-  SubscriptionTask,
-} from '@/types/subscriptions';
+import type { SubscriptionTask } from '@/types/subscriptions';
 import type { IpcTask } from '@/types/communication';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -167,79 +163,6 @@ export const getSortedLocalLedgerAddresses = (
 };
 
 /**
- * @name importIntervalTasks
- * @summary Extract interval task data from an imported text file and send to application.
- * (main renderer)
- */
-type IntervalFunc = (t: IntervalSubscription) => void;
-
-export const importIntervalTasks = async (
-  serialized: string,
-  tryAddIntervalSubscription: IntervalFunc,
-  tryUpdateDynamicIntervalTask: IntervalFunc,
-  addIntervalSubscription: IntervalFunc,
-  updateIntervalSubscription: IntervalFunc
-): Promise<void> => {
-  const s_tasks = getFromBackupFile('intervals', serialized);
-  if (!s_tasks) {
-    return;
-  }
-
-  // Receive new tasks after persisting them to store.
-  const s_data =
-    (await window.myAPI.sendIntervalTask({
-      action: 'interval:tasks:import',
-      data: { serialized: s_tasks },
-    })) || '[]';
-
-  // Parse received tasks to insert and update.
-  const s_array: [string, string][] = JSON.parse(s_data);
-  const map = new Map<string, string>(s_array);
-
-  const inserts: IntervalSubscription[] = JSON.parse(map.get('insert') || '[]');
-  const updates: IntervalSubscription[] = JSON.parse(map.get('update') || '[]');
-
-  // Update manage subscriptions in controller and update React state.
-  if (inserts.length > 0) {
-    IntervalsController.insertSubscriptions(inserts);
-    inserts.forEach((t) => {
-      tryAddIntervalSubscription(t);
-      addIntervalSubscription(t);
-    });
-  }
-
-  if (updates.length > 0) {
-    IntervalsController.removeSubscriptions(updates);
-    updates.forEach((t) => {
-      t.status === 'enable' && IntervalsController.insertSubscription(t);
-      tryUpdateDynamicIntervalTask(t);
-      updateIntervalSubscription(t);
-    });
-  }
-
-  // Update state in OpenGov window.
-  if (await window.myAPI.isViewOpen('openGov')) {
-    inserts.forEach((t) => {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:add',
-        data: {
-          serialized: JSON.stringify(t),
-        },
-      });
-    });
-
-    updates.forEach((t) => {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(t),
-        },
-      });
-    });
-  }
-};
-
-/**
  * @name importAccountSubscriptions
  * @summary Extract account subscription data from an imported text file and send to application.
  */
@@ -323,4 +246,13 @@ export const getFromBackupFile = (
  */
 export const postToImport = (task: string, dataObj: AnyData) => {
   ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
+};
+
+/**
+ * @name postToOpenGov
+ * @summary Utility to post a message to the OpenGov window.
+ * (main renderer)
+ */
+export const postToOpenGov = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToOpenGov?.postMessage({ task, data: dataObj });
 };
