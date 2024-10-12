@@ -5,5 +5,6 @@
 import type { DataBackupContextInterface } from './types';
 
 export const defaultDataBackupContext: DataBackupContextInterface = {
+  exportDataToBackup: () => new Promise(() => {}),
   importDataFromBackup: () => new Promise(() => {}),
 };

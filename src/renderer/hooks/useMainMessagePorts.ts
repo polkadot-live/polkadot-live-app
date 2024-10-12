@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Required imports.
+/// Dependencies.
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import BigNumber from 'bignumber.js';
@@ -33,11 +33,10 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { useDataBackup } from '@app/contexts/main/DataBackup';
 
-/// Type imports.
+/// Types.
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { ExportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -49,7 +48,7 @@ export const useMainMessagePorts = () => {
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
-  const { importDataFromBackup } = useDataBackup();
+  const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
   const {
     updateRenderedSubscriptions,
@@ -276,53 +275,6 @@ export const useMainMessagePorts = () => {
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
-  };
-
-  /// Utility to post message to settings window.
-  const postToSettings = (res: boolean, text: string) => {
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:render:toast',
-      data: { success: res, text },
-    });
-  };
-
-  /**
-   * @name handleDataExport
-   * @summary Write Polkadot Live data to a file.
-   */
-  const handleDataExport = async () => {
-    const { result, msg }: ExportResult = await window.myAPI.exportAppData();
-
-    // Render toastify message in settings window.
-    switch (msg) {
-      case 'success': {
-        postToSettings(result, 'Data exported successfully.');
-        break;
-      }
-      case 'error': {
-        postToSettings(result, 'Data export error.');
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'executing': {
-        postToSettings(result, 'Export dialog is already open.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
-  };
-
-  /**
-   * @name handleDataImport
-   * @summary Import and process Polkadot Live data from a backup.
-   */
-  const handleDataImport = async () => {
-    await importDataFromBackup(handleImportAddress, handleRemoveAddress);
   };
 
   /**
@@ -755,11 +707,14 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'settings:execute:exportData': {
-              await handleDataExport();
+              await exportDataToBackup();
               break;
             }
             case 'settings:execute:importData': {
-              await handleDataImport();
+              await importDataFromBackup(
+                handleImportAddress,
+                handleRemoveAddress
+              );
               break;
             }
             default: {

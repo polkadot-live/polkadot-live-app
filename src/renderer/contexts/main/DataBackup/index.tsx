@@ -1,8 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { defaultDataBackupContext } from './default';
+/// Dependencies.
 import { createContext, useContext } from 'react';
+import { defaultDataBackupContext } from './default';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
@@ -13,11 +14,15 @@ import {
   postToOpenGov,
   postToSettings,
 } from '@/renderer/utils/ImportUtils';
+
+/// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import { useSubscriptions } from '../Subscriptions';
+
+/// Types.
 import type {
   DataBackupContextInterface,
   ImportFunc,
@@ -33,7 +38,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@/types/subscriptions';
-import type { ImportResult } from '@/types/backup';
+import type { ExportResult, ImportResult } from '@/types/backup';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -58,6 +63,43 @@ export const DataBackupProvider = ({
   const { setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
+
+  /// Write Polkadot Live data to a file.
+  const exportDataToBackup = async () => {
+    const { result, msg }: ExportResult = await window.myAPI.exportAppData();
+
+    // Render toastify message in settings window.
+    switch (msg) {
+      case 'success': {
+        postToSettings('settings:render:toast', {
+          success: result,
+          text: 'Data exported successfully.',
+        });
+        break;
+      }
+      case 'error': {
+        postToSettings('settings:render:toast', {
+          success: result,
+          text: 'Data export error.',
+        });
+        break;
+      }
+      case 'canceled': {
+        // Don't do anything on cancel.
+        break;
+      }
+      case 'executing': {
+        postToSettings('settings:render:toast', {
+          success: result,
+          text: 'Export dialog is already open.',
+        });
+        break;
+      }
+      default: {
+        throw new Error('Message not recognized');
+      }
+    }
+  };
 
   /// Exported function for importing data from a backup file.
   const importDataFromBackup = async (
@@ -320,6 +362,7 @@ export const DataBackupProvider = ({
   return (
     <DataBackupContext.Provider
       value={{
+        exportDataToBackup,
         importDataFromBackup,
       }}
     >
