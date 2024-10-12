@@ -53,7 +53,6 @@ export const DataBackupProvider = ({
 }) => {
   const { setAddresses } = useAddresses();
   const { setEvents } = useEvents();
-
   const {
     updateRenderedSubscriptions,
     tryAddIntervalSubscription,
