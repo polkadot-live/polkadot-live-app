@@ -48,6 +48,8 @@ export class WindowsController {
   /* Overlay Window                           */
   /* ---------------------------------------- */
 
+  static overlayExists = (): boolean => this.overlay !== null;
+
   static getOverlay = (): BrowserWindow | null => {
     const window = this.base?.window;
     if (!window) {
