@@ -44,7 +44,10 @@ export const Address = ({
       accountName={name}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
-        openOverlayWith(<Remove address={address} source="vault" />, 'small')
+        openOverlayWith(
+          <Remove address={address} source="vault" accountName={name} />,
+          'small'
+        )
       }
       openConfirmHandler={() =>
         openOverlayWith(

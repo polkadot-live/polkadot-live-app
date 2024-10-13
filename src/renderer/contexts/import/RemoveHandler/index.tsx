@@ -27,13 +27,14 @@ export const RemoveHandlerProvider = ({
   /// Exposed function to remove an address.
   const handleRemoveAddress = async (
     address: string,
-    source: AccountSource
+    source: AccountSource,
+    accountName: string
   ) => {
     // Update addresses state and references.
     handleAddressRemove(source, address);
 
     // Update address data in store in main process.
-    await updateAddressInStore(source, address);
+    await updateAddressInStore(source, address, accountName);
 
     // Process removed address in main renderer.
     postAddressToMainWindow(address);
@@ -42,11 +43,12 @@ export const RemoveHandlerProvider = ({
   /// Update address in store.
   const updateAddressInStore = async (
     source: AccountSource,
-    address: string
+    address: string,
+    accountName: string
   ) => {
     const ipcTask: IpcTask = {
       action: 'raw-account:remove',
-      data: { source, address },
+      data: { source, address, name: accountName },
     };
 
     await window.myAPI.rawAccountTask(ipcTask);

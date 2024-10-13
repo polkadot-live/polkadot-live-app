@@ -20,6 +20,7 @@ export interface ConfirmProps {
 }
 
 export interface RemoveProps {
+  accountName: string;
   address: string;
   source: AccountSource;
 }
