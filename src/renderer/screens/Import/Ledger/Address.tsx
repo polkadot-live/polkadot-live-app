@@ -9,29 +9,29 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { useState } from 'react';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({
-  localAddress: { address, index, isImported, name },
+  localAddress,
   orderData,
   setSection,
 }: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
-
-  // State for account name.
-  const [accountNameState, setAccountNameState] = useState<string>(name);
+  const { address, index, isImported, name } = localAddress;
+  const { handleAddressImport } = useAddresses();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
-    setAccountNameState(newName);
-
     // Update name in store in main process.
-    await renameAccountInStore(who, 'ledger', newName);
+    await renameAccountInStore(address, 'ledger', newName);
 
     // Post message to main renderer to process the account rename.
     postRenameAccount(who, newName);
+
+    // Update import window address state
+    handleAddressImport('ledger', { ...localAddress, name: newName });
   };
 
   return (
@@ -39,7 +39,7 @@ export const Address = ({
       key={index || 0}
       source={'ledger'}
       address={address}
-      accountName={accountNameState}
+      accountName={name}
       renameHandler={renameHandler}
       isImported={isImported}
       orderData={orderData}
@@ -48,7 +48,7 @@ export const Address = ({
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={accountNameState} source="ledger" />,
+          <Confirm address={address} name={name} source="ledger" />,
           'small'
         )
       }

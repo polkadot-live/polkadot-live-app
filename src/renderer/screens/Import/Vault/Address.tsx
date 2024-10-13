@@ -31,7 +31,7 @@ export const Address = ({
     postRenameAccount(who, newName);
 
     // Update import window address state
-    handleAddressImport(source, localAddress);
+    handleAddressImport(source, { ...localAddress, name: newName });
   };
 
   return (

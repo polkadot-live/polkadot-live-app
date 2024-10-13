@@ -219,7 +219,7 @@ export const DataBackupProvider = ({
         const account = AccountsController.get(chainId, address);
         if (account) {
           account.name = name;
-          AccountsController.update(chainId, account);
+          AccountsController.set(chainId, account);
         }
       }
 
