@@ -40,7 +40,7 @@ export const AddHandlerProvider = ({
     handleAddressAdd(source, address);
 
     // Update address data in store in main process.
-    await updateAddressInStore(source, address);
+    await updateAddressInStore(source, address, accountName);
 
     // Process added address in main renderer.
     if (isConnected) {
@@ -51,11 +51,12 @@ export const AddHandlerProvider = ({
   /// Update address in store.
   const updateAddressInStore = async (
     source: AccountSource,
-    address: string
+    address: string,
+    accountName: string
   ) => {
     const ipcTask: IpcTask = {
       action: 'raw-account:add',
-      data: { source, address },
+      data: { source, address, name: accountName },
     };
 
     await window.myAPI.rawAccountTask(ipcTask);
