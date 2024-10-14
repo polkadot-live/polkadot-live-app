@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.1-alpha...v0.2.0-alpha) (2024-10-14)
+
+
+### Features
+
+* account subscriptions backup ([#707](https://github.com/polkadot-live/polkadot-live-app/issues/707)) ([84bedbf](https://github.com/polkadot-live/polkadot-live-app/commit/84bedbf64afa8a6129fb0829ae7e69b6caf8d02c))
+* backup iteration ([#702](https://github.com/polkadot-live/polkadot-live-app/issues/702)) ([c6288af](https://github.com/polkadot-live/polkadot-live-app/commit/c6288af9a34b6074ad5c6fcf5a9893d6743c7600))
+* export events data ([#703](https://github.com/polkadot-live/polkadot-live-app/issues/703)) ([3c805c5](https://github.com/polkadot-live/polkadot-live-app/commit/3c805c55c4350b25a7a02f21b0e881f53bc58692))
+* export interval subscriptions ([#705](https://github.com/polkadot-live/polkadot-live-app/issues/705)) ([68f96c9](https://github.com/polkadot-live/polkadot-live-app/commit/68f96c9873441f242545f696d6e55f6534de7508))
+* import events data ([#704](https://github.com/polkadot-live/polkadot-live-app/issues/704)) ([7992289](https://github.com/polkadot-live/polkadot-live-app/commit/79922892e42cc64483fdd8a2f4333fea62a0f815))
+* import interval subscriptions ([#706](https://github.com/polkadot-live/polkadot-live-app/issues/706)) ([6b6ab0e](https://github.com/polkadot-live/polkadot-live-app/commit/6b6ab0e2bb6c8fba003c199bff0223bfd759d2a2))
+* tabbed child windows ([#668](https://github.com/polkadot-live/polkadot-live-app/issues/668)) ([5afa843](https://github.com/polkadot-live/polkadot-live-app/commit/5afa843448e8dbdcacdd5ad35527f6ff386461dc))
+* umami analytics integration ([#680](https://github.com/polkadot-live/polkadot-live-app/issues/680)) ([4ddc8ed](https://github.com/polkadot-live/polkadot-live-app/commit/4ddc8ed8d03f0b27a981df2ac95529a166206fb7))
+
+
+### Bug Fixes
+
+* data backup debugging ([#713](https://github.com/polkadot-live/polkadot-live-app/issues/713)) ([72df72f](https://github.com/polkadot-live/polkadot-live-app/commit/72df72f4c30d672140053c6af6cf7fbd97f2963f))
+* debugging iteration ([#701](https://github.com/polkadot-live/polkadot-live-app/issues/701)) ([0aa3a4a](https://github.com/polkadot-live/polkadot-live-app/commit/0aa3a4af666c986ccca581b9815d887fb81606e0))
+
 ## [0.1.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.1.1-alpha) (2024-08-15)
 
 
