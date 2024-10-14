@@ -12,10 +12,6 @@ export const ImportVault = ({ section, setSection }: ImportVaultProps) => {
   return !vaultAddresses.length ? (
     <Splash setSection={setSection} />
   ) : (
-    <Manage
-      section={section}
-      setSection={setSection}
-      addresses={vaultAddresses}
-    />
+    <Manage section={section} setSection={setSection} />
   );
 };

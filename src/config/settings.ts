@@ -85,7 +85,7 @@ export const SettingsList: SettingItem[] = [
     enabled: true,
     helpKey: 'help:settings:importData',
     settingType: 'button',
-    title: 'Import Accounts',
+    title: 'Import Data',
     platforms: ['darwin', 'win32'],
   },
   {
@@ -96,7 +96,7 @@ export const SettingsList: SettingItem[] = [
     enabled: true,
     helpKey: 'help:settings:exportData',
     settingType: 'button',
-    title: 'Export Accounts',
+    title: 'Export Data',
     platforms: ['darwin', 'win32'],
   },
 ];

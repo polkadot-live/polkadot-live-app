@@ -6,6 +6,7 @@ import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
 import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import type { AnyJson } from '@/types/misc';
@@ -16,7 +17,6 @@ import type {
   NotificationData,
 } from '@/types/reporter';
 import type { IpcTask } from '@/types/communication';
-import { SettingsController } from './SettingsController';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -121,7 +121,6 @@ export class EventsController {
    */
   static processAsync(task: IpcTask): string | boolean {
     switch (task.action) {
-      // Update a collection of event's associated account name.
       case 'events:update:accountName': {
         const { address, newName }: { address: string; newName: string } =
           task.data;
@@ -129,6 +128,7 @@ export class EventsController {
         // Update events in storage.
         const updated = this.updateEventAccountName(address, newName);
 
+        // TODO: Decouple from this function.
         // Update account's subscription tasks in storage.
         SubscriptionsController.updateCachedAccountNameForTasks(
           address,
@@ -138,9 +138,11 @@ export class EventsController {
         // Return updated events in serialized form.
         return JSON.stringify(updated);
       }
-      // Remove an event from the store.
       case 'events:remove': {
         return this.removeEvent(task.data.event);
+      }
+      case 'events:import': {
+        return this.doImport(task.data.events);
       }
       default: {
         return false;
@@ -168,6 +170,73 @@ export class EventsController {
     }
 
     return { event, wasPersisted: updated };
+  }
+
+  /**
+   * @name doImport
+   * @summary Persists unique imported events to the store.
+   */
+  private static doImport(serialized: string): string {
+    const parsed: EventCallback[] = JSON.parse(serialized);
+
+    // Update persisted event account names.
+    const addressesChecked: string[] = [];
+    for (const event of parsed) {
+      if (event.who.origin !== 'account') {
+        continue;
+      }
+
+      const who = event.who.data as EventAccountData;
+      if (!addressesChecked.find((a) => a === who.address)) {
+        addressesChecked.push(who.address);
+        this.syncAccountName(event);
+      }
+    }
+
+    // Add imported event if it's not a duplicate.
+    let stored = this.getEventsFromStore();
+    let persist = false;
+
+    for (const event of parsed) {
+      const { events, updated } = pushUniqueEvent(event, stored);
+
+      if (updated) {
+        stored = events;
+        persist = true;
+      }
+    }
+
+    if (persist) {
+      this.persistEventsToStore(stored);
+      debug('🔷 Event persisted (%o total in store)', stored.length);
+    }
+
+    return JSON.stringify(stored);
+  }
+
+  /**
+   * @name syncAccountName
+   * @summary Updates the associated account names of persisted events.
+   * (receives an event that was just imported)
+   */
+  private static syncAccountName(event: EventCallback) {
+    if (event.who.origin !== 'account') {
+      return event;
+    }
+
+    // Find any imported accounts with the same address and sync the event's account name.
+    const { address, accountName } = event.who.data as EventAccountData;
+    const updated = this.getEventsFromStore().map((e: EventCallback) => {
+      if (e.who.origin !== 'account') {
+        return e;
+      }
+      const who = e.who.data as EventAccountData;
+      who.address === address && (who.accountName = accountName);
+      return e;
+    });
+
+    // Persist updated events to store.
+    this.persistEventsToStore(updated);
   }
 
   /**
@@ -232,6 +301,14 @@ export class EventsController {
     debug('🔷 Event removed (%o total in store)', updated.length);
 
     return true;
+  }
+
+  /**
+   * @name getBackupData
+   * @summary Get all stored events in serialized form.
+   */
+  static getBackupData(): string {
+    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
   }
 
   /**

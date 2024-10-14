@@ -42,7 +42,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   const updateRenderedSubscriptions = (task: SubscriptionTask) => {
     setRenderedSubscriptionsState((prev) => ({
       ...prev,
-      tasks: prev.tasks.map((t) => (t.action === task.action ? task : t)),
+      tasks: prev.tasks.map((t) => (compareTasks(task, t) ? task : t)),
     }));
   };
 
@@ -137,6 +137,30 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return map;
+  };
+
+  /// Determine if two tasks are the same task.
+  const compareTasks = (a: SubscriptionTask, b: SubscriptionTask): boolean => {
+    // Different task types.
+    if (!a.account && b.account) {
+      return false;
+    }
+
+    // Compare chain tasks.
+    if (!a.account && !b.account) {
+      return a.chainId === b.chainId && a.action === b.action;
+    }
+
+    // Account account tasks.
+    if (a.account && b.account) {
+      return (
+        a.account.address === b.account.address &&
+        a.action === b.action &&
+        a.chainId === b.chainId
+      );
+    }
+
+    return false;
   };
 
   return (

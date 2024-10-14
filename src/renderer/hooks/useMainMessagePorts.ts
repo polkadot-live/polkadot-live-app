@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Required imports.
+/// Dependencies.
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { APIsController } from '@/controller/renderer/APIsController';
 import BigNumber from 'bignumber.js';
@@ -23,25 +23,20 @@ import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useAppSettings } from '../contexts/main/AppSettings';
-import { useBootstrapping } from '../contexts/main/Bootstrapping';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useIntervalSubscriptions } from '../contexts/main/IntervalSubscriptions';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
+import { useDataBackup } from '@app/contexts/main/DataBackup';
 
-/// Type imports.
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+/// Types.
 import type { ActiveReferendaInfo } from '@/types/openGov';
 import type { AnyData } from '@/types/misc';
 import type { EventCallback } from '@/types/reporter';
-import type { ExportResult, ImportResult } from '@/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -52,8 +47,8 @@ export const useMainMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
-
   const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
+  const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
   const {
     updateRenderedSubscriptions,
@@ -100,17 +95,45 @@ export const useMainMessagePorts = () => {
    * @name handleImportAddress
    * @summary Imports a new account when a message is received from `import` window.
    */
-  const handleImportAddress = async (ev: MessageEvent) => {
+  const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     const { chainId, source, address, name } = ev.data.data;
 
     // Add address to accounts controller.
-    const account = AccountsController.add(chainId, source, address, name);
+    let account =
+      AccountsController.add(chainId, source, address, name) || undefined;
 
+    // Unsubscribe all tasks if the account exists and is being re-imported.
+    if (fromBackup && !account) {
+      account = AccountsController.get(chainId, address);
+
+      if (account) {
+        await AccountsController.removeAllSubscriptions(account);
+        const allTasks = SubscriptionsController.getAllSubscriptionsForAccount(
+          account,
+          'disable'
+        );
+
+        for (const task of allTasks) {
+          updateTask('account', task, task.account?.address);
+          updateRenderedSubscriptions(task);
+
+          await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:account:update',
+            data: {
+              serAccount: JSON.stringify(account.flatten()),
+              serTask: JSON.stringify(task),
+            },
+          });
+        }
+      }
+    }
+
+    // Return if account already exists and isn't being re-imported.
     if (!account) {
-      // Account could not be added, probably already added.
       return;
     }
 
+    // Fetch account data from network.
     const isOnline: boolean =
       (await window.myAPI.sendConnectionTaskAsync({
         action: 'connection:getStatus',
@@ -118,20 +141,17 @@ export const useMainMessagePorts = () => {
       })) || false;
 
     if (isOnline) {
-      // Fetch account nonce and balance.
       await fetchBalanceForAccount(account);
-
-      // Initialize nomination pool data for account if necessary.
       await fetchNominationPoolDataForAccount(account);
-
-      // Initialize nominating data for account if necessary.
       await fetchNominatingDataForAccount(account);
     }
 
-    // Subscribe account to all possible subscriptions if setting enabled.
-    if (account.queryMulti !== null) {
-      const tasks =
-        SubscriptionsController.getAllSubscriptionsForAccount(account);
+    // Subscribe new account to all possible subscriptions if setting enabled.
+    if (account.queryMulti !== null && !fromBackup) {
+      const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        account,
+        'enable'
+      );
 
       // Update persisted state and React state for tasks.
       for (const task of tasks) {
@@ -148,7 +168,8 @@ export const useMainMessagePorts = () => {
       }
 
       // Subscribe to tasks if app setting enabled.
-      ConfigRenderer.enableAutomaticSubscriptions &&
+      !fromBackup &&
+        ConfigRenderer.enableAutomaticSubscriptions &&
         (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
@@ -156,7 +177,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Add account to address context state.
-    await importAddress(chainId, source, address, name);
+    await importAddress(chainId, source, address, name, fromBackup);
 
     // Send message back to import window to reset account's processing flag.
     ConfigRenderer.portToImport?.postMessage({
@@ -174,7 +195,7 @@ export const useMainMessagePorts = () => {
 
   /**
    * @name handleRemoveAddress
-   * @summary Removes an account a message is received from `import` window.
+   * @summary Removes an account when a message is received from `import` window.
    *
    * Also called when deleting an account.
    */
@@ -229,21 +250,17 @@ export const useMainMessagePorts = () => {
     const { address, chainId, newName } = ev.data.data;
     const account = AccountsController.get(chainId, address);
 
-    if (!account) {
-      // Account not found in controller.
-      console.log('account not imported');
-      return;
+    if (account) {
+      // Set new account name and persist new account data to storage.
+      account.name = newName;
+      await AccountsController.set(chainId, account);
+
+      // Update account react state.
+      setAddresses(AccountsController.getAllFlattenedAccountData());
+
+      // Update subscription task react state.
+      updateAccountNameInTasks(address, newName);
     }
-
-    // Set new account name and persist new account data to storage.
-    account.name = newName;
-    await AccountsController.set(chainId, account);
-
-    // Update account react state.
-    setAddresses(AccountsController.getAllFlattenedAccountData());
-
-    // Update subscription task react state.
-    updateAccountNameInTasks(address, newName);
 
     // The updated events will be sent back to the renderer for updating React state.
     const serialized = (await window.myAPI.sendEventTaskAsync({
@@ -254,113 +271,6 @@ export const useMainMessagePorts = () => {
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
-  };
-
-  /// Utility to post message to settings window.
-  const postToSettings = (res: boolean, text: string) => {
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:render:toast',
-      data: { success: res, text },
-    });
-  };
-
-  /// Utility to post message to import window.
-  const postToImport = (
-    json: LocalAddress | LedgerLocalAddress,
-    source: AccountSource
-  ) => {
-    ConfigRenderer.portToImport?.postMessage({
-      task: 'import:account:add',
-      data: { json: JSON.stringify(json), source },
-    });
-  };
-
-  /**
-   * @name handleDataExport
-   * @summary Write Polkadot Live data to a file.
-   */
-  const handleDataExport = async () => {
-    const { result, msg }: ExportResult = await window.myAPI.exportAppData();
-
-    // Render toastify message in settings window.
-    switch (msg) {
-      case 'success': {
-        postToSettings(result, 'Data exported successfully.');
-        break;
-      }
-      case 'error': {
-        postToSettings(result, 'Data export error.');
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'executing': {
-        postToSettings(result, 'Export dialog is already open.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
-  };
-
-  /**
-   * @name handleDataImport
-   * @summary Import and process Polkadot Live data from a backup.
-   */
-  const handleDataImport = async () => {
-    const response: ImportResult = await window.myAPI.importAppData();
-
-    switch (response.msg) {
-      case 'success': {
-        try {
-          if (!response.data) {
-            throw new Error('No import data.');
-          }
-          const { serialized } = response.data;
-          const parsedArr: [AccountSource, string][] = JSON.parse(serialized);
-          const parsedMap = new Map<AccountSource, string>(parsedArr);
-          const importWindowOpen = await window.myAPI.isViewOpen('import');
-
-          for (const [source, ser] of parsedMap.entries()) {
-            const parsed =
-              source === 'ledger'
-                ? (JSON.parse(ser) as LedgerLocalAddress[])
-                : (JSON.parse(ser) as LocalAddress[]);
-
-            parsed.forEach(async (a) => {
-              // Persist addresses to Electron store.
-              await window.myAPI.rawAccountTask({
-                action: 'raw-account:persist',
-                data: { source, serialized: JSON.stringify(a) },
-              });
-
-              // Update import window state only if it's open.
-              importWindowOpen && postToImport(a, source);
-            });
-          }
-
-          postToSettings(response.result, 'Data imported successfully.');
-        } catch (err) {
-          postToSettings(false, 'Error parsing JSON.');
-        }
-
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
-        break;
-      }
-      case 'error': {
-        postToSettings(response.result, 'Data import error.');
-        break;
-      }
-      default: {
-        throw new Error('Message not recognized');
-      }
-    }
   };
 
   /**
@@ -696,7 +606,7 @@ export const useMainMessagePorts = () => {
           // Message received from `import`.
           switch (ev.data.task) {
             case 'renderer:address:import': {
-              await handleImportAddress(ev);
+              await handleImportAddress(ev, false);
               break;
             }
             case 'renderer:address:remove': {
@@ -793,11 +703,14 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'settings:execute:exportData': {
-              await handleDataExport();
+              await exportDataToBackup();
               break;
             }
             case 'settings:execute:importData': {
-              await handleDataImport();
+              await importDataFromBackup(
+                handleImportAddress,
+                handleRemoveAddress
+              );
               break;
             }
             default: {

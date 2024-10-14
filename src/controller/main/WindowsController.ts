@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
+import { BrowserWindow } from 'electron';
 import type { AnyJson } from '@/types/misc';
-import type { BaseWindow, BrowserWindow, WebContentsView } from 'electron';
+import type { BaseWindow, WebContentsView } from 'electron';
 
 // A window helper to manage which windows are open and their current state.
 interface StoredWindow {
@@ -30,6 +31,7 @@ export class WindowsController {
   static base: StoredBase | null = null;
   static views: StoredView[] = [];
   static tabsView: WebContentsView | null = null;
+  private static overlay: BrowserWindow | null = null;
 
   // Height of tabs view in pixels (tabs height + header height)
   static Y_OFFSET = 49 + 35.0938;
@@ -41,6 +43,51 @@ export class WindowsController {
   // Get a managed web contents view.
   static getView = (viewId: string) =>
     this.views.find(({ id }) => viewId === id)?.view ?? undefined;
+
+  /* ---------------------------------------- */
+  /* Overlay Window                           */
+  /* ---------------------------------------- */
+
+  static overlayExists = (): boolean => this.overlay !== null;
+
+  static getOverlay = (): BrowserWindow | null => {
+    const window = this.base?.window;
+    if (!window) {
+      return null;
+    }
+
+    const { x, y, width, height } = window.getBounds();
+    const overlay = new BrowserWindow({
+      alwaysOnTop: true,
+      frame: false,
+      show: true,
+      x,
+      y,
+      width,
+      height,
+      resizable: false,
+      minimizable: false,
+      maximizable: false,
+      closable: true,
+      fullscreenable: false,
+      skipTaskbar: true,
+      backgroundColor: '#2b2b2b',
+      opacity: 0.25,
+    });
+
+    overlay.on('move', () => {
+      const [xPos, yPos] = WindowsController.overlay!.getPosition();
+      WindowsController.base?.window.setPosition(xPos, yPos, false);
+    });
+
+    this.overlay = overlay;
+    return this.overlay;
+  };
+
+  static destroyOverlay = () => {
+    this.overlay?.close();
+    this.overlay = null;
+  };
 
   /* ---------------------------------------- */
   /* Base Window                              */

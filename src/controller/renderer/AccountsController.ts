@@ -27,36 +27,29 @@ export class AccountsController {
    * @summary Injects accounts into class from store.
    */
   static async initialize() {
-    const stored: string =
+    const serialized: string =
       (await window.myAPI.sendAccountTask({
         action: 'account:getAll',
         data: null,
       })) || '';
 
-    // Instantiate empty map if no accounts found in store.
-    if (stored === '') {
+    // Instantiate empty map if no accounts exist.
+    if (serialized === '') {
       this.accounts = new Map();
       return;
     }
 
-    // Parse serialized data into a map of StoredAccounts.
-    const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(stored));
-    const importedAccounts: ImportedAccounts = new Map();
-
-    for (const [chain, accounts] of parsed) {
-      const imported: Account[] = [];
-
-      for (const a of accounts) {
-        // Instantiate account.
-        const account = new Account(chain, a._source, a._address, a._name);
-        imported.push(account);
-      }
-
-      importedAccounts.set(chain, imported);
+    // Instantiate accounts.
+    const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(serialized));
+    for (const [chain, stored] of parsed) {
+      this.accounts.set(
+        chain,
+        stored.map(
+          ({ _source, _address, _name }) =>
+            new Account(chain, _source, _address, _name)
+        )
+      );
     }
-
-    // Inject imported accounts into controller.
-    this.accounts = importedAccounts;
   }
 
   /**
@@ -191,8 +184,6 @@ export class AccountsController {
   /**
    * @name set
    * @summary Updates an Account in the `accounts` property.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {Account} account - the account to set.
    */
   static set = async (chain: ChainID, account: Account) => {
     this.accounts.set(

@@ -9,12 +9,12 @@ import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { useRemoveHandler } from '@/renderer/contexts/import/RemoveHandler';
 import type { RemoveProps } from './types';
 
-export const Remove = ({ address, source }: RemoveProps) => {
+export const Remove = ({ address, source, accountName }: RemoveProps) => {
   const { setStatus } = useOverlay();
   const { handleRemoveAddress } = useRemoveHandler();
 
   const handleClickRemove = async () => {
-    await handleRemoveAddress(address, source);
+    await handleRemoveAddress(address, source, accountName);
     setStatus(0);
   };
 

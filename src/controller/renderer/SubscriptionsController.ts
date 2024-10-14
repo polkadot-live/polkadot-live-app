@@ -187,19 +187,17 @@ export class SubscriptionsController {
     for (const accounts of accountsMap.values()) {
       for (const a of accounts) {
         const tasks = allAccountTasks
-          // Get all possible tasks for account's chain ID.
+          // Filter on account's chain ID.
           .filter((t) => t.chainId === a.chain)
-          // Populate tasks with correct arguments.
-          .map((t) => SubscriptionsController.getTaskArgsForAccount(a, t))
-          // Merge active tasks in the array.
-          .map((t) => {
-            for (const active of a.getSubscriptionTasks() || []) {
-              if (active.action === t.action && active.chainId === t.chainId) {
-                return active;
-              }
-            }
-            return t;
-          });
+          // Fill task arguments.
+          .map((t) => this.getTaskArgsForAccount(a, t))
+          // Merge active tasks.
+          .map(
+            (t) =>
+              (a.getSubscriptionTasks() || []).find(
+                (next) => next.action === t.action && next.chainId === t.chainId
+              ) || t
+          );
 
         result.set(a.address, tasks);
       }
@@ -212,11 +210,14 @@ export class SubscriptionsController {
    * @name enableAllSubscriptionsForAccount
    * @summary Activate all subscriptions when an account is imported.
    */
-  static getAllSubscriptionsForAccount = (account: Account) =>
+  static getAllSubscriptionsForAccount = (
+    account: Account,
+    status: 'enable' | 'disable'
+  ) =>
     allAccountTasks
       .filter((t) => t.chainId === account.chain)
       .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
-      .map((t) => ({ ...t, status: 'enable' }) as SubscriptionTask);
+      .map((t) => ({ ...t, status }) as SubscriptionTask);
 
   /**
    * @name getTaskArgsForAccount

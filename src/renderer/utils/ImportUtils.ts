@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigImport } from '@/config/processes/import';
+import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
@@ -9,6 +10,7 @@ import type {
   LocalAddress,
 } from '@/types/accounts';
 import { getAddressChainId } from '../Utils';
+import type { AnyData } from '@/types/misc';
 import type { ChainID } from '@/types/chains';
 import type { IpcTask } from '@/types/communication';
 
@@ -155,4 +157,45 @@ export const getSortedLocalLedgerAddresses = (
   }
 
   return sorted;
+};
+
+/**
+ * @name getFromBackupFile
+ * @summary Get some serialized data from backup files.
+ * Key may be `addresses`, `events` or `intervals`.
+ */
+export const getFromBackupFile = (
+  key: string,
+  serialized: string
+): string | undefined => {
+  const s_array: [string, string][] = JSON.parse(serialized);
+  const s_map = new Map<string, string>(s_array);
+  return s_map.get(key);
+};
+
+/**
+ * @name postToImport
+ * @summary Utility to post a message to the import window.
+ * (main renderer)
+ */
+export const postToImport = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
+};
+
+/**
+ * @name postToOpenGov
+ * @summary Utility to post a message to the OpenGov window.
+ * (main renderer)
+ */
+export const postToOpenGov = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToOpenGov?.postMessage({ task, data: dataObj });
+};
+
+/**
+ * @name postToSettings
+ * @summary Utility to post a message to the Settings window.
+ * (main renderer)
+ */
+export const postToSettings = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToSettings?.postMessage({ task, data: dataObj });
 };

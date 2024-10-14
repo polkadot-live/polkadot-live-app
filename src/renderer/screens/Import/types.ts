@@ -3,11 +3,7 @@
 
 import type { AnyFunction, AnyJson } from '@/types/misc';
 import type { Html5Qrcode } from 'html5-qrcode';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@/types/accounts';
+import type { AccountSource, LedgerLocalAddress } from '@/types/accounts';
 import type { LedgerResponse } from '@/types/ledger';
 
 export interface HomeProps {
@@ -32,7 +28,6 @@ export interface VaultSplashProps {
 export interface ManageVaultProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
   section: number;
-  addresses: LocalAddress[];
 }
 
 export interface Html5QrScannerProps {
@@ -48,7 +43,6 @@ export interface ImportLedgerProps {
 }
 
 export interface ImportLedgerManageProps {
-  addresses: LedgerLocalAddress[];
   isImporting: boolean;
   statusCodes: LedgerResponse[];
   toggleImport: AnyFunction;
@@ -57,11 +51,7 @@ export interface ImportLedgerManageProps {
 }
 
 export interface LedgerAddressProps {
-  accountName: string;
-  address: string;
-  source: AccountSource;
-  index: number;
-  isImported: boolean;
+  localAddress: LedgerLocalAddress;
   orderData: {
     curIndex: number;
     lastIndex: number;

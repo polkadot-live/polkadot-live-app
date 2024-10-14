@@ -33,6 +33,10 @@ export class AddressesController {
         this.persist(task);
         break;
       }
+      case 'raw-account:import': {
+        this.doImport(task);
+        break;
+      }
       case 'raw-account:remove': {
         this.remove(task);
         break;
@@ -49,7 +53,7 @@ export class AddressesController {
    * @summary Set the import flag of an address to `true`.
    */
   private static add(task: IpcTask) {
-    const { source, address } = task.data;
+    const { address, source, name } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
@@ -57,7 +61,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: true } : a
+          a.address === address ? { ...a, name, isImported: true } : a
         )
       );
 
@@ -67,7 +71,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: true } : a
+          a.address === address ? { ...a, name, isImported: true } : a
         )
       );
 
@@ -103,10 +107,10 @@ export class AddressesController {
   }
 
   /**
-   * @name getAll
+   * @name getBackupData
    * @summary Get all stored addresses in serialized form.
    */
-  static getAll(): string {
+  static getBackupData(): string {
     const map = new Map<AccountSource, string>();
 
     for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
@@ -115,10 +119,26 @@ export class AddressesController {
         source === 'ledger'
           ? (this.getStoredAddresses(key) as LedgerLocalAddress[])
           : (this.getStoredAddresses(key) as LocalAddress[]);
+
+      if (fetched.length === 0) {
+        continue;
+      }
+
       map.set(source, JSON.stringify(fetched));
     }
 
     return JSON.stringify(Array.from(map.entries()));
+  }
+
+  /**
+   * @name getAllBySource
+   * @summary Get all addresses from a particular source.
+   */
+  static getAllBySource(
+    source: AccountSource
+  ): LedgerLocalAddress[] | LocalAddress[] {
+    const key = ConfigMain.getStorageKey(source);
+    return this.getStoredAddresses(key, source === 'ledger');
   }
 
   /**
@@ -129,6 +149,33 @@ export class AddressesController {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
     return store.has(key) ? this.getFromStore(key) : '[]';
+  }
+
+  /**
+   * @name doImport
+   * @summary Persist an address to store that's being imported from a backup file.
+   */
+  private static doImport(task: IpcTask) {
+    const { source, serialized } = task.data;
+    const parsed: LocalAddress | LedgerLocalAddress = JSON.parse(serialized);
+    const { address, isImported, name } = parsed;
+
+    if (this.isAlreadyPersisted(address)) {
+      isImported
+        ? this.add({
+            action: 'raw-account:add',
+            data: { source, address, name },
+          })
+        : this.remove({
+            action: 'raw-account:remove',
+            data: { source, address, name },
+          });
+    } else {
+      this.persist({
+        action: 'raw-account:persist',
+        data: { source, serialized },
+      });
+    }
   }
 
   /**
@@ -168,7 +215,7 @@ export class AddressesController {
    * @summary Set the import flag of an address to `false`.
    */
   private static remove(task: IpcTask) {
-    const { source, address } = task.data;
+    const { address, source, name } = task.data;
     const key = ConfigMain.getStorageKey(source);
 
     if (source === 'ledger') {
@@ -176,7 +223,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
       const serialised = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: false } : a
+          a.address === address ? { ...a, name, isImported: false } : a
         )
       );
 
@@ -186,7 +233,7 @@ export class AddressesController {
       const stored = this.getStoredAddresses(key) as LocalAddress[];
       const serialized = JSON.stringify(
         stored.map((a) =>
-          a.address === address ? { ...a, isImported: false } : a
+          a.address === address ? { ...a, name, isImported: false } : a
         )
       );
 
