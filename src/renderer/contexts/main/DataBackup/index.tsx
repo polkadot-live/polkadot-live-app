@@ -76,15 +76,19 @@ export const DataBackupProvider = ({
         });
         break;
       }
+      case 'alreadyOpen': {
+        // Don't do anything.
+        break;
+      }
+      case 'canceled': {
+        // Don't do anything on cancel.
+        break;
+      }
       case 'error': {
         postToSettings('settings:render:toast', {
           success: result,
           text: 'Data export error.',
         });
-        break;
-      }
-      case 'canceled': {
-        // Don't do anything on cancel.
         break;
       }
       case 'executing': {
@@ -137,6 +141,10 @@ export const DataBackupProvider = ({
 
         // Broadcast importing flag.
         window.myAPI.relayModeFlag('isImporting', false);
+        break;
+      }
+      case 'alreadyOpen': {
+        // Don't do anything.
         break;
       }
       case 'canceled': {
@@ -219,7 +227,7 @@ export const DataBackupProvider = ({
         const account = AccountsController.get(chainId, address);
         if (account) {
           account.name = name;
-          AccountsController.update(chainId, account);
+          await AccountsController.set(chainId, account);
         }
       }
 

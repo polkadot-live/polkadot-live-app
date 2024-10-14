@@ -18,6 +18,11 @@ export class BackupController {
    * @summary Export Polkadot Live data to a text file.
    */
   static async export(): Promise<ExportResult> {
+    // Exit early if overlay is created.
+    if (WindowsController.overlayExists()) {
+      return { result: false, msg: 'alreadyOpen' };
+    }
+
     // Return early if export dialog is already open.
     if (ConfigMain.exportingData) {
       return { result: false, msg: 'executing' };
@@ -68,6 +73,11 @@ export class BackupController {
    * @summary Import a Polkadot Live data file.
    */
   static async import(): Promise<ImportResult> {
+    // Exit early if overlay is created.
+    if (WindowsController.overlayExists()) {
+      return { result: false, msg: 'alreadyOpen' };
+    }
+
     // Render transparent browser window over base window.
     const overlay = WindowsController.getOverlay();
     if (!overlay) {

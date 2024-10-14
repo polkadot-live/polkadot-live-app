@@ -128,6 +128,7 @@ export class EventsController {
         // Update events in storage.
         const updated = this.updateEventAccountName(address, newName);
 
+        // TODO: Decouple from this function.
         // Update account's subscription tasks in storage.
         SubscriptionsController.updateCachedAccountNameForTasks(
           address,

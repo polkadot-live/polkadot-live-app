@@ -31,7 +31,7 @@ export const ImportHandlerProvider = ({
 }) => {
   const { isConnected } = useConnections();
   const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
-  const { handleAddressImport, isAlreadyImported } = useAddresses();
+  const { handleAddressImport } = useAddresses();
 
   /// Exposed function to import an address.
   const handleImportAddress = async (
@@ -70,11 +70,6 @@ export const ImportHandlerProvider = ({
     source: AccountSource
   ) => {
     const { address, isImported } = imported;
-
-    // Return if address is already imported.
-    if (isAlreadyImported(address)) {
-      return;
-    }
 
     // Set processing flag for account if it needs importing.
     isImported

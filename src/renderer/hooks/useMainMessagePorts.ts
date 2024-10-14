@@ -195,7 +195,7 @@ export const useMainMessagePorts = () => {
 
   /**
    * @name handleRemoveAddress
-   * @summary Removes an account a message is received from `import` window.
+   * @summary Removes an account when a message is received from `import` window.
    *
    * Also called when deleting an account.
    */
@@ -250,21 +250,17 @@ export const useMainMessagePorts = () => {
     const { address, chainId, newName } = ev.data.data;
     const account = AccountsController.get(chainId, address);
 
-    if (!account) {
-      // Account not found in controller.
-      console.log('account not imported');
-      return;
+    if (account) {
+      // Set new account name and persist new account data to storage.
+      account.name = newName;
+      await AccountsController.set(chainId, account);
+
+      // Update account react state.
+      setAddresses(AccountsController.getAllFlattenedAccountData());
+
+      // Update subscription task react state.
+      updateAccountNameInTasks(address, newName);
     }
-
-    // Set new account name and persist new account data to storage.
-    account.name = newName;
-    await AccountsController.set(chainId, account);
-
-    // Update account react state.
-    setAddresses(AccountsController.getAllFlattenedAccountData());
-
-    // Update subscription task react state.
-    updateAccountNameInTasks(address, newName);
 
     // The updated events will be sent back to the renderer for updating React state.
     const serialized = (await window.myAPI.sendEventTaskAsync({

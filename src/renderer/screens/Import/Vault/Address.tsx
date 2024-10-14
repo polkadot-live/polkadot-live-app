@@ -9,32 +9,29 @@ import {
 } from '@/renderer/utils/ImportUtils';
 import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
+import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { useState } from 'react';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({
-  address,
-  source,
-  accountName,
-  isImported,
+  localAddress,
   setSection,
   orderData,
 }: AddressProps) => {
+  const { address, isImported, name, source } = localAddress;
   const { openOverlayWith } = useOverlay();
-
-  // State for account name.
-  const [accountNameState, setAccountNameState] = useState<string>(accountName);
+  const { handleAddressImport } = useAddresses();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
-    setAccountNameState(newName);
-
     // Update name in store in main process.
     await renameAccountInStore(address, 'vault', newName);
 
     // Post message to main renderer to process the account rename.
     postRenameAccount(who, newName);
+
+    // Update import window address state
+    handleAddressImport(source, { ...localAddress, name: newName });
   };
 
   return (
@@ -44,14 +41,17 @@ export const Address = ({
       source={source}
       isImported={isImported}
       orderData={orderData}
-      accountName={accountNameState}
+      accountName={name}
       renameHandler={renameHandler}
       openRemoveHandler={() =>
-        openOverlayWith(<Remove address={address} source="vault" />, 'small')
+        openOverlayWith(
+          <Remove address={address} source="vault" accountName={name} />,
+          'small'
+        )
       }
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={accountNameState} source="vault" />,
+          <Confirm address={address} name={name} source="vault" />,
           'small'
         )
       }

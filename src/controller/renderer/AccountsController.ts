@@ -201,19 +201,6 @@ export class AccountsController {
   };
 
   /**
-   * @name update
-   * @summary Update an existing account.
-   */
-  static update = (chain: ChainID, account: Account) => {
-    this.accounts.set(
-      chain,
-      this.accounts
-        .get(chain)
-        ?.map((a) => (a.address === account.address ? account : a)) || []
-    );
-  };
-
-  /**
    * @name add
    * @summary Adds an account to the list of imported accounts. Fails if the account already
    * exists.
