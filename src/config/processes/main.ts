@@ -18,11 +18,11 @@ export class Config {
   private static _readOnlyAddressesStorageKey = 'read_only_addresses';
 
   // Main window's docked properties.
-  private static _dockedWidth = 420;
-  private static _dockedHeight = 575;
+  private static _dockedWidth = 490;
+  private static _dockedHeight = 600;
 
   // Child window properties.
-  private static _childWidth = 700;
+  private static _childWidth = 780;
 
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;

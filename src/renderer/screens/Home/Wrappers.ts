@@ -46,46 +46,6 @@ export const CarouselWrapper = styled(motion.div)`
   }
 `;
 
-export const TabsWrapper = styled.div`
-  --tab-height: 3.3rem;
-  background-color: var(--background-menu);
-  border-bottom: 2px solid var(--border-primary-color);
-  width: 100%;
-  display: flex;
-  z-index: 2;
-  margin-top: 3rem;
-  padding-top: 0.5rem;
-
-  > button {
-    font-family: InterSemiBold, sans-serif;
-    color: var(--text-color-secondary);
-    height: var(--tab-height);
-    flex-basis: 50%;
-    transition: background-color 0.15s;
-    padding-top: 0.5rem;
-    font-size: 1.1rem;
-
-    &:hover {
-      background: #1e1e1e;
-    }
-
-    > span {
-      position: relative;
-      top: -1px;
-      box-sizing: border-box;
-      padding: 0.75rem 0;
-    }
-
-    &.active {
-      color: var(--text-color-primary);
-      > span {
-        height: var(--tab-height);
-        border-bottom: 2px solid var(--border-secondary-color);
-      }
-    }
-  }
-`;
-
 export const IconWrapper = styled.div`
   position: absolute;
   top: 6rem;
