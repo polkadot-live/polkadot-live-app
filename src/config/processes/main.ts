@@ -19,7 +19,7 @@ export class Config {
 
   // Main window's docked properties.
   private static _dockedWidth = 490;
-  private static _dockedHeight = 600;
+  private static _dockedHeight = 620;
 
   // Child window properties.
   private static _childWidth = 780;

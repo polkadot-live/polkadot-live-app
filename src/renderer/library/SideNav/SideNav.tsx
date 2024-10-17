@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import { NavItem } from './NavItem';
@@ -12,39 +11,16 @@ import {
   faGaugeSimple,
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
-import type { SideNavProps } from './SideNav.types';
+import { useSideNav } from '../contexts';
 
-export const SideNav = ({ selected, setSelected }: SideNavProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export const SideNav = () => {
+  const { isCollapsed, setIsCollapsed } = useSideNav();
 
   return (
     <SideNavWrapper $isCollapsed={isCollapsed}>
-      <NavItem
-        selected={selected === 0}
-        id={0}
-        setSelected={setSelected}
-        isCollapsed={isCollapsed}
-        icon={faGaugeSimple}
-        label={'Summary'}
-      />
-
-      <NavItem
-        selected={selected === 1}
-        id={1}
-        setSelected={setSelected}
-        isCollapsed={isCollapsed}
-        icon={faBarsStaggered}
-        label={'Events'}
-      />
-
-      <NavItem
-        selected={selected === 2}
-        id={2}
-        setSelected={setSelected}
-        isCollapsed={isCollapsed}
-        icon={faCubesStacked}
-        label={'Subscribe'}
-      />
+      <NavItem id={0} icon={faGaugeSimple} label={'Summary'} />
+      <NavItem id={1} icon={faBarsStaggered} label={'Events'} />
+      <NavItem id={2} icon={faCubesStacked} label={'Subscribe'} />
 
       <NavItemWrapper
         $size={'half'}

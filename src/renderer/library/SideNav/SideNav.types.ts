@@ -7,13 +7,5 @@ export interface NavItemProps {
   children?: JSX.Element;
   icon?: IconProp;
   label?: string;
-  selected: boolean;
   id: number;
-  isCollapsed: boolean;
-  setSelected: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export interface SideNavProps {
-  selected: number;
-  setSelected: React.Dispatch<React.SetStateAction<number>>;
 }

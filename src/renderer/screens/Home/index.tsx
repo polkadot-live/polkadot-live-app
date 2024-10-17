@@ -7,7 +7,8 @@ import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSideNav } from '@/renderer/library/contexts';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
@@ -35,7 +36,7 @@ export const Home = () => {
 
   // Get app loading flag.
   const { appLoading } = useBootstrapping();
-  const [selected, setSelected] = useState(0);
+  const { selectedId } = useSideNav();
 
   useEffect(() => {
     // Listen for event callbacks.
@@ -73,7 +74,7 @@ export const Home = () => {
           color: 'rgb(241 245 249)',
         }}
       >
-        <SideNav selected={selected} setSelected={setSelected} />
+        <SideNav />
 
         <BodyInterfaceWrapper $maxHeight>
           {appLoading && (
@@ -98,7 +99,7 @@ export const Home = () => {
             </>
           )}
           {/* Summary */}
-          {!appLoading && selected === 0 && (
+          {!appLoading && selectedId === 0 && (
             <ScrollWrapper>
               <IconWrapper>
                 <IconSVG width={175} opacity={0.02} />
@@ -109,7 +110,7 @@ export const Home = () => {
             </ScrollWrapper>
           )}
           {/* Events */}
-          {!appLoading && selected === 1 && (
+          {!appLoading && selectedId === 1 && (
             <ScrollWrapper>
               <IconWrapper>
                 <IconSVG width={175} opacity={0.02} />
@@ -118,7 +119,7 @@ export const Home = () => {
             </ScrollWrapper>
           )}
           {/* Subscribe */}
-          {!appLoading && selected === 2 && (
+          {!appLoading && selectedId === 2 && (
             <ScrollWrapper>
               <IconWrapper>
                 <IconSVG width={175} opacity={0.02} />
