@@ -16,7 +16,6 @@ export const HeaderWrapper = styled.div`
   top: 0;
   left: 0;
   z-index: 30;
-  border-bottom: 1px solid var(--border-primary-color);
 
   .content-wrapper {
     display: flex;
