@@ -11,6 +11,7 @@ import { ConnectionsProvider } from '@app/contexts/common/Connections';
 import { TabsProvider } from '@/renderer/contexts/tabs/Tabs';
 
 // Main window contexts.
+import { SideNavProvider } from './library/contexts';
 import { AddressesProvider } from '@app/contexts/main/Addresses';
 import { AppSettingsProvider } from '@app/contexts/main/AppSettings';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
@@ -59,6 +60,7 @@ const getProvidersForWindow = () => {
     }
     case 'main': {
       return withProviders(
+        SideNavProvider,
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
