@@ -12,7 +12,7 @@ import { useSideNav } from '@/renderer/library/contexts';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
-import { IconWrapper } from './Wrappers';
+import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
@@ -63,74 +63,53 @@ export const Home = () => {
   return (
     <>
       <Header showMenu={true} appLoading={appLoading} />
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          position: 'fixed',
-          top: '3rem',
-          bottom: '3rem',
-          left: 0,
-          color: 'rgb(241 245 249)',
-        }}
-      >
+      <FixedFlexWrapper>
+        {/* Side Navigation */}
         <SideNav />
 
         <BodyInterfaceWrapper $maxHeight>
-          {appLoading && (
-            <>
-              <IconWrapper>
-                <IconSVG width={175} opacity={0.01} />
-              </IconWrapper>
-              <div className="app-loading">
-                <div className="lds-grid">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
+          <IconWrapper>
+            <IconSVG width={175} opacity={appLoading ? 0.01 : 0.02} />
+          </IconWrapper>
+
+          {appLoading ? (
+            <div className="app-loading">
+              <div className="lds-grid">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <p>Loading Polkadot Live</p>
+            </div>
+          ) : (
+            <ScrollWrapper>
+              {/* Summary */}
+              {selectedId === 0 && (
+                <div style={{ padding: '2rem 1rem' }}>
+                  <h1>Summary</h1>
+                  <p>Welcome back to Polkadot Live.</p>
                 </div>
-                <p>Loading Polkadot Live</p>
-              </div>
-            </>
-          )}
-          {/* Summary */}
-          {!appLoading && selectedId === 0 && (
-            <ScrollWrapper>
-              <IconWrapper>
-                <IconSVG width={175} opacity={0.02} />
-              </IconWrapper>
-              <div style={{ padding: '2rem 1rem' }}>
-                <h1>Summary</h1>
-              </div>
-            </ScrollWrapper>
-          )}
-          {/* Events */}
-          {!appLoading && selectedId === 1 && (
-            <ScrollWrapper>
-              <IconWrapper>
-                <IconSVG width={175} opacity={0.02} />
-              </IconWrapper>
-              <Events />
-            </ScrollWrapper>
-          )}
-          {/* Subscribe */}
-          {!appLoading && selectedId === 2 && (
-            <ScrollWrapper>
-              <IconWrapper>
-                <IconSVG width={175} opacity={0.02} />
-              </IconWrapper>
-              <div className="container">
-                <Manage addresses={getAddresses()} />
-              </div>
+              )}
+
+              {/* Events */}
+              {selectedId === 1 && <Events />}
+
+              {/* Subscribe */}
+              {selectedId === 2 && (
+                <div className="container">
+                  <Manage addresses={getAddresses()} />
+                </div>
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>
-      </div>
+      </FixedFlexWrapper>
       <Footer />
     </>
   );

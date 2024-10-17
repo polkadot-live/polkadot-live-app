@@ -4,6 +4,17 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+// Wrapper containing the side nav and main content.
+export const FixedFlexWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  position: fixed;
+  top: 3rem; // header height
+  bottom: 3rem; // footer height
+  left: 0;
+  color: rgb(241 245 249);
+`;
+
 export const CarouselWrapper = styled(motion.div)`
   position: relative;
   overflow: hidden;
