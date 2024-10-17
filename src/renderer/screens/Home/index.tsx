@@ -14,6 +14,7 @@ import { Events } from './Events';
 import {
   faBarsStaggered,
   faCubesStacked,
+  faDownLeftAndUpRightToCenter,
   faGaugeSimple,
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
@@ -151,8 +152,8 @@ export const SideNavWrapper = styled.nav<{ $isCollapsed: boolean }>`
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  max-width: ${(props) => (props.$isCollapsed ? '74px' : '102px')};
-  background-color: rgb(2 6 23);
+  max-width: ${(props) => (props.$isCollapsed ? '74px' : '98px')};
+  background-color: #1a1919;
   padding: ${(props) => (props.$isCollapsed ? '0' : '0 0.7rem')};
   padding-top: 2rem;
   padding-bottom: 1rem;
@@ -167,12 +168,12 @@ export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
   })
 )`
   width: ${(props) => (props.$size === 'fill' ? '90%' : '65%')};
-  min-height: ${(props) => (props.$size === 'fill' ? '75px' : '45px')};
+  min-height: ${(props) => (props.$size === 'fill' ? '72px' : '45px')};
   position: relative;
   padding: 0.5rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
-  background-color: rgb(30 41 59);
+  background-color: #313131;
   border: none;
   border-radius: 0.375rem;
   color: #c9c9c9;
@@ -183,7 +184,7 @@ export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
   cursor: pointer;
 
   &:hover {
-    background-color: #2c3849;
+    background-color: #3d3d3d;
   }
 
   .children-container {
@@ -253,13 +254,21 @@ export const SideNav = ({
 
       <NavItemWrapper
         $size={'half'}
-        style={{ marginTop: 'auto' }}
+        style={
+          isCollapsed
+            ? { marginTop: 'auto' }
+            : { marginTop: 'auto', maxWidth: '48px' }
+        }
         onClick={() => setIsCollapsed((pv) => !pv)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <FontAwesomeIcon
-          icon={faUpRightAndDownLeftFromCenter}
+          icon={
+            isCollapsed
+              ? faUpRightAndDownLeftFromCenter
+              : faDownLeftAndUpRightToCenter
+          }
           transform={'shrink-2'}
         />
       </NavItemWrapper>
@@ -289,8 +298,8 @@ export const NavItem = ({
   <NavItemWrapper
     $size={isCollapsed ? 'half' : 'fill'}
     onClick={() => setSelected(id)}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
   >
     <span className="children-container">
       {children && children}
@@ -298,7 +307,7 @@ export const NavItem = ({
         <FontAwesomeIcon
           icon={icon}
           transform={isCollapsed ? 'shrink-1' : 'grow-4'}
-          style={{ marginTop: isCollapsed ? '0.5rem' : '0' }}
+          style={{ marginTop: isCollapsed ? '0.5rem' : '0.5rem' }}
         />
       )}
       {!isCollapsed && label && (
@@ -318,7 +327,7 @@ export const NavItem = ({
             position: 'absolute',
             inset: '0px',
             borderRadius: '0.375rem',
-            backgroundColor: 'rgb(79 70 229)',
+            backgroundColor: '#ac2461',
             zIndex: '0',
           }}
           initial={{ scale: 0 }}
