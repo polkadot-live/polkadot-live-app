@@ -12,3 +12,8 @@ export interface NavItemProps {
   isCollapsed: boolean;
   setSelected: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export interface SideNavProps {
+  selected: number;
+  setSelected: React.Dispatch<React.SetStateAction<number>>;
+}

@@ -12,14 +12,9 @@ import {
   faGaugeSimple,
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
+import type { SideNavProps } from './SideNav.types';
 
-export const SideNav = ({
-  selected,
-  setSelected,
-}: {
-  selected: number;
-  setSelected: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+export const SideNav = ({ selected, setSelected }: SideNavProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
