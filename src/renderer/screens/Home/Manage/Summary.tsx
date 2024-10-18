@@ -2,13 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import type { AnyFunction } from '@/types/misc';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
   font-size: 1.75rem;
+  margin-bottom: 1rem;
 `;
 
 const SubHeading = styled.h2`
@@ -88,6 +92,59 @@ const StatItem = styled.div`
   }
 `;
 
+const SummarySection = ({
+  title,
+  btnText,
+  btnClickHandler,
+  children,
+}: {
+  title: string;
+  btnText: string;
+  btnClickHandler: AnyFunction;
+  children: React.ReactNode;
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  return (
+    <StatsSection>
+      <div
+        className="header-wrapper"
+        onClick={() => setIsCollapsed((pv) => !pv)}
+      >
+        <SubHeading>
+          <FontAwesomeIcon
+            style={{ minWidth: '1rem' }}
+            icon={isCollapsed ? faCaretRight : faCaretDown}
+            transform={'shrink-3'}
+          />
+          {title}
+        </SubHeading>
+        <ButtonMono
+          className="btn"
+          iconLeft={faCaretRight}
+          text={btnText}
+          onClick={btnClickHandler}
+        />
+      </div>
+
+      <motion.div
+        style={{ overflowY: 'hidden' }}
+        variants={{
+          open: { height: '100%' },
+          close: { height: 0 },
+        }}
+        animate={isCollapsed ? 'close' : 'open'}
+        transition={{
+          ease: 'easeOut',
+          duration: 0.12,
+        }}
+      >
+        {children}
+      </motion.div>
+    </StatsSection>
+  );
+};
+
 export const Summary: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const temp = 'temp';
@@ -97,7 +154,7 @@ export const Summary: React.FC = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: '2rem',
+        rowGap: '1rem',
         padding: '2rem 1rem',
       }}
     >
@@ -106,18 +163,13 @@ export const Summary: React.FC = () => {
         <MainHeading>Summary</MainHeading>
       </section>
       {/* Accounts */}
-      <StatsSection>
-        <div className="header-wrapper">
-          <SubHeading>
-            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
-            Accounts
-          </SubHeading>
-          <ButtonMono
-            className="btn"
-            iconLeft={faCaretRight}
-            text={'Accounts'}
-          />
-        </div>
+      <SummarySection
+        title="Accounts"
+        btnText="Accounts"
+        btnClickHandler={() => {
+          console.log('todo');
+        }}
+      >
         <StatsGrid>
           <StatItem
             className="total-item"
@@ -139,17 +191,16 @@ export const Summary: React.FC = () => {
             <span>3</span>
           </StatItem>
         </StatsGrid>
-      </StatsSection>
+      </SummarySection>
 
       {/* Events */}
-      <StatsSection>
-        <div className="header-wrapper">
-          <SubHeading>
-            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
-            Events
-          </SubHeading>
-          <ButtonMono className="btn" iconLeft={faCaretRight} text={'Events'} />
-        </div>
+      <SummarySection
+        title="Events"
+        btnText="Events"
+        btnClickHandler={() => {
+          console.log('todo');
+        }}
+      >
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
@@ -168,21 +219,16 @@ export const Summary: React.FC = () => {
             <span>4</span>
           </StatItem>
         </StatsGrid>
-      </StatsSection>
+      </SummarySection>
 
       {/* Subscriptions */}
-      <StatsSection>
-        <div className="header-wrapper">
-          <SubHeading>
-            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
-            Subscriptions
-          </SubHeading>
-          <ButtonMono
-            className="btn"
-            iconLeft={faCaretRight}
-            text={'Subscribe'}
-          />
-        </div>
+      <SummarySection
+        title="Subscriptions"
+        btnText="Subscribe"
+        btnClickHandler={() => {
+          console.log('todo');
+        }}
+      >
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
@@ -201,7 +247,7 @@ export const Summary: React.FC = () => {
             <span>8</span>
           </StatItem>
         </StatsGrid>
-      </StatsSection>
+      </SummarySection>
     </div>
   );
 };
