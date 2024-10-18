@@ -9,6 +9,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import type { AnyFunction } from '@/types/misc';
+import { useEvents } from '@/renderer/contexts/main/Events';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -164,6 +165,8 @@ const SummarySection = ({
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
+  const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
+    useEvents();
 
   return (
     <div
@@ -190,7 +193,7 @@ export const Summary: React.FC = () => {
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
-            <span>8</span>
+            <span>20</span>
           </StatItem>
           <StatItem>
             <h3>Vault</h3>
@@ -218,20 +221,18 @@ export const Summary: React.FC = () => {
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
-            <span>20</span>
+            <span>{getEventsCount()}</span>
           </StatItem>
-          <StatItem>
-            <h3>Balances</h3>
-            <span>7</span>
-          </StatItem>
-          <StatItem>
-            <h3>Nominating</h3>
-            <span>9</span>
-          </StatItem>
-          <StatItem>
-            <h3>Pools</h3>
-            <span>4</span>
-          </StatItem>
+          {getAllEventCategoryKeys().map((category) => {
+            if (getEventsCount(category) > 0) {
+              return (
+                <StatItem key={`total_${category}_events`}>
+                  <h3>{getReadableEventCategory(category)}</h3>
+                  <span>{getEventsCount(category)}</span>
+                </StatItem>
+              );
+            }
+          })}
         </StatsGrid>
       </SummarySection>
 

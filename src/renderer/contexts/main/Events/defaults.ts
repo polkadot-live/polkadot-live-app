@@ -15,4 +15,7 @@ export const defaultEventsContext: EventsContextInterface = {
   updateEventsOnAccountRename: (es, c) => {},
   markStaleEvent: (u, c) => {},
   removeOutdatedEvents: (e) => {},
+  getEventsCount: () => 0,
+  getReadableEventCategory: () => '',
+  getAllEventCategoryKeys: () => [],
 };
