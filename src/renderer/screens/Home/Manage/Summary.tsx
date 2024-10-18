@@ -16,14 +16,18 @@ const MainHeading = styled.h1`
   margin-bottom: 1rem;
 `;
 
-const SubHeading = styled.h2`
+const SubHeading = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  color: #b8b3b9;
   h2 {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     padding: 0 0.2rem;
+  }
+  svg {
+    min-width: 90px;
   }
 `;
 
@@ -127,11 +131,10 @@ const SummarySection = ({
       <div className="header-wrapper" onClick={handleClick}>
         <SubHeading>
           <FontAwesomeIcon
-            style={{ minWidth: '1rem' }}
+            style={{ minWidth: '0.75rem' }}
             icon={isCollapsed ? faCaretRight : faCaretDown}
-            transform={'shrink-3'}
           />
-          {title}
+          <h2>{title}</h2>
         </SubHeading>
         <ButtonMono
           className="btn"
