@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import type { AnyFunction } from '@/types/misc';
 import { useEvents } from '@/renderer/contexts/main/Events';
+import { useAddresses } from '@/renderer/contexts/main/Addresses';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -167,6 +168,12 @@ export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
     useEvents();
+  const {
+    getAddressesCountByChain,
+    getAddressesCountBySource,
+    getAllAccountSources,
+    getReadableAccountSource,
+  } = useAddresses();
 
   return (
     <div
@@ -183,7 +190,7 @@ export const Summary: React.FC = () => {
       </section>
       {/* Accounts */}
       <SummarySection
-        title="Accounts"
+        title="Active Accounts"
         btnText="Accounts"
         btnClickHandler={() => {
           window.myAPI.openWindow('import');
@@ -193,20 +200,18 @@ export const Summary: React.FC = () => {
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
-            <span>20</span>
+            <span>{getAddressesCountByChain()}</span>
           </StatItem>
-          <StatItem>
-            <h3>Vault</h3>
-            <span>8</span>
-          </StatItem>
-          <StatItem>
-            <h3>Ledger</h3>
-            <span>1</span>
-          </StatItem>
-          <StatItem>
-            <h3>Read-Only</h3>
-            <span>3</span>
-          </StatItem>
+          {getAllAccountSources().map((source) => {
+            if (getAddressesCountBySource(source) > 0) {
+              return (
+                <StatItem key={`total_${source}_addresses`}>
+                  <h3>{getReadableAccountSource(source)}</h3>
+                  <span>{getAddressesCountBySource(source)}</span>
+                </StatItem>
+              );
+            }
+          })}
         </StatsGrid>
       </SummarySection>
 

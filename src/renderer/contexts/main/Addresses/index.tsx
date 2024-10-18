@@ -112,6 +112,52 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
+  /// Get addresses count by chain ID.
+  const getAddressesCountByChain = (chainId?: ChainID): number =>
+    addresses.size === 0
+      ? 0
+      : chainId === undefined
+        ? addresses.values().reduce((acc, as) => acc + as.length, 0)
+        : addresses.get(chainId)?.length || 0;
+
+  /// Get addresses count by import method.
+  const getAddressesCountBySource = (target: AccountSource): number =>
+    addresses
+      .values()
+      .reduce(
+        (acc, as) =>
+          acc +
+          as.reduce(
+            (accIn, { source }) => (source === target ? accIn + 1 : accIn),
+            0
+          ),
+        0
+      );
+
+  /// Get all account sources.
+  const getAllAccountSources = (): AccountSource[] => [
+    'ledger',
+    'read-only',
+    'vault',
+  ];
+
+  const getReadableAccountSource = (source: AccountSource): string => {
+    switch (source) {
+      case 'ledger': {
+        return 'Ledger';
+      }
+      case 'read-only': {
+        return 'Read Only';
+      }
+      case 'vault': {
+        return 'Vault';
+      }
+      case 'system': {
+        return 'System';
+      }
+    }
+  };
+
   return (
     <AddressesContext.Provider
       value={{
@@ -122,6 +168,10 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
+        getAddressesCountByChain,
+        getAddressesCountBySource,
+        getAllAccountSources,
+        getReadableAccountSource,
       }}
     >
       {children}
