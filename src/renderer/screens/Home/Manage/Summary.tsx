@@ -17,6 +17,15 @@ const StatsSection = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 1.25rem;
+
+  .total-item {
+    background-color: #292929 !important;
+    h3,
+    span {
+      font-size: 1.26rem !important;
+      color: #f1f1f1 !important;
+    }
+  }
 `;
 
 const StatsGrid = styled.div`
@@ -34,8 +43,8 @@ const StatItem = styled.div`
   padding: 1rem;
 
   h3 {
-    color: #eaeef3;
-    font-size: 1.15rem;
+    color: #d1d1d1;
+    font-size: 1.1rem;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -70,7 +79,10 @@ export const Summary: React.FC = () => {
       <StatsSection>
         <SubHeading>Accounts</SubHeading>
         <StatsGrid>
-          <StatItem style={{ borderTopLeftRadius: '0.375rem' }}>
+          <StatItem
+            className="total-item"
+            style={{ borderTopLeftRadius: '0.375rem' }}
+          >
             <h3>Total</h3>
             <span>8</span>
           </StatItem>
@@ -93,7 +105,7 @@ export const Summary: React.FC = () => {
       <StatsSection>
         <SubHeading>Events</SubHeading>
         <StatsGrid>
-          <StatItem>
+          <StatItem className="total-item">
             <h3>Total</h3>
             <span>20</span>
           </StatItem>
@@ -116,6 +128,10 @@ export const Summary: React.FC = () => {
       <StatsSection>
         <SubHeading>Subscriptions</SubHeading>
         <StatsGrid>
+          <StatItem className="total-item">
+            <h3>Total</h3>
+            <span>16</span>
+          </StatItem>
           <StatItem>
             <h3>Ledger 1</h3>
             <span>3</span>
