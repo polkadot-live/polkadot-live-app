@@ -1,6 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
 
 const MainHeading = styled.h1`
@@ -9,14 +12,20 @@ const MainHeading = styled.h1`
 `;
 
 const SubHeading = styled.h2`
-  font-size: 1.35rem;
-  padding: 0 0.2rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  h2 {
+    font-size: 1.35rem;
+    padding: 0 0.2rem;
+  }
 `;
 
 const StatsSection = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 1.25rem;
+  row-gap: 1rem;
 
   .total-item {
     background-color: #292929 !important;
@@ -24,6 +33,27 @@ const StatsSection = styled.div`
     span {
       font-size: 1.26rem !important;
       color: #f1f1f1 !important;
+    }
+  }
+
+  .btn {
+    background-color: #953254;
+    border: none;
+    color: #f7f7f7;
+    min-width: 8.5rem;
+  }
+
+  .header-wrapper {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 0.35rem;
+    transition: background-color 150ms ease-out;
+    border-radius: 0.375rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #1a1919;
     }
   }
 `;
@@ -77,7 +107,17 @@ export const Summary: React.FC = () => {
       </section>
       {/* Accounts */}
       <StatsSection>
-        <SubHeading>Accounts</SubHeading>
+        <div className="header-wrapper">
+          <SubHeading>
+            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
+            Accounts
+          </SubHeading>
+          <ButtonMono
+            className="btn"
+            iconLeft={faCaretRight}
+            text={'Accounts'}
+          />
+        </div>
         <StatsGrid>
           <StatItem
             className="total-item"
@@ -103,7 +143,13 @@ export const Summary: React.FC = () => {
 
       {/* Events */}
       <StatsSection>
-        <SubHeading>Events</SubHeading>
+        <div className="header-wrapper">
+          <SubHeading>
+            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
+            Events
+          </SubHeading>
+          <ButtonMono className="btn" iconLeft={faCaretRight} text={'Events'} />
+        </div>
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
@@ -126,7 +172,17 @@ export const Summary: React.FC = () => {
 
       {/* Subscriptions */}
       <StatsSection>
-        <SubHeading>Subscriptions</SubHeading>
+        <div className="header-wrapper">
+          <SubHeading>
+            <FontAwesomeIcon icon={faCaretDown} transform={'shrink-3'} />
+            Subscriptions
+          </SubHeading>
+          <ButtonMono
+            className="btn"
+            iconLeft={faCaretRight}
+            text={'Subscribe'}
+          />
+        </div>
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
