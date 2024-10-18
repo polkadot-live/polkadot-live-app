@@ -66,6 +66,18 @@ const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.25rem;
+
+  div:nth-of-type(3n) {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+  div:nth-of-type(3n + 1) {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  div:last-of-type {
+    border-bottom-right-radius: 0.375rem;
+  }
 `;
 
 const StatItem = styled.div`
@@ -171,10 +183,7 @@ export const Summary: React.FC = () => {
         }}
       >
         <StatsGrid>
-          <StatItem
-            className="total-item"
-            style={{ borderTopLeftRadius: '0.375rem' }}
-          >
+          <StatItem className="total-item">
             <h3>Total</h3>
             <span>8</span>
           </StatItem>
@@ -182,11 +191,11 @@ export const Summary: React.FC = () => {
             <h3>Vault</h3>
             <span>8</span>
           </StatItem>
-          <StatItem style={{ borderTopRightRadius: '0.375rem' }}>
+          <StatItem>
             <h3>Ledger</h3>
             <span>1</span>
           </StatItem>
-          <StatItem style={{ borderBottomLeftRadius: '0.375rem' }}>
+          <StatItem>
             <h3>Read-Only</h3>
             <span>3</span>
           </StatItem>
