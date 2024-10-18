@@ -86,14 +86,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
     }
   }, [display]);
 
-  // Variants for actions section.
-  const actionsVariants = {
-    openLeft: { height: 'auto', marginLeft: 0 },
-    openRight: { height: 'auto', marginLeft: '-100%' },
-    closedLeft: { height: 0, marginLeft: 0 },
-    closedRight: { height: 0, marginLeft: '-100%' },
-  };
-
   const showIconTooltip = () =>
     event.category !== 'openGov' && event.category !== 'debugging';
 
@@ -110,6 +102,20 @@ export const Item = memo(function Item({ event }: ItemProps) {
     getPrimaryActions().length > 0 && source !== 'read-only';
 
   const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
+
+  // Variants for actions section.
+  const actionsVariants = {
+    openLeft: { height: 'auto', marginLeft: 0 },
+    openRight: {
+      height: 'auto',
+      marginLeft: hasPrimaryActions ? '-114%' : '-100%',
+    },
+    closedLeft: { height: 0, marginLeft: 0 },
+    closedRight: {
+      height: 0,
+      marginLeft: hasPrimaryActions ? '-114%' : '-100%',
+    },
+  };
 
   // Flag indicating if action buttons are showing.
   const [showActions, setShowActions] = useState(hasPrimaryActions);

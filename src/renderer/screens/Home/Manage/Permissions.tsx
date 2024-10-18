@@ -523,9 +523,6 @@ export const Permissions = ({
             <SortControlLabel label={breadcrumb} />
           )}
         </div>
-        <div className="right">
-          <SortControlLabel label={'Subscription On / Off'} noBorder={true} />
-        </div>
       </ControlsWrapper>
 
       <AccountsWrapper>
