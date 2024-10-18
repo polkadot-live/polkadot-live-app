@@ -22,6 +22,7 @@ import { ScrollWrapper } from '@/renderer/library/utils';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
+import { Summary } from '@app/screens/Home/Manage/Summary';
 
 export const Home = () => {
   // Set up port communication for the `main` renderer.
@@ -90,12 +91,7 @@ export const Home = () => {
           ) : (
             <ScrollWrapper>
               {/* Summary */}
-              {selectedId === 0 && (
-                <div style={{ padding: '2rem 1rem' }}>
-                  <h1>Summary</h1>
-                  <p>Welcome back to Polkadot Live.</p>
-                </div>
-              )}
+              {selectedId === 0 && <Summary />}
 
               {/* Events */}
               {selectedId === 1 && <Events />}
