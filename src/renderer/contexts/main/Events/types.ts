@@ -15,6 +15,9 @@ export interface EventsContextInterface {
   updateEventsOnAccountRename: (e: EventCallback[], c: ChainID) => void;
   markStaleEvent: (u: string, c: ChainID) => void;
   removeOutdatedEvents: (e: EventCallback) => void;
+  getEventsCount: (category?: string) => number;
+  getReadableEventCategory: (category: string) => string;
+  getAllEventCategoryKeys: () => string[];
 }
 
 export type EventsState = Map<ChainID, EventCallback[]>;
