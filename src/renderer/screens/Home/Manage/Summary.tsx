@@ -4,6 +4,7 @@
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSideNav } from '@/renderer/library/contexts';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -75,9 +76,6 @@ const StatsGrid = styled.div`
     border-top-left-radius: 0.375rem;
     border-bottom-left-radius: 0.375rem;
   }
-  div:last-of-type {
-    border-bottom-right-radius: 0.375rem;
-  }
 `;
 
 const StatItem = styled.div`
@@ -117,12 +115,16 @@ const SummarySection = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+    if (!(target instanceof HTMLButtonElement)) {
+      setIsCollapsed((pv) => !pv);
+    }
+  };
+
   return (
     <StatsSection>
-      <div
-        className="header-wrapper"
-        onClick={() => setIsCollapsed((pv) => !pv)}
-      >
+      <div className="header-wrapper" onClick={handleClick}>
         <SubHeading>
           <FontAwesomeIcon
             style={{ minWidth: '1rem' }}
@@ -158,8 +160,7 @@ const SummarySection = ({
 };
 
 export const Summary: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const temp = 'temp';
+  const { setSelectedId } = useSideNav();
 
   return (
     <div
@@ -179,7 +180,8 @@ export const Summary: React.FC = () => {
         title="Accounts"
         btnText="Accounts"
         btnClickHandler={() => {
-          console.log('todo');
+          window.myAPI.openWindow('import');
+          window.myAPI.umamiEvent('window-open-accounts', null);
         }}
       >
         <StatsGrid>
@@ -207,7 +209,7 @@ export const Summary: React.FC = () => {
         title="Events"
         btnText="Events"
         btnClickHandler={() => {
-          console.log('todo');
+          setSelectedId(1);
         }}
       >
         <StatsGrid>
@@ -235,7 +237,7 @@ export const Summary: React.FC = () => {
         title="Subscriptions"
         btnText="Subscribe"
         btnClickHandler={() => {
-          console.log('todo');
+          setSelectedId(2);
         }}
       >
         <StatsGrid>
