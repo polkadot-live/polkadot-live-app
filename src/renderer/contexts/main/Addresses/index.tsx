@@ -117,28 +117,27 @@ export const AddressesProvider = ({
     addresses.size === 0
       ? 0
       : chainId === undefined
-        ? addresses.values().reduce((acc, as) => acc + as.length, 0)
+        ? [...addresses.values()].reduce((acc, as) => acc + as.length, 0)
         : addresses.get(chainId)?.length || 0;
 
   /// Get addresses count by import method.
   const getAddressesCountBySource = (target: AccountSource): number =>
-    addresses
-      .values()
-      .reduce(
-        (acc, as) =>
-          acc +
-          as.reduce(
-            (accIn, { source }) => (source === target ? accIn + 1 : accIn),
-            0
-          ),
-        0
-      );
+    [...addresses.values()].reduce(
+      (acc, as) =>
+        acc +
+        as.reduce(
+          (accIn, { source }) => (source === target ? accIn + 1 : accIn),
+          0
+        ),
+      0
+    );
 
   /// Get all imported account names.
   const getAllAccounts = (): FlattenedAccountData[] =>
-    addresses
-      .values()
-      .reduce((acc, as) => acc.concat([...as.map((a) => a)]), []);
+    [...addresses.values()].reduce(
+      (acc, as) => acc.concat([...as.map((a) => a)]),
+      []
+    );
 
   /// Get all account sources.
   const getAllAccountSources = (): AccountSource[] => [

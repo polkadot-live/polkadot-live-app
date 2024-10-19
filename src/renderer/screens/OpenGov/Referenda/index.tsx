@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretHeader,
 } from '@/renderer/library/Accordion';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
@@ -31,11 +32,10 @@ import {
   Scrollable,
   SortControlButton,
 } from '@/renderer/utils/common';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
-import type { ReferendaProps } from '../types';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();

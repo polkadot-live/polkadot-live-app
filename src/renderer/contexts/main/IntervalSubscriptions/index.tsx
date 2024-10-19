@@ -99,13 +99,11 @@ export const IntervalSubscriptionsProvider = ({
 
   /// Get total interval subscription count.
   const getTotalIntervalSubscriptionCount = (): number =>
-    subscriptions
-      .values()
-      .reduce(
-        (acc, tasks) =>
-          acc + tasks.filter((task) => task.status === 'enable').length,
-        0
-      );
+    [...subscriptions.values()].reduce(
+      (acc, tasks) =>
+        acc + tasks.filter((task) => task.status === 'enable').length,
+      0
+    );
 
   return (
     <IntervalSubscriptionsContext.Provider

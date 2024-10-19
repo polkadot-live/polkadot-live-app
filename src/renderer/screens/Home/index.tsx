@@ -19,10 +19,10 @@ import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { SideNav } from '@/renderer/library/SideNav';
 import { ScrollWrapper } from '@/renderer/library/utils';
+import { Summary } from '@/renderer/screens/Home/Summary';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
-import { Summary } from '@app/screens/Home/Manage/Summary';
 
 export const Home = () => {
   // Set up port communication for the `main` renderer.

@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretHeader,
 } from '@/renderer/library/Accordion';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
@@ -13,7 +14,6 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Scrollable } from '@/renderer/utils/common';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { OsPlatform, SettingItem } from './types';
