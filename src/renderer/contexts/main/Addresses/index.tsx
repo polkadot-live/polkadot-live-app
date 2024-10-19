@@ -112,6 +112,84 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
+  /// Get addresses count by chain ID.
+  const getAddressesCountByChain = (chainId?: ChainID): number =>
+    addresses.size === 0
+      ? 0
+      : chainId === undefined
+        ? addresses.values().reduce((acc, as) => acc + as.length, 0)
+        : addresses.get(chainId)?.length || 0;
+
+  /// Get addresses count by import method.
+  const getAddressesCountBySource = (target: AccountSource): number =>
+    addresses
+      .values()
+      .reduce(
+        (acc, as) =>
+          acc +
+          as.reduce(
+            (accIn, { source }) => (source === target ? accIn + 1 : accIn),
+            0
+          ),
+        0
+      );
+
+  /// Get all imported account names.
+  const getAllAccounts = (): FlattenedAccountData[] =>
+    addresses
+      .values()
+      .reduce((acc, as) => acc.concat([...as.map((a) => a)]), []);
+
+  /// Get all account sources.
+  const getAllAccountSources = (): AccountSource[] => [
+    'ledger',
+    'read-only',
+    'vault',
+  ];
+
+  /// Get readable account source for rendering.
+  const getReadableAccountSource = (source: AccountSource): string => {
+    switch (source) {
+      case 'ledger': {
+        return 'Ledger';
+      }
+      case 'read-only': {
+        return 'Read Only';
+      }
+      case 'vault': {
+        return 'Vault';
+      }
+      case 'system': {
+        return 'System';
+      }
+    }
+  };
+
+  /// Get subscription count for address.
+  const getSubscriptionCountForAccount = (
+    flattened: FlattenedAccountData
+  ): number => {
+    const { address, chain } = flattened;
+    const account = AccountsController.get(chain, address);
+    if (!account) {
+      return 0;
+    }
+
+    const tasks = account.getSubscriptionTasks();
+    if (!tasks) {
+      return 0;
+    }
+
+    return tasks.length;
+  };
+
+  /// Get total subscription count.
+  const getTotalSubscriptionCount = (): number =>
+    getAllAccounts().reduce(
+      (acc, flattened) => acc + getSubscriptionCountForAccount(flattened),
+      0
+    );
+
   return (
     <AddressesContext.Provider
       value={{
@@ -122,6 +200,13 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
+        getAddressesCountByChain,
+        getAddressesCountBySource,
+        getAllAccountSources,
+        getReadableAccountSource,
+        getAllAccounts,
+        getSubscriptionCountForAccount,
+        getTotalSubscriptionCount,
       }}
     >
       {children}

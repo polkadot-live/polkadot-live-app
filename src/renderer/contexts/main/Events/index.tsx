@@ -223,6 +223,46 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  /// Get event count.
+  const getEventsCount = (category?: string) =>
+    events.size == 0
+      ? 0
+      : category === undefined
+        ? sortAllGroupedEvents(true)
+            .values()
+            .reduce((acc, es) => acc + es.length, 0)
+        : sortAllGroupedEvents(true).get(category)?.length || 0;
+
+  /// Get readable event category.
+  const getReadableEventCategory = (category: string) => {
+    // 'balances', 'nominationPools', 'nominating', 'openGov'
+    switch (category) {
+      case 'balances': {
+        return 'Balances';
+      }
+      case 'nominationPools': {
+        return 'Pools';
+      }
+      case 'nominating': {
+        return 'Nominating';
+      }
+      case 'openGov': {
+        return 'OpenGov';
+      }
+      default: {
+        return 'Unknown';
+      }
+    }
+  };
+
+  /// Get array of all encoded event categories.
+  const getAllEventCategoryKeys = (): string[] => [
+    'balances',
+    'nominationPools',
+    'nominating',
+    'openGov',
+  ];
+
   return (
     <EventsContext.Provider
       value={{
@@ -236,6 +276,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         updateEventsOnAccountRename,
         markStaleEvent,
         removeOutdatedEvents,
+        getEventsCount,
+        getReadableEventCategory,
+        getAllEventCategoryKeys,
       }}
     >
       {children}

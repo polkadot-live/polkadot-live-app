@@ -22,4 +22,11 @@ export interface AddressesContextInterface {
   ) => Promise<void>;
   removeAddress: (n: ChainID, a: string) => Promise<void>;
   getAddress: (a: string) => FlattenedAccountData | null;
+  getAddressesCountByChain: (chainId?: ChainID) => number;
+  getAddressesCountBySource: (target: AccountSource) => number;
+  getAllAccountSources: () => AccountSource[];
+  getReadableAccountSource: (source: AccountSource) => string;
+  getAllAccounts: () => FlattenedAccountData[];
+  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
+  getTotalSubscriptionCount: () => number;
 }

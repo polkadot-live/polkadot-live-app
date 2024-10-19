@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@app/library/Menu';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import type { HeaderProps } from './types';
+import { version } from '../../../../package.json';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { dockToggled, handleDockedToggle } = useAppSettings();
@@ -39,7 +40,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
     <HeaderWrapper>
       <div className="content-wrapper">
         <div className="grab" />
-        <span className="alpha">alpha</span>
+        <span className="alpha">{version}</span>
         <div className="right">
           {showMenu || windowId === 'main' ? (
             <div className="controls-wrapper">

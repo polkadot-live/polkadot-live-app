@@ -13,4 +13,5 @@ export const defaultIntervalSubscriptionsContext: IntervalSubscriptionsContextIn
     updateIntervalSubscription: () => {},
     getIntervalSubscriptionsForChain: () => [],
     getSortedKeys: () => [],
+    getTotalIntervalSubscriptionCount: () => 0,
   };
