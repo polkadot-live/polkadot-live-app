@@ -16,4 +16,5 @@ export interface IntervalSubscriptionsContextInterface {
     chainId: ChainID
   ) => IntervalSubscription[];
   getSortedKeys: () => ChainID[];
+  getTotalIntervalSubscriptionCount: () => number;
 }

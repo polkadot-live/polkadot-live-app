@@ -16,4 +16,7 @@ export const defaultAddressesContext: AddressesContextInterface = {
   getAddressesCountBySource: () => 0,
   getAllAccountSources: () => [],
   getReadableAccountSource: () => '',
+  getAllAccounts: () => [],
+  getSubscriptionCountForAccount: () => 0,
+  getTotalSubscriptionCount: () => 0,
 };

@@ -134,6 +134,12 @@ export const AddressesProvider = ({
         0
       );
 
+  /// Get all imported account names.
+  const getAllAccounts = (): FlattenedAccountData[] =>
+    addresses
+      .values()
+      .reduce((acc, as) => acc.concat([...as.map((a) => a)]), []);
+
   /// Get all account sources.
   const getAllAccountSources = (): AccountSource[] => [
     'ledger',
@@ -141,6 +147,7 @@ export const AddressesProvider = ({
     'vault',
   ];
 
+  /// Get readable account source for rendering.
   const getReadableAccountSource = (source: AccountSource): string => {
     switch (source) {
       case 'ledger': {
@@ -158,6 +165,31 @@ export const AddressesProvider = ({
     }
   };
 
+  /// Get subscription count for address.
+  const getSubscriptionCountForAccount = (
+    flattened: FlattenedAccountData
+  ): number => {
+    const { address, chain } = flattened;
+    const account = AccountsController.get(chain, address);
+    if (!account) {
+      return 0;
+    }
+
+    const tasks = account.getSubscriptionTasks();
+    if (!tasks) {
+      return 0;
+    }
+
+    return tasks.length;
+  };
+
+  /// Get total subscription count.
+  const getTotalSubscriptionCount = (): number =>
+    getAllAccounts().reduce(
+      (acc, flattened) => acc + getSubscriptionCountForAccount(flattened),
+      0
+    );
+
   return (
     <AddressesContext.Provider
       value={{
@@ -172,6 +204,9 @@ export const AddressesProvider = ({
         getAddressesCountBySource,
         getAllAccountSources,
         getReadableAccountSource,
+        getAllAccounts,
+        getSubscriptionCountForAccount,
+        getTotalSubscriptionCount,
       }}
     >
       {children}

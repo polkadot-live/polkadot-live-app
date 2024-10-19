@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import type { AnyFunction } from '@/types/misc';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
+import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -105,6 +106,10 @@ const StatItem = styled.div`
     color: #eaeef3;
     font-size: 1.2rem;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
   }
 `;
 
@@ -171,9 +176,13 @@ export const Summary: React.FC = () => {
   const {
     getAddressesCountByChain,
     getAddressesCountBySource,
-    getAllAccountSources,
     getReadableAccountSource,
+    getAllAccountSources,
+    getAllAccounts,
+    getSubscriptionCountForAccount,
+    getTotalSubscriptionCount,
   } = useAddresses();
+  const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
 
   return (
     <div
@@ -185,9 +194,8 @@ export const Summary: React.FC = () => {
       }}
     >
       {/* Title */}
-      <section>
-        <MainHeading>Summary</MainHeading>
-      </section>
+      <MainHeading>Summary</MainHeading>
+
       {/* Accounts */}
       <SummarySection
         title="Active Accounts"
@@ -252,20 +260,23 @@ export const Summary: React.FC = () => {
         <StatsGrid>
           <StatItem className="total-item">
             <h3>Total</h3>
-            <span>16</span>
+            <span>
+              {getTotalSubscriptionCount() +
+                getTotalIntervalSubscriptionCount()}
+            </span>
           </StatItem>
-          <StatItem>
-            <h3>Ledger 1</h3>
-            <span>3</span>
-          </StatItem>
-          <StatItem>
-            <h3>Main Account</h3>
-            <span>5</span>
-          </StatItem>
-          <StatItem>
-            <h3>Referenda</h3>
-            <span>8</span>
-          </StatItem>
+          {getAllAccounts().map((flattened) => (
+            <StatItem key={`${flattened.address}_subscriptions_count`}>
+              <h3>{flattened.name}</h3>
+              <span>{getSubscriptionCountForAccount(flattened)}</span>
+            </StatItem>
+          ))}
+          {getTotalIntervalSubscriptionCount() > 0 && (
+            <StatItem>
+              <h3>Referenda</h3>
+              <span>{getTotalIntervalSubscriptionCount()}</span>
+            </StatItem>
+          )}
         </StatsGrid>
       </SummarySection>
     </div>

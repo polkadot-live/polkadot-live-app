@@ -26,4 +26,7 @@ export interface AddressesContextInterface {
   getAddressesCountBySource: (target: AccountSource) => number;
   getAllAccountSources: () => AccountSource[];
   getReadableAccountSource: (source: AccountSource) => string;
+  getAllAccounts: () => FlattenedAccountData[];
+  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
+  getTotalSubscriptionCount: () => number;
 }

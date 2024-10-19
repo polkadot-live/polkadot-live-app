@@ -156,9 +156,6 @@ export class AccountsController {
   /**
    * @name get
    * @summary Gets an account from the `accounts` property.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {string} address - the account address.
-   * @returns {(Account|undefined)}
    */
   static get = (chain: ChainID, address?: string): Account | undefined =>
     this.accounts.get(chain)?.find((a) => a.address === address);
@@ -166,7 +163,6 @@ export class AccountsController {
   /**
    * @name getAllFlattenedAccountData
    * @summary Gets all essential account data (flattened) for ease of use.
-   * @returns {ImportedAccounts}
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
     const map: FlattenedAccounts = new Map();
@@ -202,13 +198,7 @@ export class AccountsController {
 
   /**
    * @name add
-   * @summary Adds an account to the list of imported accounts. Fails if the account already
-   * exists.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {AccountSource} source - the source of the account.
-   * @param {string} address - the account address.
-   * @param {string} name - the account name.
-   * @returns {Account|false}
+   * @summary Adds an account to the list of imported accounts. Fails if the account already exists.
    */
   static add = (
     chain: ChainID,
@@ -228,8 +218,6 @@ export class AccountsController {
   /**
    * @name remove
    * @summary Removes an account from the list of imported accounts if it exists.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {string} address - the account address.
    */
   static remove = (chain: ChainID, address: string) => {
     if (this.accountExists(chain, address)) {
@@ -241,9 +229,6 @@ export class AccountsController {
   /**
    * @name pushAccount
    * @summary Pushes an account to the list of imported accounts for a chain.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {Account} account - the account to push.
-   * @returns {AccountStatus}
    */
   private static pushAccount = (
     chain: ChainID,
@@ -257,8 +242,6 @@ export class AccountsController {
   /**
    * @name spliceAccount
    * @summary Splices an account from the imported accounts list.
-   * @param {string} address - the account address.
-   * @returns {ImportedAccounts}
    */
   // TODO: Make private and remove WDIO test case.
   static spliceAccount = (address: string): ImportedAccounts => {
@@ -277,7 +260,6 @@ export class AccountsController {
   /**
    * @name setAccounts
    * @summary Utility to update accounts, both in class and in store.
-   * @param {ImportedAccounts} accounts - the accounts object to persist to the class.
    */
   private static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
@@ -296,10 +278,6 @@ export class AccountsController {
   /**
    * @name accountExists
    * @summary Utility to check whether an account exists.
-   * @param {ChainID} chain - the chain the account belongs to.
-   * @param {string} address - the account address.
-   * @param {AccountStatus|undefined} status - the account status to match against.
-   * @returns {boolean}
    */
   private static accountExists = (chain: ChainID, address: string): boolean => {
     for (const accounts of this.accounts.values()) {
