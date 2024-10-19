@@ -168,6 +168,7 @@ SPDX-License-Identifier: GPL-3.0-only */
   border: 1px solid var(--text-color-primary);
   border-radius: var(--button-border-radius-large);
   color: var(--text-color-invert);
+  user-select: none;
 
   &.secondary-color {
     border-color: var(--text-color-secondary);
@@ -193,6 +194,7 @@ SPDX-License-Identifier: GPL-3.0-only */
   border: 1px solid var(--text-color-primary);
   border-radius: var(--button-border-radius-large);
   color: var(--text-color-primary);
+  user-select: none;
 
   &.secondary-color {
     border-color: var(--text-color-secondary);
