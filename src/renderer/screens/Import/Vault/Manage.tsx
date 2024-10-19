@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretHeader,
 } from '@/renderer/library/Accordion';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
@@ -15,7 +16,6 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import {
   ControlsWrapper,
   StatsFooter,

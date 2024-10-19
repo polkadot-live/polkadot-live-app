@@ -5,8 +5,8 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretHeader,
 } from '@/renderer/library/Accordion';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';

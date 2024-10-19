@@ -1,8 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccordionItem, AccordionPanel } from '@/renderer/library/Accordion';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
+import {
+  AccordionItem,
+  AccordionPanel,
+  AccordionCaretHeader,
+} from '@/renderer/library/Accordion';
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
