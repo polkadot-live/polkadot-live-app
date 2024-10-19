@@ -16,9 +16,4 @@ export const ShiftingMeterWrapper = styled.div`
     transform: 1s all;
     transition-timing-function: cubic-bezier(0, 0.99, 1, 1.01);
   }
-  .shifting-digit {
-    position: absolute;
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
-  }
 `;
