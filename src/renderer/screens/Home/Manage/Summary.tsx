@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretRight,
+  faCaretDown,
+  faInfo,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSideNav } from '@/renderer/library/contexts';
 import { useState } from 'react';
@@ -12,6 +16,7 @@ import type { AnyFunction } from '@/types/misc';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
+import { useHelp } from '@/renderer/contexts/common/Help';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -28,6 +33,7 @@ const SubHeading = styled.div`
   h2 {
     font-size: 1.3rem;
     padding: 0 0.2rem;
+    user-select: none;
   }
   svg {
     min-width: 90px;
@@ -93,6 +99,30 @@ const StatItem = styled.div`
   gap: 0.5rem;
   padding: 1rem;
 
+  > div:first-of-type {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    > h3 {
+      flex: 1;
+    }
+    .help {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.5rem;
+      font-size: 0.85rem;
+      border-radius: 0.275rem;
+      transition: background-color 150ms ease-out;
+      cursor: pointer;
+      &:hover {
+        background-color: #191919;
+      }
+    }
+  }
+
   h3 {
     color: #d1d1d1;
     font-size: 1.1rem;
@@ -100,7 +130,6 @@ const StatItem = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
   }
   span {
     color: #eaeef3;
@@ -171,6 +200,8 @@ const SummarySection = ({
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
+  const { openHelp } = useHelp();
+
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
     useEvents();
   const {
@@ -207,7 +238,15 @@ export const Summary: React.FC = () => {
       >
         <StatsGrid>
           <StatItem className="total-item">
-            <h3>Total</h3>
+            <div>
+              <h3>Total</h3>
+              <div
+                className="help"
+                onClick={() => openHelp('help:summary:activeAccounts')}
+              >
+                <FontAwesomeIcon icon={faInfo} />
+              </div>
+            </div>
             <span>{getAddressesCountByChain()}</span>
           </StatItem>
           {getAllAccountSources().map((source) => {
@@ -233,7 +272,15 @@ export const Summary: React.FC = () => {
       >
         <StatsGrid>
           <StatItem className="total-item">
-            <h3>Total</h3>
+            <div>
+              <h3>Total</h3>
+              <div
+                className="help"
+                onClick={() => openHelp('help:summary:events')}
+              >
+                <FontAwesomeIcon icon={faInfo} />
+              </div>
+            </div>
             <span>{getEventsCount()}</span>
           </StatItem>
           {getAllEventCategoryKeys().map((category) => {
@@ -259,7 +306,15 @@ export const Summary: React.FC = () => {
       >
         <StatsGrid>
           <StatItem className="total-item">
-            <h3>Total</h3>
+            <div>
+              <h3>Total</h3>
+              <div
+                className="help"
+                onClick={() => openHelp('help:summary:subscriptions')}
+              >
+                <FontAwesomeIcon icon={faInfo} />
+              </div>
+            </div>
             <span>
               {getTotalSubscriptionCount() +
                 getTotalIntervalSubscriptionCount()}
