@@ -10,14 +10,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSideNav } from '@/renderer/library/contexts';
 import { useState } from 'react';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import type { AnyFunction } from '@/types/misc';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { ShiftingMeter } from '@app/library/ShiftingMeter';
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
+import type { AnyFunction } from '@/types/misc';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);

@@ -228,9 +228,10 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     events.size == 0
       ? 0
       : category === undefined
-        ? sortAllGroupedEvents(true)
-            .values()
-            .reduce((acc, es) => acc + es.length, 0)
+        ? [...sortAllGroupedEvents(true).values()].reduce(
+            (acc, es) => acc + es.length,
+            0
+          )
         : sortAllGroupedEvents(true).get(category)?.length || 0;
 
   /// Get readable event category.
