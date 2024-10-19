@@ -17,6 +17,7 @@ import { useEvents } from '@/renderer/contexts/main/Events';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { ShiftingMeter } from '@app/library/ShiftingMeter';
 
 const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -247,14 +248,21 @@ export const Summary: React.FC = () => {
                 <FontAwesomeIcon icon={faInfo} />
               </div>
             </div>
-            <span>{getAddressesCountByChain()}</span>
+            <span>
+              <ShiftingMeter value={getAddressesCountByChain()} size={1.26} />
+            </span>
           </StatItem>
           {getAllAccountSources().map((source) => {
             if (getAddressesCountBySource(source) > 0) {
               return (
                 <StatItem key={`total_${source}_addresses`}>
                   <h3>{getReadableAccountSource(source)}</h3>
-                  <span>{getAddressesCountBySource(source)}</span>
+                  <span>
+                    <ShiftingMeter
+                      value={getAddressesCountBySource(source)}
+                      size={1.2}
+                    />
+                  </span>
                 </StatItem>
               );
             }
@@ -281,14 +289,21 @@ export const Summary: React.FC = () => {
                 <FontAwesomeIcon icon={faInfo} />
               </div>
             </div>
-            <span>{getEventsCount()}</span>
+            <span>
+              <ShiftingMeter value={getEventsCount()} size={1.26} />
+            </span>
           </StatItem>
           {getAllEventCategoryKeys().map((category) => {
             if (getEventsCount(category) > 0) {
               return (
                 <StatItem key={`total_${category}_events`}>
                   <h3>{getReadableEventCategory(category)}</h3>
-                  <span>{getEventsCount(category)}</span>
+                  <span>
+                    <ShiftingMeter
+                      value={getEventsCount(category)}
+                      size={1.2}
+                    />
+                  </span>
                 </StatItem>
               );
             }
@@ -316,20 +331,35 @@ export const Summary: React.FC = () => {
               </div>
             </div>
             <span>
-              {getTotalSubscriptionCount() +
-                getTotalIntervalSubscriptionCount()}
+              <ShiftingMeter
+                value={
+                  getTotalSubscriptionCount() +
+                  getTotalIntervalSubscriptionCount()
+                }
+                size={1.26}
+              />
             </span>
           </StatItem>
           {getAllAccounts().map((flattened) => (
             <StatItem key={`${flattened.address}_subscriptions_count`}>
               <h3>{flattened.name}</h3>
-              <span>{getSubscriptionCountForAccount(flattened)}</span>
+              <span>
+                <ShiftingMeter
+                  value={getSubscriptionCountForAccount(flattened)}
+                  size={1.2}
+                />
+              </span>
             </StatItem>
           ))}
           {getTotalIntervalSubscriptionCount() > 0 && (
             <StatItem>
               <h3>Referenda</h3>
-              <span>{getTotalIntervalSubscriptionCount()}</span>
+              <span>
+                <ShiftingMeter
+                  value={getTotalIntervalSubscriptionCount()}
+                  size={1.2}
+                />
+              </span>
             </StatItem>
           )}
         </StatsGrid>
