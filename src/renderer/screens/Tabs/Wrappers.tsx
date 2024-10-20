@@ -32,6 +32,7 @@ export const TabWrapper = styled(motion.div)`
   min-width: 115px;
   padding: 0.3rem 0;
   margin-top: -5px;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 
   &:hover {
