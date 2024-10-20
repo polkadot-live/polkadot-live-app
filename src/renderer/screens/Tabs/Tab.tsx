@@ -47,8 +47,12 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
         zIndex: activeId === id ? '20' : '1',
       }}
     >
-      <TabWrapper whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.99 }}>
-        <div className="inner" onClick={handleClick}>
+      <TabWrapper
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.99 }}
+        onClick={handleClick}
+      >
+        <div className="inner">
           <span
             role="button"
             style={{
