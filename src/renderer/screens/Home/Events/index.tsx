@@ -11,6 +11,7 @@ import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
 import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { MainHeading } from '@/renderer/library/Stats';
 
 export const Events = () => {
   /// State for sorting controls.
@@ -41,9 +42,22 @@ export const Events = () => {
   );
 
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: '1rem',
+        padding: '2rem 1rem 1rem',
+      }}
+    >
+      <MainHeading>Events</MainHeading>
+
       {/* Sorting controls */}
-      <ControlsWrapper $padWrapper={true} $padBottom={!groupingOn}>
+      <ControlsWrapper
+        $padWrapper={true}
+        $padBottom={!groupingOn}
+        style={{ padding: '0' }}
+      >
         <SortControlButton
           isActive={newestFirst}
           isDisabled={false}
@@ -110,6 +124,6 @@ export const Events = () => {
           </EventGroup>
         </div>
       </Wrapper>
-    </>
+    </div>
   );
 };

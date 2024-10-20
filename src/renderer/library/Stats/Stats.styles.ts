@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 export const MainHeading = styled.h1`
   color: rgb(211 48 121);
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   margin-bottom: 1rem;
 `;
 

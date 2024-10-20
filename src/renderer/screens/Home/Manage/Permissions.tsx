@@ -498,7 +498,7 @@ export const Permissions = ({
 
   return (
     <>
-      <ControlsWrapper $sticky={true}>
+      <ControlsWrapper $sticky={true} style={{ padding: '0 0.75rem' }}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"

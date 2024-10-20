@@ -16,8 +16,6 @@ export const Wrapper = styled.div`
 export const AccountsWrapper = styled.div`
   --item-height: 2.75rem;
   width: 100%;
-  margin-top: 1.25rem;
-  padding: 0 0.5rem 1rem;
 
   .flex-column {
     display: flex;

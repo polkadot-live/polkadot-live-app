@@ -4,7 +4,7 @@
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { motion } from 'framer-motion';
+import { cubicBezier, motion } from 'framer-motion';
 import { useState } from 'react';
 import { StatsSectionWrapper, SubHeading } from './Stats.styles';
 import type { StatsSectionProps } from './StatsSection.types';
@@ -50,8 +50,8 @@ export const StatsSection = ({
         }}
         animate={isCollapsed ? 'close' : 'open'}
         transition={{
-          ease: 'easeOut',
-          duration: 0.12,
+          ease: cubicBezier(0.15, 1, 0.1, 1),
+          duration: 0.3,
         }}
       >
         {children}

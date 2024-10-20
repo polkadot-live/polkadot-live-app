@@ -183,7 +183,7 @@ export const Accounts = ({
                   itemIndex={k}
                 />
                 <AccordionPanel>
-                  <div style={{ padding: '0.5rem 0.75rem 0' }}>
+                  <div style={{ padding: '0 0.75rem' }}>
                     {chainId === 'Empty' ? (
                       <NoAccounts />
                     ) : (
