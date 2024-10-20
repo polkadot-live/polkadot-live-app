@@ -25,28 +25,32 @@ export const TabsWrapper = styled.div`
 
 // Tab top div.
 export const TabWrapper = styled.div`
-  background-color: #282828;
-  border-radius: 1.5rem;
+  position: relative;
+  background-color: #313131;
+  border-radius: 0.375rem;
   min-width: 115px;
   padding: 0.3rem 0;
   margin-top: -5px;
   cursor: pointer;
 
   .inner {
+    position: relative;
     display: flex;
     align-items: center;
     text-align: center;
     column-gap: 0.25rem;
     padding: 0.4rem 1.25rem;
     font-size: 1.05rem;
-    color: #666;
-  }
+    color: var(--text-color-primary);
+    z-index: 20;
 
-  .btn-close {
-    &:hover {
-      svg {
-        color: #cfcfcf;
-        cursor: pointer;
+    .btn-close {
+      color: var(--text-color-primary);
+      &:hover {
+        svg {
+          color: white;
+          cursor: pointer;
+        }
       }
     }
   }

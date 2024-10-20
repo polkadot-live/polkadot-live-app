@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TabWrapper } from './Wrappers';
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
 import { useSortable } from '@dnd-kit/sortable';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { TabProps } from './types';
 
 export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
@@ -51,7 +52,7 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
           role="button"
           style={{
             flexGrow: '1',
-            color: clickedId === id ? '#cfcfcf' : '#838383',
+            color: 'var(--text-color-primary)',
           }}
         >
           {label}
@@ -60,6 +61,22 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
           <FontAwesomeIcon icon={faXmark} transform={'shrink-2'} />
         </div>
       </div>
+      <AnimatePresence>
+        {id === clickedId && (
+          <motion.span
+            style={{
+              position: 'absolute',
+              inset: '0px',
+              borderRadius: '0.375rem',
+              backgroundColor: '#ac2461',
+              zIndex: '0',
+            }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+          />
+        )}
+      </AnimatePresence>
     </TabWrapper>
   );
 };
