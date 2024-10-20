@@ -23,10 +23,10 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
+import { Scrollable } from '@/renderer/library/utils';
 import {
   ControlsWrapper,
   StatsFooter,
-  Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
 import {

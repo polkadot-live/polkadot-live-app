@@ -16,11 +16,11 @@ import { ContentWrapper } from '@app/screens/Wrappers';
 import { StickyHeadings, TrackGroup } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
+import { Scrollable } from '@/renderer/library/utils';
 import {
   renderPlaceholders,
   ControlsWrapper,
   StatsFooter,
-  Scrollable,
   SortControlButton,
 } from '@/renderer/utils/common';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';

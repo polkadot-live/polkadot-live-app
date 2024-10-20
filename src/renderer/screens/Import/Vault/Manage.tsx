@@ -16,10 +16,10 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
+import { Scrollable } from '@/renderer/library/utils';
 import {
   ControlsWrapper,
   StatsFooter,
-  Scrollable,
   SortControlLabel,
 } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';

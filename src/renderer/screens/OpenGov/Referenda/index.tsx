@@ -25,11 +25,11 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
+import { Scrollable } from '@/renderer/library/utils';
 import {
   renderPlaceholders,
   ControlsWrapper,
   StatsFooter,
-  Scrollable,
   SortControlButton,
 } from '@/renderer/utils/common';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';

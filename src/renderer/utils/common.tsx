@@ -330,42 +330,6 @@ export const ControlsWrapper = styled.div<{
 `;
 
 /**
- * @name Scrollable
- * @summary A scrollable container with which takes into account header and footer heights.
- */
-export const Scrollable = styled.div<{
-  $footerHeight?: number;
-  $headerHeight?: number;
-}>`
-  --footer-height: ${(props) => {
-    const height = props.$footerHeight;
-    return height !== undefined ? `${height}px` : '40px';
-  }};
-
-  --header-height: ${(props) => {
-    const height = props.$headerHeight;
-    return height !== undefined ? `${height}px` : '38.6px';
-  }};
-
-  // height = window height - (header height + footer height)
-  height: calc(100vh - var(--footer-height));
-  width: 100%;
-  padding: 1.5rem 0 1rem;
-  overflow-y: auto;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: #101010;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #212121;
-  }
-`;
-
-/**
  * @name StatsFooter
  * @summary Footer layout for child window.
  */

@@ -26,15 +26,15 @@ import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import type { ChainID } from '@/types/chains';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+import { Scrollable } from '@/renderer/library/utils';
 import {
   StatsFooter,
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,
-  Scrollable,
 } from '@/renderer/utils/common';
+import type { ChainID } from '@/types/chains';
+import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
