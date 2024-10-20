@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretHeader,
 } from '@/renderer/library/Accordion';
 import { AccountWrapper, AccountsWrapper } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
@@ -24,7 +25,6 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@/types/subscriptions';
-import { AccordionCaretHeader } from '@/renderer/library/Accordion/AccordionCaretHeaders';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
 

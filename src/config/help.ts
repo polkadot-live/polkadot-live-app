@@ -489,4 +489,29 @@ export const HelpConfig: HelpItems = [
       'If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us through the Polkadot Live repository on GitHub.',
     ],
   },
+  {
+    key: 'help:summary:activeAccounts',
+    title: 'Accounts Summary',
+    definition: [
+      'The accounts summary displays the total number of accounts you have added to the main window.',
+      'Separate stat boxes display the total number of accounts you have added to the main window according to the import method.',
+    ],
+  },
+  {
+    key: 'help:summary:events',
+    title: 'Events Summary',
+    definition: [
+      'The events summary displays the total number of events you have received.',
+      'Separate stat boxes display the total number of events according to the event category.',
+    ],
+  },
+  {
+    key: 'help:summary:subscriptions',
+    title: 'Subscriptions Summary',
+    definition: [
+      'The subscriptions summary displays the total number of your active subscriptions.',
+      'Separate stat boxes display the total number of active subscriptions for each account you have added to the main window.',
+      'The total number of active referenda subscriptions will also be displayed in a separate stat box, providing you have one or more enabled.',
+    ],
+  },
 ];

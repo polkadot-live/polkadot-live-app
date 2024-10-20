@@ -97,6 +97,14 @@ export const IntervalSubscriptionsProvider = ({
     return result;
   };
 
+  /// Get total interval subscription count.
+  const getTotalIntervalSubscriptionCount = (): number =>
+    [...subscriptions.values()].reduce(
+      (acc, tasks) =>
+        acc + tasks.filter((task) => task.status === 'enable').length,
+      0
+    );
+
   return (
     <IntervalSubscriptionsContext.Provider
       value={{
@@ -107,6 +115,7 @@ export const IntervalSubscriptionsProvider = ({
         updateIntervalSubscription,
         getIntervalSubscriptionsForChain,
         getSortedKeys,
+        getTotalIntervalSubscriptionCount,
       }}
     >
       {children}

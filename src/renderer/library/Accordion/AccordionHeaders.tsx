@@ -1,11 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccordionHeader, useAccordion } from '@/renderer/library/Accordion';
-import { HeadingWrapper } from '@/renderer/screens/Home/Manage/Wrappers';
+import { AccordionHeader, useAccordion } from './Accordion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import { HeadingWrapper as WideHeadingWrapper } from '@/renderer/screens/Home/Wrappers';
+import { HeadingWrapper, WideHeadingWrapper } from './AccordionHeaders.styles';
 import type {
   AccordionCaretHeaderProps,
   AccordionCaretSwitchHeaderProps,

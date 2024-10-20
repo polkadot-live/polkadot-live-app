@@ -239,6 +239,10 @@ export const ControlsWrapper = styled.div<{
       color: #666666;
       font-size: 0.9rem;
       cursor: default;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .icon {
       margin-left: 0.7rem;

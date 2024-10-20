@@ -7,15 +7,19 @@ import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer } from '@app/library/Footer';
 import { Header } from '@app/library/Header';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSideNav } from '@/renderer/library/contexts';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
-import { CarouselWrapper, IconWrapper, TabsWrapper } from './Wrappers';
+import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
+import { SideNav } from '@/renderer/library/SideNav';
+import { ScrollWrapper } from '@/renderer/library/utils';
+import { Summary } from '@/renderer/screens/Home/Summary';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';
 import type { IpcRendererEvent } from 'electron';
@@ -33,9 +37,7 @@ export const Home = () => {
 
   // Get app loading flag.
   const { appLoading } = useBootstrapping();
-
-  // Store the currently active menu tab.
-  const [section, setSection] = useState<number>(0);
+  const { selectedId } = useSideNav();
 
   useEffect(() => {
     // Listen for event callbacks.
@@ -62,90 +64,48 @@ export const Home = () => {
   return (
     <>
       <Header showMenu={true} appLoading={appLoading} />
-      <TabsWrapper>
-        {/* Events Button */}
-        <button
-          type="button"
-          className={section === 0 ? 'active' : undefined}
-          onClick={() => {
-            setSection(0);
-          }}
-        >
-          <span>Events</span>
-        </button>
-        {/* Manage Button */}
-        <button
-          type="button"
-          disabled={appLoading}
-          className={section === 1 ? 'active' : undefined}
-          style={{ opacity: appLoading ? '0.3' : '1' }}
-          onClick={() => {
-            setSection(1);
-          }}
-        >
-          <span>Subscriptions</span>
-        </button>
-      </TabsWrapper>
+      <FixedFlexWrapper>
+        {/* Side Navigation */}
+        <SideNav />
 
-      <BodyInterfaceWrapper $maxHeight>
-        <CarouselWrapper
-          animate={section === 0 ? 'home' : 'next'}
-          transition={{
-            duration: 0.35,
-            type: 'spring',
-            bounce: 0.1,
-          }}
-          variants={{
-            home: {
-              left: 0,
-            },
-            next: {
-              left: '-100%',
-            },
-          }}
-        >
-          {/* Render Events Content */}
-          <div className="scrollable">
-            {appLoading ? (
-              <>
-                <IconWrapper>
-                  <IconSVG width={175} opacity={0.01} />
-                </IconWrapper>
-                <div className="app-loading">
-                  <div className="lds-grid">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-                  <p>Loading Polkadot Live</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <IconWrapper>
-                  <IconSVG width={175} opacity={0.02} />
-                </IconWrapper>
-                <Events />
-              </>
-            )}
-          </div>
-          {/* Render Subscriptions Content */}
-          <div>
-            <IconWrapper>
-              <IconSVG width={175} opacity={0.02} />
-            </IconWrapper>
-            <div className="container">
-              {!appLoading && <Manage addresses={getAddresses()} />}
+        <BodyInterfaceWrapper $maxHeight>
+          <IconWrapper>
+            <IconSVG width={175} opacity={appLoading ? 0.01 : 0.02} />
+          </IconWrapper>
+
+          {appLoading ? (
+            <div className="app-loading">
+              <div className="lds-grid">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <p>Loading Polkadot Live</p>
             </div>
-          </div>
-        </CarouselWrapper>
-      </BodyInterfaceWrapper>
+          ) : (
+            <ScrollWrapper>
+              {/* Summary */}
+              {selectedId === 0 && <Summary />}
+
+              {/* Events */}
+              {selectedId === 1 && <Events />}
+
+              {/* Subscribe */}
+              {selectedId === 2 && (
+                <div className="container">
+                  <Manage addresses={getAddresses()} />
+                </div>
+              )}
+            </ScrollWrapper>
+          )}
+        </BodyInterfaceWrapper>
+      </FixedFlexWrapper>
       <Footer />
     </>
   );

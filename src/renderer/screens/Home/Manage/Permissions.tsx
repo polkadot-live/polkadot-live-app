@@ -7,8 +7,8 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  AccordionCaretSwitchHeader,
 } from '@/renderer/library/Accordion';
-import { AccordionCaretSwitchHeader } from '@app/library/Accordion/AccordionCaretHeaders';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
@@ -522,9 +522,6 @@ export const Permissions = ({
           ) : (
             <SortControlLabel label={breadcrumb} />
           )}
-        </div>
-        <div className="right">
-          <SortControlLabel label={'Subscription On / Off'} noBorder={true} />
         </div>
       </ControlsWrapper>
 
