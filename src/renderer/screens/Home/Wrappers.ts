@@ -22,7 +22,6 @@ export const CarouselWrapper = styled(motion.div)`
   display: flex;
   height: 100%;
   max-height: 100%;
-  margin-bottom: 3rem;
 
   .scrollable {
     overflow-y: auto;

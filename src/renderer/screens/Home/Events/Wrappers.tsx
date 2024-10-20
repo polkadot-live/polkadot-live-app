@@ -10,7 +10,6 @@ export const Wrapper = styled.div`
   flex-flow: column wrap;
   align-items: center;
   row-gap: 0.5rem;
-  padding: 0 1rem;
 `;
 
 export const NoEventsWrapper = styled.div`

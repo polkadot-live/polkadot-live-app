@@ -6,6 +6,7 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
+import { MainHeading } from '@/renderer/library/Stats';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
@@ -20,42 +21,52 @@ export const Manage = ({ addresses }: ManageProps) => {
   const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
 
   return (
-    <CarouselWrapper
-      animate={section === 0 ? 'home' : 'next'}
-      transition={{
-        duration: 0.35,
-        type: 'spring',
-        bounce: 0.1,
-      }}
-      variants={{
-        home: {
-          left: 0,
-        },
-        next: {
-          left: '-100%',
-        },
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: '1rem',
+        padding: '2rem 0 1rem',
       }}
     >
-      <div className="scrollable">
-        {/* List of accounts and chains */}
-        <Wrapper>
-          <Accounts
+      <MainHeading style={{ padding: '0 1rem 0' }}>Subscriptions</MainHeading>
+      <CarouselWrapper
+        animate={section === 0 ? 'home' : 'next'}
+        transition={{
+          duration: 0.35,
+          type: 'spring',
+          bounce: 0.1,
+        }}
+        variants={{
+          home: {
+            left: 0,
+          },
+          next: {
+            left: '-100%',
+          },
+        }}
+      >
+        <div className="scrollable" style={{ padding: '0 0.75rem' }}>
+          {/* List of accounts and chains */}
+          <Wrapper>
+            <Accounts
+              setSection={setSection}
+              setBreadcrumb={setBreadcrumb}
+              addresses={addresses}
+              setTypeClicked={setTypeClicked}
+            />
+          </Wrapper>
+        </div>
+        <div className="scrollable" style={{ padding: '0 0.75rem' }}>
+          {/* Subscription toggles for selected account or chain */}
+          <Permissions
             setSection={setSection}
-            setBreadcrumb={setBreadcrumb}
-            addresses={addresses}
-            setTypeClicked={setTypeClicked}
+            section={section}
+            breadcrumb={breadcrumb}
+            typeClicked={typeClicked}
           />
-        </Wrapper>
-      </div>
-      <div className="scrollable">
-        {/* Subscription toggles for selected account or chain */}
-        <Permissions
-          setSection={setSection}
-          section={section}
-          breadcrumb={breadcrumb}
-          typeClicked={typeClicked}
-        />
-      </div>
-    </CarouselWrapper>
+        </div>
+      </CarouselWrapper>
+    </div>
   );
 };
