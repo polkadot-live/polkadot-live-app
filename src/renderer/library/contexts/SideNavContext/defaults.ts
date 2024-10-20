@@ -8,5 +8,4 @@ export const defaultSideNavContext: SideNavContextInterface = {
   isCollapsed: false,
   selectedId: 0,
   setSelectedId: () => {},
-  setIsCollapsed: () => {},
 };

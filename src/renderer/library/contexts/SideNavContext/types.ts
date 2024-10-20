@@ -4,7 +4,6 @@
 export interface SideNavContextInterface {
   isCollapsed: boolean;
   selectedId: number;
-  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedId: React.Dispatch<React.SetStateAction<number>>;
 }
 

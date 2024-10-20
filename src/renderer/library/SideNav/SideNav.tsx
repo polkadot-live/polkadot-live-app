@@ -12,9 +12,11 @@ import {
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
 import { useSideNav } from '../contexts';
+import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 
 export const SideNav = () => {
-  const { isCollapsed, setIsCollapsed } = useSideNav();
+  const { handleSideNavCollapse } = useAppSettings();
+  const { isCollapsed } = useSideNav();
 
   return (
     <SideNavWrapper $isCollapsed={isCollapsed}>
@@ -29,7 +31,7 @@ export const SideNav = () => {
             ? { marginTop: 'auto' }
             : { marginTop: 'auto', maxWidth: '48px' }
         }
-        onClick={() => setIsCollapsed((pv) => !pv)}
+        onClick={() => handleSideNavCollapse()}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

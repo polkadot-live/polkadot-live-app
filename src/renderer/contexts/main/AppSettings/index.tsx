@@ -40,6 +40,9 @@ export const AppSettingsProvider = ({
   /// Hide dock icon.
   const [hideDockIcon, setHideDockIcon] = useState<boolean>(false);
 
+  /// Side nav collapsed flag.
+  const [sideNavCollapsed, setSideNavCollapsed] = useState<boolean>(false);
+
   /// Get settings from main and initialise state.
   useEffect(() => {
     const initSettings = async () => {
@@ -51,6 +54,7 @@ export const AppSettingsProvider = ({
         appEnablePolkassemblyApi,
         appKeepOutdatedEvents,
         appHideDockIcon,
+        appCollapseSideNav,
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
@@ -67,6 +71,7 @@ export const AppSettingsProvider = ({
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
       setEnablePolkassemblyApi(appEnablePolkassemblyApi);
       setHideDockIcon(appHideDockIcon);
+      setSideNavCollapsed(appCollapseSideNav);
     };
 
     initSettings();
@@ -146,6 +151,12 @@ export const AppSettingsProvider = ({
     handleToggleSetting('settings:execute:hideDockIcon');
   };
 
+  /// Handle collapse/expand side nav.
+  const handleSideNavCollapse = () => {
+    setSideNavCollapsed((pv) => !pv);
+    handleToggleSetting('settings:execute:collapseSideNav');
+  };
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -155,6 +166,7 @@ export const AppSettingsProvider = ({
         enableAutomaticSubscriptions,
         enablePolkassemblyApi,
         hideDockIcon,
+        sideNavCollapsed,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
@@ -163,6 +175,7 @@ export const AppSettingsProvider = ({
         handleToggleKeepOutdatedEvents,
         handleToggleHideDockIcon,
         setSilenceOsNotifications,
+        handleSideNavCollapse,
       }}
     >
       {children}
