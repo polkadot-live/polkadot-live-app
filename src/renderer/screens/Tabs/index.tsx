@@ -5,19 +5,16 @@ import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   horizontalListSortingStrategy,
   SortableContext,
-  useSortable,
 } from '@dnd-kit/sortable';
 import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
-import { CSS } from '@dnd-kit/utilities';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Header } from '@/renderer/library/Header';
 import { useDebug } from '@/renderer/hooks/useDebug';
-import { TabsWrapper, TabWrapper } from './Wrappers';
+import { TabsWrapper } from './Wrappers';
+import { Tab } from './Tab';
 
 export const Tabs: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
@@ -52,69 +49,5 @@ export const Tabs: React.FC = () => {
         </div>
       </TabsWrapper>
     </>
-  );
-};
-
-/* -------------------- */
-/* Tab Component        */
-/* -------------------- */
-
-interface TabProps {
-  id: number;
-  label: string;
-}
-
-const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
-  const { activeId, clickedId, handleTabClick, handleTabClose } = useTabs();
-
-  /// Dnd
-  const { attributes, listeners, transform, transition, setNodeRef } =
-    useSortable({
-      id,
-      transition: { duration: 250, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' },
-    });
-
-  /// Handle tab click.
-  const handleClick = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {
-    event.stopPropagation();
-    if (clickedId !== id) {
-      handleTabClick(id);
-    }
-  };
-
-  /// Handle close tab.
-  const handleClose = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
-    handleTabClose(id);
-  };
-
-  return (
-    <TabWrapper
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        zIndex: activeId === id ? '20' : '1',
-      }}
-    >
-      <div className="inner" onClick={handleClick}>
-        <span
-          role="button"
-          style={{
-            flexGrow: '1',
-            color: clickedId === id ? '#cfcfcf' : '#838383',
-          }}
-        >
-          {label}
-        </span>
-        <div className="btn-close" onClick={handleClose}>
-          <FontAwesomeIcon icon={faXmark} transform={'shrink-2'} />
-        </div>
-      </div>
-    </TabWrapper>
   );
 };
