@@ -60,13 +60,14 @@ const getProvidersForWindow = () => {
     }
     case 'main': {
       return withProviders(
-        SideNavProvider,
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
         ConnectionsProvider,
         AddressesProvider,
         AppSettingsProvider,
+        // Side nav relies on app settings.
+        SideNavProvider,
         ChainsProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,

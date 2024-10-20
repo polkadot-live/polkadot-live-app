@@ -14,6 +14,7 @@ export interface PersistedSettings {
   appEnablePolkassemblyApi: boolean;
   appKeepOutdatedEvents: boolean;
   appHideDockIcon: boolean;
+  appCollapseSideNav: boolean;
 }
 
 export type OsPlatform = 'darwin' | 'linux' | 'win32';
@@ -28,7 +29,8 @@ export type SettingAction =
   | 'settings:execute:enableAutomaticSubscriptions'
   | 'settings:execute:enablePolkassembly'
   | 'settings:execute:keepOutdatedEvents'
-  | 'settings:execute:hideDockIcon';
+  | 'settings:execute:hideDockIcon'
+  | 'settings:execute:collapseSideNav';
 
 export interface SettingItem {
   action: SettingAction;

@@ -34,6 +34,7 @@ export class SettingsController {
         appEnablePolkassemblyApi: true,
         appKeepOutdatedEvents: true,
         appHideDockIcon: false,
+        appCollapseSideNav: false,
       };
 
       // Persist default settings to store and return them.
@@ -128,6 +129,11 @@ export class SettingsController {
 
         // Hide or show dock icon.
         flag ? hideDockIcon() : showDockIcon();
+        break;
+      }
+      case 'settings:execute:collapseSideNav': {
+        const flag = !settings.appCollapseSideNav;
+        settings.appCollapseSideNav = flag;
         break;
       }
       default: {

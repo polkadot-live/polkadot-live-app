@@ -11,6 +11,7 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   enableAutomaticSubscriptions: true,
   enablePolkassemblyApi: true,
   hideDockIcon: false,
+  sideNavCollapsed: false,
   setSilenceOsNotifications: (b) => {},
   handleDockedToggle: () => {},
   handleToggleSilenceOsNotifications: () => {},
@@ -19,4 +20,5 @@ export const defaultAppSettingsContext: AppSettingsContextInterface = {
   handleToggleEnablePolkassemblyApi: () => {},
   handleToggleKeepOutdatedEvents: () => {},
   handleToggleHideDockIcon: () => {},
+  handleSideNavCollapse: () => {},
 };

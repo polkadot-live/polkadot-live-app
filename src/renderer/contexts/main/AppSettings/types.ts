@@ -8,6 +8,7 @@ export interface AppSettingsContextInterface {
   enableAutomaticSubscriptions: boolean;
   enablePolkassemblyApi: boolean;
   hideDockIcon: boolean;
+  sideNavCollapsed: boolean;
   setSilenceOsNotifications: (b: boolean) => void;
   handleDockedToggle: () => void;
   handleToggleSilenceOsNotifications: () => void;
@@ -16,4 +17,5 @@ export interface AppSettingsContextInterface {
   handleToggleEnablePolkassemblyApi: () => void;
   handleToggleKeepOutdatedEvents: () => void;
   handleToggleHideDockIcon: () => void;
+  handleSideNavCollapse: () => void;
 }
