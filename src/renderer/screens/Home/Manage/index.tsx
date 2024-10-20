@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
+import { useManage } from '@/renderer/contexts/main/Manage';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
@@ -11,6 +12,8 @@ import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
+  const { setRenderedSubscriptions } = useManage();
+
   // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
 
@@ -37,6 +40,11 @@ export const Manage = ({ addresses }: ManageProps) => {
           type: 'spring',
           bounce: 0.1,
         }}
+        // Clear rendered subscriptions when back button is clicked.
+        // Doing this will remove the scrollbar on the right section.
+        onTransitionEnd={() =>
+          section === 0 && setRenderedSubscriptions({ type: '', tasks: [] })
+        }
         variants={{
           home: {
             left: 0,
