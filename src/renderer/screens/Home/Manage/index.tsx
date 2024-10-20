@@ -40,7 +40,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           type: 'spring',
           bounce: 0.1,
         }}
-        // Clear rendered subscriptions when back button is clicked.
+        // Clear rendered subscriptions after transitioning to left section.
         // Doing this will remove the scrollbar on the right section.
         onTransitionEnd={() =>
           section === 0 && setRenderedSubscriptions({ type: '', tasks: [] })
