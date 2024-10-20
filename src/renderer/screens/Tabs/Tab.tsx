@@ -37,7 +37,7 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
   };
 
   return (
-    <TabWrapper
+    <div
       ref={setNodeRef}
       {...attributes}
       {...listeners}
@@ -47,36 +47,38 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
         zIndex: activeId === id ? '20' : '1',
       }}
     >
-      <div className="inner" onClick={handleClick}>
-        <span
-          role="button"
-          style={{
-            flexGrow: '1',
-            color: 'var(--text-color-primary)',
-          }}
-        >
-          {label}
-        </span>
-        <div className="btn-close" onClick={handleClose}>
-          <FontAwesomeIcon icon={faXmark} transform={'shrink-2'} />
-        </div>
-      </div>
-      <AnimatePresence>
-        {id === clickedId && (
-          <motion.span
+      <TabWrapper whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+        <div className="inner" onClick={handleClick}>
+          <span
+            role="button"
             style={{
-              position: 'absolute',
-              inset: '0px',
-              borderRadius: '0.375rem',
-              backgroundColor: '#ac2461',
-              zIndex: '0',
+              flexGrow: '1',
+              color: '#f1f1f1',
             }}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-          />
-        )}
-      </AnimatePresence>
-    </TabWrapper>
+          >
+            {label}
+          </span>
+          <div className="btn-close" onClick={handleClose}>
+            <FontAwesomeIcon icon={faXmark} transform={'shrink-2'} />
+          </div>
+        </div>
+        <AnimatePresence>
+          {id === clickedId && (
+            <motion.span
+              style={{
+                position: 'absolute',
+                inset: '0px',
+                borderRadius: '0.375rem',
+                backgroundColor: '#ac2461',
+                zIndex: '0',
+              }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+            />
+          )}
+        </AnimatePresence>
+      </TabWrapper>
+    </div>
   );
 };

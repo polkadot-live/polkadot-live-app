@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 // Tabs container.
@@ -24,7 +25,7 @@ export const TabsWrapper = styled.div`
 `;
 
 // Tab top div.
-export const TabWrapper = styled.div`
+export const TabWrapper = styled(motion.div)`
   position: relative;
   background-color: #313131;
   border-radius: 0.375rem;
@@ -32,6 +33,10 @@ export const TabWrapper = styled.div`
   padding: 0.3rem 0;
   margin-top: -5px;
   cursor: pointer;
+
+  &:hover {
+    background-color: #3d3d3d;
+  }
 
   .inner {
     position: relative;
@@ -48,7 +53,7 @@ export const TabWrapper = styled.div`
       color: var(--text-color-primary);
       &:hover {
         svg {
-          color: white;
+          color: #f1f1f1;
           cursor: pointer;
         }
       }
