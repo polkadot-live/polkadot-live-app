@@ -16,15 +16,11 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Scrollable } from '@/renderer/library/utils';
-import {
-  ControlsWrapper,
-  StatsFooter,
-  SortControlLabel,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/utils';
+import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import type { ManageVaultProps } from '../types';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
+import type { ManageVaultProps } from '../types';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();

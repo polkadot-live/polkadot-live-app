@@ -16,12 +16,8 @@ import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { Scrollable } from '@/renderer/library/utils';
-import {
-  ControlsWrapper,
-  StatsFooter,
-  SortControlLabel,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/utils';
+import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({

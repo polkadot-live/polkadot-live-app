@@ -26,9 +26,8 @@ import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { Scrollable } from '@/renderer/library/utils';
+import { Scrollable, StatsFooter } from '@/renderer/library/utils';
 import {
-  StatsFooter,
   ControlsWrapper,
   SortControlButton,
   renderPlaceholders,

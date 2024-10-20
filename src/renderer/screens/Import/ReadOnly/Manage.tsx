@@ -23,12 +23,8 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable } from '@/renderer/library/utils';
-import {
-  ControlsWrapper,
-  StatsFooter,
-  SortControlLabel,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/utils';
+import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import {
   getSortedLocalAddresses,
   renderToast,
