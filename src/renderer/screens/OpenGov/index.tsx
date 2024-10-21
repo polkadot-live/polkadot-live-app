@@ -10,7 +10,11 @@ import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
 import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
-import { ActionItem } from '@/renderer/library/ActionItem';
+import {
+  ActionItem,
+  ControlsWrapper,
+  SortControlButton,
+} from '@app/library/components';
 import {
   faCaretRight,
   faInfo,
@@ -26,15 +30,10 @@ import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useHelp } from '@/renderer/contexts/common/Help';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
+import { renderPlaceholders } from '@/renderer/library/utils';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import {
-  StatsFooter,
-  ControlsWrapper,
-  SortControlButton,
-  renderPlaceholders,
-  Scrollable,
-} from '@/renderer/utils/common';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.

@@ -3,7 +3,7 @@
 
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { MoreOverlay } from './Wrappers';
-import { Scrollable } from '@/renderer/utils/common';
+import { Scrollable } from '@/renderer/library/styles';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
 

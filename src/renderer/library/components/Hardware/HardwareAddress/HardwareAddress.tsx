@@ -11,10 +11,10 @@ import {
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Identicon } from '@app/library/Identicon';
+import { Identicon } from '@app/library/components';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
-import { Wrapper } from './Wrapper';
+import { HardwareAddressWrapper } from './Wrapper';
 import { getAddressChainId } from '@/renderer/Utils';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
 import { useConnections } from '@/renderer/contexts/common/Connections';
@@ -228,5 +228,9 @@ export const HardwareAddress = ({
   );
 
   // Don't render bottom border on the address if it's the last one.
-  return <Wrapper $orderData={orderData}>{renderContent()}</Wrapper>;
+  return (
+    <HardwareAddressWrapper $orderData={orderData}>
+      {renderContent()}
+    </HardwareAddressWrapper>
+  );
 };

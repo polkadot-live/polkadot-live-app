@@ -5,10 +5,11 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  ControlsWrapper,
+  SortControlButton,
+} from '@app/library/components';
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
-import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';

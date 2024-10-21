@@ -11,7 +11,7 @@ import {
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
-import { Header } from '@/renderer/library/Header';
+import { Header } from '@app/library/components';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';

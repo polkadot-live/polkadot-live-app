@@ -3,7 +3,7 @@
 
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
-import { HardwareAddress } from '@/renderer/library/Hardware/HardwareAddress';
+import { HardwareAddress } from '@/renderer/library/components/Hardware';
 import {
   postRenameAccount,
   renameAccountInStore,

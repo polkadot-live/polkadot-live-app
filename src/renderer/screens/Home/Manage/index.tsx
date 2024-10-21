@@ -2,15 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
+import { useManage } from '@/renderer/contexts/main/Manage';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
-import { MainHeading } from '@/renderer/library/Stats';
+import { MainHeading } from '@app/library/components';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
+
   // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
 
@@ -36,6 +39,14 @@ export const Manage = ({ addresses }: ManageProps) => {
           duration: 0.35,
           type: 'spring',
           bounce: 0.1,
+        }}
+        // Clear rendered subscriptions after transitioning to left section.
+        // Doing this will remove the scrollbar on the right section.
+        onTransitionEnd={() => {
+          if (section === 0) {
+            setRenderedSubscriptions({ type: '', tasks: [] });
+            setDynamicIntervalTasks([], 'Polkadot');
+          }
         }}
         variants={{
           home: {

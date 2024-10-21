@@ -3,7 +3,7 @@
 
 import styled from 'styled-components';
 
-export const Wrapper = styled.div<{
+export const HardwareAddressWrapper = styled.div<{
   $orderData?: { curIndex: number; lastIndex: number };
 }>`
   // No border bottom if last item in list.

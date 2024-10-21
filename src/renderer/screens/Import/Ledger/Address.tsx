@@ -7,7 +7,7 @@ import {
   postRenameAccount,
   renameAccountInStore,
 } from '@/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@app/library/Hardware/HardwareAddress';
+import { HardwareAddress } from '@/renderer/library/components/Hardware';
 import { Remove } from '../Addresses/Remove';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';

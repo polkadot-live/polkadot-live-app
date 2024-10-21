@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountWrapper } from './Wrappers';
-import { Switch } from '@app/library/Switch';
+import { Switch } from '@app/library/components';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

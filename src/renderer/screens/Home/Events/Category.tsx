@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+} from '@app/library/components';
 import { EventGroup } from './Wrappers';
 import { getEventChainId } from '@/utils/EventUtils';
 import { getCategory } from '@/config/chains';

@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { formatChainUnits } from '@/renderer/utils/common';
+import { formatChainUnits } from '@/renderer/library/utils';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TrackRowProps } from '../types';
 

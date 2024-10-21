@@ -6,7 +6,9 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  ControlsWrapper,
+  SortControlLabel,
+} from '@app/library/components';
 import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
@@ -16,12 +18,7 @@ import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import {
-  ControlsWrapper,
-  StatsFooter,
-  Scrollable,
-  SortControlLabel,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({

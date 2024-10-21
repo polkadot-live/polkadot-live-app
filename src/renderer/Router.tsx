@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainInterfaceWrapper } from '@app/Wrappers';
-import { Overlay } from '@app/library/Overlay';
-import { Tooltip } from '@app/library/Tooltip';
+import { Overlay, Tooltip } from '@app/library/components';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
@@ -12,7 +11,7 @@ import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
 import { OpenGov } from './screens/OpenGov';
-import { Help } from './library/Help';
+import { Help } from './library/components/Help';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';

@@ -6,7 +6,9 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  ControlsWrapper,
+  SortControlButton,
+} from '@app/library/components';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
@@ -25,13 +27,8 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
-import {
-  renderPlaceholders,
-  ControlsWrapper,
-  StatsFooter,
-  Scrollable,
-  SortControlButton,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
+import { renderPlaceholders } from '@/renderer/library/utils';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';

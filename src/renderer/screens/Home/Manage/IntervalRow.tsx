@@ -18,7 +18,7 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch } from '@app/library/Switch';
+import { Switch } from '@app/library/components';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { getShortIntervalLabel } from '@/renderer/utils/renderingUtils';
 import type { AnyData } from '@/types/misc';

@@ -11,7 +11,7 @@ import {
   faGaugeSimple,
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
-import { useSideNav } from '../contexts';
+import { useSideNav } from '../../contexts';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 
 export const SideNav = () => {
