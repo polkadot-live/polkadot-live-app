@@ -17,7 +17,7 @@ import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';

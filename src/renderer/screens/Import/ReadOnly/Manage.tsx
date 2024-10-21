@@ -24,7 +24,7 @@ import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import {
   getSortedLocalAddresses,
   renderToast,

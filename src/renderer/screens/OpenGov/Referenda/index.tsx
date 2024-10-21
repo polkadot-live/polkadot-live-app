@@ -27,7 +27,7 @@ import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
-import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';

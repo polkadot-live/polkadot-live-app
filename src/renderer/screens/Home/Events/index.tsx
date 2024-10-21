@@ -10,7 +10,7 @@ import { Accordion } from '@/renderer/library/Accordion';
 import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
-import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
 import { MainHeading } from '@/renderer/library/Stats';
 
 export const Events = () => {

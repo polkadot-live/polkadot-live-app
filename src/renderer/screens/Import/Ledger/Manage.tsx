@@ -17,7 +17,7 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({

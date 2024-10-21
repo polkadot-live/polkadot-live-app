@@ -21,7 +21,7 @@ import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
-import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 

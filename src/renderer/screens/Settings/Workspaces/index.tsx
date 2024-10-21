@@ -8,7 +8,7 @@ import {
 } from '@/renderer/library/Accordion';
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
-import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
+import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
 import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';
