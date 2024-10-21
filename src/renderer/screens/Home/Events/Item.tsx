@@ -19,7 +19,7 @@ import { getEventChainId } from '@/utils/EventUtils';
 import { renderTimeAgo } from '@/utils/TextUtils';
 import { getAddressNonce } from '@/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
-import { Identicon } from '@app/library/Identicon';
+import { Identicon } from '@app/library/components';
 import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';

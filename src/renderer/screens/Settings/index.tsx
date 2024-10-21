@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+} from '@app/library/components';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@/config/settings';

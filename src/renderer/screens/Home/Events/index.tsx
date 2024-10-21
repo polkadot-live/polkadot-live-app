@@ -6,12 +6,15 @@ import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
 import { EventGroup, Wrapper } from './Wrappers';
-import { Accordion } from '@/renderer/library/Accordion';
+import {
+  Accordion,
+  MainHeading,
+  ControlsWrapper,
+  SortControlButton,
+} from '@app/library/components';
 import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
-import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
-import { MainHeading } from '@/renderer/library/Stats';
 
 export const Events = () => {
   /// State for sorting controls.

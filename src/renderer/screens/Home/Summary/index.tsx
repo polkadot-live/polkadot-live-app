@@ -8,13 +8,13 @@ import { useEvents } from '@/renderer/contexts/main/Events';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { ShiftingMeter } from '@app/library/ShiftingMeter';
 import {
   MainHeading,
   StatsSection,
   StatsGrid,
   StatItem,
-} from '@/renderer/library/Stats';
+  ShiftingMeter,
+} from '@app/library/components';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();

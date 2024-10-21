@@ -23,7 +23,7 @@ import {
   faPlus,
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
+import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { InfoOverlay } from './InfoOverlay';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';

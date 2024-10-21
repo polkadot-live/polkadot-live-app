@@ -6,12 +6,12 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  Identicon,
+} from '@app/library/components';
 import { AccountWrapper, AccountsWrapper } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
-import { Identicon } from '@app/library/Identicon';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useManage } from '@/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';

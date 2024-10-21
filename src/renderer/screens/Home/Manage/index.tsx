@@ -7,7 +7,7 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
-import { MainHeading } from '@/renderer/library/Stats';
+import { MainHeading } from '@app/library/components';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 

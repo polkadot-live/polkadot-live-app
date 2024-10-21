@@ -8,7 +8,9 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretSwitchHeader,
-} from '@/renderer/library/Accordion';
+  ControlsWrapper,
+  SortControlLabel,
+} from '@app/library/components';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@/renderer/callbacks/oneshots';
@@ -21,7 +23,6 @@ import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
-import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 

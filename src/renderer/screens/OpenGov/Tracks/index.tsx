@@ -18,7 +18,7 @@ import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert
 import { TrackRow } from './TrackRow';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
-import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
+import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
 

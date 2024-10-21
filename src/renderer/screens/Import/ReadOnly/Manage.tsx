@@ -6,14 +6,16 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  Identicon,
+  ControlsWrapper,
+  SortControlLabel,
+} from '@app/library/components';
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import { Identicon } from '@/renderer/library/Identicon';
 import { useState } from 'react';
 import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
 
@@ -24,7 +26,6 @@ import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import {
   getSortedLocalAddresses,
   renderToast,

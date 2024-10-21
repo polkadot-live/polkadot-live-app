@@ -4,7 +4,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { WorkspaceRowWrapper } from '../Wrappers';
 import { faHashtag, faTrash, faLink } from '@fortawesome/free-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@app/library/SortControls';
+import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';

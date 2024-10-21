@@ -15,7 +15,7 @@ import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonHelp } from '@/renderer/kits/Buttons/ButtonHelp';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { ActionItem } from '@/renderer/library/ActionItem';
+import { ActionItem } from '@app/library/components';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import { useHelp } from '@/renderer/contexts/common/Help';

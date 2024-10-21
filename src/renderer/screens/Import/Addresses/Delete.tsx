@@ -4,7 +4,7 @@
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ConfirmWrapper } from './Wrappers';
-import { Identicon } from '@/renderer/library/Identicon';
+import { Identicon } from '@app/library/components';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useDeleteHandler } from '@/renderer/contexts/import/DeleteHandler';
 import type { DeleteProps } from './types';

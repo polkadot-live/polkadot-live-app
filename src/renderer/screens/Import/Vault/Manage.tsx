@@ -6,7 +6,9 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@/renderer/library/Accordion';
+  ControlsWrapper,
+  SortControlLabel,
+} from '@app/library/components';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -17,7 +19,6 @@ import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ControlsWrapper, SortControlLabel } from '@app/library/SortControls';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';

@@ -11,10 +11,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { HeaderWrapper } from './Wrapper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu } from '@app/library/Menu';
+import { Menu } from '../../components';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import type { HeaderProps } from './types';
-import { version } from '../../../../package.json';
+import { version } from '../../../../../package.json';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { dockToggled, handleDockedToggle } = useAppSettings();

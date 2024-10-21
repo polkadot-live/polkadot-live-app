@@ -11,7 +11,7 @@ import {
 import { chainIcon } from '@/config/chains';
 import { unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Identicon } from '@app/library/Identicon';
+import { Identicon } from '@app/library/components';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
 import { Wrapper } from './Wrapper';
