@@ -2,23 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { AnyFunction } from '@/types/misc';
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { SortControlsButtonProps } from './types';
 
 /**
  * @name SortControlButton
  * @summary Component that renders a sorting control button.
  */
-interface SortControlsButtonProps {
-  isActive: boolean;
-  isDisabled: boolean;
-  onLabel?: string;
-  offLabel?: string;
-  fixedWidth?: boolean;
-  onClick?: AnyFunction;
-  faIcon?: IconDefinition;
-}
-
 export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   isActive,
   isDisabled,
