@@ -49,7 +49,7 @@ import { PolkassemblyProvider } from '@app/contexts/openGov/Polkassembly';
 
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@app/library/Hooks/withProviders';
+import { withProviders } from '@app/library/hooks/withProviders';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();
