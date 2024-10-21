@@ -19,7 +19,7 @@ import { ActionItem } from '@/renderer/library/ActionItem';
 import { ModalConnectItem } from '@/renderer/kits/Overlay/structure/ModalConnectItem';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { Scrollable } from '@/renderer/library/utils';
+import { Scrollable } from '@/renderer/library/styles';
 import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {

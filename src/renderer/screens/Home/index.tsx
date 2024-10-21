@@ -18,7 +18,7 @@ import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { SideNav } from '@/renderer/library/SideNav';
-import { ScrollWrapper } from '@/renderer/library/utils';
+import { ScrollWrapper } from '@/renderer/library/styles';
 import { Summary } from '@/renderer/screens/Home/Summary';
 import type { ChainID } from '@/types/chains';
 import type { EventCallback } from '@/types/reporter';

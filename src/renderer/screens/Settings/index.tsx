@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
-import { Scrollable } from '@/renderer/library/utils';
+import { Scrollable } from '@/renderer/library/styles';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { OsPlatform, SettingItem } from './types';
 

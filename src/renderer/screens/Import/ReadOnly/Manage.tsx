@@ -23,7 +23,7 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter } from '@/renderer/library/utils';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import {
   getSortedLocalAddresses,

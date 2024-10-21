@@ -25,12 +25,9 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
-import { Scrollable, StatsFooter } from '@/renderer/library/utils';
-import {
-  renderPlaceholders,
-  ControlsWrapper,
-  SortControlButton,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
+import { renderPlaceholders } from '@/renderer/library/utils';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';

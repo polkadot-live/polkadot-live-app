@@ -1,89 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
 import { styled } from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { planckToUnit, rmCommas } from '@w3ux/utils';
-import { chainCurrency, chainUnits } from '@/config/chains';
 import type { AnyFunction } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-
-/**
- * @name createArrayWithLength
- * @summary Utility for creating an array of `n` length.
- */
-export const createArrayWithLength = (n: number): number[] =>
-  [...Array(n + 1)].map((_, i) => i);
-
-/**
- * @name renderPlaceholders
- * @summary Render placeholder loaders.
- */
-export const renderPlaceholders = (
-  length: number,
-  height = '3rem',
-  borderRadius = '1.25rem'
-) => (
-  <LoadingPlaceholderWrapper $height={height} $borderRadius={borderRadius}>
-    <div className="placeholder-content-wrapper">
-      {createArrayWithLength(length).map((_, i) => (
-        <div key={i} className="placeholder-content"></div>
-      ))}
-    </div>
-  </LoadingPlaceholderWrapper>
-);
-
-/**
- * @name LoadingPlaceholderWrapper
- * @summary Wrapper styles for the placeholder loader.
- */
-const LoadingPlaceholderWrapper = styled.div<{
-  $height: string;
-  $borderRadius: string;
-}>`
-  width: 100%;
-
-  // Renderer container.
-  .placeholder-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 2rem;
-
-    .placeholder-content {
-      height: ${(props) => (props.$height ? props.$height : '3rem')};
-      background: #000;
-      border-radius: ${(props) =>
-        props.$borderRadius ? props.$borderRadius : '1.25rem'};
-
-      // Animation
-      animation-duration: 5s;
-      animation-fill-mode: forwards;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-      animation-name: placeholderAnimate;
-      background: #101010; // Fallback
-      background: linear-gradient(
-        to right,
-        #101010 20%,
-        #202020 36%,
-        #101010 51%
-      );
-      background-size: 200%; // Animation Area
-    }
-  }
-
-  // Keyframes.
-  @keyframes placeholderAnimate {
-    0% {
-      background-position: 100% 0;
-    }
-    100% {
-      background-position: -100% 0;
-    }
-  }
-`;
 
 /**
  * @name SortControlButton
@@ -328,20 +249,3 @@ export const ControlsWrapper = styled.div<{
     }
   }
 `;
-
-/**
- * @name formatChainUnits
- * @summary Get readable chain units for rendering.
- */
-export const formatChainUnits = (units: string, chainId: ChainID) => {
-  // Include regex to remove trailing zeros after decimal point.
-  const formatted: string = planckToUnit(
-    new BigNumber(rmCommas(units)),
-    chainUnits(chainId)
-  )
-    .toFixed(2)
-    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1')
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-  return `${formatted} ${chainCurrency(chainId)}`;
-};

@@ -16,7 +16,7 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Scrollable, StatsFooter } from '@/renderer/library/utils';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { ControlsWrapper, SortControlLabel } from '@/renderer/utils/common';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';

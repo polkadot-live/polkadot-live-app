@@ -26,12 +26,9 @@ import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { Scrollable, StatsFooter } from '@/renderer/library/utils';
-import {
-  ControlsWrapper,
-  SortControlButton,
-  renderPlaceholders,
-} from '@/renderer/utils/common';
+import { Scrollable, StatsFooter } from '@/renderer/library/styles';
+import { renderPlaceholders } from '@/renderer/library/utils';
+import { ControlsWrapper, SortControlButton } from '@/renderer/utils/common';
 import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
