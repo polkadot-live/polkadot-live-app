@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.2.0-alpha...v0.3.0-alpha) (2024-10-21)
+
+
+### Features
+
+* main window screen titles ([#719](https://github.com/polkadot-live/polkadot-live-app/issues/719)) ([f90ae58](https://github.com/polkadot-live/polkadot-live-app/commit/f90ae583c1004e5f09292f3af71b6464cfc0f36b))
+* persist side nav collapsed state ([#720](https://github.com/polkadot-live/polkadot-live-app/issues/720)) ([e32bc24](https://github.com/polkadot-live/polkadot-live-app/commit/e32bc241afdad57bc40b543027760da059259440))
+* sidebar navigation + summary screen ([#714](https://github.com/polkadot-live/polkadot-live-app/issues/714)) ([8313bd9](https://github.com/polkadot-live/polkadot-live-app/commit/8313bd94be04bda93f636db764f0fb97d177ba7d))
+
 ## [0.2.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.1-alpha...v0.2.0-alpha) (2024-10-14)
 
 
