@@ -10,6 +10,7 @@ import {
   AccordionCaretSwitchHeader,
   ControlsWrapper,
   SortControlLabel,
+  Switch,
 } from '@app/library/components';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
@@ -18,7 +19,6 @@ import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
-import { Switch } from '@/renderer/library/Switch';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,

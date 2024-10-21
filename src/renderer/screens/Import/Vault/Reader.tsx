@@ -8,11 +8,13 @@ import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
 import { checkValidAddress } from '@/renderer/Utils';
-import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
-import { createImgSize } from '@/renderer/library/QRCode/util';
-import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
+import {
+  createImgSize,
+  Html5QrCodePlugin,
+  ScanWrapper,
+} from '@/renderer/library/components/QRCode';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const Reader = () => {

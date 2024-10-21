@@ -17,7 +17,7 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Wrapper } from '@/renderer/library/Hardware/HardwareAddress/Wrapper';
+import { HardwareAddressWrapper } from '@/renderer/library/components/Hardware';
 
 /// Context imports.
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
@@ -129,7 +129,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
         </ControlsWrapper>
 
         {/* Add Read Only Address */}
-        <Wrapper
+        <HardwareAddressWrapper
           style={{
             backgroundColor: 'inherit',
             padding: '1.5rem 1.5rem 0rem',
@@ -167,7 +167,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
               </div>
             </div>
           </div>
-        </Wrapper>
+        </HardwareAddressWrapper>
 
         {/* Address List */}
         <ContentWrapper style={{ padding: '1.25rem 2rem 0' }}>

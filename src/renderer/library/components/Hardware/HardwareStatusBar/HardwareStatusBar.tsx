@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Wrapper } from './Wrapper';
-import { ButtonHelp } from '../../../kits/Buttons/ButtonHelp';
-import { ButtonMonoInvert } from '../../../kits/Buttons/ButtonMonoInvert';
-import { ButtonPrimaryInvert } from '../../../kits/Buttons/ButtonPrimaryInvert';
+import { HardwareStatusBarWrapper } from './Wrapper';
+import { ButtonHelp } from '../../../../kits/Buttons/ButtonHelp';
+import { ButtonMonoInvert } from '../../../../kits/Buttons/ButtonMonoInvert';
+import { ButtonPrimaryInvert } from '../../../../kits/Buttons/ButtonPrimaryInvert';
 import type { HardwareStatusBarProps } from './types';
 
 export const HardwareStatusBar = ({
@@ -19,7 +19,7 @@ export const HardwareStatusBar = ({
   const { helpKey, handleHelp } = help || {};
 
   return (
-    <Wrapper
+    <HardwareStatusBarWrapper
       initial="hidden"
       animate={show ? 'show' : undefined}
       variants={{
@@ -79,6 +79,6 @@ export const HardwareStatusBar = ({
           )}
         </section>
       </div>
-    </Wrapper>
+    </HardwareStatusBarWrapper>
   );
 };

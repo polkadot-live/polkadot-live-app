@@ -4,7 +4,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const Wrapper = styled(motion.div)`
+export const HardwareStatusBarWrapper = styled(motion.div)`
   padding: 0.5rem;
   position: absolute;
   bottom: 0;

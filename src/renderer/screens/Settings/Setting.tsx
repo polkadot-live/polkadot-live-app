@@ -4,7 +4,7 @@
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper, SpinnerWrapper } from './Wrappers';
-import { Switch } from '@/renderer/library/Switch';
+import { Switch } from '@/renderer/library/components';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { ButtonMonoInvert } from '@app/kits/Buttons/ButtonMonoInvert';
 import { useConnections } from '@app/contexts/common/Connections';

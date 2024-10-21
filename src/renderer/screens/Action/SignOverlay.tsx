@@ -10,13 +10,15 @@ import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
-import { QrDisplayPayload } from '@app/library/QRCode/DisplayPayload';
+import {
+  Html5QrCodePlugin,
+  QrDisplayPayload,
+  ScanWrapper,
+  createImgSize,
+} from '@app/library/components/QRCode';
 import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
 import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
-import { ScanWrapper } from '@/renderer/library/QRCode/Wrappers';
-import { Html5QrCodePlugin } from '@/renderer/library/QRCode/Scan';
 import type { Html5Qrcode } from 'html5-qrcode';
-import { createImgSize } from '@/renderer/library/QRCode/util';
 
 export const SignOverlay = ({ from }: { from: string }) => {
   const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();

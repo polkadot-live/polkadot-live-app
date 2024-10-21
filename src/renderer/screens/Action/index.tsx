@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ActionItem } from '@app/library/components';
+import { ActionItem, Tx } from '@app/library/components';
 import BigNumber from 'bignumber.js';
 import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { chainCurrency } from '@/config/chains';
@@ -12,7 +12,6 @@ import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
 import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
-import { Tx } from '@/renderer/library/Tx';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
