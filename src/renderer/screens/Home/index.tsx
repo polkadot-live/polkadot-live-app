@@ -13,7 +13,7 @@ import { Events } from './Events';
 import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
+import { useInitIpcHandlers } from '@/renderer/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { ScrollWrapper } from '@/renderer/library/styles';

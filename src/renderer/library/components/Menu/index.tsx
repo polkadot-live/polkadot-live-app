@@ -3,7 +3,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { setStateWithRef } from '@w3ux/utils';
-import { useOutsideAlerter } from '@app/library/hooks/useOutsideAlerter';
+import { useOutsideAlerter } from '@/renderer/library/hook/useOutsideAlerter';
 import { useRef, useState } from 'react';
 import { MenuWrapper, Separator } from './Wrapper';
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
