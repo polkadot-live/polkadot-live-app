@@ -12,7 +12,7 @@ import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
-  const { setRenderedSubscriptions } = useManage();
+  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
 
   // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
@@ -42,9 +42,12 @@ export const Manage = ({ addresses }: ManageProps) => {
         }}
         // Clear rendered subscriptions after transitioning to left section.
         // Doing this will remove the scrollbar on the right section.
-        onTransitionEnd={() =>
-          section === 0 && setRenderedSubscriptions({ type: '', tasks: [] })
-        }
+        onTransitionEnd={() => {
+          if (section === 0) {
+            setRenderedSubscriptions({ type: '', tasks: [] });
+            setDynamicIntervalTasks([], 'Polkadot');
+          }
+        }}
         variants={{
           home: {
             left: 0,
