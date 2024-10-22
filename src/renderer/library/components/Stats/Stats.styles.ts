@@ -109,6 +109,7 @@ export const StatItem = styled.div`
   }
 
   h3 {
+    width: 100%;
     color: #d1d1d1;
     font-size: 1.1rem;
     font-weight: 600;
