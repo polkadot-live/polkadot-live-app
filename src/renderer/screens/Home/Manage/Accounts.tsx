@@ -27,6 +27,7 @@ import type {
 } from '@/types/subscriptions';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
+import { AccordionColumns } from '@/renderer/library/components/Accordion/AccordionHeaders.styles';
 
 export const Accounts = ({
   addresses,
@@ -166,7 +167,7 @@ export const Accounts = ({
 
   return (
     <AccountsWrapper>
-      <div>
+      <AccordionColumns $gap={'0.75rem'}>
         <Accordion
           multiple
           defaultIndex={accordionActiveIndices}
@@ -183,7 +184,7 @@ export const Accounts = ({
                   itemIndex={k}
                 />
                 <AccordionPanel>
-                  <div style={{ padding: '0 0.75rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem' }}>
                     {chainId === 'Empty' ? (
                       <NoAccounts />
                     ) : (
@@ -251,7 +252,7 @@ export const Accounts = ({
               itemIndex={Array.from(getSortedAddresses().keys()).length}
             />
             <AccordionPanel>
-              <div style={{ padding: '0 0.75rem' }}>
+              <div style={{ padding: '0.5rem 0.75rem' }}>
                 <div className="flex-column">
                   {getSortedKeys().length === 0 ? (
                     <NoOpenGov />
@@ -332,7 +333,7 @@ export const Accounts = ({
             </AccordionItem>
           )}
         </Accordion>
-      </div>
+      </AccordionColumns>
     </AccountsWrapper>
   );
 };

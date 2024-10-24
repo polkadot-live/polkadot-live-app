@@ -45,6 +45,7 @@ import type {
   TaskCategory,
 } from '@/types/subscriptions';
 import { useConnections } from '@/renderer/contexts/common/Connections';
+import { AccordionColumns } from '@/renderer/library/components/Accordion/AccordionHeaders.styles';
 
 export const Permissions = ({
   breadcrumb,
@@ -432,7 +433,7 @@ export const Permissions = ({
             }
           />
           <AccordionPanel>
-            <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+            <div className="flex-column" style={{ padding: '0.5rem' }}>
               {tasks
                 .sort((a, b) => a.label.localeCompare(b.label))
                 .map((task: SubscriptionTask, i: number) => (
@@ -527,10 +528,12 @@ export const Permissions = ({
       </ControlsWrapper>
 
       <AccountsWrapper>
-        {/* Render separate accordions for account and chain subscription tasks. */}
-        {typeClicked === 'account' && renderSubscriptionTasks()}
-        {typeClicked === 'chain' && renderSubscriptionTasks()}
-        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
+        <AccordionColumns $gap={'0.5rem'} style={{ marginTop: '2rem' }}>
+          {/* Render separate accordions for account and chain subscription tasks. */}
+          {typeClicked === 'account' && renderSubscriptionTasks()}
+          {typeClicked === 'chain' && renderSubscriptionTasks()}
+          {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
+        </AccordionColumns>
       </AccountsWrapper>
     </>
   );

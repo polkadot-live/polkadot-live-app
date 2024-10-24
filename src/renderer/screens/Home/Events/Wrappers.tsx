@@ -49,13 +49,12 @@ export const EventGroup = styled.div`
   border-radius: 0.9rem;
   z-index: 2;
   padding: 0 0.5rem;
-  margin-bottom: 1rem;
 
   .items-wrapper {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
-    padding: 0 0.25rem;
+    padding: 1rem 0.25rem;
   }
 `;
 

@@ -71,9 +71,9 @@ export const AccordionCaretSwitchHeader = ({
           <div className="left">
             <div className="icon-wrapper">
               {activeIndex.includes(itemIndex) ? (
-                <FontAwesomeIcon icon={faCaretDown} transform={'shrink-1'} />
+                <FontAwesomeIcon icon={faCaretDown} />
               ) : (
-                <FontAwesomeIcon icon={faCaretRight} transform={'shrink-1'} />
+                <FontAwesomeIcon icon={faCaretRight} />
               )}
             </div>
             <h5>
