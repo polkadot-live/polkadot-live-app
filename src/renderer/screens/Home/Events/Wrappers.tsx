@@ -189,12 +189,11 @@ export const EventItem = styled(motion.div)`
         }
 
         h4,
-        h5,
-        p {
-          font-size: 1.2rem;
+        h5 {
+          font-size: 1.15rem;
         }
         h4 {
-          color: var(--text-color-primary);
+          color: #b8b3b9;
           font-weight: 600;
         }
         h5 {
@@ -202,8 +201,10 @@ export const EventItem = styled(motion.div)`
           margin: 0.35rem 0;
         }
         p {
+          color: #b8b3b9;
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
+          font-size: 1.2rem;
         }
       }
     }
