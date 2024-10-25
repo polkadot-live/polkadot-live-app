@@ -118,16 +118,23 @@ export const EventItem = styled(motion.div)`
     right: 10px;
   }
 
+  // Time ago button
+  > .time-ago-btn {
+    ${eventBtnBase}
+    top: 3.1rem;
+    right: 10px;
+  }
+
   // Show actions buttons
   .show-actions-btn {
     ${eventBtnBase}
-    top: 3.5rem;
+    top: 5.2rem;
     right: 10px;
   }
 
   > div {
     width: 100%;
-    padding: 1rem;
+    padding: 1.25rem 1rem;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -136,7 +143,7 @@ export const EventItem = styled(motion.div)`
     > section {
       display: flex;
       justify-content: center;
-      column-gap: 1rem;
+      column-gap: 0.5rem;
 
       // All direct divs
       > div {
@@ -205,6 +212,7 @@ export const EventItem = styled(motion.div)`
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
           font-size: 1.2rem;
+          padding-right: 2.25rem;
         }
       }
     }

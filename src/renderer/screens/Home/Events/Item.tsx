@@ -13,6 +13,7 @@ import {
   faTimes,
   faAngleDown,
   faAngleUp,
+  faClock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@/utils/EventUtils';
@@ -159,7 +160,17 @@ export const Item = memo(function Item({ event }: ItemProps) {
             ease: 'easeInOut',
           }}
         >
-          <span>{renderTimeAgo(event.timestamp)}</span>
+          {/* Time ago */}
+          <div
+            className="time-ago-btn tooltip tooltip-trigger-element"
+            data-tooltip-text={renderTimeAgo(event.timestamp)}
+            onMouseMove={() =>
+              setTooltipTextAndOpen(renderTimeAgo(event.timestamp), 'left')
+            }
+          >
+            <FontAwesomeIcon icon={faClock} />
+          </div>
+
           {/* Dismiss button */}
           <div
             className="dismiss-btn"
