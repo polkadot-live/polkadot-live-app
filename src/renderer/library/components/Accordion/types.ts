@@ -9,6 +9,7 @@ export interface AccordionProps {
   defaultIndex: number | number[];
   indicesRef?: React.MutableRefObject<number[]>;
   setExternalIndices?: AnyFunction;
+  gap?: string;
 }
 
 export interface AccordionCaretHeaderProps {

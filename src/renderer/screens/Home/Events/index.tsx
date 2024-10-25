@@ -15,7 +15,6 @@ import {
 import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@/utils/EventUtils';
-import { AccordionColumns } from '@/renderer/library/components/Accordion/AccordionHeaders.styles';
 
 export const Events = () => {
   /// State for sorting controls.
@@ -92,24 +91,22 @@ export const Events = () => {
               : { display: 'none', width: '100%' }
           }
         >
-          <AccordionColumns>
-            <Accordion
-              multiple
-              defaultIndex={accordionActiveIndices}
-              setExternalIndices={setAccordionActiveIndices}
-            >
-              {Array.from(sortedGroupedEvents.entries()).map(
-                ([category, categoryEvents], i) => (
-                  <Category
-                    key={`${category}_events`}
-                    accordionIndex={i}
-                    category={category}
-                    events={categoryEvents}
-                  />
-                )
-              )}
-            </Accordion>
-          </AccordionColumns>
+          <Accordion
+            multiple
+            defaultIndex={accordionActiveIndices}
+            setExternalIndices={setAccordionActiveIndices}
+          >
+            {Array.from(sortedGroupedEvents.entries()).map(
+              ([category, categoryEvents], i) => (
+                <Category
+                  key={`${category}_events`}
+                  accordionIndex={i}
+                  category={category}
+                  events={categoryEvents}
+                />
+              )
+            )}
+          </Accordion>
         </div>
         <div
           style={

@@ -11,6 +11,7 @@ import {
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import type { AccordionProps } from './types';
+import { AccordionColumns } from './AccordionHeaders.styles';
 
 // Accordion Context
 const AccordionContext = createContext({
@@ -28,6 +29,7 @@ export function Accordion({
   multiple,
   defaultIndex,
   indicesRef,
+  gap = '1rem',
 }: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
@@ -66,22 +68,33 @@ export function Accordion({
     setActiveIndex(defaultIndex);
   }, [defaultIndex]);
 
-  return Children.map(children, (child, index) => {
-    const isActive =
-      multiple && Array.isArray(activeIndex)
-        ? activeIndex.includes(index)
-        : activeIndex === index;
+  return (
+    <AccordionColumns $gap={gap}>
+      {Children.map(children, (child, index) => {
+        const isActive =
+          multiple && Array.isArray(activeIndex)
+            ? activeIndex.includes(index)
+            : activeIndex === index;
 
-    const indices = Array.isArray(activeIndex) ? activeIndex : [activeIndex];
+        const indices = Array.isArray(activeIndex)
+          ? activeIndex
+          : [activeIndex];
 
-    return (
-      <AccordionContext.Provider
-        value={{ isActive, index, onChangeIndex, activeIndex: indices }}
-      >
-        {child}
-      </AccordionContext.Provider>
-    );
-  });
+        return (
+          <AccordionContext.Provider
+            value={{
+              isActive,
+              index,
+              onChangeIndex,
+              activeIndex: indices,
+            }}
+          >
+            {child}
+          </AccordionContext.Provider>
+        );
+      })}
+    </AccordionColumns>
+  );
 }
 
 export function AccordionItem({ children }: { children: ReactNode }) {

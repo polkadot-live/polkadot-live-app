@@ -28,6 +28,7 @@ import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
@@ -44,8 +45,6 @@ import type {
   SubscriptionTask,
   TaskCategory,
 } from '@/types/subscriptions';
-import { useConnections } from '@/renderer/contexts/common/Connections';
-import { AccordionColumns } from '@/renderer/library/components/Accordion/AccordionHeaders.styles';
 
 export const Permissions = ({
   breadcrumb,
@@ -408,6 +407,7 @@ export const Permissions = ({
       multiple
       defaultIndex={getAccordionIndices()}
       setExternalIndices={getAccordionIndicesSetter()}
+      gap={'0.5rem'}
     >
       {Array.from(categorisedTasks.entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
@@ -460,6 +460,7 @@ export const Permissions = ({
       multiple
       defaultIndex={accordionActiveIntervalIndices}
       setExternalIndices={setAccordionActiveIntervalIndices}
+      gap={'0.5rem'}
     >
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
@@ -528,12 +529,10 @@ export const Permissions = ({
       </ControlsWrapper>
 
       <AccountsWrapper>
-        <AccordionColumns $gap={'0.5rem'} style={{ marginTop: '2rem' }}>
-          {/* Render separate accordions for account and chain subscription tasks. */}
-          {typeClicked === 'account' && renderSubscriptionTasks()}
-          {typeClicked === 'chain' && renderSubscriptionTasks()}
-          {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
-        </AccordionColumns>
+        {/* Render separate accordions for account and chain subscription tasks. */}
+        {typeClicked === 'account' && renderSubscriptionTasks()}
+        {typeClicked === 'chain' && renderSubscriptionTasks()}
+        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
       </AccountsWrapper>
     </>
   );
