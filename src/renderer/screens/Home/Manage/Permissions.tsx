@@ -530,7 +530,7 @@ export const Permissions = ({
         </div>
       </ControlsWrapper>
 
-      <AccountsWrapper style={{ marginTop: '1rem' }}>
+      <AccountsWrapper style={{ marginTop: '1.5rem' }}>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
