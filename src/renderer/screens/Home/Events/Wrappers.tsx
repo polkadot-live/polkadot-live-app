@@ -46,9 +46,7 @@ export const NoEventsWrapper = styled.div`
 
 export const EventGroup = styled.div`
   width: 100%;
-  border-radius: 0.9rem;
   z-index: 2;
-  padding: 0 0.5rem;
 
   .items-wrapper {
     display: flex;
