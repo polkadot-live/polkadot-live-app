@@ -53,7 +53,22 @@ export const EventGroup = styled.div`
   .items-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 1rem;
+    row-gap: 0.25rem;
+
+    > div:nth-child(2n-1) {
+      background-color: #202020;
+    }
+    > div:nth-child(2n) {
+      background-color: #1c1c1c;
+    }
+    > div:first-of-type {
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+    }
+    > div:last-of-type {
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+    }
   }
 `;
 
@@ -131,12 +146,8 @@ export const EventItem = styled(motion.div)`
   }
 
   > div {
-    background: var(--background-default);
-    border: 1px solid var(--border-primary-color);
     width: 100%;
-    border-radius: 1.25rem;
     padding: 1rem;
-
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -200,7 +211,7 @@ export const EventItem = styled(motion.div)`
         h4,
         h5,
         p {
-          font-size: 1.1rem;
+          font-size: 1.2rem;
         }
         h4 {
           color: var(--text-color-primary);
@@ -217,6 +228,7 @@ export const EventItem = styled(motion.div)`
       }
     }
   }
+
   // Actions container
   .actions-wrapper {
     width: 200%;
@@ -253,6 +265,7 @@ export const EventItem = styled(motion.div)`
       }
     }
   }
+
   &:last-child {
     margin-bottom: 0;
   }
