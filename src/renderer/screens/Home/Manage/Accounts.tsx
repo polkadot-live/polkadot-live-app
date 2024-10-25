@@ -166,111 +166,56 @@ export const Accounts = ({
 
   return (
     <AccountsWrapper>
-      <div>
-        <Accordion
-          multiple
-          defaultIndex={accordionActiveIndices}
-          indicesRef={indicesRef}
-        >
-          {/* Manage Accounts */}
-          {Array.from(getSortedAddresses().entries()).map(
-            ([chainId, chainAddresses], k) => (
-              <AccordionItem key={`${chainId}_accounts`}>
-                <AccordionCaretHeader
-                  title={
-                    chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`
-                  }
-                  itemIndex={k}
-                />
-                <AccordionPanel>
-                  <div style={{ padding: '0 0.75rem' }}>
-                    {chainId === 'Empty' ? (
-                      <NoAccounts />
-                    ) : (
-                      <div className="flex-column">
-                        {chainAddresses.map(
-                          (
-                            { address, name }: FlattenedAccountData,
-                            j: number
-                          ) => (
-                            <AccountWrapper
-                              whileHover={{ scale: 1.01 }}
-                              key={`manage_account_${j}`}
-                            >
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleClickAccount(name, address)
-                                }
-                              ></button>
-                              <div className="inner">
-                                <div>
-                                  <span
-                                    style={{
-                                      zIndex: 2,
-                                      cursor: 'default',
-                                    }}
-                                    className="icon tooltip tooltip-trigger-element"
-                                    data-tooltip-text={ellipsisFn(address, 16)}
-                                    onMouseMove={() =>
-                                      setTooltipTextAndOpen(
-                                        ellipsisFn(address, 16),
-                                        'right'
-                                      )
-                                    }
-                                  >
-                                    <Identicon value={address} size={26} />
-                                  </span>
-                                  <div className="content">
-                                    <h3>{name}</h3>
-                                  </div>
-                                </div>
-                                <div>
-                                  <ButtonText
-                                    text=""
-                                    iconRight={faChevronRight}
-                                    iconTransform="shrink-3"
-                                  />
-                                </div>
-                              </div>
-                            </AccountWrapper>
-                          )
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            )
-          )}
-
-          {/* Manage OpenGov Subscriptions*/}
-          <AccordionItem key={'openGov_accounts'}>
-            <AccordionCaretHeader
-              title={'OpenGov'}
-              itemIndex={Array.from(getSortedAddresses().keys()).length}
-            />
-            <AccordionPanel>
-              <div style={{ padding: '0 0.75rem' }}>
-                <div className="flex-column">
-                  {getSortedKeys().length === 0 ? (
-                    <NoOpenGov />
-                  ) : (
-                    <>
-                      {getSortedKeys().map((chainId, i) => (
+      <Accordion
+        multiple
+        defaultIndex={accordionActiveIndices}
+        indicesRef={indicesRef}
+        gap={'0.75rem'}
+        panelPadding={'0.5rem 0.75rem'}
+      >
+        {/* Manage Accounts */}
+        {Array.from(getSortedAddresses().entries()).map(
+          ([chainId, chainAddresses], k) => (
+            <AccordionItem key={`${chainId}_accounts`}>
+              <AccordionCaretHeader
+                title={chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`}
+                itemIndex={k}
+              />
+              <AccordionPanel>
+                {chainId === 'Empty' ? (
+                  <NoAccounts />
+                ) : (
+                  <div className="flex-column">
+                    {chainAddresses.map(
+                      ({ address, name }: FlattenedAccountData, j: number) => (
                         <AccountWrapper
                           whileHover={{ scale: 1.01 }}
-                          key={`manage_chain_${i}`}
+                          key={`manage_account_${j}`}
                         >
                           <button
                             type="button"
-                            onClick={() => handleClickOpenGovChain(chainId)}
+                            onClick={() => handleClickAccount(name, address)}
                           ></button>
                           <div className="inner">
                             <div>
-                              <span>{getIcon(chainId, 'chain-icon')}</span>
+                              <span
+                                style={{
+                                  zIndex: 2,
+                                  cursor: 'default',
+                                }}
+                                className="icon tooltip tooltip-trigger-element"
+                                data-tooltip-text={ellipsisFn(address, 16)}
+                                onMouseMove={() =>
+                                  setTooltipTextAndOpen(
+                                    ellipsisFn(address, 16),
+                                    'right'
+                                  )
+                                }
+                              >
+                                <Identicon value={address} size={26} />
+                              </span>
                               <div className="content">
-                                <h3>{chainId}</h3>
+                                <h3>{name}</h3>
                               </div>
                             </div>
                             <div>
@@ -282,57 +227,99 @@ export const Accounts = ({
                             </div>
                           </div>
                         </AccountWrapper>
-                      ))}
-                    </>
-                  )}
-                </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </AccordionPanel>
+            </AccordionItem>
+          )
+        )}
+
+        {/* Manage OpenGov Subscriptions*/}
+        <AccordionItem key={'openGov_accounts'}>
+          <AccordionCaretHeader
+            title={'OpenGov'}
+            itemIndex={Array.from(getSortedAddresses().keys()).length}
+          />
+          <AccordionPanel>
+            <div className="flex-column">
+              {getSortedKeys().length === 0 ? (
+                <NoOpenGov />
+              ) : (
+                <>
+                  {getSortedKeys().map((chainId, i) => (
+                    <AccountWrapper
+                      whileHover={{ scale: 1.01 }}
+                      key={`manage_chain_${i}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleClickOpenGovChain(chainId)}
+                      ></button>
+                      <div className="inner">
+                        <div>
+                          <span>{getIcon(chainId, 'chain-icon')}</span>
+                          <div className="content">
+                            <h3>{chainId}</h3>
+                          </div>
+                        </div>
+                        <div>
+                          <ButtonText
+                            text=""
+                            iconRight={faChevronRight}
+                            iconTransform="shrink-3"
+                          />
+                        </div>
+                      </div>
+                    </AccountWrapper>
+                  ))}
+                </>
+              )}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
+
+        {/* Manage Chains */}
+        {showDebuggingSubscriptions && (
+          <AccordionItem key={'debugging_accounts'}>
+            <AccordionCaretHeader
+              title={'Debugging'}
+              itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
+            />
+            <AccordionPanel>
+              <div className="flex-column">
+                {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                  <AccountWrapper
+                    whileHover={{ scale: 1.01 }}
+                    key={`manage_chain_${i}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleClickChain(chain)}
+                    ></button>
+                    <div className="inner">
+                      <div>
+                        <span>{getIcon(chain, 'chain-icon')}</span>
+                        <div className="content">
+                          <h3>{chain}</h3>
+                        </div>
+                      </div>
+                      <div>
+                        <ButtonText
+                          text=""
+                          iconRight={faChevronRight}
+                          iconTransform="shrink-3"
+                        />
+                      </div>
+                    </div>
+                  </AccountWrapper>
+                ))}
               </div>
             </AccordionPanel>
           </AccordionItem>
-
-          {/* Manage Chains */}
-          {showDebuggingSubscriptions && (
-            <AccordionItem key={'debugging_accounts'}>
-              <AccordionCaretHeader
-                title={'Debugging'}
-                itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
-              />
-              <AccordionPanel>
-                <div style={{ padding: '0 0.75rem' }}>
-                  <div className="flex-column">
-                    {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                      <AccountWrapper
-                        whileHover={{ scale: 1.01 }}
-                        key={`manage_chain_${i}`}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleClickChain(chain)}
-                        ></button>
-                        <div className="inner">
-                          <div>
-                            <span>{getIcon(chain, 'chain-icon')}</span>
-                            <div className="content">
-                              <h3>{chain}</h3>
-                            </div>
-                          </div>
-                          <div>
-                            <ButtonText
-                              text=""
-                              iconRight={faChevronRight}
-                              iconTransform="shrink-3"
-                            />
-                          </div>
-                        </div>
-                      </AccountWrapper>
-                    ))}
-                  </div>
-                </div>
-              </AccordionPanel>
-            </AccordionItem>
-          )}
-        </Accordion>
-      </div>
+        )}
+      </Accordion>
     </AccountsWrapper>
   );
 };

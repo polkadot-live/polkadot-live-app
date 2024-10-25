@@ -91,6 +91,8 @@ export const Settings: React.FC = () => {
         <Accordion
           defaultIndex={accordionActiveIndices}
           setExternalIndices={setAccordionActiveIndices}
+          gap={'0.75rem'}
+          panelPadding={'1rem 0.5rem'}
         >
           {Array.from(getSortedSettings().entries()).map(
             ([category, settings], i) => (
@@ -101,10 +103,7 @@ export const Settings: React.FC = () => {
                   wide={true}
                 />
                 <AccordionPanel>
-                  <div
-                    className="flex-column"
-                    style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
-                  >
+                  <div className="flex-column">
                     {settings.map((setting, j) => (
                       <Setting
                         key={j}

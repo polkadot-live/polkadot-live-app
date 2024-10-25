@@ -72,44 +72,38 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
         </ControlsWrapper>
 
         {/* Address List */}
-        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+        <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
           {addresses.length && (
             <Accordion
               multiple
               defaultIndex={accordionActiveIndices}
               setExternalIndices={setAccordionActiveIndices}
+              gap={'0.75rem'}
             >
               {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                 ([chainId, chainAddresses], i) => (
-                  <div
-                    key={`${chainId}_vault_addresses`}
-                    style={{ marginBottom: '0.75rem' }}
-                  >
-                    <AccordionItem>
-                      <AccordionCaretHeader
-                        title={`${chainId} Accounts`}
-                        itemIndex={i}
-                        wide={true}
-                      />
-                      <AccordionPanel>
-                        <div className="items-wrapper">
-                          <div className="items round-primary-border">
-                            {chainAddresses.map((localAddress, j) => (
-                              <Address
-                                key={`address_${localAddress.name}`}
-                                localAddress={localAddress}
-                                setSection={setSection}
-                                orderData={{
-                                  curIndex: j,
-                                  lastIndex: chainAddresses.length - 1,
-                                }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </div>
+                  <AccordionItem key={`${chainId}_vault_addresses`}>
+                    <AccordionCaretHeader
+                      title={`${chainId} Accounts`}
+                      itemIndex={i}
+                      wide={true}
+                    />
+                    <AccordionPanel>
+                      <div className="items round-primary-border">
+                        {chainAddresses.map((localAddress, j) => (
+                          <Address
+                            key={`address_${localAddress.name}`}
+                            localAddress={localAddress}
+                            setSection={setSection}
+                            orderData={{
+                              curIndex: j,
+                              lastIndex: chainAddresses.length - 1,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </AccordionPanel>
+                  </AccordionItem>
                 )
               )}
             </Accordion>

@@ -59,7 +59,7 @@ export const Events = () => {
       <ControlsWrapper
         $padWrapper={true}
         $padBottom={!groupingOn}
-        style={{ padding: '0' }}
+        style={{ padding: '0 0.5rem' }}
       >
         <SortControlButton
           isActive={newestFirst}
@@ -95,6 +95,7 @@ export const Events = () => {
             multiple
             defaultIndex={accordionActiveIndices}
             setExternalIndices={setAccordionActiveIndices}
+            panelPadding={'1rem 0.25rem'}
           >
             {Array.from(sortedGroupedEvents.entries()).map(
               ([category, categoryEvents], i) => (
