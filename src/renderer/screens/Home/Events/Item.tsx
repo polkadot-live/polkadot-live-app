@@ -165,7 +165,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
             className="dismiss-btn"
             onClick={async () => await handleDismissEvent()}
           >
-            <FontAwesomeIcon icon={faTimes} transform={'shrink-2'} />
+            <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
           </div>
 
           {/* Expand actions button */}
@@ -176,7 +176,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
             >
               <FontAwesomeIcon
                 icon={showActions ? faAngleUp : faAngleDown}
-                transform={'shrink-2'}
+                transform={'grow-2'}
               />
             </div>
           )}

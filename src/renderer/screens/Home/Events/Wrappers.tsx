@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -72,9 +72,29 @@ export const EventGroup = styled.div`
   }
 `;
 
+// Mixin for event item buttons.
+const eventBtnBase = css`
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  padding: 0;
+  cursor: pointer;
+
+  svg {
+    color: var(--text-color-primary);
+    opacity: 0.4;
+    transition: opacity 0.2s ease-out;
+  }
+  &:hover {
+    svg {
+      opacity: 1;
+    }
+  }
+`;
+
 export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
-
   position: relative;
 
   // Time ago
@@ -93,56 +113,16 @@ export const EventItem = styled(motion.div)`
 
   // Dismiss button
   > .dismiss-btn {
-    --main-color: #4f4f4f;
-    position: absolute;
-    width: 2rem;
-    height: 2rem;
-    opacity: 0.75;
+    ${eventBtnBase}
     top: 1rem;
     right: 10px;
-    transition: color 0.2s ease-out;
-    padding: 0;
-    border-radius: 0.5rem;
-    border: 1px solid var(--main-color);
-    cursor: pointer;
-
-    svg {
-      color: var(--main-color);
-    }
-    &:hover {
-      border-color: rgb(169 74 117);
-      svg {
-        color: rgb(169 74 117);
-      }
-    }
   }
 
   // Show actions buttons
   .show-actions-btn {
-    --main-color: #4f4f4f;
-    position: absolute;
-    border: 1px solid var(--main-color);
-    top: 4rem;
+    ${eventBtnBase}
+    top: 3.5rem;
     right: 10px;
-    width: 2rem;
-    height: 2rem;
-    opacity: 0.75;
-    border-radius: 0.5rem;
-    padding: 0;
-    cursor: pointer;
-    transition: opacity 0.1s ease-out;
-
-    svg {
-      color: var(--main-color);
-    }
-
-    &:hover {
-      border-color: rgb(169 74 117);
-      svg {
-        color: rgb(169 74 117);
-      }
-      opacity: 0.75;
-    }
   }
 
   > div {
