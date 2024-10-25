@@ -14,7 +14,6 @@ export const Wrapper = styled.div`
 `;
 
 export const AccountsWrapper = styled.div`
-  --item-height: 2.75rem;
   width: 100%;
 
   .flex-column {

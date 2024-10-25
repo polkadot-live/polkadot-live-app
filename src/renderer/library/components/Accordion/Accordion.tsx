@@ -18,6 +18,7 @@ const AccordionContext = createContext({
   isActive: false,
   index: 0,
   activeIndex: [] as number[],
+  panelPad: '1rem 0.25rem',
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   onChangeIndex: (i: number) => {},
 });
@@ -30,10 +31,12 @@ export function Accordion({
   defaultIndex,
   indicesRef,
   gap = '1rem',
+  panelPadding = '1rem 0.25rem',
 }: AccordionProps) {
   const [activeIndex, setActiveIndex] = useState<number | number[]>(
     defaultIndex
   );
+  const [panelPad] = useState<string>(panelPadding);
 
   // Accordion gets re-rendered when index is changed.
   function onChangeIndex(index: number) {
@@ -87,6 +90,7 @@ export function Accordion({
               index,
               onChangeIndex,
               activeIndex: indices,
+              panelPad,
             }}
           >
             {child}
@@ -123,7 +127,7 @@ export function AccordionHeader({ children }: { children: ReactNode }) {
 }
 
 export function AccordionPanel({ children }: { children: ReactNode }) {
-  const { isActive } = useAccordion();
+  const { isActive, panelPad } = useAccordion();
   const [isOpen, setIsOpen] = useState(isActive);
 
   useEffect(() => {
@@ -142,7 +146,7 @@ export function AccordionPanel({ children }: { children: ReactNode }) {
       variants={variants}
       transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
     >
-      {children}
+      <div style={{ padding: panelPad }}>{children}</div>
     </motion.div>
   );
 }

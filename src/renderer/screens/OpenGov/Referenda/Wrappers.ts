@@ -184,7 +184,6 @@ export const ReferendaGroup = styled.div`
 
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.5rem;
   border-radius: var(--container-border-radius);
   border: 1px solid var(--border-primary-color);
 

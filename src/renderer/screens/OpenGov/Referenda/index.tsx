@@ -387,24 +387,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             </NoteWrapper>
           )}
 
-          {/* Sticky Headings */}
-          {!groupingOn && !fetchingReferenda && (
-            <StickyHeadings style={{ opacity: overlayStatus === 0 ? 1 : 0 }}>
-              <div className="content-wrapper">
-                <div className="left">
-                  <div className="heading">ID</div>
-                  <div className="heading">
-                    {usePolkassemblyApi ? 'Title and Origin' : 'Origin'}
-                  </div>
-                </div>
-                <div className="right">
-                  <div className="heading">Portal Links</div>
-                  <div className="heading">Subscribe / Show All</div>
-                </div>
-              </div>
-            </StickyHeadings>
-          )}
-
           {/* List referenda */}
           <section>
             {!isConnected ? (
@@ -413,13 +395,33 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 <p>Please reconnect to load OpenGov referenda.</p>
               </div>
             ) : (
-              <div>
+              <div style={{ marginTop: '2rem' }}>
                 {fetchingReferenda ? (
-                  <div style={{ marginTop: '2rem' }}>
-                    {renderPlaceholders(4)}
-                  </div>
+                  <>{renderPlaceholders(4)}</>
                 ) : (
                   <>
+                    {/* Sticky Headings */}
+                    {!groupingOn && !fetchingReferenda && (
+                      <StickyHeadings
+                        style={{ opacity: overlayStatus === 0 ? 1 : 0 }}
+                      >
+                        <div className="content-wrapper">
+                          <div className="left">
+                            <div className="heading">ID</div>
+                            <div className="heading">
+                              {usePolkassemblyApi
+                                ? 'Title and Origin'
+                                : 'Origin'}
+                            </div>
+                          </div>
+                          <div className="right">
+                            <div className="heading">Portal Links</div>
+                            <div className="heading">Subscribe / Show All</div>
+                          </div>
+                        </div>
+                      </StickyHeadings>
+                    )}
+
                     {renderCategorised()}
                     {renderListed()}
                     {renderSubscribedCategorised()}

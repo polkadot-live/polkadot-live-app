@@ -10,6 +10,7 @@ export interface AccordionProps {
   indicesRef?: React.MutableRefObject<number[]>;
   setExternalIndices?: AnyFunction;
   gap?: string;
+  panelPadding?: string;
 }
 
 export interface AccordionCaretHeaderProps {

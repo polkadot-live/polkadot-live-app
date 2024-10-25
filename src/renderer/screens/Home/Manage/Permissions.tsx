@@ -408,6 +408,7 @@ export const Permissions = ({
       defaultIndex={getAccordionIndices()}
       setExternalIndices={getAccordionIndicesSetter()}
       gap={'0.5rem'}
+      panelPadding={'0.5rem'}
     >
       {Array.from(categorisedTasks.entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
@@ -433,7 +434,7 @@ export const Permissions = ({
             }
           />
           <AccordionPanel>
-            <div className="flex-column" style={{ padding: '0.5rem' }}>
+            <div className="flex-column">
               {tasks
                 .sort((a, b) => a.label.localeCompare(b.label))
                 .map((task: SubscriptionTask, i: number) => (
@@ -461,6 +462,7 @@ export const Permissions = ({
       defaultIndex={accordionActiveIntervalIndices}
       setExternalIndices={setAccordionActiveIntervalIndices}
       gap={'0.5rem'}
+      panelPadding={'0.5rem 0.75rem'}
     >
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
@@ -484,7 +486,7 @@ export const Permissions = ({
               }
             />
             <AccordionPanel>
-              <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+              <div className="flex-column">
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
@@ -528,7 +530,7 @@ export const Permissions = ({
         </div>
       </ControlsWrapper>
 
-      <AccountsWrapper>
+      <AccountsWrapper style={{ marginTop: '1rem' }}>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}

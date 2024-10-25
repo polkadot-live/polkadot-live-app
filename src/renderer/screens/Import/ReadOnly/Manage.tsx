@@ -170,7 +170,9 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
         </HardwareAddressWrapper>
 
         {/* Address List */}
-        <ContentWrapper style={{ padding: '1.25rem 2rem 0' }}>
+        <ContentWrapper
+          style={{ padding: '1.25rem 2rem 0', marginTop: '1rem' }}
+        >
           <Accordion
             multiple
             defaultIndex={accordionActiveIndices}

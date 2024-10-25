@@ -73,7 +73,7 @@ export const Manage = ({
           />
         </ControlsWrapper>
 
-        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+        <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
           {/* Address List */}
           {addresses.length ? (
             <Accordion
