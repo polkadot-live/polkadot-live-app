@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -13,9 +13,11 @@ export const Wrapper = styled.div`
   max-height: 100%;
 `;
 
+// TODO: Remove
 export const AccountsWrapper = styled.div`
   width: 100%;
 
+  // TODO: Remove
   .flex-column {
     display: flex;
     flex-direction: column;
@@ -24,12 +26,98 @@ export const AccountsWrapper = styled.div`
   }
 `;
 
-export const AccountWrapper = styled(motion.div)`
-  background: var(--background-default);
-  border: 1px solid var(--border-primary-color);
+// Mixin to overlay a button over the element.
+const buttonOverlay = css`
+  > button {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+export const ItemsColumn = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.25rem;
+
+  > div:nth-child(2n-1) {
+    background-color: #202020;
+  }
+  > div:nth-child(2n) {
+    background-color: #1c1c1c;
+  }
+  > div:first-of-type {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+  }
+  > div:last-of-type {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+`;
+
+export const ItemEntryWrapper = styled(motion.div)`
+  ${buttonOverlay}
+
   width: 100%;
   position: relative;
+  padding: 1.25rem 1rem;
+
+  > .inner {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    align-items: center;
+
+    > div:nth-child(2) {
+      justify-self: end;
+    }
+    > div:nth-child(1) {
+      flex: 1;
+      display: flex;
+      position: relative;
+      align-items: center;
+      column-gap: 1.25rem;
+      overflow: hidden;
+
+      span > .chain-icon {
+        height: var(--item-height);
+        width: 20px;
+        fill: rgb(160, 37, 90);
+        margin-right: 4px;
+        margin-top: 4px;
+      }
+      .content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+
+        > h3 {
+          width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          margin: 0;
+          font-size: 1.15rem;
+        }
+      }
+    }
+  }
+`;
+
+export const AccountWrapper = styled(motion.div)`
+  // TODO: Remove
+  ${buttonOverlay}
+
+  background: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   border-radius: 1.25rem;
+  width: 100%;
+  position: relative;
   padding: 0.6rem 1.25rem;
 
   /* Native icon */
@@ -167,15 +255,6 @@ export const AccountWrapper = styled(motion.div)`
       padding: 0.5rem;
       opacity: 0.4;
     }
-  }
-
-  > button {
-    z-index: 2;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
   }
 
   > .inner {
