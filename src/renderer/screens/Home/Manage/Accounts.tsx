@@ -190,6 +190,7 @@ export const Accounts = ({
                       ({ address, name }: FlattenedAccountData, j: number) => (
                         <ItemEntryWrapper
                           whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
                           key={`manage_account_${j}`}
                         >
                           <button
@@ -251,6 +252,7 @@ export const Accounts = ({
                   {getSortedKeys().map((chainId, i) => (
                     <ItemEntryWrapper
                       whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                       key={`manage_chain_${i}`}
                     >
                       <button
@@ -292,6 +294,7 @@ export const Accounts = ({
                 {Array.from(chainSubscriptions.keys()).map((chain, i) => (
                   <ItemEntryWrapper
                     whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                     key={`manage_chain_${i}`}
                   >
                     <button
