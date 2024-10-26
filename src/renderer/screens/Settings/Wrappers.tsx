@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { mixinHelpIcon } from '@app/library/components/Common';
 
 export const ContentWrapper = styled.div`
   width: 100%;
@@ -86,21 +87,18 @@ export const SpinnerWrapper = styled.div`
 `;
 
 export const SettingWrapper = styled(motion.div)`
-  display: flex;
-  column-gap: 1rem;
-
-  background: var(--background-default);
-  border: 1px solid var(--border-primary-color);
-  width: 100%;
   position: relative;
-  border-radius: 1.25rem;
-  padding: 1rem 1.25rem;
+  display: flex;
+  width: 100%;
+  column-gap: 1rem;
+  padding: 1.15rem 1rem;
+  font-size: 1.15rem;
 
   .left {
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: 1rem;
+    column-gap: 0.5rem;
   }
   .right {
     display: flex;
@@ -108,13 +106,13 @@ export const SettingWrapper = styled(motion.div)`
     justify-content: end;
   }
   .icon-wrapper {
-    padding: 0 0.3rem;
+    ${mixinHelpIcon}
+    font-size: 1rem;
     color: #4a4a4a;
-    cursor: pointer;
-    transform: color 0.2s ease-out;
+    transition: color 0.2s ease-out;
 
     &:hover {
-      color: #953254;
+      color: inherit;
     }
   }
 `;
