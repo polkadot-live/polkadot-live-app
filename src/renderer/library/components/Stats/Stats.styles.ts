@@ -78,7 +78,7 @@ export const StatsSectionWrapper = styled.div`
 `;
 
 export const StatItem = styled.div`
-  background-color: #212121;
+  background-color: #1c1c1c;
   display: flex;
   align-items: start;
   flex-direction: column;
