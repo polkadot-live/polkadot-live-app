@@ -8,7 +8,7 @@ import {
   AccordionCaretHeader,
   Identicon,
 } from '@app/library/components';
-import { AccountWrapper, AccountsWrapper } from './Wrappers';
+import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
@@ -165,13 +165,13 @@ export const Accounts = ({
   };
 
   return (
-    <AccountsWrapper>
+    <div style={{ width: '100%' }}>
       <Accordion
         multiple
         defaultIndex={accordionActiveIndices}
         indicesRef={indicesRef}
-        gap={'0.75rem'}
-        panelPadding={'0.5rem 0.75rem'}
+        panelPadding={'0.5rem 0.25rem'}
+        gap={'0.5rem'}
       >
         {/* Manage Accounts */}
         {Array.from(getSortedAddresses().entries()).map(
@@ -185,11 +185,12 @@ export const Accounts = ({
                 {chainId === 'Empty' ? (
                   <NoAccounts />
                 ) : (
-                  <div className="flex-column">
+                  <ItemsColumn>
                     {chainAddresses.map(
                       ({ address, name }: FlattenedAccountData, j: number) => (
-                        <AccountWrapper
+                        <ItemEntryWrapper
                           whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
                           key={`manage_account_${j}`}
                         >
                           <button
@@ -226,10 +227,10 @@ export const Accounts = ({
                               />
                             </div>
                           </div>
-                        </AccountWrapper>
+                        </ItemEntryWrapper>
                       )
                     )}
-                  </div>
+                  </ItemsColumn>
                 )}
               </AccordionPanel>
             </AccordionItem>
@@ -243,14 +244,15 @@ export const Accounts = ({
             itemIndex={Array.from(getSortedAddresses().keys()).length}
           />
           <AccordionPanel>
-            <div className="flex-column">
+            <ItemsColumn>
               {getSortedKeys().length === 0 ? (
                 <NoOpenGov />
               ) : (
                 <>
                   {getSortedKeys().map((chainId, i) => (
-                    <AccountWrapper
+                    <ItemEntryWrapper
                       whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                       key={`manage_chain_${i}`}
                     >
                       <button
@@ -272,11 +274,11 @@ export const Accounts = ({
                           />
                         </div>
                       </div>
-                    </AccountWrapper>
+                    </ItemEntryWrapper>
                   ))}
                 </>
               )}
-            </div>
+            </ItemsColumn>
           </AccordionPanel>
         </AccordionItem>
 
@@ -288,10 +290,11 @@ export const Accounts = ({
               itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
             />
             <AccordionPanel>
-              <div className="flex-column">
+              <ItemsColumn>
                 {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                  <AccountWrapper
+                  <ItemEntryWrapper
                     whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                     key={`manage_chain_${i}`}
                   >
                     <button
@@ -313,13 +316,13 @@ export const Accounts = ({
                         />
                       </div>
                     </div>
-                  </AccountWrapper>
+                  </ItemEntryWrapper>
                 ))}
-              </div>
+              </ItemsColumn>
             </AccordionPanel>
           </AccordionItem>
         )}
       </Accordion>
-    </AccountsWrapper>
+    </div>
   );
 };

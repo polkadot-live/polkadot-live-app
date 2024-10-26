@@ -49,18 +49,14 @@ export const Events = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: '1rem',
+        rowGap: '0.75rem',
         padding: '2rem 1rem 1rem',
       }}
     >
       <MainHeading>Events</MainHeading>
 
       {/* Sorting controls */}
-      <ControlsWrapper
-        $padWrapper={true}
-        $padBottom={!groupingOn}
-        style={{ padding: '0 0.5rem' }}
-      >
+      <ControlsWrapper $padBottom={!groupingOn}>
         <SortControlButton
           isActive={newestFirst}
           isDisabled={false}
@@ -95,7 +91,8 @@ export const Events = () => {
             multiple
             defaultIndex={accordionActiveIndices}
             setExternalIndices={setAccordionActiveIndices}
-            panelPadding={'1rem 0.25rem'}
+            panelPadding={'0.5rem 0.25rem'}
+            gap={'0.5rem'}
           >
             {Array.from(sortedGroupedEvents.entries()).map(
               ([category, categoryEvents], i) => (

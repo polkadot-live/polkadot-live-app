@@ -53,10 +53,7 @@ export const EventGroup = styled.div`
     flex-direction: column;
     row-gap: 0.25rem;
 
-    > div:nth-child(2n-1) {
-      background-color: #202020;
-    }
-    > div:nth-child(2n) {
+    > div {
       background-color: #1c1c1c;
     }
     > div:first-of-type {
@@ -132,7 +129,7 @@ export const EventItem = styled(motion.div)`
 
   > div {
     width: 100%;
-    padding: 1.25rem 1rem;
+    padding: 1.15rem 1rem;
     text-align: left;
     display: flex;
     flex-direction: column;
