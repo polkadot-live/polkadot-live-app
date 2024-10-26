@@ -8,12 +8,7 @@ import {
   AccordionCaretHeader,
   Identicon,
 } from '@app/library/components';
-import {
-  ItemEntryWrapper,
-  AccountWrapper,
-  AccountsWrapper,
-  ItemsColumn,
-} from './Wrappers';
+import { ItemEntryWrapper, AccountsWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
@@ -293,9 +288,9 @@ export const Accounts = ({
               itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
             />
             <AccordionPanel>
-              <div className="flex-column">
+              <ItemsColumn>
                 {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                  <AccountWrapper
+                  <ItemEntryWrapper
                     whileHover={{ scale: 1.01 }}
                     key={`manage_chain_${i}`}
                   >
@@ -318,9 +313,9 @@ export const Accounts = ({
                         />
                       </div>
                     </div>
-                  </AccountWrapper>
+                  </ItemEntryWrapper>
                 ))}
-              </div>
+              </ItemsColumn>
             </AccordionPanel>
           </AccordionItem>
         )}
