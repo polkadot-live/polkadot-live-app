@@ -28,7 +28,7 @@ export const Manage = ({ addresses }: ManageProps) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: '1rem',
+        rowGap: '0.75rem',
         padding: '2rem 0 1rem',
       }}
     >

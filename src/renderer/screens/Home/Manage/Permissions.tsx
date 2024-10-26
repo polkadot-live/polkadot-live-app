@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { AccountsWrapper } from './Wrappers';
+import { FlexColumn, ItemsColumn } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
@@ -434,7 +434,7 @@ export const Permissions = ({
             }
           />
           <AccordionPanel>
-            <div className="flex-column">
+            <ItemsColumn>
               {tasks
                 .sort((a, b) => a.label.localeCompare(b.label))
                 .map((task: SubscriptionTask, i: number) => (
@@ -448,7 +448,7 @@ export const Permissions = ({
                     getTaskType={getTaskType}
                   />
                 ))}
-            </div>
+            </ItemsColumn>
           </AccordionPanel>
         </AccordionItem>
       ))}
@@ -462,7 +462,7 @@ export const Permissions = ({
       defaultIndex={accordionActiveIntervalIndices}
       setExternalIndices={setAccordionActiveIntervalIndices}
       gap={'0.5rem'}
-      panelPadding={'0.5rem 0.75rem'}
+      panelPadding={'0.5rem'}
     >
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
@@ -486,14 +486,14 @@ export const Permissions = ({
               }
             />
             <AccordionPanel>
-              <div className="flex-column">
+              <ItemsColumn>
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
                     task={task}
                   />
                 ))}
-              </div>
+              </ItemsColumn>
             </AccordionPanel>
           </AccordionItem>
         )
@@ -503,7 +503,7 @@ export const Permissions = ({
 
   return (
     <>
-      <ControlsWrapper $sticky={true} style={{ padding: '0 0.75rem' }}>
+      <ControlsWrapper $sticky={false}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
@@ -530,12 +530,12 @@ export const Permissions = ({
         </div>
       </ControlsWrapper>
 
-      <AccountsWrapper style={{ marginTop: '1.5rem' }}>
+      <FlexColumn style={{ marginTop: '1.5rem' }}>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
         {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
-      </AccountsWrapper>
+      </FlexColumn>
     </>
   );
 };

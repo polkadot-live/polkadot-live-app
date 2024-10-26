@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import { mixinHelpIcon } from '../Common';
 
 export const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -71,7 +72,7 @@ export const StatsSectionWrapper = styled.div`
     cursor: pointer;
 
     &:hover {
-      background-color: #1a1919;
+      background-color: #151515;
     }
   }
 `;
@@ -93,15 +94,10 @@ export const StatItem = styled.div`
       flex: 1;
     }
     .help {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.6rem;
-      height: 1.5rem;
+      ${mixinHelpIcon}
       font-size: 0.85rem;
-      border-radius: 0.275rem;
       transition: background-color 150ms ease-out;
-      cursor: pointer;
+      border-radius: 0.275rem;
       &:hover {
         background-color: #191919;
       }

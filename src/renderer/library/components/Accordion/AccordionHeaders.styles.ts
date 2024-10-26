@@ -16,7 +16,7 @@ const headerBase = css`
     transition: background-color 0.15s ease-in-out;
 
     &:hover {
-      background-color: #1a1919;
+      background-color: #151515;
     }
     .left {
       flex: 1;
@@ -38,7 +38,7 @@ const headerBase = css`
     .right {
       display: flex;
       justify-content: flex-end;
-      padding-right: 1.6rem; // line up with toggles below
+      padding-right: 1.1rem; // line up with toggles below
     }
 
     .icon-wrapper {

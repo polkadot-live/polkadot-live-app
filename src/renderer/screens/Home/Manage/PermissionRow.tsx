@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountWrapper } from './Wrappers';
+import { TaskEntryWrapper } from './Wrappers';
 import { Switch } from '@app/library/components';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -55,7 +55,7 @@ export const PermissionRow = ({
   };
 
   return (
-    <AccountWrapper whileHover={{ scale: 1.01 }}>
+    <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
         <div>
           <div className="content">
@@ -64,11 +64,7 @@ export const PermissionRow = ({
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
-                <FontAwesomeIcon
-                  className="info-icon"
-                  icon={faInfo}
-                  transform={'shrink-1'}
-                />
+                <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
               </div>
               {task.label}
             </h3>
@@ -183,6 +179,6 @@ export const PermissionRow = ({
           </div>
         </div>
       </div>
-    </AccountWrapper>
+    </TaskEntryWrapper>
   );
 };

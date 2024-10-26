@@ -8,7 +8,7 @@ import {
   AccordionCaretHeader,
   Identicon,
 } from '@app/library/components';
-import { ItemEntryWrapper, AccountsWrapper, ItemsColumn } from './Wrappers';
+import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@/renderer/Utils';
@@ -165,13 +165,13 @@ export const Accounts = ({
   };
 
   return (
-    <AccountsWrapper>
+    <div style={{ width: '100%' }}>
       <Accordion
         multiple
         defaultIndex={accordionActiveIndices}
         indicesRef={indicesRef}
-        gap={'0.75rem'}
-        panelPadding={'1rem 0.25rem'}
+        panelPadding={'0.5rem 0.25rem'}
+        gap={'0.5rem'}
       >
         {/* Manage Accounts */}
         {Array.from(getSortedAddresses().entries()).map(
@@ -323,6 +323,6 @@ export const Accounts = ({
           </AccordionItem>
         )}
       </Accordion>
-    </AccountsWrapper>
+    </div>
   );
 };

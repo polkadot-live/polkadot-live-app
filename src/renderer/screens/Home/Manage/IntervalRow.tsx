@@ -7,7 +7,7 @@ import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useIntervalTasksManager } from '@/renderer/contexts/main/IntervalTasksManager';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { AccountWrapper } from './Wrappers';
+import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleCheck,
@@ -102,7 +102,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   };
 
   return (
-    <AccountWrapper whileHover={{ scale: 1.01 }}>
+    <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
         <div>
           <div className="content">
@@ -111,11 +111,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
-                <FontAwesomeIcon
-                  className="info-icon"
-                  icon={faInfo}
-                  transform={'shrink-1'}
-                />
+                <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
               </div>
               {task.label}
             </h3>
@@ -211,6 +207,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                   style={{
                     position: 'absolute',
                     top: '-4px',
+                    left: '6px',
                     opacity: isDisabled ? '0.3' : '1',
                   }}
                   className="enabled"
@@ -293,6 +290,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           />
         </div>
       </div>
-    </AccountWrapper>
+    </TaskEntryWrapper>
   );
 };
