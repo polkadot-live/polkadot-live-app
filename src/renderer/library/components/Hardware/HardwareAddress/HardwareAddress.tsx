@@ -9,7 +9,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
-import { unescape } from '@w3ux/utils';
+import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/components';
 import { useState } from 'react';
@@ -101,18 +101,24 @@ export const HardwareAddress = ({
     <HardwareAddressWrapper $orderData={orderData}>
       <div className="content">
         <div className="inner">
-          <div className="identicon">
-            <Identicon value={address} size={36} />
+          <div
+            className="tooltip tooltip-trigger-element"
+            data-tooltip-text={ellipsisFn(address, 16)}
+            onMouseMove={() =>
+              setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
+            }
+          >
+            <div className="identicon">
+              <Identicon value={address} size={36} />
+            </div>
           </div>
           <div>
-            <section className="row">
+            <section>
               <div className="input-wrapper">
                 {renderChainIcon()}
 
-                <h5 className="full">
-                  <span>{address}</span>
-                </h5>
                 <input
+                  style={{ borderColor: editing ? '#3a3a3a' : '#1c1c1c' }}
                   type="text"
                   disabled={isProcessing()}
                   value={editing ? editName : accountName}
@@ -127,27 +133,16 @@ export const HardwareAddress = ({
                 />
 
                 {editing && !isProcessing() && (
-                  <div style={{ display: 'flex' }}>
-                    &nbsp;
+                  <div className="edit">
                     <button
                       id="commit-btn"
                       type="button"
-                      className="edit"
                       onPointerDown={() => commitEdit()}
                     >
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        transform="grow-1"
-                        className="icon"
-                      />
+                      <FontAwesomeIcon icon={faCheck} />
                     </button>
-                    &nbsp;
-                    <button
-                      type="button"
-                      className="edit"
-                      onPointerDown={() => cancelEditing()}
-                    >
-                      <FontAwesomeIcon icon={faXmark} transform="grow-1" />
+                    <button type="button" onPointerDown={() => cancelEditing()}>
+                      <FontAwesomeIcon icon={faXmark} />
                     </button>
                   </div>
                 )}

@@ -62,13 +62,6 @@ export const AddressWrapper = styled.div`
 
     .items-wrapper {
       padding-bottom: 1rem;
-
-      .items {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin: 0 0.25rem;
-      }
     }
     .edit {
       margin-left: 0.75rem;

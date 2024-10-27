@@ -47,7 +47,7 @@ export const StatsSectionWrapper = styled.div`
   row-gap: 1rem;
 
   .total-item {
-    background-color: #292929 !important;
+    background-color: #242424 !important;
     h3,
     span {
       font-size: 1.26rem !important;

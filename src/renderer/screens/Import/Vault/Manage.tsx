@@ -22,6 +22,7 @@ import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
@@ -78,7 +79,8 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
               multiple
               defaultIndex={accordionActiveIndices}
               setExternalIndices={setAccordionActiveIndices}
-              gap={'0.75rem'}
+              gap={'0.5rem'}
+              panelPadding={'0.5rem 0.25rem'}
             >
               {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                 ([chainId, chainAddresses], i) => (
@@ -89,7 +91,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                       wide={true}
                     />
                     <AccordionPanel>
-                      <div className="items round-primary-border">
+                      <ItemsColumn>
                         {chainAddresses.map((localAddress, j) => (
                           <Address
                             key={`address_${localAddress.name}`}
@@ -101,7 +103,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                             }}
                           />
                         ))}
-                      </div>
+                      </ItemsColumn>
                     </AccordionPanel>
                   </AccordionItem>
                 )

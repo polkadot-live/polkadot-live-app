@@ -1,7 +1,36 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+const mixinAddressInput = css`
+  border: 1px solid #313131;
+  background: var(--background-list-item);
+  color: var(--text-color-primary);
+
+  width: 100%;
+  max-width: 380px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.04rem;
+  font-size: 1.15rem;
+
+  transition:
+    background-color 0.2s,
+    max-width 0.2s,
+    padding 0.2s;
+
+  &:focus {
+    background: var(--background-modal);
+    max-width: 380px;
+  }
+
+  &:disabled {
+    border: 1px solid var(--background-menu);
+    background: none;
+  }
+`;
 
 export const HardwareAddressWrapper = styled.div<{
   $orderData?: { curIndex: number; lastIndex: number };
@@ -9,38 +38,6 @@ export const HardwareAddressWrapper = styled.div<{
   display: flex;
   align-items: center;
   padding: 1rem;
-
-  // Specify border radius on first and last items in list.
-  border-top-right-radius: ${(props) =>
-    props.$orderData
-      ? props.$orderData.curIndex === 0
-        ? '1.25rem'
-        : '0'
-      : '0'};
-
-  border-top-left-radius: ${(props) =>
-    props.$orderData
-      ? props.$orderData.curIndex === 0
-        ? '1.25rem'
-        : '0'
-      : '0'};
-
-  border-bottom-left-radius: ${(props) =>
-    props.$orderData
-      ? props.$orderData.curIndex === props.$orderData.lastIndex
-        ? '1.25rem'
-        : '0'
-      : '0'};
-
-  border-bottom-right-radius: ${(props) =>
-    props.$orderData
-      ? props.$orderData.curIndex === props.$orderData.lastIndex
-        ? '1.25rem'
-        : '0'
-      : '0'};
-
-  background-color: var(--background-primary);
-  transition: background-color 0.1s ease-out;
   cursor: default;
 
   // Utility Classes
@@ -49,7 +46,6 @@ export const HardwareAddressWrapper = styled.div<{
     align-items: center;
     column-gap: 0.25rem;
   }
-  // End Utility Classes
 
   > .action {
     height: 100%;
@@ -99,30 +95,6 @@ export const HardwareAddressWrapper = styled.div<{
         flex-shrink: 1;
         flex-grow: 0;
         position: relative;
-
-        .index-icon {
-          background: var(--background-primary);
-          border: 1px solid var(--border-primary-color);
-          color: var(--text-color-secondary);
-          font-family: InterSemiBold, sans-serif;
-          border-radius: 50%;
-          position: absolute;
-          bottom: -0.25rem;
-          right: -0.6rem;
-          min-width: 1.75rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 0.35rem;
-          height: 1.75rem;
-          width: auto;
-
-          svg {
-            color: var(--text-color-primary);
-            width: 60%;
-            height: 60%;
-          }
-        }
       }
 
       > div:last-child {
@@ -131,6 +103,7 @@ export const HardwareAddressWrapper = styled.div<{
         justify-content: flex-end;
         flex-grow: 1;
 
+        // Edit buttons.
         button {
           margin-left: 0.5rem;
         }
@@ -149,21 +122,7 @@ export const HardwareAddressWrapper = styled.div<{
               opacity: 0.5;
             }
 
-            .full {
-              position: absolute;
-              opacity: 0.5;
-              width: 100%;
-              top: 26px;
-              left: 20px;
-
-              > span {
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
-                width: 100%;
-                max-width: 100%;
-              }
-            }
+            // Chain icon.
             .chain-icon {
               position: absolute;
               top: 7px;
@@ -177,19 +136,19 @@ export const HardwareAddressWrapper = styled.div<{
                 fill: #953254;
               }
             }
-
-            input {
-              padding-left: 38px;
-              padding-bottom: 2.5rem;
-            }
           }
 
-          &.row {
+          .edit {
+            display: flex;
+            gap: 0.5rem;
             align-items: center;
-            column-gap: 1rem;
+            margin-left: 0.75rem;
 
-            .edit {
-              margin-left: 0.75rem;
+            button {
+              font-size: 1.1rem;
+              &:hover {
+                color: #f1f1f1;
+              }
             }
           }
         }
@@ -207,61 +166,20 @@ export const HardwareAddressWrapper = styled.div<{
         }
 
         input {
-          border: 1px solid var(--border-primary-color);
-          background: var(--background-list-item);
-          color: var(--text-color-primary);
-          border-radius: 0.75rem;
+          ${mixinAddressInput}
+          border-radius: 0.375rem;
+          border: 1px dashed #1c1c1c;
           padding: 0.85rem 0.75rem;
-          letter-spacing: 0.04rem;
-          font-size: 1rem;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          width: 100%;
-          max-width: 380px;
-          transition:
-            background-color 0.2s,
-            max-width 0.2s,
-            padding 0.2s;
-
-          &:focus {
-            background: var(--background-modal);
-            max-width: 380px;
-          }
-
-          &:disabled {
-            border: 1px solid var(--background-menu);
-            background: none;
-          }
+          transition: border-color 150ms ease-out;
+          padding-left: 38px;
         }
 
+        // For read only address input.
         .add-input {
-          border: 1px solid var(--border-primary-color);
-          background: var(--background-list-item);
-          color: var(--text-color-primary);
+          ${mixinAddressInput}
           border-radius: 1.25rem;
           padding: 0.6rem 1.25rem;
-          letter-spacing: 0.04rem;
           font-size: 0.95rem;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          width: 100%;
-          max-width: 380px;
-          transition:
-            background-color 0.2s,
-            max-width 0.2s,
-            padding 0.2s;
-
-          &:focus {
-            background: var(--background-modal);
-            max-width: 380px;
-          }
-
-          &:disabled {
-            border: 1px solid var(--background-menu);
-            background: none;
-          }
         }
 
         .full {
@@ -285,6 +203,12 @@ export const HardwareAddressWrapper = styled.div<{
           }
         }
       }
+    }
+  }
+
+  &:hover {
+    input {
+      border-color: #3a3a3a !important;
     }
   }
 

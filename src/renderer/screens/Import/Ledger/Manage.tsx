@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import type { ImportLedgerManageProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Manage = ({
   isImporting,
@@ -80,6 +81,8 @@ export const Manage = ({
               multiple
               defaultIndex={accordionActiveIndices}
               setExternalIndices={setAccordionActiveIndices}
+              gap={'0.5rem'}
+              panelPadding={'0.5rem 0.25rem'}
             >
               {Array.from(
                 getSortedLocalLedgerAddresses(addresses).entries()
@@ -92,21 +95,19 @@ export const Manage = ({
                       wide={true}
                     />
                     <AccordionPanel>
-                      <div className="items-wrapper">
-                        <div className="items round-primary-border">
-                          {chainAddresses.map((localAddress, j) => (
-                            <Address
-                              key={`address_${localAddress.name}`}
-                              localAddress={localAddress}
-                              orderData={{
-                                curIndex: j,
-                                lastIndex: chainAddresses.length - 1,
-                              }}
-                              setSection={setSection}
-                            />
-                          ))}
-                        </div>
-                      </div>
+                      <ItemsColumn>
+                        {chainAddresses.map((localAddress, j) => (
+                          <Address
+                            key={`address_${localAddress.name}`}
+                            localAddress={localAddress}
+                            orderData={{
+                              curIndex: j,
+                              lastIndex: chainAddresses.length - 1,
+                            }}
+                            setSection={setSection}
+                          />
+                        ))}
+                      </ItemsColumn>
                     </AccordionPanel>
                   </AccordionItem>
                 </div>
