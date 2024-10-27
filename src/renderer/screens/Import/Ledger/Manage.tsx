@@ -90,7 +90,7 @@ export const Manage = ({
                 <div key={`${chainId}_ledger_addresses`}>
                   <AccordionItem>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />

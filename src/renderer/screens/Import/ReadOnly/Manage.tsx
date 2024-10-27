@@ -186,7 +186,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                 <div key={`${chainId}_read_only_addresses`}>
                   <AccordionItem>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />

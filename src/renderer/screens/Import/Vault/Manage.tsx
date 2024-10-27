@@ -86,7 +86,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                 ([chainId, chainAddresses], i) => (
                   <AccordionItem key={`${chainId}_vault_addresses`}>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />
