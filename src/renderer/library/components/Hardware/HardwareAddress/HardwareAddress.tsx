@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/components';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
+import { EllipsisSpinner } from '../../Spinners';
 import { HardwareAddressWrapper } from './Wrapper';
 import { getAddressChainId } from '@/renderer/Utils';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
@@ -95,9 +96,9 @@ export const HardwareAddress = ({
   // Utility to get processing status.
   const isProcessing = () => getStatusForAccount(address, source) || false;
 
-  // Function to render wrapper JSX.
-  const renderContent = () => (
-    <>
+  // Don't render bottom border on the address if it's the last one.
+  return (
+    <HardwareAddressWrapper $orderData={orderData}>
       <div className="content">
         <div className="inner">
           <div className="identicon">
@@ -197,15 +198,7 @@ export const HardwareAddress = ({
               }
             />
             {isProcessing() && (
-              <div
-                style={{ position: 'absolute', left: '3px', top: '8px' }}
-                className="lds-ellipsis"
-              >
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
+              <EllipsisSpinner style={{ left: '3px', top: '8px' }} />
             )}
           </div>
         )}
@@ -224,13 +217,6 @@ export const HardwareAddress = ({
           />
         </div>
       </div>
-    </>
-  );
-
-  // Don't render bottom border on the address if it's the last one.
-  return (
-    <HardwareAddressWrapper $orderData={orderData}>
-      {renderContent()}
     </HardwareAddressWrapper>
   );
 };
