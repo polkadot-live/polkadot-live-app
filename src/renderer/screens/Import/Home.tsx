@@ -19,11 +19,31 @@ import { ActionItem } from '@app/library/components';
 import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable } from '@/renderer/library/styles';
-import type { HomeProps } from './types';
 import { ImportMethodCard } from './Wrappers';
+import type { AccountSource } from '@/types/accounts';
+import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {
   const { openHelp } = useHelp();
+
+  /// Handle clicking on an import method card.
+  const handleClick = (
+    event: React.MouseEvent<HTMLElement>,
+    source: AccountSource
+  ) => {
+    let target = event.target as HTMLElement | null;
+
+    // Traverse up the DOM tree and return if `stay` class found.
+    while (target) {
+      if (target.classList.contains('stay')) {
+        return;
+      }
+      target = target.parentElement;
+    }
+
+    setSource(source);
+    setSection(1);
+  };
 
   return (
     <Scrollable
@@ -38,22 +58,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           style={{ marginTop: '1.75rem' }}
         />
         <div className="grid-wrapper">
-          <ImportMethodCard
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              let target = event.target as HTMLElement | null;
-
-              // Traverse up the DOM tree and return if `stay` class found.
-              while (target) {
-                if (target.classList.contains('stay')) {
-                  return;
-                }
-                target = target.parentElement;
-              }
-
-              setSource('vault');
-              setSection(1);
-            }}
-          >
+          <ImportMethodCard onClick={(e) => handleClick(e, 'vault')}>
             <div>
               <div>
                 <PolkadotVaultSVG
