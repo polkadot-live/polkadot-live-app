@@ -17,7 +17,7 @@ export const SubHeading = styled.div`
   gap: 0.75rem;
   color: #b8b3b9;
   h2 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     padding: 0 0.2rem;
     user-select: none;
   }
