@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { EllipsisSpinnerWrapper } from './EllipsisSpinner.styles';
-
-interface EllipsisSpinnerProps {
-  style?: React.CSSProperties;
-}
+import type { EllipsisSpinnerProps } from './types';
 
 // Note: Add inside a relative container for correct positioning.
 export const EllipsisSpinner: React.FC<EllipsisSpinnerProps> = ({
