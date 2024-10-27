@@ -3,6 +3,7 @@
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
+import { GridSpinner } from '@/renderer/library/components/Spinners';
 import { useAddresses } from '@/renderer/contexts/main/Addresses';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { Footer, Header, SideNav } from '@app/library/components';
@@ -73,17 +74,7 @@ export const Home = () => {
 
           {appLoading ? (
             <div className="app-loading">
-              <div className="lds-grid">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
+              <GridSpinner />
               <p>Loading Polkadot Live</p>
             </div>
           ) : (
