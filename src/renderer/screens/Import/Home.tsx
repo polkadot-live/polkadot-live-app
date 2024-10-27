@@ -104,7 +104,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    signer.parity.io
+                    vault.novasama.io
                     <FontAwesomeIcon
                       icon={faExternalLinkAlt}
                       transform="shrink-6"
