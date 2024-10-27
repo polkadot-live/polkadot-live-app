@@ -56,7 +56,12 @@ export const HardwareAddressWrapper = styled.div<{
     padding-left: 1rem;
 
     .account-action-btn {
-      min-width: 60px;
+      min-width: 56px;
+      color: #7e7e7e;
+      background-color: rgb(23 23 23);
+      border-color: rgb(47 47 47);
+      padding: 0.5rem;
+      font-size: 0.9rem;
     }
 
     button {
@@ -67,14 +72,8 @@ export const HardwareAddressWrapper = styled.div<{
       color: rgb(101 101 101);
       transition: color 0.2 ease-out;
     }
-    .red-hover:hover {
-      color: rgb(165 63 63);
-    }
-    .green-hover:hover {
-      color: #5c9d5c;
-    }
-    .orange-hover:hover {
-      color: #9e632d;
+    .white-hover:hover {
+      color: #f1f1f1;
     }
     .processing {
       background-color: var(--background-modal);
@@ -172,6 +171,10 @@ export const HardwareAddressWrapper = styled.div<{
           padding: 0.85rem 0.75rem;
           transition: border-color 150ms ease-out;
           padding-left: 38px;
+
+          &:focus {
+            background-color: rgb(24 24 24);
+          }
         }
 
         // For read only address input.

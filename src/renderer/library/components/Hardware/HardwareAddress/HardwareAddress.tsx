@@ -109,7 +109,7 @@ export const HardwareAddress = ({
             }
           >
             <div className="identicon">
-              <Identicon value={address} size={36} />
+              <Identicon value={address} size={30} />
             </div>
           </div>
           <div>
@@ -162,7 +162,7 @@ export const HardwareAddress = ({
             onMouseMove={() => setTooltipTextAndOpen('Remove From Main Window')}
           >
             <ButtonMono
-              className="account-action-btn orange-hover"
+              className="account-action-btn white-hover"
               iconLeft={faMinus}
               iconTransform={'grow-0'}
               text={''}
@@ -189,7 +189,7 @@ export const HardwareAddress = ({
               className={
                 isProcessing()
                   ? 'account-action-btn processing'
-                  : 'account-action-btn green-hover'
+                  : 'account-action-btn white-hover'
               }
             />
             {isProcessing() && (
@@ -204,7 +204,7 @@ export const HardwareAddress = ({
         >
           <ButtonMono
             disabled={isProcessing()}
-            className="account-action-btn red-hover"
+            className="account-action-btn white-hover"
             iconLeft={faTrash}
             iconTransform="shrink-2"
             text={''}
