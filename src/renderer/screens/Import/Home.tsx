@@ -14,6 +14,7 @@ import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@app/library/components';
+import { useEffect } from 'react';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable } from '@/renderer/library/styles';
 import { ImportMethodCard } from './Wrappers';
@@ -42,6 +43,28 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
     setSection(1);
   };
 
+  useEffect(() => {
+    const applyBorders = () => {
+      const cards = document.querySelectorAll(
+        '.methodCard'
+      ) as NodeListOf<HTMLElement>;
+
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          card.style.borderTopLeftRadius = '0.375rem';
+        } else if (i === 1) {
+          card.style.borderTopRightRadius = '0.375rem';
+        } else if (i === 2) {
+          card.style.borderBottomLeftRadius = '0.375rem';
+        } else if (i === 3) {
+          card.style.borderBottomRightRadius = '0.375rem';
+        }
+      });
+    };
+
+    applyBorders();
+  }, []);
+
   return (
     <Scrollable
       $footerHeight={0}
@@ -53,7 +76,10 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
         <ActionItem text={'Import Accounts'} style={{ marginTop: '1.75rem' }} />
         <div className="grid-wrapper">
           {/* Vault */}
-          <ImportMethodCard onClick={(e) => handleClick(e, 'vault')}>
+          <ImportMethodCard
+            onClick={(e) => handleClick(e, 'vault')}
+            className="methodCard"
+          >
             <div>
               <div>
                 <PolkadotVaultSVG
@@ -93,7 +119,10 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           </ImportMethodCard>
 
           {/* Ledger */}
-          <ImportMethodCard onClick={(e) => handleClick(e, 'ledger')}>
+          <ImportMethodCard
+            className="methodCard"
+            onClick={(e) => handleClick(e, 'ledger')}
+          >
             <div>
               <div style={{ paddingTop: '0.2rem' }}>
                 <LedgerLogoSVG
@@ -135,7 +164,10 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           </ImportMethodCard>
 
           {/* Read-only */}
-          <ImportMethodCard onClick={(e) => handleClick(e, 'read-only')}>
+          <ImportMethodCard
+            className="methodCard"
+            onClick={(e) => handleClick(e, 'read-only')}
+          >
             <div>
               <div>
                 <FontAwesomeIcon
