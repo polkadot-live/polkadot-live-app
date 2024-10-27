@@ -6,8 +6,7 @@ import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
 export const ImportMethodCard = styled.div`
   background-color: #1c1c1c;
-  padding: 1.25rem 2rem;
-  border-radius: 0.375rem;
+  padding: 1.75rem 2rem;
   transition: background-color 150ms ease-out;
   cursor: pointer;
 
@@ -28,10 +27,24 @@ export const ImportMethodCard = styled.div`
 
     // Main content
     > div:first-child {
+      position: relative;
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+
+      .label {
+        display: flex;
+        gap: 0.25rem;
+      }
+      .help-icon {
+        ${mixinHelpIcon}
+        color: #5a5a5a;
+        transition: color 150ms ease-out;
+        &:hover {
+          color: inherit;
+        }
+      }
 
       // Label and link
       > div {
@@ -49,14 +62,6 @@ export const ImportMethodCard = styled.div`
           cursor: pointer;
           &:hover {
             color: #d33079;
-          }
-        }
-        .help-icon {
-          ${mixinHelpIcon}
-          color: #5a5a5a;
-          transition: color 150ms ease-out;
-          &:hover {
-            color: inherit;
           }
         }
       }

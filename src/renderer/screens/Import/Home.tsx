@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faChrome, faReadme, faUsb } from '@fortawesome/free-brands-svg-icons';
+import { faChrome, faReadme } from '@fortawesome/free-brands-svg-icons';
 import {
   faCaretRight,
   faExternalLinkAlt,
@@ -58,15 +58,16 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           style={{ marginTop: '1.75rem' }}
         />
         <div className="grid-wrapper">
+          {/* VAULT */}
           <ImportMethodCard onClick={(e) => handleClick(e, 'vault')}>
             <div>
               <div>
                 <PolkadotVaultSVG
                   className="logo vault"
-                  style={{ width: '2rem', height: '2rem' }}
+                  style={{ height: '2rem', width: 'fit-content' }}
                 />
                 <div>
-                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                  <div className="label">
                     <h1>Polkadot Vault</h1>
                     <div
                       className="help-icon stay"
@@ -96,59 +97,48 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
               </div>
             </div>
           </ImportMethodCard>
-          <ModalHardwareItem>
-            <div className="body">
-              <div className="status">
-                <ButtonHelp
-                  onClick={() => {
-                    openHelp('help:import:ledger');
-                  }}
+
+          {/* LEDGER */}
+          <ImportMethodCard onClick={(e) => handleClick(e, 'ledger')}>
+            <div>
+              <div style={{ paddingTop: '0.2rem' }}>
+                <LedgerLogoSVG
+                  className="logo mono"
+                  style={{ height: '2rem', width: 'fit-content' }}
                 />
+                <div>
+                  <div className="label">
+                    <h1>Ledger</h1>
+                    <div
+                      className="help-icon stay"
+                      onClick={() => {
+                        openHelp('help:import:ledger');
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfo} transform={'shrink-2'} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex' }}>
+                    <ButtonText
+                      text="BETA"
+                      disabled
+                      marginRight
+                      style={{ opacity: 0.5, padding: 0 }}
+                    />
+                    <ButtonText
+                      text="Chrome / Brave"
+                      disabled
+                      iconLeft={faChrome}
+                      style={{ opacity: 0.5, padding: 0 }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="row">
-                <LedgerLogoSVG className="logo mono" />
-              </div>
-              <div className="row">
-                <ButtonText
-                  text="BETA"
-                  disabled
-                  marginRight
-                  style={{ opacity: 0.5 }}
-                />
-                <ButtonText
-                  text="Chrome / Brave"
-                  disabled
-                  iconLeft={faChrome}
-                  style={{ opacity: 0.5 }}
-                />
-              </div>
-              <div className="row margin">
-                <ButtonMonoInvert
-                  text="USB"
-                  onClick={() => {
-                    setSource('ledger');
-                    setSection(1);
-                  }}
-                  iconLeft={faUsb}
-                  iconTransform="shrink-1"
-                />
+              <div className="caret">
+                <FontAwesomeIcon icon={faCaretRight} />
               </div>
             </div>
-            <div className="foot">
-              <a
-                className="link"
-                href={`https://ledger.com`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                ledger.com
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
-            </div>
-          </ModalHardwareItem>
+          </ImportMethodCard>
 
           {/* Read-only*/}
           <ModalHardwareItem>

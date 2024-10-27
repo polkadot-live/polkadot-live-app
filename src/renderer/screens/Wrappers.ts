@@ -54,7 +54,20 @@ export const ContentWrapper = styled.div`
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.2rem;
+    gap: 0.25rem;
+
+    > div:nth-child(1) {
+      border-top-left-radius: 0.375rem;
+    }
+    > div:nth-child(2) {
+      border-top-right-radius: 0.375rem;
+    }
+    > div:nth-last-child(2) {
+      border-bottom-left-radius: 0.375rem;
+    }
+    > div:nth-last-child(1) {
+      border-bottom-right-radius: 0.375rem;
+    }
   }
 
   .svg-title {
