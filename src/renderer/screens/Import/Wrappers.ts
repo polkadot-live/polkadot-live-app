@@ -2,6 +2,76 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import { mixinHelpIcon } from '@/renderer/library/components/Common';
+
+export const ImportMethodCard = styled.div`
+  background-color: #1c1c1c;
+  padding: 1.25rem 2rem;
+  border-radius: 0.375rem;
+  transition: background-color 150ms ease-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #212121;
+    .caret {
+      color: inherit;
+    }
+  }
+
+  > div {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    user-select: none;
+
+    // Main content
+    > div:first-child {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      // Label and link
+      > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        h1 {
+          font-size: 1.3rem;
+          color: #f1f1f1;
+        }
+        a {
+          width: fit-content;
+          color: var(--text-color-secondary);
+          display: block;
+          cursor: pointer;
+          &:hover {
+            color: #d33079;
+          }
+        }
+        .help-icon {
+          ${mixinHelpIcon}
+          color: #5a5a5a;
+          transition: color 150ms ease-out;
+          &:hover {
+            color: inherit;
+          }
+        }
+      }
+    }
+
+    // Arrow
+    .caret {
+      justify-content: end;
+      align-content: center;
+      font-size: 1.25rem;
+      color: #5a5a5a;
+      transition: color 150ms ease-out;
+    }
+  }
+`;
 
 export const SplashWrapper = styled.div`
   width: 100%;
