@@ -1,22 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faChrome, faReadme } from '@fortawesome/free-brands-svg-icons';
+import { faChrome } from '@fortawesome/free-brands-svg-icons';
 import {
   faCaretRight,
   faExternalLinkAlt,
   faInfo,
-  faKeyboard,
+  faCircleDot,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
-import { ButtonHelp } from '@/renderer/kits/Buttons/ButtonHelp';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@app/library/components';
-import { ModalHardwareItem } from '@/renderer/kits/Overlay/structure/ModalHardwareItem';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable } from '@/renderer/library/styles';
 import { ImportMethodCard } from './Wrappers';
@@ -53,12 +50,9 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
     >
       <ContentWrapper>
         {/* Hardware */}
-        <ActionItem
-          text={'Hardware or Read Only'}
-          style={{ marginTop: '1.75rem' }}
-        />
+        <ActionItem text={'Import Accounts'} style={{ marginTop: '1.75rem' }} />
         <div className="grid-wrapper">
-          {/* VAULT */}
+          {/* Vault */}
           <ImportMethodCard onClick={(e) => handleClick(e, 'vault')}>
             <div>
               <div>
@@ -98,7 +92,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             </div>
           </ImportMethodCard>
 
-          {/* LEDGER */}
+          {/* Ledger */}
           <ImportMethodCard onClick={(e) => handleClick(e, 'ledger')}>
             <div>
               <div style={{ paddingTop: '0.2rem' }}>
@@ -140,41 +134,39 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             </div>
           </ImportMethodCard>
 
-          {/* Read-only*/}
-          <ModalHardwareItem>
-            <div className="body">
-              <div className="status">
-                <ButtonHelp
-                  onClick={() => {
-                    openHelp('help:import:readOnly');
-                  }}
+          {/* Read-only */}
+          <ImportMethodCard onClick={(e) => handleClick(e, 'read-only')}>
+            <div>
+              <div>
+                <FontAwesomeIcon
+                  icon={faCircleDot}
+                  className="logo mono"
+                  style={{ width: 'fit-content', fontSize: '1.8rem' }}
                 />
+                <div>
+                  <div className="label">
+                    <h1>Read Only</h1>
+                    <div
+                      className="help-icon stay"
+                      onClick={() => {
+                        openHelp('help:import:readOnly');
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfo} transform={'shrink-2'} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex' }}>
+                    <span style={{ color: 'var(--text-color-secondary)' }}>
+                      Track any address.
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="row">
-                <FontAwesomeIcon icon={faReadme} className="logo mono" />
+              <div className="caret">
+                <FontAwesomeIcon icon={faCaretRight} />
               </div>
-              <div className="row">
-                <ButtonText
-                  text="Read Only"
-                  disabled
-                  marginRight
-                  style={{ opacity: 0.5 }}
-                />
-              </div>
-              <div className="row margin" style={{ marginBottom: '0.75rem' }}>
-                <ButtonMonoInvert
-                  text="Manage"
-                  onClick={() => {
-                    setSource('read-only');
-                    setSection(1);
-                  }}
-                  iconLeft={faKeyboard}
-                  iconTransform="shrink-1"
-                />
-              </div>
-              <div className="foot"></div>
             </div>
-          </ModalHardwareItem>
+          </ImportMethodCard>
         </div>
       </ContentWrapper>
     </Scrollable>

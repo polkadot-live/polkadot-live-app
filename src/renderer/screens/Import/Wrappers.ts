@@ -8,6 +8,7 @@ export const ImportMethodCard = styled.div`
   background-color: #1c1c1c;
   padding: 1.75rem 2rem;
   transition: background-color 150ms ease-out;
+  min-height: 125px;
   cursor: pointer;
 
   &:hover {
