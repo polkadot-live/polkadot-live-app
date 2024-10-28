@@ -13,11 +13,7 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { AddressProps } from '../Addresses/types';
 
-export const Address = ({
-  localAddress,
-  setSection,
-  orderData,
-}: AddressProps) => {
+export const Address = ({ localAddress, setSection }: AddressProps) => {
   const { address, isImported, name, source } = localAddress;
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
@@ -40,7 +36,6 @@ export const Address = ({
       address={address}
       source={source}
       isImported={isImported}
-      orderData={orderData}
       accountName={name}
       renameHandler={renameHandler}
       openRemoveHandler={() =>

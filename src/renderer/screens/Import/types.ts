@@ -52,10 +52,6 @@ export interface ImportLedgerManageProps {
 
 export interface LedgerAddressProps {
   localAddress: LedgerLocalAddress;
-  orderData: {
-    curIndex: number;
-    lastIndex: number;
-  };
   setSection: AnyFunction;
 }
 

@@ -28,7 +28,6 @@ export const HardwareAddress = ({
   address,
   source,
   isImported,
-  orderData,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -98,7 +97,7 @@ export const HardwareAddress = ({
 
   // Don't render bottom border on the address if it's the last one.
   return (
-    <HardwareAddressWrapper $orderData={orderData}>
+    <HardwareAddressWrapper>
       <div className="content">
         <div className="inner">
           <div
@@ -109,7 +108,7 @@ export const HardwareAddress = ({
             }
           >
             <div className="identicon">
-              <Identicon value={address} size={30} />
+              <Identicon value={address} size={28} />
             </div>
           </div>
           <div>

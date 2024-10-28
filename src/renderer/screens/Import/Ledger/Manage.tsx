@@ -18,9 +18,9 @@ import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import type { ImportLedgerManageProps } from '../types';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Manage = ({
   isImporting,
@@ -96,14 +96,10 @@ export const Manage = ({
                     />
                     <AccordionPanel>
                       <ItemsColumn>
-                        {chainAddresses.map((localAddress, j) => (
+                        {chainAddresses.map((localAddress) => (
                           <Address
                             key={`address_${localAddress.name}`}
                             localAddress={localAddress}
-                            orderData={{
-                              curIndex: j,
-                              lastIndex: chainAddresses.length - 1,
-                            }}
                             setSection={setSection}
                           />
                         ))}

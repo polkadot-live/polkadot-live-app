@@ -32,12 +32,10 @@ const mixinAddressInput = css`
   }
 `;
 
-export const HardwareAddressWrapper = styled.div<{
-  $orderData?: { curIndex: number; lastIndex: number };
-}>`
+export const HardwareAddressWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   cursor: default;
 
   // Utility Classes

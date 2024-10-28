@@ -13,11 +13,7 @@ import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { LedgerAddressProps } from '../types';
 
-export const Address = ({
-  localAddress,
-  orderData,
-  setSection,
-}: LedgerAddressProps) => {
+export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
   const { address, index, isImported, name } = localAddress;
   const { handleAddressImport } = useAddresses();
@@ -42,7 +38,6 @@ export const Address = ({
       accountName={name}
       renameHandler={renameHandler}
       isImported={isImported}
-      orderData={orderData}
       openRemoveHandler={() =>
         openOverlayWith(
           <Remove address={address} source="ledger" accountName={name} />,

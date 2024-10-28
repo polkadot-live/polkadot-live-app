@@ -7,10 +7,6 @@ import type { AnyFunction } from '@/types/misc';
 export interface AddressProps {
   localAddress: LocalAddress;
   setSection: AnyFunction;
-  orderData: {
-    curIndex: number;
-    lastIndex: number;
-  };
 }
 
 export interface ConfirmProps {

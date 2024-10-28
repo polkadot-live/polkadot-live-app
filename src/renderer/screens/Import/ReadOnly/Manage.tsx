@@ -194,14 +194,10 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                       <ItemsColumn>
                         {addresses.length ? (
                           <>
-                            {chainAddresses.map((localAddress, j) => (
+                            {chainAddresses.map((localAddress) => (
                               <Address
                                 key={`address_${localAddress.name}`}
                                 localAddress={localAddress}
-                                orderData={{
-                                  curIndex: j,
-                                  lastIndex: chainAddresses.length - 1,
-                                }}
                                 setSection={setSection}
                               />
                             ))}

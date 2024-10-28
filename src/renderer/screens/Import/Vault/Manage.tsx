@@ -92,15 +92,11 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                     />
                     <AccordionPanel>
                       <ItemsColumn>
-                        {chainAddresses.map((localAddress, j) => (
+                        {chainAddresses.map((localAddress) => (
                           <Address
                             key={`address_${localAddress.name}`}
                             localAddress={localAddress}
                             setSection={setSection}
-                            orderData={{
-                              curIndex: j,
-                              lastIndex: chainAddresses.length - 1,
-                            }}
                           />
                         ))}
                       </ItemsColumn>
