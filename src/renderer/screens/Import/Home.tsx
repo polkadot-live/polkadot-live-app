@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ImportMethodCard } from '@/renderer/library/components/Cards';
+import { NavCard } from '@/renderer/library/components/Cards';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
@@ -71,7 +71,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
         <ActionItem text={'Import Accounts'} style={{ marginTop: '1.75rem' }} />
         <div className="grid-wrapper">
           {/* Vault */}
-          <ImportMethodCard
+          <NavCard
             title={'Polkadot Vault'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'vault')
@@ -100,7 +100,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           />
 
           {/* Ledger */}
-          <ImportMethodCard
+          <NavCard
             title={'Ledger'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'ledger')
@@ -132,7 +132,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           />
 
           {/* Read-only */}
-          <ImportMethodCard
+          <NavCard
             title={'Read Only'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'read-only')

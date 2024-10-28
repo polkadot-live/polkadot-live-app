@@ -24,7 +24,7 @@ import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ImportMethodCard } from '@/renderer/library/components/Cards';
+import { NavCard } from '@/renderer/library/components/Cards';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
@@ -193,7 +193,7 @@ export const OpenGov: React.FC = () => {
               {/* Referenda */}
               <ActionItem text={'Referenda'} />
               <GridTwoCol>
-                <ImportMethodCard
+                <NavCard
                   title={'Polkadot'}
                   onClick={() => handleOpenReferenda('Polkadot')}
                   childrenLogo={
@@ -208,7 +208,7 @@ export const OpenGov: React.FC = () => {
                   }
                 />
 
-                <ImportMethodCard
+                <NavCard
                   title={'Kusama'}
                   onClick={() => handleOpenReferenda('Kusama')}
                   childrenLogo={
@@ -227,7 +227,7 @@ export const OpenGov: React.FC = () => {
               {/* Origins and Tracks */}
               <ActionItem text={'Tracks'} />
               <GridTwoCol>
-                <ImportMethodCard
+                <NavCard
                   title={'Polkadot'}
                   onClick={() => handleOpenTracks('Polkadot')}
                   childrenLogo={
@@ -242,7 +242,7 @@ export const OpenGov: React.FC = () => {
                   }
                 />
 
-                <ImportMethodCard
+                <NavCard
                   title={'Kusama'}
                   onClick={() => handleOpenTracks('Kusama')}
                   childrenLogo={

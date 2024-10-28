@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useHelp } from '@/renderer/contexts/common/Help';
-import { ImportMethodCardWrapper } from './ImportMethodCard.styles';
+import { NavCardWrapper } from './NavCard.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import type { AnyFunction } from '@/types/misc';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
-interface ImportMethodCardProps {
+interface NavCardProps {
   // TItle of the card.
   title: string;
   // Handler when clicking the card.
@@ -23,7 +23,7 @@ interface ImportMethodCardProps {
   styleLogoCont?: React.CSSProperties;
 }
 
-export const ImportMethodCard = ({
+export const NavCard = ({
   // TItle of the card.
   title,
   // Handler when clicking the card.
@@ -36,11 +36,11 @@ export const ImportMethodCard = ({
   childrenSubtitle,
   // Styles to apply to the logo container.
   styleLogoCont,
-}: ImportMethodCardProps) => {
+}: NavCardProps) => {
   const { openHelp } = useHelp();
 
   return (
-    <ImportMethodCardWrapper className="methodCard" onClick={onClick}>
+    <NavCardWrapper className="methodCard" onClick={onClick}>
       <div>
         <div style={{ ...styleLogoCont }}>
           {childrenLogo}
@@ -65,6 +65,6 @@ export const ImportMethodCard = ({
           <FontAwesomeIcon icon={faCaretRight} />
         </div>
       </div>
-    </ImportMethodCardWrapper>
+    </NavCardWrapper>
   );
 };

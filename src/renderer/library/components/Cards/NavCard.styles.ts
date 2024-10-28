@@ -4,7 +4,7 @@
 import styled from 'styled-components';
 import { mixinHelpIcon } from '../Common';
 
-export const ImportMethodCardWrapper = styled.div`
+export const NavCardWrapper = styled.div`
   background-color: #1c1c1c;
   padding: 1.75rem 2rem;
   transition: background-color 150ms ease-out;
