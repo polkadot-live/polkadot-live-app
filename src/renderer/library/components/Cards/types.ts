@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction } from '@/types/misc';
+import type { ChainID } from '@/types/chains';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export interface NavCardProps {
@@ -17,4 +18,11 @@ export interface NavCardProps {
   helpKey?: HelpItemKey;
   // Styles to apply to the logo container.
   styleLogoCont?: React.CSSProperties;
+}
+
+export interface TreasuryStatCardProps {
+  chainId: ChainID;
+  title: string;
+  statText: string;
+  helpKey: HelpItemKey;
 }

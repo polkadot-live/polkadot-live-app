@@ -4,12 +4,7 @@
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import {
-  GridFourCol,
-  GridTwoCol,
-  TreasuryStat,
-  WindowWrapper,
-} from '@app/screens/Wrappers';
+import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
@@ -20,7 +15,7 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@app/library/components';
-import { faInfo, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@/renderer/contexts/common/Connections';
@@ -28,10 +23,8 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavCard } from '@/renderer/library/components/Cards';
+import { NavCard, TreasuryStatCard } from '@/renderer/library/components/Cards';
 import { useDebug } from '@/renderer/hooks/useDebug';
-import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import type { ChainID } from '@/types/chains';
@@ -57,7 +50,6 @@ export const OpenGov: React.FC = () => {
   } = useTreasury();
 
   /// Help overlay and tooltip.
-  const { openHelp } = useHelp();
   const { setTooltipTextAndOpen, wrapWithOfflineTooltip } = useTooltip();
 
   /// Tracks and referenda contexts.
@@ -175,57 +167,30 @@ export const OpenGov: React.FC = () => {
                 <>
                   {wrapWithOfflineTooltip(
                     <GridFourCol>
-                      <TreasuryStat $chainId={treasuryChainId}>
-                        <div>
-                          <h2>Treasury Balance</h2>
-
-                          <div
-                            className="help-icon"
-                            onClick={() =>
-                              openHelp('help:openGov:treasuryBalance')
-                            }
-                          >
-                            <FontAwesomeIcon icon={faInfo} />
-                          </div>
-                        </div>
-                        <h4>{getFormattedFreeBalance()}</h4>
-                      </TreasuryStat>
-                      <TreasuryStat $chainId={treasuryChainId}>
-                        <div>
-                          <h2>Next Burn</h2>
-                          <div
-                            className="help-icon"
-                            onClick={() => openHelp('help:openGov:nextBurn')}
-                          >
-                            <FontAwesomeIcon icon={faInfo} />
-                          </div>
-                        </div>
-                        <h4>{getFormattedNextBurn()}</h4>
-                      </TreasuryStat>
-                      <TreasuryStat $chainId={treasuryChainId}>
-                        <div>
-                          <h2>To Be Awarded</h2>
-                          <div
-                            className="help-icon"
-                            onClick={() => openHelp('help:openGov:toBeAwarded')}
-                          >
-                            <FontAwesomeIcon icon={faInfo} />
-                          </div>
-                        </div>
-                        <h4>{getFormattedToBeAwarded()}</h4>
-                      </TreasuryStat>
-                      <TreasuryStat $chainId={treasuryChainId}>
-                        <div>
-                          <h2>Spend Period</h2>
-                          <div
-                            className="help-icon"
-                            onClick={() => openHelp('help:openGov:spendPeriod')}
-                          >
-                            <FontAwesomeIcon icon={faInfo} />
-                          </div>
-                        </div>
-                        <h4>{getSpendPeriodProgress()}</h4>
-                      </TreasuryStat>
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Treasury Balance'}
+                        statText={getFormattedFreeBalance()}
+                        helpKey={'help:openGov:treasuryBalance'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Next Burn'}
+                        statText={getFormattedNextBurn()}
+                        helpKey={'help:openGov:nextBurn'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'To Be Awarded'}
+                        statText={getFormattedToBeAwarded()}
+                        helpKey={'help:openGov:toBeAwarded'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Spend Period'}
+                        statText={getSpendPeriodProgress()}
+                        helpKey={'help:openGov:spendPeriod'}
+                      />
                     </GridFourCol>,
                     isConnected
                   )}
