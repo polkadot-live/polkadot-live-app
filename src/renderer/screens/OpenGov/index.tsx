@@ -4,7 +4,12 @@
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
+import {
+  GridFourCol,
+  GridTwoCol,
+  TreasuryStat,
+  WindowWrapper,
+} from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
@@ -30,7 +35,6 @@ import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import type { ChainID } from '@/types/chains';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -130,16 +134,6 @@ export const OpenGov: React.FC = () => {
     setSection(1);
   };
 
-  /// Helper to render a help info icon.
-  const renderInfoIcon = (label: string, helpKey: HelpItemKey) => (
-    <span>
-      {label}
-      <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
-        <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-      </div>
-    </span>
-  );
-
   /// Handle changing treasury stats.
   const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const target = event.target.value as ChainID;
@@ -180,33 +174,59 @@ export const OpenGov: React.FC = () => {
               ) : (
                 <>
                   {wrapWithOfflineTooltip(
-                    <section className="content-wrapper">
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'Treasury Balance',
-                          'help:openGov:treasuryBalance'
-                        )}
+                    <GridFourCol>
+                      <TreasuryStat $chainId={treasuryChainId}>
+                        <div>
+                          <h2>Treasury Balance</h2>
+
+                          <div
+                            className="help-icon"
+                            onClick={() =>
+                              openHelp('help:openGov:treasuryBalance')
+                            }
+                          >
+                            <FontAwesomeIcon icon={faInfo} />
+                          </div>
+                        </div>
                         <h4>{getFormattedFreeBalance()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
+                      </TreasuryStat>
+                      <TreasuryStat $chainId={treasuryChainId}>
+                        <div>
+                          <h2>Next Burn</h2>
+                          <div
+                            className="help-icon"
+                            onClick={() => openHelp('help:openGov:nextBurn')}
+                          >
+                            <FontAwesomeIcon icon={faInfo} />
+                          </div>
+                        </div>
                         <h4>{getFormattedNextBurn()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'To Be Awarded',
-                          'help:openGov:toBeAwarded'
-                        )}
+                      </TreasuryStat>
+                      <TreasuryStat $chainId={treasuryChainId}>
+                        <div>
+                          <h2>To Be Awarded</h2>
+                          <div
+                            className="help-icon"
+                            onClick={() => openHelp('help:openGov:toBeAwarded')}
+                          >
+                            <FontAwesomeIcon icon={faInfo} />
+                          </div>
+                        </div>
                         <h4>{getFormattedToBeAwarded()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'Spend Period',
-                          'help:openGov:spendPeriod'
-                        )}
+                      </TreasuryStat>
+                      <TreasuryStat $chainId={treasuryChainId}>
+                        <div>
+                          <h2>Spend Period</h2>
+                          <div
+                            className="help-icon"
+                            onClick={() => openHelp('help:openGov:spendPeriod')}
+                          >
+                            <FontAwesomeIcon icon={faInfo} />
+                          </div>
+                        </div>
                         <h4>{getSpendPeriodProgress()}</h4>
-                      </div>
-                    </section>,
+                      </TreasuryStat>
+                    </GridFourCol>,
                     isConnected
                   )}
                 </>
