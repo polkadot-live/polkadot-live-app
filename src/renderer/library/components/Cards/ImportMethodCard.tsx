@@ -13,12 +13,12 @@ interface ImportMethodCardProps {
   title: string;
   // Handler when clicking the card.
   onClick: AnyFunction;
-  // Help content to display on clicking the info button.
-  helpKey: HelpItemKey;
   // Markup rendered in logo container.
   childrenLogo: React.ReactNode;
   // Markup rendered in the card subtitle container.
   childrenSubtitle: React.ReactNode;
+  // Help content to display on clicking the info button.
+  helpKey?: HelpItemKey;
   // Styles to apply to the logo container.
   styleLogoCont?: React.CSSProperties;
 }
@@ -47,14 +47,16 @@ export const ImportMethodCard = ({
           <div>
             <div className="label">
               <h1>{title}</h1>
-              <div
-                className="help-icon stay"
-                onClick={() => {
-                  openHelp(helpKey);
-                }}
-              >
-                <FontAwesomeIcon icon={faInfo} transform={'shrink-2'} />
-              </div>
+              {helpKey && (
+                <div
+                  className="help-icon stay"
+                  onClick={() => {
+                    openHelp(helpKey);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faInfo} transform={'shrink-2'} />
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex' }}>{childrenSubtitle}</div>
           </div>
