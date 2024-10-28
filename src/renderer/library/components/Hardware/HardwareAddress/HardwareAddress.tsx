@@ -95,7 +95,6 @@ export const HardwareAddress = ({
   // Utility to get processing status.
   const isProcessing = () => getStatusForAccount(address, source) || false;
 
-  // Don't render bottom border on the address if it's the last one.
   return (
     <HardwareAddressWrapper>
       <div className="content">
