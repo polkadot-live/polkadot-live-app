@@ -78,6 +78,30 @@ export const OpenGov: React.FC = () => {
     } else {
       isConnected && initTreasury(treasuryChainId);
     }
+
+    const applyBorders = () => {
+      const cards = document.querySelectorAll(
+        '.methodCard'
+      ) as NodeListOf<HTMLElement>;
+
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          card.style.borderTopLeftRadius = '0.375rem';
+          card.style.borderBottomLeftRadius = '0.375rem';
+        } else if (i === 1) {
+          card.style.borderTopRightRadius = '0.375rem';
+          card.style.borderBottomRightRadius = '0.375rem';
+        } else if (i === 2) {
+          card.style.borderTopLeftRadius = '0.375rem';
+          card.style.borderBottomLeftRadius = '0.375rem';
+        } else if (i === 3) {
+          card.style.borderTopRightRadius = '0.375rem';
+          card.style.borderBottomRightRadius = '0.375rem';
+        }
+      });
+    };
+
+    applyBorders();
   }, []);
 
   /// Reload treasury data if app goes online from offline mode.
