@@ -11,8 +11,6 @@ export type HardwareAddressProps = ComponentBase & {
   source: AccountSource;
   // Whether this address is imported in main window.
   isImported: boolean;
-  // Index data for the current address.
-  orderData: { curIndex: number; lastIndex: number };
   // current name of the account.
   accountName: string;
   // handle rename

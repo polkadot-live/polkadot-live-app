@@ -9,11 +9,12 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { chainIcon } from '@/config/chains';
-import { unescape } from '@w3ux/utils';
+import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/components';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
+import { EllipsisSpinner } from '../../Spinners';
 import { HardwareAddressWrapper } from './Wrapper';
 import { getAddressChainId } from '@/renderer/Utils';
 import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
@@ -27,7 +28,6 @@ export const HardwareAddress = ({
   address,
   source,
   isImported,
-  orderData,
   accountName,
   renameHandler,
   openConfirmHandler,
@@ -95,23 +95,28 @@ export const HardwareAddress = ({
   // Utility to get processing status.
   const isProcessing = () => getStatusForAccount(address, source) || false;
 
-  // Function to render wrapper JSX.
-  const renderContent = () => (
-    <>
+  return (
+    <HardwareAddressWrapper>
       <div className="content">
         <div className="inner">
-          <div className="identicon">
-            <Identicon value={address} size={36} />
+          <div
+            className="tooltip tooltip-trigger-element"
+            data-tooltip-text={ellipsisFn(address, 16)}
+            onMouseMove={() =>
+              setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
+            }
+          >
+            <div className="identicon">
+              <Identicon value={address} size={28} />
+            </div>
           </div>
           <div>
-            <section className="row">
+            <section>
               <div className="input-wrapper">
                 {renderChainIcon()}
 
-                <h5 className="full">
-                  <span>{address}</span>
-                </h5>
                 <input
+                  style={{ borderColor: editing ? '#3a3a3a' : '#1c1c1c' }}
                   type="text"
                   disabled={isProcessing()}
                   value={editing ? editName : accountName}
@@ -126,27 +131,16 @@ export const HardwareAddress = ({
                 />
 
                 {editing && !isProcessing() && (
-                  <div style={{ display: 'flex' }}>
-                    &nbsp;
+                  <div className="edit">
                     <button
                       id="commit-btn"
                       type="button"
-                      className="edit"
                       onPointerDown={() => commitEdit()}
                     >
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        transform="grow-1"
-                        className="icon"
-                      />
+                      <FontAwesomeIcon icon={faCheck} />
                     </button>
-                    &nbsp;
-                    <button
-                      type="button"
-                      className="edit"
-                      onPointerDown={() => cancelEditing()}
-                    >
-                      <FontAwesomeIcon icon={faXmark} transform="grow-1" />
+                    <button type="button" onPointerDown={() => cancelEditing()}>
+                      <FontAwesomeIcon icon={faXmark} />
                     </button>
                   </div>
                 )}
@@ -166,7 +160,7 @@ export const HardwareAddress = ({
             onMouseMove={() => setTooltipTextAndOpen('Remove From Main Window')}
           >
             <ButtonMono
-              className="account-action-btn orange-hover"
+              className="account-action-btn white-hover"
               iconLeft={faMinus}
               iconTransform={'grow-0'}
               text={''}
@@ -193,19 +187,11 @@ export const HardwareAddress = ({
               className={
                 isProcessing()
                   ? 'account-action-btn processing'
-                  : 'account-action-btn green-hover'
+                  : 'account-action-btn white-hover'
               }
             />
             {isProcessing() && (
-              <div
-                style={{ position: 'absolute', left: '3px', top: '8px' }}
-                className="lds-ellipsis"
-              >
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
+              <EllipsisSpinner style={{ left: '3px', top: '8px' }} />
             )}
           </div>
         )}
@@ -216,7 +202,7 @@ export const HardwareAddress = ({
         >
           <ButtonMono
             disabled={isProcessing()}
-            className="account-action-btn red-hover"
+            className="account-action-btn white-hover"
             iconLeft={faTrash}
             iconTransform="shrink-2"
             text={''}
@@ -224,13 +210,6 @@ export const HardwareAddress = ({
           />
         </div>
       </div>
-    </>
-  );
-
-  // Don't render bottom border on the address if it's the last one.
-  return (
-    <HardwareAddressWrapper $orderData={orderData}>
-      {renderContent()}
     </HardwareAddressWrapper>
   );
 };

@@ -25,7 +25,7 @@ const headerBase = css`
 
       h5 {
         font-family: InterSemiBold, sans-serif;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         padding: 0 0.2rem;
         line-height: 1.6rem;
         margin-top: 0;

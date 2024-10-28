@@ -54,7 +54,7 @@ export const ContentWrapper = styled.div`
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.2rem;
+    gap: 0.25rem;
   }
 
   .svg-title {

@@ -22,6 +22,7 @@ import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
@@ -78,30 +79,27 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
               multiple
               defaultIndex={accordionActiveIndices}
               setExternalIndices={setAccordionActiveIndices}
-              gap={'0.75rem'}
+              gap={'0.5rem'}
+              panelPadding={'0.5rem 0.25rem'}
             >
               {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                 ([chainId, chainAddresses], i) => (
                   <AccordionItem key={`${chainId}_vault_addresses`}>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />
                     <AccordionPanel>
-                      <div className="items round-primary-border">
-                        {chainAddresses.map((localAddress, j) => (
+                      <ItemsColumn>
+                        {chainAddresses.map((localAddress) => (
                           <Address
                             key={`address_${localAddress.name}`}
                             localAddress={localAddress}
                             setSection={setSection}
-                            orderData={{
-                              curIndex: j,
-                              lastIndex: chainAddresses.length - 1,
-                            }}
                           />
                         ))}
-                      </div>
+                      </ItemsColumn>
                     </AccordionPanel>
                   </AccordionItem>
                 )
