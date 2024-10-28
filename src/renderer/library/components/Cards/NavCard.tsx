@@ -5,23 +5,7 @@ import { useHelp } from '@/renderer/contexts/common/Help';
 import { NavCardWrapper } from './NavCard.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
-import type { AnyFunction } from '@/types/misc';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-
-interface NavCardProps {
-  // TItle of the card.
-  title: string;
-  // Handler when clicking the card.
-  onClick: AnyFunction;
-  // Markup rendered in logo container.
-  childrenLogo: React.ReactNode;
-  // Markup rendered in the card subtitle container.
-  childrenSubtitle: React.ReactNode;
-  // Help content to display on clicking the info button.
-  helpKey?: HelpItemKey;
-  // Styles to apply to the logo container.
-  styleLogoCont?: React.CSSProperties;
-}
+import type { NavCardProps } from './types';
 
 export const NavCard = ({
   // TItle of the card.
