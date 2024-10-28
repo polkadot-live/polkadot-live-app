@@ -6,8 +6,9 @@ import {
   faExternalLinkAlt,
   faCircleDot,
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ContentWrapper } from '@app/screens/Wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ImportMethodCard } from '@/renderer/library/components/Cards';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
@@ -16,7 +17,6 @@ import { useEffect } from 'react';
 import { Scrollable } from '@/renderer/library/styles';
 import type { AccountSource } from '@/types/accounts';
 import type { HomeProps } from './types';
-import { ImportMethodCard } from '@/renderer/library/components/Cards';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {
   /// Handle clicking on an import method card.
@@ -73,8 +73,9 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           {/* Vault */}
           <ImportMethodCard
             title={'Polkadot Vault'}
-            source={'vault'}
-            onClick={handleClick}
+            onClick={(e: React.MouseEvent<HTMLElement>) =>
+              handleClick(e, 'vault')
+            }
             helpKey={'help:import:vault'}
             childrenLogo={
               <PolkadotVaultSVG
@@ -101,8 +102,9 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           {/* Ledger */}
           <ImportMethodCard
             title={'Ledger'}
-            source={'ledger'}
-            onClick={handleClick}
+            onClick={(e: React.MouseEvent<HTMLElement>) =>
+              handleClick(e, 'ledger')
+            }
             helpKey={'help:import:ledger'}
             childrenLogo={
               <LedgerLogoSVG
@@ -132,8 +134,9 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           {/* Read-only */}
           <ImportMethodCard
             title={'Read Only'}
-            source={'read-only'}
-            onClick={handleClick}
+            onClick={(e: React.MouseEvent<HTMLElement>) =>
+              handleClick(e, 'read-only')
+            }
             helpKey={'help:import:readOnly'}
             childrenLogo={
               <FontAwesomeIcon

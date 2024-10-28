@@ -5,15 +5,12 @@ import { useHelp } from '@/renderer/contexts/common/Help';
 import { ImportMethodCardWrapper } from './ImportMethodCard.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
-import type { AccountSource } from '@/types/accounts';
 import type { AnyFunction } from '@/types/misc';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 interface ImportMethodCardProps {
   // TItle of the card.
   title: string;
-  // Source of import method.
-  source: AccountSource;
   // Handler when clicking the card.
   onClick: AnyFunction;
   // Help content to display on clicking the info button.
@@ -29,8 +26,6 @@ interface ImportMethodCardProps {
 export const ImportMethodCard = ({
   // TItle of the card.
   title,
-  // Source of import method.
-  source,
   // Handler when clicking the card.
   onClick,
   // Help content to display on clicking the info button.
@@ -45,10 +40,7 @@ export const ImportMethodCard = ({
   const { openHelp } = useHelp();
 
   return (
-    <ImportMethodCardWrapper
-      className="methodCard"
-      onClick={(e) => onClick(e, source)}
-    >
+    <ImportMethodCardWrapper className="methodCard" onClick={onClick}>
       <div>
         <div style={{ ...styleLogoCont }}>
           {childrenLogo}
