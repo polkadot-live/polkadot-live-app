@@ -146,3 +146,35 @@ export const ContentWrapper = styled.div`
     }
   }
 `;
+
+export const WindowWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  padding: 0 1.5rem;
+  background-color: var(--background-modal);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+export const GridTwoCol = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+`;
+
+export const GridFourCol = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.25rem;
+
+  > div:first-of-type {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  > div:last-of-type {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+`;

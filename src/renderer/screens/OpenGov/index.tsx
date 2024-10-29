@@ -4,7 +4,7 @@
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { ContentWrapper } from '@app/screens/Wrappers';
+import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
@@ -15,25 +15,22 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@app/library/components';
-import {
-  faCaretRight,
-  faInfo,
-  faArrowsRotate,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
-import { IconWrapper, OpenGovCard, TreasuryStats } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { TreasuryStats } from './Wrappers';
+import {
+  NavCardThin,
+  TreasuryStatCard,
+} from '@/renderer/library/components/Cards';
 import { useDebug } from '@/renderer/hooks/useDebug';
-import { useHelp } from '@/renderer/contexts/common/Help';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import type { ChainID } from '@/types/chains';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -56,7 +53,6 @@ export const OpenGov: React.FC = () => {
   } = useTreasury();
 
   /// Help overlay and tooltip.
-  const { openHelp } = useHelp();
   const { setTooltipTextAndOpen, wrapWithOfflineTooltip } = useTooltip();
 
   /// Tracks and referenda contexts.
@@ -81,6 +77,30 @@ export const OpenGov: React.FC = () => {
     } else {
       isConnected && initTreasury(treasuryChainId);
     }
+
+    const applyBorders = () => {
+      const cards = document.querySelectorAll(
+        '.methodCard'
+      ) as NodeListOf<HTMLElement>;
+
+      cards.forEach((card, i) => {
+        if (i === 0) {
+          card.style.borderTopLeftRadius = '0.375rem';
+          card.style.borderBottomLeftRadius = '0.375rem';
+        } else if (i === 1) {
+          card.style.borderTopRightRadius = '0.375rem';
+          card.style.borderBottomRightRadius = '0.375rem';
+        } else if (i === 2) {
+          card.style.borderTopLeftRadius = '0.375rem';
+          card.style.borderBottomLeftRadius = '0.375rem';
+        } else if (i === 3) {
+          card.style.borderTopRightRadius = '0.375rem';
+          card.style.borderBottomRightRadius = '0.375rem';
+        }
+      });
+    };
+
+    applyBorders();
   }, []);
 
   /// Reload treasury data if app goes online from offline mode.
@@ -108,16 +128,6 @@ export const OpenGov: React.FC = () => {
     fetchReferendaData(chainId);
     setSection(1);
   };
-
-  /// Helper to render a help info icon.
-  const renderInfoIcon = (label: string, helpKey: HelpItemKey) => (
-    <span>
-      {label}
-      <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
-        <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-      </div>
-    </span>
-  );
 
   /// Handle changing treasury stats.
   const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -159,118 +169,81 @@ export const OpenGov: React.FC = () => {
               ) : (
                 <>
                   {wrapWithOfflineTooltip(
-                    <section className="content-wrapper">
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'Treasury Balance',
-                          'help:openGov:treasuryBalance'
-                        )}
-                        <h4>{getFormattedFreeBalance()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon('Next Burn', 'help:openGov:nextBurn')}
-                        <h4>{getFormattedNextBurn()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'To Be Awarded',
-                          'help:openGov:toBeAwarded'
-                        )}
-                        <h4>{getFormattedToBeAwarded()}</h4>
-                      </div>
-                      <div className="stat-wrapper">
-                        {renderInfoIcon(
-                          'Spend Period',
-                          'help:openGov:spendPeriod'
-                        )}
-                        <h4>{getSpendPeriodProgress()}</h4>
-                      </div>
-                    </section>,
+                    <GridFourCol>
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Treasury Balance'}
+                        statText={getFormattedFreeBalance()}
+                        helpKey={'help:openGov:treasuryBalance'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Next Burn'}
+                        statText={getFormattedNextBurn()}
+                        helpKey={'help:openGov:nextBurn'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'To Be Awarded'}
+                        statText={getFormattedToBeAwarded()}
+                        helpKey={'help:openGov:toBeAwarded'}
+                      />
+                      <TreasuryStatCard
+                        chainId={treasuryChainId}
+                        title={'Spend Period'}
+                        statText={getSpendPeriodProgress()}
+                        helpKey={'help:openGov:spendPeriod'}
+                      />
+                    </GridFourCol>,
                     isConnected
                   )}
                 </>
               )}
             </TreasuryStats>
 
-            <ContentWrapper>
+            <WindowWrapper>
+              {/* Referenda */}
+              <ActionItem text={'Referenda'} />
+              <GridTwoCol>
+                <NavCardThin
+                  title={'Polkadot'}
+                  onClick={() => handleOpenReferenda('Polkadot')}
+                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
+                  childrenSubtitle={
+                    <span>Active referenda on the Polkadot network.</span>
+                  }
+                />
+
+                <NavCardThin
+                  title={'Kusama'}
+                  onClick={() => handleOpenReferenda('Kusama')}
+                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
+                  childrenSubtitle={
+                    <span>Active referenda on the Kusama network.</span>
+                  }
+                />
+              </GridTwoCol>
+
               {/* Origins and Tracks */}
               <ActionItem text={'Tracks'} />
-              <div className="grid-wrapper" style={{ marginBottom: '1.5rem' }}>
-                <OpenGovCard onClick={() => handleOpenTracks('Polkadot')}>
-                  <IconWrapper className="hover" $chainId={'Polkadot'}>
-                    <PolkadotSVG
-                      width={60}
-                      opacity={0.06}
-                      className="svg-wrapper"
-                    />
-                  </IconWrapper>
-                  <div className="content-wrapper">
-                    <h4 className="btn-polkadot">
-                      <span>
-                        <FontAwesomeIcon icon={faCaretRight} />
-                      </span>
-                      On Polkadot
-                    </h4>
-                  </div>
-                </OpenGovCard>
-                <OpenGovCard onClick={() => handleOpenTracks('Kusama')}>
-                  <IconWrapper className="hover" $chainId={'Kusama'}>
-                    <KusamaSVG
-                      width={100}
-                      opacity={0.06}
-                      className="svg-wrapper"
-                    />
-                  </IconWrapper>
-                  <div className="content-wrapper">
-                    <h4 className="btn-kusama">
-                      <span>
-                        <FontAwesomeIcon icon={faCaretRight} />
-                      </span>
-                      On Kusama
-                    </h4>
-                  </div>
-                </OpenGovCard>
-              </div>
+              <GridTwoCol>
+                <NavCardThin
+                  title={'Polkadot'}
+                  onClick={() => handleOpenTracks('Polkadot')}
+                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
+                  childrenSubtitle={
+                    <span>Tracks on the Polkadot network.</span>
+                  }
+                />
 
-              {/* Proposals */}
-              <ActionItem text={'Referenda'} />
-              <div className="grid-wrapper">
-                <OpenGovCard onClick={() => handleOpenReferenda('Polkadot')}>
-                  <IconWrapper className="hover" $chainId={'Polkadot'}>
-                    <PolkadotSVG
-                      width={60}
-                      opacity={0.06}
-                      className="svg-wrapper"
-                    />
-                  </IconWrapper>
-                  <div className="content-wrapper">
-                    <h4 className="btn-polkadot">
-                      <span>
-                        <FontAwesomeIcon icon={faCaretRight} />
-                      </span>
-                      On Polkadot
-                    </h4>
-                  </div>
-                </OpenGovCard>
-                <OpenGovCard onClick={() => handleOpenReferenda('Kusama')}>
-                  <IconWrapper className="hover" $chainId={'Kusama'}>
-                    <KusamaSVG
-                      width={100}
-                      opacity={0.06}
-                      className="svg-wrapper"
-                    />
-                  </IconWrapper>
-                  <div className="content-wrapper">
-                    <h4 className="btn-kusama">
-                      <span>
-                        <FontAwesomeIcon icon={faCaretRight} />
-                      </span>
-                      On Kusama
-                    </h4>
-                  </div>
-                </OpenGovCard>
-              </div>
-            </ContentWrapper>
+                <NavCardThin
+                  title={'Kusama'}
+                  onClick={() => handleOpenTracks('Kusama')}
+                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
+                  childrenSubtitle={<span>Tracks on the Kusama network.</span>}
+                />
+              </GridTwoCol>
+            </WindowWrapper>
           </Scrollable>
 
           <StatsFooter $chainId={'Polkadot'}>
