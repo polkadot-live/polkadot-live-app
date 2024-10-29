@@ -179,41 +179,10 @@ export const StickyHeadings = styled.div`
   }
 `;
 
-export const ReferendaGroup = styled.div`
-  --container-border-radius: 1.25rem;
-
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--container-border-radius);
-  border: 1px solid var(--border-primary-color);
-
-  > div {
-    border-bottom: 2px solid var(--background-default);
-  }
-  > div:first-of-type {
-    border-top-right-radius: var(--container-border-radius);
-    border-top-left-radius: var(--container-border-radius);
-  }
-  > div:last-of-type {
-    border-bottom-right-radius: var(--container-border-radius);
-    border-bottom-left-radius: var(--container-border-radius);
-    border-bottom: none;
-  }
-`;
-
 export const ReferendumRowWrapper = styled.div`
   position: relative;
   padding: 1rem 1.25rem;
-  background-color: var(--background-primary);
-  transition: background-color 0.2s ease-out;
-
-  &:hover {
-    background-color: #121212;
-
-    .links-wrapper {
-      opacity: 1;
-    }
-  }
+  background-color: #1c1c1c;
 
   /* Content */
   .content-wrapper {

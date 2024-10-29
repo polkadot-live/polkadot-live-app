@@ -26,13 +26,14 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
+import { NoteWrapper, StickyHeadings } from './Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
 import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
 import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { ReferendaProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
@@ -141,7 +142,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 wide={true}
               />
               <AccordionPanel>
-                <ReferendaGroup>
+                <ItemsColumn>
                   {infos.map((referendum, j) => (
                     <ReferendumRow
                       key={`${j}_${referendum.referendaId}`}
@@ -149,7 +150,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                     />
                   ))}
-                </ReferendaGroup>
+                </ItemsColumn>
               </AccordionPanel>
             </AccordionItem>
           )
@@ -188,7 +189,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 wide={true}
               />
               <AccordionPanel>
-                <ReferendaGroup>
+                <ItemsColumn>
                   {infos.map((referendum, j) => (
                     <ReferendumRow
                       key={`${j}_${referendum.referendaId}`}
@@ -196,7 +197,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                     />
                   ))}
-                </ReferendaGroup>
+                </ItemsColumn>
               </AccordionPanel>
             </AccordionItem>
           ))}
@@ -207,8 +208,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   /// Render referenda as single list.
   const renderListed = () => (
-    <ReferendaGroup
-      style={{ display: groupingOn || onlySubscribed ? 'none' : 'block' }}
+    <ItemsColumn
+      style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
     >
       {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
         <ReferendumRow
@@ -217,19 +218,19 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           index={i}
         />
       ))}
-    </ReferendaGroup>
+    </ItemsColumn>
   );
 
   /// Render subscribed referenda as a single list.
   const renderSubscribedListed = () => {
-    const display = groupingOn || !onlySubscribed ? 'none' : 'block';
+    const display = groupingOn || !onlySubscribed ? 'none' : 'flex';
 
     return isNotSubscribedToAny(chainId) ? (
       <div style={{ display }}>
         <p>You have not subscribed to any referenda.</p>
       </div>
     ) : (
-      <ReferendaGroup style={{ display }}>
+      <ItemsColumn style={{ display }}>
         {getSortedActiveReferenda(newestFirst, getSubscribedReferenda()).map(
           (referendum, i) => (
             <ReferendumRow
@@ -239,7 +240,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             />
           )
         )}
-      </ReferendaGroup>
+      </ItemsColumn>
     );
   };
 
