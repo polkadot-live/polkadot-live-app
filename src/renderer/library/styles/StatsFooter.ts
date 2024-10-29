@@ -65,11 +65,17 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
 
     &.badge-btn {
       cursor: pointer;
+      color: inherit;
+      transition: color 150ms ease-out;
+      .icon-wrapper {
+        transition: color 150ms ease-out;
+      }
       &:hover {
         .icon-wrapper {
-          color: #953254;
+          color: #f1f1f1;
           opacity: 1;
         }
+        color: #f1f1f1 !important;
       }
     }
   }

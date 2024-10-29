@@ -148,8 +148,6 @@ export const TrackItem = styled(motion.div)`
     overflow: hidden;
 
     .periods-wrapper {
-      --border-top-bottom: 1px solid #1f1f1f;
-
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: 5rem;
@@ -157,9 +155,6 @@ export const TrackItem = styled(motion.div)`
       width: 100%;
       margin-top: 1rem;
       padding: 1.25rem 0 1.25rem;
-      border-top: var(--border-top-bottom);
-      border-bottom: var(--border-top-bottom);
-      background-color: #111;
     }
 
     /* Period stat */
@@ -169,6 +164,7 @@ export const TrackItem = styled(motion.div)`
       align-items: center;
 
       > span:first-of-type {
+        font-size: 1.05rem;
         display: flex;
         align-items: center;
         column-gap: 0.5rem;
@@ -176,14 +172,14 @@ export const TrackItem = styled(motion.div)`
         opacity: 0.8;
 
         .icon-wrapper {
-          padding-right: 0.3rem;
-          padding-left: 0.25rem;
-          font-size: 0.8rem;
-          cursor: pointer;
-          opacity: 0.4;
+          ${mixinHelpIcon}
+          font-size: 0.9rem;
+          color: #585858;
+          transition: color 150ms ease-out;
+          margin-left: -0.25rem;
+          margin-bottom: 0.15rem;
           &:hover {
-            color: #953254;
-            opacity: 1;
+            color: #f1f1f1 !important;
           }
         }
       }
@@ -211,7 +207,7 @@ export const TrackItem = styled(motion.div)`
   .expand-btn-wrapper {
     display: flex;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     padding-left: 0.75rem;
     opacity: 0.8;
     transition: opacity 0.1s ease-out;
@@ -233,7 +229,7 @@ export const TrackItem = styled(motion.div)`
       svg {
         color: #f1f1f1;
         position: absolute;
-        top: 5px;
+        top: 6px;
         left: 6px;
       }
     }
