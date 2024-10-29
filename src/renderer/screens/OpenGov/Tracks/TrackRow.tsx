@@ -44,9 +44,10 @@ export const TrackRow = ({ track }: TrackRowProps) => {
               <FontAwesomeIcon icon={faHashtag} transform={'shrink-2'} />
               {track.trackId}
             </span>
-            <h4>
-              {renderHelpIcon(track.helpHey)} {track.label}
-            </h4>
+            <div className="titleWrapper">
+              <h4>{track.label}</h4>
+              {renderHelpIcon(track.helpKey)}
+            </div>
           </div>
         </div>
         <div className="right">

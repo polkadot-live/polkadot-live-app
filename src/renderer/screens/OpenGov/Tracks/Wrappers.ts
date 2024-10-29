@@ -3,36 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-
-/**
- * Provides the following styled components:
- *   TrackGroup
- *   StickyHeadings
- *   TrackItem
- */
-
-export const TrackGroup = styled.div`
-  --container-border-radius: 1.25rem;
-
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
-  border-radius: var(--container-border-radius);
-  border: 1px solid var(--border-mid-color);
-
-  > div {
-    border-bottom: 2px solid var(--background-default);
-  }
-  > div:first-of-type {
-    border-top-right-radius: var(--container-border-radius);
-    border-top-left-radius: var(--container-border-radius);
-  }
-  > div:last-of-type {
-    border-bottom-right-radius: var(--container-border-radius);
-    border-bottom-left-radius: var(--container-border-radius);
-    border-bottom: none;
-  }
-`;
+import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
 export const StickyHeadings = styled.div`
   background-color: var(--background-modal);
@@ -55,8 +26,8 @@ export const StickyHeadings = styled.div`
       column-gap: 1rem;
 
       div:nth-child(1) {
-        min-width: 64px;
-        padding-left: 20px;
+        min-width: 58px;
+        padding-left: 22px;
       }
       div:nth-child(2) {
         min-width: 40px;
@@ -82,7 +53,7 @@ export const StickyHeadings = styled.div`
   }
 
   .heading {
-    font-size: 0.92rem;
+    font-size: 1rem;
     color: var(--text-color-secondary);
     font-weight: 500;
     opacity: 0.6;
@@ -112,10 +83,6 @@ export const TrackItem = styled(motion.div)`
     min-width: 18px;
   }
 
-  &:hover {
-    background-color: #121212;
-  }
-
   /* Content */
   .content-wrapper {
     display: flex;
@@ -139,39 +106,40 @@ export const TrackItem = styled(motion.div)`
   /* Stats */
   .stat-wrapper {
     display: flex;
-    column-gap: 1rem;
+    column-gap: 1.5rem;
     min-width: 90px;
     display: flex;
     align-items: center;
 
     .icon-wrapper {
-      font-size: 0.8rem;
-      padding-right: 0.8rem;
-      padding-left: 0.4rem;
-      cursor: pointer;
-      opacity: 0.4;
+      ${mixinHelpIcon}
+      font-size: 0.9rem;
+      color: #585858;
+      transition: color 150ms ease-out;
+      margin-left: -0.25rem;
+      margin-bottom: 0.15rem;
       &:hover {
-        color: #953254;
-        opacity: 1;
+        color: #f1f1f1 !important;
       }
+    }
+
+    .titleWrapper {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
     }
 
     // Stat text.
     h4 {
-      display: flex;
-      flex: 1;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
     }
     // Stat label.
     span {
       display: flex;
       align-items: center;
-      column-gap: 0.4rem;
-      padding: 0.5rem 1rem 0.5rem;
-      border: 1px solid var(--border-secondary-color);
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-      background-color: rgb(17 17 17);
+      font-size: 0.9rem;
+      column-gap: 0.6rem;
+      padding: 0.5rem 0.75rem 0.5rem;
     }
   }
 
@@ -180,8 +148,6 @@ export const TrackItem = styled(motion.div)`
     overflow: hidden;
 
     .periods-wrapper {
-      --border-top-bottom: 1px solid #1f1f1f;
-
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: 5rem;
@@ -189,9 +155,6 @@ export const TrackItem = styled(motion.div)`
       width: 100%;
       margin-top: 1rem;
       padding: 1.25rem 0 1.25rem;
-      border-top: var(--border-top-bottom);
-      border-bottom: var(--border-top-bottom);
-      background-color: #111;
     }
 
     /* Period stat */
@@ -201,6 +164,7 @@ export const TrackItem = styled(motion.div)`
       align-items: center;
 
       > span:first-of-type {
+        font-size: 1.05rem;
         display: flex;
         align-items: center;
         column-gap: 0.5rem;
@@ -208,14 +172,14 @@ export const TrackItem = styled(motion.div)`
         opacity: 0.8;
 
         .icon-wrapper {
-          padding-right: 0.3rem;
-          padding-left: 0.25rem;
-          font-size: 0.8rem;
-          cursor: pointer;
-          opacity: 0.4;
+          ${mixinHelpIcon}
+          font-size: 0.9rem;
+          color: #585858;
+          transition: color 150ms ease-out;
+          margin-left: -0.25rem;
+          margin-bottom: 0.15rem;
           &:hover {
-            color: #953254;
-            opacity: 1;
+            color: #f1f1f1 !important;
           }
         }
       }
@@ -243,7 +207,7 @@ export const TrackItem = styled(motion.div)`
   .expand-btn-wrapper {
     display: flex;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     padding-left: 0.75rem;
     opacity: 0.8;
     transition: opacity 0.1s ease-out;
@@ -265,7 +229,7 @@ export const TrackItem = styled(motion.div)`
       svg {
         color: #f1f1f1;
         position: absolute;
-        top: 5px;
+        top: 6px;
         left: 6px;
       }
     }

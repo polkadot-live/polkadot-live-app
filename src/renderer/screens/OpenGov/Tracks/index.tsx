@@ -13,7 +13,7 @@ import {
   faInfo,
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import { StickyHeadings, TrackGroup } from './Wrappers';
+import { StickyHeadings } from './Wrappers';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
@@ -21,6 +21,7 @@ import { renderPlaceholders } from '@/renderer/library/utils';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { TracksProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Tracks = ({ setSection }: TracksProps) => {
   const { openHelp } = useHelp();
@@ -39,9 +40,9 @@ export const Tracks = ({ setSection }: TracksProps) => {
   /// Utility to render help icon.
   const renderHelpBadge = (label: string, key: HelpItemKey) => (
     <div className="stat-wrapper badge-btn" onClick={() => openHelp(key)}>
-      <span>
+      <span style={{ fontSize: '0.9rem' }}>
         <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+          <FontAwesomeIcon icon={faInfo} transform={'grow-2'} />
         </div>
         {label}
       </span>
@@ -65,7 +66,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   return (
     <>
-      <Scrollable>
+      <Scrollable style={{ paddingBottom: '2rem' }}>
         <ContentWrapper>
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={true}>
@@ -122,7 +123,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                   </StickyHeadings>
 
                   {/* Track Listing */}
-                  <TrackGroup>
+                  <ItemsColumn>
                     {tracks
                       .sort((a, b) =>
                         sortIdAscending
@@ -132,7 +133,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                       .map((track) => (
                         <TrackRow key={track.trackId} track={track} />
                       ))}
-                  </TrackGroup>
+                  </ItemsColumn>
                 </>
               )}
             </div>
