@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled, { css } from 'styled-components';
+import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
 /**
  * Provides the following styled components:
@@ -25,6 +26,7 @@ export const TitleWithOrigin = styled.div`
 
   h4 {
     min-width: 18px;
+    font-size: 1.1rem !important;
   }
   div:nth-of-type(1) {
     display: flex;
@@ -33,7 +35,7 @@ export const TitleWithOrigin = styled.div`
 
     p {
       margin: 0;
-      font-size: 1rem;
+      font-size: 1rem !important;
     }
   }
 `;
@@ -223,24 +225,17 @@ export const ReferendumRowWrapper = styled.div`
     width: 100%;
 
     .content-wrapper {
-      --border-top-bottom: 1px solid #1f1f1f;
-
       width: 100%;
       margin-top: 1.25rem;
-      padding: 0.75rem 0.5rem;
       display: flex;
       flex-direction: column;
       row-gap: 0.25rem;
-      background-color: #111;
-      border-top: var(--border-top-bottom);
-      border-bottom: var(--border-top-bottom);
 
       .subscription-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.5rem;
-        font-size: 0.95rem;
 
         div {
           justify-content: center;
@@ -257,12 +252,24 @@ export const ReferendumRowWrapper = styled.div`
           width: 100%;
           display: flex;
           align-items: center;
-          column-gap: 1rem;
+          gap: 0.5rem;
           width: 100%;
 
           p {
-            font-size: 0.95rem;
+            color: var(--text-color-primary);
+            font-size: 1.05rem;
             font-weight: 600;
+          }
+          span {
+            ${mixinHelpIcon}
+            font-size: 0.9rem;
+            color: #585858;
+            transition: color 150ms ease-out;
+            margin-left: -0.25rem;
+            margin-bottom: 0.15rem;
+            &:hover {
+              color: #f1f1f1 !important;
+            }
           }
         }
       }
@@ -273,34 +280,25 @@ export const ReferendumRowWrapper = styled.div`
     font-size: 0.8rem;
     cursor: pointer;
     opacity: 0.4;
-    &:hover {
-      color: #953254;
-      opacity: 1;
-    }
   }
+
   /* Add Subscription Button */
   .add-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    column-gap: 0.5rem;
-    margin-left: 0.25rem;
 
-    min-width: 120px;
-    background-color: rgb(19 19 19);
-    border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);
     padding: 0.5rem 0.75rem;
-    border-radius: var(--button-border-radius-large);
-    transition: background-color 0.2s ease-out;
+    transition: color 0.15s ease-out;
     cursor: pointer;
 
     svg,
     span {
-      font-size: 0.9rem;
+      font-size: 1.3rem;
     }
     &:hover {
-      background-color: rgb(24 24 24);
+      color: #f1f1f1;
     }
   }
 `;

@@ -27,7 +27,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { InfoOverlay } from './InfoOverlay';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
 
@@ -60,12 +59,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const getIntervalSubscriptions = () =>
     allIntervalTasks.filter((t) => t.chainId === chainId);
 
-  const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
-      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-    </div>
-  );
-
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
     return title === '' ? (
@@ -87,7 +80,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         <div className="left">
           <div className="stat-wrapper">
             <span>
-              <FontAwesomeIcon icon={faHashtag} transform={'shrink-4'} />
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
               {referendum.referendaId}
             </span>
             {usePolkassemblyApi ? (
@@ -211,15 +204,12 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 key={`${index}_${referendaId}_${t.action}`}
                 className="subscription-row"
               >
-                <span>{renderHelpIcon(t.helpKey)}</span>
-                <p>{t.label}:</p>
                 {isSubscribedToTask(referendum, t) ? (
                   <button
                     className="add-btn"
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
-                    <span>Unsubscribe</span>
                   </button>
                 ) : (
                   <button
@@ -227,9 +217,12 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
-                    <span>Subscribe</span>
                   </button>
                 )}
+                <p>{t.label}</p>
+                <span onClick={() => openHelp(t.helpKey)}>
+                  <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                </span>
               </div>
             ))}
           </div>
