@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
+import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,10 +22,11 @@ import {
   faMinus,
   faPlus,
   faHashtag,
+  faUpRightFromSquare,
+  faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { InfoOverlay } from './InfoOverlay';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
 
@@ -58,12 +59,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const getIntervalSubscriptions = () =>
     allIntervalTasks.filter((t) => t.chainId === chainId);
 
-  const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
-      <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-    </div>
-  );
-
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
     return title === '' ? (
@@ -85,7 +80,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         <div className="left">
           <div className="stat-wrapper">
             <span>
-              <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
               {referendum.referendaId}
             </span>
             {usePolkassemblyApi ? (
@@ -93,9 +88,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
                 <div>
                   <p>{renderOrigin(referendum)}</p>
-                  <MoreButton onClick={() => handleMoreClick()}>
-                    More
-                  </MoreButton>
                 </div>
               </TitleWithOrigin>
             ) : (
@@ -105,25 +97,39 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         </div>
         <div className="right">
           <div className="links-wrapper">
+            {/* More */}
+            <button
+              className="btn-more tooltip-trigger-element"
+              onClick={() => handleMoreClick()}
+              data-tooltip-text="View Description"
+              onMouseMove={() => setTooltipTextAndOpen('View Description')}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
+
             {/* Polkassembly */}
             <button
-              className="btn-polkassembly"
+              className="btn-polkassembly tooltip-trigger-element"
+              data-tooltip-text="Polkassembly"
+              onMouseMove={() => setTooltipTextAndOpen('Polkassembly')}
               onClick={() => {
                 window.myAPI.openBrowserURL(uriPolkassembly);
                 window.myAPI.umamiEvent('link-open', { dest: 'polkassembly' });
               }}
             >
-              Polkassembly
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
             </button>
             {/* Subsquare */}
             <button
-              className="btn-subsquare"
+              className="btn-subsquare tooltip-trigger-element"
+              data-tooltip-text="Subsquare"
+              onMouseMove={() => setTooltipTextAndOpen('Subsquare')}
               onClick={() => {
                 window.myAPI.openBrowserURL(uriSubsquare);
                 window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
               }}
             >
-              Subsquare
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
             </button>
           </div>
           {/* Add + Remove Subscriptions */}
@@ -198,15 +204,12 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 key={`${index}_${referendaId}_${t.action}`}
                 className="subscription-row"
               >
-                <span>{renderHelpIcon(t.helpKey)}</span>
-                <p>{t.label}:</p>
                 {isSubscribedToTask(referendum, t) ? (
                   <button
                     className="add-btn"
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
-                    <span>Unsubscribe</span>
                   </button>
                 ) : (
                   <button
@@ -214,9 +217,12 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
-                    <span>Subscribe</span>
                   </button>
                 )}
+                <p>{t.label}</p>
+                <span onClick={() => openHelp(t.helpKey)}>
+                  <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                </span>
               </div>
             ))}
           </div>

@@ -1,17 +1,15 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
-/**
- * Provides the following styled components:
- *   TitleWithOrigin
- *   MoreButton
- *   MoreOverlay
- *   NoteWrapper
- *   ReferendaGroup
- *   ReferendumRowWrapper
- */
+const mixinRowButton = css`
+  font-size: 1.3rem;
+  padding: 0.4rem 1rem;
+  transition: color 150ms ease-out;
+  cursor: pointer;
+`;
 
 export const TitleWithOrigin = styled.div`
   display: flex;
@@ -19,6 +17,7 @@ export const TitleWithOrigin = styled.div`
 
   h4 {
     min-width: 18px;
+    font-size: 1.1rem !important;
   }
   div:nth-of-type(1) {
     display: flex;
@@ -27,20 +26,8 @@ export const TitleWithOrigin = styled.div`
 
     p {
       margin: 0;
-      font-size: 0.9rem;
+      font-size: 1rem !important;
     }
-  }
-`;
-
-export const MoreButton = styled.button`
-  font-size: 0.85rem;
-  background-color: var(--border-primary-color);
-  padding: 1px 6px;
-  border-radius: 1.25rem;
-  transition: background-color 0.2s ease-out;
-
-  &:hover {
-    background-color: var(--border-mid-color);
   }
 `;
 
@@ -119,101 +106,10 @@ export const NoteWrapper = styled.div`
   }
 `;
 
-export const StickyHeadings = styled.div`
-  background-color: var(--background-modal);
-  position: sticky;
-  top: -1.55rem;
-  z-index: 15;
-
-  .content-wrapper {
-    display: flex;
-    column-gap: 1rem;
-    align-items: center;
-
-    div {
-      padding: 0.4rem 0 0.4rem;
-    }
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 70px;
-        padding-left: 20px;
-      }
-      div:nth-child(2) {
-        min-width: 40px;
-      }
-    }
-
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 154px;
-      }
-      div:nth-child(2) {
-        padding-right: 22px;
-        text-align: right;
-        min-width: 152px;
-      }
-    }
-  }
-
-  .heading {
-    font-size: 0.92rem;
-    color: var(--text-color-secondary);
-    font-weight: 500;
-    opacity: 0.6;
-    transition: opacity 0.2s ease-out;
-    cursor: default;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`;
-
-export const ReferendaGroup = styled.div`
-  --container-border-radius: 1.25rem;
-
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--container-border-radius);
-  border: 1px solid var(--border-primary-color);
-
-  > div {
-    border-bottom: 2px solid var(--background-default);
-  }
-  > div:first-of-type {
-    border-top-right-radius: var(--container-border-radius);
-    border-top-left-radius: var(--container-border-radius);
-  }
-  > div:last-of-type {
-    border-bottom-right-radius: var(--container-border-radius);
-    border-bottom-left-radius: var(--container-border-radius);
-    border-bottom: none;
-  }
-`;
-
 export const ReferendumRowWrapper = styled.div`
   position: relative;
   padding: 1rem 1.25rem;
-  background-color: var(--background-primary);
-  transition: background-color 0.2s ease-out;
-
-  &:hover {
-    background-color: #121212;
-
-    .links-wrapper {
-      opacity: 1;
-    }
-  }
+  background-color: #1c1c1c;
 
   /* Content */
   .content-wrapper {
@@ -259,14 +155,12 @@ export const ReferendumRowWrapper = styled.div`
       font-size: 1.05rem;
     }
     span {
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       column-gap: 0.4rem;
-      padding: 0.5rem 1rem 0.5rem;
-      border: 1px solid var(--border-secondary-color);
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-      background-color: rgb(17 17 17);
+      border-radius: 0.375rem;
+      margin-right: 1.5rem;
     }
   }
 
@@ -280,32 +174,25 @@ export const ReferendumRowWrapper = styled.div`
     opacity: 0.5;
     transition: opacity 0.2s ease-out;
 
-    .btn-polkassembly {
-      font-size: 0.95rem;
-      color: rgb(169, 74, 117);
-      padding: 0.4rem 1rem;
-      border-radius: 1.25rem;
-      background-color: #101010;
-      border: 1px solid var(--background-default);
-      transition: border-color 0.2s ease-out;
-      cursor: pointer;
-
+    .btn-more {
+      ${mixinRowButton}
+      color: #8d8d8d;
       &:hover {
-        border-color: rgb(169, 74, 117);
+        color: #f1f1f1;
+      }
+    }
+    .btn-polkassembly {
+      ${mixinRowButton}
+      color: rgb(172 80 122);
+      &:hover {
+        color: rgb(255 108 174);
       }
     }
     .btn-subsquare {
-      font-size: 0.95rem;
+      ${mixinRowButton}
       color: rgb(92 129 177);
-      padding: 0.4rem 1rem;
-      border-radius: 1.25rem;
-      background-color: #101010;
-      border: 1px solid var(--background-default);
-      cursor: pointer;
-      transition: border-color 0.2s ease-out;
-
       &:hover {
-        border-color: rgb(92 129 177);
+        color: rgb(171 208 255);
       }
     }
   }
@@ -315,6 +202,12 @@ export const ReferendumRowWrapper = styled.div`
     position: relative;
     padding: 0.25rem 0.5rem;
     min-width: 80px;
+
+    .icon-wrapper {
+      background-color: #464646;
+      border-color: #464646;
+      font-size: 0.85rem;
+    }
   }
 
   /* Collapsable Section */
@@ -323,24 +216,17 @@ export const ReferendumRowWrapper = styled.div`
     width: 100%;
 
     .content-wrapper {
-      --border-top-bottom: 1px solid #1f1f1f;
-
       width: 100%;
       margin-top: 1.25rem;
-      padding: 0.75rem 0.5rem;
       display: flex;
       flex-direction: column;
       row-gap: 0.25rem;
-      background-color: #111;
-      border-top: var(--border-top-bottom);
-      border-bottom: var(--border-top-bottom);
 
       .subscription-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.5rem;
-        font-size: 0.95rem;
 
         div {
           justify-content: center;
@@ -357,12 +243,24 @@ export const ReferendumRowWrapper = styled.div`
           width: 100%;
           display: flex;
           align-items: center;
-          column-gap: 1rem;
+          gap: 0.5rem;
           width: 100%;
 
           p {
-            font-size: 0.95rem;
+            color: var(--text-color-primary);
+            font-size: 1.05rem;
             font-weight: 600;
+          }
+          span {
+            ${mixinHelpIcon}
+            font-size: 0.9rem;
+            color: #585858;
+            transition: color 150ms ease-out;
+            margin-left: -0.25rem;
+            margin-bottom: 0.15rem;
+            &:hover {
+              color: #f1f1f1 !important;
+            }
           }
         }
       }
@@ -373,34 +271,25 @@ export const ReferendumRowWrapper = styled.div`
     font-size: 0.8rem;
     cursor: pointer;
     opacity: 0.4;
-    &:hover {
-      color: #953254;
-      opacity: 1;
-    }
   }
+
   /* Add Subscription Button */
   .add-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    column-gap: 0.5rem;
-    margin-left: 0.25rem;
 
-    min-width: 120px;
-    background-color: rgb(19 19 19);
-    border: 1px solid rgb(68 68 68);
     color: rgb(101 101 101);
     padding: 0.5rem 0.75rem;
-    border-radius: var(--button-border-radius-large);
-    transition: background-color 0.2s ease-out;
+    transition: color 0.15s ease-out;
     cursor: pointer;
 
     svg,
     span {
-      font-size: 0.9rem;
+      font-size: 1.3rem;
     }
     &:hover {
-      background-color: rgb(24 24 24);
+      color: #f1f1f1;
     }
   }
 `;
