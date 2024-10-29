@@ -87,7 +87,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         <div className="left">
           <div className="stat-wrapper">
             <span>
-              <FontAwesomeIcon icon={faHashtag} transform={'shrink-0'} />
+              <FontAwesomeIcon icon={faHashtag} transform={'shrink-4'} />
               {referendum.referendaId}
             </span>
             {usePolkassemblyApi ? (

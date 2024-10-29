@@ -33,7 +33,7 @@ export const TitleWithOrigin = styled.div`
 
     p {
       margin: 0;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
   }
 `;
@@ -222,14 +222,12 @@ export const ReferendumRowWrapper = styled.div`
       font-size: 1.05rem;
     }
     span {
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       column-gap: 0.4rem;
-      padding: 0.5rem 1rem 0.5rem;
-      border: 1px solid var(--border-secondary-color);
-      border-radius: 0.5rem;
-      font-size: 0.8rem;
-      background-color: rgb(17 17 17);
+      border-radius: 0.375rem;
+      margin-right: 1.5rem;
     }
   }
 
@@ -271,6 +269,12 @@ export const ReferendumRowWrapper = styled.div`
     position: relative;
     padding: 0.25rem 0.5rem;
     min-width: 80px;
+
+    .icon-wrapper {
+      background-color: #464646;
+      border-color: #464646;
+      font-size: 0.85rem;
+    }
   }
 
   /* Collapsable Section */
