@@ -190,9 +190,7 @@ export const HardwareAddress = ({
                   : 'account-action-btn white-hover'
               }
             />
-            {isProcessing() && (
-              <EllipsisSpinner style={{ left: '3px', top: '8px' }} />
-            )}
+            {isProcessing() && <EllipsisSpinner style={{ top: '8px' }} />}
           </div>
         )}
         <div

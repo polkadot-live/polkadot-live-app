@@ -207,6 +207,7 @@ export const ReferendumRowWrapper = styled.div`
       background-color: #464646;
       border-color: #464646;
       font-size: 0.85rem;
+      transition: all 150ms ease-out;
     }
   }
 

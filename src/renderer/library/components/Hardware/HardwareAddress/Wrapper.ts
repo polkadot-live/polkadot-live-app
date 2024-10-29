@@ -54,12 +54,17 @@ export const HardwareAddressWrapper = styled.div`
     padding-left: 1rem;
 
     .account-action-btn {
-      min-width: 56px;
+      min-width: 4.5rem;
       color: #7e7e7e;
-      background-color: rgb(23 23 23);
-      border-color: rgb(47 47 47);
-      padding: 0.5rem;
-      font-size: 0.9rem;
+      background-color: #2d2d2d;
+      border-color: #2d2d2d;
+      padding: 0.45rem 0.5rem;
+      font-size: 0.85rem;
+      transition: all 150ms ease-out;
+
+      &:hover {
+        background-color: #373737;
+      }
     }
 
     button {
@@ -74,8 +79,7 @@ export const HardwareAddressWrapper = styled.div`
       color: #f1f1f1;
     }
     .processing {
-      background-color: var(--background-modal);
-      color: var(--background-modal);
+      color: #2d2d2d;
     }
   }
 
