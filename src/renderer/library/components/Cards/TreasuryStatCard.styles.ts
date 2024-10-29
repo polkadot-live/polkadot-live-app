@@ -20,7 +20,7 @@ const getChainIdColor = (chainId: ChainID): string => {
 };
 
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
-  background-color: #202020;
+  background-color: #212121;
   padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
 
     h2 {
       font-size: 1.1rem;
-      color: var(--text-color-primary);
+      color: #d5d5d5;
     }
     .help-icon {
       ${mixinHelpIcon}

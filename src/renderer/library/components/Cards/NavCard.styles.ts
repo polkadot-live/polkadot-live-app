@@ -4,11 +4,11 @@
 import styled from 'styled-components';
 import { mixinHelpIcon } from '../Common';
 
-export const NavCardWrapper = styled.div`
+export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
   background-color: #1c1c1c;
-  padding: 1.75rem 2rem;
+  padding: ${({ $thin }) => ($thin ? '1.5rem 2rem' : '1.75rem 2rem')};
   transition: background-color 150ms ease-out;
-  min-height: 125px;
+  min-height: ${({ $thin }) => ($thin ? 'fit-content' : '125px')};
   cursor: pointer;
 
   &:hover {
@@ -32,8 +32,14 @@ export const NavCardWrapper = styled.div`
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: ${({ $thin }) => ($thin ? '0.75rem' : '1.5rem')};
 
+      .thin-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        min-height: 32px;
+      }
       .label {
         display: flex;
         gap: 0.25rem;

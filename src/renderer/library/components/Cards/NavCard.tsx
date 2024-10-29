@@ -26,8 +26,10 @@ export const NavCard = ({
   return (
     <NavCardWrapper className="methodCard" onClick={onClick}>
       <div>
-        <div style={{ ...styleLogoCont }}>
-          {childrenLogo}
+        <div>
+          <div style={{ ...styleLogoCont, minHeight: '28px' }}>
+            {childrenLogo}
+          </div>
           <div>
             <div className="label">
               <h1>{title}</h1>
@@ -52,3 +54,33 @@ export const NavCard = ({
     </NavCardWrapper>
   );
 };
+
+export const NavCardThin = ({
+  // TItle of the card.
+  title,
+  // Handler when clicking the card.
+  onClick,
+  // Markup rendered in logo container.
+  childrenLogo,
+  // Markup rendered in the card subtitle container.
+  childrenSubtitle,
+  // Styles to apply to the logo container.
+  styleLogoCont,
+}: NavCardProps) => (
+  <NavCardWrapper $thin={true} className="methodCard" onClick={onClick}>
+    <div>
+      <div>
+        <div className="thin-content">
+          <div style={{ minHeight: '26px', ...styleLogoCont }}>
+            {childrenLogo}
+          </div>
+          <h1>{title}</h1>
+        </div>
+        <div style={{ display: 'flex' }}>{childrenSubtitle}</div>
+      </div>
+      <div className="caret">
+        <FontAwesomeIcon icon={faCaretRight} />
+      </div>
+    </div>
+  </NavCardWrapper>
+);

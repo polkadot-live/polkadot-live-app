@@ -23,7 +23,10 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
-import { NavCard, TreasuryStatCard } from '@/renderer/library/components/Cards';
+import {
+  NavCardThin,
+  TreasuryStatCard,
+} from '@/renderer/library/components/Cards';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
@@ -202,31 +205,19 @@ export const OpenGov: React.FC = () => {
               {/* Referenda */}
               <ActionItem text={'Referenda'} />
               <GridTwoCol>
-                <NavCard
+                <NavCardThin
                   title={'Polkadot'}
                   onClick={() => handleOpenReferenda('Polkadot')}
-                  childrenLogo={
-                    <PolkadotSVG
-                      width={'1.8rem'}
-                      opacity={0.8}
-                      className="svg-wrapper"
-                    />
-                  }
+                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
                   childrenSubtitle={
                     <span>Active referenda on the Polkadot network.</span>
                   }
                 />
 
-                <NavCard
+                <NavCardThin
                   title={'Kusama'}
                   onClick={() => handleOpenReferenda('Kusama')}
-                  childrenLogo={
-                    <KusamaSVG
-                      width={'2.2rem'}
-                      opacity={0.8}
-                      className="svg-wrapper"
-                    />
-                  }
+                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
                   childrenSubtitle={
                     <span>Active referenda on the Kusama network.</span>
                   }
@@ -236,31 +227,19 @@ export const OpenGov: React.FC = () => {
               {/* Origins and Tracks */}
               <ActionItem text={'Tracks'} />
               <GridTwoCol>
-                <NavCard
+                <NavCardThin
                   title={'Polkadot'}
                   onClick={() => handleOpenTracks('Polkadot')}
-                  childrenLogo={
-                    <PolkadotSVG
-                      width={'1.8rem'}
-                      opacity={0.8}
-                      className="svg-wrapper"
-                    />
-                  }
+                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
                   childrenSubtitle={
                     <span>Tracks on the Polkadot network.</span>
                   }
                 />
 
-                <NavCard
+                <NavCardThin
                   title={'Kusama'}
                   onClick={() => handleOpenTracks('Kusama')}
-                  childrenLogo={
-                    <KusamaSVG
-                      width={'2.2rem'}
-                      opacity={0.8}
-                      className="svg-wrapper"
-                    />
-                  }
+                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
                   childrenSubtitle={<span>Tracks on the Kusama network.</span>}
                 />
               </GridTwoCol>
