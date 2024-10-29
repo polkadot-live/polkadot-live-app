@@ -26,19 +26,16 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper, StickyHeadings } from './Wrappers';
+import { NoteWrapper } from './Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
-import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { ReferendaProps } from '../types';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
-  const { status: overlayStatus } = useOverlay();
 
   const {
     referenda,
@@ -49,8 +46,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
-
-  const { usePolkassemblyApi } = usePolkassembly();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -401,28 +396,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   <>{renderPlaceholders(4)}</>
                 ) : (
                   <>
-                    {/* Sticky Headings */}
-                    {!groupingOn && !fetchingReferenda && (
-                      <StickyHeadings
-                        style={{ opacity: overlayStatus === 0 ? 1 : 0 }}
-                      >
-                        <div className="content-wrapper">
-                          <div className="left">
-                            <div className="heading">ID</div>
-                            <div className="heading">
-                              {usePolkassemblyApi
-                                ? 'Title and Origin'
-                                : 'Origin'}
-                            </div>
-                          </div>
-                          <div className="right">
-                            <div className="heading">Portal Links</div>
-                            <div className="heading">Subscribe / Show All</div>
-                          </div>
-                        </div>
-                      </StickyHeadings>
-                    )}
-
                     {renderCategorised()}
                     {renderListed()}
                     {renderSubscribedCategorised()}

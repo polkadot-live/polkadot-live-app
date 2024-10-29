@@ -113,66 +113,6 @@ export const NoteWrapper = styled.div`
   }
 `;
 
-export const StickyHeadings = styled.div`
-  background-color: var(--background-modal);
-  position: sticky;
-  top: -1.55rem;
-  z-index: 15;
-
-  .content-wrapper {
-    display: flex;
-    column-gap: 1rem;
-    align-items: center;
-
-    div {
-      padding: 0.4rem 0 0.4rem;
-    }
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 70px;
-        padding-left: 20px;
-      }
-      div:nth-child(2) {
-        min-width: 40px;
-      }
-    }
-
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 154px;
-      }
-      div:nth-child(2) {
-        padding-right: 22px;
-        text-align: right;
-        min-width: 152px;
-      }
-    }
-  }
-
-  .heading {
-    font-size: 0.92rem;
-    color: var(--text-color-secondary);
-    font-weight: 500;
-    opacity: 0.6;
-    transition: opacity 0.2s ease-out;
-    cursor: default;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`;
-
 export const ReferendumRowWrapper = styled.div`
   position: relative;
   padding: 1rem 1.25rem;
