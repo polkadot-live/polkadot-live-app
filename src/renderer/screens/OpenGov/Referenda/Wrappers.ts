@@ -4,15 +4,6 @@
 import styled, { css } from 'styled-components';
 import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
-/**
- * Provides the following styled components:
- *   TitleWithOrigin
- *   MoreOverlay
- *   NoteWrapper
- *   ReferendaGroup
- *   ReferendumRowWrapper
- */
-
 const mixinRowButton = css`
   font-size: 1.3rem;
   padding: 0.4rem 1rem;
