@@ -4,36 +4,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-/**
- * Provides the following styled components:
- *   TrackGroup
- *   StickyHeadings
- *   TrackItem
- */
-
-export const TrackGroup = styled.div`
-  --container-border-radius: 1.25rem;
-
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
-  border-radius: var(--container-border-radius);
-  border: 1px solid var(--border-mid-color);
-
-  > div {
-    border-bottom: 2px solid var(--background-default);
-  }
-  > div:first-of-type {
-    border-top-right-radius: var(--container-border-radius);
-    border-top-left-radius: var(--container-border-radius);
-  }
-  > div:last-of-type {
-    border-bottom-right-radius: var(--container-border-radius);
-    border-bottom-left-radius: var(--container-border-radius);
-    border-bottom: none;
-  }
-`;
-
 export const StickyHeadings = styled.div`
   background-color: var(--background-modal);
   position: sticky;
