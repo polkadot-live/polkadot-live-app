@@ -60,7 +60,7 @@ export const HardwareAddressWrapper = styled.div`
       border-color: #2d2d2d;
       padding: 0.45rem 0.5rem;
       font-size: 0.85rem;
-      transition: color 150ms ease-out;
+      transition: all 150ms ease-out;
 
       &:hover {
         background-color: #373737;
