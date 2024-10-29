@@ -136,7 +136,7 @@ export class Track {
   get decisionPeriod() {
     return this._decisionPeriod;
   }
-  get helpHey() {
+  get helpKey() {
     return this._helpKey;
   }
   get maxDeciding() {
