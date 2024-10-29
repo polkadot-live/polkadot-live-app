@@ -127,6 +127,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         multiple
         defaultIndex={accordionActiveIndices}
         setExternalIndices={setAccordionActiveIndices}
+        gap={'0.5rem'}
+        panelPadding={'0.5rem 0.25rem'}
       >
         {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
           ([origin, infos], i) => (
