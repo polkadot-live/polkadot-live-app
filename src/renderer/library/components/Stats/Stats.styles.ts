@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import { mixinHelpIcon } from '../Common';
 
 export const MainHeading = styled.h1`
   color: rgb(211 48 121);
@@ -16,7 +17,7 @@ export const SubHeading = styled.div`
   gap: 0.75rem;
   color: #b8b3b9;
   h2 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     padding: 0 0.2rem;
     user-select: none;
   }
@@ -46,7 +47,7 @@ export const StatsSectionWrapper = styled.div`
   row-gap: 1rem;
 
   .total-item {
-    background-color: #292929 !important;
+    background-color: #242424 !important;
     h3,
     span {
       font-size: 1.26rem !important;
@@ -71,13 +72,13 @@ export const StatsSectionWrapper = styled.div`
     cursor: pointer;
 
     &:hover {
-      background-color: #1a1919;
+      background-color: #151515;
     }
   }
 `;
 
 export const StatItem = styled.div`
-  background-color: #212121;
+  background-color: #1c1c1c;
   display: flex;
   align-items: start;
   flex-direction: column;
@@ -93,15 +94,10 @@ export const StatItem = styled.div`
       flex: 1;
     }
     .help {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.6rem;
-      height: 1.5rem;
+      ${mixinHelpIcon}
       font-size: 0.85rem;
-      border-radius: 0.275rem;
       transition: background-color 150ms ease-out;
-      cursor: pointer;
+      border-radius: 0.275rem;
       &:hover {
         background-color: #191919;
       }
@@ -109,6 +105,7 @@ export const StatItem = styled.div`
   }
 
   h3 {
+    width: 100%;
     color: #d1d1d1;
     font-size: 1.1rem;
     font-weight: 600;

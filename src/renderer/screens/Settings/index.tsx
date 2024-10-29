@@ -16,6 +16,7 @@ import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { Scrollable } from '@/renderer/library/styles';
 import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
+import { ItemsColumn } from '../Home/Manage/Wrappers';
 import type { OsPlatform, SettingItem } from './types';
 
 export const Settings: React.FC = () => {
@@ -91,6 +92,8 @@ export const Settings: React.FC = () => {
         <Accordion
           defaultIndex={accordionActiveIndices}
           setExternalIndices={setAccordionActiveIndices}
+          gap={'0.5rem'}
+          panelPadding={'0.5rem 0.25rem'}
         >
           {Array.from(getSortedSettings().entries()).map(
             ([category, settings], i) => (
@@ -101,10 +104,7 @@ export const Settings: React.FC = () => {
                   wide={true}
                 />
                 <AccordionPanel>
-                  <div
-                    className="flex-column"
-                    style={{ padding: '0 0.75rem', marginBottom: '1.5rem' }}
-                  >
+                  <ItemsColumn>
                     {settings.map((setting, j) => (
                       <Setting
                         key={j}
@@ -112,7 +112,7 @@ export const Settings: React.FC = () => {
                         handleSetting={handleSetting}
                       />
                     ))}
-                  </div>
+                  </ItemsColumn>
                 </AccordionPanel>
               </AccordionItem>
             )

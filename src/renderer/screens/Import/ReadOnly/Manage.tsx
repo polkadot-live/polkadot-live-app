@@ -34,6 +34,7 @@ import {
 /// Type imports.
 import type { FormEvent } from 'react';
 import type { ManageReadOnlyProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   const { readOnlyAddresses: addresses, isAlreadyImported } = useAddresses();
@@ -170,43 +171,41 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
         </HardwareAddressWrapper>
 
         {/* Address List */}
-        <ContentWrapper style={{ padding: '1.25rem 2rem 0' }}>
+        <ContentWrapper
+          style={{ padding: '1.25rem 2rem 0', marginTop: '1rem' }}
+        >
           <Accordion
             multiple
             defaultIndex={accordionActiveIndices}
             setExternalIndices={setAccordionActiveIndices}
+            gap={'0.5rem'}
+            panelPadding={'0.5rem 0.25rem'}
           >
             {Array.from(getSortedLocalAddresses(addresses).entries()).map(
               ([chainId, chainAddresses], i) => (
                 <div key={`${chainId}_read_only_addresses`}>
                   <AccordionItem>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />
                     <AccordionPanel>
-                      <div className="items-wrapper">
-                        <div className="items round-primary-border">
-                          {addresses.length ? (
-                            <>
-                              {chainAddresses.map((localAddress, j) => (
-                                <Address
-                                  key={`address_${localAddress.name}`}
-                                  localAddress={localAddress}
-                                  orderData={{
-                                    curIndex: j,
-                                    lastIndex: chainAddresses.length - 1,
-                                  }}
-                                  setSection={setSection}
-                                />
-                              ))}
-                            </>
-                          ) : (
-                            <p>No read only addresses imported.</p>
-                          )}
-                        </div>
-                      </div>
+                      <ItemsColumn>
+                        {addresses.length ? (
+                          <>
+                            {chainAddresses.map((localAddress) => (
+                              <Address
+                                key={`address_${localAddress.name}`}
+                                localAddress={localAddress}
+                                setSection={setSection}
+                              />
+                            ))}
+                          </>
+                        ) : (
+                          <p>No read only addresses imported.</p>
+                        )}
+                      </ItemsColumn>
                     </AccordionPanel>
                   </AccordionItem>
                 </div>

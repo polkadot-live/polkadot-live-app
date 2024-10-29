@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { AccountsWrapper } from './Wrappers';
+import { FlexColumn, ItemsColumn } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
@@ -28,6 +28,7 @@ import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
@@ -44,7 +45,6 @@ import type {
   SubscriptionTask,
   TaskCategory,
 } from '@/types/subscriptions';
-import { useConnections } from '@/renderer/contexts/common/Connections';
 
 export const Permissions = ({
   breadcrumb,
@@ -407,6 +407,8 @@ export const Permissions = ({
       multiple
       defaultIndex={getAccordionIndices()}
       setExternalIndices={getAccordionIndicesSetter()}
+      gap={'0.5rem'}
+      panelPadding={'0.5rem'}
     >
       {Array.from(categorisedTasks.entries()).map(([category, tasks], j) => (
         <AccordionItem key={`${category}_${j}`}>
@@ -432,7 +434,7 @@ export const Permissions = ({
             }
           />
           <AccordionPanel>
-            <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+            <ItemsColumn>
               {tasks
                 .sort((a, b) => a.label.localeCompare(b.label))
                 .map((task: SubscriptionTask, i: number) => (
@@ -446,7 +448,7 @@ export const Permissions = ({
                     getTaskType={getTaskType}
                   />
                 ))}
-            </div>
+            </ItemsColumn>
           </AccordionPanel>
         </AccordionItem>
       ))}
@@ -459,6 +461,8 @@ export const Permissions = ({
       multiple
       defaultIndex={accordionActiveIntervalIndices}
       setExternalIndices={setAccordionActiveIntervalIndices}
+      gap={'0.5rem'}
+      panelPadding={'0.5rem'}
     >
       {Array.from(getCategorizedDynamicIntervals().entries()).map(
         ([referendumId, intervalTasks], i) => (
@@ -482,14 +486,14 @@ export const Permissions = ({
               }
             />
             <AccordionPanel>
-              <div className="flex-column" style={{ padding: '0 0.75rem' }}>
+              <ItemsColumn>
                 {intervalTasks.map((task: IntervalSubscription, j: number) => (
                   <IntervalRow
                     key={`${j}_${task.referendumId}_${task.action}`}
                     task={task}
                   />
                 ))}
-              </div>
+              </ItemsColumn>
             </AccordionPanel>
           </AccordionItem>
         )
@@ -499,7 +503,7 @@ export const Permissions = ({
 
   return (
     <>
-      <ControlsWrapper $sticky={true} style={{ padding: '0 0.75rem' }}>
+      <ControlsWrapper $sticky={false}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
@@ -526,12 +530,12 @@ export const Permissions = ({
         </div>
       </ControlsWrapper>
 
-      <AccountsWrapper>
+      <FlexColumn style={{ marginTop: '1.5rem' }}>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
         {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
-      </AccountsWrapper>
+      </FlexColumn>
     </>
   );
 };

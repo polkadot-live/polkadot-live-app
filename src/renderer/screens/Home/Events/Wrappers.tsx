@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -46,22 +46,50 @@ export const NoEventsWrapper = styled.div`
 
 export const EventGroup = styled.div`
   width: 100%;
-  border-radius: 0.9rem;
   z-index: 2;
-  padding: 0 0.5rem;
-  margin-bottom: 1rem;
 
   .items-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 1rem;
-    padding: 0 0.25rem;
+    row-gap: 0.25rem;
+
+    > div {
+      background-color: #1c1c1c;
+    }
+    > div:first-of-type {
+      border-top-left-radius: 0.375rem;
+      border-top-right-radius: 0.375rem;
+    }
+    > div:last-of-type {
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+    }
+  }
+`;
+
+// Mixin for event item buttons.
+const eventBtnBase = css`
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  padding: 0;
+  cursor: pointer;
+
+  svg {
+    color: var(--text-color-primary);
+    opacity: 0.4;
+    transition: opacity 0.2s ease-out;
+  }
+  &:hover {
+    svg {
+      opacity: 1;
+    }
   }
 `;
 
 export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
-
   position: relative;
 
   // Time ago
@@ -80,65 +108,28 @@ export const EventItem = styled(motion.div)`
 
   // Dismiss button
   > .dismiss-btn {
-    --main-color: #4f4f4f;
-    position: absolute;
-    width: 2rem;
-    height: 2rem;
-    opacity: 0.75;
+    ${eventBtnBase}
     top: 1rem;
     right: 10px;
-    transition: color 0.2s ease-out;
-    padding: 0;
-    border-radius: 0.5rem;
-    border: 1px solid var(--main-color);
-    cursor: pointer;
+  }
 
-    svg {
-      color: var(--main-color);
-    }
-    &:hover {
-      border-color: rgb(169 74 117);
-      svg {
-        color: rgb(169 74 117);
-      }
-    }
+  // Time ago button
+  > .time-ago-btn {
+    ${eventBtnBase}
+    top: 3.1rem;
+    right: 10px;
   }
 
   // Show actions buttons
   .show-actions-btn {
-    --main-color: #4f4f4f;
-    position: absolute;
-    border: 1px solid var(--main-color);
-    top: 4rem;
+    ${eventBtnBase}
+    top: 5.2rem;
     right: 10px;
-    width: 2rem;
-    height: 2rem;
-    opacity: 0.75;
-    border-radius: 0.5rem;
-    padding: 0;
-    cursor: pointer;
-    transition: opacity 0.1s ease-out;
-
-    svg {
-      color: var(--main-color);
-    }
-
-    &:hover {
-      border-color: rgb(169 74 117);
-      svg {
-        color: rgb(169 74 117);
-      }
-      opacity: 0.75;
-    }
   }
 
   > div {
-    background: var(--background-default);
-    border: 1px solid var(--border-primary-color);
     width: 100%;
-    border-radius: 1.25rem;
-    padding: 1rem;
-
+    padding: 1.15rem 1rem;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -147,7 +138,7 @@ export const EventItem = styled(motion.div)`
     > section {
       display: flex;
       justify-content: center;
-      column-gap: 1rem;
+      column-gap: 0.5rem;
 
       // All direct divs
       > div {
@@ -200,12 +191,11 @@ export const EventItem = styled(motion.div)`
         }
 
         h4,
-        h5,
-        p {
-          font-size: 1.1rem;
+        h5 {
+          font-size: 1.15rem;
         }
         h4 {
-          color: var(--text-color-primary);
+          color: #b8b3b9;
           font-weight: 600;
         }
         h5 {
@@ -213,12 +203,16 @@ export const EventItem = styled(motion.div)`
           margin: 0.35rem 0;
         }
         p {
+          color: #b8b3b9;
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
+          font-size: 1.2rem;
+          padding-right: 2.25rem;
         }
       }
     }
   }
+
   // Actions container
   .actions-wrapper {
     width: 200%;
@@ -255,6 +249,7 @@ export const EventItem = styled(motion.div)`
       }
     }
   }
+
   &:last-child {
     margin-bottom: 0;
   }

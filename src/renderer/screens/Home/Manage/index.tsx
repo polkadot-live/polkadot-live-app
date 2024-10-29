@@ -28,7 +28,7 @@ export const Manage = ({ addresses }: ManageProps) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: '1rem',
+        rowGap: '0.75rem',
         padding: '2rem 0 1rem',
       }}
     >
@@ -57,7 +57,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           },
         }}
       >
-        <div className="scrollable" style={{ padding: '0 0.75rem' }}>
+        <div className="scrollable" style={{ padding: '0 1rem' }}>
           {/* List of accounts and chains */}
           <Wrapper>
             <Accounts
@@ -68,7 +68,7 @@ export const Manage = ({ addresses }: ManageProps) => {
             />
           </Wrapper>
         </div>
-        <div className="scrollable" style={{ padding: '0 0.75rem' }}>
+        <div className="scrollable" style={{ padding: '0 1rem' }}>
           {/* Subscription toggles for selected account or chain */}
           <Permissions
             setSection={setSection}

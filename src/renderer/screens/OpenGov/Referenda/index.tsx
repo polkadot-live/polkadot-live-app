@@ -26,18 +26,16 @@ import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper, ReferendaGroup, StickyHeadings } from './Wrappers';
+import { NoteWrapper } from './Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
 import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
-import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
 import type { ReferendaProps } from '../types';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
-  const { status: overlayStatus } = useOverlay();
 
   const {
     referenda,
@@ -48,8 +46,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
-
-  const { usePolkassemblyApi } = usePolkassembly();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -131,6 +127,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         multiple
         defaultIndex={accordionActiveIndices}
         setExternalIndices={setAccordionActiveIndices}
+        gap={'0.5rem'}
+        panelPadding={'0.5rem 0.25rem'}
       >
         {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
           ([origin, infos], i) => (
@@ -141,7 +139,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 wide={true}
               />
               <AccordionPanel>
-                <ReferendaGroup>
+                <ItemsColumn>
                   {infos.map((referendum, j) => (
                     <ReferendumRow
                       key={`${j}_${referendum.referendaId}`}
@@ -149,7 +147,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                     />
                   ))}
-                </ReferendaGroup>
+                </ItemsColumn>
               </AccordionPanel>
             </AccordionItem>
           )
@@ -188,7 +186,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 wide={true}
               />
               <AccordionPanel>
-                <ReferendaGroup>
+                <ItemsColumn>
                   {infos.map((referendum, j) => (
                     <ReferendumRow
                       key={`${j}_${referendum.referendaId}`}
@@ -196,7 +194,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                       index={j}
                     />
                   ))}
-                </ReferendaGroup>
+                </ItemsColumn>
               </AccordionPanel>
             </AccordionItem>
           ))}
@@ -207,8 +205,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   /// Render referenda as single list.
   const renderListed = () => (
-    <ReferendaGroup
-      style={{ display: groupingOn || onlySubscribed ? 'none' : 'block' }}
+    <ItemsColumn
+      style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
     >
       {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
         <ReferendumRow
@@ -217,19 +215,19 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           index={i}
         />
       ))}
-    </ReferendaGroup>
+    </ItemsColumn>
   );
 
   /// Render subscribed referenda as a single list.
   const renderSubscribedListed = () => {
-    const display = groupingOn || !onlySubscribed ? 'none' : 'block';
+    const display = groupingOn || !onlySubscribed ? 'none' : 'flex';
 
     return isNotSubscribedToAny(chainId) ? (
       <div style={{ display }}>
         <p>You have not subscribed to any referenda.</p>
       </div>
     ) : (
-      <ReferendaGroup style={{ display }}>
+      <ItemsColumn style={{ display }}>
         {getSortedActiveReferenda(newestFirst, getSubscribedReferenda()).map(
           (referendum, i) => (
             <ReferendumRow
@@ -239,7 +237,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             />
           )
         )}
-      </ReferendaGroup>
+      </ItemsColumn>
     );
   };
 
@@ -387,24 +385,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             </NoteWrapper>
           )}
 
-          {/* Sticky Headings */}
-          {!groupingOn && !fetchingReferenda && (
-            <StickyHeadings style={{ opacity: overlayStatus === 0 ? 1 : 0 }}>
-              <div className="content-wrapper">
-                <div className="left">
-                  <div className="heading">ID</div>
-                  <div className="heading">
-                    {usePolkassemblyApi ? 'Title and Origin' : 'Origin'}
-                  </div>
-                </div>
-                <div className="right">
-                  <div className="heading">Portal Links</div>
-                  <div className="heading">Subscribe / Show All</div>
-                </div>
-              </div>
-            </StickyHeadings>
-          )}
-
           {/* List referenda */}
           <section>
             {!isConnected ? (
@@ -413,11 +393,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 <p>Please reconnect to load OpenGov referenda.</p>
               </div>
             ) : (
-              <div>
+              <div style={{ marginTop: '2rem' }}>
                 {fetchingReferenda ? (
-                  <div style={{ marginTop: '2rem' }}>
-                    {renderPlaceholders(4)}
-                  </div>
+                  <>{renderPlaceholders(4)}</>
                 ) : (
                   <>
                     {renderCategorised()}

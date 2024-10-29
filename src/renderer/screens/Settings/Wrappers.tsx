@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { mixinHelpIcon } from '@app/library/components/Common';
 
 export const ContentWrapper = styled.div`
   width: 100%;
@@ -14,94 +15,22 @@ export const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
-    margin: 0.5rem 0;
-  }
-`;
-
-export const SpinnerWrapper = styled.div`
-  position: relative;
-
-  /* 3 Dot Spinner */
-  .lds-ellipsis {
-    /* change color here */
-    color: #afafaf;
-  }
-  .lds-ellipsis,
-  .lds-ellipsis div {
-    box-sizing: border-box;
-  }
-  .lds-ellipsis {
-    margin-left: 8px;
-    top: 12px;
-    display: inline-block;
-    position: relative;
-  }
-  .lds-ellipsis div {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-  .lds-ellipsis div:nth-child(1) {
-    left: 4px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(2) {
-    left: 4px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(3) {
-    left: 16px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-  .lds-ellipsis div:nth-child(4) {
-    left: 28px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(12px, 0);
-    }
   }
 `;
 
 export const SettingWrapper = styled(motion.div)`
-  display: flex;
-  column-gap: 1rem;
-
-  background: var(--background-default);
-  border: 1px solid var(--border-primary-color);
-  width: 100%;
   position: relative;
-  border-radius: 1.25rem;
-  padding: 1rem 1.25rem;
+  display: flex;
+  width: 100%;
+  column-gap: 1rem;
+  padding: 1.15rem 1rem;
+  font-size: 1.15rem;
 
   .left {
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: 1rem;
+    column-gap: 0.5rem;
   }
   .right {
     display: flex;
@@ -109,13 +38,13 @@ export const SettingWrapper = styled(motion.div)`
     justify-content: end;
   }
   .icon-wrapper {
-    padding: 0 0.3rem;
+    ${mixinHelpIcon}
+    font-size: 1rem;
     color: #4a4a4a;
-    cursor: pointer;
-    transform: color 0.2s ease-out;
+    transition: color 0.2s ease-out;
 
     &:hover {
-      color: #953254;
+      color: inherit;
     }
   }
 `;

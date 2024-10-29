@@ -1,27 +1,69 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const HeadingWrapper = styled.div`
+// Base styles to mixin styled header components.
+const headerBase = css`
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  z-index: 3;
-  opacity: 0.75;
   user-select: none;
+  z-index: 3;
   cursor: pointer;
 
   .flex {
-    display: flex;
-    column-gap: 0.5rem;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 0.35rem;
+    border-radius: 0.375rem;
     transition: background-color 0.15s ease-in-out;
-    border-bottom: 1px solid var(--border-secondary-color);
 
     &:hover {
-      background-color: #141414;
+      background-color: #151515;
     }
+    .left {
+      flex: 1;
+      display: flex;
+      justify-content: flex-start;
+
+      h5 {
+        font-family: InterSemiBold, sans-serif;
+        font-size: 1.2rem;
+        padding: 0 0.2rem;
+        line-height: 1.6rem;
+        margin-top: 0;
+
+        > span {
+          color: var(--text-color-primary);
+        }
+      }
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+      padding-right: 1.1rem; // line up with toggles below
+    }
+
+    .icon-wrapper {
+      svg {
+        color: #b8b3b9;
+      }
+    }
+  }
+`;
+
+export const AccordionColumns = styled.div<{ $gap?: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ $gap }) => ($gap ? $gap : '1rem')};
+`;
+
+export const HeadingWrapper = styled.div`
+  ${headerBase}
+
+  .flex {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 0.35rem;
+
     > div {
       display: flex;
       flex-direction: row;
@@ -31,44 +73,21 @@ export const HeadingWrapper = styled.div`
     }
 
     .left {
-      flex: 1;
-      display: flex;
       column-gap: 0.75rem;
-      justify-content: flex-start;
 
       .icon-wrapper {
         min-width: 0.75rem;
-        opacity: 0.4;
       }
-      h5 {
-        > span {
-          color: var(--text-color-primary);
-        }
-      }
-    }
-    .right {
-      display: flex;
-      justify-content: flex-end;
     }
   }
 `;
 
 export const WideHeadingWrapper = styled.div`
-  width: 100%;
-  margin-bottom: 1rem;
-  opacity: 0.75;
-  user-select: none;
-  cursor: pointer;
+  ${headerBase}
 
   .flex {
     padding: 0.25rem 0;
-    transition: background-color 0.15s ease-in-out;
-    border-bottom: 1px solid var(--border-secondary-color);
-    transition: background-color 0.15s ease-in-out;
 
-    &:hover {
-      background-color: #141414;
-    }
     > div {
       display: flex;
       flex-direction: row;
@@ -77,24 +96,10 @@ export const WideHeadingWrapper = styled.div`
       padding: 0.5rem;
     }
     .left {
-      display: flex;
-      justify-content: flex-start;
-      flex: 1;
-
       .icon-wrapper {
-        min-width: 0.75rem;
-        opacity: 0.4;
+        min-width: 0.65rem;
       }
     }
-    .right {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-
-  h5 {
-    display: flex;
-    align-items: flex-end;
   }
 
   .icon {

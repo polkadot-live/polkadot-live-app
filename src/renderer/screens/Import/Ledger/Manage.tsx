@@ -18,6 +18,7 @@ import { getSortedLocalLedgerAddresses } from '@/renderer/utils/ImportUtils';
 import { useAddresses } from '@/renderer/contexts/import/Addresses';
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import type { ImportLedgerManageProps } from '../types';
 
@@ -73,13 +74,15 @@ export const Manage = ({
           />
         </ControlsWrapper>
 
-        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+        <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
           {/* Address List */}
           {addresses.length ? (
             <Accordion
               multiple
               defaultIndex={accordionActiveIndices}
               setExternalIndices={setAccordionActiveIndices}
+              gap={'0.5rem'}
+              panelPadding={'0.5rem 0.25rem'}
             >
               {Array.from(
                 getSortedLocalLedgerAddresses(addresses).entries()
@@ -87,26 +90,20 @@ export const Manage = ({
                 <div key={`${chainId}_ledger_addresses`}>
                   <AccordionItem>
                     <AccordionCaretHeader
-                      title={`${chainId} Accounts`}
+                      title={`${chainId}`}
                       itemIndex={i}
                       wide={true}
                     />
                     <AccordionPanel>
-                      <div className="items-wrapper">
-                        <div className="items round-primary-border">
-                          {chainAddresses.map((localAddress, j) => (
-                            <Address
-                              key={`address_${localAddress.name}`}
-                              localAddress={localAddress}
-                              orderData={{
-                                curIndex: j,
-                                lastIndex: chainAddresses.length - 1,
-                              }}
-                              setSection={setSection}
-                            />
-                          ))}
-                        </div>
-                      </div>
+                      <ItemsColumn>
+                        {chainAddresses.map((localAddress) => (
+                          <Address
+                            key={`address_${localAddress.name}`}
+                            localAddress={localAddress}
+                            setSection={setSection}
+                          />
+                        ))}
+                      </ItemsColumn>
                     </AccordionPanel>
                   </AccordionItem>
                 </div>
