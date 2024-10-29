@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
-import { MoreButton, ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
+import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,8 @@ import {
   faMinus,
   faPlus,
   faHashtag,
+  faUpRightFromSquare,
+  faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { InfoOverlay } from './InfoOverlay';
@@ -93,9 +95,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
                 <div>
                   <p>{renderOrigin(referendum)}</p>
-                  <MoreButton onClick={() => handleMoreClick()}>
-                    More
-                  </MoreButton>
                 </div>
               </TitleWithOrigin>
             ) : (
@@ -105,25 +104,39 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         </div>
         <div className="right">
           <div className="links-wrapper">
+            {/* More */}
+            <button
+              className="btn-more tooltip-trigger-element"
+              onClick={() => handleMoreClick()}
+              data-tooltip-text="View Description"
+              onMouseMove={() => setTooltipTextAndOpen('View Description')}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
+
             {/* Polkassembly */}
             <button
-              className="btn-polkassembly"
+              className="btn-polkassembly tooltip-trigger-element"
+              data-tooltip-text="Polkassembly"
+              onMouseMove={() => setTooltipTextAndOpen('Polkassembly')}
               onClick={() => {
                 window.myAPI.openBrowserURL(uriPolkassembly);
                 window.myAPI.umamiEvent('link-open', { dest: 'polkassembly' });
               }}
             >
-              Polkassembly
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
             </button>
             {/* Subsquare */}
             <button
-              className="btn-subsquare"
+              className="btn-subsquare tooltip-trigger-element"
+              data-tooltip-text="Subsquare"
+              onMouseMove={() => setTooltipTextAndOpen('Subsquare')}
               onClick={() => {
                 window.myAPI.openBrowserURL(uriSubsquare);
                 window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
               }}
             >
-              Subsquare
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
             </button>
           </div>
           {/* Add + Remove Subscriptions */}

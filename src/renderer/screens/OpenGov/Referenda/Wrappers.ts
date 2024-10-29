@@ -1,17 +1,23 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 /**
  * Provides the following styled components:
  *   TitleWithOrigin
- *   MoreButton
  *   MoreOverlay
  *   NoteWrapper
  *   ReferendaGroup
  *   ReferendumRowWrapper
  */
+
+const mixinRowButton = css`
+  font-size: 1.3rem;
+  padding: 0.4rem 1rem;
+  transition: color 150ms ease-out;
+  cursor: pointer;
+`;
 
 export const TitleWithOrigin = styled.div`
   display: flex;
@@ -29,18 +35,6 @@ export const TitleWithOrigin = styled.div`
       margin: 0;
       font-size: 0.9rem;
     }
-  }
-`;
-
-export const MoreButton = styled.button`
-  font-size: 0.85rem;
-  background-color: var(--border-primary-color);
-  padding: 1px 6px;
-  border-radius: 1.25rem;
-  transition: background-color 0.2s ease-out;
-
-  &:hover {
-    background-color: var(--border-mid-color);
   }
 `;
 
@@ -249,32 +243,25 @@ export const ReferendumRowWrapper = styled.div`
     opacity: 0.5;
     transition: opacity 0.2s ease-out;
 
-    .btn-polkassembly {
-      font-size: 0.95rem;
-      color: rgb(169, 74, 117);
-      padding: 0.4rem 1rem;
-      border-radius: 1.25rem;
-      background-color: #101010;
-      border: 1px solid var(--background-default);
-      transition: border-color 0.2s ease-out;
-      cursor: pointer;
-
+    .btn-more {
+      ${mixinRowButton}
+      color: #8d8d8d;
       &:hover {
-        border-color: rgb(169, 74, 117);
+        color: #f1f1f1;
+      }
+    }
+    .btn-polkassembly {
+      ${mixinRowButton}
+      color: rgb(172 80 122);
+      &:hover {
+        color: rgb(255 108 174);
       }
     }
     .btn-subsquare {
-      font-size: 0.95rem;
+      ${mixinRowButton}
       color: rgb(92 129 177);
-      padding: 0.4rem 1rem;
-      border-radius: 1.25rem;
-      background-color: #101010;
-      border: 1px solid var(--background-default);
-      cursor: pointer;
-      transition: border-color 0.2s ease-out;
-
       &:hover {
-        border-color: rgb(92 129 177);
+        color: rgb(171 208 255);
       }
     }
   }
