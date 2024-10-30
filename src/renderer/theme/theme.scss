@@ -32,21 +32,30 @@ SPDX-License-Identifier: GPL-3.0-only */
 }
 
 .theme-dark {
-  // NEW
+  /* General: Backgrounds */
   --background-window: #111;
   --background-surface: #181818;
+  --background-primary: #1c1c1c;
+  --accent-primary: #ac2461;
 
   /* Side Nav */
   --nav-background: #1a1919;
   --nav-button-background: #313131;
-  --nav-button-background-active: #ac2461;
+  --nav-button-background-active: var(--accent-primary);
   --nav-button-background-hover: #3d3d3d;
   --nav-button-icon: #c9c9c9;     // (??)
   --nav-button-text: #b8b3b9;     // (text-color-primary)
 
+  /* Accordion */
+  --accordion-background-hover: #151515;
+
   /* Header */
   --badge-alpha-color: #959595;   // (??)
   --badge-alpha-background: #2a2a2a;
+
+  /* Stats */
+  --stats-background-highlight: #242424;
+  --stats-text-title: #d1d1d1;
 
   /* General: Borders */
   --border-primary-color: #262626;
@@ -54,13 +63,15 @@ SPDX-License-Identifier: GPL-3.0-only */
   --border-mid-color: #333;
 
   /* General: Text */
+  --text-main-heading: #d33079;
+  --text-highlight: #f1f1f1;
   --text-color-primary: #b8b3b9;
   --text-color-secondary: #938e94;
   --text-color-invert: #0f0e0f;
 
   // OLD
   --background-default: #171717;
-  --background-primary: #141414;
+  //--background-primary: #141414;
   --background-invert: #ddd;
   --background-modal: #111;
   --background-status-overlay: rgb(43 38 43 / 75%);
