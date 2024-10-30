@@ -5,9 +5,9 @@ import styled from 'styled-components';
 
 /* 3 Dot Spinner */
 export const EllipsisSpinnerWrapper = styled.div`
+  color: #afafaf;
   position: absolute;
   top: 12px;
-  color: #afafaf;
   box-sizing: border-box;
   margin-left: 8px;
   display: inline-block;

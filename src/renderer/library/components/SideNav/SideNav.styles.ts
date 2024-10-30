@@ -53,17 +53,17 @@ export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
 `;
 
 export const SideNavWrapper = styled.nav<{ $isCollapsed: boolean }>`
+  border-top: 1px solid var(--border-primary-color);
+  background-color: var(--nav-background);
   flex: 1;
   display: flex;
   flex-direction: column;
   align-self: stretch;
   max-width: ${(props) => (props.$isCollapsed ? '74px' : '98px')};
-  background-color: #1a1919;
   padding: ${(props) => (props.$isCollapsed ? '0' : '0 0.7rem')};
   padding-top: 2rem;
   padding-bottom: 1rem;
   align-items: center;
   gap: 0.75rem;
   overflow-y: auto;
-  border-top: 1px solid var(--border-primary-color);
 `;

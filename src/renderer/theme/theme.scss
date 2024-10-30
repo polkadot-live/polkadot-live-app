@@ -37,8 +37,9 @@ SPDX-License-Identifier: GPL-3.0-only */
   --background-surface: #181818;
   --background-primary: #1c1c1c;
   --background-primary-hover: #212121;
-  --accent-primary: #ac2461;
   --background-overlay: rgb(22 18 22 / 70%);
+  --accent-primary: #ac2461;
+  --accent-secondary: #a94a75;
 
   /* Chains */
   --polkadot-pink: #ac2461;
@@ -54,6 +55,11 @@ SPDX-License-Identifier: GPL-3.0-only */
   --nav-button-background-hover: #3d3d3d;
   --nav-button-icon: #c9c9c9;     // (??)
   --nav-button-text: #b8b3b9;     // (text-color-primary)
+
+  /* Sort Controls */
+  --sort-button-background: #313131;
+  --sort-button-background-hover: #3a3a3a;
+  --sort-button-text: #ededed;
 
   /* Accordion */
   --accordion-background-hover: #151515;
