@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { mixinHelpIcon } from '@app/library/components/Common';
 
 export const ContentWrapper = styled.div`
+  background-color: var(--background-window);
   width: 100%;
   position: relative;
   padding: 1.5rem;
-  background-color: var(--background-modal);
 
   .flex-column {
     display: flex;
@@ -39,15 +39,19 @@ export const SettingWrapper = styled(motion.div)`
   }
   .icon-wrapper {
     ${mixinHelpIcon}
+    color: var(--text-dimmed);
     font-size: 1rem;
-    color: #4a4a4a;
     transition: color 0.2s ease-out;
 
     &:hover {
-      color: inherit;
+      color: var(--text-highlight);
     }
   }
 `;
+
+/* ------------------------------------------------------------ */
+/* Workspaces                                                   */
+/* ------------------------------------------------------------ */
 
 export const WorkspacesContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -135,13 +139,13 @@ export const WorkspaceRowWrapper = styled.div`
 `;
 
 export const ConfirmWrapper = styled.div`
+  background-color: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2.5rem;
-  border: 1px solid var(--border-primary-color);
-  background-color: var(--background-default);
 
   h3,
   h5,
