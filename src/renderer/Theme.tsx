@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-//import { setStateWithRef } from '@w3ux/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import { Router } from './Router';
 import { useRef, useState } from 'react';

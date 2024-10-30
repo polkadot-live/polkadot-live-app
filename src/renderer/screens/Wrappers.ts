@@ -11,7 +11,7 @@ export const HeaderWrapper = styled.div`
   z-index: 5;
   width: 100%;
 
-  background-color: var(--background-menu);
+  background-color: var(--background-surface);
   border-bottom: 1px solid var(--border-primary-color);
 
   .content {
@@ -49,7 +49,7 @@ export const ContentWrapper = styled.div`
   width: 100%;
   position: relative;
   padding: 0 1.5rem;
-  background-color: var(--background-modal);
+  background-color: var(--background-window);
 
   .grid-wrapper {
     display: grid;
@@ -148,10 +148,10 @@ export const ContentWrapper = styled.div`
 `;
 
 export const WindowWrapper = styled.div`
+  background-color: var(--background-modal);
   width: 100%;
   position: relative;
   padding: 0 1.5rem;
-  background-color: var(--background-modal);
 
   display: flex;
   flex-direction: column;
