@@ -2,26 +2,86 @@
 SPDX-License-Identifier: GPL-3.0-only */
 
 .theme-light {
-  --background-default: #efeeee;
-  --background-primary: #f8f7f7;
-  --background-invert: #333;
-  --background-modal: #f9f7f7;
-  --background-status-overlay: rgb(255 255 255 / 85%);
-  --background-menu: #eaeaea;
+  /* General: Backgrounds */
+  --background-window: #111;
+  --background-surface: #181818;
+  --background-primary: #1c1c1c;
+  --background-primary-hover: #212121;
+  --background-overlay: rgb(22 18 22 / 70%);
+  --accent-primary: #ac2461;
+  --accent-secondary: #a94a75;
 
-  --text-color-primary: #3f3f3f;
-  --text-color-secondary: #555;
-  --text-color-invert: #fafafa;
-
+  /* General: Borders */
   --border-primary-color: #e4e4e4;
   --border-secondary-color: #cfcccc;
+  --border-mid-color: #3a3a3a;
 
+  /* General: Buttons */
+  --button-background-primary: #2d2d2d;
+  --button-background-primary-hover: #373737;
+  --button-pink-background: #953254;
+  --button-pink-color: #ededed;
+  --button-background-secondary: #464646;
+
+  /* General: Chains */
+  --polkadot-pink: #ac2461;
+
+  /* General: Scrollbar */
+  --scrollbar-track-background-color: #101010;
+  --scrollbar-thumb-background-color: #212121;
+
+  /* General: Text */
+  --text-main-heading: #d33079;
+  --text-highlight: #f1f1f1;
+  --text-dimmed: #5a5a5a;
+  --text-color-primary: #3f3f3f;
+  --text-color-secondary: #555;
+  --text-color-tertiary: #c7c7c7;
+  --text-color-invert: #fafafa;
+
+  /* Accordion */
+  --accordion-background-hover: #151515;
+
+  /* Cog Menu */
+  --menu-button-hover: #333;
+  --menu-text-disabled: #636363;
+  --card-shadow-color: rgb(158 158 158 / 20%);
+
+  /* Ellipsis Spinner */
+  --ellipsis-spinner-color: #afafaf;
+
+  /* Header */
+  --badge-alpha-color: #959595;
+  --badge-alpha-background: #2a2a2a;
+
+  /* Side Nav */
+  --nav-background: #1a1919;
+  --nav-button-background: #313131;
+  --nav-button-background-active: var(--accent-primary);
+  --nav-button-background-hover: #3d3d3d;
+  --nav-button-icon: #c9c9c9;
+  --nav-button-text: #b8b3b9;
+
+  /* Sort Controls */
+  --sort-button-background: #313131;
+  --sort-button-background-hover: #3a3a3a;
+  --sort-button-text: #ededed;
+
+  /* Stats */
+  --stats-background-highlight: #242424;
+  --stats-text-title: #d1d1d1;
+
+  /* Legacy */
+  //--background-primary: #f8f7f7;
+  //--background-modal: #f9f7f7;
+  //--background-menu: #eaeaea;
+  --background-default: #efeeee;
+  --background-invert: #333;
+  --background-status-overlay: rgb(255 255 255 / 85%);
+  
   --button-primary-background: #efeeee;
   --button-hover-background: #e8e6e6;
-
   --modal-background-color: rgb(224 222 222 / 70%);
-
-  --card-shadow-color: rgb(158 158 158 / 20%);
 
   --accent-color-primary: var(--accent-color-primary-light);
   --accent-color-secondary: var(--accent-color-secondary-light);
