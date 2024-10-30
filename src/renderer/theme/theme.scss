@@ -32,6 +32,17 @@ SPDX-License-Identifier: GPL-3.0-only */
 }
 
 .theme-dark {
+  // NEW
+  --window-background: #111;
+
+  --nav-background: #1a1919;
+  --nav-button-background: #313131;
+  --nav-button-background-active: #ac2461;
+  --nav-button-background-hover: #3d3d3d;
+  --nav-button-icon: #c9c9c9;     // 	(??)
+  --nav-button-text: #b8b3b9;     // (text-color-primary)
+
+  // OLD
   --background-default: #171717;
   --background-primary: #141414;
   --background-invert: #ddd;

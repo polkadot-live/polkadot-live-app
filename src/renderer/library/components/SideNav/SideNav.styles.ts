@@ -18,25 +18,26 @@ export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
     $size: props.$size,
   })
 )`
+  background-color: var(--nav-button-background);
+  color: var(--nav-button-text);
+
+  &:hover {
+    background-color: var(--nav-button-background-hover);
+  }
+
+  position: relative;
   width: ${(props) => (props.$size === 'fill' ? '90%' : '65%')};
   min-height: ${(props) => (props.$size === 'fill' ? '72px' : '45px')};
-  position: relative;
   padding: 0.5rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
-  background-color: #313131;
   border: none;
   border-radius: 0.375rem;
-  color: #c9c9c9;
   transition-property: color, background-color, border-color,
     text-decoration-color, fill, stroke, width, height;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
   cursor: pointer;
-
-  &:hover {
-    background-color: #3d3d3d;
-  }
 
   .children-container {
     display: block;
