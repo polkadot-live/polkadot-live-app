@@ -95,11 +95,12 @@ export const StatItem = styled.div`
     }
     .help {
       ${mixinHelpIcon}
+      color: var(--text-dimmed);
       font-size: 0.85rem;
-      transition: background-color 150ms ease-out;
+      transition: all 150ms ease-out;
       border-radius: 0.275rem;
       &:hover {
-        background-color: var(--background-surface);
+        color: var(--text-highlight);
       }
     }
   }
