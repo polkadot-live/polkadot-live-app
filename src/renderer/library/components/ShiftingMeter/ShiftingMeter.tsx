@@ -14,7 +14,7 @@ export const ShiftingMeter = ({
   value,
   duration = 700,
   size = 3,
-  color = '#f1f1f1',
+  color = 'var(--text-color-primary)',
 }: ShiftingMeterProps) => (
   <ShiftingMeterWrapper>
     <div

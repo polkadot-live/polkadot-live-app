@@ -32,13 +32,5 @@ export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
   .loading-wrapper {
     display: flex;
     column-gap: 1rem;
-    justify-content: space-between;
-  }
-
-  .content-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    column-gap: 0.5rem;
   }
 `;

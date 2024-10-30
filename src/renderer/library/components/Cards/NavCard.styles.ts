@@ -5,16 +5,16 @@ import styled from 'styled-components';
 import { mixinHelpIcon } from '../Common';
 
 export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
-  background-color: #1c1c1c;
+  background-color: var(--background-primary);
   padding: ${({ $thin }) => ($thin ? '1.5rem 2rem' : '1.75rem 2rem')};
-  transition: background-color 150ms ease-out;
   min-height: ${({ $thin }) => ($thin ? 'fit-content' : '125px')};
+  transition: background-color 150ms ease-out;
   cursor: pointer;
 
   &:hover {
-    background-color: #212121;
+    background-color: var(--background-primary-hover);
     .caret {
-      color: inherit;
+      color: var(--text-color-primary);
     }
   }
 
@@ -46,7 +46,7 @@ export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
       }
       .help-icon {
         ${mixinHelpIcon}
-        color: #5a5a5a;
+        color: var(--text-dimmed);
         transition: color 150ms ease-out;
         &:hover {
           color: inherit;
@@ -59,16 +59,16 @@ export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
         flex-direction: column;
         gap: 0.5rem;
         h1 {
+          color: var(--text-highlight);
           font-size: 1.3rem;
-          color: #f1f1f1;
         }
         a {
-          width: fit-content;
           color: var(--text-color-secondary);
+          width: fit-content;
           display: block;
           cursor: pointer;
           &:hover {
-            color: #d33079;
+            color: var(--accent-primary);
           }
         }
       }
@@ -79,7 +79,7 @@ export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
       justify-content: end;
       align-content: center;
       font-size: 1.25rem;
-      color: #5a5a5a;
+      color: var(--text-dimmed);
       transition: color 150ms ease-out;
     }
   }

@@ -4,13 +4,13 @@
 import styled from 'styled-components';
 
 export const ConfirmWrapper = styled.div`
+  background-color: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2.5rem;
-  border: 1px solid var(--border-primary-color);
-  background-color: var(--background-default);
 
   h3,
   h5,

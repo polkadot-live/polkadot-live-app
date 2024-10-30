@@ -36,9 +36,9 @@ export const ListWrapper = styled(motion.div)`
 `;
 
 export const DefinitionWrapper = styled(motion.div)`
-  background: var(--background-modal);
-  border-radius: 1.5rem;
+  background: var(--background-surface);
   border: 1px solid var(--border-primary-color);
+  border-radius: 0.375rem;
 
   display: flex;
   flex-flow: row wrap;
@@ -50,7 +50,6 @@ export const DefinitionWrapper = styled(motion.div)`
 
   @media (min-width: 0px) and (max-width: 425px) {
     padding: 1.5rem;
-    border-radius: 1rem;
   }
 
   .header {
@@ -119,7 +118,7 @@ export const ItemWrapper = styled(motion.div)<{
 
   > * {
     background: var(--background-floating-card);
-    border-radius: 1.5rem;
+    border-radius: 0.375rem;
     flex: 1;
     padding: 1.5rem;
     display: flex;

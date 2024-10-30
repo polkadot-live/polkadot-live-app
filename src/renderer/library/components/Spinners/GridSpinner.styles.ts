@@ -11,11 +11,11 @@ export const GridSpinnerWrapper = styled.div`
   height: 80px;
 
   div {
+    background: var(--text-color-secondary);
     position: absolute;
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--text-color-secondary);
     animation: lds-grid 1.2s linear infinite;
   }
   div:nth-child(1) {

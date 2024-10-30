@@ -16,7 +16,7 @@ const headerBase = css`
     transition: background-color 0.15s ease-in-out;
 
     &:hover {
-      background-color: #151515;
+      background-color: var(--accordion-background-hover);
     }
     .left {
       flex: 1;
@@ -43,7 +43,7 @@ const headerBase = css`
 
     .icon-wrapper {
       svg {
-        color: #b8b3b9;
+        color: var(--text-color-primary);
       }
     }
   }

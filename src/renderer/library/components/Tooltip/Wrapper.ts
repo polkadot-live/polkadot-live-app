@@ -4,9 +4,8 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  background: var(--background-modal);
+  background: var(--background-window);
   border: 1px solid var(--border-mid-color);
-  color: #fff;
   transition: opacity var(--transition-duration);
   display: flex;
   flex-flow: row wrap;
@@ -16,8 +15,8 @@ export const Wrapper = styled.div`
   z-index: 99;
 
   h3 {
-    width: 100%;
     color: var(--text-color-primary);
+    width: 100%;
     font-family: InterSemiBold, sans-serif;
     font-size: 0.9rem;
     padding: 0;

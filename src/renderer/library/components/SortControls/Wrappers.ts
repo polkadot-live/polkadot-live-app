@@ -26,7 +26,7 @@ export const ControlsWrapper = styled.div<{
 
   z-index: ${(props) => (props.$sticky ? '4' : 'inherit')};
   background-color: ${(props) =>
-    props.$sticky ? 'var(--background-modal)' : 'inherit'};
+    props.$sticky ? 'var(--sort-button-background)' : 'inherit'};
 
   top: 0;
   position: ${(props) => (props.$sticky ? 'sticky' : 'inherit')};
@@ -52,50 +52,48 @@ export const ControlsWrapper = styled.div<{
   }
 
   .back-btn {
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
     max-height: 23.52px;
     align-self: center;
     font-size: 0.9rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-color: #a94a75;
-    color: #a94a75;
   }
 
   .breadcrumb-wrapper {
+    border: 1px solid var(--text-dimmed);
     display: flex;
     align-items: center;
     padding: 0.5rem 1.5rem;
-    border: 1px solid #454545;
     border-radius: 1.25rem;
 
     span {
+      color: var(--text-dimmed);
       display: inline-block;
-      text-align: center;
-      display: inline-block;
-      color: #666666;
       font-size: 0.9rem;
-      cursor: default;
-
+      text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      cursor: default;
     }
     .icon {
+      color: var(--text-dimmed);
       margin-left: 0.7rem;
-      color: #ededed;
     }
   }
 
   .icon-wrapper {
+    border: 1px solid var(--border-secondary-color);
+    position: relative;
+
+    border-radius: 1.25rem;
     opacity: 0.75;
     display: flex;
     column-gap: 0.75rem;
     align-items: center;
     min-width: auto;
-
-    position: relative;
-    border: 1px solid #535353;
-    border-radius: 1.25rem;
 
     margin: 0;
     padding: 0.3rem 0.5rem;
@@ -113,13 +111,13 @@ export const ControlsWrapper = styled.div<{
       }
     }
     span {
+      color: var(--text-color-secondary);
       display: inline-block;
       padding-right: 1rem;
-      color: #666666;
       font-size: 0.9rem;
     }
     .icon {
-      color: #5f5f5f;
+      color: var(--text-color-secondary);
       margin-left: 0.7rem;
     }
     &:hover {
@@ -127,15 +125,15 @@ export const ControlsWrapper = styled.div<{
     }
     // Button is active.
     &.active {
-      border-color: #454545;
-      background-color: #3a3a3a;
+      border-color: var(--sort-button-background);
+      background-color: var(--sort-button-background);
       transition: opacity 0.1s ease-out;
       .icon,
       span {
-        color: #ededed;
+        color: var(--sort-button-text);
       }
       &:hover {
-        background-color: #3a3a3a;
+        background-color: var(--sort-button-background-hover);
       }
     }
     &.disable {
@@ -145,19 +143,18 @@ export const ControlsWrapper = styled.div<{
 
   /* Select */
   .select-wrapper {
+    border: 1px solid var(--border-secondary-color);
     display: flex;
     align-items: center;
     column-gap: 0.25rem;
-
-    border: 1px solid var(--border-secondary-color);
     border-radius: 1.25rem;
     padding: 0.35rem 1.5rem;
     cursor: pointer;
 
     select {
-      font-size: 1rem;
+      color: var(--text-color-secondary);
       background-color: inherit;
-      color: #929292;
+      font-size: 1rem;
       opacity: 0.8;
       border: none;
       cursor: pointer;

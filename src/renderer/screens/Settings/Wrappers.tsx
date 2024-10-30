@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { mixinHelpIcon } from '@app/library/components/Common';
 
 export const ContentWrapper = styled.div`
+  background-color: var(--background-window);
   width: 100%;
   position: relative;
   padding: 1.5rem;
-  background-color: var(--background-modal);
 
   .flex-column {
     display: flex;
@@ -39,66 +39,19 @@ export const SettingWrapper = styled(motion.div)`
   }
   .icon-wrapper {
     ${mixinHelpIcon}
+    color: var(--text-dimmed);
     font-size: 1rem;
-    color: #4a4a4a;
     transition: color 0.2s ease-out;
 
     &:hover {
-      color: inherit;
+      color: var(--text-highlight);
     }
   }
 `;
 
-export const HeadingWrapper = styled.div`
-  margin-bottom: 1rem;
-  width: 100%;
-  z-index: 3;
-  opacity: 0.75;
-  user-select: none;
-  cursor: pointer;
-
-  .flex {
-    display: flex;
-    column-gap: 0.5rem;
-    align-items: center;
-    padding: 0.25rem 0;
-    transition: background-color 0.15s ease-in-out;
-    border-bottom: 1px solid var(--border-secondary-color);
-
-    &:hover {
-      background-color: #141414;
-    }
-    > div {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      column-gap: 1rem;
-      padding: 0.5rem;
-    }
-
-    .left {
-      flex: 1;
-      display: flex;
-      column-gap: 0.75rem;
-      justify-content: flex-start;
-
-      .icon-wrapper {
-        min-width: 0.75rem;
-        opacity: 0.4;
-      }
-      h5 {
-        font-size: 0.95rem;
-        > span {
-          color: var(--text-color-primary);
-        }
-      }
-    }
-    .right {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-`;
+/* ------------------------------------------------------------ */
+/* Workspaces                                                   */
+/* ------------------------------------------------------------ */
 
 export const WorkspacesContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -186,13 +139,13 @@ export const WorkspaceRowWrapper = styled.div`
 `;
 
 export const ConfirmWrapper = styled.div`
+  background-color: var(--background-default);
+  border: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2.5rem;
-  border: 1px solid var(--border-primary-color);
-  background-color: var(--background-default);
 
   h3,
   h5,

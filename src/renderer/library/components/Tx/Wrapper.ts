@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
   }
 
   > .inner {
-    background: var(--background-modal-footer);
+    background: var(--background-surface);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -48,7 +48,7 @@ export const Wrapper = styled.div`
               padding-left: 0.5rem;
 
               &.prompt {
-                color: var(--accent-color-primary);
+                color: var(--accent-primary);
                 font-size: 1.05rem;
                 align-items: flex-start;
 

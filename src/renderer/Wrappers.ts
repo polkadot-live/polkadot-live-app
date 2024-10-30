@@ -6,10 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // The outer-most component wrapping the app.
 export const MainInterfaceWrapper = styled.div`
-  background: var(--background-modal);
+  background: var(--background-window);
   color: var(--text-color-primary);
   align-items: center;
-  //border-radius: 10px;
   display: flex;
   flex-flow: column nowrap;
   flex-grow: 1;
@@ -21,7 +20,7 @@ export const MainInterfaceWrapper = styled.div`
   .Toastify__toast {
     font-size: 1.15rem;
     color: var(--text-color-primary);
-    background-color: var(--background-modal);
+    background-color: var(--background-window);
     border: 1px solid var(--border-mid-color);
     border-radius: 1rem;
     margin: 0.5rem;
@@ -48,9 +47,9 @@ export const BodyInterfaceWrapper = styled.div<{
     height: 80%;
 
     > p {
+      color: var(--text-color-primary);
       font-size: 1.2rem;
       text-align: center;
-      color: var(--text-color-primary);
       margin-top: 20px;
     }
   }

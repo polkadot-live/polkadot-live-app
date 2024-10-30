@@ -43,7 +43,7 @@ export const NavItem = ({ children, id, icon, label }: NavItemProps) => {
               position: 'absolute',
               inset: '0px',
               borderRadius: '0.375rem',
-              backgroundColor: '#ac2461',
+              backgroundColor: 'var(--nav-button-background-active)',
               zIndex: '0',
             }}
             initial={{ scale: 0 }}
