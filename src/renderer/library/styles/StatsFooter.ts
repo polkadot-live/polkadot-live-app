@@ -9,12 +9,12 @@ import type { ChainID } from '@/types/chains';
  * @summary Footer layout for child window.
  */
 export const StatsFooter = styled.section<{ $chainId: ChainID }>`
+  background-color: var(--background-surface);
+  border-top: 1px solid var(--border-primary-color);
   position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;
   width: 100%;
-  border-top: 1px solid var(--border-primary-color);
-  background-color: var(--background-primary);
 
   > div:first-of-type {
     display: flex;
@@ -44,12 +44,8 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
       font-size: 0.8rem;
       padding-right: 0.75rem;
       padding-left: 0.4rem;
-      cursor: pointer;
       opacity: 0.4;
-      &:hover {
-        color: #953254;
-        opacity: 1;
-      }
+      cursor: pointer;
     }
 
     // Stat label.

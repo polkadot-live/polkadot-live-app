@@ -41,6 +41,10 @@ SPDX-License-Identifier: GPL-3.0-only */
   --accent-primary: #ac2461;
   --accent-secondary: #a94a75;
 
+  /* Scrollbar */
+  --scrollbar-track-background-color: #101010;
+  --scrollbar-thumb-background-color: #212121;
+
   /* Chains */
   --polkadot-pink: #ac2461;
 
@@ -90,6 +94,9 @@ SPDX-License-Identifier: GPL-3.0-only */
   --menu-text-disabled: #636363;
   --card-shadow-color: rgb(28 24 28 / 25%);
 
+  /* Ellipsis Spinner */
+  --ellipsis-spinner-color: #afafaf;
+
   // Legacy
   --background-default: #171717;
   --background-invert: #ddd;
@@ -100,7 +107,6 @@ SPDX-License-Identifier: GPL-3.0-only */
   //--background-menu: #181818;
 
   --button-primary-background: rgb(58 52 58);
-
   --modal-background-color: rgb(22 18 22 / 70%);
 
   --accent-color-primary: var(--accent-color-primary-dark);

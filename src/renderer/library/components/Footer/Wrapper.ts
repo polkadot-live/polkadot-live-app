@@ -141,18 +141,15 @@ export const SelectRpcWrapper = styled.div`
     select {
       color: var(--text-color-primary);
       border: 1px solid var(--border-primary-color);
-      background-color: inherit;
       transition: background-color 0.15s ease-out;
-      &:hover {
-        background-color: var(--background-window);
-      }
 
       width: 225px;
+      position: relative;
+      background-color: inherit;
       appearance: none;
       padding: 0.5rem 0.5rem 0.5rem 2.5rem;
       border-radius: 0.5rem;
       font-size: 1rem;
-      position: relative;
       cursor: pointer;
     }
   }
