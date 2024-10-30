@@ -39,7 +39,9 @@ export const Tabs: React.FC = () => {
               strategy={horizontalListSortingStrategy}
             >
               {Number(tabsData.length) === 0 && (
-                <div style={{ color: '#8f8f8f' }}>No windows open.</div>
+                <div style={{ color: 'var(--text-color-secondary)' }}>
+                  No windows open.
+                </div>
               )}
               {tabsData.map(({ id, label }) => (
                 <Tab key={String(id)} id={id} label={label} />
