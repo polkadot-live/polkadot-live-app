@@ -36,9 +36,9 @@ export const ListWrapper = styled(motion.div)`
 `;
 
 export const DefinitionWrapper = styled(motion.div)`
-  background: var(--background-modal);
-  border-radius: 1.5rem;
+  background: var(--background-surface);
   border: 1px solid var(--border-primary-color);
+  border-radius: 1.5rem;
 
   display: flex;
   flex-flow: row wrap;
