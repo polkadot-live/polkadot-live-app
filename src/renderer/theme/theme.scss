@@ -33,14 +33,30 @@ SPDX-License-Identifier: GPL-3.0-only */
 
 .theme-dark {
   // NEW
-  --window-background: #111;
+  --background-window: #111;
+  --background-surface: #181818;
 
+  /* Side Nav */
   --nav-background: #1a1919;
   --nav-button-background: #313131;
   --nav-button-background-active: #ac2461;
   --nav-button-background-hover: #3d3d3d;
-  --nav-button-icon: #c9c9c9;     // 	(??)
+  --nav-button-icon: #c9c9c9;     // (??)
   --nav-button-text: #b8b3b9;     // (text-color-primary)
+
+  /* Header */
+  --badge-alpha-color: #959595;   // (??)
+  --badge-alpha-background: #2a2a2a;
+
+  /* General: Borders */
+  --border-primary-color: #262626;
+  --border-secondary-color: #414141;
+  --border-mid-color: #333;
+
+  /* General: Text */
+  --text-color-primary: #b8b3b9;
+  --text-color-secondary: #938e94;
+  --text-color-invert: #0f0e0f;
 
   // OLD
   --background-default: #171717;
@@ -49,14 +65,6 @@ SPDX-License-Identifier: GPL-3.0-only */
   --background-modal: #111;
   --background-status-overlay: rgb(43 38 43 / 75%);
   --background-menu: #181818;
-
-  --text-color-primary: #b8b3b9;
-  --text-color-secondary: #938e94;
-  --text-color-invert: #0f0e0f;
-
-  --border-primary-color: #262626;
-  --border-secondary-color: #414141;
-  --border-mid-color: #333;
 
   --button-primary-background: rgb(58 52 58);
   --button-hover-background: #333;
