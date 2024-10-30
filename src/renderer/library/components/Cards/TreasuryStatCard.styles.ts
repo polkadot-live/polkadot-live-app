@@ -20,31 +20,31 @@ const getChainIdColor = (chainId: ChainID): string => {
 };
 
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
-  background-color: #212121;
+  background-color: var(--background-primary-hover);
   padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 
   h4 {
-    font-size: 1.15rem;
     color: ${({ $chainId }) => getChainIdColor($chainId)};
+    font-size: 1.15rem;
   }
   > div:first-of-type {
     display: flex;
     gap: 0.25rem;
 
     h2 {
+      color: var(--text-color-primary);
       font-size: 1.1rem;
-      color: #d5d5d5;
     }
     .help-icon {
       ${mixinHelpIcon}
-      color: #5a5a5a;
+      color: var(--text-dimmed);
       font-size: 0.9rem;
       transition: color 150ms ease-out;
       &:hover {
-        color: #f1f1f1;
+        color: var(--text-highlight);
       }
     }
   }
