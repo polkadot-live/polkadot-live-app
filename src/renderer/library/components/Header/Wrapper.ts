@@ -74,8 +74,8 @@ export const HeaderWrapper = styled.div`
 
           &:hover {
             background-color: inherit;
-            border: 1px solid var(--border-secondary-color) !important;
-            opacity: 0.8;
+            opacity: 0.75;
+            border: 1px solid var(--border-secondary-color);
           }
         }
       }
