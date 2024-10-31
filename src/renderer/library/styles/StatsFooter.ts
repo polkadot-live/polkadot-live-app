@@ -62,16 +62,12 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
     &.badge-btn {
       cursor: pointer;
       color: inherit;
-      transition: color 150ms ease-out;
+      transition: opacity 150ms ease-out;
       .icon-wrapper {
-        transition: color 150ms ease-out;
+        transition: opacity 150ms ease-out;
       }
       &:hover {
-        .icon-wrapper {
-          color: #f1f1f1;
-          opacity: 1;
-        }
-        color: #f1f1f1 !important;
+        opacity: 0.8;
       }
     }
   }
@@ -83,7 +79,7 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
 
     h2 {
       font-size: 0.95rem;
-      opacity: 0.5;
+      color: var(--text-color-secondary);
     }
     span {
       color: ${(props) =>

@@ -155,7 +155,6 @@ export const ControlsWrapper = styled.div<{
       color: var(--text-color-secondary);
       background-color: inherit;
       font-size: 1rem;
-      opacity: 0.8;
       border: none;
       cursor: pointer;
     }
