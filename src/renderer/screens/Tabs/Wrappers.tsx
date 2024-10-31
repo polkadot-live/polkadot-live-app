@@ -20,15 +20,15 @@ export const TabsWrapper = styled.div`
     column-gap: 0.75rem;
     height: 100%;
     padding: 0 1.15rem;
-    .label {
-      color: var(--text-highlight);
-      flex-grow: 1;
-    }
   }
 `;
 
 // Tab top div.
-export const TabWrapper = styled(motion.div)`
+export const TabWrapper = styled(motion.div).attrs<{
+  $active: boolean;
+}>((props) => ({
+  $active: props.$active,
+}))`
   background-color: var(--nav-button-background);
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -38,12 +38,16 @@ export const TabWrapper = styled(motion.div)`
   margin-top: -5px;
   cursor: pointer;
 
+  .label {
+    color: ${({ $active }) =>
+      $active ? 'var(--text-bright)' : 'var(--text-color-primary)'};
+    flex-grow: 1;
+  }
   &:hover {
     background-color: var(--nav-button-background-hover);
   }
 
   .inner {
-    color: var(--text-color-primary);
     position: relative;
     display: flex;
     align-items: center;
@@ -54,12 +58,12 @@ export const TabWrapper = styled(motion.div)`
     z-index: 20;
 
     .btn-close {
-      color: var(--text-color-primary);
+      color: ${({ $active }) =>
+        $active ? 'var(--text-bright)' : 'var(--text-color-primary)'};
+      opacity: 0.6;
+      cursor: pointer;
       &:hover {
-        svg {
-          color: var(--text-highlight);
-          cursor: pointer;
-        }
+        opacity: 1;
       }
     }
   }

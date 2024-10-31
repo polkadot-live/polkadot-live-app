@@ -48,6 +48,7 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
       }}
     >
       <TabWrapper
+        $active={id === clickedId}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.99 }}
         onClick={handleClick}
