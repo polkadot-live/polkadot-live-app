@@ -19,7 +19,7 @@ export const MenuWrapper = styled.div`
   box-shadow: -1px 3px 5px 0px var(--card-shadow-color);
   border: 1px solid var(--border-mid-color);
   background: var(--background-surface);
-  border-radius: 0.75rem;
+  border-radius: 0.375rem;
   overflow: hidden;
   user-select: none;
 

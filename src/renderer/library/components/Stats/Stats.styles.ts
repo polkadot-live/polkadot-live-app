@@ -56,7 +56,7 @@ export const StatsSectionWrapper = styled.div`
   }
 
   .btn {
-    color: var(--text-highlight);
+    color: var(--text-bright);
     background-color: var(--accent-primary);
     border: none;
     min-width: 8.5rem;

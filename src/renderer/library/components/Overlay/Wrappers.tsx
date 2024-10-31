@@ -44,7 +44,7 @@ export const HeightWrapper = styled.div<{ size: string }>`
 
 export const ContentWrapper = styled.div`
   &.bg {
-    background: var(--background-primary);
+    //background: var(--background-primary);
   }
 
   &.transparent {

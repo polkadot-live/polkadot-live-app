@@ -3,78 +3,82 @@ SPDX-License-Identifier: GPL-3.0-only */
 
 .theme-light {
   /* General: Backgrounds */
-  --background-window: #111;
-  --background-surface: #181818;
-  --background-primary: #1c1c1c;
-  --background-primary-hover: #212121;
-  --background-overlay: rgb(22 18 22 / 70%);
+  --background-window: #eee;
+  --background-surface: #dadada;
+  --background-primary: #e3e3e3;
+  --background-primary-hover: #dedede;
+  --background-overlay: rgba(120, 120, 120, 0.5);
   --accent-primary: #ac2461;
   --accent-secondary: #a94a75;
 
   /* General: Borders */
-  --border-primary-color: #e4e4e4;
-  --border-secondary-color: #cfcccc;
-  --border-mid-color: #3a3a3a;
+  --border-primary-color: #cdcdcd;
+  --border-secondary-color: #8a8a8a;
+  --border-mid-color: #a8a8a8;
 
   /* General: Buttons */
-  --button-background-primary: #2d2d2d;
-  --button-background-primary-hover: #373737;
+  --button-background-primary: #d2d2d2;
+  --button-background-primary-hover: #c8c8c8;
   --button-pink-background: #953254;
   --button-pink-color: #ededed;
-  --button-background-secondary: #464646;
+  --button-background-secondary: #b9b9b9;
 
   /* General: Chains */
   --polkadot-pink: #ac2461;
 
   /* General: Scrollbar */
-  --scrollbar-track-background-color: #101010;
-  --scrollbar-thumb-background-color: #212121;
+  --scrollbar-track-background-color: #d8d8d8;
+  --scrollbar-thumb-background-color: #afafaf;
+
+  /* General: Switch */
+  --switch-disable-background: #efefef;
+  --switch-disable-border: #cecece;
+  --switch-disable-color: #cecece;
 
   /* General: Text */
   --text-main-heading: #d33079;
-  --text-highlight: #f1f1f1;
-  --text-dimmed: #5a5a5a;
-  --text-color-primary: #3f3f3f;
-  --text-color-secondary: #555;
-  --text-color-tertiary: #c7c7c7;
-  --text-color-invert: #fafafa;
+  --text-highlight: #0e0e0e;
+  --text-dimmed: #a5a5a5;
+  --text-bright: #ececec;
+  --text-color-primary: #686868;
+  --text-color-secondary: #7a7a7a;
+  --text-color-tertiary: #383838;
+  --text-color-invert: #050505;
 
   /* Accordion */
-  --accordion-background-hover: #151515;
+  --accordion-background-hover: #e5e5e5;
 
   /* Cog Menu */
-  --menu-button-hover: #333;
-  --menu-text-disabled: #636363;
-  --card-shadow-color: rgb(158 158 158 / 20%);
+  --menu-button-hover: #ccc;
+  --menu-text-disabled: #9c9c9c;
+  --card-shadow-color: #d1d1d1;
 
   /* Ellipsis Spinner */
-  --ellipsis-spinner-color: #afafaf;
+  --ellipsis-spinner-color: #505050;
 
   /* Header */
-  --badge-alpha-color: #959595;
-  --badge-alpha-background: #2a2a2a;
+  --badge-alpha-color: #545454;
+  --badge-alpha-background: #f1f1f1;
 
   /* Side Nav */
-  --nav-background: #1a1919;
-  --nav-button-background: #313131;
+  --nav-background: #e5e6e6;
+  --nav-button-background: #cecece;
   --nav-button-background-active: var(--accent-primary);
-  --nav-button-background-hover: #3d3d3d;
-  --nav-button-icon: #c9c9c9;
-  --nav-button-text: #b8b3b9;
+  --nav-button-background-hover: #c2c2c2;
+  --nav-button-icon: #363636;
+  --nav-button-text: #5e5e5e;
+  --nav-button-text-active: #e9e9e9;
 
   /* Sort Controls */
-  --sort-button-background: #313131;
-  --sort-button-background-hover: #3a3a3a;
-  --sort-button-text: #ededed;
+  --sort-button-background: #cecece;
+  --sort-button-background-hover: #c5c5c5;
+  --sort-button-text: #121212;
 
   /* Stats */
-  --stats-background-highlight: #242424;
-  --stats-text-title: #d1d1d1;
+  --stats-background-highlight: #dbdbdb;
+  --stats-text-title: #2e2e2e;
 
   /* Legacy */
-  //--background-primary: #f8f7f7;
-  //--background-modal: #f9f7f7;
-  //--background-menu: #eaeaea;
   --background-default: #efeeee;
   --background-invert: #333;
   --background-status-overlay: rgb(255 255 255 / 85%);
@@ -120,10 +124,16 @@ SPDX-License-Identifier: GPL-3.0-only */
   --scrollbar-track-background-color: #101010;
   --scrollbar-thumb-background-color: #212121;
 
+  /* General: Switch */
+  --switch-disable-background: #101010;
+  --switch-disable-border: #252525;
+  --switch-disable-color: #252525;
+
   /* General: Text */
   --text-main-heading: #d33079;
   --text-highlight: #f1f1f1;
-  --text-dimmed: #5a5a5a;
+  --text-dimmed: #4e4e4e;
+  --text-bright: #ececec;
   --text-color-primary: #b8b3b9;
   --text-color-secondary: #938e94;
   --text-color-tertiary: #c7c7c7;
@@ -151,6 +161,8 @@ SPDX-License-Identifier: GPL-3.0-only */
   --nav-button-background-hover: #3d3d3d;
   --nav-button-icon: #c9c9c9;
   --nav-button-text: #b8b3b9;
+  --nav-button-icon-active: #c9c9c9;
+  --nav-button-text-active: #b8b3b9;
 
   /* Sort Controls */
   --sort-button-background: #313131;

@@ -13,13 +13,16 @@ export const ExpandButtonWrapper = styled(motion.div)`
   line-height: 1.75rem;
 `;
 
-export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
-  (props) => ({
-    $size: props.$size,
-  })
-)`
+export const NavItemWrapper = styled(motion.button).attrs<{
+  $active: boolean;
+  $size: string;
+}>((props) => ({
+  $size: props.$size,
+  $active: props.$active,
+}))`
   background-color: var(--nav-button-background);
-  color: var(--nav-button-text);
+  color: ${({ $active }) =>
+    $active ? 'var(--nav-button-text-active)' : 'var(--nav-button-text)'};
 
   &:hover {
     background-color: var(--nav-button-background-hover);
@@ -48,6 +51,8 @@ export const NavItemWrapper = styled(motion.button).attrs<{ $size: string }>(
       font-size: 0.95rem;
       font-weight: 600;
       margin-top: 0.5rem;
+      color: ${({ $active }) =>
+        $active ? 'var(--nav-button-text-active)' : 'var(--nav-button-text)'};
     }
   }
 `;

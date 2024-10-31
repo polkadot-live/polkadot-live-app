@@ -214,7 +214,7 @@ export const TrackItem = styled(motion.div)`
     cursor: pointer;
 
     h4 {
-      color: var(--text-highlight);
+      color: var(--text-bright);
       font-size: 0.9rem;
     }
     &:hover {
@@ -227,7 +227,7 @@ export const TrackItem = styled(motion.div)`
       padding: 0;
 
       svg {
-        color: var(--text-highlight);
+        color: var(--text-bright);
         position: absolute;
         top: 6px;
         left: 6px;

@@ -30,6 +30,7 @@ export const Remove = ({ address, source, accountName }: RemoveProps) => {
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
         <ButtonMono
+          className="confirm-action"
           text="Remove Account"
           onClick={async () => await handleClickRemove()}
         />
