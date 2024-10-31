@@ -25,6 +25,7 @@ export const SideNav = () => {
       <NavItem id={2} icon={faCubesStacked} label={'Subscribe'} />
 
       <NavItemWrapper
+        $active={false}
         $size={'half'}
         style={
           isCollapsed
