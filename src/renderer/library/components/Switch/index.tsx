@@ -83,9 +83,9 @@ export const Switch = ({
       case 'primary':
       default: {
         if (disabled) {
-          setBgColor('var(--text-color-invert)');
-          setBorderColor('#2e2e2e');
-          setButtonColor('#2e2e2e');
+          setBgColor('var(--switch-disable-background)');
+          setBorderColor('var(--switch-disable-border)');
+          setButtonColor('var(--switch-disable-color)');
           break;
         }
         setBorderColor('var(--border-primary-color)');
