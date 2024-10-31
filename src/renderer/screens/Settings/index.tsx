@@ -15,14 +15,12 @@ import { Config as ConfigSettings } from '@/config/processes/settings';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
 import { Scrollable } from '@/renderer/library/styles';
-import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
 import type { OsPlatform, SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
   useSettingsMessagePorts();
-  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   /// Active accordion indices for settings panels.

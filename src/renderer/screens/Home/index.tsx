@@ -16,7 +16,6 @@ import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useInitIpcHandlers } from '@/renderer/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
-import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { ScrollWrapper } from '@/renderer/library/styles';
 import { Summary } from '@/renderer/screens/Home/Summary';
 import type { ChainID } from '@/types/chains';
@@ -26,7 +25,6 @@ import type { IpcRendererEvent } from 'electron';
 export const Home = () => {
   // Set up port communication for the `main` renderer.
   useMainMessagePorts();
-  useAppModesSyncing();
 
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();

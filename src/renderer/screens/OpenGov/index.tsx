@@ -30,13 +30,11 @@ import {
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { Scrollable, StatsFooter } from '@/renderer/library/styles';
 import { renderPlaceholders } from '@/renderer/library/utils';
-import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { ChainID } from '@/types/chains';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
-  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   /// Connection status.

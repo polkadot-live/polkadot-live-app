@@ -10,13 +10,11 @@ import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMo
 import { ImportReadOnly } from './ReadOnly';
 import { useImportMessagePorts } from '@/renderer/hooks/useImportMessagePorts';
 import { useDebug } from '@/renderer/hooks/useDebug';
-import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import type { AccountSource } from '@/types/accounts';
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
-  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   // Active section

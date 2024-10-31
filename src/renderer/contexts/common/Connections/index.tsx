@@ -2,8 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
+
+/**
+ * Automatically listens for and sets mode flag state when they are
+ * updated in other processes.
+ *
+ * Immediately sets this renderer's mode flag state which is
+ * consistent with the app.
+ */
 
 export const ConnectionsContext = createContext<ConnectionsContextInterface>(
   defaults.defaultConnectionsContext
@@ -24,6 +32,33 @@ export const ConnectionsProvider = ({
 
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    // Synchronize flags in store.
+    const syncModeFlags = async () => {
+      setIsImporting(await window.myAPI.getModeFlag('isImporting'));
+      setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+    };
+
+    // Listen for synching events.
+    window.myAPI.syncModeFlags((_, modeId, flag) => {
+      switch (modeId) {
+        case 'isImporting': {
+          setIsImporting(flag);
+          break;
+        }
+        case 'darkMode': {
+          setDarkMode(flag);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    });
+
+    syncModeFlags();
+  }, []);
 
   return (
     <ConnectionsContext.Provider
