@@ -4,6 +4,9 @@
 import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
 
+// Package styles.
+import '@theme-toggles/react/css/Classic.css';
+
 // Network themes.
 import '@app/theme/accents/polkadot-relay.css';
 

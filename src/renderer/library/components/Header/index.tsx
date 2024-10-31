@@ -15,6 +15,7 @@ import { Menu } from '../../components';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import type { HeaderProps } from './types';
 import { version } from '../../../../../package.json';
+import { Classic } from '@theme-toggles/react';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
   const { dockToggled, handleDockedToggle } = useAppSettings();
@@ -63,6 +64,19 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                   icon={faWindowRestore}
                 />
               </button>
+
+              {/* Theme toggle */}
+              <Classic
+                className="theme-toggle"
+                duration={300}
+                placeholder={undefined}
+                onPointerEnterCapture={() => {
+                  // empty
+                }}
+                onPointerLeaveCapture={() => {
+                  // empty
+                }}
+              />
 
               {/* Cog menu*/}
               <Menu />
