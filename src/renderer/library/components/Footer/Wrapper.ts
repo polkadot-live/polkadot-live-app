@@ -73,7 +73,7 @@ export const NetworkItem = styled.div`
 
   width: 100%;
   padding: 1rem;
-  border-radius: 1.25rem;
+  border-radius: 0.375rem;
 
   .left {
     display: flex;
@@ -148,7 +148,7 @@ export const SelectRpcWrapper = styled.div`
       background-color: inherit;
       appearance: none;
       padding: 0.5rem 0.5rem 0.5rem 2.5rem;
-      border-radius: 0.5rem;
+      border-radius: 0.375rem;
       font-size: 1rem;
       cursor: pointer;
     }

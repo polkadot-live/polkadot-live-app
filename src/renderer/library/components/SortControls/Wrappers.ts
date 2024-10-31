@@ -69,7 +69,7 @@ export const ControlsWrapper = styled.div<{
     border-radius: 1.25rem;
 
     span {
-      color: var(--text-dimmed);
+      color: var(--text-color-secondary);
       display: inline-block;
       font-size: 0.9rem;
       text-align: center;
