@@ -112,7 +112,7 @@ export const Reader = () => {
   const containerStyle = useMemo(() => createImgSize(400), []);
 
   return (
-    <QRVieweraWrapper>
+    <QRVieweraWrapper style={{ background: 'none !important' }}>
       <div className="viewer">
         <ScanWrapper style={containerStyle}>
           <Html5QrCodePlugin

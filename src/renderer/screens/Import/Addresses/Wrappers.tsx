@@ -28,6 +28,9 @@ export const ConfirmWrapper = styled.div`
     margin-top: 1rem;
 
     > button {
+      &.confirm-action {
+        color: var(--button-primary-background);
+      }
       margin-right: 1rem;
       &:last-child {
         margin-right: 0;

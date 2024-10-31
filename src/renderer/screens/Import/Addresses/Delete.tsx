@@ -32,6 +32,7 @@ export const Delete = ({ address, source, setSection }: DeleteProps) => {
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
         <ButtonMono
+          className="confirm-action"
           text="Delete Account"
           onClick={async () => await handleDeleteClick()}
         />
