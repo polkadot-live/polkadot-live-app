@@ -4,8 +4,7 @@
 import styled, { css } from 'styled-components';
 
 const mixinAddressInput = css`
-  border: 1px solid #313131;
-  background: var(--background-list-item);
+  border: 1px solid var(--border-mid-color);
   color: var(--text-color-primary);
 
   width: 100%;
@@ -22,12 +21,12 @@ const mixinAddressInput = css`
     padding 0.2s;
 
   &:focus {
-    background: var(--background-modal);
+    background: var(--background-surface);
     max-width: 380px;
   }
 
   &:disabled {
-    border: 1px solid var(--background-menu);
+    border: none;
     background: none;
   }
 `;
@@ -54,32 +53,23 @@ export const HardwareAddressWrapper = styled.div`
     padding-left: 1rem;
 
     .account-action-btn {
+      color: var(--text-color-secondary);
+      background-color: var(--button-background-primary);
+      border-color: var(--button-background-primary);
       min-width: 4.5rem;
-      color: #7e7e7e;
-      background-color: #2d2d2d;
-      border-color: #2d2d2d;
       padding: 0.45rem 0.5rem;
       font-size: 0.85rem;
       transition: all 150ms ease-out;
 
       &:hover {
-        background-color: #373737;
+        background-color: var(--button-background-primary-hover);
       }
     }
-
-    button {
-      flex-basis: 50%;
-      flex-grow: 1;
-      background-color: rgb(17 17 17);
-      border-color: rgb(68, 68, 68);
-      color: rgb(101 101 101);
-      transition: color 0.2 ease-out;
-    }
     .white-hover:hover {
-      color: #f1f1f1;
+      color: var(--text-highlight);
     }
     .processing {
-      color: #2d2d2d;
+      color: var(--text-dimmed);
     }
   }
 
@@ -134,7 +124,7 @@ export const HardwareAddressWrapper = styled.div`
               transition: opacity 0.1s ease-out;
 
               ellipse {
-                fill: #953254;
+                fill: var(--polkadot-pink);
               }
             }
           }
@@ -148,7 +138,7 @@ export const HardwareAddressWrapper = styled.div`
             button {
               font-size: 1.1rem;
               &:hover {
-                color: #f1f1f1;
+                color: var(--text-highlight);
               }
             }
           }
@@ -175,7 +165,7 @@ export const HardwareAddressWrapper = styled.div`
           padding-left: 38px;
 
           &:focus {
-            background-color: rgb(24 24 24);
+            background-color: var(--background-surface);
           }
         }
 
@@ -213,7 +203,7 @@ export const HardwareAddressWrapper = styled.div`
 
   &:hover {
     input {
-      border-color: #3a3a3a !important;
+      border-color: var(--border-mid-color) !important;
     }
   }
 

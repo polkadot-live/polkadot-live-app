@@ -54,7 +54,7 @@ export const EventGroup = styled.div`
     row-gap: 0.25rem;
 
     > div {
-      background-color: #1c1c1c;
+      background-color: var(--background-primary);
     }
     > div:first-of-type {
       border-top-left-radius: 0.375rem;
@@ -91,20 +91,6 @@ const eventBtnBase = css`
 export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
   position: relative;
-
-  // Time ago
-  > span:first-child {
-    text-align: right;
-    position: absolute;
-    top: 1.25rem;
-    right: 44px;
-    color: #4d4c4c;
-    transition: color ease-out 0.1s;
-    cursor: default;
-  }
-  > span:first-child:hover {
-    color: var(--text-color-secondary);
-  }
 
   // Dismiss button
   > .dismiss-btn {
@@ -164,26 +150,6 @@ export const EventItem = styled(motion.div)`
               height: 100%;
               z-index: 99;
             }
-
-            .eventIcon {
-              background: var(--background-default);
-              border: 1px solid var(--border-primary-color);
-              border-radius: 50%;
-              position: absolute;
-              bottom: -0.65rem;
-              right: -0.1rem;
-              width: 1.75rem;
-              height: 1.75rem;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-
-              svg {
-                width: 60%;
-                height: 60%;
-                color: var(--text-color-primary);
-              }
-            }
           }
         }
         &:last-child {
@@ -195,7 +161,7 @@ export const EventItem = styled(motion.div)`
           font-size: 1.15rem;
         }
         h4 {
-          color: #b8b3b9;
+          color: var(--text-color-primary);
           font-weight: 600;
         }
         h5 {
@@ -203,7 +169,7 @@ export const EventItem = styled(motion.div)`
           margin: 0.35rem 0;
         }
         p {
-          color: #b8b3b9;
+          color: var(--text-color-primary);
           font-weight: 600;
           margin: 0.2rem 0 0.4rem;
           font-size: 1.2rem;
@@ -235,13 +201,13 @@ export const EventItem = styled(motion.div)`
       padding-left: 4.5rem;
 
       .btn-mono {
-        background-color: #953254;
-        border: 1px solid #953254;
-        color: #ededed;
+        background-color: var(--button-pink-background);
+        border: 1px solid var(--button-pink-background);
+        color: var(--button-pink-color);
       }
       .btn-mono-invert {
-        border: 1px solid #a23b5e;
-        color: #a23b5e;
+        border: 1px solid var(--accent-secondary);
+        color: var(--accent-secondary);
       }
       button {
         font-size: 0.95rem;

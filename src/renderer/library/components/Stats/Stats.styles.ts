@@ -5,17 +5,17 @@ import styled from 'styled-components';
 import { mixinHelpIcon } from '../Common';
 
 export const MainHeading = styled.h1`
-  color: rgb(211 48 121);
+  color: var(--text-main-heading);
   font-size: 1.65rem;
   margin-bottom: 1rem;
 `;
 
 export const SubHeading = styled.div`
+  color: var(--text-color-primary);
   flex: 1;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #b8b3b9;
   h2 {
     font-size: 1.25rem;
     padding: 0 0.2rem;
@@ -47,18 +47,18 @@ export const StatsSectionWrapper = styled.div`
   row-gap: 1rem;
 
   .total-item {
-    background-color: #242424 !important;
+    background-color: var(--stats-background-highlight) !important;
     h3,
     span {
+      color: var(--text-highlight) !important;
       font-size: 1.26rem !important;
-      color: #f1f1f1 !important;
     }
   }
 
   .btn {
-    background-color: #953254;
+    color: var(--text-bright);
+    background-color: var(--accent-primary);
     border: none;
-    color: #f7f7f7;
     min-width: 8.5rem;
   }
 
@@ -67,18 +67,18 @@ export const StatsSectionWrapper = styled.div`
     gap: 1rem;
     align-items: center;
     padding: 0.5rem 0.35rem;
-    transition: background-color 150ms ease-out;
     border-radius: 0.375rem;
+    transition: background-color 150ms ease-out;
     cursor: pointer;
 
     &:hover {
-      background-color: #151515;
+      background-color: var(--accordion-background-hover);
     }
   }
 `;
 
 export const StatItem = styled.div`
-  background-color: #1c1c1c;
+  background-color: var(--background-primary);
   display: flex;
   align-items: start;
   flex-direction: column;
@@ -95,18 +95,19 @@ export const StatItem = styled.div`
     }
     .help {
       ${mixinHelpIcon}
+      color: var(--text-dimmed);
       font-size: 0.85rem;
-      transition: background-color 150ms ease-out;
+      transition: all 150ms ease-out;
       border-radius: 0.275rem;
       &:hover {
-        background-color: #191919;
+        color: var(--text-highlight);
       }
     }
   }
 
   h3 {
+    color: var(--stats-text-title);
     width: 100%;
-    color: #d1d1d1;
     font-size: 1.1rem;
     font-weight: 600;
     white-space: nowrap;
@@ -114,12 +115,11 @@ export const StatItem = styled.div`
     text-overflow: ellipsis;
   }
   span {
-    color: #eaeef3;
     font-size: 1.2rem;
     font-weight: 600;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 100%;
   }
 `;

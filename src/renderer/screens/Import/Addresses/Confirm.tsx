@@ -29,7 +29,11 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
-        <ButtonMono text="Add Account" onClick={() => handleClickConfirm()} />
+        <ButtonMono
+          className="confirm-action"
+          text="Add Account"
+          onClick={() => handleClickConfirm()}
+        />
       </div>
     </ConfirmWrapper>
   );

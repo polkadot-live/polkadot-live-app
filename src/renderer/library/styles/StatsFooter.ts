@@ -9,12 +9,12 @@ import type { ChainID } from '@/types/chains';
  * @summary Footer layout for child window.
  */
 export const StatsFooter = styled.section<{ $chainId: ChainID }>`
+  background-color: var(--background-surface);
+  border-top: 1px solid var(--border-primary-color);
   position: fixed;
   bottom: 0;
   padding: 0.75rem 1.5rem;
   width: 100%;
-  border-top: 1px solid var(--border-primary-color);
-  background-color: var(--background-primary);
 
   > div:first-of-type {
     display: flex;
@@ -44,12 +44,8 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
       font-size: 0.8rem;
       padding-right: 0.75rem;
       padding-left: 0.4rem;
-      cursor: pointer;
       opacity: 0.4;
-      &:hover {
-        color: #953254;
-        opacity: 1;
-      }
+      cursor: pointer;
     }
 
     // Stat label.
@@ -66,16 +62,12 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
     &.badge-btn {
       cursor: pointer;
       color: inherit;
-      transition: color 150ms ease-out;
+      transition: opacity 150ms ease-out;
       .icon-wrapper {
-        transition: color 150ms ease-out;
+        transition: opacity 150ms ease-out;
       }
       &:hover {
-        .icon-wrapper {
-          color: #f1f1f1;
-          opacity: 1;
-        }
-        color: #f1f1f1 !important;
+        opacity: 0.8;
       }
     }
   }
@@ -87,7 +79,7 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
 
     h2 {
       font-size: 0.95rem;
-      opacity: 0.5;
+      color: var(--text-color-secondary);
     }
     span {
       color: ${(props) =>

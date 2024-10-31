@@ -4,7 +4,7 @@
 import styled from 'styled-components';
 
 export const OverlayWrapper = styled.div`
-  background: var(--modal-background-color);
+  background: var(--background-overlay);
 
   position: fixed;
   width: 100%;
@@ -36,7 +36,7 @@ export const HeightWrapper = styled.div<{ size: string }>`
   width: 100%;
   max-width: ${(props) => (props.size === 'small' ? '400px' : '600px')};
   max-height: 100%;
-  border-radius: 1.5rem;
+  border-radius: 0.375rem;
   z-index: 9;
   position: relative;
   overflow: hidden;
@@ -44,7 +44,7 @@ export const HeightWrapper = styled.div<{ size: string }>`
 
 export const ContentWrapper = styled.div`
   &.bg {
-    background: var(--background-primary);
+    //background: var(--background-primary);
   }
 
   &.transparent {
@@ -56,9 +56,6 @@ export const ContentWrapper = styled.div`
   overflow: hidden;
   position: relative;
 
-  a {
-    color: var(--network-color-primary);
-  }
   .header {
     width: 100%;
     display: flex;

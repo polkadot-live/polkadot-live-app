@@ -6,7 +6,7 @@ import styled from 'styled-components';
 export const HeaderWrapper = styled.div`
   --header-height: 3rem;
   height: var(--header-height);
-  background-color: var(--background-menu);
+  background-color: var(--background-surface);
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
@@ -24,6 +24,8 @@ export const HeaderWrapper = styled.div`
     position: relative;
 
     .alpha {
+      color: var(--badge-alpha-color);
+      background-color: var(--badge-alpha-background);
       position: absolute;
       top: 0.5rem;
       left: 0;
@@ -32,8 +34,6 @@ export const HeaderWrapper = styled.div`
       opacity: 0.85;
       font-size: 0.85rem;
       letter-spacing: 0.05rem;
-      color: #959595;
-      background-color: rgb(42 42 42);
       border-radius: 1.5rem;
       user-select: none;
     }
@@ -74,8 +74,8 @@ export const HeaderWrapper = styled.div`
 
           &:hover {
             background-color: inherit;
-            border: 1px solid var(--border-secondary-color) !important;
-            opacity: 0.8;
+            opacity: 0.75;
+            border: 1px solid var(--border-secondary-color);
           }
         }
       }

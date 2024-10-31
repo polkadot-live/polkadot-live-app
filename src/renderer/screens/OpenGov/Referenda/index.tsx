@@ -340,7 +340,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               }
               onMouseMove={() =>
                 setTooltipTextAndOpen(
-                  isConnected ? 'Refresh Referenda' : 'Currently Offline'
+                  isConnected ? 'Refresh Referenda' : 'Currently Offline',
+                  'bottom'
                 )
               }
             >
@@ -359,7 +360,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               }
               onMouseMove={() =>
                 setTooltipTextAndOpen(
-                  isConnected ? 'Show Subscribed' : 'Currently Offline'
+                  isConnected ? 'Show Subscribed' : 'Currently Offline',
+                  'bottom'
                 )
               }
             >

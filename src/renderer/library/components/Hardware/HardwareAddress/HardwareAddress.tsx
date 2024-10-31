@@ -116,7 +116,11 @@ export const HardwareAddress = ({
                 {renderChainIcon()}
 
                 <input
-                  style={{ borderColor: editing ? '#3a3a3a' : '#1c1c1c' }}
+                  style={{
+                    borderColor: editing
+                      ? 'var(--border-mid-color)'
+                      : 'var(--background-primary)',
+                  }}
                   type="text"
                   disabled={isProcessing()}
                   value={editing ? editName : accountName}

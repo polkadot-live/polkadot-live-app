@@ -31,12 +31,12 @@ export const LoadingPlaceholderWrapper = styled.div<{
       animation-iteration-count: infinite;
       animation-timing-function: linear;
       animation-name: placeholderAnimate;
-      background: #101010; // Fallback
+      background: var(--background-window); // Fallback
       background: linear-gradient(
         to right,
-        #101010 20%,
-        #202020 36%,
-        #101010 51%
+        var(--background-window) 20%,
+        var(--background-surface) 36%,
+        var(--background-window) 51%
       );
       background-size: 200%; // Animation Area
     }

@@ -4,7 +4,7 @@
 import styled from 'styled-components';
 
 export const FooterWrapper = styled.div`
-  background: var(--background-menu);
+  background: var(--background-surface);
   border-top: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
@@ -66,14 +66,14 @@ export const FooterWrapper = styled.div`
 `;
 
 export const NetworkItem = styled.div`
+  background-color: var(--background-window);
   display: flex;
   align-items: center;
   column-gap: 0.55rem;
 
   width: 100%;
   padding: 1rem;
-  border-radius: 1.25rem;
-  background-color: var(--background-modal);
+  border-radius: 0.375rem;
 
   .left {
     display: flex;
@@ -98,8 +98,8 @@ export const NetworkItem = styled.div`
     column-gap: 0.55rem;
 
     label {
+      color: var(--text-color-primary);
       font-size: 0.9rem;
-      color: #848484;
     }
   }
 `;
@@ -139,21 +139,18 @@ export const SelectRpcWrapper = styled.div`
       }
     }
     select {
+      color: var(--text-color-primary);
+      border: 1px solid var(--border-primary-color);
+      transition: background-color 0.15s ease-out;
+
       width: 225px;
+      position: relative;
+      background-color: inherit;
       appearance: none;
       padding: 0.5rem 0.5rem 0.5rem 2.5rem;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border-primary-color);
-      background-color: inherit;
-      color: #afafaf;
+      border-radius: 0.375rem;
       font-size: 1rem;
-      position: relative;
       cursor: pointer;
-      transition: background-color 0.1s ease-out;
-
-      &:hover {
-        background-color: var(--background-default);
-      }
     }
   }
 `;

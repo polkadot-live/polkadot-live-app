@@ -13,6 +13,7 @@ export const NavItem = ({ children, id, icon, label }: NavItemProps) => {
   return (
     <NavItemWrapper
       $size={isCollapsed ? 'half' : 'fill'}
+      $active={id === selectedId}
       onClick={() => setSelectedId(id)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -43,7 +44,7 @@ export const NavItem = ({ children, id, icon, label }: NavItemProps) => {
               position: 'absolute',
               inset: '0px',
               borderRadius: '0.375rem',
-              backgroundColor: '#ac2461',
+              backgroundColor: 'var(--nav-button-background-active)',
               zIndex: '0',
             }}
             initial={{ scale: 0 }}

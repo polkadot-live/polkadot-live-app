@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { mixinHelpIcon } from '@/renderer/library/components/Common';
 
 export const StickyHeadings = styled.div`
-  background-color: var(--background-modal);
+  background-color: var(--background-window);
   position: sticky;
   top: -1.5rem;
   z-index: 15;
@@ -53,8 +53,8 @@ export const StickyHeadings = styled.div`
   }
 
   .heading {
-    font-size: 1rem;
     color: var(--text-color-secondary);
+    font-size: 1rem;
     font-weight: 500;
     opacity: 0.6;
     transition: opacity 0.2s ease-out;
@@ -67,9 +67,9 @@ export const StickyHeadings = styled.div`
 `;
 
 export const TrackItem = styled(motion.div)`
+  background-color: var(--background-primary);
   position: relative;
   padding: 1rem 1.25rem;
-  background-color: var(--background-primary);
   transition: background-color 0.2s ease-out;
 
   // Utility.
@@ -113,13 +113,13 @@ export const TrackItem = styled(motion.div)`
 
     .icon-wrapper {
       ${mixinHelpIcon}
+      color: var(--text-dimmed);
       font-size: 0.9rem;
-      color: #585858;
       transition: color 150ms ease-out;
       margin-left: -0.25rem;
       margin-bottom: 0.15rem;
       &:hover {
-        color: #f1f1f1 !important;
+        color: var(--text-highlight) !important;
       }
     }
 
@@ -173,13 +173,13 @@ export const TrackItem = styled(motion.div)`
 
         .icon-wrapper {
           ${mixinHelpIcon}
+          color: var(--text-dimmed);
           font-size: 0.9rem;
-          color: #585858;
           transition: color 150ms ease-out;
           margin-left: -0.25rem;
           margin-bottom: 0.15rem;
           &:hover {
-            color: #f1f1f1 !important;
+            color: var(--text-highlight) !important;
           }
         }
       }
@@ -188,8 +188,8 @@ export const TrackItem = styled(motion.div)`
         font-size: 1rem;
       }
       > span:last-of-type {
-        flex: 1;
         color: var(--text-color-secondary);
+        flex: 1;
         opacity: 0.6;
         font-weight: 400;
         font-size: 0.9rem;
@@ -210,11 +210,11 @@ export const TrackItem = styled(motion.div)`
     border-radius: 0.375rem;
     padding-left: 0.75rem;
     opacity: 0.8;
-    transition: opacity 0.1s ease-out;
+    transition: all 0.1s ease-out;
     cursor: pointer;
 
     h4 {
-      color: #f1f1f1;
+      color: var(--text-bright);
       font-size: 0.9rem;
     }
     &:hover {
@@ -227,7 +227,7 @@ export const TrackItem = styled(motion.div)`
       padding: 0;
 
       svg {
-        color: #f1f1f1;
+        color: var(--text-bright);
         position: absolute;
         top: 6px;
         left: 6px;

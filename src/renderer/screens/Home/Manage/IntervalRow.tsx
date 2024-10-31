@@ -188,14 +188,12 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </div>
 
           {/* Interval Selector */}
-          <div
-            className="interval-wrapper tooltip-trigger-element"
-            data-tooltip-text={'Set Interval'}
-            onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
-          >
+          <div className="interval-wrapper ">
             {!intervalClicked || isDisabled ? (
               <div
-                className="badge-container"
+                className="badge-container tooltip-trigger-element"
+                data-tooltip-text={'Set Interval'}
+                onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
                 onClick={() =>
                   setIntervalClicked((prev) => (isDisabled ? prev : !prev))
                 }
@@ -234,12 +232,14 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                     )
                   )}
                 </select>
-                <FontAwesomeIcon
-                  className="enabled"
-                  icon={faXmark}
-                  transform={'grow-2'}
-                  onClick={() => setIntervalClicked(false)}
-                />
+                <div className="close">
+                  <FontAwesomeIcon
+                    className="enabled"
+                    icon={faXmark}
+                    transform={'grow-2'}
+                    onClick={() => setIntervalClicked(false)}
+                  />
+                </div>
               </div>
             )}
           </div>

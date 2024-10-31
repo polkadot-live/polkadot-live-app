@@ -20,10 +20,11 @@ export const ScrollWrapper = styled.div`
     width: 5px;
   }
   &::-webkit-scrollbar-track {
-    background-color: #101010;
+    background-color: var(--scrollbar-track-background-color);
+    background-color: var(--scrollbar-track-background-color);
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #212121;
+    background-color: var(--scrollbar-thumb-background-color);
   }
 `;
 
@@ -56,9 +57,9 @@ export const Scrollable = styled.div<{
     width: 5px;
   }
   &::-webkit-scrollbar-track {
-    background-color: #101010;
+    background-color: var(--scrollbar-track-background-color);
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #212121;
+    background-color: var(--scrollbar-thumb-background-color);
   }
 `;

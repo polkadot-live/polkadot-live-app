@@ -39,7 +39,7 @@ export const ItemsColumn = styled.div`
   row-gap: 0.25rem;
 
   > div {
-    background-color: #1c1c1c;
+    background-color: var(--background-primary);
   }
   > div:first-of-type {
     border-top-left-radius: 0.375rem;
@@ -99,7 +99,7 @@ export const ItemEntryWrapper = styled(motion.div)`
 `;
 
 export const TaskEntryWrapper = styled(motion.div)`
-  background: var(--background-default);
+  background: var(--background-primary);
   width: 100%;
   position: relative;
   padding: 1.15rem 1rem;
@@ -113,10 +113,10 @@ export const TaskEntryWrapper = styled(motion.div)`
     }
 
     .checked-icon-wrapper {
+      color: var(--text-color-tertiary);
       position: absolute;
       bottom: 0;
       right: -2px;
-      color: #c7c7c7;
 
       .disable {
         opacity: 0.4;
@@ -171,15 +171,14 @@ export const TaskEntryWrapper = styled(motion.div)`
     }
 
     .interval-badge {
+      color: var(--text-color-tertiary);
+      background-color: var(--border-mid-color);
       position: absolute;
       top: 9px;
       left: -6px;
       min-width: 46px;
       padding: 1px 0;
       opacity: 0.9;
-      color: #cbcbcb;
-      background-color: var(--border-mid-color);
-      border: 1px solid var(--background-modal);
       border-radius: 1.25rem;
       font-size: 0.7rem;
       font-weight: 600;
@@ -188,7 +187,9 @@ export const TaskEntryWrapper = styled(motion.div)`
     }
 
     &:hover {
-      opacity: 0.6;
+      .badge-container {
+        opacity: 0.6;
+      }
     }
     .enabled {
       padding: 0.5rem;
@@ -196,22 +197,27 @@ export const TaskEntryWrapper = styled(motion.div)`
 
     /* Select */
     .select-wrapper {
+      border: 1px solid var(--border-secondary-color);
+      border-radius: 0.25rem;
       display: flex;
       align-items: center;
       column-gap: 0.25rem;
-
-      border: 1px solid var(--border-secondary-color);
-      border-radius: 0.25rem;
       padding: 0rem 0.6rem;
       cursor: pointer;
 
       select {
+        color: var(--text-color-tertiary);
         font-size: 1rem;
         background-color: inherit;
-        color: #fcfcfc;
         opacity: 0.8;
         border: none;
         cursor: pointer;
+      }
+      .close {
+        transition: opacity 120ms ease-out;
+        &:hover {
+          opacity: 0.6;
+        }
       }
     }
   }
@@ -254,12 +260,6 @@ export const TaskEntryWrapper = styled(motion.div)`
       &:first-child {
         overflow: hidden;
 
-        span > .chain-icon {
-          width: 22px;
-          fill: rgb(160, 37, 90);
-          margin-right: 4px;
-        }
-
         .content {
           display: flex;
           align-items: center;
@@ -277,9 +277,9 @@ export const TaskEntryWrapper = styled(motion.div)`
             font-size: 1.15rem;
 
             .icon-wrapper {
+              color: var(--text-dimmed);
               ${mixinHelpIcon}
               font-size: 1rem;
-              color: #4a4a4a;
               transition: color 150ms ease-out;
               &:hover {
                 color: inherit;

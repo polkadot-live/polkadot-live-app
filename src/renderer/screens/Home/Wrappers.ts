@@ -12,7 +12,6 @@ export const FixedFlexWrapper = styled.div`
   top: 3rem; // header height
   bottom: 3rem; // footer height
   left: 0;
-  color: rgb(241 245 249);
 `;
 
 export const CarouselWrapper = styled(motion.div)`
@@ -34,10 +33,10 @@ export const CarouselWrapper = styled(motion.div)`
       width: 5px;
     }
     &::-webkit-scrollbar-track {
-      background-color: #101010;
+      background-color: var(--scrollbar-track-background-color);
     }
     &::-webkit-scrollbar-thumb {
-      background-color: #212121;
+      background-color: var(--scrollbar-thumb-background-color);
     }
   }
   > div {
@@ -72,7 +71,7 @@ export const NoAccountsWrapper = styled.div`
   align-items: center;
   margin: 1rem 1rem 0.75rem;
   padding: 2rem;
-  border-radius: 1rem;
+  border-radius: 0.375rem;
   background: rgb(126, 61, 90);
   background: linear-gradient(
     45deg,

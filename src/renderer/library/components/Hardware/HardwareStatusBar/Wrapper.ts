@@ -5,14 +5,14 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const HardwareStatusBarWrapper = styled(motion.div)`
+  background-color: var(--background-primary);
+  border-top: 1px solid var(--border-primary-color);
   padding: 0.5rem;
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   z-index: 10;
-  background-color: var(--background-primary);
-  border-top: 1px solid var(--border-primary-color);
 
   > .inner {
     border-radius: 1rem;
@@ -51,8 +51,8 @@ export const HardwareStatusBarWrapper = styled(motion.div)`
 
     h3,
     h5 {
-      font-size: 1.1rem;
       color: #a5a5a5;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
       flex: 1;

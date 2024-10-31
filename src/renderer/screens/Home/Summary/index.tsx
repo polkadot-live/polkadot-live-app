@@ -67,7 +67,11 @@ export const Summary: React.FC = () => {
               </div>
             </div>
             <span>
-              <ShiftingMeter value={getAddressesCountByChain()} size={1.26} />
+              <ShiftingMeter
+                color={'var(--text-highlight)'}
+                value={getAddressesCountByChain()}
+                size={1.26}
+              />
             </span>
           </StatItem>
           {getAllAccountSources().map((source) => {
@@ -108,7 +112,11 @@ export const Summary: React.FC = () => {
               </div>
             </div>
             <span>
-              <ShiftingMeter value={getEventsCount()} size={1.26} />
+              <ShiftingMeter
+                color={'var(--text-highlight)'}
+                value={getEventsCount()}
+                size={1.26}
+              />
             </span>
           </StatItem>
           {getAllEventCategoryKeys().map((category) => {
@@ -150,6 +158,7 @@ export const Summary: React.FC = () => {
             </div>
             <span>
               <ShiftingMeter
+                color={'var(--text-highlight)'}
                 value={
                   getTotalSubscriptionCount() +
                   getTotalIntervalSubscriptionCount()

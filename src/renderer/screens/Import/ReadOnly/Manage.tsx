@@ -152,6 +152,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                   />
                   <div className="flex-inner-row">
                     <button
+                      style={{ color: 'var(--background-primary)' }}
                       className="btn-mono lg"
                       onPointerDown={async () => await onImport()}
                     >

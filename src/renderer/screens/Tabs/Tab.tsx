@@ -48,18 +48,13 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
       }}
     >
       <TabWrapper
+        $active={id === clickedId}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.99 }}
         onClick={handleClick}
       >
         <div className="inner">
-          <span
-            role="button"
-            style={{
-              flexGrow: '1',
-              color: '#f1f1f1',
-            }}
-          >
+          <span role="button" className="label">
             {label}
           </span>
           <div className="btn-close" onClick={handleClose}>
@@ -73,7 +68,7 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
                 position: 'absolute',
                 inset: '0px',
                 borderRadius: '0.375rem',
-                backgroundColor: '#ac2461',
+                backgroundColor: 'var(--nav-button-background-active)',
                 zIndex: '0',
               }}
               initial={{ scale: 0 }}

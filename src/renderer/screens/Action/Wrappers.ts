@@ -39,6 +39,7 @@ export const QRViewerWrapper = styled.div`
   }
 
   .progress {
+    background-color: var(--background-surface);
     margin-bottom: 1rem;
     border-radius: 1rem;
     padding: 0.45rem 1.5rem 0.45rem 1.5rem;
