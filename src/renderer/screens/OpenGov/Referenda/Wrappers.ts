@@ -170,16 +170,20 @@ export const ReferendumRowWrapper = styled.div`
     }
     .btn-polkassembly {
       ${mixinRowButton}
+      opacity: 0.8;
       color: rgb(172 80 122);
+      transition: opacity 0.15s ease-out;
       &:hover {
-        color: rgb(255 108 174);
+        opacity: 1;
       }
     }
     .btn-subsquare {
       ${mixinRowButton}
+      opacity: 0.8;
       color: rgb(92 129 177);
+      transition: opacity 0.15s ease-out;
       &:hover {
-        color: rgb(171 208 255);
+        opacity: 1;
       }
     }
   }
