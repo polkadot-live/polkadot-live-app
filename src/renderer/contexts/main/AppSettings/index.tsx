@@ -167,6 +167,7 @@ export const AppSettingsProvider = ({
         enablePolkassemblyApi,
         hideDockIcon,
         sideNavCollapsed,
+        setSilenceOsNotifications,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
         handleToggleShowDebuggingSubscriptions,
@@ -174,7 +175,6 @@ export const AppSettingsProvider = ({
         handleToggleEnablePolkassemblyApi,
         handleToggleKeepOutdatedEvents,
         handleToggleHideDockIcon,
-        setSilenceOsNotifications,
         handleSideNavCollapse,
       }}
     >

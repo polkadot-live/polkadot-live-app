@@ -7,6 +7,7 @@ import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
 
 export interface PersistedSettings {
   appDocked: boolean;
+  appDarkMode: boolean;
   appSilenceOsNotifications: boolean;
   appShowOnAllWorkspaces: boolean;
   appShowDebuggingSubscriptions: boolean;

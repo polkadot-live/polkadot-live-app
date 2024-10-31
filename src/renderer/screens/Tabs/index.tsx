@@ -12,11 +12,13 @@ import {
 } from '@dnd-kit/modifiers';
 import { useTabs } from '@/renderer/contexts/tabs/Tabs';
 import { Header } from '@app/library/components';
+import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { useDebug } from '@/renderer/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
 
 export const Tabs: React.FC = () => {
+  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   const { handleDragStart, handleDragEnd, items, sensors, tabsData } =

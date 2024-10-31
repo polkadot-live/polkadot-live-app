@@ -22,9 +22,19 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app is importing data from backup file.
   const [isImporting, setIsImporting] = useState(false);
 
+  // Flag set to `true` when app's theme is dark mode.
+  const [darkMode, setDarkMode] = useState(true);
+
   return (
     <ConnectionsContext.Provider
-      value={{ isConnected, setIsConnected, isImporting, setIsImporting }}
+      value={{
+        darkMode,
+        isConnected,
+        isImporting,
+        setDarkMode,
+        setIsConnected,
+        setIsImporting,
+      }}
     >
       {children}
     </ConnectionsContext.Provider>

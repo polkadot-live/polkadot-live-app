@@ -15,11 +15,13 @@ import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
+import { useAppModesSyncing } from '@/renderer/hooks/useAppModesSyncing';
 import { useDebug } from '@/renderer/hooks/useDebug';
 
 export const Action = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
+  useAppModesSyncing();
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.

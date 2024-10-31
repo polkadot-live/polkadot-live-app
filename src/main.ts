@@ -373,6 +373,35 @@ app.whenReady().then(async () => {
 
         break;
       }
+      case 'darkMode': {
+        // Persist new flag to store.
+        SettingsController.process({
+          action: 'settings:set:darkMode',
+          data: { flag },
+        });
+
+        // Send to main window.
+        WindowsController.getWindow('menu')?.webContents?.send(
+          'renderer:modeFlag:set',
+          modeId,
+          flag
+        );
+
+        // Send to tabs view.
+        WindowsController.tabsView?.webContents.send(
+          'renderer:modeFlag:set',
+          modeId,
+          flag
+        );
+
+        // Send to open windows.
+        const ids = ['action', 'import', 'openGov', 'settings'];
+        for (const viewId of ids) {
+          const view = WindowsController.getView(viewId);
+          view && view.webContents.send('renderer:modeFlag:set', modeId, flag);
+        }
+        break;
+      }
       default: {
         break;
       }

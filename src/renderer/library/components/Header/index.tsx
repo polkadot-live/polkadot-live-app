@@ -10,14 +10,16 @@ import {
   faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons';
 import { HeaderWrapper } from './Wrapper';
+import { Classic } from '@theme-toggles/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '../../components';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useConnections } from '@/renderer/contexts/common/Connections';
 import type { HeaderProps } from './types';
 import { version } from '../../../../../package.json';
-import { Classic } from '@theme-toggles/react';
 
 export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
+  const { darkMode, setDarkMode } = useConnections();
   const { dockToggled, handleDockedToggle } = useAppSettings();
   const windowId = window.myAPI.getWindowId();
 
@@ -67,15 +69,14 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
               {/* Theme toggle */}
               <Classic
+                toggled={darkMode}
+                toggle={setDarkMode}
+                onToggle={(toggled: boolean) => {
+                  // Persist new setting to store and broadcast to open windows.
+                  window.myAPI.relayModeFlag('darkMode', toggled);
+                }}
                 className="theme-toggle"
                 duration={300}
-                placeholder={undefined}
-                onPointerEnterCapture={() => {
-                  // empty
-                }}
-                onPointerLeaveCapture={() => {
-                  // empty
-                }}
               />
 
               {/* Cog menu*/}

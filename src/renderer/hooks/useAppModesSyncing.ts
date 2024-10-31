@@ -13,11 +13,12 @@ import { useEffect } from 'react';
  */
 
 export const useAppModesSyncing = () => {
-  const { setIsImporting } = useConnections();
+  const { setIsImporting, setDarkMode } = useConnections();
 
   useEffect(() => {
     const syncModeFlags = async () => {
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
+      setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
     };
 
     // Listen for setting events.
@@ -25,6 +26,10 @@ export const useAppModesSyncing = () => {
       switch (modeId) {
         case 'isImporting': {
           setIsImporting(flag);
+          break;
+        }
+        case 'darkMode': {
+          setDarkMode(flag);
           break;
         }
         default: {
