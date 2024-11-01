@@ -369,6 +369,12 @@ app.whenReady().then(async () => {
           data: { flag },
         });
 
+        // Set base window background color.
+        const { appDarkMode } = SettingsController.getAppSettings();
+        WindowsController.base?.window.setBackgroundColor(
+          appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
+        );
+
         // Relay to renderers.
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;

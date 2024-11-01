@@ -178,6 +178,11 @@ export const createBaseWindow = () => {
   const defaultX = screenWidth / 2 - baseWidth / 2;
   const defaultY = screenHeight / 2 - baseHeight / 2;
 
+  const { appDarkMode } = SettingsController.getAppSettings();
+  const backgroundColor = appDarkMode
+    ? ConfigMain.themeColorDark
+    : ConfigMain.themeColorLight;
+
   const baseWindow = new BaseWindow({
     alwaysOnTop: true,
     x: defaultX,
@@ -196,7 +201,7 @@ export const createBaseWindow = () => {
     closable: true,
     fullscreen: false,
     center: true,
-    backgroundColor: '#101010',
+    backgroundColor,
   });
 
   // Hide base window and menu bar on Linux and Windows.
