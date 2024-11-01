@@ -57,7 +57,10 @@ export interface PreloadAPI {
 
   getModeFlag: (modeId: string) => Promise<boolean>;
   syncModeFlags: (
-    callback: (_: IpcRendererEvent, modeId: string, flag: boolean) => void
+    callback: (
+      _: IpcRendererEvent,
+      data: { modeId: string; flag: boolean }
+    ) => void
   ) => void;
   relayModeFlag: (modeId: string, flag: boolean) => void;
 

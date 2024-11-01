@@ -45,6 +45,35 @@ export class WindowsController {
     this.views.find(({ id }) => viewId === id)?.view ?? undefined;
 
   /* ---------------------------------------- */
+  /* Messaging                                */
+  /* ---------------------------------------- */
+
+  static relayIpc = (
+    channel: string,
+    ipcData: { modeId: string; flag: boolean },
+    includeTabs = true,
+    includeMain = true,
+    includeViews = true
+  ) => {
+    // Send to main window.
+    if (includeMain) {
+      WindowsController.getWindow('menu')?.webContents?.send(channel, ipcData);
+    }
+
+    // Send to tabs view.
+    if (includeTabs) {
+      this.tabsView?.webContents.send(channel, ipcData);
+    }
+
+    // Send to views.
+    if (includeViews) {
+      for (const { view } of this.views) {
+        view.webContents.send(channel, ipcData);
+      }
+    }
+  };
+
+  /* ---------------------------------------- */
   /* Overlay Window                           */
   /* ---------------------------------------- */
 

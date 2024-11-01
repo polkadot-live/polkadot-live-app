@@ -358,19 +358,8 @@ app.whenReady().then(async () => {
       case 'isImporting': {
         ConfigMain.importingData = flag;
 
-        // Send to main window.
-        WindowsController.getWindow('menu')?.webContents?.send(
-          'renderer:modeFlag:set',
-          modeId,
-          flag
-        );
-
-        // Send to open views.
-        for (const viewId of ['import', 'settings']) {
-          const view = WindowsController.getView(viewId);
-          view && view.webContents.send(`renderer:modeFlag:set`, modeId, flag);
-        }
-
+        // Relay to renderers.
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
       case 'darkMode': {
@@ -380,26 +369,8 @@ app.whenReady().then(async () => {
           data: { flag },
         });
 
-        // Send to main window.
-        WindowsController.getWindow('menu')?.webContents?.send(
-          'renderer:modeFlag:set',
-          modeId,
-          flag
-        );
-
-        // Send to tabs view.
-        WindowsController.tabsView?.webContents.send(
-          'renderer:modeFlag:set',
-          modeId,
-          flag
-        );
-
-        // Send to open windows.
-        const ids = ['action', 'import', 'openGov', 'settings'];
-        for (const viewId of ids) {
-          const view = WindowsController.getView(viewId);
-          view && view.webContents.send('renderer:modeFlag:set', modeId, flag);
-        }
+        // Relay to renderers.
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
       default: {

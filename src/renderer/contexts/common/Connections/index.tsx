@@ -41,7 +41,7 @@ export const ConnectionsProvider = ({
     };
 
     // Listen for synching events.
-    window.myAPI.syncModeFlags((_, modeId, flag) => {
+    window.myAPI.syncModeFlags((_, { modeId, flag }) => {
       switch (modeId) {
         case 'isImporting': {
           setIsImporting(flag);
