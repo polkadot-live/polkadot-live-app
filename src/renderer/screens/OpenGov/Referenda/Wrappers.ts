@@ -197,8 +197,14 @@ export const ReferendumRowWrapper = styled.div`
     .icon-wrapper {
       background-color: var(--button-background-secondary);
       border-color: var(--button-background-secondary);
+      padding: 0.4rem 0.6rem;
+      border: none;
       font-size: 0.85rem;
       transition: all 150ms ease-out;
+
+      &:hover {
+        filter: brightness(90%);
+      }
     }
   }
 
