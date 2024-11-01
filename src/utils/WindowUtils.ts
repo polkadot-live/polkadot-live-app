@@ -57,6 +57,15 @@ export const createTray = () => {
 };
 
 /**
+ * @name getWindowBackgroundColor
+ * @returns The correct background color based on the active theme.
+ */
+const getWindowBackgroundColor = (): string => {
+  const { appDarkMode } = SettingsController.getAppSettings();
+  return appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight;
+};
+
+/**
  * @name createMainWindow
  * @summary Set up the main window:
  *
@@ -93,7 +102,7 @@ export const createMainWindow = (isTest: boolean) => {
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: getWindowBackgroundColor(),
     webPreferences: {
       sandbox: !isTest,
       preload: path.join(__dirname, 'preload.js'),
@@ -196,7 +205,7 @@ export const createBaseWindow = () => {
     closable: true,
     fullscreen: false,
     center: true,
-    backgroundColor: '#101010',
+    backgroundColor: getWindowBackgroundColor(),
   });
 
   // Hide base window and menu bar on Linux and Windows.
@@ -210,7 +219,7 @@ export const createBaseWindow = () => {
   const tabsView = new WebContentsView({ webPreferences });
   const viewHeight = WindowsController.Y_OFFSET;
   tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: viewHeight });
-  tabsView.setBackgroundColor('#181818');
+  tabsView.setBackgroundColor(getWindowBackgroundColor());
   loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
   baseWindow.contentView.addChildView(tabsView);
 
@@ -264,7 +273,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     });
 
     // Add view to active set and render.
-    view.setBackgroundColor('#101010');
+    view.setBackgroundColor(getWindowBackgroundColor());
     loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
     WindowsController.addView(view, name);
     WindowsController.addTab(name);

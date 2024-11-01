@@ -4,6 +4,8 @@
 export interface ConnectionsContextInterface {
   isConnected: boolean;
   isImporting: boolean;
+  darkMode: boolean;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
 }

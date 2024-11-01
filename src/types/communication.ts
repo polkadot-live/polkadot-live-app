@@ -59,6 +59,7 @@ export interface IpcTask {
     | 'interval:tasks:import'
     // Settings
     | 'settings:set:docked'
+    | 'settings:set:darkMode'
     | 'settings:toggle'
     | 'settings:toggle:allWorkspaces'
     // Workspaces

@@ -358,19 +358,25 @@ app.whenReady().then(async () => {
       case 'isImporting': {
         ConfigMain.importingData = flag;
 
-        // Send to main window.
-        WindowsController.getWindow('menu')?.webContents?.send(
-          'renderer:modeFlag:set',
-          modeId,
-          flag
+        // Relay to renderers.
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
+      case 'darkMode': {
+        // Persist new flag to store.
+        SettingsController.process({
+          action: 'settings:set:darkMode',
+          data: { flag },
+        });
+
+        // Set the background color for all open windows and views.
+        const { appDarkMode } = SettingsController.getAppSettings();
+        WindowsController.setWindowsBackgroundColor(
+          appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
         );
 
-        // Send to open views.
-        for (const viewId of ['import', 'settings']) {
-          const view = WindowsController.getView(viewId);
-          view && view.webContents.send(`renderer:modeFlag:set`, modeId, flag);
-        }
-
+        // Relay to renderers.
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
       default: {

@@ -56,7 +56,7 @@ const getProvidersForWindow = () => {
 
   switch (windowId) {
     case 'tabs': {
-      return withProviders(TabsProvider)(Theme);
+      return withProviders(ConnectionsProvider, TabsProvider)(Theme);
     }
     case 'main': {
       return withProviders(
@@ -110,6 +110,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         TooltipProvider,
+        ConnectionsProvider,
         TxMetaProvider
       )(Theme);
     }

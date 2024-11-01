@@ -62,6 +62,13 @@ export const HeaderWrapper = styled.div`
         .hide-text {
           color: rgba(0, 0, 0, 0);
         }
+        .theme-toggle {
+          svg {
+            width: 1.4rem;
+            height: 1.4rem;
+            margin-top: 2px;
+          }
+        }
         .dock-btn {
           border: 1px solid var(--border-mid-color);
           min-width: 96px;

@@ -23,6 +23,8 @@ export class Config {
 
   // Child window properties.
   private static _childWidth = 780;
+  private static _themeColorDark = '#1c1c1c';
+  private static _themeColorLight = '#e3e3e3';
 
   // Cache port pairs to be sent to their respective windows.
   private static _main_import_ports: PortPair;
@@ -146,6 +148,14 @@ export class Config {
 
   static set childWidth(width: number) {
     Config._childWidth = width;
+  }
+
+  static get themeColorDark(): string {
+    return Config._themeColorDark;
+  }
+
+  static get themeColorLight(): string {
+    return Config._themeColorLight;
   }
 
   static get exportingData(): boolean {

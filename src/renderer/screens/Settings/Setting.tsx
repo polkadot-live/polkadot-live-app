@@ -9,7 +9,7 @@ import { useHelp } from '@/renderer/contexts/common/Help';
 import { ButtonMonoInvert } from '@app/kits/Buttons/ButtonMonoInvert';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
-import type { SettingAction, SettingProps } from './types';
+import type { SettingAction, SettingItem, SettingProps } from './types';
 import { EllipsisSpinner } from '@/renderer/library/components/Spinners';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
@@ -44,7 +44,14 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
 
   /// Determine if switch should be disabled.
   const getDisabled = (action: SettingAction): boolean =>
-    action === 'settings:execute:importData' ? isImporting : false;
+    action === 'settings:execute:importData' ||
+    action === 'settings:execute:exportData'
+      ? isImporting
+      : false;
+
+  /// Get specific flag for import button.
+  const getImportFlag = ({ action }: SettingItem): boolean =>
+    action === 'settings:execute:importData' && getDisabled(action);
 
   return (
     <SettingWrapper>
@@ -72,12 +79,12 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
               }}
               disabled={getDisabled(setting.action)}
               iconLeft={setting.buttonIcon}
-              text={getDisabled(setting.action) ? '' : setting.buttonText || ''}
+              text={getImportFlag(setting) ? '' : setting.buttonText || ''}
               iconTransform="shrink-2"
               onClick={() => handleButtonClick()}
             />
 
-            {getDisabled(setting.action) && (
+            {getImportFlag(setting) && (
               <EllipsisSpinner style={{ left: '26px', top: '10px' }} />
             )}
           </div>

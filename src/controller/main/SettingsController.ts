@@ -27,6 +27,7 @@ export class SettingsController {
     } else {
       const settings: PersistedSettings = {
         appDocked: false,
+        appDarkMode: true,
         appSilenceOsNotifications: false,
         appShowOnAllWorkspaces: true,
         appShowDebuggingSubscriptions: false,
@@ -51,6 +52,13 @@ export class SettingsController {
     switch (task.action) {
       case 'settings:set:docked': {
         WindowUtils.handleNewDockFlag(task.data.flag);
+        break;
+      }
+      case 'settings:set:darkMode': {
+        const settings = this.getAppSettings();
+        settings.appDarkMode = task.data.flag;
+        const key = Config.settingsStorageKey;
+        (store as Record<string, AnyData>).set(key, settings);
         break;
       }
       case 'settings:toggle:allWorkspaces': {

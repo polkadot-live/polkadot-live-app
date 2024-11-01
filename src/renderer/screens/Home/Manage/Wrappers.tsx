@@ -108,6 +108,8 @@ export const TaskEntryWrapper = styled(motion.div)`
 
   /* OS Notifications Icon */
   .native-wrapper {
+    color: var(--text-color-secondary);
+
     .native-content {
       position: relative;
     }
@@ -131,22 +133,24 @@ export const TaskEntryWrapper = styled(motion.div)`
     .unchecked {
       transition: opacity 0.1s ease-in-out;
       padding: 0.5rem;
-      opacity: 0.4;
+      opacity: 0.7;
       cursor: pointer;
 
       &:hover {
-        opacity: 0.6;
+        opacity: 0.8;
       }
     }
     .disabled {
       transition: opacity 0.1s ease-in-out;
       padding: 0.5rem;
-      opacity: 0.15;
+      opacity: 0.25;
     }
   }
 
   /* Remove button */
   .remove-wrapper {
+    color: var(--text-color-secondary);
+
     .enabled {
       cursor: pointer;
       padding: 0.5rem;
@@ -224,13 +228,15 @@ export const TaskEntryWrapper = styled(motion.div)`
 
   /* One-shot icon */
   .one-shot-wrapper {
+    color: var(--text-color-secondary);
+
     .enabled {
       cursor: pointer;
       padding: 0.5rem;
       transition: opacity 0.1s ease-in-out;
 
       &:hover {
-        opacity: 0.6;
+        opacity: 0.8;
       }
     }
     .processing {

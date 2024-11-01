@@ -3,25 +3,20 @@
 
 import { setStateWithRef } from '@w3ux/utils';
 import { Router } from './Router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { useConnections } from './contexts/common/Connections';
 
 export const Theme = () => {
-  // Check whether system is initially on dark mode.
-  const { matches: isDarkMode } = window.matchMedia(
-    '(prefers-color-scheme: dark)'
-  );
+  const { darkMode } = useConnections();
 
   // Store initial theme in state.
-  const [mode, setMode] = useState(isDarkMode ? 'dark' : 'light');
+  const [mode, setMode] = useState(darkMode ? 'dark' : 'light');
   const modeRef = useRef(mode);
 
-  // Subscribe to system theme changes.
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', (event) => {
-      setStateWithRef(event.matches ? 'dark' : 'light', setMode, modeRef);
-    });
+  useEffect(() => {
+    setStateWithRef(darkMode ? 'dark' : 'light', setMode, modeRef);
+  }, [darkMode]);
 
   return (
     <ThemeProvider theme={{ mode: modeRef.current }}>
