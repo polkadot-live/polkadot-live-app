@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.2.0-alpha...v0.3.0-alpha) (2024-11-01)
+
+
+### Features
+
+* accordion styling iteration ([#724](https://github.com/polkadot-live/polkadot-live-app/issues/724)) ([a2cb54f](https://github.com/polkadot-live/polkadot-live-app/commit/a2cb54f1f2cdb31408aca35fbbdc0b91dd05f6f8))
+* dynamic themes ([#733](https://github.com/polkadot-live/polkadot-live-app/issues/733)) ([a6c7701](https://github.com/polkadot-live/polkadot-live-app/commit/a6c7701a57bbe39b26a7b603d8efd9189843ba7f))
+* event item styling ([#725](https://github.com/polkadot-live/polkadot-live-app/issues/725)) ([82e781e](https://github.com/polkadot-live/polkadot-live-app/commit/82e781ecf3f50d2afc02dc665a7dec66d69198a2))
+* import screen styling ([#728](https://github.com/polkadot-live/polkadot-live-app/issues/728)) ([d95ce36](https://github.com/polkadot-live/polkadot-live-app/commit/d95ce36db5612e66bed5a4754dee63c781861bed))
+* main window screen titles ([#719](https://github.com/polkadot-live/polkadot-live-app/issues/719)) ([f90ae58](https://github.com/polkadot-live/polkadot-live-app/commit/f90ae583c1004e5f09292f3af71b6464cfc0f36b))
+* open gov referenda styling ([#730](https://github.com/polkadot-live/polkadot-live-app/issues/730)) ([3d2b3e1](https://github.com/polkadot-live/polkadot-live-app/commit/3d2b3e16ae8d8f8382c41baddfdd3c7a2f028516))
+* open gov screen styling ([#729](https://github.com/polkadot-live/polkadot-live-app/issues/729)) ([d6d203d](https://github.com/polkadot-live/polkadot-live-app/commit/d6d203dc2e540e3581119c29c375f2cd89ff88f0))
+* open gov tracks styling ([#731](https://github.com/polkadot-live/polkadot-live-app/issues/731)) ([879ae0e](https://github.com/polkadot-live/polkadot-live-app/commit/879ae0ef3c83cea9e744868528494cabaa3c6319))
+* persist side nav collapsed state ([#720](https://github.com/polkadot-live/polkadot-live-app/issues/720)) ([e32bc24](https://github.com/polkadot-live/polkadot-live-app/commit/e32bc241afdad57bc40b543027760da059259440))
+* settings screen styling ([#727](https://github.com/polkadot-live/polkadot-live-app/issues/727)) ([ad8b56f](https://github.com/polkadot-live/polkadot-live-app/commit/ad8b56f571eec49e80c7e02bc6f4aa95392433f0))
+* sidebar navigation + summary screen ([#714](https://github.com/polkadot-live/polkadot-live-app/issues/714)) ([8313bd9](https://github.com/polkadot-live/polkadot-live-app/commit/8313bd94be04bda93f636db764f0fb97d177ba7d))
+* styling iteration ([#723](https://github.com/polkadot-live/polkadot-live-app/issues/723)) ([eb2667b](https://github.com/polkadot-live/polkadot-live-app/commit/eb2667bf427d6583d4f818fe7ef49255ffb7e2f3))
+* subscription screen styling ([#726](https://github.com/polkadot-live/polkadot-live-app/issues/726)) ([d72e510](https://github.com/polkadot-live/polkadot-live-app/commit/d72e510302711ed3a65de3314b2a14d31c38cfc5))
+* theme toggle ([#736](https://github.com/polkadot-live/polkadot-live-app/issues/736)) ([a2873e4](https://github.com/polkadot-live/polkadot-live-app/commit/a2873e40f7cffd6b85e7c9a9cb36f0ea6ad3a878))
+
+
+### Bug Fixes
+
+* no accounts wrapper theming ([#738](https://github.com/polkadot-live/polkadot-live-app/issues/738)) ([865058d](https://github.com/polkadot-live/polkadot-live-app/commit/865058d3bc2aacc102c03f304e76c843b724396c))
+* overflow ellipsis ([fffe723](https://github.com/polkadot-live/polkadot-live-app/commit/fffe723c8d203bea9d8bfc4972f5a423c475698a))
+
 ## [0.2.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.1-alpha...v0.2.0-alpha) (2024-10-14)
 
 
