@@ -57,7 +57,7 @@ export class WindowsController {
   ) => {
     // Send to main window.
     if (includeMain) {
-      WindowsController.getWindow('menu')?.webContents?.send(channel, ipcData);
+      this.getWindow('menu')?.webContents?.send(channel, ipcData);
     }
 
     // Send to tabs view.
@@ -70,6 +70,15 @@ export class WindowsController {
       for (const { view } of this.views) {
         view.webContents.send(channel, ipcData);
       }
+    }
+  };
+
+  static setWindowsBackgroundColor = (color: string) => {
+    this.getWindow('menu')?.setBackgroundColor(color);
+    this.base?.window.setBackgroundColor(color);
+    this.tabsView?.setBackgroundColor(color);
+    for (const { view } of this.views) {
+      view.setBackgroundColor(color);
     }
   };
 

@@ -369,9 +369,9 @@ app.whenReady().then(async () => {
           data: { flag },
         });
 
-        // Set base window background color.
+        // Set the background color for all open windows and views.
         const { appDarkMode } = SettingsController.getAppSettings();
-        WindowsController.base?.window.setBackgroundColor(
+        WindowsController.setWindowsBackgroundColor(
           appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
         );
 
