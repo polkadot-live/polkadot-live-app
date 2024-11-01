@@ -65,29 +65,21 @@ export const IconWrapper = styled.div`
 `;
 
 export const NoAccountsWrapper = styled.div`
+  color: var(--text-color-primary);
+  background-color: var(--background-primary);
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
   align-items: center;
-  margin: 1rem 1rem 0.75rem;
+  margin: 0.75rem 1rem;
   padding: 2rem;
   border-radius: 0.375rem;
-  background: rgb(126, 61, 90);
-  background: linear-gradient(
-    45deg,
-    rgb(100 33 62) 0%,
-    rgb(126 40 80) 50%,
-    rgb(124 49 82) 101%
-  );
-  filter: brightness(75%);
 
   button {
     z-index: 1;
     padding: 0.5rem 1.75rem !important;
-    filter: brightness(140%);
   }
   h4 {
     text-align: center;
-    filter: brightness(140%);
   }
 `;
