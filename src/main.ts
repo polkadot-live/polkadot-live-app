@@ -362,6 +362,7 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
+
       case 'darkMode': {
         // Persist new flag to store.
         SettingsController.process({

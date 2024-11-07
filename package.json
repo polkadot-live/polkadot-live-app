@@ -3,7 +3,8 @@
   "productName": "Polkadot Live",
   "version": "0.3.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
-  "main": ".vite/build/main.js",
+  "main": "dist/main/main.cjs",
+  "type": "module",
   "contributors": [
     "Dane Bulat<dane.bulat@gmail.com>"
   ],
@@ -17,7 +18,12 @@
     "publish": "electron-forge publish",
     "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
     "package:dev": "NODE_ENV=test electron-forge package",
-    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts"
+    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts",
+    "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
+    "watch": "cross-env DEBUG=1 node scripts/watch.js"
+  },
+  "engines": {
+    "node": ">=23.1.0"
   },
   "keywords": [],
   "author": {
@@ -54,6 +60,7 @@
     "@wdio/mocha-framework": "^8.32.3",
     "@wdio/spec-reporter": "^8.32.2",
     "@wdio/types": "^8.32.2",
+    "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "electron": "^30.1.2",
     "eslint": "^8.57.0",
