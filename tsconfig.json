@@ -23,15 +23,13 @@
     "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
   },
   "include": [
+    "config/**/*",
+    "scripts/**/*",
     "src",
     "src/**/*.ts",
     "test",
     "wdio.conf.ts",
-    "forge.env.d.ts",
     "vite.base.config.ts",
-    "vite.main.config.ts",
-    "vite.preload.config.ts",
-    "vite.renderer.config.ts",
   ],
   "exclude": ["node_modules", ".vite/**/*", "out/**/*"]
 }

@@ -105,7 +105,7 @@ export const createMainWindow = (isTest: boolean) => {
     backgroundColor: getWindowBackgroundColor(),
     webPreferences: {
       sandbox: !isTest,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
     },
   });
 
@@ -215,7 +215,9 @@ export const createBaseWindow = () => {
   // TODO: Register local shortcut Ctrl+Q and Ctrl+W
 
   // Create tabbed WebContentsView and add to base window.
-  const webPreferences = { preload: path.join(__dirname, 'preload.js') };
+  const webPreferences = {
+    preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
+  };
   const tabsView = new WebContentsView({ webPreferences });
   const viewHeight = WindowsController.Y_OFFSET;
   tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: viewHeight });
@@ -268,7 +270,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     const view = new WebContentsView({
       webPreferences: {
         sandbox: !isTest,
-        preload: path.join(__dirname, 'preload.js'),
+        preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
       },
     });
 
@@ -322,18 +324,15 @@ const loadUrlWithRoute = (
     options.args ? `?${new URLSearchParams(options.args).toString()}` : ''
   }`;
 
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+  if (process.env.VITE_DEV_SERVER_URL) {
     // Development: load from vite dev server.
     const cont = window instanceof BrowserWindow ? window : window.webContents;
-    cont.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/${route}`);
+    cont.loadURL(`${process.env.VITE_DEV_SERVER_URL}/#/${route}`);
   } else {
     // Production: load from app build.
     const cont = window instanceof BrowserWindow ? window : window.webContents;
     cont.loadURL(
-      `file://${path.join(
-        __dirname,
-        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html#${route}`
-      )}`
+      `file://${path.join(__dirname, `../renderer/index.html#${route}`)}`
     );
   }
 };

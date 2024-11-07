@@ -3,7 +3,7 @@ on: workflow_dispatch
 
 env:
   APPLE_ID: ${{ secrets.APPLE_ID }}
-  APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+  APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
   APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         cache: 'yarn'
-        node-version: 20.x
+        node-version: 23.x
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10' 
@@ -53,5 +53,9 @@ jobs:
       run: yarn install
     - name: Publish
       env:
+        CSC_LINK: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+        CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-      run: yarn publish
+        EP_GH_IGNORE_TIME: true
+        MODE: 'production'
+      run: yarn vendors && yarn package
