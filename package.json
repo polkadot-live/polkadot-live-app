@@ -14,7 +14,15 @@
     "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
     "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts",
     "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
-    "watch": "cross-env DEBUG=1 node scripts/watch.js"
+    "watch": "cross-env DEBUG=1 node scripts/watch.js",
+    "build:renderer": "vite build --config config/vite.renderer.config.js",
+    "build:preload": "vite build --config config/vite.preload.config.js",
+    "build:main": "vite build --config config/vite.main.config.js",
+    "build:all": "concurrently \"yarn run build:renderer\" \"yarn run build:preload\" \"yarn run build:main\"",
+    "package": "cross-env MODE=production yarn run build:all && electron-builder --config scripts/electron-builder.config.prod.mjs",
+    "package:dev": "cross-env MODE=development yarn run build:all && electron-builder --config scripts/electron-builder.config.dev.mjs",
+    "package:win": "cross-env MODE=production CSC_IDENTITY_AUTO_DISCOVERY=false yarn run build:all && electron-builder build --win --config scripts/electron-builder.config.prod.mjs",
+    "asar:list": "asar list"
   },
   "engines": {
     "node": ">=23.1.0"
@@ -43,9 +51,11 @@
     "@wdio/mocha-framework": "^8.32.3",
     "@wdio/spec-reporter": "^8.32.2",
     "@wdio/types": "^8.32.2",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "electron": "^30.1.2",
+    "electron-builder": "^25.1.8",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -72,6 +82,7 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@electron/asar": "^3.2.17",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.5.0",
     "@fortawesome/free-regular-svg-icons": "^6.5.0",
