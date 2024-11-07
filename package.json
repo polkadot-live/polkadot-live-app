@@ -14,7 +14,7 @@
     "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
     "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts",
     "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
-    "watch": "cross-env DEBUG=1 node scripts/watch.js",
+    "watch": "cross-env DEBUG=1 MODE=development node scripts/watch.js",
     "build:renderer": "vite build --config config/vite.renderer.config.js",
     "build:preload": "vite build --config config/vite.preload.config.js",
     "build:main": "vite build --config config/vite.main.config.js",
