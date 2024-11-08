@@ -17,7 +17,7 @@ import unhandled from 'electron-unhandled';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { AccountsController } from '@/controller/main/AccountsController';
 import { AddressesController } from '@/controller/main/AddressesController';
-import { AnalyticsController } from './controller/main/AnalyticsController';
+import { AnalyticsController } from '@/controller/main/AnalyticsController';
 import { BackupController } from '@/controller/main/BackupController';
 import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';

@@ -1,17 +1,7 @@
 {
   "root": true,
-  "overrides": [
-    {
-      "files": [
-        "**/*.{js,ts,tsx}",
-        // Include all workspace packages.
-        "packages/**/*.{js,ts,tsx}",
-        "packages/*/src/**/*.{js,ts,tsx}"
-      ]
-    }
-  ],
   "env": {
-    "browser": true,
+    //"browser": true,
     "node": true
   },
   "extends": [
@@ -38,25 +28,18 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": [
-          "tsconfig.json"
-        ]
+        "project": ["tsconfig.base.json", "packages/*/tsconfig.json"]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    // Include package configs.
-    "project": [
-      "tsconfig.json",
-      "./packages/*/tsconfig.json"
-    ],
-    // Include package configs.
+    "project": ["tsconfig.base.json"],
+    "tsconfigRootDir": ".",
     "ignorePatterns": [
       "node_modules/",
       "dist/",
-      "packages/*/node_modules/",
-      "packages/*/dist/"
+      "packages/*/dist"
     ],
     "sourceType": "module",
     "ecmaVersion": "latest",

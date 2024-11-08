@@ -7,7 +7,7 @@ import { defineConfig } from 'vite';
 import { join, resolve } from 'path';
 
 const PACKAGE_ROOT = __dirname;
-const PROJECT_ROOT = PACKAGE_ROOT;
+const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
 /**
  * @type {import('vite').UserConfig}

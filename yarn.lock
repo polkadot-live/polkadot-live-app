@@ -344,7 +344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/asar@npm:^3.2.17, @electron/asar@npm:^3.2.7":
+"@electron/asar@npm:^3.2.7":
   version: 3.2.17
   resolution: "@electron/asar@npm:3.2.17"
   dependencies:
@@ -873,6 +873,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ledgerhq/devices@npm:^8.4.4":
+  version: 8.4.4
+  resolution: "@ledgerhq/devices@npm:8.4.4"
+  dependencies:
+    "@ledgerhq/errors": "npm:^6.19.1"
+    "@ledgerhq/logs": "npm:^6.12.0"
+    rxjs: "npm:^7.8.1"
+    semver: "npm:^7.3.5"
+  checksum: ea4c3dada124c5c0aad59837e1c399bf2f41f8b4da5c996aaf73bbf8719082598808947c505dc728266ff83fc5fea71170d3f0d18a9b5d59e6e2737ae8a38f39
+  languageName: node
+  linkType: hard
+
 "@ledgerhq/errors@npm:^6.16.4, @ledgerhq/errors@npm:^6.17.0":
   version: 6.17.0
   resolution: "@ledgerhq/errors@npm:6.17.0"
@@ -880,32 +892,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-node-hid-noevents@npm:^6.30.1":
-  version: 6.30.1
-  resolution: "@ledgerhq/hw-transport-node-hid-noevents@npm:6.30.1"
+"@ledgerhq/errors@npm:^6.19.1":
+  version: 6.19.1
+  resolution: "@ledgerhq/errors@npm:6.19.1"
+  checksum: 5cfbd5ff5e4316afc88c456a74d3dc0e0032dafd88f656e80a5cb5b297a75ba6701c53ce38ef3f38a84a8591c499b0b9248cdf352ff34c97a550440cdaddd8d2
+  languageName: node
+  linkType: hard
+
+"@ledgerhq/hw-transport-node-hid-noevents@npm:^6.30.5":
+  version: 6.30.5
+  resolution: "@ledgerhq/hw-transport-node-hid-noevents@npm:6.30.5"
   dependencies:
-    "@ledgerhq/devices": "npm:^8.4.0"
-    "@ledgerhq/errors": "npm:^6.17.0"
-    "@ledgerhq/hw-transport": "npm:^6.31.0"
+    "@ledgerhq/devices": "npm:^8.4.4"
+    "@ledgerhq/errors": "npm:^6.19.1"
+    "@ledgerhq/hw-transport": "npm:^6.31.4"
     "@ledgerhq/logs": "npm:^6.12.0"
     node-hid: "npm:2.1.2"
-  checksum: 637ed150cbaeabfe436ff489d358c77fd7cfa51cadc3c0e414b1d4c73eb245b07a1378847585a8635988c0350d6be9d30f0c5ba80325e8e8da117fba8786adfd
+  checksum: 678488ddf69d8eb1cddec1f31c73b1661f2f8305e87a6e192af74c7558ccf6c2b4e78c61021d29a07213188c3ad55fa0d1b1c7fa1bbf7c6b0f80400d4d2ddfae
   languageName: node
   linkType: hard
 
 "@ledgerhq/hw-transport-node-hid@npm:^6.29.1":
-  version: 6.29.1
-  resolution: "@ledgerhq/hw-transport-node-hid@npm:6.29.1"
+  version: 6.29.5
+  resolution: "@ledgerhq/hw-transport-node-hid@npm:6.29.5"
   dependencies:
-    "@ledgerhq/devices": "npm:^8.4.0"
-    "@ledgerhq/errors": "npm:^6.17.0"
-    "@ledgerhq/hw-transport": "npm:^6.31.0"
-    "@ledgerhq/hw-transport-node-hid-noevents": "npm:^6.30.1"
+    "@ledgerhq/devices": "npm:^8.4.4"
+    "@ledgerhq/errors": "npm:^6.19.1"
+    "@ledgerhq/hw-transport": "npm:^6.31.4"
+    "@ledgerhq/hw-transport-node-hid-noevents": "npm:^6.30.5"
     "@ledgerhq/logs": "npm:^6.12.0"
     lodash: "npm:^4.17.21"
     node-hid: "npm:2.1.2"
     usb: "npm:2.9.0"
-  checksum: 833ca2aa739e02b32f64ad7e07cd5bcb98cec82da00f8975470af30bb49844195734a4a5106e6eaad3b67f0a2fc514bc3dcad8f46294101e792a40564c5511c2
+  checksum: ac426d0e639e47c41e82a3887bbac5f5587cc41214ae84ede8c3ac8962386e4bdfe98a613d7b3a7ba50245446f301eb29ec1160cb9db3394dc97339a7ee0c311
   languageName: node
   linkType: hard
 
@@ -921,7 +940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:6.31.0, @ledgerhq/hw-transport@npm:^6.31.0":
+"@ledgerhq/hw-transport@npm:6.31.0":
   version: 6.31.0
   resolution: "@ledgerhq/hw-transport@npm:6.31.0"
   dependencies:
@@ -930,6 +949,18 @@ __metadata:
     "@ledgerhq/logs": "npm:^6.12.0"
     events: "npm:^3.3.0"
   checksum: 6d277a05eb5a202a17a7a942e63022ae26321795c640d59a75b032e33274c731da5f23fbf00132efa57bc715bea8505d6a1293c20b121d603459b25c1d784444
+  languageName: node
+  linkType: hard
+
+"@ledgerhq/hw-transport@npm:^6.31.0, @ledgerhq/hw-transport@npm:^6.31.4":
+  version: 6.31.4
+  resolution: "@ledgerhq/hw-transport@npm:6.31.4"
+  dependencies:
+    "@ledgerhq/devices": "npm:^8.4.4"
+    "@ledgerhq/errors": "npm:^6.19.1"
+    "@ledgerhq/logs": "npm:^6.12.0"
+    events: "npm:^3.3.0"
+  checksum: 033acb802d991788efcda9223356528d0987a268e94c34cbafde499541722363e7cfa6e2734365ef3282c0a80a69f4964a6d728690ff7494662a650516530b02
   languageName: node
   linkType: hard
 
@@ -1137,6 +1168,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@polkadot-live/main@workspace:packages/main"
   dependencies:
+    "@ledgerhq/hw-transport": "npm:^6.31.0"
+    "@ledgerhq/hw-transport-node-hid": "npm:^6.29.1"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"
     "@types/electron-localshortcut": "npm:^3.1.0"
@@ -1170,7 +1203,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@polkadot-live/preload@workspace:^, @polkadot-live/preload@workspace:packages/preload":
+"@polkadot-live/preload@workspace:packages/preload":
   version: 0.0.0-use.local
   resolution: "@polkadot-live/preload@workspace:packages/preload"
   dependencies:
@@ -1192,7 +1225,6 @@ __metadata:
     "@fortawesome/free-regular-svg-icons": "npm:^6.5.0"
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.0"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
-    "@polkadot-live/preload": "workspace:^"
     "@polkadot/api": "npm:^11.3.1"
     "@polkadot/rpc-provider": "npm:^11.3.1"
     "@polkadot/types": "npm:^11.3.1"
@@ -2326,7 +2358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mocha@npm:^10.0.0, @types/mocha@npm:^10.0.6":
+"@types/mocha@npm:^10.0.0":
   version: 10.0.6
   resolution: "@types/mocha@npm:10.0.6"
   checksum: 4526c9e88388f9e1004c6d3937c5488a39908810f26b927173c58d52b43057f3895627dc06538e96706e08b88158885f869ec6311f6b58fd72bdef715f26d6c3
@@ -4675,14 +4707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detect-libc@npm:^2.0.0":
-  version: 2.0.2
-  resolution: "detect-libc@npm:2.0.2"
-  checksum: a9f4ffcd2701525c589617d98afe5a5d0676c8ea82bcc4ed6f3747241b79f781d36437c59a5e855254c864d36a3e9f8276568b6b531c28d6e53b093a15703f11
-  languageName: node
-  linkType: hard
-
-"detect-libc@npm:^2.0.1":
+"detect-libc@npm:^2.0.0, detect-libc@npm:^2.0.1":
   version: 2.0.3
   resolution: "detect-libc@npm:2.0.3"
   checksum: 88095bda8f90220c95f162bf92cad70bd0e424913e655c20578600e35b91edc261af27531cf160a331e185c0ced93944bc7e09939143225f56312d7fd800fdb7
@@ -4923,7 +4948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:^25.1.8":
+"electron-builder@npm:25.1.8":
   version: 25.1.8
   resolution: "electron-builder@npm:25.1.8"
   dependencies:
@@ -8462,16 +8487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-abi@npm:^3.3.0":
-  version: 3.56.0
-  resolution: "node-abi@npm:3.56.0"
-  dependencies:
-    semver: "npm:^7.3.5"
-  checksum: 1cdaee96ba3898905a9ad775dd88556478fcd73bbe815e575725209da37057d187fb96e7efb785e331f4b3725e9939014a69d2edd7bf6969fad73344e1fcaf2f
-  languageName: node
-  linkType: hard
-
-"node-abi@npm:^3.45.0":
+"node-abi@npm:^3.3.0, node-abi@npm:^3.45.0":
   version: 3.71.0
   resolution: "node-abi@npm:3.71.0"
   dependencies:
@@ -8549,13 +8565,13 @@ __metadata:
   linkType: hard
 
 "node-gyp-build@npm:^4.5.0":
-  version: 4.8.0
-  resolution: "node-gyp-build@npm:4.8.0"
+  version: 4.8.2
+  resolution: "node-gyp-build@npm:4.8.2"
   bin:
     node-gyp-build: bin.js
     node-gyp-build-optional: optional.js
     node-gyp-build-test: build-test.js
-  checksum: 85324be16f81f0235cbbc42e3eceaeb1b5ab94c8d8f5236755e1435b4908338c65a4e75f66ee343cbcb44ddf9b52a428755bec16dcd983295be4458d95c8e1ad
+  checksum: d816b43974d31d6257b6e87d843f2626c72389a285208394bc57a7766b210454d2642860a5e5b5c333d8ecabaeabad3b31b94f58cf8ca1aabdef0c320d02baaa
   languageName: node
   linkType: hard
 
@@ -9175,61 +9191,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "polkadot-live@workspace:."
   dependencies:
-    "@dnd-kit/core": "npm:^6.1.0"
-    "@dnd-kit/modifiers": "npm:^7.0.0"
-    "@dnd-kit/sortable": "npm:^8.0.0"
-    "@dnd-kit/utilities": "npm:^3.2.2"
-    "@electron/asar": "npm:^3.2.17"
-    "@fortawesome/fontawesome-svg-core": "npm:^6.6.0"
-    "@fortawesome/free-brands-svg-icons": "npm:^6.5.0"
-    "@fortawesome/free-regular-svg-icons": "npm:^6.5.0"
-    "@fortawesome/free-solid-svg-icons": "npm:^6.5.0"
-    "@fortawesome/react-fontawesome": "npm:^0.2.0"
-    "@ledgerhq/hw-transport": "npm:^6.31.0"
-    "@ledgerhq/hw-transport-node-hid": "npm:^6.29.1"
-    "@polkadot/api": "npm:^11.3.1"
-    "@polkadot/rpc-provider": "npm:^11.3.1"
-    "@polkadot/types": "npm:^11.3.1"
-    "@polkadot/types-codec": "npm:^11.3.1"
-    "@polkadot/util": "npm:^12.6.2"
-    "@polkadot/util-crypto": "npm:^12.6.2"
-    "@substrate/connect": "npm:^1.0.2"
-    "@theme-toggles/react": "npm:^4.1.0"
-    "@types/auto-launch": "npm:^5.0.2"
-    "@types/debug": "npm:^4.1.12"
-    "@types/electron-localshortcut": "npm:^3.1.0"
-    "@types/ip": "npm:^1.1.3"
-    "@types/mocha": "npm:^10.0.6"
-    "@types/react": "npm:^18.2.79"
-    "@types/react-dom": "npm:^18.2.25"
-    "@types/styled-components": "npm:^5.1.34"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.0"
     "@typescript-eslint/parser": "npm:^7.7.0"
-    "@vitejs/plugin-react-swc": "npm:^3.6.0"
-    "@w3ux/extension-assets": "npm:^0.2.6"
-    "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
-    "@w3ux/utils": "npm:0.4.0-alpha.0"
-    "@wdio/cli": "npm:8.32.3"
-    "@wdio/dot-reporter": "npm:^8.32.2"
-    "@wdio/globals": "npm:^8.32.3"
-    "@wdio/local-runner": "npm:^8.32.3"
-    "@wdio/mocha-framework": "npm:^8.32.3"
-    "@wdio/spec-reporter": "npm:^8.32.2"
-    "@wdio/types": "npm:^8.32.2"
-    "@zondax/ledger-substrate": "npm:^0.44.7"
-    auto-launch: "npm:^5.0.6"
-    axios: "npm:^1.7.2"
-    bignumber.js: "npm:^9.1.2"
     concurrently: "npm:^9.1.0"
     cross-env: "npm:^7.0.3"
-    date-fns: "npm:^3.6.0"
-    debug: "npm:^4.3.4"
     electron: "npm:^30.1.2"
-    electron-builder: "npm:^25.1.8"
-    electron-localshortcut: "npm:^3.2.1"
-    electron-squirrel-startup: "npm:^1.0.0"
-    electron-store: "npm:^8.1.0"
-    electron-unhandled: "npm:^4.0.1"
+    electron-builder: "npm:25.1.8"
     eslint: "npm:^8.57.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-import-resolver-typescript: "npm:^3.6.1"
@@ -9238,30 +9205,11 @@ __metadata:
     eslint-plugin-react: "npm:^7.34.3"
     eslint-plugin-react-hooks: "npm:^4.6.2"
     eslint-plugin-unused-imports: "npm:^4.0.0"
-    expect: "npm:^29.7.0"
-    expect-webdriverio: "npm:^4.11.9"
-    framer-motion: "npm:^11.1.1"
-    html5-qrcode: "npm:^2.3.8"
-    ip: "npm:^2.0.1"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
-    qrcode-generator: "npm:^1.4.4"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    react-error-boundary: "npm:^4.0.12"
-    react-router-dom: "npm:^6.22.3"
-    react-toastify: "npm:^10.0.5"
-    sass: "npm:^1.71.1"
-    sass-loader: "npm:^14.1.1"
-    socket.io: "npm:^4.7.5"
-    styled-components: "npm:^6.1.8"
-    svg-inline-loader: "npm:^0.8.2"
     ts-node: "npm:^10.9.2"
     typescript: "npm:5.4.5"
     vite: "npm:^4.4.11"
-    vite-plugin-eslint: "npm:^1.8.1"
-    vite-plugin-svgr: "npm:^4.2.0"
-    wdio-electron-service: "npm:^5.4.0"
   languageName: unknown
   linkType: soft
 

@@ -26,7 +26,7 @@ function setupMainPackageWatcher({ resolvedUrls }) {
   return build({
     mode,
     logLevel,
-    configFile: 'config/vite.main.config.js',
+    configFile: 'packages/main/vite.config.js',
     build: {
       /**
        * Set to {} to enable rollup watcher
@@ -68,7 +68,7 @@ function setupPreloadPackageWatcher({ ws }) {
   return build({
     mode,
     logLevel,
-    configFile: 'config/vite.preload.config.js',
+    configFile: 'packages/preload/vite.config.js',
     build: {
       /**
        * Set to {} to enable rollup watcher.
@@ -98,7 +98,7 @@ function setupPreloadPackageWatcher({ ws }) {
 const rendererWatchServer = await createServer({
   mode,
   logLevel,
-  configFile: 'config/vite.renderer.config.js',
+  configFile: 'packages/renderer/vite.config.js',
 }).then((s) => s.listen());
 
 await setupPreloadPackageWatcher(rendererWatchServer);

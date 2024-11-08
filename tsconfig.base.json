@@ -1,9 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "rootDir": ".",
     "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "checkJs": false,
     "strict": true,
     "allowJs": true,
@@ -16,13 +16,26 @@
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["node"],
 
     /* Paths are relative to base URL */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@app/*": ["./packagegs/renderer/src/renderer/*"],
     },
+    "declarationMap": false,
+    "noEmitOnError": true,
   },
-  "include": ["./src/**/*.ts", "vite.config.js"],
+  "include": [
+    "packages/**/*",
+    "scripts/**/*",
+    "vite.base.config.ts",
+    "wdio.conf.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*/node_modules",
+    "**/*/dist",
+    ".vite/**/*"
+  ],
 }

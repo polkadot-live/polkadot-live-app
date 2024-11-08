@@ -1,9 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "baseUrl": ".",
+    "moduleResolution": "Node",
     "checkJs": false,
     "strict": true,
     "allowJs": true,
@@ -14,15 +14,16 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "moduleResolution": "Node",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
+
+    /* Paths are relative to base URL */
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@app/*": ["./src/renderer/*"],
     },
-    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
   },
-  "include": ["./src/**/*.ts", "../../types/**/*.d.ts", "vite.config.js", "index.d.ts"],
-  "exclude": ["node_modules", ".vite/**/*", "out/**/*", "**/*.spec.ts", "**/*.test.ts"]
+  "include": ["./src/**/*.ts", "vite.config.js"],
+  "exclude": ["node_modules"]
 }

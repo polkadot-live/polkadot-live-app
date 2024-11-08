@@ -8,7 +8,7 @@ import { join, resolve } from 'path';
 import { chrome } from '../../.electron-vendors.cache.json';
 
 const PACKAGE_ROOT = __dirname;
-const PROJECT_ROOT = PACKAGE_ROOT;
+const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
 /**
  * @type {import('vite').UserConfig}
