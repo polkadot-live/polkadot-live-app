@@ -1,0 +1,20 @@
+{
+  "name": "@polkadot-live/preload",
+  "version": "0.3.0-alpha",
+  "type": "module",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": "./dist/preload.cjs"
+  },
+  "scripts": {
+    "build": "vite build --config vite.config.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.4.5",
+    "vite": "^4.4.11"
+  },
+  "packageManager": "yarn@4.0.2"
+}

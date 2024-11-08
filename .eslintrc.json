@@ -1,5 +1,15 @@
 {
   "root": true,
+  "overrides": [
+    {
+      "files": [
+        "**/*.{js,ts,tsx}",
+        // Include all workspace packages.
+        "packages/**/*.{js,ts,tsx}",
+        "packages/*/src/**/*.{js,ts,tsx}"
+      ]
+    }
+  ],
   "env": {
     "browser": true,
     "node": true
@@ -36,7 +46,18 @@
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "tsconfig.json",
+    // Include package configs.
+    "project": [
+      "tsconfig.json",
+      "./packages/*/tsconfig.json"
+    ],
+    // Include package configs.
+    "ignorePatterns": [
+      "node_modules/",
+      "dist/",
+      "packages/*/node_modules/",
+      "packages/*/dist/"
+    ],
     "sourceType": "module",
     "ecmaVersion": "latest",
     "ecmaFeatures": {

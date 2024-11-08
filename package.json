@@ -1,12 +1,17 @@
 {
-  "name": "polkadot-live-vite",
+  "name": "polkadot-live",
   "productName": "Polkadot Live",
   "version": "0.3.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
-  "main": "dist/main/main.cjs",
   "type": "module",
   "contributors": [
     "Dane Bulat<dane.bulat@gmail.com>"
+  ],
+  "keywords": [],
+  "private": true,
+  "main": "dist/main/main.cjs",
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
     "clear": "rm -rf node_modules out tsconfig.tsbuildinfo",
@@ -27,7 +32,6 @@
   "engines": {
     "node": ">=23.1.0"
   },
-  "keywords": [],
   "author": {
     "name": "Dane Bulat",
     "email": "dane.bulat@gmail.com"

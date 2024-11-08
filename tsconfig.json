@@ -23,6 +23,7 @@
     "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
   },
   "include": [
+    "packages/**/*.ts",
     "config/**/*",
     "scripts/**/*",
     "src",
