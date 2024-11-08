@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="connect-src 'self' * 'unsafe-eval'"
+    />
+    <style>
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 500;
+        src: url('/fonts/Inter500.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: InterSemiBold;
+        font-style: normal;
+        font-weight: 600;
+        src: url('/fonts/Inter600.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: InterBold;
+        font-style: normal;
+        font-weight: 700;
+        src: url('/fonts/Inter700.woff2') format('woff2');
+      }
+
+      @font-face {
+        font-family: Unbounded;
+        font-style: normal;
+        font-weight: 700;
+        src: url('/fonts/Unbounded.woff2') format('woff2');
+      }
+
+      body {
+        overflow: hidden;
+      }
+    </style>
+
+    <title>Polkadot Live</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/renderer/index.tsx"></script>
+  </body>
+</html>

@@ -1170,12 +1170,65 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@polkadot-live/preload@workspace:packages/preload":
+"@polkadot-live/preload@workspace:^, @polkadot-live/preload@workspace:packages/preload":
   version: 0.0.0-use.local
   resolution: "@polkadot-live/preload@workspace:packages/preload"
   dependencies:
     typescript: "npm:5.4.5"
     vite: "npm:^4.4.11"
+  languageName: unknown
+  linkType: soft
+
+"@polkadot-live/renderer@workspace:packages/renderer":
+  version: 0.0.0-use.local
+  resolution: "@polkadot-live/renderer@workspace:packages/renderer"
+  dependencies:
+    "@dnd-kit/core": "npm:^6.1.0"
+    "@dnd-kit/modifiers": "npm:^7.0.0"
+    "@dnd-kit/sortable": "npm:^8.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    "@fortawesome/fontawesome-svg-core": "npm:^6.6.0"
+    "@fortawesome/free-brands-svg-icons": "npm:^6.5.0"
+    "@fortawesome/free-regular-svg-icons": "npm:^6.5.0"
+    "@fortawesome/free-solid-svg-icons": "npm:^6.5.0"
+    "@fortawesome/react-fontawesome": "npm:^0.2.0"
+    "@polkadot-live/preload": "workspace:^"
+    "@polkadot/api": "npm:^11.3.1"
+    "@polkadot/rpc-provider": "npm:^11.3.1"
+    "@polkadot/types": "npm:^11.3.1"
+    "@polkadot/types-codec": "npm:^11.3.1"
+    "@polkadot/util": "npm:^12.6.2"
+    "@polkadot/util-crypto": "npm:^12.6.2"
+    "@substrate/connect": "npm:^1.0.2"
+    "@theme-toggles/react": "npm:^4.1.0"
+    "@types/react": "npm:^18.2.79"
+    "@types/react-dom": "npm:^18.2.25"
+    "@types/styled-components": "npm:^5.1.34"
+    "@vitejs/plugin-react-swc": "npm:^3.6.0"
+    "@w3ux/extension-assets": "npm:^0.2.6"
+    "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
+    "@w3ux/utils": "npm:0.4.0-alpha.0"
+    "@zondax/ledger-substrate": "npm:^0.44.7"
+    axios: "npm:^1.7.2"
+    bignumber.js: "npm:^9.1.2"
+    cross-env: "npm:^7.0.3"
+    date-fns: "npm:^3.6.0"
+    framer-motion: "npm:^11.1.1"
+    html5-qrcode: "npm:^2.3.8"
+    qrcode-generator: "npm:^1.4.4"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    react-error-boundary: "npm:^4.0.12"
+    react-router-dom: "npm:^6.22.3"
+    react-toastify: "npm:^10.0.5"
+    sass: "npm:^1.71.1"
+    sass-loader: "npm:^14.1.1"
+    styled-components: "npm:^6.1.8"
+    svg-inline-loader: "npm:^0.8.2"
+    typescript: "npm:5.4.5"
+    vite: "npm:^4.4.11"
+    vite-plugin-eslint: "npm:^1.8.1"
+    vite-plugin-svgr: "npm:^4.2.0"
   languageName: unknown
   linkType: soft
 
