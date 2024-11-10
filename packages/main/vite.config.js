@@ -48,6 +48,7 @@ export default defineConfig({
       external,
       output: {
         entryFileNames: '[name].cjs',
+        format: 'cjs',
       },
     },
     emptyOutDir: true,

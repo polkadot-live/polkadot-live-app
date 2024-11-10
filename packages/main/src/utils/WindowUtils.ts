@@ -15,7 +15,7 @@ import {
   register as registerLocalShortcut,
   unregisterAll as unregisterAllLocalShortcut,
 } from 'electron-localshortcut';
-import path from 'path';
+import path, { resolve, join } from 'path';
 import { store } from '@/main';
 import { hideDockIcon, reportOnlineStatus } from '@/utils/SystemUtils';
 import { EventsController } from '@/controller/main/EventsController';
@@ -26,6 +26,9 @@ import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@/types/misc';
 import type { PortPairID } from '@/types/communication';
 import type { Rectangle } from 'electron';
+
+const PACKAGES_PATH = join(__dirname, '../..');
+const PRELOAD_PATH = resolve(PACKAGES_PATH, 'preload', 'dist', 'preload.cjs');
 
 const debug = MainDebug.extend('WindowUtils');
 
@@ -105,7 +108,7 @@ export const createMainWindow = (isTest: boolean) => {
     backgroundColor: getWindowBackgroundColor(),
     webPreferences: {
       sandbox: !isTest,
-      preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
+      preload: PRELOAD_PATH,
     },
   });
 
@@ -216,7 +219,7 @@ export const createBaseWindow = () => {
 
   // Create tabbed WebContentsView and add to base window.
   const webPreferences = {
-    preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
+    preload: PRELOAD_PATH,
   };
   const tabsView = new WebContentsView({ webPreferences });
   const viewHeight = WindowsController.Y_OFFSET;
@@ -270,7 +273,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     const view = new WebContentsView({
       webPreferences: {
         sandbox: !isTest,
-        preload: path.join(__dirname, '..', 'preload', 'preload.cjs'),
+        preload: PRELOAD_PATH,
       },
     });
 

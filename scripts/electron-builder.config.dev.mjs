@@ -1,6 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { findFilesThatShouldBeExcluded } from './build-helpers.mjs';
+
 /**
  * Export electron-builder config.
  */
@@ -16,7 +18,12 @@ export default {
     output: 'releases',
     buildResources: 'dist/renderer',
   },
-  files: ['dist/**/*', 'node_modules/**/*', 'package.json'],
+  files: [
+    'dist/**/*',
+    'node_modules/**/*',
+    'package.json',
+    ...(await findFilesThatShouldBeExcluded()),
+  ],
   npmRebuild: true,
   /** Mac */
   dmg: {

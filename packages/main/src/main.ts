@@ -91,6 +91,7 @@ unhandled({
   logger: () => {
     console.error();
   },
+
   showDialog: false,
 });
 

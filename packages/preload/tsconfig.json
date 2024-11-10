@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
@@ -24,5 +24,4 @@
       "@/*": ["./src/*"],
     },
   },
-  "include": ["./src/**/*.ts", "vite.config.js"],
 }

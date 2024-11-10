@@ -19,9 +19,6 @@
 
     /* Paths are relative to base URL */
     "baseUrl": ".",
-    "paths": {
-      "@app/*": ["./packagegs/renderer/src/renderer/*"],
-    },
     "declarationMap": false,
     "noEmitOnError": true,
   },

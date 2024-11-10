@@ -9,7 +9,7 @@
   ],
   "keywords": [],
   "private": true,
-  "main": "dist/main/main.cjs",
+  "main": "packages/main/dist/main.cjs",
   "workspaces": [
     "packages/*"
   ],
@@ -38,6 +38,7 @@
   "license": "GPL-3.0-only",
   "devDependencies": {
     "@electron/asar": "^3.2.17",
+    "@npmcli/map-workspaces": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",
     "concurrently": "^9.1.0",

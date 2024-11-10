@@ -28,14 +28,14 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": ["tsconfig.base.json", "packages/*/tsconfig.json"]
+        "project": ["tsconfig.json", "packages/*/tsconfig.json"]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["tsconfig.base.json"],
-    "tsconfigRootDir": ".",
+    "tsconfigRootDir": "./",
+    "project": ["tsconfig.json", "packages/*/tsconfig.json"],
     "ignorePatterns": [
       "node_modules/",
       "dist/",

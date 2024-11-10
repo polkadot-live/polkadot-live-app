@@ -2,7 +2,7 @@
   "name": "@polkadot-live/main",
   "version": "0.3.0-alpha",
   "type": "module",
-  "main": "dist/main.cjs",
+  "main": "./dist/main.cjs",
   "files": [
     "dist/**"
   ],
