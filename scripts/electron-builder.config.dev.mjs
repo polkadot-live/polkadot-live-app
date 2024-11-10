@@ -16,11 +16,12 @@ export default {
   /** Building */
   directories: {
     output: 'releases',
-    buildResources: 'dist/renderer',
+    buildResources: 'packages/renderer/dist',
   },
   files: [
-    'dist/**/*',
-    'node_modules/**/*',
+    'packages/main/dist',
+    'packages/preload/dist',
+    'packages/renderer/dist',
     'package.json',
     ...(await findFilesThatShouldBeExcluded()),
   ],

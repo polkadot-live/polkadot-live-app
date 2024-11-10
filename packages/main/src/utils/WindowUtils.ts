@@ -335,7 +335,7 @@ const loadUrlWithRoute = (
     // Production: load from app build.
     const cont = window instanceof BrowserWindow ? window : window.webContents;
     cont.loadURL(
-      `file://${path.join(__dirname, `../renderer/index.html#${route}`)}`
+      `file://${path.join(__dirname, `../../renderer/dist/index.html#${route}`)}`
     );
   }
 };
