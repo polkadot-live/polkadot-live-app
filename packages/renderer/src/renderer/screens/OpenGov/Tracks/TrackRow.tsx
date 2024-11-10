@@ -15,7 +15,7 @@ import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { useHelp } from '@/renderer/contexts/common/Help';
 import { useTracks } from '@/renderer/contexts/openGov/Tracks';
 import { formatChainUnits } from '@/renderer/library/utils';
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
+import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 
 export const TrackRow = ({ track }: TrackRowProps) => {

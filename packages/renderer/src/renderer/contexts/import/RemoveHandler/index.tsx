@@ -6,8 +6,8 @@ import { Config as ConfigImport } from '@/config/processes/import';
 import { getAddressChainId } from '@/renderer/Utils';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import type { AccountSource } from '@/types/accounts';
-import type { IpcTask } from '@/types/communication';
+import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { IpcTask } from '@polkadot-live/types/communication';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =

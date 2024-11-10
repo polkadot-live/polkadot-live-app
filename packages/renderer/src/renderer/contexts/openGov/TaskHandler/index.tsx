@@ -6,8 +6,8 @@ import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { Flip, toast } from 'react-toastify';
-import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';
 
 export const TaskHandlerContext = createContext<TaskHandlerContextInterface>(

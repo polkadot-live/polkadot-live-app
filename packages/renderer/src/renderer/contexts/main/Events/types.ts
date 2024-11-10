@@ -1,8 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  DismissEvent,
+  EventCallback,
+} from '@polkadot-live/types/reporter';
 
 export interface EventsContextInterface {
   events: EventsState;

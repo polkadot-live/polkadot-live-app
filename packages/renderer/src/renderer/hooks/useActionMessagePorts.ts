@@ -4,7 +4,7 @@
 import { Config as ConfigAction } from '@/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
-import type { ActionMeta } from '@/types/tx';
+import type { ActionMeta } from '@polkadot-live/types/tx';
 
 export const useActionMessagePorts = () => {
   /// Action window specific.

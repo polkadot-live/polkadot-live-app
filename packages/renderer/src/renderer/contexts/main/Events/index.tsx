@@ -8,8 +8,11 @@ import {
   getEventChainId,
   doRemoveOutdatedEvents,
 } from '@/utils/EventUtils';
-import type { ChainID } from '@/types/chains';
-import type { DismissEvent, EventCallback } from '@/types/reporter';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  DismissEvent,
+  EventCallback,
+} from '@polkadot-live/types/reporter';
 import type {
   EventsContextInterface,
   EventsState,

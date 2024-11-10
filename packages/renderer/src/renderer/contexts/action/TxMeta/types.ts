@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@/types/misc';
-import type { ActionMeta, TxStatus } from '@/types/tx';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type BigNumber from 'bignumber.js';
 
 export interface TxMetaContextInterface {

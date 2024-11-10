@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import { useAddresses } from '../Addresses';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { AccountStatusesContextInterface } from './types';
 
 export const AccountStatusesContext =

@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { useConnections } from '../../common/Connections';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { Track } from '@/model/Track';
 import type { TracksContextInterface } from './types';
 

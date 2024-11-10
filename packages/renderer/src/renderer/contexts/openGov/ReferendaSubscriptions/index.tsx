@@ -4,10 +4,10 @@
 import { NUM_REFERENDUM_SUBSCRIPTIONS } from '@/config/subscriptions/interval';
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
-import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext =
   createContext<ReferendaSubscriptionsContextInterface>(

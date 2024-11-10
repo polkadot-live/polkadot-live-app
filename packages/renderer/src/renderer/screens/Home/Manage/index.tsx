@@ -9,7 +9,7 @@ import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
 import { MainHeading } from '@app/library/components';
 import type { ManageProps } from './types';
-import type { SubscriptionTaskType } from '@/types/subscriptions';
+import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();

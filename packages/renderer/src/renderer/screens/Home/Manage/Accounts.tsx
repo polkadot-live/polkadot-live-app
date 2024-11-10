@@ -19,12 +19,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import type { AccountsProps } from './types';
-import type { ChainID } from '@/types/chains';
-import type { FlattenedAccountData } from '@/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
 

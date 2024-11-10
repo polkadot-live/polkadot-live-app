@@ -9,9 +9,9 @@ import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
 import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
 import { chainCurrency } from '@/config/chains';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { TreasuryContextInterface } from './types';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext

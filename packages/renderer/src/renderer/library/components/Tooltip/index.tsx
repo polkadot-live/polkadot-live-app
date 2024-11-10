@@ -4,7 +4,7 @@
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
 import { useEffect, useRef } from 'react';
 import { Wrapper } from './Wrapper';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const Tooltip = () => {
   const {

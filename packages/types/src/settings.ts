@@ -14,6 +14,8 @@ export interface PersistedSettings {
   appCollapseSideNav: boolean;
 }
 
+export type OsPlatform = 'darwin' | 'linux' | 'win32';
+
 export type SettingAction =
   | 'settings:execute:dockedWindow'
   | 'settings:execute:showOnAllWorkspaces'

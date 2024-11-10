@@ -26,9 +26,9 @@ import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { handleApiDisconnects } from '@/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
-import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/types/subscriptions';
-import type { IpcTask } from '@/types/communication';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext

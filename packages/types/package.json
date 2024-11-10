@@ -1,0 +1,34 @@
+{
+  "name": "@polkadot-live/types",
+  "version": "0.3.0-alpha",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./accounts": "./src/accounts.ts",
+    "./apis": "./src/apis.ts",
+    "./backup": "./src/backup.ts",
+    "./blockstream": "./src/blockstream.ts",
+    "./communication": "./src/communication.ts",
+    "./help": "./src/help.ts",
+    "./ledger": "./src/ledger.ts",
+    "./misc": "./src/misc.ts",
+    "./openGov": "./src/openGov.ts",
+    "./orchestrator": "./src/orchestrator.ts",
+    "./preload": "./src/preload.ts",
+    "./reporter": "./src/reporter.ts",
+    "./settings": "./src/settings.ts",
+    "./subscriptions": "./src/subscriptions.ts",
+    "./tx": "./src/tx.ts",
+    "./chains": "./src/chains/index.ts",
+    "./chains/polkadot": "./src/chains/polkadot.ts",
+    "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"
+  },
+  "files": [],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.4.5"
+  },
+  "packageManager": "yarn@4.0.2"
+}

@@ -7,9 +7,9 @@ import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext

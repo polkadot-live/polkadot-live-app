@@ -2,6 +2,7 @@
   "name": "@polkadot-live/main",
   "version": "0.3.0-alpha",
   "type": "module",
+  "private": true,
   "main": "./dist/main.cjs",
   "files": [
     "dist/**"
@@ -12,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
     "@types/auto-launch": "^5.0.2",
     "@types/debug": "^4.1.12",
     "@types/electron-localshortcut": "^3.1.0",
@@ -38,6 +40,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "^6.31.0",
     "@ledgerhq/hw-transport-node-hid": "^6.29.1",
+    "@polkadot-live/preload": "workspace:*",
     "@zondax/ledger-substrate": "^0.44.7",
     "auto-launch": "^5.0.6",
     "electron-localshortcut": "^3.2.1",

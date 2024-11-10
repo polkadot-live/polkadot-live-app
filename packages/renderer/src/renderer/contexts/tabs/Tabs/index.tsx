@@ -11,8 +11,9 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
+import type { IpcRendererEvent } from 'electron';
 import type { TabsContextInterface } from './types';
-import type { TabData } from '@/types/communication';
+import type { TabData } from '@polkadot-live/types/communication';
 
 export const TabsContext = createContext<TabsContextInterface>(
   defaults.defaultTabsContext
@@ -30,7 +31,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
 
   /// Open tab callback.
   useEffect(() => {
-    window.myAPI.handleOpenTab((_, tabData) => {
+    window.myAPI.handleOpenTab((_: IpcRendererEvent, tabData: TabData) => {
       const found = tabsDataRef.current.find(
         ({ viewId }) => viewId === tabData.viewId
       );

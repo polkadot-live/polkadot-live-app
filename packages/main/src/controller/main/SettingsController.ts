@@ -6,9 +6,12 @@ import { hideDockIcon, showDockIcon } from '@/utils/SystemUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/main/WindowsController';
 import * as WindowUtils from '@/utils/WindowUtils';
-import type { AnyData } from '@/types/misc';
-import type { IpcTask } from '@/types/communication';
-import type { PersistedSettings, SettingAction } from '@/types/settings';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type {
+  PersistedSettings,
+  SettingAction,
+} from '@polkadot-live/types/settings';
 
 export class SettingsController {
   /**

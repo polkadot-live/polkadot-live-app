@@ -5,7 +5,7 @@ import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 export interface AddressesContextInterface {
   ledgerAddresses: LedgerLocalAddress[];

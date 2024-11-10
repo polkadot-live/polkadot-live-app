@@ -32,13 +32,13 @@ import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
-import type { EventCallback } from '@/types/reporter';
+} from '@polkadot-live/types/accounts';
+import type { EventCallback } from '@polkadot-live/types/reporter';
 import type {
   IntervalSubscription,
   SubscriptionTask,
-} from '@/types/subscriptions';
-import type { ExportResult, ImportResult } from '@/types/backup';
+} from '@polkadot-live/types/subscriptions';
+import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext

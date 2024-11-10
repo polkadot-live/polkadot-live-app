@@ -3,10 +3,10 @@
 
 import { store } from '@/main';
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
-import type { AnyData } from '@/types/misc';
-import type { AccountSource } from '@/types/accounts';
-import type { ChainID } from '@/types/chains';
-import type { IpcTask } from '@/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class AccountsController {
   /**

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * Provides the following styled components:

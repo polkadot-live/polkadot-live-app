@@ -3,8 +3,8 @@
 
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type {
   AccountBalance,
   AccountSource,
@@ -12,7 +12,7 @@ import type {
   AccountNominationPoolData,
   AccountNominatingData,
   AccountJson,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 /**
  * Account collection types.

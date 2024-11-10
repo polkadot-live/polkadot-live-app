@@ -6,8 +6,8 @@ import { chainTasks as allChainTasks } from '@/config/subscriptions/chain';
 import { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 import type { Account, ImportedAccounts } from '@/model/Account';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:

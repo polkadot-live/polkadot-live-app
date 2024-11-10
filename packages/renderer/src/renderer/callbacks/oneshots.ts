@@ -3,7 +3,10 @@
 
 import { getApiInstance } from '@/utils/ApiUtils';
 import { Callbacks } from '.';
-import type { ApiCallEntry, SubscriptionTask } from '@/types/subscriptions';
+import type {
+  ApiCallEntry,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 
 export const executeOneShot = async (task: SubscriptionTask) => {
   switch (task.action) {

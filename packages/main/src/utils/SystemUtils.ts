@@ -4,7 +4,7 @@
 import { WindowsController } from '@/controller/main/WindowsController';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
 import { app } from 'electron';
-import type { AnyFunction } from '@/types/misc';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 
 // Hide dock icon if platform is macOS.
 // NOTE: We need to wait over a second for the `.hide()` API to work.

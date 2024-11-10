@@ -8,8 +8,8 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
-} from '@/types/subscriptions';
-import type { ChainID } from '@/types/chains';
+} from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from './types';
 
 // Hook to manage context.

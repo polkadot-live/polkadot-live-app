@@ -7,7 +7,7 @@ import PolkadotIcon from './svg/polkadotIcon.svg?react';
 import WestendIcon from './svg/westendIcon.svg?react';
 import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
 
 interface Chain {

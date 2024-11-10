@@ -5,11 +5,11 @@ import { chainCurrency, chainUnits } from '@/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type BigNumber from 'bignumber.js';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 /**
  * @name timestampToDate

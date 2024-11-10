@@ -9,14 +9,14 @@ import { NotificationsController } from '@/controller/main/NotificationsControll
 import { SettingsController } from '@/controller/main/SettingsController';
 import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import { WindowsController } from '@/controller/main/WindowsController';
-import type { AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EventAccountData,
   EventCallback,
   NotificationData,
-} from '@/types/reporter';
-import type { IpcTask } from '@/types/communication';
+} from '@polkadot-live/types/reporter';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 const debug = MainDebug.extend('EventsController');
 

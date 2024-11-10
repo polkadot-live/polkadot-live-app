@@ -4,9 +4,9 @@
 import { Config as ConfigMain } from '@/config/processes/main';
 import { WebsocketsController } from './WebsocketsController';
 import { store } from '@/main';
-import type { AnyData } from '@/types/misc';
-import type { IpcTask } from '@/types/communication';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 
 export class WorkspacesController {
   private static storageKey = ConfigMain.workspacesStorageKey;

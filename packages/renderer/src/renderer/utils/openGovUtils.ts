@@ -3,8 +3,8 @@
 
 import BigNumber from 'bignumber.js';
 import { Track } from '@/model/Track';
-import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { AnyData } from '@/types/misc';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 
 /**

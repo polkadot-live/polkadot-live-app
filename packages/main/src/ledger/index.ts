@@ -4,9 +4,12 @@
 import { MainDebug } from '@/utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
 import type { WebContentsView } from 'electron';
-import type { LedgerGetAddressResult, LedgerTask } from '@/types/ledger';
+import type {
+  LedgerGetAddressResult,
+  LedgerTask,
+} from '@polkadot-live/types/ledger';
 import type Transport from '@ledgerhq/hw-transport';
 
 const debug = MainDebug.extend('Ledger');

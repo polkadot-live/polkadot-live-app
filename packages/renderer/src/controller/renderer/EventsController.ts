@@ -16,14 +16,17 @@ import {
 } from '@/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
-import type { ActionMeta } from '@/types/tx';
-import type { AnyData } from '@/types/misc';
-import type { IntervalSubscription, ApiCallEntry } from '@/types/subscriptions';
+import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type {
+  IntervalSubscription,
+  ApiCallEntry,
+} from '@polkadot-live/types/subscriptions';
 import type {
   EventAccountData,
   EventCallback,
   EventChainData,
-} from '@/types/reporter';
+} from '@polkadot-live/types/reporter';
 
 export class EventsController {
   /**

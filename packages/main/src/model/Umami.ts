@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 // From https://www.whatismybrowser.com/guides/the-latest-user-agent/chrome
 const defaultAgent = `Mozilla/5.0 Umami/${process?.version || 1.0}`;

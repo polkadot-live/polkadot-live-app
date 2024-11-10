@@ -1,11 +1,14 @@
 {
+  "name": "@polkadot-live/preload",
   "version": "0.3.0-alpha",
   "type": "module",
+  "private": true,
   "files": [
     "dist/**"
   ],
   "exports": {
-    "./preload.cjs": "./dist/preload.cjs"
+    "./preload.cjs": "./dist/preload.cjs",
+    "./preload": "./src/preload.ts"
   },
   "scripts": {
     "build": "vite build --config vite.config.js",
@@ -13,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
     "typescript": "5.4.5",
     "vite": "^4.4.11"
   },

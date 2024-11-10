@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import crypto from 'crypto';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 // Return SHA256 hash of a string.
 export const getSHA256Hash = (val: string) => {

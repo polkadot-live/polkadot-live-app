@@ -10,7 +10,7 @@ import { EventsController } from '@/controller/main/EventsController';
 import { IntervalsController } from '@/controller/main/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
 import { version } from '../../../package.json';
-import type { ExportResult, ImportResult } from '@/types/backup';
+import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export class BackupController {
   /**

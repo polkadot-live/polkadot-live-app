@@ -3,15 +3,15 @@
 
 import { setStateWithRef } from '@w3ux/utils';
 import * as defaults from './defaults';
-import type { AddressesContextInterface } from './types';
+import { AccountsController } from '@/controller/renderer/AccountsController';
 import { useContext, createContext, useState, useRef } from 'react';
+import type { AddressesContextInterface } from './types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
-} from '@/types/accounts';
-import type { ChainID } from '@/types/chains';
-import { AccountsController } from '@/controller/renderer/AccountsController';
+} from '@polkadot-live/types/accounts';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext

@@ -79,6 +79,7 @@ export async function findFilesThatShouldBeExcluded() {
     '@polkadot-live/main',
     '@polkadot-live/preload',
     '@polkadot-live/renderer',
+    '@polkadot-live/types',
   ];
 
   for (const [name, path] of workspaces) {

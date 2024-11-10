@@ -3,7 +3,7 @@
 
 import { store } from '@/main';
 import { BrowserWindow } from 'electron';
-import type { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type { BaseWindow, WebContentsView } from 'electron';
 
 // A window helper to manage which windows are open and their current state.

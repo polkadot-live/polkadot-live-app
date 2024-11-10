@@ -4,7 +4,7 @@
 import type {
   IntervalSetting,
   IntervalSubscription,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 /// Total interval subscription tasks for a referendum.
 export const NUM_REFERENDUM_SUBSCRIPTIONS = 3;

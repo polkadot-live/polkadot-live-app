@@ -15,7 +15,7 @@ import { Help } from './library/components/Help';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
-import type { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type { IpcRendererEvent } from 'electron';
 
 export const RouterInner = () => {

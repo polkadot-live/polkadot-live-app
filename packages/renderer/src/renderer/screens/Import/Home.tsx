@@ -15,7 +15,7 @@ import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@app/library/components';
 import { useEffect } from 'react';
 import { Scrollable } from '@/renderer/library/styles';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {

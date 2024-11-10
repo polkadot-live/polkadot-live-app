@@ -34,13 +34,13 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { useDataBackup } from '@app/contexts/main/DataBackup';
 
 /// Types.
-import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { AnyData } from '@/types/misc';
-import type { EventCallback } from '@/types/reporter';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { EventCallback } from '@polkadot-live/types/reporter';
 import type {
   IntervalSubscription,
   SubscriptionTask,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.

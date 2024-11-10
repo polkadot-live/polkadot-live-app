@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@/config/chains';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { LoadingPlaceholderWrapper } from '../styles/LoadingPlaceholderWrapper';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * @name createArrayWithLength

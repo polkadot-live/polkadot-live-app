@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { PreloadAPI } from './preload';
+import type { PreloadAPI } from '../preload';
 
 declare global {
   interface Window {

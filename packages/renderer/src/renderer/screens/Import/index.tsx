@@ -10,7 +10,7 @@ import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMo
 import { ImportReadOnly } from './ReadOnly';
 import { useImportMessagePorts } from '@/renderer/hooks/useImportMessagePorts';
 import { useDebug } from '@/renderer/hooks/useDebug';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.

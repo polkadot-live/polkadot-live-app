@@ -33,9 +33,9 @@ import { hideDockIcon } from '@/utils/SystemUtils';
 import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
-import type { AnyData, AnyJson } from '@/types/misc';
-import type { IpcTask } from '@/types/communication';
-import type { NotificationData } from '@/types/reporter';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { NotificationData } from '@polkadot-live/types/reporter';
 
 const debug = MainDebug;
 

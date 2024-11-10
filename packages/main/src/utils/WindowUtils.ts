@@ -23,8 +23,8 @@ import { SettingsController } from '@/controller/main/SettingsController';
 import { WindowsController } from '@/controller/main/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
-import type { AnyJson } from '@/types/misc';
-import type { PortPairID } from '@/types/communication';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { PortPairID } from '@polkadot-live/types/communication';
 import type { Rectangle } from 'electron';
 
 const PACKAGES_PATH = join(__dirname, '../..');

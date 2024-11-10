@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { Track } from '@/model/Track';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface TracksProps {
   setSection: (section: number) => void;

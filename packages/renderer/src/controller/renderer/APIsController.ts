@@ -4,8 +4,8 @@
 import { Api } from '@/model/Api';
 import { ChainList } from '@/config/chains';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import type { ChainID } from '@/types/chains';
-import type { FlattenedAPIData } from '@/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 /**
  *  A static class that manages active api providers.

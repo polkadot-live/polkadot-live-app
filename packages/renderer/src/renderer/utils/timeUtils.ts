@@ -3,7 +3,7 @@
 
 import { formatDuration } from 'date-fns';
 import { rmCommas } from '@w3ux/utils';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * @name secondsUntilNextMinute

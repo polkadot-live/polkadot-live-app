@@ -4,12 +4,12 @@
 import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
 import { intervalDurationsConfig } from '@/config/subscriptions/interval';
 import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
-import type { AnyData } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSetting,
   IntervalSubscription,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 export class IntervalsController {
   /// Active interval subscriptions keyed by chain ID.

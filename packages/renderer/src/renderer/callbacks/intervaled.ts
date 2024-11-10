@@ -15,13 +15,16 @@ import {
   getOriginIdFromName,
   rmChars,
 } from '../utils/openGovUtils';
-import type { AnyData } from '@/types/misc';
-import type { ActiveReferendaInfo, OneShotReturn } from '@/types/openGov';
-import type { NotificationData } from '@/types/reporter';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type {
+  ActiveReferendaInfo,
+  OneShotReturn,
+} from '@polkadot-live/types/openGov';
+import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
   IntervalSubscription,
   NotificationPolicy,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 /// Debugging function.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

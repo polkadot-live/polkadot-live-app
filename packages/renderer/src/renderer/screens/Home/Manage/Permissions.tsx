@@ -37,14 +37,14 @@ import { useManage } from '@/renderer/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
 
 /// Type imports.
-import type { AnyFunction } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
+import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
   SubscriptionTask,
   TaskCategory,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 export const Permissions = ({
   breadcrumb,

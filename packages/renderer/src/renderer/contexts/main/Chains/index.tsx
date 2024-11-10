@@ -4,8 +4,8 @@
 import React, { createContext, useContext, useState } from 'react';
 import * as defaults from './defaults';
 import type { ChainsContextInterface } from './types';
-import type { ChainID } from '@/types/chains';
-import type { FlattenedAPIData } from '@/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext

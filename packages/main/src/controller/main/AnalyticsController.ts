@@ -3,7 +3,7 @@
 
 import { address as ipAddress } from 'ip';
 import { Umami } from '@/model/Umami';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export class AnalyticsController {
   private static umami: Umami | null = null;

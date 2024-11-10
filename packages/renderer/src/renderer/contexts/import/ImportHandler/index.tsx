@@ -8,14 +8,14 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ImportHandlerContextInterface } from './types';
-import type { IpcTask } from '@/types/communication';
+import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 export const ImportHandlerContext =
   createContext<ImportHandlerContextInterface>(

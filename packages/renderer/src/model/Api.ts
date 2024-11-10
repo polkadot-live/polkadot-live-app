@@ -6,11 +6,11 @@ import BigNumber from 'bignumber.js';
 import { ChainList } from '@/config/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import { rmCommas } from '@w3ux/utils';
-import type { AnyJson } from '@/types/misc';
-import type { APIConstants } from '@/types/chains/polkadot';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { APIConstants } from '@polkadot-live/types/chains/polkadot';
 import type { Codec } from '@polkadot/types-codec/types';
-import type { ChainID, ChainStatus } from '@/types/chains';
-import type { FlattenedAPIData } from '@/types/apis';
+import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 
 const debug = MainDebug.extend('Api');

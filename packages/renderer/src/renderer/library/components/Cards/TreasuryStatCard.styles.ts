@@ -3,7 +3,7 @@
 
 import styled from 'styled-components';
 import { mixinHelpIcon } from '../Common';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 const getChainIdColor = (chainId: ChainID): string => {
   switch (chainId) {

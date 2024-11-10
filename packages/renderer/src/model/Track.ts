@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { HelpItemKey } from '@/renderer/contexts/common/Help/types';
-import type { MinApproval, MinSupport } from '@/types/openGov';
+import type { HelpItemKey } from '@polkadot-live/types/help';
+import type { MinApproval, MinSupport } from '@polkadot-live/types/openGov';
 
 /**
  * @name Track

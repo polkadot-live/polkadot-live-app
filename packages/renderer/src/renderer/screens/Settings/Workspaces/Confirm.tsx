@@ -7,7 +7,7 @@ import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
 import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
 import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
 import { Flip, toast } from 'react-toastify';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
+import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 
 interface ConfirmProps {
   workspace: WorkspaceItem;

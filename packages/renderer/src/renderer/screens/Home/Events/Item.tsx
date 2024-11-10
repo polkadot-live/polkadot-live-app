@@ -25,9 +25,9 @@ import { useEffect, useState, memo } from 'react';
 import { useEvents } from '@/renderer/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import type { EventAccountData } from '@/types/reporter';
+import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import Governance from '@/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;

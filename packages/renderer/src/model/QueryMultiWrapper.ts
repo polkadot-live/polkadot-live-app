@@ -4,13 +4,13 @@
 import { Callbacks } from '@/renderer/callbacks';
 import { MainDebug } from '@/utils/DebugUtils';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
-import type { ChainID } from '@/types/chains';
-import type { AnyData, AnyFunction } from '@/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
   ApiCallEntry,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('QueryMultiWrapper');

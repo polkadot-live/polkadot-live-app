@@ -8,11 +8,11 @@ import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 import { getAddressChainId } from '../Utils';
-import type { AnyData } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
-import type { IpcTask } from '@/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 type ToastType = 'success' | 'error';
 

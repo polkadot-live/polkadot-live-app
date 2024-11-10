@@ -9,8 +9,8 @@ import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
-import type { IpcTask } from '@/types/communication';
+} from '@polkadot-live/types/accounts';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export const AddressesContext = createContext<AddressesContextInterface>(
   defaults.defaultAddressesContext

@@ -7,9 +7,9 @@ import type { ExportResult, ImportResult } from './backup';
 import type { LedgerTask } from './ledger';
 import type { IpcTask, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
-import type { PersistedSettings } from '@/renderer/screens/Settings/types';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
+import type { PersistedSettings } from './settings';
 
 export interface PreloadAPI {
   getWindowId: () => string;

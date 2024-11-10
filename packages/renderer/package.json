@@ -2,6 +2,7 @@
   "name": "@polkadot-live/renderer",
   "version": "0.3.0-alpha",
   "type": "module",
+  "private": true,
   "main": "./dist/index.html",
   "files": [
     "dist/**"
@@ -12,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "@types/styled-components": "^5.1.34",

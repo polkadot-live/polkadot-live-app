@@ -1,16 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EventAccountData,
   EventCallback,
   EventChainData,
-} from '@/types/reporter';
+} from '@polkadot-live/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 /**
  * @name getEventChainId

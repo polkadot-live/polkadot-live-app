@@ -9,8 +9,8 @@ import { APIsController } from '@/controller/renderer/APIsController';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { MainDebug } from './DebugUtils';
-import type { ChainID } from '@/types/chains';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 const debug = MainDebug.extend('ApiUtils');
 

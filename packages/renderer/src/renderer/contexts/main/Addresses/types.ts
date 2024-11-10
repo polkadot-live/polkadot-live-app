@@ -5,8 +5,8 @@ import type {
   AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
-} from '@/types/accounts';
-import type { ChainID } from '@/types/chains';
+} from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface AddressesContextInterface {
   addresses: FlattenedAccounts;

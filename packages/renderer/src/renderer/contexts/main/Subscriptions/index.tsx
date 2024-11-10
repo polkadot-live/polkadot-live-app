@@ -5,8 +5,8 @@ import { createContext, useContext, useState } from 'react';
 import { TaskQueue } from '@/orchestrators/TaskQueue';
 import * as ApiUtils from '@/utils/ApiUtils';
 import * as defaults from './defaults';
-import type { AnyFunction } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
+import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from './types';
 import type {
@@ -14,7 +14,7 @@ import type {
   SubscriptionTaskType,
   TaskCategory,
   WrappedSubscriptionTasks,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
 import { AccountsController } from '@/controller/renderer/AccountsController';
 import { useChains } from '@app/contexts/main/Chains';

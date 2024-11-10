@@ -3,8 +3,8 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
-import type { ChainID } from '@/types/chains';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from './types';
 
 export const IntervalSubscriptionsContext =

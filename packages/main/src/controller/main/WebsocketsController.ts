@@ -6,8 +6,8 @@ import { Server } from 'socket.io';
 import { MainDebug } from '@/utils/DebugUtils';
 import { WindowsController } from './WindowsController';
 import { WorkspacesController } from './WorkspacesController';
-import type { IpcTask } from '@/types/communication';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 
 const debug = MainDebug.extend('WebsocketsController');
 

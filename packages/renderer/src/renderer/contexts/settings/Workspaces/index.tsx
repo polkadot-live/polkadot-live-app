@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import type { WorkspacesContextInterface } from './types';
-import type { WorkspaceItem } from '@/types/developerConsole/workspaces';
+import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 
 export const WorkspacesContext = createContext<WorkspacesContextInterface>(
   defaults.defaultWorkspacesContext

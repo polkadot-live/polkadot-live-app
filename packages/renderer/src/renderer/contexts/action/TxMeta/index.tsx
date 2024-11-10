@@ -12,8 +12,8 @@ import React, {
 } from 'react';
 import * as defaults from './defaults';
 import type { TxMetaContextInterface } from './types';
-import type { AnyJson } from '@/types/misc';
-import type { ActionMeta, TxStatus } from '@/types/tx';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta

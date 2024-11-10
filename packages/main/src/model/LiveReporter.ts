@@ -3,7 +3,7 @@
 
 import { MainDebug } from '@/utils/DebugUtils';
 import { NotificationsController } from '@/controller/main/NotificationsController';
-import type { Report, Reporter } from '@/types/reporter';
+import type { Report, Reporter } from '@polkadot-live/types/reporter';
 
 const debug = MainDebug.extend('LiveReporter');
 

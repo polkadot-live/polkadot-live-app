@@ -3,7 +3,7 @@
 
 import { MainDebug } from '@/utils/DebugUtils';
 import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import * as ApiUtils from '@/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');

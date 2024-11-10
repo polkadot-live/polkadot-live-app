@@ -4,8 +4,8 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import type { ChainID } from '@/types/chains';
-import type { ActiveReferendaInfo } from '@/types/openGov';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 import type {
   PolkassemblyContextInterface,
   PolkassemblyProposal,

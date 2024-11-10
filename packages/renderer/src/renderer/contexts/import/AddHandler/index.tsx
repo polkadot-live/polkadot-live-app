@@ -9,8 +9,8 @@ import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AddHandlerContextInterface } from './types';
-import type { IpcTask } from '@/types/communication';
-import type { AccountSource } from '@/types/accounts';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const AddHandlerContext = createContext<AddHandlerContextInterface>(
   defaults.defaultAddHandlerContext

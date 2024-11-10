@@ -7,9 +7,9 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { getAddressChainId } from '@/renderer/Utils';
-import type { AccountSource } from '@/types/accounts';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
-import type { IpcTask } from '@/types/communication';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export const DeleteHandlerContext =
   createContext<DeleteHandlerContextInterface>(

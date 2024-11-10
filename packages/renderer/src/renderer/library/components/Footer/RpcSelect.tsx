@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import type { FlattenedAPIData } from '@/types/apis';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;

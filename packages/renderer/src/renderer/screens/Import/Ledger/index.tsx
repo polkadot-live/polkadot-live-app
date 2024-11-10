@@ -13,10 +13,10 @@ import type {
   GetAddressMessage,
   LedgerResponse,
   LedgerTask,
-} from '@/types/ledger';
+} from '@polkadot-live/types/ledger';
 import type { ImportLedgerProps } from '../types';
 import type { IpcRendererEvent } from 'electron';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
 

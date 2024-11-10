@@ -3,7 +3,7 @@
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import http2 from 'http2';
-import type { IpcTask } from '@/types/communication';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class OnlineStatusController {
   private static onlineStatus = false;

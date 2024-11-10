@@ -4,9 +4,12 @@
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
 import type { Account } from '@/model/Account';
-import type { AnyData } from '@/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
-import type { AccountNominatingData, ValidatorData } from '@/types/accounts';
+import type {
+  AccountNominatingData,
+  ValidatorData,
+} from '@polkadot-live/types/accounts';
 
 interface ValidatorOverviewData {
   total: string;

@@ -18,10 +18,10 @@ import type {
   FlattenedAccountData,
   NominationPoolCommission,
   NominationPoolRoles,
-} from '@/types/accounts';
-import type { ApiCallEntry } from '@/types/subscriptions';
-import type { AnyData, AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
+} from '@polkadot-live/types/accounts';
+import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@/model/Account';
 import type { ApiPromise } from '@polkadot/api';
 import * as ApiUtils from '@/utils/ApiUtils';

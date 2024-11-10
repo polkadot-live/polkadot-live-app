@@ -1,10 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction, AnyJson } from '@/types/misc';
+import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
 import type { Html5Qrcode } from 'html5-qrcode';
-import type { AccountSource, LedgerLocalAddress } from '@/types/accounts';
-import type { LedgerResponse } from '@/types/ledger';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+} from '@polkadot-live/types/accounts';
+import type { LedgerResponse } from '@polkadot-live/types/ledger';
 
 export interface HomeProps {
   setSection: AnyFunction;

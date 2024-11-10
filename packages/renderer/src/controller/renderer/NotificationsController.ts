@@ -9,9 +9,12 @@ import {
   getNominationPoolStateText,
 } from '@/utils/TextUtils';
 import type { Account } from '@/model/Account';
-import type { AnyData } from '@/types/misc';
-import type { ApiCallEntry, IntervalSubscription } from '@/types/subscriptions';
-import type { NotificationData } from '@/types/reporter';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type {
+  ApiCallEntry,
+  IntervalSubscription,
+} from '@polkadot-live/types/subscriptions';
+import type { NotificationData } from '@polkadot-live/types/reporter';
 import type BigNumber from 'bignumber.js';
 
 export class NotificationsController {

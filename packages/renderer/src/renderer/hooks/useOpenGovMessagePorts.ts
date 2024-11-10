@@ -9,8 +9,8 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
 import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
-import type { ActiveReferendaInfo } from '@/types/openGov';
-import type { IntervalSubscription } from '@/types/subscriptions';
+import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
   const { setIsConnected } = useConnections();

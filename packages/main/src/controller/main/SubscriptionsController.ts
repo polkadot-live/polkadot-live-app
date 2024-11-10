@@ -4,11 +4,14 @@
 import { store } from '@/main';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { OnlineStatusController } from '@/controller/main/OnlineStatusController';
-import type { AnyData, AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
-import type { FlattenedAccountData, StoredAccount } from '@/types/accounts';
-import type { IpcTask } from '@/types/communication';
-import type { SubscriptionTask } from '@/types/subscriptions';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  FlattenedAccountData,
+  StoredAccount,
+} from '@polkadot-live/types/accounts';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:

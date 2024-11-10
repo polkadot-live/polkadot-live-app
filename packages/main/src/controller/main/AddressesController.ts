@@ -3,13 +3,13 @@
 
 import { Config as ConfigMain } from '@/config/processes/main';
 import { store } from '@/main';
-import type { AnyData } from '@/types/misc';
-import type { IpcTask } from '@/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
+} from '@polkadot-live/types/accounts';
 
 export class AddressesController {
   /**

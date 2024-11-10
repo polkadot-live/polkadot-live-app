@@ -6,9 +6,9 @@ import { chainUnits } from '@/config/chains';
 import { Config as ConfigRenderer } from '@/config/processes/renderer';
 import { getApiInstanceOrThrow } from '@/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
-import type { AnyJson } from '@/types/misc';
-import type { ChainID } from '@/types/chains';
-import type { TxStatus } from '@/types/tx';
+import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {

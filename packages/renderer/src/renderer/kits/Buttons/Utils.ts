@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@/types/misc';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type { MouseEvent } from 'react';
 
 // Formats mouse handlers for buttons given its props.

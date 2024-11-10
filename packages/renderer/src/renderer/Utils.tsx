@@ -6,7 +6,7 @@ import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ChainList } from '@/config/chains';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 // Return an address' chain ID.
 export const getAddressChainId = (address: string): ChainID => {

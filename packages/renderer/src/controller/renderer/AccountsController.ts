@@ -3,13 +3,13 @@
 
 import { Account } from '@/model/Account';
 import type { ImportedAccounts } from '@/model/Account';
-import type { ChainID } from '@/types/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountSource,
   FlattenedAccounts,
   StoredAccount,
-} from '@/types/accounts';
-import type { SubscriptionTask } from '@/types/subscriptions';
+} from '@polkadot-live/types/accounts';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
 
 /**

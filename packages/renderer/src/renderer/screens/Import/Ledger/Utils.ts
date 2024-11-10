@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { LedgerResponse } from '@/types/ledger';
-import type { AnyJson } from '@/types/misc';
+import type { LedgerResponse } from '@polkadot-live/types/ledger';
+import type { AnyJson } from '@polkadot-live/types/misc';
 
 // formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (

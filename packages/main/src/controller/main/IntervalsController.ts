@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
-import type { AnyData } from '@/types/misc';
-import type { IntervalSubscription } from '@/types/subscriptions';
-import type { IpcTask } from '@/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class IntervalsController {
   private static key = 'interval_subscriptions';

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MessageChannelMain } from 'electron';
-import type { AccountSource } from '@/types/accounts';
-import type { PortPair, PortPairID } from '@/types/communication';
+import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {

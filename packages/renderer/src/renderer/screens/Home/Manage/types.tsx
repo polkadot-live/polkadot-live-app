@@ -1,13 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@/types/misc';
-import type { FlattenedAccountData } from '@/types/accounts';
+import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
   IntervalSubscription,
   SubscriptionTask,
   SubscriptionTaskType,
-} from '@/types/subscriptions';
+} from '@polkadot-live/types/subscriptions';
 
 export interface ManageProps {
   addresses: FlattenedAccountData[];

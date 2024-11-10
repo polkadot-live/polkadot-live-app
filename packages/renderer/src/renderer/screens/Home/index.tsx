@@ -18,8 +18,8 @@ import { useInitIpcHandlers } from '@/renderer/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
 import { ScrollWrapper } from '@/renderer/library/styles';
 import { Summary } from '@/renderer/screens/Home/Summary';
-import type { ChainID } from '@/types/chains';
-import type { EventCallback } from '@/types/reporter';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { IpcRendererEvent } from 'electron';
 
 export const Home = () => {

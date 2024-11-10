@@ -1,14 +1,14 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { WindowsController } from '@/controller/main/WindowsController';
+import { NotificationsController } from '@/controller/main/NotificationsController';
+import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
 import type {
   ImportNewAddressArg,
   AppOrchestratorArg,
   RemoveImportedAccountArg,
-} from '@/types/orchestrator';
-import { WindowsController } from '@/controller/main/WindowsController';
-import { NotificationsController } from '@/controller/main/NotificationsController';
-import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+} from '@polkadot-live/types/orchestrator';
 
 // Orchestrate class to perform high-level app tasks.
 export class AppOrchestrator {

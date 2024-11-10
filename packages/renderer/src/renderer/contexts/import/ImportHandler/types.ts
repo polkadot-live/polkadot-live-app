@@ -5,8 +5,8 @@ import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
-} from '@/types/accounts';
-import type { AnyData } from '@/types/misc';
+} from '@polkadot-live/types/accounts';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export interface ImportHandlerContextInterface {
   handleImportAddress: (

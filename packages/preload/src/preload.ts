@@ -5,9 +5,9 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron';
-import type { PreloadAPI } from '@/types/preload';
-import type { AnyData, AnyJson } from '@/types/misc';
-import type { IpcTask } from '@/types/communication';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { PreloadAPI } from '@polkadot-live/types/preload';
+import type { IpcTask } from '@polkadot-live/types/communication';
 
 console.log(global.location.search);
 
