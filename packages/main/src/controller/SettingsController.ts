@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config } from '@/config/processes/main';
+import { Config } from '@/config/main';
 import { hideDockIcon, showDockIcon } from '@/utils/SystemUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/WindowsController';

@@ -14,7 +14,7 @@ import { executeLedgerLoop } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { Config as ConfigMain } from '@/config/processes/main';
+import { Config as ConfigMain } from '@/config/main';
 import { AccountsController } from '@/controller/AccountsController';
 import { AddressesController } from '@/controller/AddressesController';
 import { AnalyticsController } from '@/controller/AnalyticsController';

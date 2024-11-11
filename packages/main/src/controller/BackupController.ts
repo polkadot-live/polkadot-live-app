@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '@/config/processes/main';
+import { Config as ConfigMain } from '@/config/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/AddressesController';
