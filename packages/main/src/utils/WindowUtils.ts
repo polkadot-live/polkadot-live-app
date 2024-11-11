@@ -41,7 +41,7 @@ const debug = MainDebug.extend('WindowUtils');
  * - Add `mouse-up` listener in order to toggle the main window
  */
 export const createTray = () => {
-  const iconPath = path.resolve(__dirname, 'assets/IconTemplate.png');
+  const iconPath = path.resolve(__dirname, 'IconTemplate.png');
   const icon = nativeImage.createFromPath(iconPath);
   const tray = new Tray(icon);
 
