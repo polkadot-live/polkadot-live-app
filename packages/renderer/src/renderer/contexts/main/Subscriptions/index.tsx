@@ -15,10 +15,10 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
+import { AccountsController } from '@ren/controller/AccountsController';
 import { useChains } from '@app/contexts/main/Chains';
-import { APIsController } from '@ren/controller/renderer/APIsController';
+import { APIsController } from '@ren/controller/APIsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =

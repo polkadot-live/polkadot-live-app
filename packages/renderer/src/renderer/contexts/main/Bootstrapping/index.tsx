@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { defaultBootstrappingContext } from './default';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
-import { APIsController } from '@ren/controller/renderer/APIsController';
+import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import {
@@ -11,8 +11,8 @@ import {
   fetchAccountNominatingData,
   fetchAccountNominationPoolData,
 } from '@ren/utils/AccountUtils';
-import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import React, {
   createContext,
   useContext,

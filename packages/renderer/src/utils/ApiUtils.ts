@@ -5,9 +5,9 @@
  * @todo Move to `utils/renderer`
  */
 
-import { APIsController } from '@ren/controller/renderer/APIsController';
-import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
+import { AccountsController } from '@ren/controller/AccountsController';
 import { MainDebug } from './DebugUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';

@@ -12,12 +12,12 @@ import {
   SortControlLabel,
   Switch,
 } from '@app/library/components';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@ren/renderer/callbacks/oneshots';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import {
   getTooltipClassForGroup,

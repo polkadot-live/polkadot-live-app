@@ -4,7 +4,7 @@
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { executeIntervaledOneShot } from '@ren/renderer/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import { createContext, useContext } from 'react';
 import { useBootstrapping } from '../Bootstrapping';
 import { useManage } from '../Manage';

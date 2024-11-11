@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch } from '@app/library/components';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import { getShortIntervalLabel } from '@ren/renderer/utils/renderingUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalRowProps } from './types';

@@ -1,18 +1,18 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/AccountsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { EventsController } from '@ren/controller/renderer/EventsController';
+import { EventsController } from '@ren/controller/EventsController';
 import {
   areArraysEqual,
   getAccountExposed_deprecated,
   getAccountNominatingData,
   getEraRewards,
 } from './nominating';
-import { NotificationsController } from '@ren/controller/renderer/NotificationsController';
+import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
 import * as ApiUtils from '@ren/utils/ApiUtils';

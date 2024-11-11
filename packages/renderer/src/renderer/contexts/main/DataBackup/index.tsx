@@ -4,9 +4,9 @@
 /// Dependencies.
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
-import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
+import { AccountsController } from '@ren/controller/AccountsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import {
   getFromBackupFile,

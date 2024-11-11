@@ -6,8 +6,8 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { getApiInstance } from '@ren/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import { EventsController } from '@ren/controller/renderer/EventsController';
-import { NotificationsController } from '@ren/controller/renderer/NotificationsController';
+import { EventsController } from '@ren/controller/EventsController';
+import { NotificationsController } from '@ren/controller/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
 import {
   getMinApprovalSupport,

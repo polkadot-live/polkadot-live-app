@@ -3,7 +3,7 @@
 
 import { setStateWithRef } from '@w3ux/utils';
 import * as defaults from './defaults';
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/AccountsController';
 import { useContext, createContext, useState, useRef } from 'react';
 import type { AddressesContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

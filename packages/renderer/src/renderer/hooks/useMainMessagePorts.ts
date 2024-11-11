@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import { AccountsController } from '@ren/controller/renderer/AccountsController';
-import { APIsController } from '@ren/controller/renderer/APIsController';
+import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { encodeAddress } from '@polkadot/util-crypto';
-import { ExtrinsicsController } from '@ren/controller/renderer/ExtrinsicsController';
+import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
   fetchNominatingDataForAccount,
@@ -20,8 +20,8 @@ import {
 } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
-import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
-import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
