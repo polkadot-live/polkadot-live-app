@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@/config/chains';
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
-import { getApiInstanceOrThrow } from '@/utils/ApiUtils';
+import { chainUnits } from '@ren/config/chains';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';

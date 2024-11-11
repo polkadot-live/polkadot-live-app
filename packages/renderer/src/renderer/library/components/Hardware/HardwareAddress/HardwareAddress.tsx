@@ -8,19 +8,22 @@ import {
   faMinus,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
-import { chainIcon } from '@/config/chains';
+import { chainIcon } from '@ren/config/chains';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '@app/library/components';
 import { useState } from 'react';
-import { renderToast, validateAccountName } from '@/renderer/utils/ImportUtils';
+import {
+  renderToast,
+  validateAccountName,
+} from '@ren/renderer/utils/ImportUtils';
 import { EllipsisSpinner } from '../../Spinners';
 import { HardwareAddressWrapper } from './Wrapper';
-import { getAddressChainId } from '@/renderer/Utils';
-import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useConnections } from '@/renderer/contexts/common/Connections';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { getAddressChainId } from '@ren/renderer/Utils';
+import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 

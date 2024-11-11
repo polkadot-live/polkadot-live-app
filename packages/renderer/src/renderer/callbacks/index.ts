@@ -1,25 +1,25 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '@/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
-import { checkAccountWithProperties } from '@/utils/AccountUtils';
-import { Config as RendererConfig } from '@/config/processes/renderer';
-import { EventsController } from '@/controller/renderer/EventsController';
+import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
+import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { EventsController } from '@ren/controller/renderer/EventsController';
 import {
   areArraysEqual,
   getAccountExposed_deprecated,
   getAccountNominatingData,
   getEraRewards,
 } from './nominating';
-import { NotificationsController } from '@/controller/renderer/NotificationsController';
+import { NotificationsController } from '@ren/controller/renderer/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import * as ApiUtils from '@/utils/ApiUtils';
+import * as ApiUtils from '@ren/utils/ApiUtils';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 
 export class Callbacks {
   /**
@@ -602,7 +602,12 @@ export class Callbacks {
       // Update account and entry data.
       if (!isSame) {
         // eslint-disable-next-line prettier/prettier
-        account.nominationPoolData!.poolRoles = { depositor, root, nominator, bouncer };
+        account.nominationPoolData!.poolRoles = {
+          depositor,
+          root,
+          nominator,
+          bouncer,
+        };
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -652,7 +657,8 @@ export class Callbacks {
 
       const isSame =
         // eslint-disable-next-line prettier/prettier
-        JSON.stringify(poolCommission.changeRate) === JSON.stringify(changeRate) &&
+        JSON.stringify(poolCommission.changeRate) ===
+          JSON.stringify(changeRate) &&
         JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
         poolCommission.throttleFrom === (throttleFrom as string | null) &&
         poolCommission.max === (max as string | null);
@@ -664,7 +670,12 @@ export class Callbacks {
       // Update account and entry data.
       if (!isSame) {
         // eslint-disable-next-line prettier/prettier
-        account.nominationPoolData!.poolCommission = { changeRate, current, max, throttleFrom };
+        account.nominationPoolData!.poolCommission = {
+          changeRate,
+          current,
+          max,
+          throttleFrom,
+        };
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -770,7 +781,9 @@ export class Callbacks {
   ) {
     try {
       // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const era: number = parseInt(
+        (data.toHuman().index as string).replace(/,/g, '')
+      );
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -829,7 +842,9 @@ export class Callbacks {
   ) {
     try {
       // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const era: number = parseInt(
+        (data.toHuman().index as string).replace(/,/g, '')
+      );
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -899,7 +914,9 @@ export class Callbacks {
   ) {
     try {
       // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const era: number = parseInt(
+        (data.toHuman().index as string).replace(/,/g, '')
+      );
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -979,7 +996,9 @@ export class Callbacks {
   ) {
     try {
       // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt((data.toHuman().index as string).replace(/,/g, ''));
+      const era: number = parseInt(
+        (data.toHuman().index as string).replace(/,/g, '')
+      );
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 

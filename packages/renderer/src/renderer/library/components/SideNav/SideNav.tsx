@@ -12,7 +12,7 @@ import {
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
 import { useSideNav } from '../../contexts';
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
 
 export const SideNav = () => {
   const { handleSideNavCollapse } = useAppSettings();

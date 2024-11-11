@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainCurrency, chainUnits } from '@/config/chains';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { LoadingPlaceholderWrapper } from '../styles/LoadingPlaceholderWrapper';
 import type { ChainID } from '@polkadot-live/types/chains';

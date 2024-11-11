@@ -6,7 +6,7 @@ import { BodyInterfaceWrapper } from '@app/Wrappers';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { SplashWrapper } from '../Wrappers';
 import { determineStatusFromCodes } from './Utils';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
 import type { SplashProps } from '../types';
 
 export const Splash = ({ statusCodes, setSection }: SplashProps) => (

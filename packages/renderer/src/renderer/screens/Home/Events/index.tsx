@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEvents } from '@/renderer/contexts/main/Events';
+import { useEvents } from '@ren/renderer/contexts/main/Events';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
@@ -14,7 +14,7 @@ import {
 } from '@app/library/components';
 import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
-import { getEventChainId } from '@/utils/EventUtils';
+import { getEventChainId } from '@ren/utils/EventUtils';
 
 export const Events = () => {
   /// State for sorting controls.

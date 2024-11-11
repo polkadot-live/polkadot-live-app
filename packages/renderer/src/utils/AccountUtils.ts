@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '@/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
 import BigNumber from 'bignumber.js';
 import {
   BN,
@@ -11,7 +11,7 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import { getAccountNominatingData } from '@/renderer/callbacks/nominating';
+import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
 import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,
@@ -22,9 +22,9 @@ import type {
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { Account } from '@/model/Account';
+import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
-import * as ApiUtils from '@/utils/ApiUtils';
+import * as ApiUtils from '@ren/utils/ApiUtils';
 
 /**
  * @name fetchAccountBalances
@@ -244,7 +244,10 @@ export const checkAccountWithProperties = (
   }
 
   // eslint-disable-next-line prettier/prettier
-  const { chainId, account: { address } } = entry.task;
+  const {
+    chainId,
+    account: { address },
+  } = entry.task;
   const account = AccountsController.get(chainId, address);
 
   if (account === undefined) {

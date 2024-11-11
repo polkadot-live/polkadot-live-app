@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled, { css } from 'styled-components';
-import { mixinHelpIcon } from '@/renderer/library/components/Common';
+import { mixinHelpIcon } from '@ren/renderer/library/components/Common';
 
 const mixinRowButton = css`
   font-size: 1.3rem;

@@ -8,13 +8,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavCard } from '@/renderer/library/components/Cards';
+import { NavCard } from '@ren/renderer/library/components/Cards';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
 import { ActionItem } from '@app/library/components';
 import { useEffect } from 'react';
-import { Scrollable } from '@/renderer/library/styles';
+import { Scrollable } from '@ren/renderer/library/styles';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 

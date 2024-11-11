@@ -9,15 +9,15 @@ import {
   Identicon,
 } from '@app/library/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
+import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { getIcon } from '@/renderer/Utils';
+import { getIcon } from '@ren/renderer/Utils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
-import { useManage } from '@/renderer/contexts/main/Manage';
-import { useSubscriptions } from '@/renderer/contexts/main/Subscriptions';
+import { useManage } from '@ren/renderer/contexts/main/Manage';
+import { useSubscriptions } from '@ren/renderer/contexts/main/Subscriptions';
 import { useEffect, useRef, useState } from 'react';
-import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
@@ -25,7 +25,7 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
 
 export const Accounts = ({

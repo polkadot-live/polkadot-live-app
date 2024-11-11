@@ -17,12 +17,5 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
-
-    /* Paths are relative to base URL */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@app/*": ["./src/renderer/*"],
-    },
   },
 }

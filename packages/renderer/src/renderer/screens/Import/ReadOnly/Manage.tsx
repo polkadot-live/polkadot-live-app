@@ -11,25 +11,25 @@ import {
   SortControlLabel,
 } from '@app/library/components';
 import { Address } from './Address';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { HardwareAddressWrapper } from '@/renderer/library/components/Hardware';
+import { HardwareAddressWrapper } from '@ren/renderer/library/components/Hardware';
 
 /// Context imports.
-import { useAccountStatuses } from '@/renderer/contexts/import/AccountStatuses';
-import { useAddresses } from '@/renderer/contexts/import/Addresses';
-import { useImportHandler } from '@/renderer/contexts/import/ImportHandler';
+import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
+import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter } from '@/renderer/library/styles';
+import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
 import {
   getSortedLocalAddresses,
   renderToast,
-} from '@/renderer/utils/ImportUtils';
+} from '@ren/renderer/utils/ImportUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';

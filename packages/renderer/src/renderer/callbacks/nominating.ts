@@ -3,7 +3,7 @@
 
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import type { Account } from '@/model/Account';
+import type { Account } from '@ren/model/Account';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 import type {
@@ -240,7 +240,9 @@ export const getAccountNominatingData = async (
   account: Account
 ): Promise<AccountNominatingData | null> => {
   // eslint-disable-next-line prettier/prettier
-  const nominatorData: AnyData = await api.query.staking.nominators(account.address);
+  const nominatorData: AnyData = await api.query.staking.nominators(
+    account.address
+  );
   const nominators = nominatorData.toHuman();
 
   // Return early if account is not nominating.

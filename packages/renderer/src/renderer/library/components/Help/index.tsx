@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ActiveDefinition } from './Items/ActiveDefinition';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { CanvasContainer } from '@/renderer/kits/Overlay/structure/CanvasContainer';
-import { CanvasScroll } from '@/renderer/kits/Overlay/structure/CanvasScroll';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { CanvasContainer } from '@ren/renderer/kits/Overlay/structure/CanvasContainer';
+import { CanvasScroll } from '@ren/renderer/kits/Overlay/structure/CanvasScroll';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { ModalContent } from '@/renderer/kits/Overlay/structure/ModalContent';
+import { ModalContent } from '@ren/renderer/kits/Overlay/structure/ModalContent';
 import { useAnimation } from 'framer-motion';
 import { useCallback, useEffect } from 'react';
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 
 export const Help = () => {
   const controls = useAnimation();

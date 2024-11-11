@@ -3,13 +3,13 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { setStateWithRef } from '@w3ux/utils';
-import { useOutsideAlerter } from '@/renderer/library/hooks/useOutsideAlerter';
+import { useOutsideAlerter } from '@ren/renderer/library/hooks/useOutsideAlerter';
 import { useRef, useState } from 'react';
 import { MenuWrapper, Separator } from './Wrapper';
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 import {
   faBell,
   faBellSlash,
@@ -17,7 +17,7 @@ import {
   faLinkSlash,
   faWifi,
 } from '@fortawesome/free-solid-svg-icons';
-import { Config as RendererConfig } from '@/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { Flip, toast } from 'react-toastify';
 
 export const Menu = () => {

@@ -7,7 +7,7 @@ import {
   pushUniqueEvent,
   getEventChainId,
   doRemoveOutdatedEvents,
-} from '@/utils/EventUtils';
+} from '@ren/utils/EventUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   DismissEvent,

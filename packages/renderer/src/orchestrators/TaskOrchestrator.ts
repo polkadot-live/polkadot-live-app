@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MainDebug } from '@/utils/DebugUtils';
-import type { QueryMultiWrapper } from '@/model/QueryMultiWrapper';
+import { MainDebug } from '@ren/utils/DebugUtils';
+import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import * as ApiUtils from '@/utils/ApiUtils';
+import * as ApiUtils from '@ren/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 

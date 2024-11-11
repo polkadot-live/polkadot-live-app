@@ -32,7 +32,7 @@ export default defineConfig({
         replacement: resolve(PACKAGE_ROOT, 'src', 'renderer'),
       },
       {
-        find: '@',
+        find: '@ren',
         replacement: resolve(PACKAGE_ROOT, 'src'),
       },
     ],

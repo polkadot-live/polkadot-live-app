@@ -11,9 +11,10 @@ import {
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
-import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
+import { useWebsocketServer } from '@ren/renderer/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';
-import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
+import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
+import type { IpcRendererEvent } from 'electron';
 
 export const Workspaces = () => {
   const { isListening, startServer, stopServer } = useWebsocketServer();
@@ -39,7 +40,7 @@ export const Workspaces = () => {
   };
 
   /// Handle receiving a workspace from the main process.
-  window.myAPI.reportWorkspace((_, serialised) => {
+  window.myAPI.reportWorkspace((_: IpcRendererEvent, serialised: string) => {
     try {
       addWorkspace(JSON.parse(serialised));
     } catch (error) {

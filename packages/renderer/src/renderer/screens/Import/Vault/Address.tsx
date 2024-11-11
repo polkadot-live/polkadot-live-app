@@ -6,11 +6,11 @@ import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
   renameAccountInStore,
-} from '@/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@/renderer/library/components/Hardware/HardwareAddress';
+} from '@ren/renderer/utils/ImportUtils';
+import { HardwareAddress } from '@ren/renderer/library/components/Hardware/HardwareAddress';
 import { Remove } from '../Addresses/Remove';
-import { useAddresses } from '@/renderer/contexts/import/Addresses';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {

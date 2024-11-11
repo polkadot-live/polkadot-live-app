@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { WorkspaceRowWrapper } from '../Wrappers';
 import { faHashtag, faTrash, faLink } from '@fortawesome/free-solid-svg-icons';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useWorkspaces } from '@/renderer/contexts/settings/Workspaces';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import { Confirm } from './Confirm';
-import { useWebsocketServer } from '@/renderer/contexts/settings/WebsocketServer';
+import { useWebsocketServer } from '@ren/renderer/contexts/settings/WebsocketServer';
 import type { WorkspaceRowProps } from '../types';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {

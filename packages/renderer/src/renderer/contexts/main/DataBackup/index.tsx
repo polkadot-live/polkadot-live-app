@@ -4,16 +4,16 @@
 /// Dependencies.
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import { AccountsController } from '@/controller/renderer/AccountsController';
-import { IntervalsController } from '@/controller/renderer/IntervalsController';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { getAddressChainId } from '@/renderer/Utils';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
+import { getAddressChainId } from '@ren/renderer/Utils';
 import {
   getFromBackupFile,
   postToImport,
   postToOpenGov,
   postToSettings,
-} from '@/renderer/utils/ImportUtils';
+} from '@ren/renderer/utils/ImportUtils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';

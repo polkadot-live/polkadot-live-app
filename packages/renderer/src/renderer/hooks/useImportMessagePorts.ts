@@ -1,13 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigImport } from '@/config/processes/import';
+import { Config as ConfigImport } from '@ren/config/processes/import';
 
 /// Import window contexts.
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@/renderer/contexts/common/Connections';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useEffect } from 'react';
 import type {
   AccountSource,

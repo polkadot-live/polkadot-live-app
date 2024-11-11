@@ -1,11 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { MoreOverlay } from './Wrappers';
-import { Scrollable } from '@/renderer/library/styles';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
+import { Scrollable } from '@ren/renderer/library/styles';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import type { PolkassemblyProposal } from '@ren/renderer/contexts/openGov/Polkassembly/types';
 
 interface InfoOverlayProps {
   proposalData: PolkassemblyProposal;

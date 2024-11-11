@@ -1,23 +1,23 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { GridSpinner } from '@/renderer/library/components/Spinners';
-import { useAddresses } from '@/renderer/contexts/main/Addresses';
-import { useEvents } from '@/renderer/contexts/main/Events';
+import { GridSpinner } from '@ren/renderer/library/components/Spinners';
+import { useAddresses } from '@ren/renderer/contexts/main/Addresses';
+import { useEvents } from '@ren/renderer/contexts/main/Events';
 import { Footer, Header, SideNav } from '@app/library/components';
 import { useEffect } from 'react';
-import { useSideNav } from '@/renderer/library/contexts';
+import { useSideNav } from '@ren/renderer/library/contexts';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useInitIpcHandlers } from '@/renderer/hooks/useInitIpcHandlers';
-import { useMainMessagePorts } from '@/renderer/hooks/useMainMessagePorts';
-import { ScrollWrapper } from '@/renderer/library/styles';
-import { Summary } from '@/renderer/screens/Home/Summary';
+import { useInitIpcHandlers } from '@ren/renderer/hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '@ren/renderer/hooks/useMainMessagePorts';
+import { ScrollWrapper } from '@ren/renderer/library/styles';
+import { Summary } from '@ren/renderer/screens/Home/Summary';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { IpcRendererEvent } from 'electron';

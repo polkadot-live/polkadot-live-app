@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Flip, toast } from 'react-toastify';
 import type { SettingFlagsContextInterface } from './types';
-import type { SettingItem } from '@/renderer/screens/Settings/types';
+import type { SettingItem } from '@ren/renderer/screens/Settings/types';
 
 export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
   defaults.defaultSettingFlagsContext

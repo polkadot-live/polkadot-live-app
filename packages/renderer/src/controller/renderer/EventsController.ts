@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@/config/chains';
+import { chainUnits } from '@ren/config/chains';
 import {
   checkAccountWithProperties,
   checkFlattenedAccountWithProperties,
-} from '@/utils/AccountUtils';
+} from '@ren/utils/AccountUtils';
 import {
   getBalanceText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-} from '@/utils/TextUtils';
+} from '@ren/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
@@ -568,7 +568,8 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:pendingPayouts': {
         // eslint-disable-next-line prettier/prettier
-        const { eraRewards, era }: { eraRewards: BigNumber; era: string } = miscData;
+        const { eraRewards, era }: { eraRewards: BigNumber; era: string } =
+          miscData;
         const { chainId } = entry.task;
         const { address, name: accountName, source } = entry.task.account!;
 

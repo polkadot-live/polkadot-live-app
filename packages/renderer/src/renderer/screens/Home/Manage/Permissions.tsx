@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { FlexColumn, ItemsColumn } from './Wrappers';
 import {
   Accordion,
@@ -12,29 +12,29 @@ import {
   SortControlLabel,
   Switch,
 } from '@app/library/components';
-import { AccountsController } from '@/controller/renderer/AccountsController';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
-import { executeOneShot } from '@/renderer/callbacks/oneshots';
+import { executeOneShot } from '@ren/renderer/callbacks/oneshots';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
-import { IntervalsController } from '@/controller/renderer/IntervalsController';
+import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
-import { useConnections } from '@/renderer/contexts/common/Connections';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useManage } from '@/renderer/contexts/main/Manage';
-import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useManage } from '@ren/renderer/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
 
 /// Type imports.
 import type { AnyFunction } from '@polkadot-live/types/misc';

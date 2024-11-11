@@ -3,11 +3,11 @@
 
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSideNav } from '@/renderer/library/contexts';
-import { useEvents } from '@/renderer/contexts/main/Events';
-import { useAddresses } from '@/renderer/contexts/main/Addresses';
-import { useIntervalSubscriptions } from '@/renderer/contexts/main/IntervalSubscriptions';
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useSideNav } from '@ren/renderer/library/contexts';
+import { useEvents } from '@ren/renderer/contexts/main/Events';
+import { useAddresses } from '@ren/renderer/contexts/main/Addresses';
+import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 import {
   MainHeading,
   StatsSection,

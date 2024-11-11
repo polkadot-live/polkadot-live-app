@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { executeIntervaledOneShot } from '@/renderer/callbacks/intervaled';
-import { intervalDurationsConfig } from '@/config/subscriptions/interval';
-import { secondsUntilNextMinute } from '@/renderer/utils/timeUtils';
+import { executeIntervaledOneShot } from '@ren/renderer/callbacks/intervaled';
+import { intervalDurationsConfig } from '@ren/config/subscriptions/interval';
+import { secondsUntilNextMinute } from '@ren/renderer/utils/timeUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {

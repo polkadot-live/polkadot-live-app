@@ -3,12 +3,12 @@
 
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
-import { useOpenGovMessagePorts } from '@/renderer/hooks/useOpenGovMessagePorts';
+import { useOpenGovMessagePorts } from '@ren/renderer/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
-import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
-import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
+import { ModalSection } from '@ren/renderer/kits/Overlay/structure/ModalSection';
+import { ModalMotionTwoSection } from '@ren/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { Tracks } from './Tracks';
 import {
   ActionItem,
@@ -16,20 +16,20 @@ import {
   SortControlButton,
 } from '@app/library/components';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { useTracks } from '@ren/renderer/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
-import { useConnections } from '@/renderer/contexts/common/Connections';
-import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useTreasury } from '@/renderer/contexts/openGov/Treasury';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTreasury } from '@ren/renderer/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import {
   NavCardThin,
   TreasuryStatCard,
-} from '@/renderer/library/components/Cards';
-import { useDebug } from '@/renderer/hooks/useDebug';
-import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { renderPlaceholders } from '@/renderer/library/utils';
+} from '@ren/renderer/library/components/Cards';
+import { useDebug } from '@ren/renderer/hooks/useDebug';
+import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
+import { renderPlaceholders } from '@ren/renderer/library/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OpenGov: React.FC = () => {

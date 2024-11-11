@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { defaultBootstrappingContext } from './default';
-import { AccountsController } from '@/controller/renderer/AccountsController';
-import { APIsController } from '@/controller/renderer/APIsController';
-import { Config as RendererConfig } from '@/config/processes/renderer';
-import { ChainList } from '@/config/chains';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { APIsController } from '@ren/controller/renderer/APIsController';
+import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { ChainList } from '@ren/config/chains';
 import {
   fetchAccountBalances,
   fetchAccountNominatingData,
   fetchAccountNominationPoolData,
-} from '@/utils/AccountUtils';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { IntervalsController } from '@/controller/renderer/IntervalsController';
+} from '@ren/utils/AccountUtils';
+import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
+import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
 import React, {
   createContext,
   useContext,
@@ -24,7 +24,7 @@ import { useAddresses } from '@app/contexts/main/Addresses';
 import { useChains } from '@app/contexts/main/Chains';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { handleApiDisconnects } from '@/utils/ApiUtils';
+import { handleApiDisconnects } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

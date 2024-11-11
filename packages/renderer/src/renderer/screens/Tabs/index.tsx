@@ -10,9 +10,9 @@ import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
-import { useTabs } from '@/renderer/contexts/tabs/Tabs';
+import { useTabs } from '@ren/renderer/contexts/tabs/Tabs';
 import { Header } from '@app/library/components';
-import { useDebug } from '@/renderer/hooks/useDebug';
+import { useDebug } from '@ren/renderer/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
 

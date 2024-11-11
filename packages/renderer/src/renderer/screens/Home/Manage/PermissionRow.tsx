@@ -11,8 +11,8 @@ import {
   faList,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHelp } from '@/renderer/contexts/common/Help';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,

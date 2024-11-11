@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import {
   faAngleLeft,
@@ -16,19 +16,19 @@ import {
   faClock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getEventChainId } from '@/utils/EventUtils';
-import { renderTimeAgo } from '@/utils/TextUtils';
-import { getAddressNonce } from '@/utils/AccountUtils';
+import { getEventChainId } from '@ren/utils/EventUtils';
+import { renderTimeAgo } from '@ren/utils/TextUtils';
+import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@app/library/components';
 import { useEffect, useState, memo } from 'react';
-import { useEvents } from '@/renderer/contexts/main/Events';
+import { useEvents } from '@ren/renderer/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import Governance from '@/config/svg/governance.svg?react';
+import Governance from '@ren/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
 

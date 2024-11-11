@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
+import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cubicBezier, motion } from 'framer-motion';

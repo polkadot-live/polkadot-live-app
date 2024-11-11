@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Api } from '@/model/Api';
-import { ChainList } from '@/config/chains';
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { Api } from '@ren/model/Api';
+import { ChainList } from '@ren/config/chains';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 

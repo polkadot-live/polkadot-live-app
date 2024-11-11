@@ -6,8 +6,8 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
 import {
@@ -16,8 +16,8 @@ import {
   ScanWrapper,
   createImgSize,
 } from '@app/library/components/QRCode';
-import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
-import { ButtonSecondary } from '@/renderer/kits/Buttons/ButtonSecondary';
+import { ButtonPrimary } from '@ren/renderer/kits/Buttons/ButtonPrimary';
+import { ButtonSecondary } from '@ren/renderer/kits/Buttons/ButtonSecondary';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const SignOverlay = ({ from }: { from: string }) => {

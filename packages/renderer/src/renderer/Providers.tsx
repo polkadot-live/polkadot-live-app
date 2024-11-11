@@ -8,7 +8,7 @@ import { TooltipProvider } from '@app/contexts/common/Tooltip';
 import { ConnectionsProvider } from '@app/contexts/common/Connections';
 
 // Tabs contexts.
-import { TabsProvider } from '@/renderer/contexts/tabs/Tabs';
+import { TabsProvider } from '@ren/renderer/contexts/tabs/Tabs';
 
 // Main window contexts.
 import { SideNavProvider } from './library/contexts';
@@ -49,7 +49,7 @@ import { PolkassemblyProvider } from '@app/contexts/openGov/Polkassembly';
 
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@/renderer/library/hooks/withProviders';
+import { withProviders } from '@ren/renderer/library/hooks/withProviders';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();

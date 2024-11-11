@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { defaultSideNavContext } from './defaults';
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
 import type { SideNavContextInterface, SideNavProviderProps } from './types';
 
 const SideNavContext = createContext<SideNavContextInterface>(

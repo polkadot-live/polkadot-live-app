@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "vite build --config vite.config.js",
+    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "clear:dist": "rm -fr dist",
     "typecheck": "tsc --noEmit"
   },

@@ -5,7 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TabWrapper } from './Wrappers';
-import { useTabs } from '@/renderer/contexts/tabs/Tabs';
+import { useTabs } from '@ren/renderer/contexts/tabs/Tabs';
 import { useSortable } from '@dnd-kit/sortable';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { TabProps } from './types';

@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigAction } from '@/config/processes/action';
+import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
-import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 
 export const useActionMessagePorts = () => {

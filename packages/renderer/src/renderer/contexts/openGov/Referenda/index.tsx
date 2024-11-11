@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
-import { getOrderedOrigins } from '@/renderer/utils/openGovUtils';
+import { getOrderedOrigins } from '@ren/renderer/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
 import type { ChainID } from '@polkadot-live/types/chains';

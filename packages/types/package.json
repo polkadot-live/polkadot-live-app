@@ -25,6 +25,7 @@
   },
   "files": [],
   "scripts": {
+    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

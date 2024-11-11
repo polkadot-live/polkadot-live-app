@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './default';
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
-import { chainCurrency } from '@/config/chains';
+import { formatBlocksToTime } from '@ren/renderer/utils/timeUtils';
+import { chainCurrency } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TreasuryContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

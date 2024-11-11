@@ -5,7 +5,7 @@ import InfoSVG from '../svg/help.svg?react';
 import type { ButtonCommonProps } from '../types';
 import { appendOrEmpty } from '@w3ux/utils';
 import { onMouseHandlers } from '../Utils';
-import type { ComponentBaseWithClassName } from '@/renderer/types';
+import type { ComponentBaseWithClassName } from '@ren/renderer/types';
 
 export type ButtonHelpProps = ComponentBaseWithClassName &
   ButtonCommonProps & {

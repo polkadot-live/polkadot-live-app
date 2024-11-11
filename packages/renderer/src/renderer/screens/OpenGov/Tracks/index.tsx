@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
-import { useHelp } from '@/renderer/contexts/common/Help';
-import { useConnections } from '@/renderer/contexts/common/Connections';
-import { useTracks } from '@/renderer/contexts/openGov/Tracks';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useTracks } from '@ren/renderer/contexts/openGov/Tracks';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -14,10 +14,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { StickyHeadings } from './Wrappers';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { TrackRow } from './TrackRow';
-import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { renderPlaceholders } from '@/renderer/library/utils';
+import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
+import { renderPlaceholders } from '@ren/renderer/library/utils';
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';

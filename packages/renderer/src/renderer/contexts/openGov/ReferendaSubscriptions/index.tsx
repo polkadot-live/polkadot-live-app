@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { NUM_REFERENDUM_SUBSCRIPTIONS } from '@/config/subscriptions/interval';
+import { NUM_REFERENDUM_SUBSCRIPTIONS } from '@ren/config/subscriptions/interval';
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';

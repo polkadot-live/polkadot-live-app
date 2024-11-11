@@ -16,10 +16,10 @@
   "scripts": {
     "asar:list": "asar list",
     "build": "yarn workspaces foreach --all -pt run build",
+    "lint": "yarn workspaces foreach --all -pt run lint",
     "typecheck": "yarn workspaces foreach --all -pt run typecheck",
     "clear:dist": "yarn workspaces foreach --all -pt run clear:dist",
     "clear": "rm -rf node_modules tsconfig.tsbuildinfo",
-    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
     "watch": "cross-env DEBUG=1 DISABLE_ANALYTICS=1 MODE=development node scripts/watch.js",
     "package": "cross-env MODE=production yarn run build && electron-builder --config scripts/electron-builder.config.prod.mjs",

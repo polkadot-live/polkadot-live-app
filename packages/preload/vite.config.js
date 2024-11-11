@@ -4,7 +4,7 @@
 import { chrome } from '../../.electron-vendors.cache.json';
 import { external } from '../../vite.base.config';
 import { defineConfig } from 'vite';
-import { join, resolve } from 'path';
+import { join } from 'path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
@@ -19,12 +19,6 @@ export default defineConfig({
   envDir: PROJECT_ROOT,
   resolve: {
     preserveSymlinks: true,
-    alias: [
-      {
-        find: '@',
-        replacement: resolve(PACKAGE_ROOT, 'src'),
-      },
-    ],
   },
   build: {
     ssr: true,

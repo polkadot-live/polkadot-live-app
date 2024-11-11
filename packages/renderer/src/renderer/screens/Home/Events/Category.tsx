@@ -7,8 +7,8 @@ import {
   AccordionCaretHeader,
 } from '@app/library/components';
 import { EventGroup } from './Wrappers';
-import { getEventChainId } from '@/utils/EventUtils';
-import { getCategory } from '@/config/chains';
+import { getEventChainId } from '@ren/utils/EventUtils';
+import { getCategory } from '@ren/config/chains';
 import { EventItem } from './EventItem';
 import type { EventCategoryProps } from './types';
 

@@ -3,9 +3,9 @@
 
 import { ActionItem, Tx } from '@app/library/components';
 import BigNumber from 'bignumber.js';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { chainCurrency } from '@/config/chains';
-import { Config as ConfigAction } from '@/config/processes/action';
+import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
+import { chainCurrency } from '@ren/config/chains';
+import { Config as ConfigAction } from '@ren/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
@@ -13,9 +13,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
 import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { useEffect, useState } from 'react';
-import { useTxMeta } from '@/renderer/contexts/action/TxMeta';
-import { useActionMessagePorts } from '@/renderer/hooks/useActionMessagePorts';
-import { useDebug } from '@/renderer/hooks/useDebug';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
+import { useActionMessagePorts } from '@ren/renderer/hooks/useActionMessagePorts';
+import { useDebug } from '@ren/renderer/hooks/useDebug';
 
 export const Action = () => {
   // Set up port communication for `action` window.

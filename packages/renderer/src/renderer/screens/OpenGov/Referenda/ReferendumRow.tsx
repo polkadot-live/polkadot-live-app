@@ -1,19 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { intervalTasks as allIntervalTasks } from '@/config/subscriptions/interval';
+import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
 import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
-import { renderOrigin } from '@/renderer/utils/openGovUtils';
+import { renderOrigin } from '@ren/renderer/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useReferenda } from '@/renderer/contexts/openGov/Referenda';
-import { useReferendaSubscriptions } from '@/renderer/contexts/openGov/ReferendaSubscriptions';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
+import { useReferendaSubscriptions } from '@ren/renderer/contexts/openGov/ReferendaSubscriptions';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 import { useState } from 'react';
-import { useTaskHandler } from '@/renderer/contexts/openGov/TaskHandler';
-import { usePolkassembly } from '@/renderer/contexts/openGov/Polkassembly';
+import { useTaskHandler } from '@ren/renderer/contexts/openGov/TaskHandler';
+import { usePolkassembly } from '@ren/renderer/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
 import {
   faChevronDown,
@@ -28,7 +28,7 @@ import {
 import { ControlsWrapper, SortControlButton } from '@app/library/components';
 import { InfoOverlay } from './InfoOverlay';
 import type { ReferendumRowProps } from '../types';
-import type { PolkassemblyProposal } from '@/renderer/contexts/openGov/Polkassembly/types';
+import type { PolkassemblyProposal } from '@ren/renderer/contexts/openGov/Polkassembly/types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;

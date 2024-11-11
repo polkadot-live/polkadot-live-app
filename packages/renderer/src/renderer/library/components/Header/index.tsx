@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ButtonSecondary } from '@app/kits/Buttons/ButtonSecondary';
-import { Config as RendererConfig } from '@/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import {
   faTimes,
   faUnlock,
@@ -13,8 +13,8 @@ import { HeaderWrapper } from './Wrapper';
 import { Classic } from '@theme-toggles/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '../../components';
-import { useAppSettings } from '@/renderer/contexts/main/AppSettings';
-import { useConnections } from '@/renderer/contexts/common/Connections';
+import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import type { HeaderProps } from './types';
 import { version } from '../../../../../package.json';
 

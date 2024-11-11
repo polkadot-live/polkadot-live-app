@@ -3,8 +3,8 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
-import { ChainList } from '@/config/chains';
-import { MainDebug } from '@/utils/DebugUtils';
+import { ChainList } from '@ren/config/chains';
+import { MainDebug } from '@ren/utils/DebugUtils';
 import { rmCommas } from '@w3ux/utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { APIConstants } from '@polkadot-live/types/chains/polkadot';

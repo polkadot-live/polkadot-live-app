@@ -4,7 +4,7 @@
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TreasuryStatCardWrapper } from './TreasuryStatCard.styles';
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 import type { TreasuryStatCardProps } from './types';
 
 export const TreasuryStatCard = ({

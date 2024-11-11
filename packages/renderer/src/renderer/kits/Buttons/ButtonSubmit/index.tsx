@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
-import type { ComponentBaseWithClassName } from '@/renderer/types';
+import type { ComponentBaseWithClassName } from '@ren/renderer/types';
 
 export type ButtonSubmitProps = ComponentBaseWithClassName &
   ButtonIconProps &

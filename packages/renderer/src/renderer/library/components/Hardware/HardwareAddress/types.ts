@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { ComponentBase } from '@/renderer/types';
+import type { ComponentBase } from '@ren/renderer/types';
 
 export type HardwareAddressProps = ComponentBase & {
   // the address to import.

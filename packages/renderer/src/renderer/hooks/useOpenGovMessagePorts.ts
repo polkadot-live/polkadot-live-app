@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { getTracks } from '../utils/openGovUtils';
 import { useConnections } from '../contexts/common/Connections';
 import { useEffect } from 'react';

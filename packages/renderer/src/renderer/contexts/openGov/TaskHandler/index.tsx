@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigOpenGov } from '@/config/processes/openGov';
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { Flip, toast } from 'react-toastify';

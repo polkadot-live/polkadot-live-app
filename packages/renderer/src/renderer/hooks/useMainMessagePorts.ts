@@ -2,24 +2,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import { AccountsController } from '@/controller/renderer/AccountsController';
-import { APIsController } from '@/controller/renderer/APIsController';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
+import { APIsController } from '@ren/controller/renderer/APIsController';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@/config/chains';
-import { Config as ConfigRenderer } from '@/config/processes/renderer';
+import { chainUnits } from '@ren/config/chains';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { encodeAddress } from '@polkadot/util-crypto';
-import { ExtrinsicsController } from '@/controller/renderer/ExtrinsicsController';
+import { ExtrinsicsController } from '@ren/controller/renderer/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
-} from '@/utils/AccountUtils';
-import { getApiInstanceOrThrow, handleApiDisconnects } from '@/utils/ApiUtils';
+} from '@ren/utils/AccountUtils';
+import {
+  getApiInstanceOrThrow,
+  handleApiDisconnects,
+} from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { IntervalsController } from '@/controller/renderer/IntervalsController';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
+import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
+import { IntervalsController } from '@ren/controller/renderer/IntervalsController';
+import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';

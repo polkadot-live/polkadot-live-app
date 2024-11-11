@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useState } from 'react';
-import { TaskQueue } from '@/orchestrators/TaskQueue';
-import * as ApiUtils from '@/utils/ApiUtils';
+import { TaskQueue } from '@ren/orchestrators/TaskQueue';
+import * as ApiUtils from '@ren/utils/ApiUtils';
 import * as defaults from './defaults';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -15,11 +15,11 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import { SubscriptionsController } from '@/controller/renderer/SubscriptionsController';
-import { AccountsController } from '@/controller/renderer/AccountsController';
+import { SubscriptionsController } from '@ren/controller/renderer/SubscriptionsController';
+import { AccountsController } from '@ren/controller/renderer/AccountsController';
 import { useChains } from '@app/contexts/main/Chains';
-import { APIsController } from '@/controller/renderer/APIsController';
-import { TaskOrchestrator } from '@/orchestrators/TaskOrchestrator';
+import { APIsController } from '@ren/controller/renderer/APIsController';
+import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =
   createContext<SubscriptionsContextInterface>(

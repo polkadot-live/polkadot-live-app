@@ -10,17 +10,17 @@ import {
   SortControlLabel,
 } from '@app/library/components';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Address } from './Address';
 import { Reader } from './Reader';
-import { ButtonText } from '@/renderer/kits/Buttons/ButtonText';
-import { getSortedLocalAddresses } from '@/renderer/utils/ImportUtils';
+import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
+import { getSortedLocalAddresses } from '@ren/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Scrollable, StatsFooter } from '@/renderer/library/styles';
-import { ButtonPrimaryInvert } from '@/renderer/kits/Buttons/ButtonPrimaryInvert';
-import { useAddresses } from '@/renderer/contexts/import/Addresses';
+import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
+import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 

@@ -5,11 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
-import { ModalSection } from '@/renderer/kits/Overlay/structure/ModalSection';
-import { ModalMotionTwoSection } from '@/renderer/kits/Overlay/structure/ModalMotionTwoSection';
+import { ModalSection } from '@ren/renderer/kits/Overlay/structure/ModalSection';
+import { ModalMotionTwoSection } from '@ren/renderer/kits/Overlay/structure/ModalMotionTwoSection';
 import { ImportReadOnly } from './ReadOnly';
-import { useImportMessagePorts } from '@/renderer/hooks/useImportMessagePorts';
-import { useDebug } from '@/renderer/hooks/useDebug';
+import { useImportMessagePorts } from '@ren/renderer/hooks/useImportMessagePorts';
+import { useDebug } from '@ren/renderer/hooks/useDebug';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const Import: React.FC = () => {

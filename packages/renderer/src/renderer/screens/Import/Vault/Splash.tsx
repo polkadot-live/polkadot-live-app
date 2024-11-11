@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonPrimary } from '@/renderer/kits/Buttons/ButtonPrimary';
+import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonPrimary } from '@ren/renderer/kits/Buttons/ButtonPrimary';
 import { ErrorBoundary } from 'react-error-boundary';
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { Reader } from './Reader';
 import { SplashWrapper } from '../Wrappers';

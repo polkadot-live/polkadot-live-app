@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chainCurrency, chainUnits } from '@/config/chains';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
 import type BigNumber from 'bignumber.js';

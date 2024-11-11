@@ -11,10 +11,10 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatBlocksToTime } from '@/renderer/utils/timeUtils';
-import { useHelp } from '@/renderer/contexts/common/Help';
-import { useTracks } from '@/renderer/contexts/openGov/Tracks';
-import { formatChainUnits } from '@/renderer/library/utils';
+import { formatBlocksToTime } from '@ren/renderer/utils/timeUtils';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
+import { useTracks } from '@ren/renderer/contexts/openGov/Tracks';
+import { formatChainUnits } from '@ren/renderer/library/utils';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 

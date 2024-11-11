@@ -9,14 +9,15 @@ import {
 } from '@app/library/components';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
-import { SettingsList } from '@/config/settings';
+import { SettingsList } from '@ren/config/settings';
 import { useEffect, useState } from 'react';
-import { Config as ConfigSettings } from '@/config/processes/settings';
-import { useDebug } from '@/renderer/hooks/useDebug';
-import { useSettingsMessagePorts } from '@/renderer/hooks/useSettingsMessagePorts';
-import { Scrollable } from '@/renderer/library/styles';
+import { Config as ConfigSettings } from '@ren/config/processes/settings';
+import { useDebug } from '@ren/renderer/hooks/useDebug';
+import { useSettingsMessagePorts } from '@ren/renderer/hooks/useSettingsMessagePorts';
+import { Scrollable } from '@ren/renderer/library/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
-import type { OsPlatform, SettingItem } from './types';
+import type { OsPlatform } from '@polkadot-live/types/settings';
+import type { SettingItem } from './types';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.

@@ -8,11 +8,11 @@ import {
   faCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useChains } from '@/renderer/contexts/main/Chains';
+import { useChains } from '@ren/renderer/contexts/main/Chains';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import { getIcon } from '@/renderer/Utils';
+import { getIcon } from '@ren/renderer/Utils';
 import { SelectRpc } from './RpcSelect';
 
 export const Footer = () => {

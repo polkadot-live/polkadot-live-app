@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@/renderer/library/components/Common';
+import { mixinHelpIcon } from '@ren/renderer/library/components/Common';
 
 export const StickyHeadings = styled.div`
   background-color: var(--background-window);

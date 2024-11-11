@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { HelpConfig } from '@/config/help';
+import { HelpConfig } from '@ren/config/help';
 import * as defaults from './defaults';
 import type {
   HelpContextInterface,

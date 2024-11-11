@@ -3,7 +3,7 @@
 
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTooltip } from '@/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import styled from 'styled-components';
 
 interface WarningIconProps {

@@ -19,6 +19,11 @@
 
     /* Paths are relative to base URL */
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["./packages/main/src/*"],
+      "@ren/*": ["./packages/renderer/src/*"],
+      "@app/*": ["./packages/renderer/src/renderer/*"]
+    },
     "declarationMap": false,
     "noEmitOnError": true,
   },

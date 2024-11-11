@@ -4,6 +4,7 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
+import type { IpcRendererEvent } from 'electron';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -41,21 +42,26 @@ export const ConnectionsProvider = ({
     };
 
     // Listen for synching events.
-    window.myAPI.syncModeFlags((_, { modeId, flag }) => {
-      switch (modeId) {
-        case 'isImporting': {
-          setIsImporting(flag);
-          break;
-        }
-        case 'darkMode': {
-          setDarkMode(flag);
-          break;
-        }
-        default: {
-          break;
+    window.myAPI.syncModeFlags(
+      (
+        _: IpcRendererEvent,
+        { modeId, flag }: { modeId: string; flag: boolean }
+      ) => {
+        switch (modeId) {
+          case 'isImporting': {
+            setIsImporting(flag);
+            break;
+          }
+          case 'darkMode': {
+            setDarkMode(flag);
+            break;
+          }
+          default: {
+            break;
+          }
         }
       }
-    });
+    );
 
     syncModeFlags();
   }, []);

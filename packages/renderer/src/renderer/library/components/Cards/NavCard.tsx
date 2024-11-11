@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useHelp } from '@/renderer/contexts/common/Help';
+import { useHelp } from '@ren/renderer/contexts/common/Help';
 import { NavCardWrapper } from './NavCard.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';

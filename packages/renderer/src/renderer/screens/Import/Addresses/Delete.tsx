@@ -1,12 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono } from '@/renderer/kits/Buttons/ButtonMono';
-import { ButtonMonoInvert } from '@/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
 import { ConfirmWrapper } from './Wrappers';
 import { Identicon } from '@app/library/components';
-import { useOverlay } from '@/renderer/contexts/common/Overlay';
-import { useDeleteHandler } from '@/renderer/contexts/import/DeleteHandler';
+import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useDeleteHandler } from '@ren/renderer/contexts/import/DeleteHandler';
 import type { DeleteProps } from './types';
 
 export const Delete = ({ address, source, setSection }: DeleteProps) => {
