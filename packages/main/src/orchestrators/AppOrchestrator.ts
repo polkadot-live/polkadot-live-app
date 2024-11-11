@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { WindowsController } from '@/controller/main/WindowsController';
-import { NotificationsController } from '@/controller/main/NotificationsController';
-import { SubscriptionsController } from '@/controller/main/SubscriptionsController';
+import { WindowsController } from '@/controller/WindowsController';
+import { NotificationsController } from '@/controller/NotificationsController';
+import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import type {
   ImportNewAddressArg,
   AppOrchestratorArg,

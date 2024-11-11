@@ -4,12 +4,12 @@
 import { Config as ConfigMain } from '@/config/processes/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
-import { AddressesController } from '@/controller/main/AddressesController';
+import { AddressesController } from '@/controller/AddressesController';
 import { WindowsController } from './WindowsController';
-import { EventsController } from '@/controller/main/EventsController';
-import { IntervalsController } from '@/controller/main/IntervalsController';
+import { EventsController } from '@/controller/EventsController';
+import { IntervalsController } from '@/controller/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
-import { version } from '../../../package.json';
+import { version } from '../../package.json';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export class BackupController {

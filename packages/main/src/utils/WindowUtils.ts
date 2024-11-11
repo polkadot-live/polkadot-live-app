@@ -18,9 +18,9 @@ import {
 import path, { resolve, join } from 'path';
 import { store } from '@/main';
 import { hideDockIcon, reportOnlineStatus } from '@/utils/SystemUtils';
-import { EventsController } from '@/controller/main/EventsController';
-import { SettingsController } from '@/controller/main/SettingsController';
-import { WindowsController } from '@/controller/main/WindowsController';
+import { EventsController } from '@/controller/EventsController';
+import { SettingsController } from '@/controller/SettingsController';
+import { WindowsController } from '@/controller/WindowsController';
 import { Config as ConfigMain } from '@/config/processes/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@polkadot-live/types/misc';

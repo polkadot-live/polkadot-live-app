@@ -4,7 +4,7 @@
 import { Config } from '@/config/processes/main';
 import { hideDockIcon, showDockIcon } from '@/utils/SystemUtils';
 import { store } from '@/main';
-import { WindowsController } from '@/controller/main/WindowsController';
+import { WindowsController } from '@/controller/WindowsController';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
