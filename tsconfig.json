@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "target": "ESNext",
-    "module": "CommonJS",
-    "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "checkJs": false,
     "strict": true,
     "allowJs": true,
@@ -13,23 +14,32 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "moduleResolution": "Node",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
+
+    /* Paths are relative to base URL */
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@app/*": ["./src/renderer/*"],
+      "@/*": ["./packages/main/src/*"],
+      "@ren/*": ["./packages/renderer/src/*"],
+      "@app/*": ["./packages/renderer/src/renderer/*"]
     },
-    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"]
+    "declarationMap": false,
+    "noEmitOnError": true,
   },
   "include": [
-    "config/**/*",
+    "packages/**/*.ts",
+    "packages/**/*.js",
+    "packages/**/*.tsx",
     "scripts/**/*",
-    "src",
-    "src/**/*.ts",
-    "test",
-    "wdio.conf.ts",
     "vite.base.config.ts",
+    "wdio.conf.ts"
   ],
-  "exclude": ["node_modules", ".vite/**/*", "out/**/*"]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*/node_modules",
+    "**/*/dist",
+    ".vite/**/*"
+  ],
 }

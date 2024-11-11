@@ -1,7 +1,7 @@
 {
   "root": true,
   "env": {
-    "browser": true,
+    //"browser": true,
     "node": true
   },
   "extends": [
@@ -28,15 +28,19 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": [
-          "tsconfig.json"
-        ]
+        "project": ["tsconfig.json", "packages/*/tsconfig.json"]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "tsconfig.json",
+    "tsconfigRootDir": "./",
+    "project": ["tsconfig.json", "packages/*/tsconfig.json"],
+    "ignorePatterns": [
+      "node_modules/",
+      "dist/",
+      "packages/*/dist"
+    ],
     "sourceType": "module",
     "ecmaVersion": "latest",
     "ecmaFeatures": {
