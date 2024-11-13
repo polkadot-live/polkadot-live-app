@@ -7,7 +7,7 @@ import {
   postRenameAccount,
   renameAccountInStore,
 } from '@ren/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@ren/renderer/library/components/Hardware';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
 import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import { useOverlay } from '@ren/renderer/contexts/common/Overlay';

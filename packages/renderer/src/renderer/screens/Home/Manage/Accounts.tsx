@@ -7,9 +7,9 @@ import {
   AccordionPanel,
   AccordionCaretHeader,
   Identicon,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
-import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
+import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@ren/renderer/Utils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';

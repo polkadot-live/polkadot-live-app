@@ -8,10 +8,10 @@ import {
   AccordionCaretHeader,
   ControlsWrapper,
   SortControlButton,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
   faLayerGroup,
@@ -27,11 +27,11 @@ import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import { getSpacedOrigin } from '@ren/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
-import { renderPlaceholders } from '@ren/renderer/library/utils';
-import { useReferendaSubscriptions } from '@ren/renderer/contexts/openGov/ReferendaSubscriptions';
-import type { ReferendaProps } from '../types';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { renderPlaceholders } from '@polkadot-live/ui/utils';
+import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
+import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isConnected } = useConnections();

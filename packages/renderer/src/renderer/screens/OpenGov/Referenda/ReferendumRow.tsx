@@ -25,7 +25,10 @@ import {
   faUpRightFromSquare,
   faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@app/library/components';
+import {
+  ControlsWrapper,
+  SortControlButton,
+} from '@polkadot-live/ui/components';
 import { InfoOverlay } from './InfoOverlay';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@ren/renderer/contexts/openGov/Polkassembly/types';

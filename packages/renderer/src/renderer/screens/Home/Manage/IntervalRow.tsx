@@ -18,7 +18,7 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch } from '@app/library/components';
+import { Switch } from '@polkadot-live/ui/components';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { getShortIntervalLabel } from '@ren/renderer/utils/renderingUtils';
 import type { AnyData } from '@polkadot-live/types/misc';

@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { NoAccountsWrapper } from './Wrappers';
 

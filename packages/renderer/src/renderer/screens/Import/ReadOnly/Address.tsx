@@ -3,7 +3,7 @@
 
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
-import { HardwareAddress } from '@ren/renderer/library/components/Hardware';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
   postRenameAccount,
   renameAccountInStore,

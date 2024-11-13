@@ -4,7 +4,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { WorkspaceRowWrapper } from '../Wrappers';
 import { faHashtag, faTrash, faLink } from '@fortawesome/free-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@app/library/components';
+import {
+  ControlsWrapper,
+  SortControlButton,
+} from '@polkadot-live/ui/components';
 import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
 import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
 import { useOverlay } from '@ren/renderer/contexts/common/Overlay';

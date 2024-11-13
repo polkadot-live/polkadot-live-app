@@ -3,7 +3,7 @@
 
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { useAddresses } from '@app/contexts/import/Addresses';
 import type { ImportVaultProps } from '../types';
 
 export const ImportVault = ({ section, setSection }: ImportVaultProps) => {

@@ -14,11 +14,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { StickyHeadings } from './Wrappers';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { TrackRow } from './TrackRow';
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
-import { renderPlaceholders } from '@ren/renderer/library/utils';
-import { ControlsWrapper, SortControlButton } from '@app/library/components';
+import {
+  ControlsWrapper,
+  SortControlButton,
+} from '@polkadot-live/ui/components';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TracksProps } from '../types';

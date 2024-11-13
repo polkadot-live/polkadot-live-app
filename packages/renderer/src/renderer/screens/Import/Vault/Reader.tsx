@@ -6,7 +6,7 @@ import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
-import { ButtonSecondary } from '@ren/renderer/kits/Buttons/ButtonSecondary';
+import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { checkValidAddress } from '@ren/renderer/Utils';
 import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
@@ -14,7 +14,7 @@ import {
   createImgSize,
   Html5QrCodePlugin,
   ScanWrapper,
-} from '@ren/renderer/library/components/QRCode';
+} from '@polkadot-live/ui/components/qrcode';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const Reader = () => {

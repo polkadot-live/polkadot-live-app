@@ -8,18 +8,20 @@ import {
   AccordionCaretHeader,
   ControlsWrapper,
   SortControlLabel,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Address } from './Address';
 import { Reader } from './Reader';
-import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
+import {
+  ButtonText,
+  ButtonPrimaryInvert,
+} from '@polkadot-live/ui/kits/buttons';
 import { getSortedLocalAddresses } from '@ren/renderer/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';

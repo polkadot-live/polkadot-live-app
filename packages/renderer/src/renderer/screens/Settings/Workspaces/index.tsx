@@ -7,7 +7,7 @@ import {
   AccordionCaretHeader,
   ControlsWrapper,
   SortControlButton,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';

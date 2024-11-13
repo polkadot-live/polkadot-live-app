@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
-import { Identicon } from '@app/library/components';
+import { Identicon } from '@polkadot-live/ui/components';
 import { ConfirmWrapper } from './Wrappers';
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import { useAddHandler } from '@ren/renderer/contexts/import/AddHandler';
 import type { ConfirmProps } from './types';
 

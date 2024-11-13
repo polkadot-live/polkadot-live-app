@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@app/library/components/Common';
+import { mixinHelpIcon } from '@polkadot-live/ui/components';
 
 export const ContentWrapper = styled.div`
   background-color: var(--background-window);

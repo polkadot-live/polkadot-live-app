@@ -1,0 +1,50 @@
+{
+  "name": "@polkadot-live/ui",
+  "version": "0.3.0-alpha",
+  "type": "module",
+  "private": true,
+  "files": [],
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts",
+    "./components/help": "./src/components/Help/index.tsx",
+    "./components/qrcode": "./src/components/QRCode/index.ts",
+    "./contexts": "./src/contexts/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./styles": "./src/styles/index.ts",
+    "./utils": "./src/utils/index.ts",
+    "./kits/buttons": "./src/kits/Buttons/index.ts",
+    "./kits/overlay": "./src/kits/Overlay/index.ts"
+  },
+  "scripts": {
+    "build": "yarn clear:dist && gulp",
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
+    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
+    "@types/gulp-sass": "^5",
+    "gulp": "^5.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "sass": "^1.80.6",
+    "typescript": "5.4.5"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-brands-svg-icons": "^6.5.0",
+    "@fortawesome/free-regular-svg-icons": "^6.5.0",
+    "@fortawesome/free-solid-svg-icons": "^6.5.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@theme-toggles/react": "^4.1.0",
+    "@w3ux/react-polkicon": "1.2.0-alpha.8",
+    "@w3ux/utils": "0.4.0-alpha.0",
+    "bignumber.js": "^9.1.2",
+    "framer-motion": "^11.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.1.8"
+  },
+  "packageManager": "yarn@4.0.2"
+}

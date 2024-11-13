@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ActionItem, Tx } from '@app/library/components';
+import { ActionItem, Tx } from '@polkadot-live/ui/components';
 import BigNumber from 'bignumber.js';
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
+import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { chainCurrency } from '@ren/config/chains';
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';

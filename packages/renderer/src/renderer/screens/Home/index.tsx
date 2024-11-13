@@ -2,22 +2,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { BodyInterfaceWrapper } from '@app/Wrappers';
-import { GridSpinner } from '@ren/renderer/library/components/Spinners';
-import { useAddresses } from '@ren/renderer/contexts/main/Addresses';
-import { useEvents } from '@ren/renderer/contexts/main/Events';
-import { Footer, Header, SideNav } from '@app/library/components';
 import { useEffect } from 'react';
-import { useSideNav } from '@ren/renderer/library/contexts';
-import IconSVG from '@app/svg/polkadotIcon.svg?react';
+import { useAddresses } from '@app/contexts/main/Addresses';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useEvents } from '@app/contexts/main/Events';
+import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
+import { Summary } from '@app/screens/Home/Summary';
 import { Events } from './Events';
 import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useInitIpcHandlers } from '@ren/renderer/hooks/useInitIpcHandlers';
-import { useMainMessagePorts } from '@ren/renderer/hooks/useMainMessagePorts';
-import { ScrollWrapper } from '@ren/renderer/library/styles';
-import { Summary } from '@ren/renderer/screens/Home/Summary';
+import IconSVG from '@app/svg/polkadotIcon.svg?react';
+
+/** Library */
+import { BodyInterfaceWrapper } from '@app/Wrappers';
+import {
+  Header,
+  Footer,
+  SideNav,
+  GridSpinner,
+} from '@polkadot-live/ui/components';
+import { ScrollWrapper } from '@polkadot-live/ui/styles';
+import { useSideNav } from '@polkadot-live/ui/contexts';
+
+/** Types */
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { IpcRendererEvent } from 'electron';
@@ -31,10 +40,11 @@ export const Home = () => {
 
   const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
+  const { handleSideNavCollapse, sideNavCollapsed } = useAppSettings();
+  const { selectedId, setSelectedId } = useSideNav();
 
   // Get app loading flag.
   const { appLoading } = useBootstrapping();
-  const { selectedId } = useSideNav();
 
   useEffect(() => {
     // Listen for event callbacks.
@@ -63,7 +73,14 @@ export const Home = () => {
       <Header showMenu={true} appLoading={appLoading} />
       <FixedFlexWrapper>
         {/* Side Navigation */}
-        <SideNav />
+        <SideNav
+          handleSideNavCollapse={handleSideNavCollapse}
+          navState={{
+            isCollapsed: sideNavCollapsed,
+            selectedId,
+            setSelectedId,
+          }}
+        />
 
         <BodyInterfaceWrapper $maxHeight>
           <IconWrapper>

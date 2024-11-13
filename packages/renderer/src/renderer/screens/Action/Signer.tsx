@@ -1,12 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonSubmit } from '@ren/renderer/kits/Buttons/ButtonSubmit';
+import { useOverlay } from '@app/contexts/common/Overlay';
+import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { chainCurrency } from '@ren/config/chains';
 import { EstimatedFee } from './Wrappers';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import { SignOverlay } from './SignOverlay';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import type { SubmitProps } from './types';
 
 export const Signer = ({

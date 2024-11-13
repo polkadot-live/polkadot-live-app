@@ -3,18 +3,18 @@
 
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSideNav } from '@ren/renderer/library/contexts';
-import { useEvents } from '@ren/renderer/contexts/main/Events';
-import { useAddresses } from '@ren/renderer/contexts/main/Addresses';
-import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
+import { useSideNav } from '@polkadot-live/ui/contexts';
+import { useEvents } from '@app/contexts/main/Events';
+import { useAddresses } from '@app/contexts/main/Addresses';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
+import { useHelp } from '@app/contexts/common/Help';
 import {
   MainHeading,
   StatsSection,
   StatsGrid,
   StatItem,
   ShiftingMeter,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();

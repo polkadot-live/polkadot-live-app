@@ -7,7 +7,7 @@ import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
-import { MainHeading } from '@app/library/components';
+import { MainHeading } from '@polkadot-live/ui/components';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 

@@ -6,18 +6,18 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-  Identicon,
   ControlsWrapper,
+  Identicon,
+  HardwareAddressWrapper,
   SortControlLabel,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { Address } from './Address';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { HardwareAddressWrapper } from '@ren/renderer/library/components/Hardware';
 
 /// Context imports.
 import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
@@ -25,7 +25,7 @@ import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import {
   getSortedLocalAddresses,
   renderToast,

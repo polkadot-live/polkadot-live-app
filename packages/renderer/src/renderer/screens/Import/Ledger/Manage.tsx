@@ -8,18 +8,20 @@ import {
   AccordionCaretHeader,
   ControlsWrapper,
   SortControlLabel,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { Address } from './Address';
 import { determineStatusFromCodes } from './Utils';
-import { ButtonText } from '@ren/renderer/kits/Buttons/ButtonText';
+import {
+  ButtonText,
+  ButtonPrimaryInvert,
+} from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../Wrappers';
 import { getSortedLocalLedgerAddresses } from '@ren/renderer/utils/ImportUtils';
 import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
 import { useState } from 'react';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({

@@ -11,7 +11,7 @@ import {
   ControlsWrapper,
   SortControlLabel,
   Switch,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@ren/renderer/callbacks/oneshots';
@@ -23,7 +23,7 @@ import {
   getTooltipClassForGroup,
   toolTipTextFor,
 } from '@app/utils/renderingUtils';
-import { ButtonPrimaryInvert } from '@ren/renderer/kits/Buttons/ButtonPrimaryInvert';
+import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.

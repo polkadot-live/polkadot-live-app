@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionPanel,
   AccordionCaretHeader,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@ren/config/settings';
@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@ren/config/processes/settings';
 import { useDebug } from '@ren/renderer/hooks/useDebug';
 import { useSettingsMessagePorts } from '@ren/renderer/hooks/useSettingsMessagePorts';
-import { Scrollable } from '@ren/renderer/library/styles';
+import { Scrollable } from '@polkadot-live/ui/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
 import type { OsPlatform } from '@polkadot-live/types/settings';
 import type { SettingItem } from './types';

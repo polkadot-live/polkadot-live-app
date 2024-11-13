@@ -1,11 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useOverlay } from '@app/contexts/common/Overlay';
 import { ConfirmWrapper } from '../Wrappers';
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
-import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
+import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
+import { useWorkspaces } from '@app/contexts/settings/Workspaces';
 import { Flip, toast } from 'react-toastify';
 import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 

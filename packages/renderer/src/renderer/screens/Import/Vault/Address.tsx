@@ -6,11 +6,11 @@ import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
   renameAccountInStore,
-} from '@ren/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@ren/renderer/library/components/Hardware/HardwareAddress';
+} from '@app/utils/ImportUtils';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useOverlay } from '@app/contexts/common/Overlay';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { TaskEntryWrapper } from './Wrappers';
-import { Switch } from '@app/library/components';
+import { Switch } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

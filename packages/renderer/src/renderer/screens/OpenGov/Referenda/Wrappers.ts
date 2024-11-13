@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled, { css } from 'styled-components';
-import { mixinHelpIcon } from '@ren/renderer/library/components/Common';
+import { mixinHelpIcon } from '@polkadot-live/ui/components';
 
 const mixinRowButton = css`
   font-size: 1.3rem;

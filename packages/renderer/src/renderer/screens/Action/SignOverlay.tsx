@@ -15,9 +15,8 @@ import {
   QrDisplayPayload,
   ScanWrapper,
   createImgSize,
-} from '@app/library/components/QRCode';
-import { ButtonPrimary } from '@ren/renderer/kits/Buttons/ButtonPrimary';
-import { ButtonSecondary } from '@ren/renderer/kits/Buttons/ButtonSecondary';
+} from '@polkadot-live/ui/components/qrcode';
+import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const SignOverlay = ({ from }: { from: string }) => {
