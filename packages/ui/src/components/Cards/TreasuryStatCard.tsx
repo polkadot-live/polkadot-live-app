@@ -4,7 +4,6 @@
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TreasuryStatCardWrapper } from './TreasuryStatCard.styles';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
 import type { TreasuryStatCardProps } from './types';
 
 export const TreasuryStatCard = ({
@@ -12,18 +11,15 @@ export const TreasuryStatCard = ({
   title,
   statText,
   helpKey,
-}: TreasuryStatCardProps) => {
-  const { openHelp } = useHelp();
-
-  return (
-    <TreasuryStatCardWrapper $chainId={chainId}>
-      <div>
-        <h2>{title}</h2>
-        <div className="help-icon" onClick={() => openHelp(helpKey)}>
-          <FontAwesomeIcon icon={faInfo} />
-        </div>
+  openHelp,
+}: TreasuryStatCardProps) => (
+  <TreasuryStatCardWrapper $chainId={chainId}>
+    <div>
+      <h2>{title}</h2>
+      <div className="help-icon" onClick={() => openHelp(helpKey)}>
+        <FontAwesomeIcon icon={faInfo} />
       </div>
-      <h4>{statText}</h4>
-    </TreasuryStatCardWrapper>
-  );
-};
+    </div>
+    <h4>{statText}</h4>
+  </TreasuryStatCardWrapper>
+);

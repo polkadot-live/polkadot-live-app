@@ -17,8 +17,8 @@ import './theme/index.scss';
 import './theme/utils.scss';
 
 // Library styles.
-import './kits/Buttons/index.scss';
-import './kits/Overlay/index.scss';
+import '@polkadot-live/ui/kits/buttons/index.scss';
+import '@polkadot-live/ui/kits/overlay/index.scss';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

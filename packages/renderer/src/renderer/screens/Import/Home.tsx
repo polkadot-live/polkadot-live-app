@@ -12,12 +12,15 @@ import { ActionItem, NavCard } from '@polkadot-live/ui/components';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
+import { useHelp } from '@app/contexts/common/Help';
 import { useEffect } from 'react';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {
+  const { openHelp } = useHelp();
+
   /// Handle clicking on an import method card.
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -75,6 +78,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'vault')
             }
+            openHelp={openHelp}
             helpKey={'help:import:vault'}
             childrenLogo={
               <PolkadotVaultSVG
@@ -104,6 +108,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'ledger')
             }
+            openHelp={openHelp}
             helpKey={'help:import:ledger'}
             childrenLogo={
               <LedgerLogoSVG
@@ -136,6 +141,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'read-only')
             }
+            openHelp={openHelp}
             helpKey={'help:import:readOnly'}
             childrenLogo={
               <FontAwesomeIcon

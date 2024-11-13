@@ -5,7 +5,7 @@ import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 
-export interface NavCardProps {
+export interface NavCardBaseProps {
   // TItle of the card.
   title: string;
   // Handler when clicking the card.
@@ -18,6 +18,12 @@ export interface NavCardProps {
   helpKey?: HelpItemKey;
   // Styles to apply to the logo container.
   styleLogoCont?: React.CSSProperties;
+  // Function to open help overlay.
+}
+
+export interface NavCardProps extends NavCardBaseProps {
+  // Function to open help overlay.
+  openHelp: (key: HelpItemKey) => void;
 }
 
 export interface TreasuryStatCardProps {
@@ -25,4 +31,5 @@ export interface TreasuryStatCardProps {
   title: string;
   statText: string;
   helpKey: HelpItemKey;
+  openHelp: (key: HelpItemKey) => void;
 }

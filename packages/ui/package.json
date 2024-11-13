@@ -14,7 +14,9 @@
     "./styles": "./src/styles/index.ts",
     "./utils": "./src/utils/index.ts",
     "./kits/buttons": "./src/kits/Buttons/index.ts",
-    "./kits/overlay": "./src/kits/Overlay/index.ts"
+    "./kits/buttons/*": "./src/kits/Buttons/*",
+    "./kits/overlay": "./src/kits/Overlay/index.ts",
+    "./kits/overlay/*": "./src/kits/Overlay/index.scss"
   },
   "scripts": {
     "build": "yarn clear:dist && gulp",
