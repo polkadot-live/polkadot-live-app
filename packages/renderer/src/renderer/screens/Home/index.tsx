@@ -23,6 +23,7 @@ import {
   Footer,
   SideNav,
   GridSpinner,
+  Menu,
 } from '@polkadot-live/ui/components';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useSideNav } from '@polkadot-live/ui/contexts';
@@ -102,7 +103,9 @@ export const Home = () => {
         onDockToggle={onDockToggle}
         onRestoreWindow={() => window.myAPI.restoreWindow('base')}
         onThemeToggle={() => window.myAPI.relayModeFlag('darkMode', !darkMode)}
-      />
+      >
+        <Menu />
+      </Header>
 
       <FixedFlexWrapper>
         {/* Side Navigation */}

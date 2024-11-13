@@ -10,4 +10,5 @@ export interface HeaderProps {
   onDockToggle?: () => void;
   onRestoreWindow?: () => void;
   onThemeToggle?: (toggled: boolean) => void;
+  children?: React.ReactNode;
 }

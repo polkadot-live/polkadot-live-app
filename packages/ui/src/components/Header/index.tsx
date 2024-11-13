@@ -1,12 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Menu } from '../../components';
-import { ButtonSecondary } from '../../kits/Buttons';
-import { HeaderWrapper } from './Wrapper';
-import { version } from '../../../package.json';
-import type { HeaderProps } from './types';
-
 import { useState } from 'react';
 import { Classic } from '@theme-toggles/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,7 +11,13 @@ import {
   faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons';
 
+import { ButtonSecondary } from '../../kits/Buttons';
+import { HeaderWrapper } from './Wrapper';
+import { version } from '../../../package.json';
+import type { HeaderProps } from './types';
+
 export const Header = ({
+  children,
   appLoading = false,
   showButtons = false,
   darkMode,
@@ -68,8 +68,8 @@ export const Header = ({
                 duration={300}
               />
 
-              {/* Cog menu*/}
-              <Menu />
+              {/* Children */}
+              {children}
             </div>
           ) : (
             <button
