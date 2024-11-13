@@ -24,7 +24,13 @@ export const Tabs: React.FC = () => {
 
   return (
     <>
-      <Header showMenu={false} appLoading={false} />
+      <Header
+        onCloseWindow={() => {
+          const windowId = window.myAPI.getWindowId();
+          window.myAPI.closeWindow(windowId);
+        }}
+      />
+
       <TabsWrapper>
         <div className="inner">
           <DndContext

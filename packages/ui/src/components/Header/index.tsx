@@ -1,43 +1,33 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { Menu } from '../../components';
+import { ButtonSecondary } from '../../kits/Buttons';
+import { HeaderWrapper } from './Wrapper';
+import { version } from '../../../package.json';
+import type { HeaderProps } from './types';
+
+import { useState } from 'react';
+import { Classic } from '@theme-toggles/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTimes,
   faUnlock,
   faLock,
   faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons';
-import { HeaderWrapper } from './Wrapper';
-import { Classic } from '@theme-toggles/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu } from '../../components';
-import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { version } from '../../../package.json';
-import type { HeaderProps } from './types';
 
-export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
-  const { darkMode, setDarkMode } = useConnections();
-  const { dockToggled, handleDockedToggle } = useAppSettings();
-  const windowId = window.myAPI.getWindowId();
-
-  /// Handle clicking the docked button.
-  const handleDocked = () => {
-    handleDockedToggle();
-
-    RendererConfig.portToSettings?.postMessage({
-      task: 'settings:set:dockedWindow',
-      data: {
-        docked: !dockToggled,
-      },
-    });
-
-    // Analytics.
-    const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
-    window.myAPI.umamiEvent(event, { setting: 'dock-window' });
-  };
+export const Header = ({
+  appLoading = false,
+  showButtons = false,
+  darkMode,
+  dockToggled,
+  onCloseWindow,
+  onDockToggle,
+  onRestoreWindow,
+  onThemeToggle,
+}: HeaderProps) => {
+  const [toggleState, setToggleState] = useState(Boolean(darkMode));
 
   return (
     <HeaderWrapper>
@@ -45,7 +35,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
         <div className="grab" />
         <span className="alpha">{version}</span>
         <div className="right">
-          {showMenu || windowId === 'main' ? (
+          {showButtons ? (
             <div className="controls-wrapper">
               {/* Dock window */}
               <ButtonSecondary
@@ -53,13 +43,13 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
                 text={dockToggled ? 'Detach' : 'Dock'}
                 iconLeft={dockToggled ? faUnlock : faLock}
                 iconTransform="shrink-5"
-                onClick={() => handleDocked()}
+                onClick={() => onDockToggle && onDockToggle()}
               />
 
               {/* Restore base window */}
               <button
                 type="button"
-                onClick={() => window.myAPI.restoreWindow('base')}
+                onClick={() => onRestoreWindow && onRestoreWindow()}
               >
                 <FontAwesomeIcon
                   transform={'shrink-1'}
@@ -69,11 +59,10 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
 
               {/* Theme toggle */}
               <Classic
-                toggled={darkMode}
-                toggle={setDarkMode}
-                onToggle={(toggled: boolean) => {
-                  // Persist new setting to store and broadcast to open windows.
-                  window.myAPI.relayModeFlag('darkMode', toggled);
+                toggled={toggleState}
+                onToggle={(toggled) => {
+                  onThemeToggle && onThemeToggle(toggled);
+                  setToggleState(toggled);
                 }}
                 className="theme-toggle"
                 duration={300}
@@ -86,7 +75,7 @@ export const Header = ({ showMenu, appLoading = false }: HeaderProps) => {
             <button
               type="button"
               disabled={appLoading}
-              onClick={() => window.myAPI.closeWindow(windowId)}
+              onClick={() => onCloseWindow && onCloseWindow()}
             >
               <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
             </button>

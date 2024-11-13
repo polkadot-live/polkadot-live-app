@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
@@ -40,7 +41,13 @@ export const Home = () => {
 
   const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
-  const { handleSideNavCollapse, sideNavCollapsed } = useAppSettings();
+  const { darkMode } = useConnections();
+  const {
+    dockToggled,
+    sideNavCollapsed,
+    handleDockedToggle,
+    handleSideNavCollapse,
+  } = useAppSettings();
   const { selectedId, setSelectedId } = useSideNav();
 
   // Get app loading flag.
@@ -68,9 +75,35 @@ export const Home = () => {
     );
   }, []);
 
+  /// TODO: Move to file.
+  /// Handle header dock toggle.
+  const onDockToggle = () => {
+    handleDockedToggle();
+
+    ConfigRenderer.portToSettings?.postMessage({
+      task: 'settings:set:dockedWindow',
+      data: {
+        docked: !dockToggled,
+      },
+    });
+
+    // Analytics.
+    const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
+    window.myAPI.umamiEvent(event, { setting: 'dock-window' });
+  };
+
   return (
     <>
-      <Header showMenu={true} appLoading={appLoading} />
+      <Header
+        showButtons={true}
+        appLoading={appLoading}
+        darkMode={darkMode}
+        dockToggled={dockToggled}
+        onDockToggle={onDockToggle}
+        onRestoreWindow={() => window.myAPI.restoreWindow('base')}
+        onThemeToggle={() => window.myAPI.relayModeFlag('darkMode', !darkMode)}
+      />
+
       <FixedFlexWrapper>
         {/* Side Navigation */}
         <SideNav

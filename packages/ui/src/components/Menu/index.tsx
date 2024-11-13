@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { setStateWithRef } from '@w3ux/utils';
 import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
@@ -17,7 +18,6 @@ import {
 
 /** External */
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
 import { useHelp } from '@ren/renderer/contexts/common/Help';
