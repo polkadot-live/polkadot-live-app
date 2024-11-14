@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import type { Html5QrScannerProps } from '@ren/renderer/screens/Import/types';
+import type { Html5QrScannerProps } from './types';
 
 export const Html5QrCodePlugin = ({
   fps,

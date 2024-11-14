@@ -3,6 +3,14 @@
 
 import type { HexString } from '@polkadot/util/types';
 import type React from 'react';
+import type { Html5Qrcode } from 'html5-qrcode';
+
+export interface Html5QrScannerProps {
+  fps: number;
+  qrCodeSuccessCallback: (data: string | null) => void;
+  qrCodeErrorCallback: (error: string) => void;
+  html5QrCode: Html5Qrcode | null;
+}
 
 export interface FrameState {
   frames: Uint8Array[];

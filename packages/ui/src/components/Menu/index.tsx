@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { setStateWithRef } from '@w3ux/utils';
+import { ButtonSecondary } from '../../kits/Buttons';
 import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
 import React, { useRef, useState } from 'react';
 import { MenuWrapper, Separator } from './Wrapper';

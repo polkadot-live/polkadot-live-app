@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
-import type { Html5Qrcode } from 'html5-qrcode';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -31,13 +30,6 @@ export interface VaultSplashProps {
 export interface ManageVaultProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
   section: number;
-}
-
-export interface Html5QrScannerProps {
-  fps: number;
-  qrCodeSuccessCallback: (data: string | null) => void;
-  qrCodeErrorCallback: (error: string) => void;
-  html5QrCode: Html5Qrcode | null;
 }
 
 export interface ImportLedgerProps {

@@ -3,8 +3,8 @@
 
 import React, { memo, useMemo } from 'react';
 import { QrDisplay } from './Display.js';
-import type { DisplayPayloadProps } from './types.js';
 import { createSignPayload } from './util.js';
+import type { DisplayPayloadProps } from './types.js';
 
 const DisplayPayload = ({
   address,
