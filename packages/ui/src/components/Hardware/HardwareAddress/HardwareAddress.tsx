@@ -8,38 +8,33 @@ import {
   faMinus,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
-import { chainIcon } from '@ren/config/chains';
+import { useState } from 'react';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '../../Identicon';
-import { useState } from 'react';
-import {
-  renderToast,
-  validateAccountName,
-} from '@ren/renderer/utils/ImportUtils';
 import { EllipsisSpinner } from '../../Spinners';
-import { HardwareAddressWrapper } from './Wrapper';
-import { getAddressChainId } from '@ren/renderer/Utils';
-import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useTooltip } from '../../../contexts/Tooltip';
-import { ButtonMono } from '@polkadot-live/ui/kits/buttons';
+import { ButtonMono } from '../../../kits/Buttons';
+import { validateAccountName } from '../../../utils';
+import { HardwareAddressWrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
   address,
-  source,
-  isImported,
   accountName,
+  ChainIcon,
+  isConnected,
+  isImported,
+  processingStatus,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
+  onRenameError,
+  onRenameSuccess,
 }: HardwareAddressProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
-  const { isConnected } = useConnections();
-  const { getStatusForAccount } = useAccountStatuses();
 
   // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
@@ -65,14 +60,14 @@ export const HardwareAddress = ({
 
     // Handle validation failure.
     if (!validateAccountName(trimmed)) {
-      renderToast('Bad account name.', 'error', `toast-${trimmed}`);
+      onRenameError('Bad account name.', `toast-${trimmed}`);
       setEditName(accountName);
       setEditing(false);
       return;
     }
 
     // Render success alert.
-    renderToast('Account name updated.', 'success', `toast-${trimmed}`);
+    onRenameSuccess('Account name updated.', `toast-${trimmed}`);
 
     // Otherwise rename account.
     renameHandler(address, trimmed).then(() => {
@@ -89,14 +84,12 @@ export const HardwareAddress = ({
   };
 
   // Function to render a chain icon.
-  const renderChainIcon = () => {
-    const chainId = getAddressChainId(address);
-    const ChainIcon = chainIcon(chainId);
-    return <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />;
-  };
+  const renderChainIcon = () => (
+    <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />
+  );
 
   // Utility to get processing status.
-  const isProcessing = () => getStatusForAccount(address, source) || false;
+  const isProcessing = () => processingStatus || false;
 
   return (
     <HardwareAddressWrapper>

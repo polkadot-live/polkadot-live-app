@@ -1,24 +1,32 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ComponentBase } from '../../../types';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export type HardwareAddressProps = ComponentBase & {
-  // the address to import.
+  // The address to import.
   address: string;
-  // The account's import source.
-  source: AccountSource;
+  // Account processing status.
+  processingStatus: boolean | null;
+  // Address chain icon SVG.
+  ChainIcon: AnyData;
+  // App's connection status.
+  isConnected: boolean;
   // Whether this address is imported in main window.
   isImported: boolean;
-  // current name of the account.
+  // Current name of the account.
   accountName: string;
-  // handle rename
+  // Handle rename
   renameHandler: (address: string, newName: string) => Promise<void>;
-  // handle remove UI.
+  // Handle remove UI.
   openRemoveHandler: () => void;
-  // handle confirm import UI.
+  // Handle confirm import UI.
   openConfirmHandler: () => void;
-  // handle confirm delete UI.
+  // Handle confirm delete UI.
   openDeleteHandler: () => void;
+  // Handle rename success.
+  onRenameSuccess: (message: string, toastId: string) => void;
+  // Handle rename error.
+  onRenameError: (message: string, toastId: string) => void;
 };
