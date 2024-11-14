@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ComponentBase } from '@ren/renderer/types';
+import type { ComponentBase } from '../../types';
 import type { ReactNode } from 'react';
 
 export type ActionItemProps = ComponentBase & {

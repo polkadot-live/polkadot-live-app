@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
 import { onMouseHandlers } from '../Utils';
 import type { ButtonCommonProps, ButtonIconProps } from '../types';
-import type { ComponentBaseWithClassName } from '@ren/renderer/types';
+import type { ComponentBaseWithClassName } from '../../../types';
 
 export type ButtonPrimaryProps = ComponentBaseWithClassName &
   ButtonIconProps &
