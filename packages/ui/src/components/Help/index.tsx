@@ -5,17 +5,21 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useAnimation } from 'framer-motion';
 import { useCallback, useEffect } from 'react';
 import { ActiveDefinition } from './Items/ActiveDefinition';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
 
 /** Kits */
 import { ButtonPrimaryInvert } from '../../kits/Buttons/ButtonPrimaryInvert';
 import { CanvasContainer } from '../../kits/Overlay/structure/CanvasContainer';
 import { CanvasScroll } from '../../kits/Overlay/structure/CanvasScroll';
 import { ModalContent } from '../../kits/Overlay/structure/ModalContent';
+import type { HelpProps } from './typess';
 
-export const Help = () => {
+export const Help = ({
+  status,
+  definition,
+  closeHelp,
+  setStatus,
+}: HelpProps) => {
   const controls = useAnimation();
-  const { setStatus, status, definition, closeHelp } = useHelp();
 
   const onFadeIn = useCallback(async () => {
     await controls.start('visible');
