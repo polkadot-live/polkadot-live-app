@@ -4,7 +4,7 @@
 import { ButtonMono, ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { ConfirmWrapper } from './Wrappers';
 import { Identicon } from '@polkadot-live/ui/components';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useDeleteHandler } from '@ren/renderer/contexts/import/DeleteHandler';
 import type { DeleteProps } from './types';
 

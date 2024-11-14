@@ -10,7 +10,7 @@ import {
 } from '@ren/renderer/utils/ImportUtils';
 import { Remove } from '../Addresses/Remove';
 import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {

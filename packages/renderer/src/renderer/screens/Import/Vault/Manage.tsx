@@ -10,7 +10,7 @@ import {
   SortControlLabel,
 } from '@polkadot-live/ui/components';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Address } from './Address';
 import { Reader } from './Reader';

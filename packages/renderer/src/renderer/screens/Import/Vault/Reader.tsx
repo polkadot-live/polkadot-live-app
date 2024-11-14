@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';

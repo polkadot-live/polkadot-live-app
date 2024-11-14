@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@app/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { chainCurrency } from '@ren/config/chains';
 import { EstimatedFee } from './Wrappers';

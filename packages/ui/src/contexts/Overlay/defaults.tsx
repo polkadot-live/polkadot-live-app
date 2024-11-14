@@ -5,7 +5,7 @@
 import type { OverlayContextInterface } from './types';
 
 export const defaultOverlayContext: OverlayContextInterface = {
-  setOnCloseOverlay: (value) => {},
+  setOnCloseOverlay: () => {},
   openOverlayWith: (o, s, t) => {},
   closeOverlay: () => {},
   setStatus: (s) => {},

@@ -3,9 +3,12 @@
 
 // General contexts.
 import { HelpProvider } from '@app/contexts/common/Help';
-import { OverlayProvider } from '@app/contexts/common/Overlay';
 import { ConnectionsProvider } from '@app/contexts/common/Connections';
-import { SideNavProvider, TooltipProvider } from '@polkadot-live/ui/contexts';
+import {
+  OverlayProvider,
+  SideNavProvider,
+  TooltipProvider,
+} from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
 import { TabsProvider } from '@app/contexts/tabs/Tabs';

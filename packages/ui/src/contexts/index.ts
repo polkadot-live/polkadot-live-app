@@ -3,3 +3,4 @@
 
 export { useSideNav, SideNavProvider } from './SideNavContext';
 export { useTooltip, TooltipProvider } from './Tooltip';
+export { useOverlay, OverlayProvider } from './Overlay';

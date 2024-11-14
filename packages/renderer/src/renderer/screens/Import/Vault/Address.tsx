@@ -10,7 +10,7 @@ import {
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { useOverlay } from '@app/contexts/common/Overlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {
