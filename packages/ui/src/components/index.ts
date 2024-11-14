@@ -6,7 +6,6 @@ export * from './ActionItem';
 export * from './Cards';
 export * from './Common';
 export * from './DragClose';
-export * from './Footer';
 export * from './Hardware';
 export * from './Header';
 export * from './Identicon';

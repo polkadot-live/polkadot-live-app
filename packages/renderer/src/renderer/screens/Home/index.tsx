@@ -12,6 +12,7 @@ import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
 import { Summary } from '@app/screens/Home/Summary';
 import { Events } from './Events';
+import { Footer } from './Footer';
 import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
@@ -21,7 +22,6 @@ import { Flip, toast } from 'react-toastify';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import {
   Header,
-  Footer,
   SideNav,
   GridSpinner,
   Menu,

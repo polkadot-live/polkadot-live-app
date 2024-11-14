@@ -8,7 +8,7 @@ import {
   faCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useChains } from '@ren/renderer/contexts/main/Chains';
+import { useChains } from '@app/contexts/main/Chains';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
