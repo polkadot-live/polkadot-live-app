@@ -32,8 +32,8 @@ import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
-import { useManage } from '@ren/renderer/contexts/main/Manage';
+import { useTooltip } from '@polkadot-live/ui/contexts';
+import { useManage } from '@app/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
 
 /// Type imports.

@@ -23,7 +23,7 @@ import {
 import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import { getSpacedOrigin } from '@ren/renderer/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';

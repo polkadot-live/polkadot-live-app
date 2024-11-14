@@ -8,7 +8,7 @@ import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@ren/renderer/contexts/openGov/ReferendaSubscriptions';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
 import { useHelp } from '@ren/renderer/contexts/common/Help';
 import { useState } from 'react';

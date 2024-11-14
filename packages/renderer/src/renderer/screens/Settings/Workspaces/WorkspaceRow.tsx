@@ -8,11 +8,11 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
-import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useTooltip } from '@polkadot-live/ui/contexts';
+import { useWorkspaces } from '@app/contexts/settings/Workspaces';
+import { useOverlay } from '@app/contexts/common/Overlay';
 import { Confirm } from './Confirm';
-import { useWebsocketServer } from '@ren/renderer/contexts/settings/WebsocketServer';
+import { useWebsocketServer } from '@app/contexts/settings/WebsocketServer';
 import type { WorkspaceRowProps } from '../types';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {

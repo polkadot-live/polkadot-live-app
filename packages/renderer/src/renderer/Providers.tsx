@@ -4,14 +4,13 @@
 // General contexts.
 import { HelpProvider } from '@app/contexts/common/Help';
 import { OverlayProvider } from '@app/contexts/common/Overlay';
-import { TooltipProvider } from '@app/contexts/common/Tooltip';
 import { ConnectionsProvider } from '@app/contexts/common/Connections';
+import { SideNavProvider, TooltipProvider } from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
-import { TabsProvider } from '@ren/renderer/contexts/tabs/Tabs';
+import { TabsProvider } from '@app/contexts/tabs/Tabs';
 
 // Main window contexts.
-import { SideNavProvider } from '@polkadot-live/ui/contexts';
 import { AddressesProvider } from '@app/contexts/main/Addresses';
 import { AppSettingsProvider } from '@app/contexts/main/AppSettings';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';

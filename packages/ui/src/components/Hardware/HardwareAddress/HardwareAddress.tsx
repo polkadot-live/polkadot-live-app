@@ -22,7 +22,7 @@ import { HardwareAddressWrapper } from './Wrapper';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
 import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '../../../contexts/Tooltip';
 import { ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';

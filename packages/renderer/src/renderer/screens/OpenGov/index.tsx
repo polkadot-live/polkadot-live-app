@@ -5,7 +5,7 @@ import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
-import { useOpenGovMessagePorts } from '@ren/renderer/hooks/useOpenGovMessagePorts';
+import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import {
   ModalSection,
@@ -24,7 +24,7 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
-import { useTooltip } from '@app/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';

@@ -6,7 +6,7 @@ import { useBootstrapping } from '@ren/renderer/contexts/main/Bootstrapping';
 import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { useHelp } from '@ren/renderer/contexts/common/Help';
 import { useIntervalTasksManager } from '@ren/renderer/contexts/main/IntervalTasksManager';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

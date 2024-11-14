@@ -17,7 +17,7 @@ import { useManage } from '@ren/renderer/contexts/main/Manage';
 import { useSubscriptions } from '@ren/renderer/contexts/main/Subscriptions';
 import { useEffect, useRef, useState } from 'react';
 import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';

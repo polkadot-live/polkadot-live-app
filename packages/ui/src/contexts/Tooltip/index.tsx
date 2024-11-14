@@ -50,6 +50,7 @@ export const TooltipProvider = ({
     openTooltip();
   };
 
+  /// TODO: Move to utils.
   /// Utility to render a tooltip over some generic JSX.
   const wrapWithTooltip = (
     Inner: React.ReactNode,
@@ -66,6 +67,7 @@ export const TooltipProvider = ({
     </div>
   );
 
+  /// TODO: Move to utils.
   /// Utility to render a tooltip over some generic JSX if app is offline.
   const wrapWithOfflineTooltip = (
     Inner: React.ReactNode,

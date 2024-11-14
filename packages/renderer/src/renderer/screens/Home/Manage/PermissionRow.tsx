@@ -11,8 +11,8 @@ import {
   faList,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useHelp } from '@app/contexts/common/Help';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,
