@@ -5,7 +5,6 @@
 import type { SideNavContextInterface } from './types';
 
 export const defaultSideNavContext: SideNavContextInterface = {
-  isCollapsed: false,
   selectedId: 0,
   setSelectedId: () => {},
 };
