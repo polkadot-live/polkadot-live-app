@@ -15,6 +15,7 @@ import { Events } from './Events';
 import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
+import { Flip, toast } from 'react-toastify';
 
 /** Library */
 import { BodyInterfaceWrapper } from '@app/Wrappers';
@@ -27,6 +28,7 @@ import {
 } from '@polkadot-live/ui/components';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useSideNav } from '@polkadot-live/ui/contexts';
+import { useHelp } from '@app/contexts/common/Help';
 
 /** Types */
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -46,13 +48,25 @@ export const Home = () => {
   const {
     dockToggled,
     sideNavCollapsed,
+    silenceOsNotifications,
     handleDockedToggle,
     handleSideNavCollapse,
+    handleToggleSilenceOsNotifications,
   } = useAppSettings();
-  const { selectedId, setSelectedId } = useSideNav();
 
-  // Get app loading flag.
-  const { appLoading } = useBootstrapping();
+  const {
+    appLoading,
+    isConnecting,
+    isAborting,
+    online: isOnline,
+    handleInitializeAppOnline,
+    handleInitializeAppOffline,
+    setIsAborting,
+    setIsConnecting,
+  } = useBootstrapping();
+
+  const { selectedId, setSelectedId } = useSideNav();
+  const { openHelp } = useHelp();
 
   useEffect(() => {
     // Listen for event callbacks.
@@ -93,6 +107,28 @@ export const Home = () => {
     window.myAPI.umamiEvent(event, { setting: 'dock-window' });
   };
 
+  /**
+   * Menu functions.
+   * TODO: Put in context.
+   */
+
+  /// Menu connect button text.
+  const getConnectionButtonText = () => {
+    if (isConnecting || appLoading) {
+      return 'Abort';
+    } else if (isOnline) {
+      return 'Disconnect';
+    } else {
+      return 'Connect';
+    }
+  };
+
+  /// Handle abort connecting.
+  const handleAbortConnecting = () => {
+    setIsAborting(true);
+    ConfigRenderer.abortConnecting = true;
+  };
+
   return (
     <>
       <Header
@@ -104,7 +140,111 @@ export const Home = () => {
         onRestoreWindow={() => window.myAPI.restoreWindow('base')}
         onThemeToggle={() => window.myAPI.relayModeFlag('darkMode', !darkMode)}
       >
-        <Menu />
+        {/* TODO: Lift menu functions to context */}
+        <Menu
+          menuItems={[
+            {
+              label: 'Accounts',
+              disabled: appLoading,
+              onClick: () => {
+                window.myAPI.openWindow('import');
+                window.myAPI.umamiEvent('window-open-accounts', null);
+              },
+            },
+            {
+              label: 'OpenGov',
+              disabled: appLoading,
+              onClick: () => {
+                window.myAPI.openWindow('openGov');
+                window.myAPI.umamiEvent('window-open-openGov', null);
+              },
+            },
+            {
+              label: 'Settings',
+              disabled: appLoading,
+              onClick: () => {
+                window.myAPI.openWindow('settings');
+                window.myAPI.umamiEvent('window-open-settings', null);
+              },
+            },
+            {
+              label: 'Exit',
+              disabled: false,
+              appendSeparator: true,
+              onClick: () => {
+                window.myAPI.quitApp();
+              },
+            },
+            {
+              label: 'Disclaimer',
+              disabled: false,
+              onClick: () => {
+                openHelp('help:docs:disclaimer');
+              },
+            },
+            {
+              label: 'Privacy',
+              disabled: false,
+              onClick: () => {
+                openHelp('help:docs:privacy');
+              },
+            },
+          ]}
+          appFlags={{
+            isConnecting,
+            isOnline,
+            isAborting,
+            isLoading: appLoading,
+          }}
+          connectLabel={getConnectionButtonText()}
+          silenceOsNotifications={silenceOsNotifications}
+          onSilenceNotifications={() => {
+            handleToggleSilenceOsNotifications();
+
+            ConfigRenderer.portToSettings?.postMessage({
+              task: 'settings:set:silenceOsNotifications',
+              data: {
+                silenced: !silenceOsNotifications,
+              },
+            });
+          }}
+          onConnectClick={async () => {
+            if (isConnecting || appLoading) {
+              handleAbortConnecting();
+            } else if (isOnline) {
+              await handleInitializeAppOffline();
+            } else {
+              // Confirm online connection.
+              const status: boolean =
+                (await window.myAPI.sendConnectionTaskAsync({
+                  action: 'connection:getStatus',
+                  data: null,
+                })) || false;
+
+              if (status) {
+                // Handle going online.
+                setIsConnecting(true);
+                await handleInitializeAppOnline();
+                setIsConnecting(false);
+              } else {
+                // Render error alert.
+                toast.error('You are offline.', {
+                  position: 'top-center',
+                  autoClose: 3000,
+                  hideProgressBar: true,
+                  closeOnClick: true,
+                  closeButton: false,
+                  pauseOnHover: false,
+                  draggable: false,
+                  progress: undefined,
+                  theme: 'dark',
+                  transition: Flip,
+                  toastId: 'toast-connection', // prevent duplicate alerts
+                });
+              }
+            }
+          }}
+        />
       </Header>
 
       <FixedFlexWrapper>
