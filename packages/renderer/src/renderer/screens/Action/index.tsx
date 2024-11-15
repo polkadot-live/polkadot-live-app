@@ -13,9 +13,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
 import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
 import { useEffect, useState } from 'react';
-import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
-import { useActionMessagePorts } from '@ren/renderer/hooks/useActionMessagePorts';
-import { useDebug } from '@ren/renderer/hooks/useDebug';
+import { useTxMeta } from '@app/contexts/action/TxMeta';
+import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
+import { useDebug } from '@app/hooks/useDebug';
 
 export const Action = () => {
   // Set up port communication for `action` window.

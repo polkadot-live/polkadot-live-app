@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { executeIntervaledOneShot } from '@ren/renderer/callbacks/intervaled';
+import { executeIntervaledOneShot } from '@app/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { createContext, useContext } from 'react';

@@ -10,12 +10,12 @@ import {
 } from '@app/utils/ImportUtils';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
-import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { chainIcon } from '@ren/config/chains';
-import { getAddressChainId } from '@ren/renderer/Utils';
+import { getAddressChainId } from '@app/Utils';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {

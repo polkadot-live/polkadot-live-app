@@ -12,7 +12,7 @@ import { useChains } from '@app/contexts/main/Chains';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import { getIcon } from '@ren/renderer/Utils';
+import { getIcon } from '@app/Utils';
 import { SelectRpc } from './RpcSelect';
 
 export const Footer = () => {

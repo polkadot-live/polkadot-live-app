@@ -20,16 +20,16 @@ import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 
 /// Context imports.
-import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import {
   getSortedLocalAddresses,
   renderToast,
-} from '@ren/renderer/utils/ImportUtils';
+} from '@app/utils/ImportUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';

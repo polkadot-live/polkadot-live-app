@@ -3,7 +3,7 @@
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
-import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
+import { useTxMeta } from '@app/contexts/action/TxMeta';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 
 export const useActionMessagePorts = () => {

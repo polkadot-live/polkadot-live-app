@@ -11,7 +11,7 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
-import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
+import { getAccountNominatingData } from '@app/callbacks/nominating';
 import { rmCommas } from '@w3ux/utils';
 import type {
   AccountBalance,

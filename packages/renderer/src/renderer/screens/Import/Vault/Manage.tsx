@@ -18,11 +18,11 @@ import {
   ButtonText,
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
-import { getSortedLocalAddresses } from '@ren/renderer/utils/ImportUtils';
+import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { useAddresses } from '@app/contexts/import/Addresses';
 import type { ManageVaultProps } from '../types';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 

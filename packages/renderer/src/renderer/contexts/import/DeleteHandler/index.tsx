@@ -6,7 +6,7 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { getAddressChainId } from '@ren/renderer/Utils';
+import { getAddressChainId } from '@app/Utils';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';

@@ -20,11 +20,11 @@ import {
   faArrowsRotate,
   faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
-import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
+import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTooltip } from '@polkadot-live/ui/contexts';
-import { getSpacedOrigin } from '@ren/renderer/utils/openGovUtils';
+import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';

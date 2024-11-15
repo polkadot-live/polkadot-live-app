@@ -21,7 +21,7 @@ import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
-import { useEvents } from '@ren/renderer/contexts/main/Events';
+import { useEvents } from '@app/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { EventAccountData } from '@polkadot-live/types/reporter';

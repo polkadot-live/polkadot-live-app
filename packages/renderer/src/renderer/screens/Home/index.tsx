@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';

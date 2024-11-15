@@ -7,7 +7,7 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
 import type {
   AccountSource,

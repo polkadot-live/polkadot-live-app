@@ -14,7 +14,7 @@ import {
 } from '@polkadot-live/ui/components';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
-import { executeOneShot } from '@ren/renderer/callbacks/oneshots';
+import { executeOneShot } from '@app/callbacks/oneshots';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@ren/controller/IntervalsController';
@@ -27,14 +27,14 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
-import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState, useRef } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useManage } from '@app/contexts/main/Manage';
-import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 
 /// Type imports.
 import type { AnyFunction } from '@polkadot-live/types/misc';

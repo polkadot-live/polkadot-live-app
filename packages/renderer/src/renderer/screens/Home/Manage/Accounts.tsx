@@ -11,12 +11,12 @@ import {
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { getIcon } from '@ren/renderer/Utils';
+import { getIcon } from '@app/Utils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
-import { useManage } from '@ren/renderer/contexts/main/Manage';
-import { useSubscriptions } from '@ren/renderer/contexts/main/Subscriptions';
+import { useManage } from '@app/contexts/main/Manage';
+import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useRef, useState } from 'react';
-import { useIntervalSubscriptions } from '@ren/renderer/contexts/main/IntervalSubscriptions';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -25,7 +25,7 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import { useAppSettings } from '@ren/renderer/contexts/main/AppSettings';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
 
 export const Accounts = ({

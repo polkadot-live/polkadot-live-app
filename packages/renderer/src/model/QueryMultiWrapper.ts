@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Callbacks } from '@ren/renderer/callbacks';
+import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@polkadot-live/types/chains';

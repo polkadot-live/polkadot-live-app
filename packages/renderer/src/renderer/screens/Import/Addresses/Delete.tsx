@@ -5,7 +5,7 @@ import { ButtonMono, ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { ConfirmWrapper } from './Wrappers';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { useDeleteHandler } from '@ren/renderer/contexts/import/DeleteHandler';
+import { useDeleteHandler } from '@app/contexts/import/DeleteHandler';
 import type { DeleteProps } from './types';
 
 export const Delete = ({ address, source, setSection }: DeleteProps) => {

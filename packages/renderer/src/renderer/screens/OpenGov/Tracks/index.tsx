@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { useTracks } from '@ren/renderer/contexts/openGov/Tracks';
+import { useHelp } from '@app/contexts/common/Help';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

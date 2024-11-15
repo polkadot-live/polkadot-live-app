@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { SettingItem } from '@ren/renderer/screens/Settings/types';
+import type { SettingItem } from '@app/screens/Settings/types';
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
 export const SettingsList: SettingItem[] = [

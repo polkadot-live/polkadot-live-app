@@ -11,7 +11,7 @@ import {
 } from '@app/utils/ImportUtils';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { chainIcon } from '@ren/config/chains';

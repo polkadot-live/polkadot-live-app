@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { Config as ConfigImport } from '@ren/config/processes/import';
-import { getAddressChainId } from '@ren/renderer/Utils';
+import { getAddressChainId } from '@app/Utils';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';

@@ -10,9 +10,9 @@ import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
-import { useTabs } from '@ren/renderer/contexts/tabs/Tabs';
+import { useTabs } from '@app/contexts/tabs/Tabs';
 import { Header } from '@polkadot-live/ui/components';
-import { useDebug } from '@ren/renderer/hooks/useDebug';
+import { useDebug } from '@app/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
 

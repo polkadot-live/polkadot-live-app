@@ -17,8 +17,8 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../Wrappers';
-import { getSortedLocalLedgerAddresses } from '@ren/renderer/utils/ImportUtils';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
+import { getSortedLocalLedgerAddresses } from '@app/utils/ImportUtils';
+import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
