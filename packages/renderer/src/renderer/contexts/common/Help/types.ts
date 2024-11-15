@@ -1,12 +1,14 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { HelpItemKey } from '@polkadot-live/types/help';
+import type {
+  HelpItemKey,
+  HelpItem,
+  HelpStatus,
+} from '@polkadot-live/types/help';
 import type { ReactNode } from 'react';
 
 export type MaybeString = string | null;
-
-export type HelpStatus = 'closed' | 'open' | 'closing';
 
 export interface HelpContextInterface {
   openHelp: (d: HelpItemKey) => void;
@@ -38,11 +40,3 @@ export interface ExternalWithKeys {
 }
 
 export type HelpConfig = Map<string, string | string[]>;
-
-export type HelpItems = HelpItem[];
-
-export interface HelpItem {
-  key: HelpItemKey;
-  title: string;
-  definition: string[];
-}
