@@ -7,13 +7,13 @@ import {
   AccordionCaretHeader,
   ControlsWrapper,
   SortControlButton,
-} from '@app/library/components';
+} from '@polkadot-live/ui/components';
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
-import { useWebsocketServer } from '@ren/renderer/contexts/settings/WebsocketServer';
+import { useWebsocketServer } from '@app/contexts/settings/WebsocketServer';
 import { useEffect } from 'react';
-import { useWorkspaces } from '@ren/renderer/contexts/settings/Workspaces';
+import { useWorkspaces } from '@app/contexts/settings/Workspaces';
 import type { IpcRendererEvent } from 'electron';
 
 export const Workspaces = () => {

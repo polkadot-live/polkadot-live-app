@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useRef, useState } from 'react';
-import { useBootstrapping } from '@ren/renderer/contexts/main/Bootstrapping';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
-import { useIntervalTasksManager } from '@ren/renderer/contexts/main/IntervalTasksManager';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useHelp } from '@app/contexts/common/Help';
+import { useIntervalTasksManager } from '@app/contexts/main/IntervalTasksManager';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,9 +18,9 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch } from '@app/library/components';
+import { Switch } from '@polkadot-live/ui/components';
 import { IntervalsController } from '@ren/controller/IntervalsController';
-import { getShortIntervalLabel } from '@ren/renderer/utils/renderingUtils';
+import { getShortIntervalLabel } from '@app/utils/renderingUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalRowProps } from './types';
 

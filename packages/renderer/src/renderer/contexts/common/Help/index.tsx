@@ -8,9 +8,8 @@ import type {
   HelpContextInterface,
   HelpContextProps,
   HelpContextState,
-  HelpStatus,
 } from './types';
-import type { HelpItemKey } from '@polkadot-live/types/help';
+import type { HelpItemKey, HelpStatus } from '@polkadot-live/types/help';
 
 export const HelpContext = createContext<HelpContextInterface>(
   defaults.defaultHelpContext

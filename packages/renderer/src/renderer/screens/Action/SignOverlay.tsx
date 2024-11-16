@@ -6,8 +6,8 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
-import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
+import { useOverlay } from '@polkadot-live/ui/contexts';
+import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from './Wrappers';
 import {
@@ -15,9 +15,8 @@ import {
   QrDisplayPayload,
   ScanWrapper,
   createImgSize,
-} from '@app/library/components/QRCode';
-import { ButtonPrimary } from '@ren/renderer/kits/Buttons/ButtonPrimary';
-import { ButtonSecondary } from '@ren/renderer/kits/Buttons/ButtonSecondary';
+} from '@polkadot-live/ui/components/qrcode';
+import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const SignOverlay = ({ from }: { from: string }) => {

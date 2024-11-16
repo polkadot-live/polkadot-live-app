@@ -6,17 +6,24 @@ import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
   renameAccountInStore,
-} from '@ren/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@ren/renderer/library/components/Hardware/HardwareAddress';
+  renderToast,
+} from '@app/utils/ImportUtils';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useOverlay } from '@polkadot-live/ui/contexts';
+import { chainIcon } from '@ren/config/chains';
+import { getAddressChainId } from '@app/Utils';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {
   const { address, isImported, name, source } = localAddress;
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
+  const { getStatusForAccount } = useAccountStatuses();
+  const { isConnected } = useConnections();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
@@ -33,17 +40,14 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
   return (
     <HardwareAddress
       key={address}
+      /* Data */
       address={address}
-      source={source}
-      isImported={isImported}
       accountName={name}
-      renameHandler={renameHandler}
-      openRemoveHandler={() =>
-        openOverlayWith(
-          <Remove address={address} source="vault" accountName={name} />,
-          'small'
-        )
-      }
+      ChainIcon={chainIcon(getAddressChainId(address))}
+      isConnected={isConnected}
+      isImported={isImported}
+      processingStatus={getStatusForAccount(address, source)}
+      /* Handlers */
       openConfirmHandler={() =>
         openOverlayWith(
           <Confirm address={address} name={name} source="vault" />,
@@ -55,6 +59,19 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
           <Delete address={address} source="vault" setSection={setSection} />
         )
       }
+      onRenameError={(message, toastId) =>
+        renderToast(message, 'error', toastId)
+      }
+      onRenameSuccess={(message, toastId) =>
+        renderToast(message, 'success', toastId)
+      }
+      openRemoveHandler={() =>
+        openOverlayWith(
+          <Remove address={address} source="vault" accountName={name} />,
+          'small'
+        )
+      }
+      renameHandler={renameHandler}
     />
   );
 };

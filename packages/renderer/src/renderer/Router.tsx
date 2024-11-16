@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainInterfaceWrapper } from '@app/Wrappers';
-import { Overlay, Tooltip } from '@app/library/components';
+import { Overlay, Tooltip, Help } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@app/screens/Action';
@@ -11,8 +11,8 @@ import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
 import { OpenGov } from './screens/OpenGov';
-import { Help } from './library/components/Help';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useHelp } from './contexts/common/Help';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@polkadot-live/types/misc';
@@ -21,6 +21,7 @@ import type { IpcRendererEvent } from 'electron';
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { setOnline } = useBootstrapping();
+  const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
 
   /// Listen for online status change.
   useEffect(() => {
@@ -51,7 +52,12 @@ export const RouterInner = () => {
 
   return (
     <MainInterfaceWrapper className={`theme-polkadot theme-${mode}`}>
-      <Help />
+      <Help
+        status={helpStatus}
+        definition={definition}
+        closeHelp={closeHelp}
+        setStatus={setStatus}
+      />
       <Overlay />
       <Tooltip />
       <ToastContainer stacked />

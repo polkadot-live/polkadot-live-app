@@ -3,15 +3,17 @@
 
 // General contexts.
 import { HelpProvider } from '@app/contexts/common/Help';
-import { OverlayProvider } from '@app/contexts/common/Overlay';
-import { TooltipProvider } from '@app/contexts/common/Tooltip';
 import { ConnectionsProvider } from '@app/contexts/common/Connections';
+import {
+  OverlayProvider,
+  SideNavProvider,
+  TooltipProvider,
+} from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
-import { TabsProvider } from '@ren/renderer/contexts/tabs/Tabs';
+import { TabsProvider } from '@app/contexts/tabs/Tabs';
 
 // Main window contexts.
-import { SideNavProvider } from './library/contexts';
 import { AddressesProvider } from '@app/contexts/main/Addresses';
 import { AppSettingsProvider } from '@app/contexts/main/AppSettings';
 import { BootstrappingProvider } from '@app/contexts/main/Bootstrapping';
@@ -49,7 +51,7 @@ import { PolkassemblyProvider } from '@app/contexts/openGov/Polkassembly';
 
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@ren/renderer/library/hooks/withProviders';
+import { withProviders } from '@polkadot-live/ui/hooks';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();

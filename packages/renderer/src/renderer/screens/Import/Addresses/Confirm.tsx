@@ -1,12 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
-import { Identicon } from '@app/library/components';
+import { useOverlay } from '@polkadot-live/ui/contexts';
+import { Identicon } from '@polkadot-live/ui/components';
 import { ConfirmWrapper } from './Wrappers';
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
-import { useAddHandler } from '@ren/renderer/contexts/import/AddHandler';
+import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
+import { useAddHandler } from '@app/contexts/import/AddHandler';
 import type { ConfirmProps } from './types';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {

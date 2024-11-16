@@ -3,17 +3,16 @@
 
 import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
 import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
-import { renderOrigin } from '@ren/renderer/utils/openGovUtils';
+import { renderOrigin } from '@app/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
-import { useReferendaSubscriptions } from '@ren/renderer/contexts/openGov/ReferendaSubscriptions';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
+import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
+import { useTooltip, useOverlay } from '@polkadot-live/ui/contexts';
+import { useHelp } from '@app/contexts/common/Help';
 import { useState } from 'react';
-import { useTaskHandler } from '@ren/renderer/contexts/openGov/TaskHandler';
-import { usePolkassembly } from '@ren/renderer/contexts/openGov/Polkassembly';
+import { useTaskHandler } from '@app/contexts/openGov/TaskHandler';
+import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
 import {
   faChevronDown,
@@ -25,10 +24,13 @@ import {
   faUpRightFromSquare,
   faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
-import { ControlsWrapper, SortControlButton } from '@app/library/components';
+import {
+  ControlsWrapper,
+  SortControlButton,
+} from '@polkadot-live/ui/components';
 import { InfoOverlay } from './InfoOverlay';
 import type { ReferendumRowProps } from '../types';
-import type { PolkassemblyProposal } from '@ren/renderer/contexts/openGov/Polkassembly/types';
+import type { PolkassemblyProposal } from '@app/contexts/openGov/Polkassembly/types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;

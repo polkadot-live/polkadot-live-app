@@ -10,11 +10,12 @@ import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
-import { useTabs } from '@ren/renderer/contexts/tabs/Tabs';
-import { Header } from '@app/library/components';
-import { useDebug } from '@ren/renderer/hooks/useDebug';
+import { useTabs } from '@app/contexts/tabs/Tabs';
+import { Header } from '@polkadot-live/ui/components';
+import { useDebug } from '@app/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
+import { version } from '../../../../package.json';
 
 export const Tabs: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
@@ -24,7 +25,14 @@ export const Tabs: React.FC = () => {
 
   return (
     <>
-      <Header showMenu={false} appLoading={false} />
+      <Header
+        version={version}
+        onCloseWindow={() => {
+          const windowId = window.myAPI.getWindowId();
+          window.myAPI.closeWindow(windowId);
+        }}
+      />
+
       <TabsWrapper>
         <div className="inner">
           <DndContext

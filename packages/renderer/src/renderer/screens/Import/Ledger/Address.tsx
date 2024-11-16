@@ -6,17 +6,24 @@ import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
   renameAccountInStore,
-} from '@ren/renderer/utils/ImportUtils';
-import { HardwareAddress } from '@ren/renderer/library/components/Hardware';
+  renderToast,
+} from '@app/utils/ImportUtils';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useOverlay } from '@polkadot-live/ui/contexts';
+import { chainIcon } from '@ren/config/chains';
+import { getAddressChainId } from '@app/Utils';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
   const { openOverlayWith } = useOverlay();
   const { address, index, isImported, name } = localAddress;
   const { handleAddressImport } = useAddresses();
+  const { getStatusForAccount } = useAccountStatuses();
+  const { isConnected } = useConnections();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
@@ -33,17 +40,14 @@ export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
   return (
     <HardwareAddress
       key={index || 0}
-      source={'ledger'}
+      /* Data */
       address={address}
       accountName={name}
-      renameHandler={renameHandler}
+      ChainIcon={chainIcon(getAddressChainId(address))}
+      isConnected={isConnected}
       isImported={isImported}
-      openRemoveHandler={() =>
-        openOverlayWith(
-          <Remove address={address} source="ledger" accountName={name} />,
-          'small'
-        )
-      }
+      processingStatus={getStatusForAccount(address, 'ledger')}
+      /* Handlers */
       openConfirmHandler={() =>
         openOverlayWith(
           <Confirm address={address} name={name} source="ledger" />,
@@ -55,6 +59,19 @@ export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
           <Delete address={address} source="ledger" setSection={setSection} />
         )
       }
+      onRenameError={(message, toastId) =>
+        renderToast(message, 'error', toastId)
+      }
+      onRenameSuccess={(message, toastId) =>
+        renderToast(message, 'success', toastId)
+      }
+      openRemoveHandler={() =>
+        openOverlayWith(
+          <Remove address={address} source="ledger" accountName={name} />,
+          'small'
+        )
+      }
+      renameHandler={renameHandler}
     />
   );
 };

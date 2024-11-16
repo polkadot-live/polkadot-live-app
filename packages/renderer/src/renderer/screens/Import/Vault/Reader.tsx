@@ -1,20 +1,20 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
-import { useOverlay } from '@ren/renderer/contexts/common/Overlay';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
-import { ButtonSecondary } from '@ren/renderer/kits/Buttons/ButtonSecondary';
-import { checkValidAddress } from '@ren/renderer/Utils';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
+import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
+import { checkValidAddress } from '@app/Utils';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import {
   createImgSize,
   Html5QrCodePlugin,
   ScanWrapper,
-} from '@ren/renderer/library/components/QRCode';
+} from '@polkadot-live/ui/components/qrcode';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const Reader = () => {

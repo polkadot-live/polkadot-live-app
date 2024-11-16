@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { TaskEntryWrapper } from './Wrappers';
-import { Switch } from '@app/library/components';
+import { Switch } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -11,8 +11,8 @@ import {
   faList,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useHelp } from '@app/contexts/common/Help';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import {
   getTooltipClassForGroup,
   toolTipTextFor,

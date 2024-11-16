@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
-import { getOrderedOrigins } from '@ren/renderer/utils/openGovUtils';
+import { getOrderedOrigins } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
 import type { ChainID } from '@polkadot-live/types/chains';

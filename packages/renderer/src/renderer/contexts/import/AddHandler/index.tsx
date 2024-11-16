@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import { Config as ConfigImport } from '@ren/config/processes/import';
 import { createContext, useContext } from 'react';
-import { getAddressChainId } from '@ren/renderer/Utils';
+import { getAddressChainId } from '@app/Utils';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';

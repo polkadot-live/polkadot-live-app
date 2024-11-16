@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ButtonMonoInvert } from '@ren/renderer/kits/Buttons/ButtonMonoInvert';
-import { ButtonMono } from '@ren/renderer/kits/Buttons/ButtonMono';
+import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import {
@@ -20,11 +19,11 @@ import { getEventChainId } from '@ren/utils/EventUtils';
 import { renderTimeAgo } from '@ren/utils/TextUtils';
 import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
-import { Identicon } from '@app/library/components';
+import { Identicon } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
-import { useEvents } from '@ren/renderer/contexts/main/Events';
+import { useEvents } from '@app/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
+import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@polkadot-live/types/accounts';

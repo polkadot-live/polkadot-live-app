@@ -1,6 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import BigNumber from 'bignumber.js';
+import { planckToUnit, rmCommas } from '@w3ux/utils';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   SubscriptionTask,
   TaskCategory,
@@ -74,4 +78,21 @@ export const getShortIntervalLabel = (ticksToWait: number) => {
     default:
       return '';
   }
+};
+
+/**
+ * @name formatChainUnits
+ * @summary Get readable chain units for rendering.
+ */
+export const formatChainUnits = (units: string, chainId: ChainID) => {
+  // Include regex to remove trailing zeros after decimal point.
+  const formatted: string = planckToUnit(
+    new BigNumber(rmCommas(units)),
+    chainUnits(chainId)
+  )
+    .toFixed(2)
+    .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1')
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  return `${formatted} ${chainCurrency(chainId)}`;
 };

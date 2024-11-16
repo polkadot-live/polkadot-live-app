@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { mixinHelpIcon } from '@ren/renderer/library/components/Common';
+import { mixinHelpIcon } from '@polkadot-live/ui/components';
 import { motion } from 'framer-motion';
 import styled, { css } from 'styled-components';
 

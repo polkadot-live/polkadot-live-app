@@ -7,13 +7,13 @@ import { defaultDataBackupContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { getAddressChainId } from '@ren/renderer/Utils';
+import { getAddressChainId } from '@app/Utils';
 import {
   getFromBackupFile,
   postToImport,
   postToOpenGov,
   postToSettings,
-} from '@ren/renderer/utils/ImportUtils';
+} from '@app/utils/ImportUtils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';

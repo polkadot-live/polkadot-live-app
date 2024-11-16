@@ -4,12 +4,11 @@
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
-import { Switch } from '@ren/renderer/library/components';
-import { useHelp } from '@ren/renderer/contexts/common/Help';
-import { ButtonMonoInvert } from '@app/kits/Buttons/ButtonMonoInvert';
+import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
+import { useHelp } from '@app/contexts/common/Help';
+import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
-import { EllipsisSpinner } from '@ren/renderer/library/components/Spinners';
 import type { SettingItem, SettingProps } from './types';
 import type { SettingAction } from '@polkadot-live/types/settings';
 

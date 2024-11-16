@@ -3,12 +3,12 @@
 
 import { setStateWithRef, ellipsisFn } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
-import { useAccountStatuses } from '@ren/renderer/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/renderer/contexts/import/Addresses';
-import { useImportHandler } from '@ren/renderer/contexts/import/ImportHandler';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import { renderToast } from '@ren/renderer/utils/ImportUtils';
+import { renderToast } from '@app/utils/ImportUtils';
 import type {
   GetAddressMessage,
   LedgerResponse,

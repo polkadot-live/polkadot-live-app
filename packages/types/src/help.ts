@@ -1,6 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+export type HelpItems = HelpItem[];
+
+export interface HelpItem {
+  key: HelpItemKey;
+  title: string;
+  definition: string[];
+}
+
+export type HelpStatus = 'closed' | 'open' | 'closing';
+
 export type HelpItemKey =
   | 'help:import:vault'
   | 'help:import:ledger'

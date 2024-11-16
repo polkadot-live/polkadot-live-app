@@ -5,31 +5,32 @@ import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
-import { useOpenGovMessagePorts } from '@ren/renderer/hooks/useOpenGovMessagePorts';
+import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
-import { ModalSection } from '@ren/renderer/kits/Overlay/structure/ModalSection';
-import { ModalMotionTwoSection } from '@ren/renderer/kits/Overlay/structure/ModalMotionTwoSection';
+import {
+  ModalSection,
+  ModalMotionTwoSection,
+} from '@polkadot-live/ui/kits/overlay';
 import { Tracks } from './Tracks';
 import {
   ActionItem,
   ControlsWrapper,
-  SortControlButton,
-} from '@app/library/components';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { useTracks } from '@ren/renderer/contexts/openGov/Tracks';
-import { Referenda } from './Referenda';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { useReferenda } from '@ren/renderer/contexts/openGov/Referenda';
-import { useTooltip } from '@ren/renderer/contexts/common/Tooltip';
-import { useTreasury } from '@ren/renderer/contexts/openGov/Treasury';
-import { TreasuryStats } from './Wrappers';
-import {
   NavCardThin,
+  SortControlButton,
   TreasuryStatCard,
-} from '@ren/renderer/library/components/Cards';
-import { useDebug } from '@ren/renderer/hooks/useDebug';
-import { Scrollable, StatsFooter } from '@ren/renderer/library/styles';
-import { renderPlaceholders } from '@ren/renderer/library/utils';
+} from '@polkadot-live/ui/components';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { useTracks } from '@app/contexts/openGov/Tracks';
+import { Referenda } from './Referenda';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useTooltip } from '@polkadot-live/ui/contexts';
+import { useTreasury } from '@app/contexts/openGov/Treasury';
+import { TreasuryStats } from './Wrappers';
+import { useDebug } from '@app/hooks/useDebug';
+import { useHelp } from '@app/contexts/common/Help';
+import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OpenGov: React.FC = () => {
@@ -39,6 +40,9 @@ export const OpenGov: React.FC = () => {
 
   /// Connection status.
   const { isConnected } = useConnections();
+
+  /// Open help function.
+  const { openHelp } = useHelp();
 
   /// Treasury context.
   const {
@@ -175,24 +179,28 @@ export const OpenGov: React.FC = () => {
                         title={'Treasury Balance'}
                         statText={getFormattedFreeBalance()}
                         helpKey={'help:openGov:treasuryBalance'}
+                        openHelp={openHelp}
                       />
                       <TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'Next Burn'}
                         statText={getFormattedNextBurn()}
                         helpKey={'help:openGov:nextBurn'}
+                        openHelp={openHelp}
                       />
                       <TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'To Be Awarded'}
                         statText={getFormattedToBeAwarded()}
                         helpKey={'help:openGov:toBeAwarded'}
+                        openHelp={openHelp}
                       />
                       <TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'Spend Period'}
                         statText={getSpendPeriodProgress()}
                         helpKey={'help:openGov:spendPeriod'}
+                        openHelp={openHelp}
                       />
                     </GridFourCol>,
                     isConnected
