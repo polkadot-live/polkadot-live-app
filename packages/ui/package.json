@@ -23,7 +23,7 @@
     "build": "gulp",
     "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
     "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
+    "lint": "eslint --fix --ext .ts,.tsx ./src && npx prettier --write ./src",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

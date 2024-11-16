@@ -51,6 +51,8 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     - name: Install Dependencies
       run: yarn install
+    - name: Build UI Package
+      run: yarn workspace @polkadot-live/ui run build
     - name: Publish
       env:
         CSC_LINK: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}

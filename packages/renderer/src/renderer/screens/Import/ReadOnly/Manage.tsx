@@ -26,10 +26,7 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
-import {
-  getSortedLocalAddresses,
-  renderToast,
-} from '@app/utils/ImportUtils';
+import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';
