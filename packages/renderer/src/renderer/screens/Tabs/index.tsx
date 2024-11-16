@@ -15,6 +15,7 @@ import { Header } from '@polkadot-live/ui/components';
 import { useDebug } from '@app/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
+import { version } from '../../../../package.json';
 
 export const Tabs: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
@@ -25,6 +26,7 @@ export const Tabs: React.FC = () => {
   return (
     <>
       <Header
+        version={version}
         onCloseWindow={() => {
           const windowId = window.myAPI.getWindowId();
           window.myAPI.closeWindow(windowId);

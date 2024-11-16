@@ -8,6 +8,7 @@ export * from './Common';
 export * from './DragClose';
 export * from './Hardware';
 export * from './Header';
+export * from './Help';
 export * from './Identicon';
 export * from './Menu';
 export * from './Overlay';

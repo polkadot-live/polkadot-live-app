@@ -6,6 +6,7 @@ export interface HeaderProps {
   appLoading?: boolean;
   darkMode?: boolean;
   dockToggled?: boolean;
+  version?: string;
   onCloseWindow?: () => void;
   onDockToggle?: () => void;
   onRestoreWindow?: () => void;

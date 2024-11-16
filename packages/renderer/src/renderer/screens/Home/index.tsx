@@ -17,6 +17,7 @@ import { Manage } from './Manage';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { Flip, toast } from 'react-toastify';
+import { version } from '../../../../package.json';
 
 /** Library */
 import { BodyInterfaceWrapper } from '@app/Wrappers';
@@ -132,6 +133,7 @@ export const Home = () => {
   return (
     <>
       <Header
+        version={version}
         showButtons={true}
         appLoading={appLoading}
         darkMode={darkMode}

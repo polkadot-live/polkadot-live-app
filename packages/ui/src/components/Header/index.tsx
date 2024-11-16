@@ -13,7 +13,6 @@ import {
 
 import { ButtonSecondary } from '../../kits/Buttons';
 import { HeaderWrapper } from './Wrapper';
-import { version } from '../../../package.json';
 import type { HeaderProps } from './types';
 
 export const Header = ({
@@ -22,6 +21,7 @@ export const Header = ({
   showButtons = false,
   darkMode,
   dockToggled,
+  version,
   onCloseWindow,
   onDockToggle,
   onRestoreWindow,
@@ -33,7 +33,7 @@ export const Header = ({
     <HeaderWrapper>
       <div className="content-wrapper">
         <div className="grab" />
-        <span className="alpha">{version}</span>
+        <span className="alpha">{version || 'unknown'}</span>
         <div className="right">
           {showButtons ? (
             <div className="controls-wrapper">

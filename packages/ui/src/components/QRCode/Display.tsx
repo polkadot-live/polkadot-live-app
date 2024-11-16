@@ -4,10 +4,10 @@
 import { objectSpread } from '@polkadot/util';
 import { xxhashAsHex } from '@polkadot/util-crypto';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { DisplayWrapper } from './Wrappers.js';
-import { qrcode } from './qrcode.js';
-import type { DisplayProps, FrameState, TimerState } from './types.js';
-import { createFrames, createImgSize } from './util.js';
+import { DisplayWrapper } from './Wrappers';
+import { qrcode } from './qrcode';
+import type { DisplayProps, FrameState, TimerState } from './types';
+import { createFrames, createImgSize } from './util';
 
 const DEFAULT_FRAME_DELAY = 2750;
 const TIMER_INC = 500;

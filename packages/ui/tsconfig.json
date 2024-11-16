@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
     "module": "ESNext",
+    "target": "ESNext",
     "moduleResolution": "Bundler",
     "checkJs": false,
     "strict": true,
@@ -11,11 +10,12 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "sourceMap": true,
-    "outDir": "dist",
+    "sourceMap": false,
+    "outDir": "dist/esm",
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
+    "removeComments": true,
   },
 }

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { memo, useMemo } from 'react';
-import { QrDisplay } from './Display.js';
-import { createSignPayload } from './util.js';
-import type { DisplayPayloadProps } from './types.js';
+import { QrDisplay } from './Display';
+import { createSignPayload } from './util';
+import type { DisplayPayloadProps } from './types';
 
 const DisplayPayload = ({
   address,
