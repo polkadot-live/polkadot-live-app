@@ -10,6 +10,7 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
+import { Classic } from '@theme-toggles/react';
 import { Summary } from '@app/screens/Home/Summary';
 import { Events } from './Events';
 import { Footer } from './Footer';
@@ -46,6 +47,7 @@ export const Home = () => {
   const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { darkMode } = useConnections();
+
   const {
     dockToggled,
     sideNavCollapsed,
@@ -133,14 +135,22 @@ export const Home = () => {
   return (
     <>
       <Header
-        version={version}
-        showButtons={true}
+        ToggleNode={
+          <Classic
+            toggled={darkMode}
+            onToggle={() => {
+              window.myAPI.relayModeFlag('darkMode', !darkMode);
+            }}
+            className="theme-toggle"
+            duration={300}
+          />
+        }
         appLoading={appLoading}
-        darkMode={darkMode}
         dockToggled={dockToggled}
+        showButtons={true}
         onDockToggle={onDockToggle}
         onRestoreWindow={() => window.myAPI.restoreWindow('base')}
-        onThemeToggle={() => window.myAPI.relayModeFlag('darkMode', !darkMode)}
+        version={version}
       >
         {/* TODO: Lift menu functions to context */}
         <Menu

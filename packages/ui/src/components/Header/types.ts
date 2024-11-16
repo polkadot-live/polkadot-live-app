@@ -4,12 +4,11 @@
 export interface HeaderProps {
   showButtons?: boolean;
   appLoading?: boolean;
-  darkMode?: boolean;
   dockToggled?: boolean;
   version?: string;
+  ToggleNode?: React.ReactNode;
   onCloseWindow?: () => void;
   onDockToggle?: () => void;
   onRestoreWindow?: () => void;
-  onThemeToggle?: (toggled: boolean) => void;
   children?: React.ReactNode;
 }
