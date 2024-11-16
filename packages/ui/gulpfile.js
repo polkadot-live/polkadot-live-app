@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import gulp from 'gulp';
-import ts from 'gulp-typescript';
 import dartSass from 'sass';
+import ts from 'gulp-typescript';
 import gulpSass from 'gulp-sass';
 import clean from 'gulp-clean';
 import rename from 'gulp-rename';
