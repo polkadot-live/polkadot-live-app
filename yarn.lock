@@ -1570,7 +1570,6 @@ __metadata:
     "@polkadot/types": "npm:^14.3.1"
     "@polkadot/util": "npm:^13.2.3"
     "@polkadot/util-crypto": "npm:^13.2.3"
-    "@theme-toggles/react": "npm:^4.1.0"
     "@types/gulp-rename": "npm:^2"
     "@types/gulp-sass": "npm:^5"
     "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
@@ -1580,7 +1579,6 @@ __metadata:
     gulp: "npm:^5.0.0"
     gulp-clean: "npm:^0.4.0"
     gulp-rename: "npm:^2.0.0"
-    gulp-replace: "npm:^1.1.4"
     gulp-sass: "npm:^5.1.0"
     gulp-typescript: "npm:^6.0.0-alpha.1"
     html5-qrcode: "npm:^2.3.8"
@@ -3326,7 +3324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/vinyl@npm:*, @types/vinyl@npm:^2.0.4":
+"@types/vinyl@npm:*":
   version: 2.0.12
   resolution: "@types/vinyl@npm:2.0.12"
   dependencies:
@@ -4640,13 +4638,6 @@ __metadata:
     buffers: "npm:~0.1.1"
     chainsaw: "npm:~0.1.0"
   checksum: 752c2c2ff9f23506b3428cc8accbfcc92fec07bf8a31a1953e9c7e2193eb5db8a67252034ab93e8adab2a1c43f3eeb3da0bacae0320e9814f3ca127942c55871
-  languageName: node
-  linkType: hard
-
-"binaryextensions@npm:^2.2.0":
-  version: 2.3.0
-  resolution: "binaryextensions@npm:2.3.0"
-  checksum: 5b118f3b864a9908109c93d0534e21983c0cf2e064c00e2866f60af3920179c85f1ca74275271b66c9381d8d5ea8c9bd254d50cf279dbcb3a9dfb9e40baaa3f2
   languageName: node
   linkType: hard
 
@@ -6612,7 +6603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:^1.0.3, escape-string-regexp@npm:^1.0.5":
+"escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: a968ad453dd0c2724e14a4f20e177aaf32bb384ab41b674a8454afe9a41c5e6fe8903323e0a1052f56289d04bd600f81278edf140b0fcc02f5cac98d0f5b5371
@@ -8111,19 +8102,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-replace@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "gulp-replace@npm:1.1.4"
-  dependencies:
-    "@types/node": "npm:*"
-    "@types/vinyl": "npm:^2.0.4"
-    istextorbinary: "npm:^3.0.0"
-    replacestream: "npm:^4.0.3"
-    yargs-parser: "npm:>=5.0.0-security.0"
-  checksum: 8df3647f3ade0c4ea2dbcdedc81ec0292cdd2b70944f3d6eab7106585a2a1fc40bc711e969c6685762d3f5214600374455c2ee4ef28e5f6d4cdd6aff594aa5f6
-  languageName: node
-  linkType: hard
-
 "gulp-sass@npm:^5.1.0":
   version: 5.1.0
   resolution: "gulp-sass@npm:5.1.0"
@@ -9031,16 +9009,6 @@ __metadata:
   version: 3.0.1
   resolution: "isobject@npm:3.0.1"
   checksum: 03344f5064a82f099a0cd1a8a407f4c0d20b7b8485e8e816c39f249e9416b06c322e8dec5b842b6bb8a06de0af9cb48e7bc1b5352f0fadc2f0abac033db3d4db
-  languageName: node
-  linkType: hard
-
-"istextorbinary@npm:^3.0.0":
-  version: 3.3.0
-  resolution: "istextorbinary@npm:3.3.0"
-  dependencies:
-    binaryextensions: "npm:^2.2.0"
-    textextensions: "npm:^3.2.0"
-  checksum: 3ea4facaed18a5e9761c523abdacb2006e5dcfeef401bdb03551a35c0720cafffb4b724c3989c8a04d8bd233d24e7c168b33e714abdbdaf493e9d31127e9e406
   languageName: node
   linkType: hard
 
@@ -11783,17 +11751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"replacestream@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "replacestream@npm:4.0.3"
-  dependencies:
-    escape-string-regexp: "npm:^1.0.3"
-    object-assign: "npm:^4.0.1"
-    readable-stream: "npm:^2.0.2"
-  checksum: e54c9d8e051a0f0873cbc0f3cddf6999b47b6b87a8ba60a5f09b222046f3e25c42337955d945ee3db928ad347afec47748e851d33a6f69fd2dda97c1d7680e2f
-  languageName: node
-  linkType: hard
-
 "require-directory@npm:^2.1.1":
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
@@ -13190,13 +13147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"textextensions@npm:^3.2.0":
-  version: 3.3.0
-  resolution: "textextensions@npm:3.3.0"
-  checksum: 99b0777b69374404602b80173958833a736870a77fb8eb3f658dde623a721f8d479f00e0e4651429ac053a4ebec3983812f8eb4b7c74326cb465bf7fbf4a334d
-  languageName: node
-  linkType: hard
-
 "through2-filter@npm:^3.0.0":
   version: 3.0.0
   resolution: "through2-filter@npm:3.0.0"
@@ -14455,17 +14405,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:>=5.0.0-security.0, yargs-parser@npm:^21.1.1":
-  version: 21.1.1
-  resolution: "yargs-parser@npm:21.1.1"
-  checksum: f84b5e48169479d2f402239c59f084cfd1c3acc197a05c59b98bab067452e6b3ea46d4dd8ba2985ba7b3d32a343d77df0debd6b343e5dae3da2aab2cdf5886b2
-  languageName: node
-  linkType: hard
-
 "yargs-parser@npm:^20.2.2":
   version: 20.2.9
   resolution: "yargs-parser@npm:20.2.9"
   checksum: 0685a8e58bbfb57fab6aefe03c6da904a59769bd803a722bb098bd5b0f29d274a1357762c7258fb487512811b8063fb5d2824a3415a0a4540598335b3b086c72
+  languageName: node
+  linkType: hard
+
+"yargs-parser@npm:^21.1.1":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: f84b5e48169479d2f402239c59f084cfd1c3acc197a05c59b98bab067452e6b3ea46d4dd8ba2985ba7b3d32a343d77df0debd6b343e5dae3da2aab2cdf5886b2
   languageName: node
   linkType: hard
 
