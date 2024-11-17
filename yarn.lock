@@ -223,6 +223,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.24.1":
+  version: 7.26.0
+  resolution: "@babel/runtime@npm:7.26.0"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 12c01357e0345f89f4f7e8c0e81921f2a3e3e101f06e8eaa18a382b517376520cd2fa8c237726eb094dab25532855df28a7baaf1c26342b52782f6936b07c287
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.15, @babel/template@npm:^7.24.0":
   version: 7.24.0
   resolution: "@babel/template@npm:7.24.0"
@@ -1694,6 +1703,7 @@ __metadata:
     qrcode-generator: "npm:^1.4.4"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    react-svg: "npm:^16.1.34"
     sass: "npm:^1.80.6"
     styled-components: "npm:^6.1.8"
     typescript: "npm:5.4.5"
@@ -3040,6 +3050,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanem/svg-injector@npm:^10.1.68":
+  version: 10.1.68
+  resolution: "@tanem/svg-injector@npm:10.1.68"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    content-type: "npm:^1.0.5"
+    tslib: "npm:^2.6.2"
+  checksum: ce94ccf666a2e1706c96ca174c53cd4bec34ade75b7f05f7193be73c1057062217c97a0b8afbd28d2a882c443b842742d51ee43f69f462425219589ad1f7c2f8
+  languageName: node
+  linkType: hard
+
 "@theme-toggles/react@npm:^4.1.0":
   version: 4.1.0
   resolution: "@theme-toggles/react@npm:4.1.0"
@@ -3361,6 +3382,13 @@ __metadata:
   version: 15.7.11
   resolution: "@types/prop-types@npm:15.7.11"
   checksum: e53423cf9d510515ef8b47ff42f4f1b65a7b7b37c8704e2dbfcb9a60defe0c0e1f3cb1acfdeb466bad44ca938d7c79bffdd51b48ffb659df2432169d0b27a132
+  languageName: node
+  linkType: hard
+
+"@types/prop-types@npm:^15.7.12":
+  version: 15.7.13
+  resolution: "@types/prop-types@npm:15.7.13"
+  checksum: 1b20fc67281902c6743379960247bc161f3f0406ffc0df8e7058745a85ea1538612109db0406290512947f9632fe9e10e7337bf0ce6338a91d6c948df16a7c61
   languageName: node
   linkType: hard
 
@@ -5554,6 +5582,13 @@ __metadata:
   version: 1.1.0
   resolution: "console-control-strings@npm:1.1.0"
   checksum: 7ab51d30b52d461412cd467721bb82afe695da78fff8f29fe6f6b9cbaac9a2328e27a22a966014df9532100f6dd85370460be8130b9c677891ba36d96a343f50
+  languageName: node
+  linkType: hard
+
+"content-type@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "content-type@npm:1.0.5"
+  checksum: b76ebed15c000aee4678c3707e0860cb6abd4e680a598c0a26e17f0bfae723ec9cc2802f0ff1bc6e4d80603719010431d2231018373d4dde10f9ccff9dadf5af
   languageName: node
   linkType: hard
 
@@ -11923,6 +11958,21 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: a2c85c3d1fa93585e312b1f7e6e21d1ca421875013a8d879e109d3ed41fb035bc93faef4cd42b354ea18d039bc50b679bf752679ad83ac26a986e3432fbd0462
+  languageName: node
+  linkType: hard
+
+"react-svg@npm:^16.1.34":
+  version: 16.1.34
+  resolution: "react-svg@npm:16.1.34"
+  dependencies:
+    "@babel/runtime": "npm:^7.24.1"
+    "@tanem/svg-injector": "npm:^10.1.68"
+    "@types/prop-types": "npm:^15.7.12"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 0c8fb2b7751508976f80d0ec7cc0713328757ba2ec3a9ee1890e87733de46158156e149f2f21c9d2a9cca504339982cafff846a32b5a6e031ac25be21d37f117
   languageName: node
   linkType: hard
 

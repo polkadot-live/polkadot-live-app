@@ -5,7 +5,8 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "inputs": ["noMarkdown", "^noMarkdown"]
+      "inputs": ["noMarkdown", "^noMarkdown"],
+      "dependsOn": ["^build"]
     }
   }
 }

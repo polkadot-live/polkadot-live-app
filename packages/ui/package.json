@@ -55,6 +55,7 @@
     "qrcode-generator": "^1.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-svg": "^16.1.34",
     "styled-components": "^6.1.8"
   },
   "packageManager": "yarn@4.0.2"
