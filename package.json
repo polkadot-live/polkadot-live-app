@@ -15,10 +15,10 @@
   ],
   "scripts": {
     "asar:list": "asar list",
-    "build": "yarn workspaces foreach --all -pt run build",
-    "lint": "yarn workspaces foreach --all -pt run lint",
-    "typecheck": "yarn workspaces foreach --all -pt run typecheck",
-    "clear:dist": "yarn workspaces foreach --all -pt run clear:dist",
+    "build": "nx run-many -t build",
+    "lint": "nx run-many -t lint",
+    "typecheck": "nx run-many -t typecheck",
+    "clear:dist": "nx run-many -t clear:dist",
     "clear": "rm -rf node_modules tsconfig.tsbuildinfo",
     "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
     "watch": "yarn clear:dist && cross-env DEBUG=1 DISABLE_ANALYTICS=1 MODE=development node scripts/watch.js",
@@ -26,7 +26,8 @@
     "package:dev": "cross-env MODE=development yarn run build && electron-builder --config scripts/electron-builder.config.dev.mjs",
     "package:win": "cross-env MODE=production CSC_IDENTITY_AUTO_DISCOVERY=false yarn run build && electron-builder build --win --config scripts/electron-builder.config.prod.mjs",
     "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
-    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts"
+    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts",
+    "graph": "nx graph"
   },
   "engines": {
     "node": ">=23.1.0"
@@ -99,6 +100,7 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-unused-imports": "^4.0.0",
+    "nx": "^20.1.2",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^3.2.4",
     "ts-node": "^10.9.2",

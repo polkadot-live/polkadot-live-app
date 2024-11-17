@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import InfoSVG from '../svg/help.svg?react';
+import { ReactSVG } from 'react-svg';
 import { appendOrEmpty } from '@w3ux/utils';
 import { onMouseHandlers } from '../Utils';
 import type { ButtonCommonProps } from '../types';
@@ -49,6 +49,6 @@ export const ButtonHelp = ({
     disabled={disabled}
     {...onMouseHandlers({ onClick, onMouseOver, onMouseMove, onMouseOut })}
   >
-    <InfoSVG />
+    <ReactSVG src="../svg/help.svg" />
   </button>
 );
