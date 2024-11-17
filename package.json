@@ -26,7 +26,8 @@
     "package:dev": "cross-env MODE=development yarn run build && electron-builder --config scripts/electron-builder.config.dev.mjs",
     "package:win": "cross-env MODE=production CSC_IDENTITY_AUTO_DISCOVERY=false yarn run build && electron-builder build --win --config scripts/electron-builder.config.prod.mjs",
     "wdio": "NODE_ENV=test wdio run wdio.conf.ts",
-    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts"
+    "test": "mocha --require ts-node/register --config .mocharc.jsonc test/unit/**/*.test.ts",
+    "graph": "nx graph"
   },
   "engines": {
     "node": ">=23.1.0"
