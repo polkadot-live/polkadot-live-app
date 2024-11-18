@@ -1,0 +1,25 @@
+{
+  "name": "@polkadot-live/preload",
+  "version": "0.3.0-alpha",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    "./preload.cjs": "./dist/preload.cjs",
+    "./preload": "./src/preload.ts"
+  },
+  "scripts": {
+    "build": "vite build --config vite.config.js",
+    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
+    "typescript": "5.4.5",
+    "vite": "^4.4.11"
+  },
+  "packageManager": "yarn@4.0.2"
+}

@@ -22,15 +22,18 @@ Polkadot Live is in active development and the codebase is constantly changing. 
 With that disclaimer out the way, use the following commands to build and run Polkadot Live:
 
 ```
-# Clone this repository
+# Clone this repository.
 gh repo clone polkadot-live/polkadot-live-app
 
-# Enter project root directory
+# Enter project root directory.
 cd polkadot-live-app
 
-# Install dependencies
+# Install dependencies.
 yarn install
 
-# Run
-yarn dev
+# Generate vendors metadata for vite configs.
+yarn vendors
+
+# Start dev server.
+yarn watch
 ```

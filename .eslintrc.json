@@ -1,7 +1,7 @@
 {
   "root": true,
   "env": {
-    "browser": true,
+    //"browser": true,
     "node": true
   },
   "extends": [
@@ -28,15 +28,20 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": [
-          "tsconfig.json"
-        ]
+        "extensions": [".ts", ".tsx"],
+        "project": ["tsconfig.json", "packages/*/tsconfig.json"]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "tsconfig.json",
+    "tsconfigRootDir": "./",
+    "project": ["tsconfig.json", "packages/*/tsconfig.json"],
+    "ignorePatterns": [
+      "node_modules/",
+      "dist/",
+      "packages/*/dist"
+    ],
     "sourceType": "module",
     "ecmaVersion": "latest",
     "ecmaFeatures": {
@@ -73,7 +78,7 @@
     "react-hooks/exhaustive-deps": "off",
     "import/no-named-as-default": "off",
     "import/no-unresolved": "error",
-     // React
+    // React
     // -----
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
@@ -81,7 +86,7 @@
     "react/jsx-filename-extension": [
       "warn",
       {
-        "extensions": [".tsx"]
+        "extensions": [".tsx", ".jsx"]
       }
     ],
     // Typescript
