@@ -24,6 +24,7 @@ import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
 import { IntervalSubscriptionsProvider } from '@app/contexts/main/IntervalSubscriptions';
 import { IntervalTasksManagerProvider } from '@app/contexts/main/IntervalTasksManager';
 import { DataBackupProvider } from '@app/contexts/main/DataBackup';
+import { CogMenuProvider } from './contexts/main/CogMenu';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
@@ -79,7 +80,9 @@ const getProvidersForWindow = () => {
         // Online status relies on other contexts being initialized.
         BootstrappingProvider,
         // Requires setting state from other contexts.
-        DataBackupProvider
+        DataBackupProvider,
+        // Requires useBootstrapping and useHelp.
+        CogMenuProvider
       )(Theme);
     }
     case 'import': {

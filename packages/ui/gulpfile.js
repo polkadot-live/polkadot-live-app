@@ -20,7 +20,8 @@ const tsProject = ts.createProject({
 
 // Paths.
 const paths = {
-  src: 'src/**/*.ts',
+  srcTs: 'src/**/*.ts',
+  srcTsx: 'src/**/*.tsx',
   dist: 'dist',
 };
 
@@ -32,7 +33,7 @@ function cleanDist() {
 // Build .ts as .js ESM modules.
 function buildEsmTs() {
   return gulp
-    .src(paths.src)
+    .src(paths.srcTs)
     .pipe(tsProject('tsconfig.json'))
     .pipe(gulp.dest('dist/mjs'));
 }
@@ -40,7 +41,7 @@ function buildEsmTs() {
 // Build .tsx as .jsx ESM modules.
 function buildEsmTsx() {
   return gulp
-    .src('src/**/*.tsx')
+    .src(paths.srcTsx)
     .pipe(tsProject('tsconfig.json'))
     .pipe(
       rename(function (path) {

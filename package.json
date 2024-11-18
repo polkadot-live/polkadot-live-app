@@ -16,9 +16,11 @@
   "scripts": {
     "asar:list": "asar list",
     "build": "nx run-many -t build",
+    "build:ui": "nx build @polkadot-live/ui",
     "lint": "nx run-many -t lint",
     "typecheck": "nx run-many -t typecheck",
     "clear:dist": "nx run-many -t clear:dist",
+    "clear:ui": "nx clear @polkadot-live/ui",
     "clear": "rm -rf node_modules tsconfig.tsbuildinfo",
     "vendors": "cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.js",
     "watch": "yarn clear:dist && cross-env DEBUG=1 DISABLE_ANALYTICS=1 MODE=development node scripts/watch.js",
