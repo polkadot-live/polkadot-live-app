@@ -56,14 +56,8 @@ export const Home = () => {
   } = useAppSettings();
 
   const { appLoading } = useBootstrapping();
-  const { selectedId, setSelectedId } = useSideNav();
-  const {
-    getAppFlags,
-    getConnectionButtonText,
-    getMenuItems,
-    handleConnectClick,
-    handleSilenceNotifications,
-  } = useCogMenu();
+  const cogMenu = useCogMenu();
+  const sideNav = useSideNav();
 
   useEffect(() => {
     // Listen for event callbacks.
@@ -87,8 +81,8 @@ export const Home = () => {
     );
   }, []);
 
-  /// TODO: Move to file.
   /// Handle header dock toggle.
+  // TODO: Move to file.
   const onDockToggle = () => {
     handleDockedToggle();
 
@@ -103,11 +97,6 @@ export const Home = () => {
     const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
     window.myAPI.umamiEvent(event, { setting: 'dock-window' });
   };
-
-  /**
-   * Menu functions.
-   * TODO: Put in context.
-   */
 
   return (
     <>
@@ -131,12 +120,12 @@ export const Home = () => {
       >
         {/* Logic in cog menu context */}
         <Menu
-          appFlags={getAppFlags()}
-          menuItems={getMenuItems()}
-          connectLabel={getConnectionButtonText()}
-          onConnectClick={handleConnectClick}
+          appFlags={cogMenu.getAppFlags()}
+          connectLabel={cogMenu.getConnectionButtonText()}
+          menuItems={cogMenu.getMenuItems()}
+          onConnectClick={cogMenu.handleConnectClick}
+          onSilenceNotifications={cogMenu.handleSilenceNotifications}
           silenceOsNotifications={silenceOsNotifications}
-          onSilenceNotifications={handleSilenceNotifications}
         />
       </Header>
 
@@ -146,8 +135,8 @@ export const Home = () => {
           handleSideNavCollapse={handleSideNavCollapse}
           navState={{
             isCollapsed: sideNavCollapsed,
-            selectedId,
-            setSelectedId,
+            selectedId: sideNav.selectedId,
+            setSelectedId: sideNav.setSelectedId,
           }}
         />
 
@@ -164,13 +153,13 @@ export const Home = () => {
           ) : (
             <ScrollWrapper>
               {/* Summary */}
-              {selectedId === 0 && <Summary />}
+              {sideNav.selectedId === 0 && <Summary />}
 
               {/* Events */}
-              {selectedId === 1 && <Events />}
+              {sideNav.selectedId === 1 && <Events />}
 
               {/* Subscribe */}
-              {selectedId === 2 && (
+              {sideNav.selectedId === 2 && (
                 <div className="container">
                   <Manage addresses={getAddresses()} />
                 </div>
