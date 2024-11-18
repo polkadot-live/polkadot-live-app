@@ -16,6 +16,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { MenuProps } from './types';
 
+export * from './types';
+
 export const Menu = ({
   menuItems,
   appFlags: { isAborting, isConnecting, isOnline, isLoading },
