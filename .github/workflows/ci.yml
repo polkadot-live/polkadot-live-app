@@ -47,5 +47,6 @@ jobs:
           cache: 'yarn'
           node-version: ${{ matrix.node-version }}
       - run: yarn install
-      - run: yarn workspace @polkadot-live/ui run build
+      - run: yarn vendors
+      - run: yarn build:ui
       - run: yarn lint
