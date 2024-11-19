@@ -42,7 +42,7 @@ export default {
     forceCodeSigning: true,
     gatekeeperAssess: false,
     hardenedRuntime: true,
-    icon: 'public/assets/icons/icon.icns',
+    icon: 'assets/icon.icns',
     notarize: true,
     target: [
       {
@@ -57,7 +57,7 @@ export default {
     allowToChangeInstallationDirectory: false,
   },
   win: {
-    icon: 'public/assets/icons/icon.ico',
+    icon: 'assets/icon.ico',
     target: [
       {
         target: 'nsis',
