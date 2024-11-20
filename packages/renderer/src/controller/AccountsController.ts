@@ -243,8 +243,7 @@ export class AccountsController {
    * @name spliceAccount
    * @summary Splices an account from the imported accounts list.
    */
-  // TODO: Make private and remove WDIO test case.
-  static spliceAccount = (address: string): ImportedAccounts => {
+  private static spliceAccount = (address: string): ImportedAccounts => {
     const filtered: ImportedAccounts = new Map();
 
     for (const [chain, accounts] of this.accounts) {
