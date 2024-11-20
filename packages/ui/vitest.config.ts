@@ -8,5 +8,15 @@ export default defineConfig({
     environment: 'jsdom',
     testTimeout: 30_000,
     hookTimeout: 30_000,
+
+    /**
+     * Import vitest functions in every test file.
+     */
+    globals: true,
+
+    /**
+     * Initialise RTL before test suite executes.
+     */
+    setupFiles: ['tests/vitest-setup.ts'],
   },
 });

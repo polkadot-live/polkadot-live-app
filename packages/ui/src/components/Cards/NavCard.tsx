@@ -33,6 +33,7 @@ export const NavCard = ({
             <h1>{title}</h1>
             {helpKey && (
               <div
+                data-testid="help-icon"
                 className="help-icon stay"
                 onClick={() => {
                   openHelp(helpKey);
