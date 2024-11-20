@@ -24,7 +24,8 @@
     "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
     "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "lint": "eslint --fix --ext .ts,.tsx ./src && npx prettier --write ./src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {
     "@polkadot-live/types": "workspace:*",
@@ -36,8 +37,10 @@
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^5.1.0",
     "gulp-typescript": "^6.0.0-alpha.1",
+    "jsdom": "^25.0.1",
     "sass": "^1.80.6",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "vitest": "^2.1.5"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",

@@ -28,7 +28,8 @@
     "package": "cross-env MODE=production yarn run build && electron-builder --config scripts/electron-builder.config.prod.mjs",
     "package:dev": "cross-env MODE=development yarn run build && electron-builder --config scripts/electron-builder.config.dev.mjs",
     "package:win": "cross-env MODE=production CSC_IDENTITY_AUTO_DISCOVERY=false yarn run build && electron-builder build --win --config scripts/electron-builder.config.prod.mjs",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "test": "nx run-many -t test"
   },
   "engines": {
     "node": ">=23.1.0"
@@ -105,7 +106,8 @@
     "prettier-plugin-organize-imports": "^3.2.4",
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",
-    "vite": "^4.4.11"
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
   },
   "resolutions": {
     "react": "18.2.0",
