@@ -17,9 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@polkadot-live/types": "workspace:*",
-    "typescript": "5.4.5",
-    "vite": "^4.4.11"
+    "@polkadot-live/types": "workspace:*"
   },
   "packageManager": "yarn@4.0.2"
 }
