@@ -32,8 +32,7 @@
     "packages/**/*.js",
     "packages/**/*.tsx",
     "scripts/**/*",
-    "vite.base.config.ts",
-    "wdio.conf.ts"
+    "vite.base.config.ts"
   ],
   "exclude": [
     "dist",
