@@ -77,7 +77,7 @@ const getWindowBackgroundColor = (): string => {
  * - Defines event listeners for the window
  * - Adds the browser window to WindowsController
  */
-export const createMainWindow = (isTest: boolean) => {
+export const createMainWindow = () => {
   const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
     'menu_bounds'
   );
@@ -107,7 +107,7 @@ export const createMainWindow = (isTest: boolean) => {
     skipTaskbar: true,
     backgroundColor: getWindowBackgroundColor(),
     webPreferences: {
-      sandbox: !isTest,
+      sandbox: true,
       preload: PRELOAD_PATH,
     },
   });
@@ -260,7 +260,7 @@ export const createBaseWindow = () => {
  * @name handleViewOnIPC
  * @summary Opens a view under a new tab in the base window.
  */
-export const handleViewOnIPC = (name: string, isTest: boolean) => {
+export const handleViewOnIPC = (name: string) => {
   ipcMain.on(`${name}:open`, () => {
     // Show view in base window if it's already created.
     if (WindowsController.viewExists(name)) {
@@ -272,7 +272,7 @@ export const handleViewOnIPC = (name: string, isTest: boolean) => {
     // Create the view and add it to the base window.
     const view = new WebContentsView({
       webPreferences: {
-        sandbox: !isTest,
+        sandbox: true,
         preload: PRELOAD_PATH,
       },
     });
