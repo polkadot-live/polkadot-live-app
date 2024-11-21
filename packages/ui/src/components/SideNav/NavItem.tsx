@@ -42,6 +42,7 @@ export const NavItem = ({
     <AnimatePresence>
       {id === selectedId && (
         <motion.span
+          data-testid={`item-${id}-selected`}
           style={{
             position: 'absolute',
             inset: '0px',

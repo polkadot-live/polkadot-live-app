@@ -44,12 +44,6 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// Expose Electron API to wdio tests
-const isTest = process.env.NODE_ENV === 'test';
-if (isTest) {
-  require('wdio-electron-service/main');
-}
-
 // Hide application menu (mac OS) if DEBUG env variable doesn't exist.
 // NOTE: Showing window on all workspaces disables the application menu.
 if (!process.env.DEBUG) {
@@ -126,7 +120,7 @@ app.whenReady().then(async () => {
   });
 
   // Ask for camera permission (Mac OS)
-  if (process.platform === 'darwin' && !isTest) {
+  if (process.platform === 'darwin') {
     systemPreferences
       .askForMediaAccess('camera')
       .then((result) => {
@@ -145,14 +139,14 @@ app.whenReady().then(async () => {
 
   // Create menu bar and tray.
   WindowUtils.createTray();
-  WindowUtils.createMainWindow(isTest);
+  WindowUtils.createMainWindow();
   WindowUtils.createBaseWindow();
 
   // Handle child windows.
-  WindowUtils.handleViewOnIPC('import', isTest);
-  WindowUtils.handleViewOnIPC('action', isTest);
-  WindowUtils.handleViewOnIPC('openGov', isTest);
-  WindowUtils.handleViewOnIPC('settings', isTest);
+  WindowUtils.handleViewOnIPC('import');
+  WindowUtils.handleViewOnIPC('action');
+  WindowUtils.handleViewOnIPC('openGov');
+  WindowUtils.handleViewOnIPC('settings');
 
   // ------------------------------
   // Handle Power Changes

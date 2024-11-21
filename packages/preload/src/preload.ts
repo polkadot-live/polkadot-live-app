@@ -11,12 +11,6 @@ import type { IpcTask } from '@polkadot-live/types/communication';
 
 console.log(global.location.search);
 
-// Expose Electron API to wdio tests
-const isTest = process.env.NODE_ENV === 'test';
-if (isTest) {
-  require('wdio-electron-service/preload');
-}
-
 /**
  * Message ports
  *

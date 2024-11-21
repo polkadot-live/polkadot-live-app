@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["node"],
+    "types": ["node", "vitest/globals"],
     "removeComments": true,
   },
 }
