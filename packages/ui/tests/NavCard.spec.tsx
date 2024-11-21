@@ -6,6 +6,7 @@ import { NavCard } from '../src/components';
 import userEvent from '@testing-library/user-event';
 
 describe('NavCard', () => {
+  const containerClass = 'methodCard';
   const renderNavCard = () =>
     render(
       <NavCard
@@ -33,7 +34,7 @@ describe('NavCard', () => {
     expect(anchor).toHaveAttribute('href', 'url1');
   });
 
-  it('should not render a help button if when a help key is not provided', () => {
+  it('should not render a help button when a help key is not provided', () => {
     renderNavCard();
 
     const helpIcon = screen.queryByTestId('help-icon');
@@ -77,10 +78,10 @@ describe('NavCard', () => {
       />
     );
 
-    const cardElement = container.getElementsByClassName('methodCard');
-    expect(cardElement[0]).toBeInTheDocument();
+    const cardElement = container.getElementsByClassName(containerClass)[0];
+    expect(cardElement).toBeInTheDocument();
 
-    await user.click(cardElement[0]);
+    await user.click(cardElement);
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });
