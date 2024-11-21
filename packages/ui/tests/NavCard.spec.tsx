@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('NavCard', () => {
   const containerClass = 'methodCard';
+
   const renderNavCard = () =>
     render(
       <NavCard
