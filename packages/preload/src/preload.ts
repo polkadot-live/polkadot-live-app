@@ -9,7 +9,9 @@ import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
-console.log(global.location.search);
+if (!process.env.VITEST) {
+  console.log(global.location.search);
+}
 
 /**
  * Message ports
