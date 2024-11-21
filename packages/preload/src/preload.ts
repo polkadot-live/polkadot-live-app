@@ -13,6 +13,8 @@ if (!process.env.VITEST) {
   console.log(global.location.search);
 }
 
+export const KEY_CONFIG = { apiKey: 'myAPI' };
+
 /**
  * Message ports
  *
@@ -231,4 +233,4 @@ export const API: PreloadAPI = {
     ipcRenderer.send('app:umami:event', event, data),
 };
 
-contextBridge.exposeInMainWorld('myAPI', API);
+contextBridge.exposeInMainWorld(KEY_CONFIG.apiKey, API);
