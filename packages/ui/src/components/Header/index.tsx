@@ -27,7 +27,9 @@ export const Header = ({
   <HeaderWrapper>
     <div className="content-wrapper">
       <div className="grab" />
-      <span className="alpha">{version || 'unknown'}</span>
+      <span data-testid="version" className="alpha">
+        {version || 'unknown'}
+      </span>
       <div className="right">
         {showButtons ? (
           <div className="controls-wrapper">
@@ -43,6 +45,7 @@ export const Header = ({
             {/* Restore base window */}
             <button
               type="button"
+              data-testid="restore-btn"
               onClick={() => onRestoreWindow && onRestoreWindow()}
             >
               <FontAwesomeIcon transform={'shrink-1'} icon={faWindowRestore} />
@@ -57,6 +60,7 @@ export const Header = ({
         ) : (
           <button
             type="button"
+            data-testid="close-btn"
             disabled={appLoading}
             onClick={() => onCloseWindow && onCloseWindow()}
           >
