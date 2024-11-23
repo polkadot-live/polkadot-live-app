@@ -44,6 +44,12 @@ export class WindowsController {
   static getView = (viewId: string) =>
     this.views.find(({ id }) => viewId === id)?.view ?? undefined;
 
+  static minimizeWindow = (windowId: string) => {
+    windowId === 'main'
+      ? this.getWindow('menu')?.minimize()
+      : this.base?.window.minimize();
+  };
+
   /* ---------------------------------------- */
   /* Messaging                                */
   /* ---------------------------------------- */

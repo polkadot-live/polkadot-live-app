@@ -6,9 +6,8 @@ import BigNumber from 'bignumber.js';
 import { ChainList } from '@ren/config/chains';
 import { MainDebug } from '@ren/utils/DebugUtils';
 import { rmCommas } from '@w3ux/utils';
-import type { AnyJson } from '@polkadot-live/types/misc';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { APIConstants } from '@polkadot-live/types/chains/polkadot';
-import type { Codec } from '@polkadot/types-codec/types';
 import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
@@ -189,7 +188,7 @@ export class Api {
       api.consts.nominationPools.palletId,
     ]);
 
-    const takeResult = (item: Codec[], index: number) =>
+    const takeResult = (item: AnyData, index: number) =>
       new BigNumber(rmCommas(item[index].toString()));
 
     const bondDuration = takeResult(result, 0);

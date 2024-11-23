@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
@@ -59,6 +59,8 @@ export const Home = () => {
   const cogMenu = useCogMenu();
   const sideNav = useSideNav();
 
+  const [platform, setPlatform] = useState<string | null>(null);
+
   useEffect(() => {
     // Listen for event callbacks.
     window.myAPI.reportNewEvent(
@@ -79,6 +81,13 @@ export const Home = () => {
         markStaleEvent(uid, chainId);
       }
     );
+
+    const initPlatform = async () => {
+      const osPlatform = await window.myAPI.getOsPlatform();
+      setPlatform(osPlatform);
+    };
+
+    initPlatform();
   }, []);
 
   /// Handle header dock toggle.
@@ -98,6 +107,12 @@ export const Home = () => {
     window.myAPI.umamiEvent(event, { setting: 'dock-window' });
   };
 
+  /// Handle minimize window button click.
+  // TODO: Move to file.
+  const onMinimizeWindow = () => {
+    window.myAPI.minimizeWindow(window.myAPI.getWindowId());
+  };
+
   return (
     <>
       <Header
@@ -114,7 +129,9 @@ export const Home = () => {
         appLoading={appLoading}
         dockToggled={dockToggled}
         showButtons={true}
+        showMinimize={String(platform) === 'linux'}
         onDockToggle={onDockToggle}
+        onMinimizeWindow={onMinimizeWindow}
         onRestoreWindow={() => window.myAPI.restoreWindow('base')}
         version={version}
       >

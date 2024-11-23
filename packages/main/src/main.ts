@@ -294,6 +294,13 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Minimize one of the main windows.
+  ipcMain.on('app:window:minimize', (_, windowId) => {
+    if (process.platform === 'linux') {
+      WindowsController.minimizeWindow(windowId);
+    }
+  });
+
   // Check if a view is currently open.
   ipcMain.handle('app:view:isOpen', (_, viewId: string) =>
     WindowsController.viewExists(viewId)
