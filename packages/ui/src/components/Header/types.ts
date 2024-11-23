@@ -3,6 +3,7 @@
 
 export interface HeaderProps {
   showButtons?: boolean;
+  showDock?: boolean;
   showMinimize?: boolean;
   appLoading?: boolean;
   dockToggled?: boolean;

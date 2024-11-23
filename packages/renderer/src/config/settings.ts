@@ -12,7 +12,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:dockedWindow',
     settingType: 'switch',
     title: 'Docked Window',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['darwin', 'win32'],
   },
   {
     action: 'settings:execute:showOnAllWorkspaces',

@@ -18,6 +18,7 @@ export const Header = ({
   children,
   appLoading = false,
   showButtons = false,
+  showDock = true,
   showMinimize = false,
   dockToggled,
   version,
@@ -37,13 +38,15 @@ export const Header = ({
         {showButtons ? (
           <div className="controls-wrapper">
             {/* Dock window */}
-            <ButtonSecondary
-              className="dock-btn"
-              text={dockToggled ? 'Detach' : 'Dock'}
-              iconLeft={dockToggled ? faUnlock : faLock}
-              iconTransform="shrink-5"
-              onClick={() => onDockToggle && onDockToggle()}
-            />
+            {showDock && (
+              <ButtonSecondary
+                className="dock-btn"
+                text={dockToggled ? 'Detach' : 'Dock'}
+                iconLeft={dockToggled ? faUnlock : faLock}
+                iconTransform="shrink-5"
+                onClick={() => onDockToggle && onDockToggle()}
+              />
+            )}
 
             {/* Restore base window */}
             <button
