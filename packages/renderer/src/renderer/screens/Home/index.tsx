@@ -93,6 +93,10 @@ export const Home = () => {
   /// Handle header dock toggle.
   // TODO: Move to file.
   const onDockToggle = () => {
+    if (platform === 'linux') {
+      return;
+    }
+
     handleDockedToggle();
 
     ConfigRenderer.portToSettings?.postMessage({
@@ -129,6 +133,7 @@ export const Home = () => {
         appLoading={appLoading}
         dockToggled={dockToggled}
         showButtons={true}
+        showDock={String(platform) !== 'linux'}
         showMinimize={String(platform) === 'linux'}
         onDockToggle={onDockToggle}
         onMinimizeWindow={onMinimizeWindow}
