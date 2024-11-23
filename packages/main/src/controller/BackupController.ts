@@ -19,7 +19,9 @@ export class BackupController {
    */
   static async export(): Promise<ExportResult> {
     // Exit early if overlay is created.
-    if (WindowsController.overlayExists()) {
+    if (process.platform === 'linux') {
+      WindowsController.setBaseAlwaysOnTop(false);
+    } else if (WindowsController.overlayExists()) {
       return { result: false, msg: 'alreadyOpen' };
     }
 
@@ -30,12 +32,15 @@ export class BackupController {
 
     // Render transparent browser window over base window.
     ConfigMain.exportingData = true;
-    const overlay = WindowsController.getOverlay();
-    if (!overlay) {
-      return { result: false, msg: 'error' };
+    let overlay = null;
+    if (process.platform !== 'linux') {
+      overlay = WindowsController.getOverlay();
+      if (!overlay) {
+        return { result: false, msg: 'error' };
+      }
     }
 
-    const { canceled, filePath } = await dialog.showSaveDialog(overlay, {
+    const dialogOptions = {
       title: 'Export Data',
       defaultPath: 'polkadot-live-data.txt',
       filters: [
@@ -45,10 +50,18 @@ export class BackupController {
         },
       ],
       properties: [],
-    });
+    };
+
+    const { canceled, filePath } =
+      process.platform === 'linux'
+        ? await dialog.showSaveDialog(dialogOptions)
+        : await dialog.showSaveDialog(overlay!, dialogOptions);
 
     // Handle save or cancel.
-    WindowsController.destroyOverlay();
+    process.platform === 'linux'
+      ? WindowsController.setBaseAlwaysOnTop(true)
+      : WindowsController.destroyOverlay();
+
     if (!canceled && filePath) {
       try {
         const serialized = this.getExportData();
@@ -74,17 +87,22 @@ export class BackupController {
    */
   static async import(): Promise<ImportResult> {
     // Exit early if overlay is created.
-    if (WindowsController.overlayExists()) {
+    if (process.platform === 'linux') {
+      WindowsController.setBaseAlwaysOnTop(false);
+    } else if (WindowsController.overlayExists()) {
       return { result: false, msg: 'alreadyOpen' };
     }
 
-    // Render transparent browser window over base window.
-    const overlay = WindowsController.getOverlay();
-    if (!overlay) {
-      return { result: false, msg: 'error' };
+    // Render transparent browser window over base window (Mac and Windows).
+    let overlay = null;
+    if (process.platform !== 'linux') {
+      overlay = WindowsController.getOverlay();
+      if (!overlay) {
+        return { result: false, msg: 'error' };
+      }
     }
 
-    const { canceled, filePaths } = await dialog.showOpenDialog(overlay, {
+    const dialogOptions: Electron.OpenDialogOptions = {
       title: 'Import Data',
       filters: [
         {
@@ -93,9 +111,19 @@ export class BackupController {
         },
       ],
       properties: ['openFile'],
-    });
+    };
 
-    WindowsController.destroyOverlay();
+    // Show open file dialog.
+    const { canceled, filePaths } =
+      process.platform === 'linux'
+        ? await dialog.showOpenDialog(dialogOptions)
+        : await dialog.showOpenDialog(overlay!, dialogOptions);
+
+    // After open file dialog is closed.
+    process.platform === 'linux'
+      ? WindowsController.setBaseAlwaysOnTop(true)
+      : WindowsController.destroyOverlay();
+
     if (!canceled && filePaths.length) {
       try {
         const serialized = await fsPromises.readFile(filePaths[0], {
