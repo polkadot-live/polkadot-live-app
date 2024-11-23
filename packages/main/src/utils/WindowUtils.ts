@@ -191,7 +191,7 @@ export const createBaseWindow = () => {
     x: defaultX,
     y: defaultY,
     frame: false,
-    show: true,
+    show: false,
     resizable: true,
     height: baseHeight,
     minHeight: 475,
@@ -208,7 +208,6 @@ export const createBaseWindow = () => {
   });
 
   // Hide base window and menu bar on Linux and Windows.
-  baseWindow.hide();
   setWindowMenuVisibility(baseWindow);
 
   // TODO: Register local shortcut Ctrl+Q and Ctrl+W
