@@ -92,6 +92,10 @@ export class WindowsController {
   /* Overlay Window                           */
   /* ---------------------------------------- */
 
+  static setBaseAlwaysOnTop = (alwaysOnTop: boolean) => {
+    this.base?.window.setAlwaysOnTop(alwaysOnTop);
+  };
+
   static overlayExists = (): boolean => this.overlay !== null;
 
   static getOverlay = (): BrowserWindow | null => {
