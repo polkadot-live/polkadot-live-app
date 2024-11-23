@@ -51,6 +51,7 @@ export interface PreloadAPI {
   openWindow: (id: string) => void;
   openDevTools: (windowId: string) => void;
   restoreWindow: (windowId: string) => void;
+  minimizeWindow: (windowId: string) => void;
   hideWindow: ApiHideWindow;
   closeWindow: ApiCloseWindow;
   quitApp: ApiEmptyPromiseRequest;

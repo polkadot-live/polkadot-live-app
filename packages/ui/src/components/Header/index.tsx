@@ -7,6 +7,7 @@ import {
   faUnlock,
   faLock,
   faWindowRestore,
+  faCircleChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { ButtonSecondary } from '../../kits/Buttons';
@@ -17,10 +18,12 @@ export const Header = ({
   children,
   appLoading = false,
   showButtons = false,
+  showMinimize = false,
   dockToggled,
   version,
   onCloseWindow,
   onDockToggle,
+  onMinimizeWindow,
   onRestoreWindow,
   ToggleNode,
 }: HeaderProps) => (
@@ -56,6 +59,21 @@ export const Header = ({
 
             {/* Children */}
             {children}
+
+            {/* Minimize button */}
+            {showMinimize && (
+              <button
+                type="button"
+                data-testid="minimize-btn"
+                onClick={() => onMinimizeWindow && onMinimizeWindow()}
+              >
+                <FontAwesomeIcon
+                  style={{ paddingLeft: '0.25rem' }}
+                  transform={'shrink-0'}
+                  icon={faCircleChevronDown}
+                />
+              </button>
+            )}
           </div>
         ) : (
           <button

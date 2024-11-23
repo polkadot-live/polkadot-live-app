@@ -176,6 +176,9 @@ export const API: PreloadAPI = {
 
   openWindow: async (id) => ipcRenderer.send(`${id}:open`),
 
+  minimizeWindow: (windowId: string) =>
+    ipcRenderer.send('app:window:minimize', windowId),
+
   openDevTools: (windowId: string) =>
     ipcRenderer.send('app:view:devTools', windowId),
 

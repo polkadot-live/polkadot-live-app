@@ -98,6 +98,12 @@ export const Home = () => {
     window.myAPI.umamiEvent(event, { setting: 'dock-window' });
   };
 
+  /// Handle minimize window button click.
+  // TODO: Move to file.
+  const onMinimizeWindow = () => {
+    window.myAPI.minimizeWindow(window.myAPI.getWindowId());
+  };
+
   return (
     <>
       <Header
@@ -114,7 +120,9 @@ export const Home = () => {
         appLoading={appLoading}
         dockToggled={dockToggled}
         showButtons={true}
+        showMinimize={true}
         onDockToggle={onDockToggle}
+        onMinimizeWindow={onMinimizeWindow}
         onRestoreWindow={() => window.myAPI.restoreWindow('base')}
         version={version}
       >

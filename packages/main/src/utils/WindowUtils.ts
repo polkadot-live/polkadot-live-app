@@ -97,7 +97,7 @@ export const createMainWindow = () => {
     minHeight: 475,
     maxHeight: 1200,
     resizable: true,
-    minimizable: false,
+    minimizable: true,
     maximizable: false,
     fullscreenable: false,
     skipTaskbar: true,
