@@ -7,6 +7,7 @@ import {
   faUnlock,
   faLock,
   faWindowRestore,
+  faCircleChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { ButtonSecondary } from '../../kits/Buttons';
@@ -17,10 +18,13 @@ export const Header = ({
   children,
   appLoading = false,
   showButtons = false,
+  showDock = true,
+  showMinimize = false,
   dockToggled,
   version,
   onCloseWindow,
   onDockToggle,
+  onMinimizeWindow,
   onRestoreWindow,
   ToggleNode,
 }: HeaderProps) => (
@@ -34,13 +38,15 @@ export const Header = ({
         {showButtons ? (
           <div className="controls-wrapper">
             {/* Dock window */}
-            <ButtonSecondary
-              className="dock-btn"
-              text={dockToggled ? 'Detach' : 'Dock'}
-              iconLeft={dockToggled ? faUnlock : faLock}
-              iconTransform="shrink-5"
-              onClick={() => onDockToggle && onDockToggle()}
-            />
+            {showDock && (
+              <ButtonSecondary
+                className="dock-btn"
+                text={dockToggled ? 'Detach' : 'Dock'}
+                iconLeft={dockToggled ? faUnlock : faLock}
+                iconTransform="shrink-5"
+                onClick={() => onDockToggle && onDockToggle()}
+              />
+            )}
 
             {/* Restore base window */}
             <button
@@ -56,6 +62,21 @@ export const Header = ({
 
             {/* Children */}
             {children}
+
+            {/* Minimize button */}
+            {showMinimize && (
+              <button
+                type="button"
+                data-testid="minimize-btn"
+                onClick={() => onMinimizeWindow && onMinimizeWindow()}
+              >
+                <FontAwesomeIcon
+                  style={{ paddingLeft: '0.25rem' }}
+                  transform={'shrink-0'}
+                  icon={faCircleChevronDown}
+                />
+              </button>
+            )}
           </div>
         ) : (
           <button

@@ -44,6 +44,12 @@ export class WindowsController {
   static getView = (viewId: string) =>
     this.views.find(({ id }) => viewId === id)?.view ?? undefined;
 
+  static minimizeWindow = (windowId: string) => {
+    windowId === 'main'
+      ? this.getWindow('menu')?.minimize()
+      : this.base?.window.minimize();
+  };
+
   /* ---------------------------------------- */
   /* Messaging                                */
   /* ---------------------------------------- */
@@ -85,6 +91,10 @@ export class WindowsController {
   /* ---------------------------------------- */
   /* Overlay Window                           */
   /* ---------------------------------------- */
+
+  static setBaseAlwaysOnTop = (alwaysOnTop: boolean) => {
+    this.base?.window.setAlwaysOnTop(alwaysOnTop);
+  };
 
   static overlayExists = (): boolean => this.overlay !== null;
 

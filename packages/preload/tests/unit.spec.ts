@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { describe, expect, it, vi } from 'vitest';
 import { API, KEY_CONFIG } from '../src/preload';
 import { contextBridge } from 'electron';
 

@@ -21,7 +21,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:showOnAllWorkspaces',
     settingType: 'switch',
     title: 'Show On All Workspaces',
-    platforms: ['darwin'],
+    platforms: ['darwin', 'linux'],
   },
   {
     action: 'settings:execute:silenceOsNotifications',
@@ -30,7 +30,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:silenceOsNotifications',
     settingType: 'switch',
     title: 'Silence OS Notifications',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:enablePolkassembly',
@@ -39,7 +39,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:enablePolkassembly',
     settingType: 'switch',
     title: 'Enable Polkassembly Data',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:hideDockIcon',
@@ -57,7 +57,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:showDebuggingSubscriptions',
     settingType: 'switch',
     title: 'Show Debugging Subscriptions',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:enableAutomaticSubscriptions',
@@ -66,7 +66,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:enableAutomaticSubscriptions',
     settingType: 'switch',
     title: 'Enable Automatic Subscriptions',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:keepOutdatedEvents',
@@ -75,7 +75,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:keepOutdatedEvents',
     settingType: 'switch',
     title: 'Keep Outdated Events',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:importData',
@@ -86,7 +86,7 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:importData',
     settingType: 'button',
     title: 'Import Data',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
   {
     action: 'settings:execute:exportData',
@@ -97,6 +97,6 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:exportData',
     settingType: 'button',
     title: 'Export Data',
-    platforms: ['darwin', 'win32'],
+    platforms: ['darwin', 'win32', 'linux'],
   },
 ];

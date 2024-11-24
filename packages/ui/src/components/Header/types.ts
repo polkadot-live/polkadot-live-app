@@ -3,12 +3,15 @@
 
 export interface HeaderProps {
   showButtons?: boolean;
+  showDock?: boolean;
+  showMinimize?: boolean;
   appLoading?: boolean;
   dockToggled?: boolean;
   version?: string;
   ToggleNode?: React.ReactNode;
   onCloseWindow?: () => void;
   onDockToggle?: () => void;
+  onMinimizeWindow?: () => void;
   onRestoreWindow?: () => void;
   children?: React.ReactNode;
 }

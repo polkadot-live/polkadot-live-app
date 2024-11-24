@@ -64,8 +64,8 @@ export const HeaderWrapper = styled.div`
         }
         .theme-toggle {
           svg {
-            width: 1.4rem;
-            height: 1.4rem;
+            width: 1.6rem;
+            height: 1.6rem;
             margin-top: 2px;
           }
         }
