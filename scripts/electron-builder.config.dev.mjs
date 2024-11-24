@@ -13,6 +13,7 @@ export default {
   compression: 'normal',
   copyright: `Copyright (C) ${new Date().getFullYear()} Polkadot Live Authors & Contributors`,
   productName: 'Polkadot Live',
+
   /** Building */
   directories: {
     output: 'releases',
@@ -26,6 +27,7 @@ export default {
     ...(await findFilesThatShouldBeExcluded()),
   ],
   npmRebuild: true,
+
   /** Mac */
   dmg: {
     sign: false,
@@ -44,6 +46,7 @@ export default {
       },
     ],
   },
+
   /** Windows */
   nsis: {
     oneClick: false,
@@ -57,5 +60,12 @@ export default {
         arch: ['x64'],
       },
     ],
+  },
+
+  /** Linux */
+  linux: {
+    icon: 'assets/1024x1024.png',
+    category: 'Network',
+    target: 'AppImage',
   },
 };
