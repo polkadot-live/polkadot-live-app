@@ -74,11 +74,6 @@ export default {
   linux: {
     icon: 'assets/1024x1024.png',
     category: 'Network',
-    target: [
-      {
-        target: 'AppImage',
-        arch: ['arm64'],
-      },
-    ],
+    target: 'AppImage',
   },
 };
