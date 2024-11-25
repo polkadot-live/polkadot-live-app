@@ -12,6 +12,7 @@ import {
 
 import { ButtonSecondary } from '../../kits/Buttons';
 import { HeaderWrapper } from './Wrapper';
+import { Padlock } from '../Padlock';
 import type { HeaderProps } from './types';
 
 export const Header = ({
@@ -77,6 +78,8 @@ export const Header = ({
                 />
               </button>
             )}
+
+            <Padlock />
           </div>
         ) : (
           <button

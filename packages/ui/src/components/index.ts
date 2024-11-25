@@ -12,6 +12,7 @@ export * from './Help';
 export * from './Identicon';
 export * from './Menu';
 export * from './Overlay';
+export * from './Padlock';
 export * from './ShiftingMeter';
 export * from './Spinners';
 export * from './SideNav';
