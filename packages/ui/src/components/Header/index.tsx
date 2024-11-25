@@ -4,13 +4,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTimes,
-  faUnlock,
-  faLock,
   faWindowRestore,
   faCircleChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
-
-import { ButtonSecondary } from '../../kits/Buttons';
 import { HeaderWrapper } from './Wrapper';
 import { Padlock } from '../Padlock';
 import type { HeaderProps } from './types';
@@ -38,17 +34,6 @@ export const Header = ({
       <div className="right">
         {showButtons ? (
           <div className="controls-wrapper">
-            {/* Dock window */}
-            {showDock && (
-              <ButtonSecondary
-                className="dock-btn"
-                text={dockToggled ? 'Detach' : 'Dock'}
-                iconLeft={dockToggled ? faUnlock : faLock}
-                iconTransform="shrink-5"
-                onClick={() => onDockToggle && onDockToggle()}
-              />
-            )}
-
             {/* Restore base window */}
             <button
               type="button"
@@ -79,7 +64,13 @@ export const Header = ({
               </button>
             )}
 
-            <Padlock />
+            {/* Dock button */}
+            {showDock && (
+              <Padlock
+                locked={Boolean(dockToggled)}
+                onClick={() => onDockToggle && onDockToggle()}
+              />
+            )}
           </div>
         ) : (
           <button
