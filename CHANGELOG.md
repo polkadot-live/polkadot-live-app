@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.4.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.3.0-alpha...v0.4.0-alpha) (2024-11-25)
+
+
+### Features
+
+* electron builder integration ([#739](https://github.com/polkadot-live/polkadot-live-app/issues/739)) ([bcb049a](https://github.com/polkadot-live/polkadot-live-app/commit/bcb049a141b768f43c4b79052a9435d34a148698))
+* header dock toggle icon ([#757](https://github.com/polkadot-live/polkadot-live-app/issues/757)) ([aff9d9a](https://github.com/polkadot-live/polkadot-live-app/commit/aff9d9a0c9d48c20315cf55024609c65d5ef28bc))
+* linux app image build ([#750](https://github.com/polkadot-live/polkadot-live-app/issues/750)) ([05ff779](https://github.com/polkadot-live/polkadot-live-app/commit/05ff77979e9981c2b5ee00b1ef3034a7cc686350))
+* linux minimise window button ([#751](https://github.com/polkadot-live/polkadot-live-app/issues/751)) ([2708361](https://github.com/polkadot-live/polkadot-live-app/commit/2708361cae9125fa4c24bce063681af27ecaa795))
+* monorepo migration ([#740](https://github.com/polkadot-live/polkadot-live-app/issues/740)) ([5c55585](https://github.com/polkadot-live/polkadot-live-app/commit/5c55585d86e2409187a684f6a7e8400b6014c8f6))
+* nx integration ([#743](https://github.com/polkadot-live/polkadot-live-app/issues/743)) ([2510ca1](https://github.com/polkadot-live/polkadot-live-app/commit/2510ca1e52aa2d37f7190442d80fcb109e9c5cc4))
+* nx watch build script ([#746](https://github.com/polkadot-live/polkadot-live-app/issues/746)) ([6d9447a](https://github.com/polkadot-live/polkadot-live-app/commit/6d9447adcaea3825345664e5427a96079fd73c64))
+* preload test suite ([#749](https://github.com/polkadot-live/polkadot-live-app/issues/749)) ([5b9e0b1](https://github.com/polkadot-live/polkadot-live-app/commit/5b9e0b19240e9bc0b71d2c97c545f9e5ab5509ee))
+* test suite infra ([#747](https://github.com/polkadot-live/polkadot-live-app/issues/747)) ([fc65286](https://github.com/polkadot-live/polkadot-live-app/commit/fc65286ee59df246b157af5a43cc7c75bec731a6))
+* ui package ([#742](https://github.com/polkadot-live/polkadot-live-app/issues/742)) ([b148b84](https://github.com/polkadot-live/polkadot-live-app/commit/b148b84cbc779b43a8fdb5f529e52e9179e6ee65))
+
+
+### Bug Fixes
+
+* build ui package in ci ([ea1f75c](https://github.com/polkadot-live/polkadot-live-app/commit/ea1f75c1dad282bc8f12865865492ec8d73de76f))
+* linux base window glitch ([#754](https://github.com/polkadot-live/polkadot-live-app/issues/754)) ([6ede563](https://github.com/polkadot-live/polkadot-live-app/commit/6ede5636a07de9750740a5f01cf65b8782574908))
+* linux overlay window alternative ([#753](https://github.com/polkadot-live/polkadot-live-app/issues/753)) ([ad66097](https://github.com/polkadot-live/polkadot-live-app/commit/ad660976a61f56e2f8cd3726b4e4ddedb877cac0))
+* vite renderer alias order ([872231e](https://github.com/polkadot-live/polkadot-live-app/commit/872231ef0ffd3065571de250d216fc516421218c))
+
 ## [0.3.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.2.0-alpha...v0.3.0-alpha) (2024-11-01)
 
 
