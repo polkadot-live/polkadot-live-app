@@ -7,7 +7,7 @@ import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { Manage } from './Manage';
-import { Splash } from './Splash';
+import { Import } from './Import';
 import { renderToast } from '@app/utils/ImportUtils';
 import type {
   GetAddressMessage,
@@ -176,7 +176,7 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
   }, [processImport]);
 
   return !addresses.length ? (
-    <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
+    <Import setSection={setSection} statusCodes={statusCodesRef.current} />
   ) : (
     <Manage
       isImporting={isImporting}
