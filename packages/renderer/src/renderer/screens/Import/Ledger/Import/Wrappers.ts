@@ -5,6 +5,40 @@ import * as Select from '@radix-ui/react-select';
 import styled from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
+export const InfoCard = styled.div`
+  background-color: var(--background-surface);
+  color: var(--text-color-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-top: 0.75rem;
+  padding: 1.25rem 1rem;
+  border-radius: 0.375rem;
+
+  .warning {
+    color: var(--accent-warning) !important;
+  }
+
+  span {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+  }
+`;
+
+export const ConnectButton = styled.button`
+  background-color: var(--button-pink-background);
+  color: var(--text-bright);
+  padding: 0 1.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease-out;
+  user-select: none;
+
+  &:hover {
+    background-color: var(--button-pink-background-hover);
+  }
+`;
+
 export const SelectTrigger = styled(Select.Trigger).attrs<{
   $theme: AnyData;
 }>((props) => ({
@@ -22,7 +56,7 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   align-items: center;
   justify-content: start;
   border-radius: 0.375rem;
-  padding: 1rem 1.25rem;
+  padding: 1.1rem 1.25rem;
   font-size: 1.2rem;
   min-height: 35px;
   gap: 1rem;

@@ -10,7 +10,7 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import { executeLedgerLoop } from './ledger';
+import { executeLedgerTask } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -390,19 +390,16 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on(
-    'app:ledger:do-loop',
-    async (_, accountIndex, chainName, tasks) => {
-      console.debug(accountIndex, chainName, tasks);
-      const importView = WindowsController.getView('import');
+  ipcMain.on('app:ledger:task', async (_, accountIndex, chainName, tasks) => {
+    console.debug(accountIndex, chainName, tasks);
+    const importView = WindowsController.getView('import');
 
-      if (importView) {
-        await executeLedgerLoop(importView!, chainName, tasks, {
-          accountIndex,
-        });
-      }
+    if (importView) {
+      await executeLedgerTask(importView!, chainName, tasks, {
+        accountIndex,
+      });
     }
-  );
+  });
 
   /**
    * Backup

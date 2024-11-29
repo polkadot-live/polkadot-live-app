@@ -4,7 +4,7 @@
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { AnyJson } from '@polkadot-live/types/misc';
 
-// formats a title and subtitle depending on the Ledger code received.
+// Formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (
   statusCode: string,
   inStatusBar = false

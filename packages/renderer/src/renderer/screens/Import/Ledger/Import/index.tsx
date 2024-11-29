@@ -15,7 +15,11 @@ import {
 } from '@polkadot-live/ui/components';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../../Wrappers';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretLeft,
+  faCheckCircle,
+  faExclamationTriangle,
+} from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { determineStatusFromCodes } from '../Utils';
 import type { AnyData } from 'packages/types/src';
@@ -23,29 +27,21 @@ import type { AnyData } from 'packages/types/src';
 /** Theme Imports */
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
-import { SelectTrigger, SelectContent } from './Wrappers';
+import {
+  ConnectButton,
+  InfoCard,
+  SelectTrigger,
+  SelectContent,
+} from './Wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const SelectItem = forwardRef(function SelectItem(
-  { children, className, ...props }: AnyData,
-  forwardedRef
-) {
-  return (
-    <Select.Item
-      className={`SelectItem ${className}`}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="SelectItemIndicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});
-
-export const Import = ({ setSection, statusCodes }: AnyData) => {
+export const Import = ({
+  setSection,
+  statusCodes,
+  handleGetLedgerAddress,
+}: AnyData) => {
   const networkData = [
-    { network: 'Polkadot', ledgerId: 'polkadot' },
+    { network: 'Polkadot', ledgerId: 'dot' },
     { network: 'Kusama', ledgerId: 'kusama' },
   ];
 
@@ -75,43 +71,65 @@ export const Import = ({ setSection, statusCodes }: AnyData) => {
 
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
         {/** Choose Network */}
-        <ActionItem text={'Choose Network'} />
-        <Select.Root>
-          <SelectTrigger $theme={theme} aria-label="Network">
-            <Select.Value placeholder="Select Network" />
-            <Select.Icon>
-              <ChevronDownIcon />
-            </Select.Icon>
-          </SelectTrigger>
-          <Select.Portal>
-            <SelectContent $theme={theme} position="popper" sideOffset={3}>
-              <Select.ScrollUpButton className="SelectScrollButton">
-                <ChevronUpIcon />
-              </Select.ScrollUpButton>
-              <Select.Viewport className="SelectViewport">
-                <Select.Group>
-                  {networkData.map(({ network, ledgerId }) => (
-                    <SelectItem key={ledgerId} value={ledgerId}>
-                      {network}
-                    </SelectItem>
-                  ))}
-                </Select.Group>
-              </Select.Viewport>
-              <Select.ScrollDownButton className="SelectScrollButton">
+        <ActionItem text={'Connect Ledger'} />
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <Select.Root>
+            <SelectTrigger $theme={theme} aria-label="Network">
+              <Select.Value placeholder="Select Network" />
+              <Select.Icon>
                 <ChevronDownIcon />
-              </Select.ScrollDownButton>
-            </SelectContent>
-          </Select.Portal>
-        </Select.Root>
+              </Select.Icon>
+            </SelectTrigger>
+            <Select.Portal>
+              <SelectContent $theme={theme} position="popper" sideOffset={3}>
+                <Select.ScrollUpButton className="SelectScrollButton">
+                  <ChevronUpIcon />
+                </Select.ScrollUpButton>
+                <Select.Viewport className="SelectViewport">
+                  <Select.Group>
+                    {networkData.map(({ network, ledgerId }) => (
+                      <SelectItem key={ledgerId} value={ledgerId}>
+                        {network}
+                      </SelectItem>
+                    ))}
+                  </Select.Group>
+                </Select.Viewport>
+                <Select.ScrollDownButton className="SelectScrollButton">
+                  <ChevronDownIcon />
+                </Select.ScrollDownButton>
+              </SelectContent>
+            </Select.Portal>
+          </Select.Root>
 
-        {/** Connect Ledger */}
-        <ActionItem text={'Connect Ledger'} style={{ marginTop: '1.5rem' }} />
-        <p>
-          {!statusCodes.length
-            ? 'Checking...'
-            : determineStatusFromCodes(statusCodes, false).title}
-        </p>
-        <p>{determineStatusFromCodes(statusCodes, false).subtitle}</p>
+          <ConnectButton onClick={() => handleGetLedgerAddress()}>
+            Connect
+          </ConnectButton>
+        </div>
+
+        {/** Status Message */}
+        {statusCodes.length > 0 && (
+          <InfoCard>
+            <span className="warning">
+              <FontAwesomeIcon icon={faExclamationTriangle} />
+              {determineStatusFromCodes(statusCodes, false).title}
+            </span>
+          </InfoCard>
+        )}
+
+        <InfoCard>
+          <span>
+            <FontAwesomeIcon icon={faCheckCircle} />
+            Connect a Ledger device to this computer with a USB cable.
+          </span>
+          <span>
+            <FontAwesomeIcon icon={faCheckCircle} />
+            Unlock the Ledger device and open the Polkadot app.
+          </span>
+          <span>
+            <FontAwesomeIcon icon={faCheckCircle} />
+            Select a network and click on the <b>Connect</b> button above.
+          </span>
+        </InfoCard>
 
         <ActionItem
           text={'Select Addresses to Import'}
@@ -122,3 +140,21 @@ export const Import = ({ setSection, statusCodes }: AnyData) => {
     </Scrollable>
   );
 };
+
+const SelectItem = forwardRef(function SelectItem(
+  { children, className, ...props }: AnyData,
+  forwardedRef
+) {
+  return (
+    <Select.Item
+      className={`SelectItem ${className}`}
+      {...props}
+      ref={forwardedRef}
+    >
+      <Select.ItemText>{children}</Select.ItemText>
+      <Select.ItemIndicator className="SelectItemIndicator">
+        <CheckIcon />
+      </Select.ItemIndicator>
+    </Select.Item>
+  );
+});
