@@ -29,6 +29,41 @@ export const LedgerAddressRow = styled.div`
   }
 `;
 
+export const AddressListFooter = styled.div`
+  background-color: var(--background-window) !important;
+  display: flex;
+  align-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+
+  .pageBtn {
+    background-color: var(--background-primary);
+    padding: 0 1.75rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s ease-out;
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+    &:hover {
+      background-color: var(--background-primary-hover);
+    }
+  }
+
+  .importBtn {
+    background-color: var(--accent-success);
+    color: var(--text-bright);
+    padding: 1.2rem 1.5rem;
+    border-radius: 0.375rem;
+    min-width: 225px;
+    transition: all 0.2s ease-out;
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+  }
+`;
+
 export const InfoCard = styled.div`
   background-color: var(--background-surface);
   color: var(--text-color-secondary);
@@ -55,11 +90,11 @@ export const ConnectButton = styled.button`
   color: var(--text-bright);
   padding: 0 1.5rem;
   border-radius: 0.375rem;
-  transition: background-color 0.2s ease-out;
+  transition: all 0.2s ease-out;
   user-select: none;
 
   &:hover {
-    background-color: var(--button-pink-background-hover);
+    filter: brightness(1.2);
   }
 `;
 
@@ -85,7 +120,6 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
   &:focus {
     //box-shadow: 0 0 0 2px black;
   }
-
   .CheckboxIndicator {
     color: var(--violet-11);
   }

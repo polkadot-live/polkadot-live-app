@@ -6,6 +6,8 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import {
@@ -38,6 +40,7 @@ import {
   LedgerAddressRow,
   SelectTrigger,
   SelectContent,
+  AddressListFooter,
 } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
@@ -177,6 +180,18 @@ export const Import = ({
             </LedgerAddressRow>
           ))}
         </ItemsColumn>
+
+        <AddressListFooter>
+          <button className="pageBtn">
+            <CaretLeftIcon />
+          </button>
+          <button className="pageBtn">
+            <CaretRightIcon />
+          </button>
+          <div style={{ flex: 1, textAlign: 'right' }}>
+            <button className="importBtn">Import 2 Addresses</button>
+          </div>
+        </AddressListFooter>
       </ContentWrapper>
     </Scrollable>
   );

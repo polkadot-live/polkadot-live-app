@@ -11,6 +11,7 @@ export const darkTheme = {
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#dd9b22',
+  accentSuccess: '#2c7a2c',
 
   /* General: Borders */
   borderPrimaryColor: '#2e2e2e',
@@ -22,7 +23,6 @@ export const darkTheme = {
   buttonBackgroundPrimary: '#2d2d2d',
   buttonBackgroundPrimaryHover: '#373737',
   buttonPinkBackground: '#953254',
-  buttonPinkBackgroundHover: '#7a2b47',
   buttonPinkColor: '#ededed',
   buttonBackgroundSecondary: '#464646',
 
@@ -108,6 +108,7 @@ export const lightThene = {
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#c3590e',
+  accentSuccess: '#2c7a2c',
 
   /* General: Borders */
   borderPrimaryColor: '#c0c0c0',
@@ -118,7 +119,6 @@ export const lightThene = {
   buttonBackgroundPrimary: '#d2d2d2',
   buttonBackgroundPrimaryHover: '#c8c8c8',
   buttonPinkBackground: '#953254',
-  buttonPinkBackgroundHover: '#802d4a',
   buttonPinkColor: '#ededed',
   buttonBackgroundSecondary: '#a5a5a5',
 
