@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -11,7 +11,10 @@ import {
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import {
-  ActionItem,
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionCaretHeader,
   ControlsWrapper,
   Identicon,
   SortControlLabel,
@@ -55,6 +58,10 @@ export const Import = ({
     { network: 'Kusama', ledgerId: 'kusama' },
   ];
 
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(Array.from({ length: 2 }, (_, index) => index));
+
   /// Handle select network change.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleNetworkChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -91,104 +98,136 @@ export const Import = ({
       </ControlsWrapper>
 
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
-        {/** Choose Network */}
-        <ActionItem text={'Connect Ledger'} />
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Select.Root>
-            <SelectTrigger $theme={theme} aria-label="Network">
-              <Select.Value placeholder="Select Network" />
-              <Select.Icon>
-                <ChevronDownIcon />
-              </Select.Icon>
-            </SelectTrigger>
-            <Select.Portal>
-              <SelectContent $theme={theme} position="popper" sideOffset={3}>
-                <Select.ScrollUpButton className="SelectScrollButton">
-                  <ChevronUpIcon />
-                </Select.ScrollUpButton>
-                <Select.Viewport className="SelectViewport">
-                  <Select.Group>
-                    {networkData.map(({ network, ledgerId }) => (
-                      <SelectItem key={ledgerId} value={ledgerId}>
-                        {network}
-                      </SelectItem>
-                    ))}
-                  </Select.Group>
-                </Select.Viewport>
-                <Select.ScrollDownButton className="SelectScrollButton">
-                  <ChevronDownIcon />
-                </Select.ScrollDownButton>
-              </SelectContent>
-            </Select.Portal>
-          </Select.Root>
+        <Accordion
+          multiple
+          defaultIndex={accordionActiveIndices}
+          setExternalIndices={setAccordionActiveIndices}
+          gap={'1rem'}
+          panelPadding={'0.5rem 0.25rem'}
+        >
+          {/** Choose Network */}
+          <AccordionItem>
+            <AccordionCaretHeader
+              title="Connect Ledger"
+              itemIndex={0}
+              wide={true}
+            />
+            <AccordionPanel>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <Select.Root>
+                  <SelectTrigger $theme={theme} aria-label="Network">
+                    <Select.Value placeholder="Select Network" />
+                    <Select.Icon>
+                      <ChevronDownIcon />
+                    </Select.Icon>
+                  </SelectTrigger>
+                  <Select.Portal>
+                    <SelectContent
+                      $theme={theme}
+                      position="popper"
+                      sideOffset={3}
+                    >
+                      <Select.ScrollUpButton className="SelectScrollButton">
+                        <ChevronUpIcon />
+                      </Select.ScrollUpButton>
+                      <Select.Viewport className="SelectViewport">
+                        <Select.Group>
+                          {networkData.map(({ network, ledgerId }) => (
+                            <SelectItem key={ledgerId} value={ledgerId}>
+                              {network}
+                            </SelectItem>
+                          ))}
+                        </Select.Group>
+                      </Select.Viewport>
+                      <Select.ScrollDownButton className="SelectScrollButton">
+                        <ChevronDownIcon />
+                      </Select.ScrollDownButton>
+                    </SelectContent>
+                  </Select.Portal>
+                </Select.Root>
 
-          <ConnectButton onClick={() => handleGetLedgerAddress()}>
-            Connect
-          </ConnectButton>
-        </div>
-
-        {/** Status Message */}
-        {statusCodes.length > 0 && (
-          <InfoCard>
-            <span className="warning">
-              <FontAwesomeIcon icon={faExclamationTriangle} />
-              {determineStatusFromCodes(statusCodes, false).title}
-            </span>
-          </InfoCard>
-        )}
-
-        <InfoCard>
-          <span>
-            <FontAwesomeIcon icon={faCheckCircle} />
-            Connect a Ledger device to this computer with a USB cable.
-          </span>
-          <span>
-            <FontAwesomeIcon icon={faCheckCircle} />
-            Unlock the Ledger device and open the Polkadot app.
-          </span>
-          <span>
-            <FontAwesomeIcon icon={faCheckCircle} />
-            Select a network and click on the <b>Connect</b> button above.
-          </span>
-        </InfoCard>
-
-        <ActionItem text={'Import Addresses'} style={{ marginTop: '2.5rem' }} />
-
-        <InfoCard style={{ marginBottom: '0.75rem' }}>
-          <span>
-            <FontAwesomeIcon icon={faCircleInfo} />
-            Connect a Ledger device to list its derived addresses.
-          </span>
-        </InfoCard>
-
-        <ItemsColumn>
-          {mockAddresses.map((address, i) => (
-            <LedgerAddressRow key={address}>
-              <Identicon value={address} size={32} />
-              <div className="addressInfo">
-                <h2>Ledger Account {i + 1}</h2>
-                <span>{ellipsisFn(address, 12)}</span>
+                <ConnectButton onClick={() => handleGetLedgerAddress()}>
+                  Connect
+                </ConnectButton>
               </div>
-              <CheckboxRoot $theme={theme} className="CheckboxRoot" id="c1">
-                <Checkbox.Indicator className="CheckboxIndicator">
-                  <CheckIcon />
-                </Checkbox.Indicator>
-              </CheckboxRoot>
-            </LedgerAddressRow>
-          ))}
-        </ItemsColumn>
 
-        <AddressListFooter>
-          <button className="pageBtn">
-            <CaretLeftIcon />
-          </button>
-          <button className="pageBtn">
-            <CaretRightIcon />
-          </button>
-          <div className="importBtn">
-            <button>Import 2 Addresses</button>
-          </div>
-        </AddressListFooter>
+              {/** Status Message */}
+              {statusCodes.length > 0 && (
+                <InfoCard>
+                  <span className="warning">
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    {determineStatusFromCodes(statusCodes, false).title}
+                  </span>
+                </InfoCard>
+              )}
+
+              <InfoCard>
+                <span>
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                  Connect a Ledger device to this computer with a USB cable.
+                </span>
+                <span>
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                  Unlock the Ledger device and open the Polkadot app.
+                </span>
+                <span>
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                  Select a network and click on the <b>Connect</b> button above.
+                </span>
+              </InfoCard>
+            </AccordionPanel>
+          </AccordionItem>
+
+          {/** Import Addresses */}
+          <AccordionItem>
+            <AccordionCaretHeader
+              title="Import Addresses"
+              itemIndex={1}
+              wide={true}
+            />
+            <AccordionPanel>
+              <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
+                <span>
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                  Connect a Ledger device to list its derived addresses.
+                </span>
+              </InfoCard>
+
+              <ItemsColumn>
+                {mockAddresses.map((address, i) => (
+                  <LedgerAddressRow key={address}>
+                    <Identicon value={address} size={28} />
+                    <div className="addressInfo">
+                      <h2>Ledger Account {i + 1}</h2>
+                      <span>{ellipsisFn(address, 12)}</span>
+                    </div>
+                    <CheckboxRoot
+                      $theme={theme}
+                      className="CheckboxRoot"
+                      id="c1"
+                    >
+                      <Checkbox.Indicator className="CheckboxIndicator">
+                        <CheckIcon />
+                      </Checkbox.Indicator>
+                    </CheckboxRoot>
+                  </LedgerAddressRow>
+                ))}
+              </ItemsColumn>
+
+              <AddressListFooter>
+                <button className="pageBtn">
+                  <CaretLeftIcon />
+                </button>
+                <button className="pageBtn">
+                  <CaretRightIcon />
+                </button>
+                <div className="importBtn">
+                  <button>Import 2 Addresses</button>
+                </div>
+              </AddressListFooter>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </ContentWrapper>
     </Scrollable>
   );

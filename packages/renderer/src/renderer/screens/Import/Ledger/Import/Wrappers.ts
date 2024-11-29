@@ -9,14 +9,14 @@ import type { AnyData } from '@polkadot-live/types/misc';
 export const LedgerAddressRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.75rem;
   padding: 1.15rem 1.5rem;
 
   > .addressInfo {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
 
     > h2 {
       margin: 0;
@@ -40,13 +40,13 @@ export const AddressListFooter = styled.div`
     background-color: var(--background-primary);
     padding: 0 1.75rem;
     border-radius: 0.375rem;
-    transition: background-color 0.2s ease-out;
+    transition: all 0.2s ease-out;
     svg {
       width: 22px;
       height: 22px;
     }
     &:hover {
-      background-color: var(--background-primary-hover);
+      filter: brightness(1.2);
     }
   }
 
@@ -56,7 +56,7 @@ export const AddressListFooter = styled.div`
     > button {
       background-color: var(--accent-success);
       color: var(--text-bright);
-      padding: 1.2rem 1.5rem;
+      padding: 0.95rem 1.5rem;
       border-radius: 0.375rem;
       min-width: 225px;
       transition: all 0.2s ease-out;
