@@ -87,7 +87,7 @@ export const Import = ({
           iconLeft={faCaretLeft}
           onClick={() => setSection(0)}
         />
-        <SortControlLabel label="Import Ledger Address" />
+        <SortControlLabel label="Import Ledger Addresses" />
       </ControlsWrapper>
 
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
@@ -152,10 +152,7 @@ export const Import = ({
           </span>
         </InfoCard>
 
-        <ActionItem
-          text={'Select Addresses to Import'}
-          style={{ marginTop: '2.5rem' }}
-        />
+        <ActionItem text={'Import Addresses'} style={{ marginTop: '2.5rem' }} />
 
         <InfoCard style={{ marginBottom: '0.75rem' }}>
           <span>
@@ -188,8 +185,8 @@ export const Import = ({
           <button className="pageBtn">
             <CaretRightIcon />
           </button>
-          <div style={{ flex: 1, textAlign: 'right' }}>
-            <button className="importBtn">Import 2 Addresses</button>
+          <div className="importBtn">
+            <button>Import 2 Addresses</button>
           </div>
         </AddressListFooter>
       </ContentWrapper>

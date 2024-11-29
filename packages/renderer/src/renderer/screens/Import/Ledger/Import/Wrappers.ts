@@ -51,15 +51,19 @@ export const AddressListFooter = styled.div`
   }
 
   .importBtn {
-    background-color: var(--accent-success);
-    color: var(--text-bright);
-    padding: 1.2rem 1.5rem;
-    border-radius: 0.375rem;
-    min-width: 225px;
-    transition: all 0.2s ease-out;
+    flex: 1;
+    text-align: right;
+    > button {
+      background-color: var(--accent-success);
+      color: var(--text-bright);
+      padding: 1.2rem 1.5rem;
+      border-radius: 0.375rem;
+      min-width: 225px;
+      transition: all 0.2s ease-out;
 
-    &:hover {
-      filter: brightness(1.2);
+      &:hover {
+        filter: brightness(1.2);
+      }
     }
   }
 `;
