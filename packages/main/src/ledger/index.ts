@@ -14,7 +14,7 @@ import type Transport from '@ledgerhq/hw-transport';
 
 const debug = MainDebug.extend('Ledger');
 
-const CHAIN_ID = 'polkadot';
+const CHAIN_ID = 'dot';
 const TX_METADATA_SRV_URL =
   'https://api.zondax.ch/polkadot/transaction/metadata';
 

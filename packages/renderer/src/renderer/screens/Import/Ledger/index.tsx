@@ -1,96 +1,27 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { setStateWithRef, ellipsisFn } from '@w3ux/utils';
-import { useEffect, useRef, useState } from 'react';
-import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { setStateWithRef } from '@w3ux/utils';
+import { useRef, useState } from 'react';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { Manage } from './Manage';
 import { Import } from './Import';
-import { renderToast } from '@app/utils/ImportUtils';
-import type {
-  GetAddressMessage,
-  LedgerResponse,
-  LedgerTask,
-} from '@polkadot-live/types/ledger';
+import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { ImportLedgerProps } from '../types';
-import type { IpcRendererEvent } from 'electron';
-import type { AnyData } from '@polkadot-live/types/misc';
 
-const TOTAL_ALLOWED_STATUS_CODES = 50;
-
-export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
+export const ImportLedger = ({
+  setSection /*, curSource*/,
+}: ImportLedgerProps) => {
   /// Status entry is added for a newly imported account.
-  const { insertAccountStatus } = useAccountStatuses();
-  const { ledgerAddresses: addresses, isAlreadyImported } = useAddresses();
-
-  /// Import handler.
-  const { handleImportAddress } = useImportHandler();
+  const { ledgerAddresses: addresses } = useAddresses();
 
   /// Store whether import is in process
   const [isImporting, setIsImporting] = useState(false);
   const isImportingRef = useRef(isImporting);
 
-  /// Used in effect for processing an import.
-  const [processImport, setProcessImport] = useState(false);
-  const bodyRef = useRef<{
-    address: string;
-    pubKey: string;
-    device: { id: string; productName: string };
-    options: AnyData;
-  } | null>(null);
-
   /// Store status codes received from Ledger device.
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
-
-  /// Gets the next non-imported address index.
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
-
-  /// Handle an incoming new status code and persist to state.
-  const handleNewStatusCode = (ack: string, statusCode: string) => {
-    const newStatusCodes = [{ ack, statusCode }, ...statusCodesRef.current];
-
-    // Remove last status code if there are more than allowed number of status codes.
-    if (newStatusCodes.length > TOTAL_ALLOWED_STATUS_CODES) {
-      newStatusCodes.pop();
-    }
-    setStateWithRef(newStatusCodes, setStatusCodes, statusCodesRef);
-  };
-
-  /// Interact with Ledger device and perform necessary tasks.
-  // TODO: Pass network.
-  const handleGetLedgerAddress = () => {
-    const tasks: LedgerTask[] = [];
-
-    if (isImportingRef.current) {
-      tasks.push('get_address');
-    }
-
-    // TODO: Make dynamic
-    const chainName = 'Polkadot';
-    window.myAPI.doLedgerTask(getNextAddressIndex(), chainName, tasks);
-  };
-
-  /// Handle a received Ledger address.
-  const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
-    const { ack, device, statusCode, body, options } = parsed;
-    handleNewStatusCode(ack, statusCode);
-
-    if (statusCode === 'ReceivedAddress') {
-      const { pubKey, address } = body[0];
-      bodyRef.current = { address, pubKey, device, options };
-      setProcessImport(true);
-    }
-  };
-
-  /// Toggle import
-  const toggleImport = (value: boolean) => {
-    setStateWithRef(value, setIsImporting, isImportingRef);
-    value ? handleGetLedgerAddress() : cancelImport();
-  };
 
   /// Cancel ongoing import.
   const cancelImport = () => {
@@ -98,74 +29,16 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
     setStateWithRef([], setStatusCodes, statusCodesRef);
   };
 
-  /// Initialise listeners for Ledger IO.
-  useEffect(() => {
-    if (curSource && curSource === 'ledger' && !addresses.length) {
-      // Listen for messages from main process.
-      window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
-        const parsed: GetAddressMessage | undefined = JSON.parse(result);
-
-        if (!parsed) {
-          throw new Error('Unable to parse GetAddressMessage');
-        }
-
-        handleLedgerStatusResponse(parsed);
-      });
-
-      setStateWithRef(true, setIsImporting, isImportingRef);
-    }
-  }, [curSource]);
-
-  /// Effect to trigger a ledger account import process.
-  useEffect(() => {
-    const handleImportProcess = async () => {
-      if (processImport && bodyRef.current) {
-        const { address, pubKey, device /*, options*/ } = bodyRef.current;
-
-        // Check if address is already imported.
-        if (isAlreadyImported(address)) {
-          renderToast(
-            'Address is already imported.',
-            'error',
-            `toast-${address}`
-          );
-          setSection(0);
-        } else {
-          await handleImportAddress(
-            address,
-            'ledger',
-            ellipsisFn(address),
-            pubKey,
-            device
-          );
-
-          // Insert account status entry.
-          insertAccountStatus(address, 'ledger');
-        }
-
-        setStateWithRef(false, setIsImporting, isImportingRef);
-        setStateWithRef([], setStatusCodes, statusCodesRef);
-        setProcessImport(false);
-        bodyRef.current = null;
-      }
-    };
-
-    handleImportProcess();
-  }, [processImport]);
-
   return !addresses.length ? (
-    <Import
-      setSection={setSection}
-      statusCodes={statusCodesRef.current}
-      handleGetLedgerAddress={handleGetLedgerAddress}
-    />
+    <Import setSection={setSection} />
   ) : (
     <Manage
       isImporting={isImporting}
-      toggleImport={toggleImport}
-      statusCodes={statusCodes}
       cancelImport={cancelImport}
       setSection={setSection}
+      // TODO: Remove:
+      toggleImport={() => false}
+      statusCodes={[]}
     />
   );
 };
