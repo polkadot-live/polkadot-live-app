@@ -72,7 +72,7 @@ export interface PreloadAPI {
   closeTab: (destroyViewId: string, showViewId: string | null) => void;
   isViewOpen: (viewId: string) => Promise<boolean>;
 
-  doLedgerLoop: ApiDoLedgerLoop;
+  doLedgerTask: ApiDoLedgerLoop;
   reportLedgerStatus: ApiReportLedgerStatus;
 
   requestImportedAccounts: ApiEmptyRequest;

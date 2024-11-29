@@ -19,7 +19,7 @@ const TX_METADATA_SRV_URL =
   'https://api.zondax.ch/polkadot/transaction/metadata';
 
 /// Connects to a Ledger device to perform a task.
-export const executeLedgerLoop = async (
+export const executeLedgerTask = async (
   view: WebContentsView,
   chainName: string,
   tasks: LedgerTask[],
@@ -57,7 +57,7 @@ export const handleGetAddress = async (
   chainName: string,
   index: number
 ) => {
-  // Forge transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
+  // Main transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
   const transport: Transport = await (
     TransportNodeHid as AnyFunction
   ).default.create(1000, 1000);

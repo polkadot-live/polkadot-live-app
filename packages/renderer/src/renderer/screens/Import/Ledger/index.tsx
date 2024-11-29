@@ -7,7 +7,7 @@ import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { Manage } from './Manage';
-import { Splash } from './Splash';
+import { Import } from './Import';
 import { renderToast } from '@app/utils/ImportUtils';
 import type {
   GetAddressMessage,
@@ -45,9 +45,6 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
-  /// Reference to ledger loop interval id.
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   /// Gets the next non-imported address index.
   const getNextAddressIndex = () =>
     !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
@@ -63,20 +60,18 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
     setStateWithRef(newStatusCodes, setStatusCodes, statusCodesRef);
   };
 
-  /// Start interval to poll Ledger device and perform necessary tasks.
-  const handleLedgerLoop = () => {
-    intervalRef.current = setInterval(() => {
-      const tasks: LedgerTask[] = [];
+  /// Interact with Ledger device and perform necessary tasks.
+  // TODO: Pass network.
+  const handleGetLedgerAddress = () => {
+    const tasks: LedgerTask[] = [];
 
-      if (isImportingRef.current) {
-        tasks.push('get_address');
-      }
+    if (isImportingRef.current) {
+      tasks.push('get_address');
+    }
 
-      // TODO: Make dynamic
-      const chainName = 'Polkadot';
-
-      window.myAPI.doLedgerLoop(getNextAddressIndex(), chainName, tasks);
-    }, 2000);
+    // TODO: Make dynamic
+    const chainName = 'Polkadot';
+    window.myAPI.doLedgerTask(getNextAddressIndex(), chainName, tasks);
   };
 
   /// Handle a received Ledger address.
@@ -85,9 +80,6 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
     handleNewStatusCode(ack, statusCode);
 
     if (statusCode === 'ReceivedAddress') {
-      // Stop polling ledger device.
-      intervalRef.current && clearInterval(intervalRef.current);
-
       const { pubKey, address } = body[0];
       bodyRef.current = { address, pubKey, device, options };
       setProcessImport(true);
@@ -97,13 +89,7 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
   /// Toggle import
   const toggleImport = (value: boolean) => {
     setStateWithRef(value, setIsImporting, isImportingRef);
-
-    if (value) {
-      handleLedgerLoop();
-    } else {
-      intervalRef.current && clearInterval(intervalRef.current);
-      cancelImport();
-    }
+    value ? handleGetLedgerAddress() : cancelImport();
   };
 
   /// Cancel ongoing import.
@@ -114,7 +100,6 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
 
   /// Initialise listeners for Ledger IO.
   useEffect(() => {
-    // Start the loop if no ledger accounts have been imported and splash page is shown.
     if (curSource && curSource === 'ledger' && !addresses.length) {
       // Listen for messages from main process.
       window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
@@ -128,14 +113,7 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
       });
 
       setStateWithRef(true, setIsImporting, isImportingRef);
-      handleLedgerLoop();
-    } else {
-      intervalRef.current && clearInterval(intervalRef.current);
     }
-
-    return () => {
-      intervalRef.current && clearInterval(intervalRef.current);
-    };
   }, [curSource]);
 
   /// Effect to trigger a ledger account import process.
@@ -176,7 +154,11 @@ export const ImportLedger = ({ setSection, curSource }: ImportLedgerProps) => {
   }, [processImport]);
 
   return !addresses.length ? (
-    <Splash setSection={setSection} statusCodes={statusCodesRef.current} />
+    <Import
+      setSection={setSection}
+      statusCodes={statusCodesRef.current}
+      handleGetLedgerAddress={handleGetLedgerAddress}
+    />
   ) : (
     <Manage
       isImporting={isImporting}
