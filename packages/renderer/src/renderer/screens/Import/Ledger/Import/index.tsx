@@ -1,6 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import * as Select from '@radix-ui/react-select';
+import * as themeVariables from '../../../../theme/variables';
+
 import { forwardRef, useState } from 'react';
 import {
   CheckIcon,
@@ -10,32 +15,16 @@ import {
   CaretRightIcon,
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
-  ControlsWrapper,
-  Identicon,
-  SortControlLabel,
-} from '@polkadot-live/ui/components';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../../Wrappers';
+import { ellipsisFn } from '@w3ux/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretLeft,
   faCheckCircle,
   faCircleInfo,
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
-import { determineStatusFromCodes } from '../Utils';
-import { ItemsColumn } from '@ren/renderer/screens/Home/Manage/Wrappers';
-import type { AnyData } from 'packages/types/src';
-
-/** Theme Imports */
-import * as Checkbox from '@radix-ui/react-checkbox';
-import * as Select from '@radix-ui/react-select';
-import * as themeVariables from '../../../../theme/variables';
 import {
   CheckboxRoot,
   ConnectButton,
@@ -45,8 +34,10 @@ import {
   SelectContent,
   AddressListFooter,
 } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ellipsisFn } from '@w3ux/utils';
+import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { determineStatusFromCodes } from '../Utils';
+import { ItemsColumn } from '@ren/renderer/screens/Home/Manage/Wrappers';
+import type { AnyData } from 'packages/types/src';
 
 export const Import = ({
   setSection,
@@ -87,18 +78,18 @@ export const Import = ({
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
       {/** Breadcrump */}
-      <ControlsWrapper $padWrapper={true} $padButton={false}>
+      <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
         <ButtonPrimaryInvert
           className="back-btn"
           text="Back"
           iconLeft={faCaretLeft}
           onClick={() => setSection(0)}
         />
-        <SortControlLabel label="Import Ledger Addresses" />
-      </ControlsWrapper>
+        <UI.SortControlLabel label="Import Ledger Addresses" />
+      </UI.ControlsWrapper>
 
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
-        <Accordion
+        <UI.Accordion
           multiple
           defaultIndex={accordionActiveIndices}
           setExternalIndices={setAccordionActiveIndices}
@@ -106,13 +97,13 @@ export const Import = ({
           panelPadding={'0.5rem 0.25rem'}
         >
           {/** Choose Network */}
-          <AccordionItem>
-            <AccordionCaretHeader
+          <UI.AccordionItem>
+            <UI.AccordionCaretHeader
               title="Connect Ledger"
               itemIndex={0}
               wide={true}
             />
-            <AccordionPanel>
+            <UI.AccordionPanel>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <Select.Root>
                   <SelectTrigger $theme={theme} aria-label="Network">
@@ -175,17 +166,17 @@ export const Import = ({
                   Select a network and click on the <b>Connect</b> button above.
                 </span>
               </InfoCard>
-            </AccordionPanel>
-          </AccordionItem>
+            </UI.AccordionPanel>
+          </UI.AccordionItem>
 
           {/** Import Addresses */}
-          <AccordionItem>
-            <AccordionCaretHeader
+          <UI.AccordionItem>
+            <UI.AccordionCaretHeader
               title="Import Addresses"
               itemIndex={1}
               wide={true}
             />
-            <AccordionPanel>
+            <UI.AccordionPanel>
               <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
                 <span>
                   <FontAwesomeIcon icon={faCircleInfo} />
@@ -196,7 +187,7 @@ export const Import = ({
               <ItemsColumn>
                 {mockAddresses.map((address, i) => (
                   <LedgerAddressRow key={address}>
-                    <Identicon value={address} size={28} />
+                    <UI.Identicon value={address} size={28} />
                     <div className="addressInfo">
                       <h2>Ledger Account {i + 1}</h2>
                       <span>{ellipsisFn(address, 12)}</span>
@@ -225,9 +216,9 @@ export const Import = ({
                   <button>Import 2 Addresses</button>
                 </div>
               </AddressListFooter>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+            </UI.AccordionPanel>
+          </UI.AccordionItem>
+        </UI.Accordion>
       </ContentWrapper>
     </Scrollable>
   );
