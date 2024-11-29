@@ -13,9 +13,10 @@ export const darkTheme = {
   accentWarning: '#dd9b22',
 
   /* General: Borders */
-  borderPrimaryColor: '#262626',
+  borderPrimaryColor: '#2e2e2e',
   borderSecondaryColor: '#414141',
   borderMidColor: '#3a3a3a',
+  borderSubtle: '#2e2e2e',
 
   /* General: Buttons */
   buttonBackgroundPrimary: '#2d2d2d',
@@ -109,7 +110,7 @@ export const lightThene = {
   accentWarning: '#c3590e',
 
   /* General: Borders */
-  borderPrimaryColor: '#cdcdcd',
+  borderPrimaryColor: '#c0c0c0',
   borderSecondaryColor: '#8a8a8a',
   borderMidColor: '#a8a8a8',
 

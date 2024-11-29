@@ -1,9 +1,33 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import styled from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
+
+export const LedgerAddressRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.15rem 1.5rem;
+
+  > .addressInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    > h2 {
+      margin: 0;
+      padding: 0;
+      font-size: 1.1rem;
+    }
+    > span {
+      color: var(--text-color-secondary);
+    }
+  }
+`;
 
 export const InfoCard = styled.div`
   background-color: var(--background-surface);
@@ -36,6 +60,34 @@ export const ConnectButton = styled.button`
 
   &:hover {
     background-color: var(--button-pink-background-hover);
+  }
+`;
+
+export const CheckboxRoot = styled(Checkbox.Root).attrs<{
+  $theme: AnyData;
+}>((props) => ({
+  $theme: props.$theme,
+}))`
+  background-color: var(--background-surface);
+  border: 1px solid var(--border-subtle);
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px var(--black-a7);
+  transition: background-color 0.2s ease-out;
+
+  &:hover {
+    background-color: var(--background-window);
+  }
+  &:focus {
+    //box-shadow: 0 0 0 2px black;
+  }
+
+  .CheckboxIndicator {
+    color: var(--violet-11);
   }
 `;
 

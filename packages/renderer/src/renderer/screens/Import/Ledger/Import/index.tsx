@@ -11,6 +11,7 @@ import { Scrollable } from '@polkadot-live/ui/styles';
 import {
   ActionItem,
   ControlsWrapper,
+  Identicon,
   SortControlLabel,
 } from '@polkadot-live/ui/components';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
@@ -18,22 +19,28 @@ import { ContentWrapper } from '../../../Wrappers';
 import {
   faCaretLeft,
   faCheckCircle,
+  faCircleInfo,
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@ren/renderer/contexts/common/Connections';
 import { determineStatusFromCodes } from '../Utils';
+import { ItemsColumn } from '@ren/renderer/screens/Home/Manage/Wrappers';
 import type { AnyData } from 'packages/types/src';
 
 /** Theme Imports */
+import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 import {
+  CheckboxRoot,
   ConnectButton,
   InfoCard,
+  LedgerAddressRow,
   SelectTrigger,
   SelectContent,
 } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ellipsisFn } from '@w3ux/utils';
 
 export const Import = ({
   setSection,
@@ -56,8 +63,19 @@ export const Import = ({
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const mockAddresses = [
+    '5CDKFFKebuBT7T7Sni7eWMrRsrXGVtauYH81VKBYk2dgjKS1',
+    '5DaL7GbMtvA7EPSPd22TLB8vKMt6CLpsaDG5a3nKgW41wNaN',
+    '5DCctuZNnfqH8j9wL34vmL9ywrqRJz4vXPoyG8HYA5QAdR9H',
+    '5HnC3oCrcTwVZ6RxGVrnNHgtH2EgQTeVAHs4VfvDwRaRZQHx',
+    '5EvLYdMDKFUSysxUHXEuDx4geWKFCTrtGLHUwmcBPapbMsvB',
+  ];
+
   return (
-    <Scrollable style={{ paddingTop: 0 }}>
+    <Scrollable
+      $footerHeight={4}
+      style={{ paddingTop: 0, paddingBottom: '2rem' }}
+    >
       {/** Breadcrump */}
       <ControlsWrapper $padWrapper={true} $padButton={false}>
         <ButtonPrimaryInvert
@@ -133,9 +151,32 @@ export const Import = ({
 
         <ActionItem
           text={'Select Addresses to Import'}
-          style={{ marginTop: '1.5rem' }}
+          style={{ marginTop: '2.5rem' }}
         />
-        <span>Render a dynamic list of ledger derived addresses.</span>
+
+        <InfoCard style={{ marginBottom: '0.75rem' }}>
+          <span>
+            <FontAwesomeIcon icon={faCircleInfo} />
+            Connect a Ledger device to list its derived addresses.
+          </span>
+        </InfoCard>
+
+        <ItemsColumn>
+          {mockAddresses.map((address, i) => (
+            <LedgerAddressRow key={address}>
+              <Identicon value={address} size={32} />
+              <div className="addressInfo">
+                <h2>Ledger Account {i + 1}</h2>
+                <span>{ellipsisFn(address, 12)}</span>
+              </div>
+              <CheckboxRoot $theme={theme} className="CheckboxRoot" id="c1">
+                <Checkbox.Indicator className="CheckboxIndicator">
+                  <CheckIcon />
+                </Checkbox.Indicator>
+              </CheckboxRoot>
+            </LedgerAddressRow>
+          ))}
+        </ItemsColumn>
       </ContentWrapper>
     </Scrollable>
   );
