@@ -93,7 +93,7 @@ type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
 
 type ApiDoLedgerLoop = (
-  accountIndex: number,
+  accountIndices: number[],
   chainName: string,
   tasks: LedgerTask[]
 ) => void;

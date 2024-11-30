@@ -18,10 +18,14 @@ export interface LedgerGetAddressResult {
 /**
  * Data sent to renderer via IPC.
  */
+export interface LedgerFetchedAddressData {
+  statusCode: string;
+  device: { id: string; productName: string };
+  body: [LedgerGetAddressResult];
+}
+
 export interface GetAddressMessage {
   ack: string;
-  body: LedgerGetAddressResult[];
-  device: { id: string; productName: string };
   options: AnyData;
-  statusCode: string;
+  addresses: string;
 }

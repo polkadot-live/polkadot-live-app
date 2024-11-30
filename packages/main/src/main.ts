@@ -390,13 +390,13 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:task', async (_, accountIndex, chainName, tasks) => {
-    console.debug(accountIndex, chainName, tasks);
+  ipcMain.on('app:ledger:task', async (_, accountIndices, chainName, tasks) => {
+    console.debug(accountIndices, chainName, tasks);
     const importView = WindowsController.getView('import');
 
     if (importView) {
       await executeLedgerTask(importView!, chainName, tasks, {
-        accountIndex,
+        accountIndices,
       });
     }
   });

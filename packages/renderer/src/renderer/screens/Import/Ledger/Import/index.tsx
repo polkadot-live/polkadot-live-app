@@ -43,6 +43,7 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   GetAddressMessage,
+  LedgerFetchedAddressData,
   LedgerResponse,
   LedgerTask,
 } from '@polkadot-live/types/ledger';
@@ -59,7 +60,7 @@ interface RawLedgerAddress {
 
 export const Import = ({ setSection }: AnyData) => {
   const { darkMode } = useConnections();
-  const { ledgerAddresses: addresses, isAlreadyImported } = useAddresses();
+  const { isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -71,6 +72,9 @@ export const Import = ({ setSection }: AnyData) => {
   const [ledgerConnected, setLedgerConnected] = useState(false);
   const [showConnectStatus, setShowConnectStatus] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState('');
+
+  // The current page of the listed Ledger addresses.
+  const [pageIndex, setPageIndex] = useState(0);
 
   // State for received addresses from `main` and selected addresses.
   const [receivedAddresses, setReceivedAddresses] = useState<
@@ -98,13 +102,19 @@ export const Import = ({ setSection }: AnyData) => {
    * Called when `Connect` button is clicked.
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddress = (chainName: string) => {
+  const handleGetLedgerAddress = () => {
     if (selectedNetwork === '') {
       setShowConnectStatus(true);
       return;
     }
     const tasks: LedgerTask[] = ['get_address'];
-    window.myAPI.doLedgerTask(getNextAddressIndex(), chainName, tasks);
+    const offset = pageIndex * 5;
+    const addressIndices = Array.from({ length: 5 }, (_, i) => i).map(
+      (i) => i + offset
+    );
+
+    setStateWithRef(true, setIsImporting, isImportingRef);
+    window.myAPI.doLedgerTask(addressIndices, selectedNetwork, tasks);
   };
 
   /**
@@ -120,21 +130,25 @@ export const Import = ({ setSection }: AnyData) => {
    * Handle a collection of received Ledger addresses.
    */
   const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
-    const { ack, device, statusCode, body, options } = parsed;
-    handleNewStatusCode(ack, statusCode);
+    const { ack, addresses, options } = parsed;
+    const received: LedgerFetchedAddressData[] = JSON.parse(addresses);
 
-    // Update list of addresses fetched from Ledger device.
-    if (statusCode === 'ReceivedAddress') {
-      const { pubKey, address } = body[0];
+    console.log(received);
 
-      setReceivedAddresses((pv) => {
-        const target = { address, pubKey, device, options };
-        const filtered = pv.filter(({ pubKey: pk }) => pk !== pubKey);
-        return [...filtered, target];
-      });
+    // Cache new address list.
+    const newCache: RawLedgerAddress[] = [];
 
-      setLedgerConnected(true);
+    for (const { statusCode, body, device } of received) {
+      handleNewStatusCode(ack, statusCode);
+
+      if (statusCode === 'ReceiveAddress') {
+        const { pubKey, address } = body[0];
+        newCache.push({ address, pubKey, device, options });
+      }
     }
+
+    setReceivedAddresses(newCache);
+    setLedgerConnected(true);
   };
 
   /**
@@ -150,15 +164,14 @@ export const Import = ({ setSection }: AnyData) => {
 
       handleLedgerStatusResponse(parsed);
     });
-
-    setStateWithRef(true, setIsImporting, isImportingRef);
   }, []);
 
   /**
-   * Util: Gets the next non-imported address index.
+   * Fetch new address list when page buttons clicked.
    */
-  const getNextAddressIndex = () =>
-    !addresses.length ? 0 : addresses[addresses.length - 1].index || 0 + 1;
+  useEffect(() => {
+    handleGetLedgerAddress();
+  }, [pageIndex]);
 
   /**
    * Util: Handle an incoming new status code and persist to state.
@@ -173,11 +186,12 @@ export const Import = ({ setSection }: AnyData) => {
    * Handle importing the selected Ledger addresses.
    */
   const handleImportProcess = async () => {
-    if (selectedAddresses.length === 0) {
+    const selected = selectedAddresses;
+    if (selected.length === 0) {
       return;
     }
 
-    for (const { address, pubKey, device } of selectedAddresses) {
+    for (const { address, pubKey, device } of selected) {
       if (isAlreadyImported(address)) {
         // TODO: Notify user address is already imported.
         continue;
@@ -210,11 +224,10 @@ export const Import = ({ setSection }: AnyData) => {
         return filtered;
       } else {
         const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
-        return target ? [...filtered, target] : filtered;
+        const updated = target ? [...filtered, target] : filtered;
+        return updated;
       }
     });
-
-    console.log(selectedAddresses);
   };
 
   return (
@@ -285,9 +298,7 @@ export const Import = ({ setSection }: AnyData) => {
                   </Select.Portal>
                 </Select.Root>
 
-                <ConnectButton
-                  onClick={() => handleGetLedgerAddress(selectedNetwork)}
-                >
+                <ConnectButton onClick={() => handleGetLedgerAddress()}>
                   Connect
                 </ConnectButton>
               </div>
@@ -350,7 +361,7 @@ export const Import = ({ setSection }: AnyData) => {
                       <LedgerAddressRow key={address}>
                         <UI.Identicon value={address} size={28} />
                         <div className="addressInfo">
-                          <h2>Ledger Account {i + 1}</h2>
+                          <h2>Ledger Account {pageIndex * 5 + i + 1}</h2>
                           <span>{ellipsisFn(address, 12)}</span>
                         </div>
                         <CheckboxRoot
@@ -370,10 +381,16 @@ export const Import = ({ setSection }: AnyData) => {
                   </ItemsColumn>
 
                   <AddressListFooter>
-                    <button className="pageBtn">
+                    <button
+                      className="pageBtn"
+                      onClick={() => setPageIndex((pv) => Math.max(0, pv - 1))}
+                    >
                       <CaretLeftIcon />
                     </button>
-                    <button className="pageBtn">
+                    <button
+                      className="pageBtn"
+                      onClick={() => setPageIndex((pv) => Math.max(0, pv + 1))}
+                    >
                       <CaretRightIcon />
                     </button>
                     <div className="importBtn">
