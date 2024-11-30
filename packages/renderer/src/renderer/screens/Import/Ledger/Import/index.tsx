@@ -71,7 +71,11 @@ export const Import = ({ setSection }: AnyData) => {
   // Dynamic state.
   const [ledgerConnected, setLedgerConnected] = useState(false);
   const [showConnectStatus, setShowConnectStatus] = useState(false);
+
   const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [connectedNetwork, setConnectedNetwork] = useState('');
+  const selectedNetworkRef = useRef(selectedNetwork);
+  const connectedNetworkRef = useRef(connectedNetwork);
 
   // The current page of the listed Ledger addresses.
   const [pageIndex, setPageIndex] = useState(0);
@@ -97,22 +101,59 @@ export const Import = ({ setSection }: AnyData) => {
   ];
 
   /**
+   * Util: Handle an incoming new status code and persist to state.
+   */
+  const handleNewStatusCode = (ack: string, statusCode: string) => {
+    const updated = [{ ack, statusCode }, ...statusCodesRef.current];
+    updated.length > TOTAL_ALLOWED_STATUS_CODES && updated.pop();
+    setStateWithRef(updated, setStatusCodes, statusCodesRef);
+  };
+
+  /**
+   * Reset selected addresses and page index when connecting to another network.
+   */
+  const preConnect = () => {
+    setLedgerConnected(false);
+    setSelectedAddresses([]);
+    setReceivedAddresses([]);
+    setPageIndex(0);
+  };
+
+  /**
+   * Update the connected network state post connection.
+   */
+  const postConnect = () => {
+    const val = selectedNetworkRef.current;
+    setConnectedNetwork(val);
+    connectedNetworkRef.current = val;
+  };
+
+  /**
    * Called when `Connect` button is clicked.
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddress = () => {
+  const handleGetLedgerAddress = (changingPage: boolean) => {
     if (selectedNetwork === '') {
       setShowConnectStatus(true);
       return;
     }
     const tasks: LedgerTask[] = ['get_address'];
-    const offset = pageIndex * 5;
-    const addressIndices = Array.from({ length: 5 }, (_, i) => i).map(
+    const offset = !changingPage ? 0 : pageIndex * 5;
+    const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
       (i) => i + offset
     );
 
     setIsFetching(true);
-    window.myAPI.doLedgerTask(addressIndices, selectedNetwork, tasks);
+
+    // Use the connected network if we're changing page.
+    // Otherwise, use the selected network.
+    const network = changingPage
+      ? connectedNetwork === ''
+        ? selectedNetwork
+        : connectedNetwork
+      : selectedNetwork;
+
+    window.myAPI.doLedgerTask(accountIndices, network, tasks);
   };
 
   /**
@@ -169,17 +210,8 @@ export const Import = ({ setSection }: AnyData) => {
    * Fetch new address list when page buttons clicked.
    */
   useEffect(() => {
-    handleGetLedgerAddress();
+    handleGetLedgerAddress(true);
   }, [pageIndex]);
-
-  /**
-   * Util: Handle an incoming new status code and persist to state.
-   */
-  const handleNewStatusCode = (ack: string, statusCode: string) => {
-    const updated = [{ ack, statusCode }, ...statusCodesRef.current];
-    updated.length > TOTAL_ALLOWED_STATUS_CODES && updated.pop();
-    setStateWithRef(updated, setStatusCodes, statusCodesRef);
-  };
 
   /**
    * Handle importing the selected Ledger addresses.
@@ -202,7 +234,7 @@ export const Import = ({ setSection }: AnyData) => {
     }
 
     setStateWithRef([], setStatusCodes, statusCodesRef);
-    setReceivedAddresses([]);
+    setSelectedAddresses([]);
   };
 
   /**
@@ -278,7 +310,10 @@ export const Import = ({ setSection }: AnyData) => {
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <Select.Root
                   value={selectedNetwork}
-                  onValueChange={(value) => setSelectedNetwork(value)}
+                  onValueChange={(val) => {
+                    setSelectedNetwork(val);
+                    selectedNetworkRef.current = val;
+                  }}
                 >
                   <SelectTrigger $theme={theme} aria-label="Network">
                     <Select.Value placeholder="Select Network" />
@@ -312,8 +347,15 @@ export const Import = ({ setSection }: AnyData) => {
                 </Select.Root>
 
                 <ConnectButton
-                  onClick={() => handleGetLedgerAddress()}
-                  disabled={isFetching}
+                  onClick={() => {
+                    preConnect();
+                    handleGetLedgerAddress(false);
+                    postConnect();
+                  }}
+                  disabled={
+                    isFetching ||
+                    selectedNetworkRef.current === connectedNetworkRef.current
+                  }
                 >
                   Connect
                 </ConnectButton>

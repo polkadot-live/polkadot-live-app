@@ -28,11 +28,14 @@ export const executeLedgerTask = async (
     if (tasks.includes('get_address')) {
       debug('🔷 Get address');
 
-      const result = await handleGetAddresses(
-        view,
-        chainName,
-        options.accountIndices ?? [0, 1, 2, 3, 4]
-      );
+      let indices: number[] = [];
+      if (options && options.accountIndices) {
+        indices = [...(options.accountIndices as number[])];
+      } else {
+        indices = [0, 1, 2, 3, 4];
+      }
+
+      const result = await handleGetAddresses(chainName, indices);
 
       if (result) {
         view.webContents.send(
@@ -52,7 +55,6 @@ export const executeLedgerTask = async (
 
 /// Gets a Polkadot addresses on the device.
 export const handleGetAddresses = async (
-  view: WebContentsView,
   chainName: string,
   indices: number[]
 ) => {
@@ -95,7 +97,7 @@ export const handleGetAddresses = async (
   const withTimeout = async (millis: number, promise: Promise<AnyFunction>) => {
     const timeout = new Promise((_, reject) =>
       setTimeout(async () => {
-        transport.close();
+        await transport.close();
         reject(Error('Timeout'));
       }, millis)
     );
@@ -124,7 +126,7 @@ export const handleGetAddresses = async (
     }
   }
 
-  transport.close();
+  await transport.close();
 
   if (error.flag) {
     throw error.obj;
