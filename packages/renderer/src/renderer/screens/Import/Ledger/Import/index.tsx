@@ -230,6 +230,13 @@ export const Import = ({ setSection }: AnyData) => {
     });
   };
 
+  /**
+   * Determine if the checkbox for a fetched address should be checked.
+   * An address which was selected before should have a checked state.
+   */
+  const getChecked = (pk: string) =>
+    selectedAddresses.find(({ pubKey }) => pubKey === pk) ? true : false;
+
   return (
     <Scrollable
       $footerHeight={4}
@@ -368,6 +375,7 @@ export const Import = ({ setSection }: AnyData) => {
                           $theme={theme}
                           className="CheckboxRoot"
                           id="c1"
+                          checked={getChecked(pubKey)}
                           onCheckedChange={(checked) =>
                             handleCheckboxClick(checked, pubKey)
                           }
