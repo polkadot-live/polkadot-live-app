@@ -84,9 +84,7 @@ export const Import = ({ setSection }: AnyData) => {
     RawLedgerAddress[]
   >([]);
 
-  const [isImporting, setIsImporting] = useState(false);
-  const isImportingRef = useRef(isImporting);
-
+  const [isFetching, setIsFetching] = useState(false);
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
@@ -113,7 +111,7 @@ export const Import = ({ setSection }: AnyData) => {
       (i) => i + offset
     );
 
-    setStateWithRef(true, setIsImporting, isImportingRef);
+    setIsFetching(true);
     window.myAPI.doLedgerTask(addressIndices, selectedNetwork, tasks);
   };
 
@@ -148,6 +146,7 @@ export const Import = ({ setSection }: AnyData) => {
     }
 
     setReceivedAddresses(newCache);
+    setIsFetching(false);
     setLedgerConnected(true);
   };
 
@@ -202,7 +201,6 @@ export const Import = ({ setSection }: AnyData) => {
       insertAccountStatus(address, 'ledger');
     }
 
-    setStateWithRef(false, setIsImporting, isImportingRef);
     setStateWithRef([], setStatusCodes, statusCodesRef);
     setReceivedAddresses([]);
   };
@@ -236,6 +234,14 @@ export const Import = ({ setSection }: AnyData) => {
    */
   const getChecked = (pk: string) =>
     selectedAddresses.find(({ pubKey }) => pubKey === pk) ? true : false;
+
+  /**
+   * Get import button text.
+   */
+  const getImportLabel = () => {
+    const len = selectedAddresses.length;
+    return `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
+  };
 
   return (
     <Scrollable
@@ -305,7 +311,10 @@ export const Import = ({ setSection }: AnyData) => {
                   </Select.Portal>
                 </Select.Root>
 
-                <ConnectButton onClick={() => handleGetLedgerAddress()}>
+                <ConnectButton
+                  onClick={() => handleGetLedgerAddress()}
+                  disabled={isFetching}
+                >
                   Connect
                 </ConnectButton>
               </div>
@@ -391,19 +400,24 @@ export const Import = ({ setSection }: AnyData) => {
                   <AddressListFooter>
                     <button
                       className="pageBtn"
+                      disabled={pageIndex === 0 || isFetching}
                       onClick={() => setPageIndex((pv) => Math.max(0, pv - 1))}
                     >
                       <CaretLeftIcon />
                     </button>
                     <button
                       className="pageBtn"
+                      disabled={isFetching}
                       onClick={() => setPageIndex((pv) => Math.max(0, pv + 1))}
                     >
                       <CaretRightIcon />
                     </button>
                     <div className="importBtn">
-                      <button onClick={async () => await handleImportProcess()}>
-                        {`Import ${selectedAddresses.length ? selectedAddresses.length : ''} Addresses`}
+                      <button
+                        disabled={selectedAddresses.length === 0 || isFetching}
+                        onClick={async () => await handleImportProcess()}
+                      >
+                        {getImportLabel()}
                       </button>
                     </div>
                   </AddressListFooter>

@@ -41,12 +41,17 @@ export const AddressListFooter = styled.div`
     padding: 0 1.75rem;
     border-radius: 0.375rem;
     transition: all 0.2s ease-out;
+
     svg {
       width: 22px;
       height: 22px;
     }
     &:hover {
       filter: brightness(1.2);
+    }
+    &:disabled {
+      filter: brightness(0.75);
+      cursor: not-allowed;
     }
   }
 
@@ -63,6 +68,10 @@ export const AddressListFooter = styled.div`
 
       &:hover {
         filter: brightness(1.2);
+      }
+      &:disabled {
+        filter: brightness(0.4);
+        cursor: not-allowed;
       }
     }
   }
@@ -99,6 +108,10 @@ export const ConnectButton = styled.button`
 
   &:hover {
     filter: brightness(1.2);
+  }
+  &:disabled {
+    filter: brightness(0.75);
+    cursor: not-allowed;
   }
 `;
 
