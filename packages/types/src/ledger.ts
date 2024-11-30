@@ -27,5 +27,6 @@ export interface LedgerFetchedAddressData {
 export interface GetAddressMessage {
   ack: string;
   options: AnyData;
-  addresses: string;
+  statusCode: string;
+  addresses?: string;
 }

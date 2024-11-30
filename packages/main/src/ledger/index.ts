@@ -38,6 +38,7 @@ export const executeLedgerTask = async (
           'renderer:ledger:report:status',
           JSON.stringify({
             ack: 'success',
+            statusCode: 'ReceiveAddress',
             options,
             addresses: result,
           })

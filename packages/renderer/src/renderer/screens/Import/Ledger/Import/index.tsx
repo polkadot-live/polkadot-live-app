@@ -176,26 +176,40 @@ export const Import = ({ setSection }: AnyData) => {
    * Handle a collection of received Ledger addresses.
    */
   const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
-    const { ack, addresses, options } = parsed;
-    const received: LedgerFetchedAddressData[] = JSON.parse(addresses);
+    const { ack, statusCode, options } = parsed;
 
-    console.log(received);
+    switch (statusCode) {
+      /** Handle fetched Ledger addresses. */
+      case 'ReceiveAddress': {
+        const { addresses } = parsed;
+        const received: LedgerFetchedAddressData[] = JSON.parse(addresses!);
 
-    // Cache new address list.
-    const newCache: RawLedgerAddress[] = [];
+        // Cache new address list.
+        const newCache: RawLedgerAddress[] = [];
 
-    for (const { statusCode, body, device } of received) {
-      handleNewStatusCode(ack, statusCode);
+        for (const { body, device } of received) {
+          handleNewStatusCode(ack, statusCode);
 
-      if (statusCode === 'ReceiveAddress') {
-        const { pubKey, address } = body[0];
-        newCache.push({ address, pubKey, device, options });
+          if (statusCode === 'ReceiveAddress') {
+            const { pubKey, address } = body[0];
+            newCache.push({ address, pubKey, device, options });
+          }
+        }
+
+        setReceivedAddresses(newCache);
+        setIsFetching(false);
+        setLedgerConnected(true);
+        break;
+      }
+      /** Handle error messages. */
+      default: {
+        setIsFetching(false);
+        setConnectedNetwork('');
+        connectedNetworkRef.current = '';
+        handleNewStatusCode(ack, statusCode);
+        break;
       }
     }
-
-    setReceivedAddresses(newCache);
-    setIsFetching(false);
-    setLedgerConnected(true);
   };
 
   /**
@@ -375,14 +389,16 @@ export const Import = ({ setSection }: AnyData) => {
               </div>
 
               {/** Error and Status Messages */}
-              {showConnectStatus && statusCodes.length > 0 && (
-                <InfoCard>
-                  <span className="warning">
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    {determineStatusFromCodes(statusCodes, false).title}
-                  </span>
-                </InfoCard>
-              )}
+              {showConnectStatus &&
+                !ledgerConnected &&
+                statusCodes.length > 0 && (
+                  <InfoCard>
+                    <span className="warning">
+                      <FontAwesomeIcon icon={faExclamationTriangle} />
+                      {determineStatusFromCodes(statusCodes, false).title}
+                    </span>
+                  </InfoCard>
+                )}
 
               {showConnectStatus && selectedNetwork === '' && (
                 <InfoCard>
@@ -432,7 +448,10 @@ export const Import = ({ setSection }: AnyData) => {
                       <LedgerAddressRow key={address}>
                         <UI.Identicon value={address} size={28} />
                         <div className="addressInfo">
-                          <h2>Ledger Account {pageIndex * 5 + i + 1}</h2>
+                          <h2>
+                            {connectedNetwork} Ledger Account{' '}
+                            {pageIndex * 5 + i + 1}
+                          </h2>
                           <span>{ellipsisFn(address, 12)}</span>
                         </div>
                         <CheckboxRoot
