@@ -14,7 +14,6 @@ import type Transport from '@ledgerhq/hw-transport';
 
 const debug = MainDebug.extend('Ledger');
 
-const CHAIN_ID = 'dot';
 const TX_METADATA_SRV_URL =
   'https://api.zondax.ch/polkadot/transaction/metadata';
 
@@ -63,20 +62,26 @@ export const handleGetAddresses = async (
   ).default.create(1000, 1000);
 
   // Get ss58 address prefix for requested chain.
-  const { ss58_addr_type: ss58prefix } =
-    supportedApps.find((app) => app.name === chainName) || {};
+  const { ss58_addr_type: ss58prefix } = supportedApps.find(
+    (app) => app.name === chainName
+  )!;
 
   if (ss58prefix === undefined) {
     transport.close();
     throw new Error(`SS58 prefix undefined for chain: ${chainName}`);
   }
 
-  // TODO: Dynamic Chain ID.
+  // Get the correct `coin_type` for the address derivation path.
+  //const slip = chainName === 'Polkadot' ? '354' : '434';
+  const slip = '354';
+
+  // Get the correct chain ID for the metadata API.
+  const chainId = chainName === 'Polkadot' ? 'dot' : 'ksm';
 
   // Establish connection to Ledger Polkadot app.
   const substrateApp = new PolkadotGenericApp(
     transport,
-    CHAIN_ID,
+    chainId,
     TX_METADATA_SRV_URL
   );
 
@@ -84,16 +89,6 @@ export const handleGetAddresses = async (
   const { deviceModel } = transport;
   const { id, productName } = deviceModel || {};
   debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
-
-  // Send in progress message to window.
-  //view.webContents.send(
-  //  'renderer:ledger:report:status',
-  //  JSON.stringify({
-  //    ack: 'success',
-  //    statusCode: 'GettingAddress',
-  //    body: `Getting addresess ${index} in progress.`,
-  //  })
-  //);
 
   // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
   // as getting an address that does not require confirmation.
@@ -110,10 +105,8 @@ export const handleGetAddresses = async (
   const results: AnyData[] = [];
   let error: { flag: boolean; obj: Error | null } = { flag: false, obj: null };
 
-  // TODO: Dynamic coin_type.
-
   for (const index of indices) {
-    const PATH = `m/44'/354'/${index}'/0'/0'`;
+    const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
     const result: LedgerGetAddressResult | Error = await withTimeout(
       3000,
       substrateApp.getAddress(PATH, ss58prefix, false)
