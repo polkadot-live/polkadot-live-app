@@ -50,7 +50,7 @@ export const AddressListFooter = styled.div`
       filter: brightness(1.2);
     }
     &:disabled {
-      filter: brightness(0.75);
+      filter: brightness(0.9);
       cursor: not-allowed;
     }
   }
@@ -70,7 +70,7 @@ export const AddressListFooter = styled.div`
         filter: brightness(1.2);
       }
       &:disabled {
-        filter: brightness(0.4);
+        filter: brightness(0.8);
         cursor: not-allowed;
       }
     }
@@ -110,7 +110,7 @@ export const ConnectButton = styled.button`
     filter: brightness(1.2);
   }
   &:disabled {
-    filter: brightness(0.75);
+    filter: brightness(0.85);
     cursor: not-allowed;
   }
 `;
@@ -131,7 +131,11 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
   box-shadow: 0 2px 10px var(--black-a7);
   transition: background-color 0.2s ease-out;
 
-  &:hover {
+  &:disabled {
+    filter: brightness(0.9);
+    cursor: not-allowed;
+  }
+  &:hover:not(:disabled) {
     background-color: var(--background-window);
   }
   &:focus {

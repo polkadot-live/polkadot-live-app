@@ -22,20 +22,16 @@ export const executeLedgerTask = async (
   view: WebContentsView,
   chainName: string,
   tasks: LedgerTask[],
-  options?: AnyJson
+  options: { accountIndices: number[] }
 ) => {
   try {
     if (tasks.includes('get_address')) {
       debug('🔷 Get address');
 
-      let indices: number[] = [];
-      if (options && options.accountIndices) {
-        indices = [...(options.accountIndices as number[])];
-      } else {
-        indices = [0, 1, 2, 3, 4];
-      }
-
-      const result = await handleGetAddresses(chainName, indices);
+      const result = await handleGetAddresses(
+        chainName,
+        options.accountIndices
+      );
 
       if (result) {
         view.webContents.send(
@@ -61,7 +57,7 @@ export const handleGetAddresses = async (
   // Main transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
   const transport: Transport = await (
     TransportNodeHid as AnyFunction
-  ).default.create(1000, 1000);
+  ).default.create();
 
   // Get ss58 address prefix for requested chain.
   const { ss58_addr_type: ss58prefix } = supportedApps.find(
@@ -136,7 +132,7 @@ export const handleGetAddresses = async (
 };
 
 /// Handle Ledger connection errors.
-const handleErrors = (view: WebContentsView, err: AnyJson) => {
+const handleErrors = (view: WebContentsView, err: AnyJson): void => {
   // Attempt to handle the error while the window still exists.
   try {
     let errorFound = false;

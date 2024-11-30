@@ -206,8 +206,7 @@ export const API: PreloadAPI = {
    */
 
   // Performs a Ledger task.
-  doLedgerTask: (accountIndices, chainName, tasks) =>
-    ipcRenderer.send('app:ledger:task', accountIndices, chainName, tasks),
+  doLedgerTask: (serialized) => ipcRenderer.send('app:ledger:task', serialized),
 
   // Reports a Ledger device result to all open windows.
   reportLedgerStatus: (callback) =>

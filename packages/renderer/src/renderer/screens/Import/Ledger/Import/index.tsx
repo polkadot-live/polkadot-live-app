@@ -132,13 +132,14 @@ export const Import = ({ setSection }: AnyData) => {
    * Called when `Connect` button is clicked.
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddress = (changingPage: boolean) => {
+  const handleGetLedgerAddress = (changingPage: boolean, targetIndex = 0) => {
     if (selectedNetwork === '') {
       setShowConnectStatus(true);
       return;
     }
+
     const tasks: LedgerTask[] = ['get_address'];
-    const offset = !changingPage ? 0 : pageIndex * 5;
+    const offset = !changingPage ? 0 : targetIndex! * 5;
     const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
       (i) => i + offset
     );
@@ -153,7 +154,13 @@ export const Import = ({ setSection }: AnyData) => {
         : connectedNetwork
       : selectedNetwork;
 
-    window.myAPI.doLedgerTask(accountIndices, network, tasks);
+    const serialized = JSON.stringify({
+      accountIndices,
+      chainName: network,
+      tasks,
+    });
+
+    window.myAPI.doLedgerTask(serialized);
   };
 
   /**
@@ -207,13 +214,6 @@ export const Import = ({ setSection }: AnyData) => {
   }, []);
 
   /**
-   * Fetch new address list when page buttons clicked.
-   */
-  useEffect(() => {
-    handleGetLedgerAddress(true);
-  }, [pageIndex]);
-
-  /**
    * Handle importing the selected Ledger addresses.
    */
   const handleImportProcess = async () => {
@@ -258,6 +258,19 @@ export const Import = ({ setSection }: AnyData) => {
         return updated;
       }
     });
+  };
+
+  /**
+   * Handle clicks for pagination buttons.
+   */
+  const handlePaginationClick = (direction: 'prev' | 'next') => {
+    const targetIndex =
+      direction === 'prev'
+        ? Math.max(0, pageIndex - 1)
+        : Math.max(0, pageIndex + 1);
+
+    setPageIndex(targetIndex);
+    handleGetLedgerAddress(true, targetIndex);
   };
 
   /**
@@ -427,6 +440,7 @@ export const Import = ({ setSection }: AnyData) => {
                           className="CheckboxRoot"
                           id="c1"
                           checked={getChecked(pubKey)}
+                          disabled={isFetching}
                           onCheckedChange={(checked) =>
                             handleCheckboxClick(checked, pubKey)
                           }
@@ -443,14 +457,14 @@ export const Import = ({ setSection }: AnyData) => {
                     <button
                       className="pageBtn"
                       disabled={pageIndex === 0 || isFetching}
-                      onClick={() => setPageIndex((pv) => Math.max(0, pv - 1))}
+                      onClick={() => handlePaginationClick('prev')}
                     >
                       <CaretLeftIcon />
                     </button>
                     <button
                       className="pageBtn"
                       disabled={isFetching}
-                      onClick={() => setPageIndex((pv) => Math.max(0, pv + 1))}
+                      onClick={() => handlePaginationClick('next')}
                     >
                       <CaretRightIcon />
                     </button>
