@@ -116,7 +116,6 @@ export const handleGetAddresses = async (
       break;
     } else {
       results.push({
-        statusCode: 'ReceiveAddress',
         device: { id, productName },
         body: [result], // { pubKey, address }
       });
