@@ -159,21 +159,20 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   background-color: var(--background);
   color: var(--text-primary);
   width: 100%;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: start;
   border-radius: 0.375rem;
   padding: 1.1rem 1.25rem;
   font-size: 1.2rem;
-  min-height: 35px;
   gap: 1rem;
 
-  /* Label */
-  :nth-child(1) {
+  /* SelectIcon */
+  .SelectIcon {
     flex: 1;
-    text-align: left;
+    text-align: right;
   }
-  /* Icon */
   :nth-child(2) {
     color: var(--text-primary);
   }

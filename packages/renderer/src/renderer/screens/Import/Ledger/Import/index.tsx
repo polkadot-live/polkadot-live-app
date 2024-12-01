@@ -40,6 +40,7 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { determineStatusFromCodes } from '../Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { useAddresses } from '@app/contexts/import/Addresses';
+import { chainIcon } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   GetAddressMessage,
@@ -96,8 +97,20 @@ export const Import = ({ setSection }: AnyData) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const networkData = [
-    { network: 'Polkadot', ledgerId: 'dot' },
-    { network: 'Kusama', ledgerId: 'kusama' },
+    {
+      network: 'Polkadot',
+      ledgerId: 'dot',
+      ChainIcon: chainIcon('Polkadot'),
+      iconWidth: 18,
+      iconFill: '#ac2461',
+    },
+    {
+      network: 'Kusama',
+      ledgerId: 'kusama',
+      ChainIcon: chainIcon('Kusama'),
+      iconWidth: 24,
+      iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
+    },
   ];
 
   /**
@@ -344,7 +357,7 @@ export const Import = ({ setSection }: AnyData) => {
                 >
                   <SelectTrigger $theme={theme} aria-label="Network">
                     <Select.Value placeholder="Select Network" />
-                    <Select.Icon>
+                    <Select.Icon className="SelectIcon">
                       <ChevronDownIcon />
                     </Select.Icon>
                   </SelectTrigger>
@@ -359,11 +372,39 @@ export const Import = ({ setSection }: AnyData) => {
                       </Select.ScrollUpButton>
                       <Select.Viewport className="SelectViewport">
                         <Select.Group>
-                          {networkData.map(({ network, ledgerId }) => (
-                            <SelectItem key={ledgerId} value={network}>
-                              {network}
-                            </SelectItem>
-                          ))}
+                          {networkData.map(
+                            ({
+                              network,
+                              ledgerId,
+                              ChainIcon,
+                              iconWidth,
+                              iconFill,
+                            }) => (
+                              <SelectItem key={ledgerId} value={network}>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: '0.75rem',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  <div style={{ minWidth: '30px' }}>
+                                    <ChainIcon
+                                      width={iconWidth}
+                                      fill={iconFill}
+                                      style={{
+                                        marginLeft:
+                                          network === 'Polkadot' ? '2px' : '0',
+                                      }}
+                                    />
+                                  </div>
+
+                                  <div>{network}</div>
+                                </div>
+                              </SelectItem>
+                            )
+                          )}
                         </Select.Group>
                       </Select.Viewport>
                       <Select.ScrollDownButton className="SelectScrollButton">
