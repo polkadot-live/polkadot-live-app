@@ -7,6 +7,7 @@ import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
+import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -320,6 +321,16 @@ export const Import = ({ setSection }: AnyData) => {
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
+      {isFetching && (
+        <BarLoader
+          color={darkMode ? '#642763' : '#a772a6'}
+          width={'100%'}
+          height={2}
+          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          speedMultiplier={0.75}
+        />
+      )}
+
       {/** Breadcrump */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
         <ButtonPrimaryInvert
