@@ -9,9 +9,8 @@ import {
   ControlsWrapper,
   SortControlLabel,
 } from '@polkadot-live/ui/components';
-import { faArrowDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { Address } from './Address';
-import { determineStatusFromCodes } from './Utils';
 import {
   ButtonText,
   ButtonPrimaryInvert,
@@ -25,11 +24,8 @@ import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import type { ImportLedgerManageProps } from '../types';
 
 export const Manage = ({
-  isImporting,
-  statusCodes,
-  //toggleImport,
-  cancelImport,
   setSection,
+  setShowImportUi,
 }: ImportLedgerManageProps) => {
   const { ledgerAddresses: addresses } = useAddresses();
 
@@ -60,19 +56,16 @@ export const Manage = ({
             className="back-btn"
             text="Back"
             iconLeft={faCaretLeft}
-            onClick={() => setSection(0)}
+            onClick={() => {
+              setSection(0);
+            }}
           />
           <SortControlLabel label="Ledger Accounts" />
 
           <ButtonText
-            iconLeft={faArrowDown}
-            text={
-              isImporting
-                ? 'Getting Account'
-                : 'Get Another Account (Coming Soon)'
-            }
-            disabled={isImporting || true}
-            onClick={() => console.log('todo') /*toggleImport(true)*/}
+            iconLeft={faCaretRight}
+            text={'Import Ledger Accounts'}
+            onClick={() => setShowImportUi(true)}
           />
         </ControlsWrapper>
 
@@ -120,28 +113,8 @@ export const Manage = ({
           <section className="left">
             <div className="footer-stat">
               <h2>Imported Ledger Accounts:</h2>
-              <span>
-                {!isImporting
-                  ? `${addresses.length}`
-                  : !statusCodes.length
-                    ? 'Connecting...'
-                    : determineStatusFromCodes(statusCodes, true).title}
-              </span>
+              <span>{addresses.length}</span>
             </div>
-          </section>
-          <section className="right">
-            {/* Look at HardwareStatusBar component when looking into ledger processing */}
-            {isImporting && (
-              <ButtonPrimaryInvert
-                text={'Cancel'}
-                style={{
-                  padding: '0.3rem 1.25rem',
-                  color: 'rgb(169, 74, 117)',
-                  borderColor: 'rgb(169, 74, 117)',
-                }}
-                onClick={() => cancelImport()}
-              />
-            )}
           </section>
         </div>
       </StatsFooter>

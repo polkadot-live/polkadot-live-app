@@ -16,12 +16,16 @@ import {
   CaretRightIcon,
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
+import {
+  ButtonPrimaryInvert,
+  ButtonText,
+} from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../../Wrappers';
 import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretLeft,
+  faCaretRight,
   faCheckCircle,
   faCircleInfo,
   faExclamationTriangle,
@@ -60,9 +64,13 @@ interface RawLedgerAddress {
   options: AnyData;
 }
 
-export const Import = ({ setSection }: AnyData) => {
+type NamedRawLedgerAddress = RawLedgerAddress & {
+  accountName: string;
+};
+
+export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   const { darkMode } = useConnections();
-  const { isAlreadyImported } = useAddresses();
+  const { isAlreadyImported, ledgerAddresses } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
@@ -87,10 +95,11 @@ export const Import = ({ setSection }: AnyData) => {
     RawLedgerAddress[]
   >([]);
   const [selectedAddresses, setSelectedAddresses] = useState<
-    RawLedgerAddress[]
+    NamedRawLedgerAddress[]
   >([]);
 
   const [isFetching, setIsFetching] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
@@ -242,35 +251,13 @@ export const Import = ({ setSection }: AnyData) => {
   }, []);
 
   /**
-   * Handle importing the selected Ledger addresses.
-   */
-  const handleImportProcess = async () => {
-    const selected = selectedAddresses;
-    if (selected.length === 0) {
-      return;
-    }
-
-    for (const { address, pubKey, device } of selected) {
-      if (isAlreadyImported(address)) {
-        // TODO: Notify user address is already imported.
-        continue;
-      }
-
-      const el = ellipsisFn(address);
-      await handleImportAddress(address, 'ledger', el, pubKey, device);
-      insertAccountStatus(address, 'ledger');
-    }
-
-    setStateWithRef([], setStatusCodes, statusCodesRef);
-    setSelectedAddresses([]);
-  };
-
-  /**
    * Handle a checkbox click to add and remove selected addresses.
+   * An initial account name is assigned.
    */
   const handleCheckboxClick = (
     checkState: Checkbox.CheckedState,
-    pk: string
+    pk: string,
+    accountName: string
   ) => {
     setSelectedAddresses((pv) => {
       const checked =
@@ -280,10 +267,15 @@ export const Import = ({ setSection }: AnyData) => {
 
       if (!checked) {
         return filtered;
+      }
+
+      const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
+
+      if (target) {
+        const namedTarget: NamedRawLedgerAddress = { ...target, accountName };
+        return [...filtered, namedTarget];
       } else {
-        const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
-        const updated = target ? [...filtered, target] : filtered;
-        return updated;
+        return filtered;
       }
     });
   };
@@ -316,12 +308,44 @@ export const Import = ({ setSection }: AnyData) => {
     return `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
   };
 
+  /**
+   * Handle importing the selected Ledger addresses.
+   */
+  const handleImportProcess = async () => {
+    if (selectedAddresses.length === 0) {
+      return;
+    }
+
+    for (const selected of selectedAddresses) {
+      const { address: add, pubKey: pk, device, accountName } = selected;
+
+      if (isAlreadyImported(add)) {
+        continue;
+      }
+
+      await handleImportAddress(add, 'ledger', accountName, false, pk, device);
+      insertAccountStatus(add, 'ledger');
+    }
+
+    setStateWithRef([], setStatusCodes, statusCodesRef);
+    setSelectedAddresses([]);
+  };
+
+  const preImport = () => {
+    setIsImporting(true);
+  };
+
+  const postImport = () => {
+    setIsImporting(false);
+    setShowImportUi(false);
+  };
+
   return (
     <Scrollable
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {isFetching && (
+      {(isFetching || isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
           width={'100%'}
@@ -337,9 +361,18 @@ export const Import = ({ setSection }: AnyData) => {
           className="back-btn"
           text="Back"
           iconLeft={faCaretLeft}
-          onClick={() => setSection(0)}
+          onClick={() => {
+            setShowImportUi(ledgerAddresses.length === 0);
+            setSection(0);
+          }}
         />
         <UI.SortControlLabel label="Import Ledger Addresses" />
+        <ButtonText
+          iconLeft={faCaretRight}
+          text={'Manage Ledger Accounts'}
+          disabled={ledgerAddresses.length === 0}
+          onClick={() => setShowImportUi(false)}
+        />
       </UI.ControlsWrapper>
 
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
@@ -472,7 +505,7 @@ export const Import = ({ setSection }: AnyData) => {
                 </span>
                 <span>
                   <FontAwesomeIcon icon={faCheckCircle} />
-                  Select a network and click on the <b>Connect</b> button above.
+                  Select a network above and click on the <b>Connect</b> button.
                 </span>
               </InfoCard>
             </UI.AccordionPanel>
@@ -506,20 +539,28 @@ export const Import = ({ setSection }: AnyData) => {
                           </h2>
                           <span>{ellipsisFn(address, 12)}</span>
                         </div>
-                        <CheckboxRoot
-                          $theme={theme}
-                          className="CheckboxRoot"
-                          id="c1"
-                          checked={getChecked(pubKey)}
-                          disabled={isFetching}
-                          onCheckedChange={(checked) =>
-                            handleCheckboxClick(checked, pubKey)
-                          }
-                        >
-                          <Checkbox.Indicator className="CheckboxIndicator">
-                            <CheckIcon />
-                          </Checkbox.Indicator>
-                        </CheckboxRoot>
+                        {isAlreadyImported(address) ? (
+                          <span className="imported">Imported</span>
+                        ) : (
+                          <CheckboxRoot
+                            $theme={theme}
+                            className="CheckboxRoot"
+                            id="c1"
+                            checked={getChecked(pubKey)}
+                            disabled={isFetching}
+                            onCheckedChange={(checked) =>
+                              handleCheckboxClick(
+                                checked,
+                                pubKey,
+                                `${connectedNetwork} Ledger Account ${pageIndex * 5 + i + 1}`
+                              )
+                            }
+                          >
+                            <Checkbox.Indicator className="CheckboxIndicator">
+                              <CheckIcon />
+                            </Checkbox.Indicator>
+                          </CheckboxRoot>
+                        )}
                       </LedgerAddressRow>
                     ))}
                   </ItemsColumn>
@@ -542,7 +583,11 @@ export const Import = ({ setSection }: AnyData) => {
                     <div className="importBtn">
                       <button
                         disabled={selectedAddresses.length === 0 || isFetching}
-                        onClick={async () => await handleImportProcess()}
+                        onClick={async () => {
+                          preImport();
+                          await handleImportProcess();
+                          postImport();
+                        }}
                       >
                         {getImportLabel()}
                       </button>

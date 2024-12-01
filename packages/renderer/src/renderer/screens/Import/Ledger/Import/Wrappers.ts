@@ -27,6 +27,11 @@ export const LedgerAddressRow = styled.div`
       color: var(--text-color-secondary);
     }
   }
+
+  .imported {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+  }
 `;
 
 export const AddressListFooter = styled.div`
