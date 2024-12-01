@@ -4,7 +4,7 @@
 import { MainDebug } from '@/utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
+import type { AnyData, AnyFunction, AnyJson } from '@polkadot-live/types/misc';
 import type { WebContentsView } from 'electron';
 import type {
   LedgerGetAddressResult,
@@ -14,7 +14,6 @@ import type Transport from '@ledgerhq/hw-transport';
 
 const debug = MainDebug.extend('Ledger');
 
-const CHAIN_ID = 'polkadot';
 const TX_METADATA_SRV_URL =
   'https://api.zondax.ch/polkadot/transaction/metadata';
 
@@ -23,16 +22,15 @@ export const executeLedgerTask = async (
   view: WebContentsView,
   chainName: string,
   tasks: LedgerTask[],
-  options?: AnyJson
+  options: { accountIndices: number[] }
 ) => {
   try {
     if (tasks.includes('get_address')) {
       debug('🔷 Get address');
 
-      const result = await handleGetAddress(
-        view,
+      const result = await handleGetAddresses(
         chainName,
-        options.accountIndex ?? 0
+        options.accountIndices
       );
 
       if (result) {
@@ -40,8 +38,9 @@ export const executeLedgerTask = async (
           'renderer:ledger:report:status',
           JSON.stringify({
             ack: 'success',
+            statusCode: 'ReceiveAddress',
             options,
-            ...result,
+            addresses: result,
           })
         );
       }
@@ -52,29 +51,59 @@ export const executeLedgerTask = async (
 };
 
 /// Gets a Polkadot addresses on the device.
-export const handleGetAddress = async (
-  view: WebContentsView,
+export const handleGetAddresses = async (
   chainName: string,
-  index: number
+  indices: number[]
 ) => {
+  // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
+  // as getting an address that does not require confirmation.
+  const withTimeout = async (
+    millis: number,
+    promise: Promise<AnyFunction>,
+    transport?: Transport
+  ) => {
+    const timeout = new Promise((_, reject) =>
+      setTimeout(async () => {
+        if (transport !== undefined) {
+          await transport.close();
+        }
+        reject(Error('Timeout'));
+      }, millis)
+    );
+    return Promise.race([promise, timeout]);
+  };
+
   // Main transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
-  const transport: Transport = await (
-    TransportNodeHid as AnyFunction
-  ).default.create(1000, 1000);
+  const transport: Transport | Error = await withTimeout(
+    3000,
+    (TransportNodeHid as AnyFunction).default.create()
+  );
+
+  if (transport instanceof Error) {
+    throw new Error("Couldn't connect to ledger.");
+  }
 
   // Get ss58 address prefix for requested chain.
-  const { ss58_addr_type: ss58prefix } =
-    supportedApps.find((app) => app.name === chainName) || {};
+  const { ss58_addr_type: ss58prefix } = supportedApps.find(
+    (app) => app.name === chainName
+  )!;
 
   if (ss58prefix === undefined) {
     transport.close();
     throw new Error(`SS58 prefix undefined for chain: ${chainName}`);
   }
 
+  // Get the correct `coin_type` for the address derivation path.
+  //const slip = chainName === 'Polkadot' ? '354' : '434';
+  const slip = '354';
+
+  // Get the correct chain ID for the metadata API.
+  const chainId = chainName === 'Polkadot' ? 'dot' : 'ksm';
+
   // Establish connection to Ledger Polkadot app.
   const substrateApp = new PolkadotGenericApp(
     transport,
-    CHAIN_ID,
+    chainId,
     TX_METADATA_SRV_URL
   );
 
@@ -83,49 +112,39 @@ export const handleGetAddress = async (
   const { id, productName } = deviceModel || {};
   debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
-  // Send in progress message to window.
-  view.webContents.send(
-    'renderer:ledger:report:status',
-    JSON.stringify({
-      ack: 'success',
-      statusCode: 'GettingAddress',
-      body: `Getting addresess ${index} in progress.`,
-    })
-  );
+  const results: AnyData[] = [];
+  let error: { flag: boolean; obj: Error | null } = { flag: false, obj: null };
 
-  // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
-  // as getting an address that does not require confirmation.
-  const withTimeout = async (millis: number, promise: Promise<AnyFunction>) => {
-    const timeout = new Promise((_, reject) =>
-      setTimeout(async () => {
-        transport.close();
-        reject(Error('Timeout'));
-      }, millis)
+  for (const index of indices) {
+    const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
+    const result: LedgerGetAddressResult | Error = await withTimeout(
+      3000,
+      substrateApp.getAddress(PATH, ss58prefix, false),
+      transport
     );
-    return Promise.race([promise, timeout]);
-  };
 
-  const PATH = `m/44'/354'/${index}'/0'/0'`;
-  const result: LedgerGetAddressResult | Error = await withTimeout(
-    3000,
-    substrateApp.getAddress(PATH, ss58prefix, false)
-  );
+    if (result instanceof Error) {
+      error = { flag: true, obj: result };
+      break;
+    } else {
+      results.push({
+        device: { id, productName },
+        body: [result], // { pubKey, address }
+      });
+    }
+  }
 
-  transport.close();
+  await transport.close();
 
-  if (result instanceof Error) {
-    throw result;
+  if (error.flag) {
+    throw error.obj;
   } else {
-    return {
-      statusCode: 'ReceivedAddress',
-      device: { id, productName },
-      body: [result], // { pubKey, address }
-    };
+    return JSON.stringify(results);
   }
 };
 
 /// Handle Ledger connection errors.
-const handleErrors = (view: WebContentsView, err: AnyJson) => {
+const handleErrors = (view: WebContentsView, err: AnyJson): void => {
   // Attempt to handle the error while the window still exists.
   try {
     let errorFound = false;

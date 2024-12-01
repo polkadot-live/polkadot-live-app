@@ -36,6 +36,7 @@ import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
+import type { LedgerTask } from 'packages/types/src';
 
 const debug = MainDebug;
 
@@ -390,13 +391,21 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:task', async (_, accountIndex, chainName, tasks) => {
-    console.debug(accountIndex, chainName, tasks);
-    const importView = WindowsController.getView('import');
+  ipcMain.on('app:ledger:task', async (_, serialized) => {
+    interface Target {
+      accountIndices: number[];
+      chainName: string;
+      tasks: LedgerTask[];
+    }
+
+    const { accountIndices, chainName, tasks }: Target = JSON.parse(serialized);
+
+    console.debug(accountIndices, chainName, tasks);
+    const importView = WindowsController.getView('import')!;
 
     if (importView) {
-      await executeLedgerTask(importView!, chainName, tasks, {
-        accountIndex,
+      await executeLedgerTask(importView, chainName, tasks, {
+        accountIndices,
       });
     }
   });

@@ -6,7 +6,8 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -17,7 +18,7 @@ import {
 import { Scrollable } from '@polkadot-live/ui/styles';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ContentWrapper } from '../../../Wrappers';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn, setStateWithRef } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretLeft,
@@ -34,49 +35,302 @@ import {
   SelectContent,
   AddressListFooter,
 } from './Wrappers';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { determineStatusFromCodes } from '../Utils';
-import { ItemsColumn } from '@ren/renderer/screens/Home/Manage/Wrappers';
-import type { AnyData } from 'packages/types/src';
+import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { chainIcon } from '@ren/config/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type {
+  GetAddressMessage,
+  LedgerFetchedAddressData,
+  LedgerResponse,
+  LedgerTask,
+} from '@polkadot-live/types/ledger';
+import type { IpcRendererEvent } from 'electron';
 
-export const Import = ({
-  setSection,
-  statusCodes,
-  handleGetLedgerAddress,
-}: AnyData) => {
-  const networkData = [
-    { network: 'Polkadot', ledgerId: 'dot' },
-    { network: 'Kusama', ledgerId: 'kusama' },
-  ];
+const TOTAL_ALLOWED_STATUS_CODES = 50;
+
+interface RawLedgerAddress {
+  address: string;
+  pubKey: string;
+  device: { id: string; productName: string };
+  options: AnyData;
+}
+
+export const Import = ({ setSection }: AnyData) => {
+  const { darkMode } = useConnections();
+  const { isAlreadyImported } = useAddresses();
+  const { insertAccountStatus } = useAccountStatuses();
+  const { handleImportAddress } = useImportHandler();
 
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: 2 }, (_, index) => index));
 
-  /// Handle select network change.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleNetworkChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedNetwork = event.target.value;
+  // Dynamic state.
+  const [ledgerConnected, setLedgerConnected] = useState(false);
+  const [showConnectStatus, setShowConnectStatus] = useState(false);
 
-    console.log(`Selected: ${selectedNetwork}`);
-  };
+  const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [connectedNetwork, setConnectedNetwork] = useState('');
+  const selectedNetworkRef = useRef(selectedNetwork);
+  const connectedNetworkRef = useRef(connectedNetwork);
 
-  const { darkMode } = useConnections();
+  // The current page of the listed Ledger addresses.
+  const [pageIndex, setPageIndex] = useState(0);
+
+  // State for received addresses from `main` and selected addresses.
+  const [receivedAddresses, setReceivedAddresses] = useState<
+    RawLedgerAddress[]
+  >([]);
+  const [selectedAddresses, setSelectedAddresses] = useState<
+    RawLedgerAddress[]
+  >([]);
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
+  const statusCodesRef = useRef(statusCodes);
+
+  // Component constant data.
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  const mockAddresses = [
-    '5CDKFFKebuBT7T7Sni7eWMrRsrXGVtauYH81VKBYk2dgjKS1',
-    '5DaL7GbMtvA7EPSPd22TLB8vKMt6CLpsaDG5a3nKgW41wNaN',
-    '5DCctuZNnfqH8j9wL34vmL9ywrqRJz4vXPoyG8HYA5QAdR9H',
-    '5HnC3oCrcTwVZ6RxGVrnNHgtH2EgQTeVAHs4VfvDwRaRZQHx',
-    '5EvLYdMDKFUSysxUHXEuDx4geWKFCTrtGLHUwmcBPapbMsvB',
+  const networkData = [
+    {
+      network: 'Polkadot',
+      ledgerId: 'dot',
+      ChainIcon: chainIcon('Polkadot'),
+      iconWidth: 18,
+      iconFill: '#ac2461',
+    },
+    {
+      network: 'Kusama',
+      ledgerId: 'kusama',
+      ChainIcon: chainIcon('Kusama'),
+      iconWidth: 24,
+      iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
+    },
   ];
+
+  /**
+   * Util: Handle an incoming new status code and persist to state.
+   */
+  const handleNewStatusCode = (ack: string, statusCode: string) => {
+    const updated = [{ ack, statusCode }, ...statusCodesRef.current];
+    updated.length > TOTAL_ALLOWED_STATUS_CODES && updated.pop();
+    setStateWithRef(updated, setStatusCodes, statusCodesRef);
+  };
+
+  /**
+   * Reset selected addresses and page index when connecting to another network.
+   */
+  const preConnect = () => {
+    setLedgerConnected(false);
+    setSelectedAddresses([]);
+    setReceivedAddresses([]);
+    setPageIndex(0);
+  };
+
+  /**
+   * Update the connected network state post connection.
+   */
+  const postConnect = () => {
+    const val = selectedNetworkRef.current;
+    setConnectedNetwork(val);
+    connectedNetworkRef.current = val;
+  };
+
+  /**
+   * Called when `Connect` button is clicked.
+   * Interact with Ledger device and perform necessary tasks.
+   */
+  const handleGetLedgerAddress = (changingPage: boolean, targetIndex = 0) => {
+    if (selectedNetwork === '') {
+      setShowConnectStatus(true);
+      return;
+    }
+
+    const tasks: LedgerTask[] = ['get_address'];
+    const offset = !changingPage ? 0 : targetIndex! * 5;
+    const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
+      (i) => i + offset
+    );
+
+    setIsFetching(true);
+
+    // Use the connected network if we're changing page.
+    // Otherwise, use the selected network.
+    const network = changingPage
+      ? connectedNetwork === ''
+        ? selectedNetwork
+        : connectedNetwork
+      : selectedNetwork;
+
+    const serialized = JSON.stringify({
+      accountIndices,
+      chainName: network,
+      tasks,
+    });
+
+    window.myAPI.doLedgerTask(serialized);
+  };
+
+  /**
+   * Update flag to show error/status messages.
+   */
+  useEffect(() => {
+    if (statusCodes.length > 0) {
+      setShowConnectStatus(true);
+    }
+  }, [statusCodes]);
+
+  /**
+   * Handle a collection of received Ledger addresses.
+   */
+  const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
+    const { ack, statusCode, options } = parsed;
+
+    switch (statusCode) {
+      /** Handle fetched Ledger addresses. */
+      case 'ReceiveAddress': {
+        const { addresses } = parsed;
+        const received: LedgerFetchedAddressData[] = JSON.parse(addresses!);
+
+        // Cache new address list.
+        const newCache: RawLedgerAddress[] = [];
+
+        for (const { body, device } of received) {
+          handleNewStatusCode(ack, statusCode);
+
+          if (statusCode === 'ReceiveAddress') {
+            const { pubKey, address } = body[0];
+            newCache.push({ address, pubKey, device, options });
+          }
+        }
+
+        setReceivedAddresses(newCache);
+        setIsFetching(false);
+        setLedgerConnected(true);
+        break;
+      }
+      /** Handle error messages. */
+      default: {
+        setIsFetching(false);
+        setConnectedNetwork('');
+        connectedNetworkRef.current = '';
+        handleNewStatusCode(ack, statusCode);
+        break;
+      }
+    }
+  };
+
+  /**
+   * Set up main process listener for Ledger IO when component loads.
+   */
+  useEffect(() => {
+    window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
+      const parsed: GetAddressMessage | undefined = JSON.parse(result);
+
+      if (!parsed) {
+        throw new Error('Unable to parse GetAddressMessage');
+      }
+
+      handleLedgerStatusResponse(parsed);
+    });
+  }, []);
+
+  /**
+   * Handle importing the selected Ledger addresses.
+   */
+  const handleImportProcess = async () => {
+    const selected = selectedAddresses;
+    if (selected.length === 0) {
+      return;
+    }
+
+    for (const { address, pubKey, device } of selected) {
+      if (isAlreadyImported(address)) {
+        // TODO: Notify user address is already imported.
+        continue;
+      }
+
+      const el = ellipsisFn(address);
+      await handleImportAddress(address, 'ledger', el, pubKey, device);
+      insertAccountStatus(address, 'ledger');
+    }
+
+    setStateWithRef([], setStatusCodes, statusCodesRef);
+    setSelectedAddresses([]);
+  };
+
+  /**
+   * Handle a checkbox click to add and remove selected addresses.
+   */
+  const handleCheckboxClick = (
+    checkState: Checkbox.CheckedState,
+    pk: string
+  ) => {
+    setSelectedAddresses((pv) => {
+      const checked =
+        typeof checkState === 'string' ? false : Boolean(checkState);
+
+      const filtered = pv.filter(({ pubKey }) => pk !== pubKey);
+
+      if (!checked) {
+        return filtered;
+      } else {
+        const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
+        const updated = target ? [...filtered, target] : filtered;
+        return updated;
+      }
+    });
+  };
+
+  /**
+   * Handle clicks for pagination buttons.
+   */
+  const handlePaginationClick = (direction: 'prev' | 'next') => {
+    const targetIndex =
+      direction === 'prev'
+        ? Math.max(0, pageIndex - 1)
+        : Math.max(0, pageIndex + 1);
+
+    setPageIndex(targetIndex);
+    handleGetLedgerAddress(true, targetIndex);
+  };
+
+  /**
+   * Determine if the checkbox for a fetched address should be checked.
+   * An address which was selected before should have a checked state.
+   */
+  const getChecked = (pk: string) =>
+    selectedAddresses.find(({ pubKey }) => pubKey === pk) ? true : false;
+
+  /**
+   * Get import button text.
+   */
+  const getImportLabel = () => {
+    const len = selectedAddresses.length;
+    return `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
+  };
 
   return (
     <Scrollable
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
+      {isFetching && (
+        <BarLoader
+          color={darkMode ? '#642763' : '#a772a6'}
+          width={'100%'}
+          height={2}
+          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          speedMultiplier={0.75}
+        />
+      )}
+
       {/** Breadcrump */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
         <ButtonPrimaryInvert
@@ -94,7 +348,7 @@ export const Import = ({
           defaultIndex={accordionActiveIndices}
           setExternalIndices={setAccordionActiveIndices}
           gap={'1rem'}
-          panelPadding={'0.5rem 0.25rem'}
+          panelPadding={'0.75rem 0.25rem'}
         >
           {/** Choose Network */}
           <UI.AccordionItem>
@@ -105,10 +359,16 @@ export const Import = ({
             />
             <UI.AccordionPanel>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <Select.Root>
+                <Select.Root
+                  value={selectedNetwork}
+                  onValueChange={(val) => {
+                    setSelectedNetwork(val);
+                    selectedNetworkRef.current = val;
+                  }}
+                >
                   <SelectTrigger $theme={theme} aria-label="Network">
                     <Select.Value placeholder="Select Network" />
-                    <Select.Icon>
+                    <Select.Icon className="SelectIcon">
                       <ChevronDownIcon />
                     </Select.Icon>
                   </SelectTrigger>
@@ -123,11 +383,39 @@ export const Import = ({
                       </Select.ScrollUpButton>
                       <Select.Viewport className="SelectViewport">
                         <Select.Group>
-                          {networkData.map(({ network, ledgerId }) => (
-                            <SelectItem key={ledgerId} value={ledgerId}>
-                              {network}
-                            </SelectItem>
-                          ))}
+                          {networkData.map(
+                            ({
+                              network,
+                              ledgerId,
+                              ChainIcon,
+                              iconWidth,
+                              iconFill,
+                            }) => (
+                              <SelectItem key={ledgerId} value={network}>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    gap: '0.75rem',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  <div style={{ minWidth: '30px' }}>
+                                    <ChainIcon
+                                      width={iconWidth}
+                                      fill={iconFill}
+                                      style={{
+                                        marginLeft:
+                                          network === 'Polkadot' ? '2px' : '0',
+                                      }}
+                                    />
+                                  </div>
+
+                                  <div>{network}</div>
+                                </div>
+                              </SelectItem>
+                            )
+                          )}
                         </Select.Group>
                       </Select.Viewport>
                       <Select.ScrollDownButton className="SelectScrollButton">
@@ -137,17 +425,38 @@ export const Import = ({
                   </Select.Portal>
                 </Select.Root>
 
-                <ConnectButton onClick={() => handleGetLedgerAddress()}>
+                <ConnectButton
+                  onClick={() => {
+                    preConnect();
+                    handleGetLedgerAddress(false);
+                    postConnect();
+                  }}
+                  disabled={
+                    isFetching ||
+                    selectedNetworkRef.current === connectedNetworkRef.current
+                  }
+                >
                   Connect
                 </ConnectButton>
               </div>
 
-              {/** Status Message */}
-              {statusCodes.length > 0 && (
+              {/** Error and Status Messages */}
+              {showConnectStatus &&
+                !ledgerConnected &&
+                statusCodes.length > 0 && (
+                  <InfoCard>
+                    <span className="warning">
+                      <FontAwesomeIcon icon={faExclamationTriangle} />
+                      {determineStatusFromCodes(statusCodes, false).title}
+                    </span>
+                  </InfoCard>
+                )}
+
+              {showConnectStatus && selectedNetwork === '' && (
                 <InfoCard>
                   <span className="warning">
                     <FontAwesomeIcon icon={faExclamationTriangle} />
-                    {determineStatusFromCodes(statusCodes, false).title}
+                    Select a network.
                   </span>
                 </InfoCard>
               )}
@@ -177,45 +486,70 @@ export const Import = ({
               wide={true}
             />
             <UI.AccordionPanel>
-              <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
-                <span>
-                  <FontAwesomeIcon icon={faCircleInfo} />
-                  Connect a Ledger device to list its derived addresses.
-                </span>
-              </InfoCard>
+              {!ledgerConnected ? (
+                <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
+                  <span>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                    Connect a Ledger device to list its derived addresses.
+                  </span>
+                </InfoCard>
+              ) : (
+                <>
+                  <ItemsColumn>
+                    {receivedAddresses.map(({ address, pubKey }, i) => (
+                      <LedgerAddressRow key={address}>
+                        <UI.Identicon value={address} size={28} />
+                        <div className="addressInfo">
+                          <h2>
+                            {connectedNetwork} Ledger Account{' '}
+                            {pageIndex * 5 + i + 1}
+                          </h2>
+                          <span>{ellipsisFn(address, 12)}</span>
+                        </div>
+                        <CheckboxRoot
+                          $theme={theme}
+                          className="CheckboxRoot"
+                          id="c1"
+                          checked={getChecked(pubKey)}
+                          disabled={isFetching}
+                          onCheckedChange={(checked) =>
+                            handleCheckboxClick(checked, pubKey)
+                          }
+                        >
+                          <Checkbox.Indicator className="CheckboxIndicator">
+                            <CheckIcon />
+                          </Checkbox.Indicator>
+                        </CheckboxRoot>
+                      </LedgerAddressRow>
+                    ))}
+                  </ItemsColumn>
 
-              <ItemsColumn>
-                {mockAddresses.map((address, i) => (
-                  <LedgerAddressRow key={address}>
-                    <UI.Identicon value={address} size={28} />
-                    <div className="addressInfo">
-                      <h2>Ledger Account {i + 1}</h2>
-                      <span>{ellipsisFn(address, 12)}</span>
-                    </div>
-                    <CheckboxRoot
-                      $theme={theme}
-                      className="CheckboxRoot"
-                      id="c1"
+                  <AddressListFooter>
+                    <button
+                      className="pageBtn"
+                      disabled={pageIndex === 0 || isFetching}
+                      onClick={() => handlePaginationClick('prev')}
                     >
-                      <Checkbox.Indicator className="CheckboxIndicator">
-                        <CheckIcon />
-                      </Checkbox.Indicator>
-                    </CheckboxRoot>
-                  </LedgerAddressRow>
-                ))}
-              </ItemsColumn>
-
-              <AddressListFooter>
-                <button className="pageBtn">
-                  <CaretLeftIcon />
-                </button>
-                <button className="pageBtn">
-                  <CaretRightIcon />
-                </button>
-                <div className="importBtn">
-                  <button>Import 2 Addresses</button>
-                </div>
-              </AddressListFooter>
+                      <CaretLeftIcon />
+                    </button>
+                    <button
+                      className="pageBtn"
+                      disabled={isFetching}
+                      onClick={() => handlePaginationClick('next')}
+                    >
+                      <CaretRightIcon />
+                    </button>
+                    <div className="importBtn">
+                      <button
+                        disabled={selectedAddresses.length === 0 || isFetching}
+                        onClick={async () => await handleImportProcess()}
+                      >
+                        {getImportLabel()}
+                      </button>
+                    </div>
+                  </AddressListFooter>
+                </>
+              )}
             </UI.AccordionPanel>
           </UI.AccordionItem>
         </UI.Accordion>

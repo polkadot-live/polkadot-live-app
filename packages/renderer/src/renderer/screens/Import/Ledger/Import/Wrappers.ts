@@ -41,12 +41,17 @@ export const AddressListFooter = styled.div`
     padding: 0 1.75rem;
     border-radius: 0.375rem;
     transition: all 0.2s ease-out;
+
     svg {
       width: 22px;
       height: 22px;
     }
     &:hover {
       filter: brightness(1.2);
+    }
+    &:disabled {
+      filter: brightness(0.9);
+      cursor: not-allowed;
     }
   }
 
@@ -63,6 +68,10 @@ export const AddressListFooter = styled.div`
 
       &:hover {
         filter: brightness(1.2);
+      }
+      &:disabled {
+        filter: brightness(0.8);
+        cursor: not-allowed;
       }
     }
   }
@@ -100,6 +109,10 @@ export const ConnectButton = styled.button`
   &:hover {
     filter: brightness(1.2);
   }
+  &:disabled {
+    filter: brightness(0.85);
+    cursor: not-allowed;
+  }
 `;
 
 export const CheckboxRoot = styled(Checkbox.Root).attrs<{
@@ -118,7 +131,11 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
   box-shadow: 0 2px 10px var(--black-a7);
   transition: background-color 0.2s ease-out;
 
-  &:hover {
+  &:disabled {
+    filter: brightness(0.9);
+    cursor: not-allowed;
+  }
+  &:hover:not(:disabled) {
     background-color: var(--background-window);
   }
   &:focus {
@@ -142,21 +159,20 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   background-color: var(--background);
   color: var(--text-primary);
   width: 100%;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: start;
   border-radius: 0.375rem;
   padding: 1.1rem 1.25rem;
   font-size: 1.2rem;
-  min-height: 35px;
   gap: 1rem;
 
-  /* Label */
-  :nth-child(1) {
+  /* SelectIcon */
+  .SelectIcon {
     flex: 1;
-    text-align: left;
+    text-align: right;
   }
-  /* Icon */
   :nth-child(2) {
     color: var(--text-primary);
   }

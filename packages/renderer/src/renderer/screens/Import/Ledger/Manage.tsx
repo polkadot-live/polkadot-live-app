@@ -27,7 +27,7 @@ import type { ImportLedgerManageProps } from '../types';
 export const Manage = ({
   isImporting,
   statusCodes,
-  toggleImport,
+  //toggleImport,
   cancelImport,
   setSection,
 }: ImportLedgerManageProps) => {
@@ -72,7 +72,7 @@ export const Manage = ({
                 : 'Get Another Account (Coming Soon)'
             }
             disabled={isImporting || true}
-            onClick={() => toggleImport(true)}
+            onClick={() => console.log('todo') /*toggleImport(true)*/}
           />
         </ControlsWrapper>
 
