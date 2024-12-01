@@ -32,11 +32,7 @@ export const ImportLedger = ({
    * been imported.
    */
   useEffect(() => {
-    if (addresses.length === 0 && !showImportUi) {
-      setShowImportUi(true);
-    } else {
-      setShowImportUi(false);
-    }
+    addresses.length === 0 ? setShowImportUi(true) : setShowImportUi(false);
   }, [addresses]);
 
   /**
@@ -53,9 +49,7 @@ export const ImportLedger = ({
         isImporting={isImporting}
         cancelImport={cancelImport}
         setSection={setSection}
-        // TODO: Remove:
-        toggleImport={() => false}
-        statusCodes={[]}
+        setShowImportUi={setShowImportUi}
       />
     );
   } else {

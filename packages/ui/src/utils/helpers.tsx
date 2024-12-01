@@ -37,7 +37,7 @@ export const validateAccountName = (accountName: string): boolean => {
   const regex = /^[a-zA-Z0-9._-\s]+$/;
 
   // Check if the length of the nickname is between 3 and 30 characters.
-  if (accountName.length < 3 || accountName.length > 20) {
+  if (accountName.length < 3 || accountName.length > 35) {
     return false;
   }
 

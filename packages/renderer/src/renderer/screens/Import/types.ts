@@ -6,7 +6,6 @@ import type {
   AccountSource,
   LedgerLocalAddress,
 } from '@polkadot-live/types/accounts';
-import type { LedgerResponse } from '@polkadot-live/types/ledger';
 
 export interface HomeProps {
   setSection: AnyFunction;
@@ -39,10 +38,9 @@ export interface ImportLedgerProps {
 
 export interface ImportLedgerManageProps {
   isImporting: boolean;
-  statusCodes: LedgerResponse[];
-  toggleImport: AnyFunction;
   cancelImport: AnyFunction;
   setSection: AnyFunction;
+  setShowImportUi: AnyFunction;
 }
 
 export interface LedgerAddressProps {
