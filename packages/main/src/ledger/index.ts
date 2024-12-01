@@ -55,10 +55,33 @@ export const handleGetAddresses = async (
   chainName: string,
   indices: number[]
 ) => {
+  // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
+  // as getting an address that does not require confirmation.
+  const withTimeout = async (
+    millis: number,
+    promise: Promise<AnyFunction>,
+    transport?: Transport
+  ) => {
+    const timeout = new Promise((_, reject) =>
+      setTimeout(async () => {
+        if (transport !== undefined) {
+          await transport.close();
+        }
+        reject(Error('Timeout'));
+      }, millis)
+    );
+    return Promise.race([promise, timeout]);
+  };
+
   // Main transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
-  const transport: Transport = await (
-    TransportNodeHid as AnyFunction
-  ).default.create();
+  const transport: Transport | Error = await withTimeout(
+    3000,
+    (TransportNodeHid as AnyFunction).default.create()
+  );
+
+  if (transport instanceof Error) {
+    throw new Error("Couldn't connect to ledger.");
+  }
 
   // Get ss58 address prefix for requested chain.
   const { ss58_addr_type: ss58prefix } = supportedApps.find(
@@ -89,18 +112,6 @@ export const handleGetAddresses = async (
   const { id, productName } = deviceModel || {};
   debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
-  // Timeout function for hanging tasks. Used for tasks that require no input from the device, such
-  // as getting an address that does not require confirmation.
-  const withTimeout = async (millis: number, promise: Promise<AnyFunction>) => {
-    const timeout = new Promise((_, reject) =>
-      setTimeout(async () => {
-        await transport.close();
-        reject(Error('Timeout'));
-      }, millis)
-    );
-    return Promise.race([promise, timeout]);
-  };
-
   const results: AnyData[] = [];
   let error: { flag: boolean; obj: Error | null } = { flag: false, obj: null };
 
@@ -108,7 +119,8 @@ export const handleGetAddresses = async (
     const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
     const result: LedgerGetAddressResult | Error = await withTimeout(
       3000,
-      substrateApp.getAddress(PATH, ss58prefix, false)
+      substrateApp.getAddress(PATH, ss58prefix, false),
+      transport
     );
 
     if (result instanceof Error) {
