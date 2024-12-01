@@ -148,13 +148,15 @@ export const AddressesProvider = ({
   ): boolean => {
     switch (source) {
       case 'ledger': {
+        let goBack = false;
         setLedgerAddresses((prev: LedgerLocalAddress[]) => {
           const updated = prev.filter((a) => a.address !== address);
           ledgerAddressesRef.current = updated;
+          updated.length === 0 && (goBack = true);
           return updated;
         });
 
-        return true;
+        return goBack;
       }
       case 'read-only': {
         setReadOnlyAddresses((prev: LocalAddress[]) => {

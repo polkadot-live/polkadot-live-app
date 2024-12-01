@@ -38,16 +38,19 @@ export const ImportHandlerProvider = ({
     address: string,
     source: AccountSource,
     accountName: string,
+    mainImport = true, // Whether to send the address to main window.
     pubKey?: string,
     device?: AnyData
   ) => {
     // Set processing flag for account.
-    setStatusForAccount(address, source, isConnected ? true : false);
+    const doMainImport = isConnected && mainImport;
+    setStatusForAccount(address, source, doMainImport);
 
     const local = constructRawAddress(
       address,
       source,
       accountName,
+      doMainImport,
       device,
       pubKey
     );
@@ -59,7 +62,7 @@ export const ImportHandlerProvider = ({
     await persistAddressToStore(source, local);
 
     // Send data to main renderer for processing.
-    if (isConnected) {
+    if (isConnected && mainImport) {
       postAddressToMainWindow(address, source, accountName);
     }
   };
@@ -85,6 +88,7 @@ export const ImportHandlerProvider = ({
     address: string,
     source: AccountSource,
     accountName: string,
+    isImported: boolean,
     device?: AnyData,
     pubKey?: string
   ) =>
@@ -92,14 +96,14 @@ export const ImportHandlerProvider = ({
       ? ({
           address,
           device: { ...device },
-          isImported: isConnected ? true : false,
+          isImported,
           name: accountName,
           pubKey: pubKey || '',
           source,
         } as LedgerLocalAddress)
       : ({
           address,
-          isImported: isConnected ? true : false,
+          isImported,
           name: accountName,
           source,
         } as LocalAddress);

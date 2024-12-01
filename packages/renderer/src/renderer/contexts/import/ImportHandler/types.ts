@@ -13,6 +13,7 @@ export interface ImportHandlerContextInterface {
     address: string,
     source: AccountSource,
     accountName: string,
+    mainImport: boolean,
     pubKey?: string,
     device?: AnyData
   ) => Promise<void>;

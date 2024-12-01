@@ -60,7 +60,7 @@ interface RawLedgerAddress {
   options: AnyData;
 }
 
-export const Import = ({ setSection }: AnyData) => {
+export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   const { darkMode } = useConnections();
   const { isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
@@ -91,6 +91,7 @@ export const Import = ({ setSection }: AnyData) => {
   >([]);
 
   const [isFetching, setIsFetching] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
@@ -242,30 +243,6 @@ export const Import = ({ setSection }: AnyData) => {
   }, []);
 
   /**
-   * Handle importing the selected Ledger addresses.
-   */
-  const handleImportProcess = async () => {
-    const selected = selectedAddresses;
-    if (selected.length === 0) {
-      return;
-    }
-
-    for (const { address, pubKey, device } of selected) {
-      if (isAlreadyImported(address)) {
-        // TODO: Notify user address is already imported.
-        continue;
-      }
-
-      const el = ellipsisFn(address);
-      await handleImportAddress(address, 'ledger', el, pubKey, device);
-      insertAccountStatus(address, 'ledger');
-    }
-
-    setStateWithRef([], setStatusCodes, statusCodesRef);
-    setSelectedAddresses([]);
-  };
-
-  /**
    * Handle a checkbox click to add and remove selected addresses.
    */
   const handleCheckboxClick = (
@@ -280,11 +257,11 @@ export const Import = ({ setSection }: AnyData) => {
 
       if (!checked) {
         return filtered;
-      } else {
-        const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
-        const updated = target ? [...filtered, target] : filtered;
-        return updated;
       }
+
+      const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
+      const updated = target ? [...filtered, target] : filtered;
+      return updated;
     });
   };
 
@@ -316,12 +293,43 @@ export const Import = ({ setSection }: AnyData) => {
     return `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
   };
 
+  /**
+   * Handle importing the selected Ledger addresses.
+   */
+  const handleImportProcess = async () => {
+    if (selectedAddresses.length === 0) {
+      return;
+    }
+
+    for (const { address, pubKey, device } of selectedAddresses) {
+      if (isAlreadyImported(address)) {
+        continue;
+      }
+
+      const el = ellipsisFn(address);
+      await handleImportAddress(address, 'ledger', el, false, pubKey, device);
+      insertAccountStatus(address, 'ledger');
+    }
+
+    setStateWithRef([], setStatusCodes, statusCodesRef);
+    setSelectedAddresses([]);
+  };
+
+  const preImport = () => {
+    setIsImporting(true);
+  };
+
+  const postImport = () => {
+    setIsImporting(false);
+    setShowImportUi(false);
+  };
+
   return (
     <Scrollable
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {isFetching && (
+      {(isFetching || isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
           width={'100%'}
@@ -542,7 +550,11 @@ export const Import = ({ setSection }: AnyData) => {
                     <div className="importBtn">
                       <button
                         disabled={selectedAddresses.length === 0 || isFetching}
-                        onClick={async () => await handleImportProcess()}
+                        onClick={async () => {
+                          preImport();
+                          await handleImportProcess();
+                          postImport();
+                        }}
                       >
                         {getImportLabel()}
                       </button>
