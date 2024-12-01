@@ -539,24 +539,28 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                           </h2>
                           <span>{ellipsisFn(address, 12)}</span>
                         </div>
-                        <CheckboxRoot
-                          $theme={theme}
-                          className="CheckboxRoot"
-                          id="c1"
-                          checked={getChecked(pubKey)}
-                          disabled={isFetching}
-                          onCheckedChange={(checked) =>
-                            handleCheckboxClick(
-                              checked,
-                              pubKey,
-                              `${connectedNetwork} Ledger Account ${pageIndex * 5 + i + 1}`
-                            )
-                          }
-                        >
-                          <Checkbox.Indicator className="CheckboxIndicator">
-                            <CheckIcon />
-                          </Checkbox.Indicator>
-                        </CheckboxRoot>
+                        {isAlreadyImported(address) ? (
+                          <span className="imported">Imported</span>
+                        ) : (
+                          <CheckboxRoot
+                            $theme={theme}
+                            className="CheckboxRoot"
+                            id="c1"
+                            checked={getChecked(pubKey)}
+                            disabled={isFetching}
+                            onCheckedChange={(checked) =>
+                              handleCheckboxClick(
+                                checked,
+                                pubKey,
+                                `${connectedNetwork} Ledger Account ${pageIndex * 5 + i + 1}`
+                              )
+                            }
+                          >
+                            <Checkbox.Indicator className="CheckboxIndicator">
+                              <CheckIcon />
+                            </Checkbox.Indicator>
+                          </CheckboxRoot>
+                        )}
                       </LedgerAddressRow>
                     ))}
                   </ItemsColumn>
