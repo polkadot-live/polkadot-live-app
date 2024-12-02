@@ -1,20 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-} from '@polkadot-live/types/accounts';
+import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { LedgerLocalAddress } from '@polkadot-live/types/accounts';
 
 export interface HomeProps {
   setSection: AnyFunction;
   setSource: AnyFunction;
-}
-
-export interface SplashProps {
-  setSection: AnyFunction;
-  statusCodes?: AnyJson;
 }
 
 export interface ImportVaultProps {
@@ -33,21 +25,18 @@ export interface ManageVaultProps {
 
 export interface ImportLedgerProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
-  curSource: AccountSource | null;
 }
 
 export interface ImportLedgerManageProps {
-  isImporting: boolean;
-  cancelImport: AnyFunction;
-  setSection: AnyFunction;
-  setShowImportUi: AnyFunction;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+  setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface LedgerAddressProps {
   localAddress: LedgerLocalAddress;
-  setSection: AnyFunction;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface ManageReadOnlyProps {
-  setSection: AnyFunction;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
 }
