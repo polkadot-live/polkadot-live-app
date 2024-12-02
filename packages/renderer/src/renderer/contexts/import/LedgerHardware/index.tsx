@@ -55,6 +55,8 @@ export const LedgerHardwareProvider = ({
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
 
+  const [pageIndex, setPageIndex] = useState(0);
+
   const [selectedNetworkState, setSelectedNetworkState] = useState('');
   const [connectedNetwork, setConnectedNetwork] = useState('');
   const selectedNetworkRef = useRef(selectedNetworkState);
@@ -286,6 +288,7 @@ export const LedgerHardwareProvider = ({
         isFetching,
         isImporting,
         networkData,
+        pageIndex,
         receivedAddresses,
         selectedAddresses,
         selectedNetworkState,
@@ -297,6 +300,7 @@ export const LedgerHardwareProvider = ({
         getImportLabel,
         resetAll,
         setIsImporting,
+        setPageIndex,
         setSelectedNetwork,
         updateSelectedAddresses,
       }}

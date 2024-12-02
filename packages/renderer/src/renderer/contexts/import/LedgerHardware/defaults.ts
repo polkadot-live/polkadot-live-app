@@ -10,6 +10,7 @@ export const defaultLedgerHardwareContext: LedgerHardwareContextInterface = {
   isFetching: false,
   isImporting: false,
   networkData: [],
+  pageIndex: 0,
   receivedAddresses: [],
   selectedAddresses: [],
   selectedNetworkState: '',
@@ -21,6 +22,7 @@ export const defaultLedgerHardwareContext: LedgerHardwareContextInterface = {
   getImportLabel: () => '',
   resetAll: () => {},
   setIsImporting: () => {},
+  setPageIndex: () => {},
   setSelectedNetwork: () => {},
   updateSelectedAddresses: () => {},
 };

@@ -63,7 +63,6 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   >(Array.from({ length: 2 }, (_, index) => index));
 
   const [showConnectStatus, setShowConnectStatus] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /**
@@ -136,10 +135,10 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   const handlePaginationClick = (direction: 'prev' | 'next') => {
     const targetIndex =
       direction === 'prev'
-        ? Math.max(0, pageIndex - 1)
-        : Math.max(0, pageIndex + 1);
+        ? Math.max(0, ledger.pageIndex - 1)
+        : Math.max(0, ledger.pageIndex + 1);
 
-    setPageIndex(targetIndex);
+    ledger.setPageIndex(targetIndex);
     handleGetLedgerAddresses(true, targetIndex);
   };
 
@@ -269,7 +268,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
 
                 <ConnectButton
                   onClick={() => {
-                    setPageIndex(0);
+                    ledger.setPageIndex(0);
                     handleGetLedgerAddresses(false);
                   }}
                   disabled={ledger.disableConnect()}
@@ -343,7 +342,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                         <div className="addressInfo">
                           <h2>
                             {connectedNetwork} Ledger Account{' '}
-                            {pageIndex * 5 + i + 1}
+                            {ledger.pageIndex * 5 + i + 1}
                           </h2>
                           <span>{ellipsisFn(address, 12)}</span>
                         </div>
@@ -360,7 +359,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                               handleCheckboxClick(
                                 checked,
                                 pubKey,
-                                `${connectedNetwork} Ledger Account ${pageIndex * 5 + i + 1}`
+                                `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
                               )
                             }
                           >
@@ -376,7 +375,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                   <AddressListFooter>
                     <button
                       className="pageBtn"
-                      disabled={pageIndex === 0 || ledger.isFetching}
+                      disabled={ledger.pageIndex === 0 || ledger.isFetching}
                       onClick={() => handlePaginationClick('prev')}
                     >
                       <CaretLeftIcon />

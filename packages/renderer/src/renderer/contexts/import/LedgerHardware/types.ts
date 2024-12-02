@@ -14,6 +14,7 @@ export interface LedgerHardwareContextInterface {
   isFetching: boolean;
   isImporting: boolean;
   networkData: LedgerNetworkData[];
+  pageIndex: number;
   receivedAddresses: RawLedgerAddress[];
   selectedAddresses: NamedRawLedgerAddress[];
   selectedNetworkState: string;
@@ -29,6 +30,7 @@ export interface LedgerHardwareContextInterface {
   getImportLabel: () => string;
   resetAll: () => void;
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
+  setPageIndex: React.Dispatch<React.SetStateAction<number>>;
   setSelectedNetwork: (network: string) => void;
   updateSelectedAddresses: (
     checked: boolean,
