@@ -331,9 +331,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </span>
                 <span>Unlock the Ledger device and open the Polkadot app.</span>
                 <span>
-                  Select a network above and click on the <b>Connect</b> button
+                  Select a network above and click on the <b>Connect</b> button.
                 </span>
-                ,
               </InfoCardSteps>
             </UI.AccordionPanel>
           </UI.AccordionItem>
