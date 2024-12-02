@@ -90,7 +90,7 @@ export const InfoCard = styled.div`
   flex-direction: column;
   gap: 1.75rem;
   margin-top: 0.75rem;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 0.375rem;
 
   .dismiss {

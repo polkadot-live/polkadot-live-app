@@ -353,7 +353,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       icon={faCircleDot}
                       transform={'shrink-3'}
                     />
-                    Connect a Ledger device to list its derived addresses.
+                    Connect a Ledger device to view its addresses.
                   </span>
                 </InfoCard>
               ) : (
