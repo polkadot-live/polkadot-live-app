@@ -45,7 +45,7 @@ import {
   AddressListFooter,
 } from './Wrappers';
 import { ContentWrapper } from '../../../Wrappers';
-import { determineStatusFromCodes } from '../Utils';
+import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import type { ImportProps } from './types';
 import type { AnyData } from '@polkadot-live/types/misc';

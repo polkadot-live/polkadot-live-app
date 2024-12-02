@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction, AnyJson } from '@polkadot-live/types/misc';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -10,11 +10,6 @@ import type {
 export interface HomeProps {
   setSection: AnyFunction;
   setSource: AnyFunction;
-}
-
-export interface SplashProps {
-  setSection: AnyFunction;
-  statusCodes?: AnyJson;
 }
 
 export interface ImportVaultProps {
