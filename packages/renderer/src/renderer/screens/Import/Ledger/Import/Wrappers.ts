@@ -103,6 +103,45 @@ export const InfoCard = styled.div`
   }
 `;
 
+export const InfoCardStepsWrapper = styled.div`
+  background-color: var(--background-surface);
+  color: var(--text-color-secondary);
+
+  display: flex;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  border-radius: 0.375rem;
+
+  > span:first-of-type {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex: 1;
+  }
+  > div:first-of-type {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    > button {
+      font-size: 1.15rem;
+      transition: all 0.15s ease-out;
+
+      &:hover:not(:disabled) {
+        filter: brightness(1.2);
+      }
+      &:disabled {
+        filter: brightness(0.5);
+      }
+    }
+
+    > span {
+      text-align: center;
+      min-width: 35px;
+    }
+  }
+`;
+
 export const ConnectButton = styled.button`
   background-color: var(--button-pink-background);
   color: var(--text-bright);
