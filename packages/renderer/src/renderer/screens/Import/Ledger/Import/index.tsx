@@ -36,6 +36,7 @@ import {
   faCircleChevronRight,
   faCircleDot,
   faExclamationTriangle,
+  faX,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   CheckboxRoot,
@@ -253,6 +254,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           text="Back"
           iconLeft={faCaretLeft}
           onClick={() => {
+            ledger.clearCaches(false, false, true);
             setShowImportUi(ledgerAddresses.length === 0);
             setSection(0);
           }}
@@ -263,7 +265,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           iconLeft={faCaretRight}
           text={'Ledger Accounts'}
           disabled={ledgerAddresses.length === 0}
-          onClick={() => setShowImportUi(false)}
+          onClick={() => {
+            ledger.clearCaches(false, false, true);
+            setShowImportUi(false);
+          }}
         />
       </UI.ControlsWrapper>
 
@@ -359,19 +364,25 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               </div>
 
               {/** Error and Status Messages */}
-              {showConnectStatus &&
-                !ledger.deviceConnected &&
-                ledger.statusCodes.length > 0 && (
-                  <InfoCard>
-                    <span className="warning">
-                      <FontAwesomeIcon icon={faExclamationTriangle} />
+              {showConnectStatus && !ledger.deviceConnected && (
+                <InfoCard>
+                  <span className="warning">
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    <span>
                       {
                         determineStatusFromCodes(ledger.statusCodes, false)
                           .title
                       }
                     </span>
-                  </InfoCard>
-                )}
+                    <button
+                      className="dismiss"
+                      onClick={() => setShowConnectStatus(false)}
+                    >
+                      <FontAwesomeIcon icon={faX} />
+                    </button>
+                  </span>
+                </InfoCard>
+              )}
 
               {showConnectStatus && ledger.selectedNetworkState === '' && (
                 <InfoCard>
