@@ -7,6 +7,12 @@ import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
 import { forwardRef, useEffect, useState } from 'react';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
+import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
+
 import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
@@ -20,7 +26,6 @@ import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
-import { ContentWrapper } from '../../../Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -39,16 +44,31 @@ import {
   SelectContent,
   AddressListFooter,
 } from './Wrappers';
-import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@app/contexts/common/Connections';
-import { useImportHandler } from '@app/contexts/import/ImportHandler';
-import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
+import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from '../Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { useAddresses } from '@app/contexts/import/Addresses';
+import type { ImportProps } from './types';
 import type { AnyData } from '@polkadot-live/types/misc';
 
-export const Import = ({ setSection, setShowImportUi }: AnyData) => {
+const SelectItem = forwardRef(function SelectItem(
+  { children, className, ...props }: AnyData,
+  forwardedRef
+) {
+  return (
+    <Select.Item
+      className={`SelectItem ${className}`}
+      {...props}
+      ref={forwardedRef}
+    >
+      <Select.ItemText>{children}</Select.ItemText>
+      <Select.ItemIndicator className="SelectItemIndicator">
+        <CheckIcon />
+      </Select.ItemIndicator>
+    </Select.Item>
+  );
+});
+
+export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { darkMode } = useConnections();
   const { isAlreadyImported, ledgerAddresses } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
@@ -407,21 +427,3 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
     </Scrollable>
   );
 };
-
-const SelectItem = forwardRef(function SelectItem(
-  { children, className, ...props }: AnyData,
-  forwardedRef
-) {
-  return (
-    <Select.Item
-      className={`SelectItem ${className}`}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="SelectItemIndicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});

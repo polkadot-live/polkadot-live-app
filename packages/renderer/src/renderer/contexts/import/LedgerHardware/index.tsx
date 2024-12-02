@@ -6,7 +6,12 @@ import { defaultLedgerHardwareContext } from './defaults';
 import { setStateWithRef } from '@w3ux/utils';
 import { chainIcon } from '@ren/config/chains';
 import { useConnections } from '../../common/Connections';
-import type { LedgerHardwareContextInterface } from './types';
+import type {
+  LedgerHardwareContextInterface,
+  LedgerNetworkData,
+  NamedRawLedgerAddress,
+  RawLedgerAddress,
+} from './types';
 import type {
   GetAddressMessage,
   LedgerFetchedAddressData,
@@ -14,28 +19,8 @@ import type {
   LedgerTask,
 } from '@polkadot-live/types/ledger';
 import type { IpcRendererEvent } from 'electron';
-import type { AnyData } from 'packages/types/src';
 
 const TOTAL_ALLOWED_STATUS_CODES = 50;
-
-export interface LedgerNetworkData {
-  network: string;
-  ledgerId: string;
-  ChainIcon: AnyData;
-  iconWidth: number;
-  iconFill: string;
-}
-
-export interface RawLedgerAddress {
-  address: string;
-  pubKey: string;
-  device: { id: string; productName: string };
-  options: AnyData;
-}
-
-export type NamedRawLedgerAddress = RawLedgerAddress & {
-  accountName: string;
-};
 
 export const LedgerHardwareContext =
   createContext<LedgerHardwareContextInterface>(defaultLedgerHardwareContext);
@@ -52,10 +37,9 @@ export const LedgerHardwareProvider = ({
   const [deviceConnected, setDeviceConnected] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
   const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
   const statusCodesRef = useRef(statusCodes);
-
-  const [pageIndex, setPageIndex] = useState(0);
 
   const [selectedNetworkState, setSelectedNetworkState] = useState('');
   const [connectedNetwork, setConnectedNetwork] = useState('');

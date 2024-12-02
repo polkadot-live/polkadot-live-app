@@ -2,11 +2,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
-import type {
-  LedgerNetworkData,
-  NamedRawLedgerAddress,
-  RawLedgerAddress,
-} from '.';
+import type { AnyData } from '@polkadot-live/types/misc';
+
+export interface LedgerNetworkData {
+  network: string;
+  ledgerId: string;
+  ChainIcon: AnyData;
+  iconWidth: number;
+  iconFill: string;
+}
+
+export interface RawLedgerAddress {
+  address: string;
+  pubKey: string;
+  device: { id: string; productName: string };
+  options: AnyData;
+}
+
+export type NamedRawLedgerAddress = RawLedgerAddress & {
+  accountName: string;
+};
 
 export interface LedgerHardwareContextInterface {
   connectedNetwork: string;
