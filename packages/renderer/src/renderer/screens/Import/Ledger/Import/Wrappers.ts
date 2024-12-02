@@ -51,11 +51,11 @@ export const AddressListFooter = styled.div`
       width: 22px;
       height: 22px;
     }
-    &:hover {
-      filter: brightness(1.2);
+    &:hover:not(:disabled) {
+      background-color: var(--background-primary-hover);
     }
     &:disabled {
-      filter: brightness(0.9);
+      opacity: 0.7;
       cursor: not-allowed;
     }
   }
@@ -71,11 +71,11 @@ export const AddressListFooter = styled.div`
       min-width: 225px;
       transition: all 0.2s ease-out;
 
-      &:hover {
+      &:hover:not(:disabled) {
         filter: brightness(1.2);
       }
       &:disabled {
-        filter: brightness(0.8);
+        opacity: 0.7;
         cursor: not-allowed;
       }
     }
@@ -85,21 +85,75 @@ export const AddressListFooter = styled.div`
 export const InfoCard = styled.div`
   background-color: var(--background-surface);
   color: var(--text-color-secondary);
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
   margin-top: 0.75rem;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 0.375rem;
 
+  .dismiss {
+    color: var(--accent-warning) !important;
+    font-size: 0.75rem;
+    filter: brightness(0.65);
+
+    &:hover {
+      filter: brightness(1);
+    }
+  }
   .warning {
     color: var(--accent-warning) !important;
+    > span:first-of-type {
+      flex: 1;
+    }
   }
 
   span {
     display: flex;
     gap: 0.9rem;
     align-items: center;
+  }
+`;
+
+export const InfoCardStepsWrapper = styled.div`
+  background-color: var(--background-surface);
+  color: var(--text-color-secondary);
+
+  display: flex;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.375rem;
+
+  > span:first-of-type {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex: 1;
+  }
+  > div:first-of-type {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    > button {
+      color: var(--text-color-secondary);
+      font-size: 1.15rem;
+      transition: all 0.15s ease-out;
+
+      &:hover:not(:disabled) {
+        color: var(--text-color-primary);
+      }
+      &:disabled {
+        color: var(--text-dimmed);
+        cursor: not-allowed;
+      }
+    }
+
+    > span {
+      text-align: center;
+      min-width: 35px;
+    }
   }
 `;
 
@@ -111,11 +165,11 @@ export const ConnectButton = styled.button`
   transition: all 0.2s ease-out;
   user-select: none;
 
-  &:hover {
+  &:hover:not(:disabled) {
     filter: brightness(1.2);
   }
   &:disabled {
-    filter: brightness(0.85);
+    opacity: 0.7;
     cursor: not-allowed;
   }
 `;
@@ -141,10 +195,7 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
     cursor: not-allowed;
   }
   &:hover:not(:disabled) {
-    background-color: var(--background-window);
-  }
-  &:focus {
-    //box-shadow: 0 0 0 2px black;
+    background-color: var(--background-secondary-color);
   }
   .CheckboxIndicator {
     color: var(--violet-11);
@@ -172,6 +223,18 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   padding: 1.1rem 1.25rem;
   font-size: 1.2rem;
   gap: 1rem;
+
+  /** Same class as select item */
+  .innerRow {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+
+    > div:first-of-type {
+      min-width: 30px;
+    }
+  }
 
   /* SelectIcon */
   .SelectIcon {
@@ -222,6 +285,17 @@ export const SelectContent = styled(Select.Content).attrs<{
     line-height: 1rem;
     border-radius: 0.375rem;
     user-select: none;
+
+    .innerRow {
+      display: flex;
+      flex-direction: row;
+      gap: 0.75rem;
+      align-items: center;
+
+      > div:first-of-type {
+        min-width: 30px;
+      }
+    }
 
     /* Disabled */
     &[data-disabled] {

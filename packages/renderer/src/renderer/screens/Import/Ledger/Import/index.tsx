@@ -31,9 +31,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretLeft,
   faCaretRight,
-  faCheckCircle,
-  faCircleInfo,
+  faCircleDot,
   faExclamationTriangle,
+  faX,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   CheckboxRoot,
@@ -44,6 +44,7 @@ import {
   SelectContent,
   AddressListFooter,
 } from './Wrappers';
+import { InfoCardSteps } from './InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
@@ -193,16 +194,21 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           text="Back"
           iconLeft={faCaretLeft}
           onClick={() => {
+            ledger.clearCaches(false, false, true);
             setShowImportUi(ledgerAddresses.length === 0);
             setSection(0);
           }}
         />
-        <UI.SortControlLabel label="Import Ledger Addresses" />
+        <UI.SortControlLabel label="Import Ledger Accounts" />
+
         <ButtonText
           iconLeft={faCaretRight}
-          text={'Manage Ledger Accounts'}
+          text={'Ledger Accounts'}
           disabled={ledgerAddresses.length === 0}
-          onClick={() => setShowImportUi(false)}
+          onClick={() => {
+            ledger.clearCaches(false, false, true);
+            setShowImportUi(false);
+          }}
         />
       </UI.ControlsWrapper>
 
@@ -253,15 +259,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               iconFill,
                             }) => (
                               <SelectItem key={ledgerId} value={network}>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: '0.75rem',
-                                    alignItems: 'center',
-                                  }}
-                                >
-                                  <div style={{ minWidth: '30px' }}>
+                                <div className="innerRow">
+                                  <div>
                                     <ChainIcon
                                       width={iconWidth}
                                       fill={iconFill}
@@ -271,7 +270,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       }}
                                     />
                                   </div>
-
                                   <div>{network}</div>
                                 </div>
                               </SelectItem>
@@ -298,19 +296,25 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               </div>
 
               {/** Error and Status Messages */}
-              {showConnectStatus &&
-                !ledger.deviceConnected &&
-                ledger.statusCodes.length > 0 && (
-                  <InfoCard>
-                    <span className="warning">
-                      <FontAwesomeIcon icon={faExclamationTriangle} />
+              {showConnectStatus && !ledger.deviceConnected && (
+                <InfoCard>
+                  <span className="warning">
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    <span>
                       {
                         determineStatusFromCodes(ledger.statusCodes, false)
                           .title
                       }
                     </span>
-                  </InfoCard>
-                )}
+                    <button
+                      className="dismiss"
+                      onClick={() => setShowConnectStatus(false)}
+                    >
+                      <FontAwesomeIcon icon={faX} />
+                    </button>
+                  </span>
+                </InfoCard>
+              )}
 
               {showConnectStatus && ledger.selectedNetworkState === '' && (
                 <InfoCard>
@@ -321,20 +325,16 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </InfoCard>
               )}
 
-              <InfoCard>
+              <InfoCardSteps style={{ marginTop: '0.75rem' }}>
                 <span>
-                  <FontAwesomeIcon icon={faCheckCircle} />
                   Connect a Ledger device to this computer with a USB cable.
                 </span>
+                <span>Unlock the Ledger device and open the Polkadot app.</span>
                 <span>
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                  Unlock the Ledger device and open the Polkadot app.
+                  Select a network above and click on the <b>Connect</b> button
                 </span>
-                <span>
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                  Select a network above and click on the <b>Connect</b> button.
-                </span>
-              </InfoCard>
+                ,
+              </InfoCardSteps>
             </UI.AccordionPanel>
           </UI.AccordionItem>
 
@@ -349,8 +349,11 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               {!ledger.deviceConnected ? (
                 <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
                   <span>
-                    <FontAwesomeIcon icon={faCircleInfo} />
-                    Connect a Ledger device to list its derived addresses.
+                    <FontAwesomeIcon
+                      icon={faCircleDot}
+                      transform={'shrink-3'}
+                    />
+                    Connect a Ledger device to view its addresses.
                   </span>
                 </InfoCard>
               ) : (
