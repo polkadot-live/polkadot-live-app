@@ -2,20 +2,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
-import type { AnyData } from 'packages/types/src';
-import type { LedgerNetworkData } from '.';
+import type {
+  LedgerNetworkData,
+  NamedRawLedgerAddress,
+  RawLedgerAddress,
+} from '.';
 
 export interface LedgerHardwareContextInterface {
+  connectedNetwork: string;
+  deviceConnected: boolean;
   isFetching: boolean;
   isImporting: boolean;
-  deviceConnected: boolean;
-  statusCodes: LedgerResponse[];
-  setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
-  setDeviceConnected: React.Dispatch<React.SetStateAction<boolean>>;
-  setStatusCodes: React.Dispatch<React.SetStateAction<LedgerResponse[]>>;
-  handleNewStatusCode: (ack: string, statusCode: string) => void;
-  fetchLedgerAddresses: (network: string, offset: number) => void;
-  statusCodesRef: AnyData;
   networkData: LedgerNetworkData[];
+  receivedAddresses: RawLedgerAddress[];
+  selectedAddresses: NamedRawLedgerAddress[];
+  selectedNetworkState: string;
+  statusCodes: LedgerResponse[];
+  clearCaches: (
+    clearReceived: boolean,
+    clearSelected: boolean,
+    clearStatusCodes: boolean
+  ) => void;
+  disableConnect: () => boolean;
+  fetchLedgerAddresses: (network: string, offset: number) => void;
+  getChecked: (pk: string) => boolean;
+  getImportLabel: () => string;
+  resetAll: () => void;
+  setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedNetwork: (network: string) => void;
+  updateSelectedAddresses: (
+    checked: boolean,
+    pk: string,
+    accountName: string
+  ) => void;
 }

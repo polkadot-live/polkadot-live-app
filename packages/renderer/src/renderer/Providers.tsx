@@ -102,6 +102,7 @@ const getProvidersForWindow = () => {
         RemoveHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         DeleteHandlerProvider,
+        // Requires useConnections
         LedgerHardwareProvider
       )(Theme);
     }
