@@ -51,11 +51,11 @@ export const AddressListFooter = styled.div`
       width: 22px;
       height: 22px;
     }
-    &:hover {
-      filter: brightness(1.2);
+    &:hover:not(:disabled) {
+      background-color: var(--background-primary-hover);
     }
     &:disabled {
-      filter: brightness(0.9);
+      opacity: 0.7;
       cursor: not-allowed;
     }
   }
@@ -71,11 +71,11 @@ export const AddressListFooter = styled.div`
       min-width: 225px;
       transition: all 0.2s ease-out;
 
-      &:hover {
+      &:hover:not(:disabled) {
         filter: brightness(1.2);
       }
       &:disabled {
-        filter: brightness(0.8);
+        opacity: 0.7;
         cursor: not-allowed;
       }
     }
@@ -122,7 +122,7 @@ export const InfoCardStepsWrapper = styled.div`
 
   display: flex;
   gap: 0.5rem;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 0.375rem;
 
   > span:first-of-type {
@@ -165,11 +165,11 @@ export const ConnectButton = styled.button`
   transition: all 0.2s ease-out;
   user-select: none;
 
-  &:hover {
+  &:hover:not(:disabled) {
     filter: brightness(1.2);
   }
   &:disabled {
-    filter: brightness(0.85);
+    opacity: 0.7;
     cursor: not-allowed;
   }
 `;
@@ -195,10 +195,7 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
     cursor: not-allowed;
   }
   &:hover:not(:disabled) {
-    background-color: var(--background-window);
-  }
-  &:focus {
-    //box-shadow: 0 0 0 2px black;
+    background-color: var(--background-secondary-color);
   }
   .CheckboxIndicator {
     color: var(--violet-11);
