@@ -42,20 +42,16 @@ import {
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
+import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 import { determineStatusFromCodes } from '../Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { chainIcon } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   GetAddressMessage,
   LedgerFetchedAddressData,
-  LedgerResponse,
-  LedgerTask,
 } from '@polkadot-live/types/ledger';
 import type { IpcRendererEvent } from 'electron';
-
-const TOTAL_ALLOWED_STATUS_CODES = 50;
 
 interface RawLedgerAddress {
   address: string;
@@ -73,15 +69,14 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   const { isAlreadyImported, ledgerAddresses } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
+  const ledger = useLedgerHardware();
 
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: 2 }, (_, index) => index));
 
   // Dynamic state.
-  const [ledgerConnected, setLedgerConnected] = useState(false);
   const [showConnectStatus, setShowConnectStatus] = useState(false);
-
   const [selectedNetwork, setSelectedNetwork] = useState('');
   const [connectedNetwork, setConnectedNetwork] = useState('');
   const selectedNetworkRef = useRef(selectedNetwork);
@@ -98,45 +93,13 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
     NamedRawLedgerAddress[]
   >([]);
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
-  const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
-  const statusCodesRef = useRef(statusCodes);
-
-  // Component constant data.
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const networkData = [
-    {
-      network: 'Polkadot',
-      ledgerId: 'dot',
-      ChainIcon: chainIcon('Polkadot'),
-      iconWidth: 18,
-      iconFill: '#ac2461',
-    },
-    {
-      network: 'Kusama',
-      ledgerId: 'kusama',
-      ChainIcon: chainIcon('Kusama'),
-      iconWidth: 24,
-      iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
-    },
-  ];
-
-  /**
-   * Util: Handle an incoming new status code and persist to state.
-   */
-  const handleNewStatusCode = (ack: string, statusCode: string) => {
-    const updated = [{ ack, statusCode }, ...statusCodesRef.current];
-    updated.length > TOTAL_ALLOWED_STATUS_CODES && updated.pop();
-    setStateWithRef(updated, setStatusCodes, statusCodesRef);
-  };
 
   /**
    * Reset selected addresses and page index when connecting to another network.
    */
   const preConnect = () => {
-    setLedgerConnected(false);
+    ledger.setDeviceConnected(false);
     setSelectedAddresses([]);
     setReceivedAddresses([]);
     setPageIndex(0);
@@ -152,48 +115,34 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
   };
 
   /**
-   * Called when `Connect` button is clicked.
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddress = (changingPage: boolean, targetIndex = 0) => {
+  const handleGetLedgerAddresses = (changingPage: boolean, targetIndex = 0) => {
     if (selectedNetwork === '') {
       setShowConnectStatus(true);
       return;
     }
 
-    const tasks: LedgerTask[] = ['get_address'];
-    const offset = !changingPage ? 0 : targetIndex! * 5;
-    const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
-      (i) => i + offset
-    );
+    const offset = !changingPage ? 0 : targetIndex * 5;
 
-    setIsFetching(true);
-
-    // Use the connected network if we're changing page.
-    // Otherwise, use the selected network.
+    // Use the connected network if we're changing page. Otherwise, use the selected network.
     const network = changingPage
       ? connectedNetwork === ''
         ? selectedNetwork
         : connectedNetwork
       : selectedNetwork;
 
-    const serialized = JSON.stringify({
-      accountIndices,
-      chainName: network,
-      tasks,
-    });
-
-    window.myAPI.doLedgerTask(serialized);
+    ledger.fetchLedgerAddresses(network, offset);
   };
 
   /**
    * Update flag to show error/status messages.
    */
   useEffect(() => {
-    if (statusCodes.length > 0) {
+    if (ledger.statusCodes.length > 0) {
       setShowConnectStatus(true);
     }
-  }, [statusCodes]);
+  }, [ledger.statusCodes]);
 
   /**
    * Handle a collection of received Ledger addresses.
@@ -211,7 +160,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
         const newCache: RawLedgerAddress[] = [];
 
         for (const { body, device } of received) {
-          handleNewStatusCode(ack, statusCode);
+          ledger.handleNewStatusCode(ack, statusCode);
 
           if (statusCode === 'ReceiveAddress') {
             const { pubKey, address } = body[0];
@@ -220,16 +169,16 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
         }
 
         setReceivedAddresses(newCache);
-        setIsFetching(false);
-        setLedgerConnected(true);
+        ledger.setIsFetching(false);
+        ledger.setDeviceConnected(true);
         break;
       }
       /** Handle error messages. */
       default: {
-        setIsFetching(false);
         setConnectedNetwork('');
         connectedNetworkRef.current = '';
-        handleNewStatusCode(ack, statusCode);
+        ledger.setIsFetching(false);
+        ledger.handleNewStatusCode(ack, statusCode);
         break;
       }
     }
@@ -290,7 +239,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
         : Math.max(0, pageIndex + 1);
 
     setPageIndex(targetIndex);
-    handleGetLedgerAddress(true, targetIndex);
+    handleGetLedgerAddresses(true, targetIndex);
   };
 
   /**
@@ -327,16 +276,17 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
       insertAccountStatus(add, 'ledger');
     }
 
+    const { setStatusCodes, statusCodesRef } = ledger;
     setStateWithRef([], setStatusCodes, statusCodesRef);
     setSelectedAddresses([]);
   };
 
   const preImport = () => {
-    setIsImporting(true);
+    ledger.setIsImporting(true);
   };
 
   const postImport = () => {
-    setIsImporting(false);
+    ledger.setIsImporting(false);
     setShowImportUi(false);
   };
 
@@ -345,7 +295,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {(isFetching || isImporting) && (
+      {(ledger.isFetching || ledger.isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
           width={'100%'}
@@ -416,7 +366,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                       </Select.ScrollUpButton>
                       <Select.Viewport className="SelectViewport">
                         <Select.Group>
-                          {networkData.map(
+                          {ledger.networkData.map(
                             ({
                               network,
                               ledgerId,
@@ -461,11 +411,11 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                 <ConnectButton
                   onClick={() => {
                     preConnect();
-                    handleGetLedgerAddress(false);
+                    handleGetLedgerAddresses(false);
                     postConnect();
                   }}
                   disabled={
-                    isFetching ||
+                    ledger.isFetching ||
                     selectedNetworkRef.current === connectedNetworkRef.current
                   }
                 >
@@ -475,12 +425,15 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
 
               {/** Error and Status Messages */}
               {showConnectStatus &&
-                !ledgerConnected &&
-                statusCodes.length > 0 && (
+                !ledger.deviceConnected &&
+                ledger.statusCodes.length > 0 && (
                   <InfoCard>
                     <span className="warning">
                       <FontAwesomeIcon icon={faExclamationTriangle} />
-                      {determineStatusFromCodes(statusCodes, false).title}
+                      {
+                        determineStatusFromCodes(ledger.statusCodes, false)
+                          .title
+                      }
                     </span>
                   </InfoCard>
                 )}
@@ -519,7 +472,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              {!ledgerConnected ? (
+              {!ledger.deviceConnected ? (
                 <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
                   <span>
                     <FontAwesomeIcon icon={faCircleInfo} />
@@ -547,7 +500,7 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                             className="CheckboxRoot"
                             id="c1"
                             checked={getChecked(pubKey)}
-                            disabled={isFetching}
+                            disabled={ledger.isFetching}
                             onCheckedChange={(checked) =>
                               handleCheckboxClick(
                                 checked,
@@ -568,21 +521,23 @@ export const Import = ({ setSection, setShowImportUi }: AnyData) => {
                   <AddressListFooter>
                     <button
                       className="pageBtn"
-                      disabled={pageIndex === 0 || isFetching}
+                      disabled={pageIndex === 0 || ledger.isFetching}
                       onClick={() => handlePaginationClick('prev')}
                     >
                       <CaretLeftIcon />
                     </button>
                     <button
                       className="pageBtn"
-                      disabled={isFetching}
+                      disabled={ledger.isFetching}
                       onClick={() => handlePaginationClick('next')}
                     >
                       <CaretRightIcon />
                     </button>
                     <div className="importBtn">
                       <button
-                        disabled={selectedAddresses.length === 0 || isFetching}
+                        disabled={
+                          selectedAddresses.length === 0 || ledger.isFetching
+                        }
                         onClick={async () => {
                           preImport();
                           await handleImportProcess();

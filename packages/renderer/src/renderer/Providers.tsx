@@ -33,6 +33,7 @@ import { ImportHandlerProvider } from '@app/contexts/import/ImportHandler';
 import { AddHandlerProvider } from '@app/contexts/import/AddHandler';
 import { RemoveHandlerProvider } from '@app/contexts/import/RemoveHandler';
 import { DeleteHandlerProvider } from '@app/contexts/import/DeleteHandler';
+import { LedgerHardwareProvider } from '@app/contexts/import/LedgerHardware';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from '@app/contexts/settings/SettingFlags';
@@ -93,10 +94,15 @@ const getProvidersForWindow = () => {
         ConnectionsProvider,
         ImportAddressesProvider,
         ImportAccountStatusesProvider,
-        ImportHandlerProvider, // Requires useAccountStatuses + useAddresses
-        AddHandlerProvider, // Requires useAccountStatuses + useAddresses
-        RemoveHandlerProvider, // Requires useAddresses
-        DeleteHandlerProvider // Requires useAccountStatuses + useAddresses
+        // Requires useAccountStatuses + useAddresses
+        ImportHandlerProvider,
+        // Requires useAccountStatuses + useAddresses
+        AddHandlerProvider,
+        // Requires useAddresses
+        RemoveHandlerProvider,
+        // Requires useAccountStatuses + useAddresses
+        DeleteHandlerProvider,
+        LedgerHardwareProvider
       )(Theme);
     }
     case 'settings': {
