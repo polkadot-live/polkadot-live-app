@@ -259,15 +259,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               iconFill,
                             }) => (
                               <SelectItem key={ledgerId} value={network}>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: '0.75rem',
-                                    alignItems: 'center',
-                                  }}
-                                >
-                                  <div style={{ minWidth: '30px' }}>
+                                <div className="innerRow">
+                                  <div>
                                     <ChainIcon
                                       width={iconWidth}
                                       fill={iconFill}
@@ -277,7 +270,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       }}
                                     />
                                   </div>
-
                                   <div>{network}</div>
                                 </div>
                               </SelectItem>

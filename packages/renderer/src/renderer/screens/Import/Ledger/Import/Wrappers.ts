@@ -227,6 +227,18 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   font-size: 1.2rem;
   gap: 1rem;
 
+  /** Same class as select item */
+  .innerRow {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+
+    > div:first-of-type {
+      min-width: 30px;
+    }
+  }
+
   /* SelectIcon */
   .SelectIcon {
     flex: 1;
@@ -276,6 +288,17 @@ export const SelectContent = styled(Select.Content).attrs<{
     line-height: 1rem;
     border-radius: 0.375rem;
     user-select: none;
+
+    .innerRow {
+      display: flex;
+      flex-direction: row;
+      gap: 0.75rem;
+      align-items: center;
+
+      > div:first-of-type {
+        min-width: 30px;
+      }
+    }
 
     /* Disabled */
     &[data-disabled] {
