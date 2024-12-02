@@ -95,7 +95,7 @@ export const InfoCard = styled.div`
 
   .dismiss {
     color: var(--accent-warning) !important;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     filter: brightness(0.65);
 
     &:hover {
@@ -137,14 +137,16 @@ export const InfoCardStepsWrapper = styled.div`
     align-items: center;
 
     > button {
+      color: var(--text-color-secondary);
       font-size: 1.15rem;
       transition: all 0.15s ease-out;
 
       &:hover:not(:disabled) {
-        filter: brightness(1.2);
+        color: var(--text-color-primary);
       }
       &:disabled {
-        filter: brightness(0.5);
+        color: var(--text-dimmed);
+        cursor: not-allowed;
       }
     }
 
