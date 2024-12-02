@@ -399,9 +399,11 @@ app.whenReady().then(async () => {
     }
 
     const { accountIndices, chainName, tasks }: Target = JSON.parse(serialized);
-
-    console.debug(accountIndices, chainName, tasks);
     const importView = WindowsController.getView('import')!;
+
+    if (process.env.DEBUG) {
+      console.debug(accountIndices, chainName, tasks);
+    }
 
     if (importView) {
       await executeLedgerTask(importView, chainName, tasks, {
