@@ -67,6 +67,7 @@ export const HeaderWrapper = styled.div`
             width: 1.6rem;
             height: 1.6rem;
             margin-top: 2px;
+            margin-right: -2px;
           }
         }
         .dock-btn {

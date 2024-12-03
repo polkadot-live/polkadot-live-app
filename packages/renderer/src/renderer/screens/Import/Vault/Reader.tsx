@@ -76,7 +76,7 @@ export const Reader = () => {
     const accountName = ellipsisFn(address);
 
     insertAccountStatus(address, 'vault');
-    await handleImportAddress(address, 'vault', accountName);
+    await handleImportAddress(address, 'vault', accountName, true);
     setImported(true);
   };
 

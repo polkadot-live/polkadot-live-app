@@ -8,7 +8,7 @@ export const Padlock = ({ locked, onClick }: PadlockProps) => (
   <PadlockWrapper>
     <div
       className={`padlock ${locked ? '' : 'green'}`}
-      style={{ marginLeft: '0.25rem', marginTop: '0.15rem' }}
+      style={{ marginLeft: '0.15rem', marginTop: '0.25rem' }}
       onClick={onClick}
     >
       <div className="keyhole"></div>

@@ -49,13 +49,13 @@ export const PadlockWrapper = styled.div`
 
   /* keyhole */
   .keyhole {
-    width: 4px;
-    height: 4px;
+    width: 3px;
+    height: 3px;
     border-radius: 12px;
     position: absolute;
     top: 60%;
     left: 50%;
-    background-color: black;
+    background-color: var(--background-surface);
     transform: translate(-50%, -50%) rotate(0deg);
     transition: all 0.2s ease-in-out;
     z-index: 1;

@@ -4,7 +4,6 @@
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
-import type { LedgerTask } from './ledger';
 import type { IpcTask, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
@@ -72,7 +71,7 @@ export interface PreloadAPI {
   closeTab: (destroyViewId: string, showViewId: string | null) => void;
   isViewOpen: (viewId: string) => Promise<boolean>;
 
-  doLedgerLoop: ApiDoLedgerLoop;
+  doLedgerTask: (serialized: string) => void;
   reportLedgerStatus: ApiReportLedgerStatus;
 
   requestImportedAccounts: ApiEmptyRequest;
@@ -91,12 +90,6 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-
-type ApiDoLedgerLoop = (
-  accountIndex: number,
-  chainName: string,
-  tasks: LedgerTask[]
-) => void;
 
 type ApiReportLedgerStatus = (
   callback: (_: IpcRendererEvent, result: string) => void

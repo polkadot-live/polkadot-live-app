@@ -105,7 +105,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     insertAccountStatus(trimmed, 'read-only');
 
     // Set processing flag to true if online and import via main renderer.
-    await handleImportAddress(trimmed, 'read-only', accountName);
+    await handleImportAddress(trimmed, 'read-only', accountName, true);
   };
 
   return (
