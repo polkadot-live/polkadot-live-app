@@ -31,6 +31,11 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:import:walletConnect',
+    title: 'Wallet Connect Accounts',
+    definition: ['TODO'],
+  },
+  {
     key: 'help:subscription:balances:transfers',
     title: 'Subscription: Free Balance',
     definition: [

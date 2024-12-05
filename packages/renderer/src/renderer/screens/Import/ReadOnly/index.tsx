@@ -4,9 +4,6 @@
 import { Manage } from './Manage';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 
-export const ImportReadOnly = ({
-  setSection,
-}: {
-  section: number;
-  setSection: AnyFunction;
-}) => <Manage setSection={setSection} />;
+export const ImportReadOnly = ({ setSection }: { setSection: AnyFunction }) => (
+  <Manage setSection={setSection} />
+);
