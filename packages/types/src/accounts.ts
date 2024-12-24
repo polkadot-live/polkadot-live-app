@@ -11,7 +11,7 @@ export type AccountSource =
   | 'ledger'
   | 'system'
   | 'read-only'
-  | 'walletConnect';
+  | 'wallet-connect';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 

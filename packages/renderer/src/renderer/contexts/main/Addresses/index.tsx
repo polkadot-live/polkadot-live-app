@@ -144,6 +144,7 @@ export const AddressesProvider = ({
     'ledger',
     'read-only',
     'vault',
+    'wallet-connect',
   ];
 
   /// Get readable account source for rendering.
@@ -160,6 +161,9 @@ export const AddressesProvider = ({
       }
       case 'system': {
         return 'System';
+      }
+      case 'wallet-connect': {
+        return 'WalletConnect';
       }
     }
   };

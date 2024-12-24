@@ -162,7 +162,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           <NavCard
             title={'Wallet Connect'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'walletConnect')
+              handleClick(e, 'wallet-connect')
             }
             openHelp={openHelp}
             helpKey={'help:import:walletConnect'}

@@ -78,7 +78,7 @@ export const Import: React.FC = () => {
           <div className={getShowClass('read-only')}>
             <ImportReadOnly setSection={setSection} />
           </div>
-          <div className={getShowClass('walletConnect')}>
+          <div className={getShowClass('wallet-connect')}>
             <ImportWalletConnect setSection={setSection} />
           </div>
         </div>
