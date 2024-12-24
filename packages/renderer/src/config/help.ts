@@ -33,7 +33,9 @@ export const HelpConfig: HelpItems = [
   {
     key: 'help:import:walletConnect',
     title: 'Wallet Connect Accounts',
-    definition: ['TODO'],
+    definition: [
+      "WalletConnect is a protocol that securely connects users' cryptocurrency wallets with decentralized applications (dApps), enabling convenient and secure interaction between the two. It eliminates the need for manual entry of wallet information and enhances security in transactions and account access.",
+    ],
   },
   {
     key: 'help:subscription:balances:transfers',
