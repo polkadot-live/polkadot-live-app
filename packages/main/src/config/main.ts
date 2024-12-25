@@ -16,6 +16,7 @@ export class Config {
   private static _ledgerAddressesStorageKey = 'ledger_addresses';
   private static _vaultAddressesStorageKey = 'vault_addresses';
   private static _readOnlyAddressesStorageKey = 'read_only_addresses';
+  private static _wcAddressesStorageKey = 'wc_addresses';
 
   // Main window's docked properties.
   private static _dockedWidth = 490;
@@ -50,6 +51,9 @@ export class Config {
       }
       case 'read-only': {
         return Config._readOnlyAddressesStorageKey;
+      }
+      case 'wallet-connect': {
+        return Config._wcAddressesStorageKey;
       }
       default: {
         throw new Error('source not recognized');

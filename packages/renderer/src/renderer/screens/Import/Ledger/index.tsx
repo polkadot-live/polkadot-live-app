@@ -19,7 +19,7 @@ export const ImportLedger = ({ setSection }: ImportLedgerProps) => {
    * been imported.
    */
   useEffect(() => {
-    addresses.length === 0 ? setShowImportUi(true) : setShowImportUi(false);
+    setShowImportUi(addresses.length === 0);
   }, [addresses]);
 
   if (!showImportUi) {

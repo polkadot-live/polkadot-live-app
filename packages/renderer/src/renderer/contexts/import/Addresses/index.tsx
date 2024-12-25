@@ -34,16 +34,24 @@ export const AddressesProvider = ({
   const [ledgerAddresses, setLedgerAddresses] = useState<LLA[]>([]);
   const [readOnlyAddresses, setReadOnlyAddresses] = useState<LA[]>([]);
   const [vaultAddresses, setVaultAddresses] = useState<LA[]>([]);
+  const [wcAddresses, setWcAddresses] = useState<LA[]>([]);
 
   /// References to addresses state.
   const ledgerAddressesRef = useRef<LLA[]>([]);
   const readOnlyAddressesRef = useRef<LA[]>([]);
   const vaultAddressesRef = useRef<LA[]>([]);
+  const wcAddressesRef = useRef<LA[]>([]);
 
   /// Fetch address data from store when component loads.
   useEffect(() => {
     const fetchAccounts = async () => {
-      const sources: AccountSource[] = ['ledger', 'read-only', 'vault'];
+      const sources: AccountSource[] = [
+        'ledger',
+        'read-only',
+        'vault',
+        'wallet-connect',
+      ];
+
       const tasks: IpcTask[] = [];
 
       for (const source of sources) {
@@ -57,6 +65,7 @@ export const AddressesProvider = ({
         window.myAPI.rawAccountTask(tasks[0]),
         window.myAPI.rawAccountTask(tasks[1]),
         window.myAPI.rawAccountTask(tasks[2]),
+        window.myAPI.rawAccountTask(tasks[3]),
       ]);
 
       setStateWithRef(
@@ -75,6 +84,12 @@ export const AddressesProvider = ({
         JSON.parse(results[2] as string),
         setVaultAddresses,
         vaultAddressesRef
+      );
+
+      setStateWithRef(
+        JSON.parse(results[3] as string),
+        setWcAddresses,
+        wcAddressesRef
       );
     };
 
@@ -95,7 +110,8 @@ export const AddressesProvider = ({
     return (
       checkAll(ledgerAddressesRef.current, address) ||
       checkAll(vaultAddressesRef.current, address) ||
-      checkAll(readOnlyAddressesRef.current, address)
+      checkAll(readOnlyAddressesRef.current, address) ||
+      checkAll(wcAddressesRef.current, address)
     );
   };
 
@@ -138,6 +154,17 @@ export const AddressesProvider = ({
 
         break;
       }
+      case 'wallet-connect': {
+        setWcAddresses((prev: LocalAddress[]) => {
+          const updated = prev
+            .filter((a) => a.address !== local.address)
+            .concat([{ ...(local as LocalAddress) }]);
+          wcAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
     }
   };
 
@@ -172,6 +199,17 @@ export const AddressesProvider = ({
         setVaultAddresses((prev: LocalAddress[]) => {
           const updated = prev.filter((a) => a.address !== address);
           vaultAddressesRef.current = updated;
+          updated.length === 0 && (goBack = true);
+          return updated;
+        });
+
+        return goBack;
+      }
+      case 'wallet-connect': {
+        let goBack = false;
+        setWcAddresses((prev: LocalAddress[]) => {
+          const updated = prev.filter((a) => a.address !== address);
+          wcAddressesRef.current = updated;
           updated.length === 0 && (goBack = true);
           return updated;
         });
@@ -220,6 +258,17 @@ export const AddressesProvider = ({
 
         break;
       }
+      case 'wallet-connect': {
+        setWcAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: false } : a
+          );
+          wcAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
     }
   };
 
@@ -259,6 +308,17 @@ export const AddressesProvider = ({
 
         break;
       }
+      case 'wallet-connect': {
+        setWcAddresses((prev: LocalAddress[]) => {
+          const updated = prev.map((a) =>
+            a.address === address ? { ...a, isImported: true } : a
+          );
+          wcAddressesRef.current = updated;
+          return updated;
+        });
+
+        break;
+      }
     }
   };
 
@@ -268,6 +328,7 @@ export const AddressesProvider = ({
         ledgerAddresses,
         readOnlyAddresses,
         vaultAddresses,
+        wcAddresses,
         isAlreadyImported,
         handleAddressImport,
         handleAddressDelete,

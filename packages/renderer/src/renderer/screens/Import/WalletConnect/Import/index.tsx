@@ -13,6 +13,7 @@ import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 /** Temp */
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
+import { useAddresses } from '@app/contexts/import/Addresses';
 import type { AnyData } from 'packages/types/src';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
@@ -28,7 +29,10 @@ interface ImportProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
+  const { wcAddresses } = useAddresses();
+
   // Instantiate a universal provider using the projectId created for your app.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initWc = async () => {
     try {
       const provider = await UniversalProvider.init({
@@ -138,23 +142,23 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             setSection(0);
           }}
         />
-        <UI.SortControlLabel label="Import Wallet Connect Accounts" />
+        <UI.SortControlLabel label="Import WalletConnect Accounts" />
+
+        <ButtonText
+          iconLeft={faCaretRight}
+          text={'WalletConnect Accounts'}
+          disabled={wcAddresses.length === 0}
+          onClick={() => setShowImportUi(false)}
+        />
 
         {/*
         <ButtonText
           iconLeft={faCaretRight}
           text={'Wallet Connect Accounts'}
           disabled={false}
-          onClick={() => setShowImportUi(false)}
-        />
-        */}
-
-        <ButtonText
-          iconLeft={faCaretRight}
-          text={'Wallet Connect Accounts'}
-          disabled={false}
           onClick={async () => await initWc()}
         />
+        */}
       </UI.ControlsWrapper>
 
       {/** Content */}

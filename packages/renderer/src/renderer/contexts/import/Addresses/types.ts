@@ -11,6 +11,7 @@ export interface AddressesContextInterface {
   ledgerAddresses: LedgerLocalAddress[];
   readOnlyAddresses: LocalAddress[];
   vaultAddresses: LocalAddress[];
+  wcAddresses: LocalAddress[];
 
   handleAddressImport: (
     source: AccountSource,
