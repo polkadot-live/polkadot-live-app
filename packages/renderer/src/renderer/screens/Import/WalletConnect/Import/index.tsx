@@ -14,6 +14,7 @@ import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { useAddresses } from '@app/contexts/import/Addresses';
+import { useState } from 'react';
 import type { AnyData } from 'packages/types/src';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
@@ -30,6 +31,10 @@ interface ImportProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
+
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(Array.from({ length: 3 }, (_, index) => index));
 
   // Instantiate a universal provider using the projectId created for your app.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -163,7 +168,53 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
       {/** Content */}
       <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
-        <span>Content...</span>
+        <UI.Accordion
+          multiple
+          defaultIndex={accordionActiveIndices}
+          setExternalIndices={setAccordionActiveIndices}
+          gap={'1rem'}
+          panelPadding={'0.75rem 0.25rem'}
+        >
+          {/* Select Networks */}
+          <UI.AccordionItem>
+            <UI.AccordionCaretHeader
+              title="Select Networks"
+              itemIndex={0}
+              wide={true}
+            />
+            <UI.AccordionPanel>
+              <p>
+                Select target networks to fetch their corresponding address.
+              </p>
+            </UI.AccordionPanel>
+          </UI.AccordionItem>
+
+          {/* Create WalletConnect Session */}
+          <UI.AccordionItem>
+            <UI.AccordionCaretHeader
+              title="Establish Session"
+              itemIndex={1}
+              wide={true}
+            />
+            <UI.AccordionPanel>
+              <p>
+                Open WalletConnect modal and establish a session with a wallet.
+              </p>
+            </UI.AccordionPanel>
+          </UI.AccordionItem>
+
+          {/* Import Addresses */}
+          <UI.AccordionItem>
+            <UI.AccordionCaretHeader
+              title="Import Addresses"
+              itemIndex={2}
+              wide={true}
+            />
+            <UI.AccordionPanel>
+              <p>Select and import addresses into Polkadot Live.</p>
+            </UI.AccordionPanel>
+          </UI.AccordionItem>
+        </UI.Accordion>
       </ContentWrapper>
     </Scrollable>
   );
