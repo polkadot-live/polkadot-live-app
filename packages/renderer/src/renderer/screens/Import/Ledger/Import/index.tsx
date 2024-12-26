@@ -374,7 +374,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <CheckboxRoot
                             $theme={theme}
                             className="CheckboxRoot"
-                            id="c1"
+                            id={`c${i}`}
                             checked={ledger.getChecked(pubKey)}
                             disabled={ledger.isFetching}
                             onCheckedChange={(checked) =>

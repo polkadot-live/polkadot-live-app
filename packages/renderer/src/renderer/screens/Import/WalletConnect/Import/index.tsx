@@ -2,20 +2,35 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import * as themeVariables from '../../../../theme/variables';
+
+import { CheckIcon } from '@radix-ui/react-icons';
 import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
+import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { ContentWrapper } from '../../../Wrappers';
 import { Scrollable } from '@polkadot-live/ui/styles';
-import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretLeft,
+  faCaretRight,
+  faCircleDot,
+} from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { useAddresses } from '@app/contexts/import/Addresses';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
+import { chainIcon } from '@ren/config/chains';
+import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { InfoCard } from '../../Ledger/Import/Wrappers';
 import type { AnyData } from 'packages/types/src';
+import type { ChainID } from 'packages/types/src/chains';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -28,13 +43,101 @@ interface ImportProps {
   setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+// Note: Duplicate of `Ledger/Import/Wrappers/LedgerAddressRow`.
+export const WcNetworkRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 1.15rem 1.5rem;
+
+  > .addressInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    > h2 {
+      margin: 0;
+      padding: 0;
+      font-size: 1.1rem;
+    }
+    > span {
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .imported {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+  }
+`;
+
+// Note: Duplicate of `Ledger/Import/Wrappers/CheckboxRoot`.
+const CheckboxRoot = styled(Checkbox.Root).attrs<{ $theme: AnyData }>(
+  (props) => ({
+    $theme: props.$theme,
+  })
+)`
+  background-color: var(--background-surface);
+  border: 1px solid var(--border-subtle);
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px var(--black-a7);
+  transition: background-color 0.2s ease-out;
+
+  &:disabled {
+    filter: brightness(0.9);
+    cursor: not-allowed;
+  }
+  &:hover:not(:disabled) {
+    background-color: var(--background-secondary-color);
+  }
+  .CheckboxIndicator {
+    color: var(--violet-11);
+  }
+`;
+
+interface WcSelectNetwork {
+  caipId: string;
+  ChainIcon: AnyData;
+  chainId: ChainID;
+  selected: boolean;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
+  const { darkMode } = useConnections();
 
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: 3 }, (_, index) => index));
+
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>([
+    {
+      caipId: WC_POLKADOT_CAIP_ID,
+      ChainIcon: chainIcon('Polkadot'),
+      chainId: 'Polkadot',
+      selected: false,
+    },
+    {
+      caipId: WC_KUSAMA_CAIP_ID,
+      ChainIcon: chainIcon('Kusama'),
+      chainId: 'Kusama',
+      selected: false,
+    },
+    {
+      caipId: WC_WESTEND_CAIP_ID,
+      ChainIcon: chainIcon('Westend'),
+      chainId: 'Westend',
+      selected: false,
+    },
+  ]);
 
   // Instantiate a universal provider using the projectId created for your app.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -183,9 +286,55 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              <p>
-                Select target networks to fetch their corresponding address.
-              </p>
+              <ItemsColumn>
+                <InfoCard style={{ margin: '0' }}>
+                  <span>
+                    <FontAwesomeIcon
+                      icon={faCircleDot}
+                      transform={'shrink-3'}
+                    />
+                    Select which network addresses to fetch.
+                  </span>
+                </InfoCard>
+                {wcNetworks.map(({ chainId, selected, ChainIcon }, i) => (
+                  <WcNetworkRow key={i}>
+                    <ChainIcon
+                      width={'20'}
+                      fill={chainId === 'Polkadot' ? '#ac2461' : ''}
+                    />
+                    <div className="addressInfo">
+                      <h2>{chainId}</h2>
+                    </div>
+                    <CheckboxRoot
+                      $theme={theme}
+                      className="CheckboxRoot"
+                      id={`c${i}`}
+                      checked={selected}
+                      disabled={false}
+                      onCheckedChange={(checked) =>
+                        setWcNetworks((prev) => {
+                          const updated = prev.map((data) =>
+                            data.chainId === chainId
+                              ? {
+                                  ...data,
+                                  selected:
+                                    typeof checked === 'string'
+                                      ? false
+                                      : Boolean(checked),
+                                }
+                              : data
+                          );
+                          return updated;
+                        })
+                      }
+                    >
+                      <Checkbox.Indicator className="CheckboxIndicator">
+                        <CheckIcon />
+                      </Checkbox.Indicator>
+                    </CheckboxRoot>
+                  </WcNetworkRow>
+                ))}
+              </ItemsColumn>
             </UI.AccordionPanel>
           </UI.AccordionItem>
 
@@ -197,9 +346,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              <p>
-                Open WalletConnect modal and establish a session with a wallet.
-              </p>
+              <InfoCard style={{ margin: '0' }}>
+                <span>
+                  <FontAwesomeIcon icon={faCircleDot} transform={'shrink-3'} />
+                  Open WalletConnect modal and establish a session with a
+                  wallet.
+                </span>
+              </InfoCard>
             </UI.AccordionPanel>
           </UI.AccordionItem>
 
@@ -211,7 +364,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              <p>Select and import addresses into Polkadot Live.</p>
+              <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
+                <span>
+                  <FontAwesomeIcon icon={faCircleDot} transform={'shrink-3'} />
+                  Establish a WalletConnect session to view addresses.
+                </span>
+              </InfoCard>
+              <p></p>
             </UI.AccordionPanel>
           </UI.AccordionItem>
         </UI.Accordion>
