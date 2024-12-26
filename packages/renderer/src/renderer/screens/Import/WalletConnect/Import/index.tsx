@@ -43,6 +43,25 @@ interface ImportProps {
   setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export const WcSessionButton = styled.button`
+  background-color: var(--button-pink-background);
+  color: var(--text-bright);
+  padding: 1rem 1.5rem;
+  margin: 0;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-out;
+  user-select: none;
+  max-width: 150px;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.2);
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+`;
+
 // Note: Duplicate of `Ledger/Import/Wrappers/LedgerAddressRow`.
 export const WcNetworkRow = styled.div`
   display: flex;
@@ -140,7 +159,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   ]);
 
   // Instantiate a universal provider using the projectId created for your app.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initWc = async () => {
     try {
       const provider = await UniversalProvider.init({
@@ -346,11 +364,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              <InfoCard style={{ margin: '0' }}>
+              <InfoCard style={{ margin: '0 0 0.5rem 0' }}>
                 <span>
                   <FontAwesomeIcon icon={faCircleDot} transform={'shrink-3'} />
-                  Open WalletConnect modal and establish a session with a
-                  wallet.
+                  <span style={{ flex: 1 }}>
+                    Establish a WalletConnect session with a supported wallet.
+                  </span>
+                  <WcSessionButton onClick={async () => await initWc()}>
+                    Connect
+                  </WcSessionButton>
                 </span>
               </InfoCard>
             </UI.AccordionPanel>
