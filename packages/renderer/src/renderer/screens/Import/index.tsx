@@ -10,6 +10,7 @@ import {
   ModalMotionTwoSection,
 } from '@polkadot-live/ui/kits/overlay';
 import { ImportReadOnly } from './ReadOnly';
+import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@app/hooks/useImportMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import type { AccountSource } from '@polkadot-live/types/accounts';
@@ -69,13 +70,16 @@ export const Import: React.FC = () => {
           }}
         >
           <div className={getShowClass('ledger')}>
-            <ImportLedger setSection={setSection} curSource={source} />
+            <ImportLedger setSection={setSection} />
           </div>
           <div className={getShowClass('vault')}>
             <ImportVault section={section} setSection={setSection} />
           </div>
           <div className={getShowClass('read-only')}>
-            <ImportReadOnly section={section} setSection={setSection} />
+            <ImportReadOnly setSection={setSection} />
+          </div>
+          <div className={getShowClass('wallet-connect')}>
+            <ImportWalletConnect setSection={setSection} />
           </div>
         </div>
       </ModalMotionTwoSection>

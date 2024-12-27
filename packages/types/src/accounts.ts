@@ -6,7 +6,12 @@ import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from './chains';
 
-export type AccountSource = 'vault' | 'ledger' | 'system' | 'read-only';
+export type AccountSource =
+  | 'vault'
+  | 'ledger'
+  | 'system'
+  | 'read-only'
+  | 'wallet-connect';
 
 export type AccountStatus = 'pending' | 'active' | 'does_not_exist';
 

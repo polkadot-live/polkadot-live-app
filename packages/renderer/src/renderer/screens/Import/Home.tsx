@@ -10,6 +10,7 @@ import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionItem, NavCard } from '@polkadot-live/ui/components';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
+import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { useHelp } from '@app/contexts/common/Help';
@@ -72,33 +73,25 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
         {/* Hardware */}
         <ActionItem text={'Import Accounts'} style={{ marginTop: '1.75rem' }} />
         <div className="grid-wrapper">
-          {/* Vault */}
+          {/* Read-only */}
           <NavCard
-            title={'Polkadot Vault'}
+            title={'Read Only'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'vault')
+              handleClick(e, 'read-only')
             }
             openHelp={openHelp}
-            helpKey={'help:import:vault'}
+            helpKey={'help:import:readOnly'}
             childrenLogo={
-              <PolkadotVaultSVG
-                className="logo vault"
-                style={{ height: '2rem', width: 'fit-content' }}
+              <FontAwesomeIcon
+                icon={faCircleDot}
+                className="logo mono"
+                style={{ width: 'fit-content', fontSize: '1.8rem' }}
               />
             }
             childrenSubtitle={
-              <a
-                className="link stay"
-                href={`https://vault.novasama.io/`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                vault.novasama.io
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
+              <span style={{ color: 'var(--text-color-secondary)' }}>
+                Track any address.
+              </span>
             }
           />
 
@@ -135,25 +128,63 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             styleLogoCont={{ paddingTop: '0.2rem' }}
           />
 
-          {/* Read-only */}
+          {/* Vault */}
           <NavCard
-            title={'Read Only'}
+            title={'Polkadot Vault'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'read-only')
+              handleClick(e, 'vault')
             }
             openHelp={openHelp}
-            helpKey={'help:import:readOnly'}
+            helpKey={'help:import:vault'}
             childrenLogo={
-              <FontAwesomeIcon
-                icon={faCircleDot}
-                className="logo mono"
-                style={{ width: 'fit-content', fontSize: '1.8rem' }}
+              <PolkadotVaultSVG
+                className="logo vault"
+                style={{ height: '2rem', width: 'fit-content' }}
               />
             }
             childrenSubtitle={
-              <span style={{ color: 'var(--text-color-secondary)' }}>
-                Track any address.
-              </span>
+              <a
+                className="link stay"
+                href={`https://vault.novasama.io/`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                vault.novasama.io
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
+            }
+          />
+
+          {/* Wallet Connect */}
+          <NavCard
+            title={'Wallet Connect'}
+            onClick={(e: React.MouseEvent<HTMLElement>) =>
+              handleClick(e, 'wallet-connect')
+            }
+            openHelp={openHelp}
+            helpKey={'help:import:walletConnect'}
+            childrenLogo={
+              <WalletConnectSVG
+                className="logo"
+                style={{ height: '2.1rem', width: 'fit-content' }}
+              />
+            }
+            childrenSubtitle={
+              <a
+                className="link stay"
+                href={`https://walletconnect.network//`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                walletconnect.network
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  transform="shrink-6"
+                />
+              </a>
             }
           />
         </div>

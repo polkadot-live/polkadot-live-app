@@ -113,7 +113,12 @@ export class AddressesController {
   static getBackupData(): string {
     const map = new Map<AccountSource, string>();
 
-    for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
+    for (const source of [
+      'ledger',
+      'read-only',
+      'vault',
+      'wallet-connect',
+    ] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
       const fetched =
         source === 'ledger'
@@ -297,7 +302,12 @@ export class AddressesController {
   }
 
   private static isAlreadyPersisted(address: string): boolean {
-    for (const source of ['ledger', 'read-only', 'vault'] as AccountSource[]) {
+    for (const source of [
+      'ledger',
+      'read-only',
+      'vault',
+      'wallet-connect',
+    ] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
       if (source === 'ledger') {
         const stored = this.getStoredAddresses(key, true);
