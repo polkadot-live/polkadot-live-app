@@ -42,7 +42,7 @@ import {
   ImportAddressRow,
   InfoCard,
 } from '../../Wrappers';
-import { InfoCardSteps } from './InfoCardSteps';
+import { InfoCardSteps } from '../../InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
