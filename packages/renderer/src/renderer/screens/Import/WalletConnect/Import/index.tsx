@@ -51,6 +51,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     setWcNetworks,
   } = useWalletConnect();
 
+  const getSelectedNetworkCount = () =>
+    wcNetworks.filter(({ selected }) => selected).length;
+
   return (
     <Scrollable
       $footerHeight={4}
@@ -177,7 +180,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   </span>
                 </InfoCard>
 
-                <WcSessionButton onClick={async () => await initWc()}>
+                <WcSessionButton
+                  disabled={getSelectedNetworkCount() === 0}
+                  onClick={async () => await initWc()}
+                >
                   Connect
                 </WcSessionButton>
               </FlexRow>
