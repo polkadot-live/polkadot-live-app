@@ -25,7 +25,6 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
 import { useWalletConnect } from '@ren/renderer/contexts/import/WalletConnect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { encodeAddress } from '@polkadot/util-crypto';
 import { ellipsisFn } from '@w3ux/utils';
 import { FlexRow, WcSessionButton } from './Wrappers';
 import {
@@ -34,7 +33,7 @@ import {
   ImportAddressRow,
   InfoCard,
 } from '../../Wrappers';
-import type { ImportProps, WcFetchedAddress } from './types';
+import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
@@ -44,32 +43,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     useState<number>(0);
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-  const { initWc, wcNetworks, setWcNetworks } = useWalletConnect();
-
-  // Temp: Addresses for mock UI.
-  const mockAddress = '5DwLjkdKkQV6vp12Hi8773GvWAvvkjaxSeVns91u7mswS4io';
-  const [receivedAddresses, setReceivedAddresses] = useState<
-    WcFetchedAddress[]
-  >([
-    {
-      chainId: 'Polkadot',
-      encoded: encodeAddress(mockAddress, 0),
-      substrate: mockAddress,
-      selected: false,
-    },
-    {
-      chainId: 'Kusama',
-      encoded: encodeAddress(mockAddress, 2),
-      substrate: mockAddress,
-      selected: false,
-    },
-    {
-      chainId: 'Westend',
-      encoded: encodeAddress(mockAddress, 42),
-      substrate: mockAddress,
-      selected: false,
-    },
-  ]);
+  const {
+    wcFetchedAddresses,
+    wcNetworks,
+    initWc,
+    setWcFetchedAddresses,
+    setWcNetworks,
+  } = useWalletConnect();
 
   return (
     <Scrollable
@@ -219,7 +199,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </span>
               </InfoCard>
               <ItemsColumn>
-                {receivedAddresses.map(({ chainId, encoded, selected }, i) => (
+                {wcFetchedAddresses.map(({ chainId, encoded, selected }, i) => (
                   <ImportAddressRow key={encoded}>
                     <UI.Identicon value={encoded} size={28} />
                     <div className="addressInfo">
@@ -235,7 +215,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       checked={selected}
                       disabled={false}
                       onCheckedChange={(checked) => {
-                        setReceivedAddresses((prev) => {
+                        setWcFetchedAddresses((prev) => {
                           const updated = prev.map((data) =>
                             data.encoded === encoded
                               ? {

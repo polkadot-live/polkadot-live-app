@@ -6,6 +6,8 @@ import type { WalletConnectContextInterface } from './types';
 
 export const defaultWalletConnectContext: WalletConnectContextInterface = {
   initWc: () => new Promise(() => {}),
+  wcFetchedAddresses: [],
+  setWcFetchedAddresses: () => {},
   wcNetworks: [],
   setWcNetworks: () => {},
 };

@@ -7,7 +7,13 @@ import { WalletConnectModal } from '@walletconnect/modal';
 import { createContext, useContext, useState } from 'react';
 import { chainIcon } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { WalletConnectContextInterface, WcSelectNetwork } from './types';
+import type {
+  WalletConnectContextInterface,
+  WcFetchedAddress,
+  WcSelectNetwork,
+} from './types';
+import { encodeAddress } from '@polkadot/util-crypto';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -15,6 +21,12 @@ const WC_RELAY_URL = 'wss://relay.walletconnect.com';
 const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
 const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
+
+const mapCaipChainId = new Map<string, ChainID>([
+  [WC_POLKADOT_CAIP_ID, 'Polkadot'],
+  [WC_KUSAMA_CAIP_ID, 'Kusama'],
+  [WC_WESTEND_CAIP_ID, 'Westend'],
+]);
 
 export const WalletConnectContext =
   createContext<WalletConnectContextInterface>(
@@ -53,12 +65,36 @@ export const WalletConnectProvider = ({
   ]);
 
   /**
+   * Fetched addresses with WalletConnect.
+   */
+  const [wcFetchedAddresses, setWcFetchedAddresses] = useState<
+    WcFetchedAddress[]
+  >([]);
+
+  /**
    * Get namespaces of selected networks.
    */
   const getNamespaces = () =>
     wcNetworks
       .filter(({ selected }) => selected)
       .map(({ caipId }) => `polkadot:${caipId}`);
+
+  /**
+   * Util for getting a chain ID's address prefix for encoding.
+   */
+  const getAddressPrefix = (chainId: ChainID) => {
+    switch (chainId) {
+      case 'Polkadot': {
+        return 0;
+      }
+      case 'Kusama': {
+        return 2;
+      }
+      case 'Westend': {
+        return 42;
+      }
+    }
+  };
 
   /**
    * Get connection params for WalletConnect session.
@@ -140,14 +176,28 @@ export const WalletConnectProvider = ({
         .map((namespace) => namespace.accounts)
         .flat();
 
-      // Grab account addresses from CAIP account formatted accounts
-      const accounts = wcAccounts.map((wcAccount) => {
-        const address = wcAccount.split(':')[2];
-        return address;
-      });
+      // Grab account addresses and their CAIP ID.
+      const accounts: { address: string; caipId: string }[] = wcAccounts.map(
+        (wcAccount) => ({
+          address: wcAccount.split(':')[2],
+          caipId: wcAccount.split(':')[1],
+        })
+      );
 
-      // TODO: Set received accounts state.
-      console.log(accounts);
+      // Set received WalletConnect address state.
+      setWcFetchedAddresses(() =>
+        accounts.map(({ address, caipId }) => {
+          const chainId = mapCaipChainId.get(caipId)!;
+          const pref = getAddressPrefix(chainId);
+
+          return {
+            chainId,
+            encoded: encodeAddress(address, pref),
+            substrate: address,
+            selected: false,
+          };
+        })
+      );
     } catch (error: AnyData) {
       console.error('An unexpected error occurred:', error);
     }
@@ -155,7 +205,13 @@ export const WalletConnectProvider = ({
 
   return (
     <WalletConnectContext.Provider
-      value={{ initWc, wcNetworks, setWcNetworks }}
+      value={{
+        initWc,
+        wcFetchedAddresses,
+        setWcFetchedAddresses,
+        wcNetworks,
+        setWcNetworks,
+      }}
     >
       {children}
     </WalletConnectContext.Provider>
