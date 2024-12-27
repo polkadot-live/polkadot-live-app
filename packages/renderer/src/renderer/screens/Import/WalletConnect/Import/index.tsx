@@ -88,10 +88,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           gap={'1rem'}
           panelPadding={'0.75rem 0.25rem'}
         >
-          {/** Select Networks */}
+          {/** Establish Session */}
           <UI.AccordionItem>
             <UI.AccordionCaretHeader
-              title="Select Networks"
+              title="Establish Session"
               itemIndex={0}
               wide={true}
             />
@@ -143,50 +143,20 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         transform={'shrink-3'}
                       />
                       <span style={{ flex: 1 }}>
-                        Select which network addresses to fetch and click{' '}
-                        <b>Next</b>
-                        to continue.
+                        Select your target networks and click Connect to fetch
+                        addresses via WalletConnect.
                       </span>
                     </span>
                   </InfoCard>
 
-                  <WcSessionButton onClick={() => console.log('todo')}>
-                    Next
+                  <WcSessionButton
+                    disabled={getSelectedNetworkCount() === 0}
+                    onClick={async () => await initWc()}
+                  >
+                    Connect
                   </WcSessionButton>
                 </FlexRow>
               </ItemsColumn>
-            </UI.AccordionPanel>
-          </UI.AccordionItem>
-
-          {/** Create WalletConnect Session */}
-          <UI.AccordionItem>
-            <UI.AccordionCaretHeader
-              title="Establish Session"
-              itemIndex={1}
-              wide={true}
-            />
-            <UI.AccordionPanel>
-              <FlexRow>
-                <InfoCard style={{ margin: '0', flex: 1 }}>
-                  <span>
-                    <FontAwesomeIcon
-                      icon={faCircleDot}
-                      transform={'shrink-3'}
-                    />
-                    <span style={{ flex: 1 }}>
-                      Click <b>Connect</b> to establish a WalletConnect session
-                      with a supported wallet.
-                    </span>
-                  </span>
-                </InfoCard>
-
-                <WcSessionButton
-                  disabled={getSelectedNetworkCount() === 0}
-                  onClick={async () => await initWc()}
-                >
-                  Connect
-                </WcSessionButton>
-              </FlexRow>
             </UI.AccordionPanel>
           </UI.AccordionItem>
 
