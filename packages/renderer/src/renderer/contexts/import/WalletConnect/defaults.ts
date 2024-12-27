@@ -4,4 +4,8 @@
 
 import type { WalletConnectContextInterface } from './types';
 
-export const defaultWalletConnectContext: WalletConnectContextInterface = {};
+export const defaultWalletConnectContext: WalletConnectContextInterface = {
+  initWc: () => new Promise(() => {}),
+  wcNetworks: [],
+  setWcNetworks: () => {},
+};
