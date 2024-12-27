@@ -26,10 +26,10 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
 import { chainIcon } from '@ren/config/chains';
-import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { ellipsisFn } from '@w3ux/utils';
+import { FlexRow, WcSessionButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
@@ -37,60 +37,13 @@ import {
   InfoCard,
 } from '../../Wrappers';
 import type { AnyData } from 'packages/types/src';
-import type { ChainID } from 'packages/types/src/chains';
+import type { ImportProps, WcFetchedAddress, WcSelectNetwork } from './types';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
 const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
 const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
-
-interface ImportProps {
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-  setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface WcSelectNetwork {
-  caipId: string;
-  ChainIcon: AnyData;
-  chainId: ChainID;
-  selected: boolean;
-}
-
-interface WcFetchedAddress {
-  chainId: ChainID;
-  encoded: string;
-  substrate: string;
-  selected: boolean;
-}
-
-export const FlexRow = styled.div`
-  background-color: var(--background-window) !important;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-`;
-
-export const WcSessionButton = styled.button`
-  background-color: var(--button-pink-background);
-  color: var(--text-bright);
-  padding: 1.05rem 1.5rem;
-  margin: 0;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease-out;
-  user-select: none;
-  width: 125px;
-  height: fit-content;
-
-  &:hover:not(:disabled) {
-    filter: brightness(1.2);
-  }
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
