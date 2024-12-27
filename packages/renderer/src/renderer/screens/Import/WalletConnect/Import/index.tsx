@@ -28,11 +28,16 @@ import { useState } from 'react';
 import { chainIcon } from '@ren/config/chains';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AddressListFooter, InfoCard } from '../../Ledger/Import/Wrappers';
-import type { AnyData } from 'packages/types/src';
-import type { ChainID } from 'packages/types/src/chains';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { ellipsisFn } from '@w3ux/utils';
+import {
+  AddressListFooter,
+  CheckboxRoot,
+  ImportAddressRow,
+  InfoCard,
+} from '../../Wrappers';
+import type { AnyData } from 'packages/types/src';
+import type { ChainID } from 'packages/types/src/chains';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -84,88 +89,6 @@ export const WcSessionButton = styled.button`
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-  }
-`;
-
-// Note: Similar to `Ledger/Import/Wrappers/LedgerAddressRow`.
-export const WcAddressRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  padding: 1.15rem 1.5rem;
-
-  > .addressInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-
-    > h2 {
-      margin: 0;
-      padding: 0;
-      font-size: 1.1rem;
-    }
-    > span {
-      color: var(--text-color-secondary);
-    }
-  }
-`;
-
-// Note: Similar to `Ledger/Import/Wrappers/LedgerAddressRow`.
-export const WcNetworkRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  padding: 1.15rem 1.5rem;
-
-  > .addressInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-
-    > h2 {
-      margin: 0;
-      padding: 0;
-      font-size: 1.1rem;
-    }
-    > span {
-      color: var(--text-color-secondary);
-    }
-  }
-
-  .imported {
-    color: var(--text-color-secondary);
-    font-size: 1rem;
-  }
-`;
-
-// Note: Duplicate of `Ledger/Import/Wrappers/CheckboxRoot`.
-const CheckboxRoot = styled(Checkbox.Root).attrs<{ $theme: AnyData }>(
-  (props) => ({
-    $theme: props.$theme,
-  })
-)`
-  background-color: var(--background-surface);
-  border: 1px solid var(--border-subtle);
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 10px var(--black-a7);
-  transition: background-color 0.2s ease-out;
-
-  &:disabled {
-    filter: brightness(0.9);
-    cursor: not-allowed;
-  }
-  &:hover:not(:disabled) {
-    background-color: var(--background-secondary-color);
-  }
-  .CheckboxIndicator {
-    color: var(--violet-11);
   }
 `;
 
@@ -362,7 +285,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             <UI.AccordionPanel>
               <ItemsColumn>
                 {wcNetworks.map(({ chainId, selected, ChainIcon }, i) => (
-                  <WcNetworkRow key={i}>
+                  <ImportAddressRow key={i}>
                     <ChainIcon
                       width={'20'}
                       fill={chainId === 'Polkadot' ? '#ac2461' : ''}
@@ -397,7 +320,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         <CheckIcon />
                       </Checkbox.Indicator>
                     </CheckboxRoot>
-                  </WcNetworkRow>
+                  </ImportAddressRow>
                 ))}
                 <FlexRow>
                   <InfoCard style={{ margin: '0', flex: 1 }}>
@@ -467,7 +390,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               </InfoCard>
               <ItemsColumn>
                 {receivedAddresses.map(({ chainId, encoded, selected }, i) => (
-                  <WcAddressRow key={encoded}>
+                  <ImportAddressRow key={encoded}>
                     <UI.Identicon value={encoded} size={28} />
                     <div className="addressInfo">
                       <h2>
@@ -502,7 +425,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         <CheckIcon />
                       </Checkbox.Indicator>
                     </CheckboxRoot>
-                  </WcAddressRow>
+                  </ImportAddressRow>
                 ))}
               </ItemsColumn>
 

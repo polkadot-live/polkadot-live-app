@@ -35,15 +35,13 @@ import {
   faExclamationTriangle,
   faX,
 } from '@fortawesome/free-solid-svg-icons';
+import { ConnectButton, SelectTrigger, SelectContent } from './Wrappers';
 import {
-  CheckboxRoot,
-  ConnectButton,
-  InfoCard,
-  LedgerAddressRow,
-  SelectTrigger,
-  SelectContent,
   AddressListFooter,
-} from './Wrappers';
+  CheckboxRoot,
+  ImportAddressRow,
+  InfoCard,
+} from '../../Wrappers';
 import { InfoCardSteps } from './InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
@@ -359,7 +357,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 <>
                   <ItemsColumn>
                     {receivedAddresses.map(({ address, pubKey }, i) => (
-                      <LedgerAddressRow key={address}>
+                      <ImportAddressRow key={address}>
                         <UI.Identicon value={address} size={28} />
                         <div className="addressInfo">
                           <h2>
@@ -390,7 +388,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             </Checkbox.Indicator>
                           </CheckboxRoot>
                         )}
-                      </LedgerAddressRow>
+                      </ImportAddressRow>
                     ))}
                   </ItemsColumn>
 
