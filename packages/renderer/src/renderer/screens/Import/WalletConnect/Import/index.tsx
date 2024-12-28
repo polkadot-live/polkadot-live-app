@@ -47,11 +47,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const {
     wcFetchedAddresses,
     wcNetworks,
-    initWc,
+    connectWc,
     setWcFetchedAddresses,
     setWcNetworks,
+    disconnectWcSession,
     wcConnecting,
     wcInitialized,
+    wcSessionActive,
   } = useWalletConnect();
 
   const getSelectedNetworkCount = () =>
@@ -67,7 +69,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
    * Handle connect button click.
    */
   const handleConnect = async () => {
-    await initWc();
+    await connectWc();
   };
 
   /**
@@ -213,16 +215,26 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     </span>
                   </InfoCard>
 
-                  <WcSessionButton
-                    disabled={
-                      getSelectedNetworkCount() === 0 ||
-                      wcConnecting ||
-                      !wcInitialized
-                    }
-                    onClick={async () => await handleConnect()}
-                  >
-                    Connect
-                  </WcSessionButton>
+                  {/** Connect and Disconnect buttons */}
+                  {!wcSessionActive ? (
+                    <WcSessionButton
+                      disabled={
+                        getSelectedNetworkCount() === 0 ||
+                        wcConnecting ||
+                        !wcInitialized
+                      }
+                      onClick={async () => await handleConnect()}
+                    >
+                      Connect
+                    </WcSessionButton>
+                  ) : (
+                    <WcSessionButton
+                      disabled={!wcSessionActive}
+                      onClick={async () => await disconnectWcSession()}
+                    >
+                      Disconnect
+                    </WcSessionButton>
+                  )}
                 </FlexRow>
               </ItemsColumn>
             </UI.AccordionPanel>

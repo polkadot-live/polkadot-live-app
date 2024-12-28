@@ -7,7 +7,9 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export interface WalletConnectContextInterface {
   wcConnecting: boolean;
   wcInitialized: boolean;
-  initWc: () => Promise<void>;
+  wcSessionActive: boolean;
+  connectWc: () => Promise<void>;
+  disconnectWcSession: () => Promise<void>;
   wcFetchedAddresses: WcFetchedAddress[];
   setWcFetchedAddresses: React.Dispatch<
     React.SetStateAction<WcFetchedAddress[]>

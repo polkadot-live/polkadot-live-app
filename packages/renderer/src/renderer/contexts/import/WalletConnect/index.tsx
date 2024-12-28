@@ -6,6 +6,7 @@ import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { chainIcon } from '@ren/config/chains';
+import { getSdkError } from '@walletconnect/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   WalletConnectContextInterface,
@@ -42,6 +43,7 @@ export const WalletConnectProvider = ({
 }) => {
   const [wcConnecting, setWcConnecting] = useState(false);
   const [wcInitialized, setWcInitialized] = useState(false);
+  const [wcSessionActive, setWcSessionActive] = useState(false);
 
   const wcProvider = useRef<UniversalProvider | null>(null);
   const wcModal = useRef<WalletConnectModal | null>(null);
@@ -103,10 +105,10 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Init provider.
+   * Init provider and modal.
    */
   const initProvider = async () => {
-    if (wcProvider.current === null) {
+    if (!wcProvider.current) {
       // Instantiate provider.
       const provider = await UniversalProvider.init({
         projectId: WC_PROJECT_ID,
@@ -138,7 +140,7 @@ export const WalletConnectProvider = ({
       wcProvider.current = provider;
     }
 
-    if (!wcModal.current === null) {
+    if (!wcModal.current) {
       // Create a standalone modal using the dapp's WalletConnect projectId.
       const modal = new WalletConnectModal({
         enableExplorer: false,
@@ -150,6 +152,7 @@ export const WalletConnectProvider = ({
       wcModal.current = modal;
     }
 
+    console.log('> WalletConnect Initialized');
     setWcInitialized(true);
   };
 
@@ -174,7 +177,7 @@ export const WalletConnectProvider = ({
   /**
    * Instantiate a universal provider using the projectId.
    */
-  const initWc = async () => {
+  const connectWc = async () => {
     try {
       // Set connecting flag.
       setWcConnecting(true);
@@ -198,6 +201,7 @@ export const WalletConnectProvider = ({
       // await client.connect({ pairingTopic, requiredNamespaces });
       const walletConnectSession = await approval();
 
+      setWcSessionActive(true);
       wcModal.current!.closeModal();
 
       // Get the accounts from the session for use in constructing transactions.
@@ -233,6 +237,27 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Disconnect from the current session.
+   */
+  const disconnectWcSession = async () => {
+    if (!wcProvider.current) {
+      return;
+    }
+
+    const topic = wcProvider.current.session?.topic;
+    if (topic) {
+      await wcProvider.current.client.disconnect({
+        topic,
+        reason: getSdkError('USER_DISCONNECTED'),
+      });
+
+      delete wcProvider.current.session;
+    }
+
+    setWcSessionActive(false);
+  };
+
+  /**
    * Initialize the WalletConnect provider on initial render.
    */
   useEffect(() => {
@@ -244,13 +269,15 @@ export const WalletConnectProvider = ({
   return (
     <WalletConnectContext.Provider
       value={{
-        initWc,
-        wcFetchedAddresses,
+        connectWc,
+        disconnectWcSession,
         setWcFetchedAddresses,
-        wcNetworks,
         setWcNetworks,
         wcConnecting,
+        wcFetchedAddresses,
         wcInitialized,
+        wcNetworks,
+        wcSessionActive,
       }}
     >
       {children}
