@@ -51,6 +51,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     setWcFetchedAddresses,
     setWcNetworks,
     wcConnecting,
+    wcInitialized,
   } = useWalletConnect();
 
   const getSelectedNetworkCount = () =>
@@ -213,7 +214,11 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   </InfoCard>
 
                   <WcSessionButton
-                    disabled={getSelectedNetworkCount() === 0 || wcConnecting}
+                    disabled={
+                      getSelectedNetworkCount() === 0 ||
+                      wcConnecting ||
+                      !wcInitialized
+                    }
                     onClick={async () => await handleConnect()}
                   >
                     Connect

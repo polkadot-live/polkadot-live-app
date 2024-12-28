@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { chainIcon } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
@@ -41,6 +41,10 @@ export const WalletConnectProvider = ({
   children: React.ReactNode;
 }) => {
   const [wcConnecting, setWcConnecting] = useState(false);
+  const [wcInitialized, setWcInitialized] = useState(false);
+
+  const wcProvider = useRef<UniversalProvider | null>(null);
+  const wcModal = useRef<WalletConnectModal | null>(null);
 
   /**
    * WalletConnect networks and their selected state.
@@ -99,6 +103,57 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Init provider.
+   */
+  const initProvider = async () => {
+    if (wcProvider.current === null) {
+      // Instantiate provider.
+      const provider = await UniversalProvider.init({
+        projectId: WC_PROJECT_ID,
+        relayUrl: WC_RELAY_URL,
+        // TODO: metadata
+      });
+
+      // Listen for WalletConnect events
+      provider.on('session_create', (session: AnyData) => {
+        console.log('Session created:', session);
+      });
+
+      provider.on('session_update', ({ topic, params }: AnyData) => {
+        console.log('Session updated:', topic, params);
+      });
+
+      provider.on('session_delete', (session: AnyData) => {
+        console.log('Session deleted:', session);
+      });
+
+      provider.on('connect', (event: AnyData) => {
+        console.log('Connected to Wallet:', event);
+      });
+
+      provider.on('disconnect', (event: AnyData) => {
+        console.log('Wallet disconnected:', event);
+      });
+
+      wcProvider.current = provider;
+    }
+
+    if (!wcModal.current === null) {
+      // Create a standalone modal using the dapp's WalletConnect projectId.
+      const modal = new WalletConnectModal({
+        enableExplorer: false,
+        explorerRecommendedWalletIds: 'NONE',
+        explorerExcludedWalletIds: 'ALL',
+        projectId: WC_PROJECT_ID,
+      });
+
+      wcModal.current = modal;
+    }
+
+    setWcInitialized(true);
+  };
+
+  /**
    * Get connection params for WalletConnect session.
    *
    * Requires up to 3 different chain namespaces (polkadot, kusama and westend).
@@ -124,48 +179,15 @@ export const WalletConnectProvider = ({
       // Set connecting flag.
       setWcConnecting(true);
 
-      const provider = await UniversalProvider.init({
-        projectId: WC_PROJECT_ID,
-        relayUrl: WC_RELAY_URL,
-      });
-
-      // Listen for WalletConnect events
-      provider.on('session_create', (session: AnyData) => {
-        console.log('Session created:', session);
-      });
-
-      provider.on('session_update', ({ topic, params }: AnyData) => {
-        console.log('Session updated:', topic, params);
-      });
-
-      provider.on('session_delete', (session: AnyData) => {
-        console.log('Session deleted:', session);
-      });
-
-      provider.on('connect', (event: AnyData) => {
-        console.log('Connected to Wallet:', event);
-      });
-
-      provider.on('disconnect', (event: AnyData) => {
-        console.log('Wallet disconnected:', event);
-      });
-
       const params = getConnectionParams();
-      const { uri, approval } = await provider.client.connect(params);
-
-      // Create a standalone modal using the dapp's WalletConnect projectId.
-      const walletConnectModal = new WalletConnectModal({
-        enableExplorer: false,
-        explorerRecommendedWalletIds: 'NONE',
-        explorerExcludedWalletIds: 'ALL',
-        projectId: WC_PROJECT_ID,
-      });
+      const { uri, approval } =
+        await wcProvider.current!.client.connect(params);
 
       // Open the modal prompting the user to scan the QR code with their wallet app or copy
       // the URI from the modal and paste into their wallet app to begin the session creation
       // process.
       if (uri) {
-        walletConnectModal.openModal({ uri });
+        wcModal.current!.openModal({ uri });
       }
 
       setWcConnecting(false);
@@ -176,7 +198,7 @@ export const WalletConnectProvider = ({
       // await client.connect({ pairingTopic, requiredNamespaces });
       const walletConnectSession = await approval();
 
-      walletConnectModal.closeModal();
+      wcModal.current!.closeModal();
 
       // Get the accounts from the session for use in constructing transactions.
       const wcAccounts = Object.values(walletConnectSession.namespaces)
@@ -210,6 +232,15 @@ export const WalletConnectProvider = ({
     }
   };
 
+  /**
+   * Initialize the WalletConnect provider on initial render.
+   */
+  useEffect(() => {
+    if (!wcProvider.current) {
+      initProvider();
+    }
+  }, []);
+
   return (
     <WalletConnectContext.Provider
       value={{
@@ -219,6 +250,7 @@ export const WalletConnectProvider = ({
         wcNetworks,
         setWcNetworks,
         wcConnecting,
+        wcInitialized,
       }}
     >
       {children}
