@@ -5,6 +5,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '../../../../theme/variables';
 
+import { BarLoader } from 'react-spinners';
 import { CheckIcon } from '@radix-ui/react-icons';
 import {
   ButtonPrimaryInvert,
@@ -22,7 +23,7 @@ import {
 /** Temp */
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWalletConnect } from '@ren/renderer/contexts/import/WalletConnect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
@@ -49,16 +50,40 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     initWc,
     setWcFetchedAddresses,
     setWcNetworks,
+    wcConnecting,
   } = useWalletConnect();
 
   const getSelectedNetworkCount = () =>
     wcNetworks.filter(({ selected }) => selected).length;
+
+  useEffect(() => {
+    if (wcFetchedAddresses.length > 0) {
+      setAccordionActiveIndices(1);
+    }
+  }, [wcFetchedAddresses]);
+
+  /**
+   * Handle connect button click.
+   */
+  const handleConnect = async () => {
+    await initWc();
+  };
 
   return (
     <Scrollable
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
+      {wcConnecting && (
+        <BarLoader
+          color={darkMode ? '#642763' : '#a772a6'}
+          width={'100%'}
+          height={2}
+          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          speedMultiplier={0.75}
+        />
+      )}
+
       {/** Bredcrumb */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
         <ButtonPrimaryInvert
@@ -150,8 +175,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   </InfoCard>
 
                   <WcSessionButton
-                    disabled={getSelectedNetworkCount() === 0}
-                    onClick={async () => await initWc()}
+                    disabled={getSelectedNetworkCount() === 0 || wcConnecting}
+                    onClick={async () => await handleConnect()}
                   >
                     Connect
                   </WcSessionButton>

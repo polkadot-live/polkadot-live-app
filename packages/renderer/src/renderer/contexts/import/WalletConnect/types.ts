@@ -5,6 +5,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface WalletConnectContextInterface {
+  wcConnecting: boolean;
   initWc: () => Promise<void>;
   wcFetchedAddresses: WcFetchedAddress[];
   setWcFetchedAddresses: React.Dispatch<

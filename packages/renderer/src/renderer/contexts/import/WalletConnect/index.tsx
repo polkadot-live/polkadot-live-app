@@ -40,6 +40,8 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const [wcConnecting, setWcConnecting] = useState(false);
+
   /**
    * WalletConnect networks and their selected state.
    */
@@ -119,6 +121,9 @@ export const WalletConnectProvider = ({
    */
   const initWc = async () => {
     try {
+      // Set connecting flag.
+      setWcConnecting(true);
+
       const provider = await UniversalProvider.init({
         projectId: WC_PROJECT_ID,
         relayUrl: WC_RELAY_URL,
@@ -162,6 +167,8 @@ export const WalletConnectProvider = ({
       if (uri) {
         walletConnectModal.openModal({ uri });
       }
+
+      setWcConnecting(false);
 
       // Await session approval from the wallet app.
       // expiry: timestamp of session expiry
@@ -211,6 +218,7 @@ export const WalletConnectProvider = ({
         setWcFetchedAddresses,
         wcNetworks,
         setWcNetworks,
+        wcConnecting,
       }}
     >
       {children}
