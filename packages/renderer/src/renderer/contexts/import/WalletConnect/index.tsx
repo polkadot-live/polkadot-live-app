@@ -199,7 +199,7 @@ export const WalletConnectProvider = ({
         })
       );
     } catch (error: AnyData) {
-      console.error('An unexpected error occurred:', error);
+      console.error('initWc: An unexpected error occurred:', error);
     }
   };
 
