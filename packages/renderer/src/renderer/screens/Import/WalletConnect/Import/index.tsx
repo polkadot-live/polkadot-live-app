@@ -69,6 +69,44 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     await initWc();
   };
 
+  /**
+   * Handle address checkbox click.
+   */
+  const handleSelectAddress = (
+    encoded: string,
+    checkState: Checkbox.CheckedState
+  ) => {
+    setWcFetchedAddresses((prev) => {
+      const updated = prev.map((data) =>
+        data.encoded === encoded
+          ? {
+              ...data,
+              selected:
+                typeof checkState === 'string' ? false : Boolean(checkState),
+            }
+          : data
+      );
+
+      return updated;
+    });
+  };
+
+  /**
+   * Get the selected addresses to import.
+   */
+  const getSelectedAddresses = () =>
+    wcFetchedAddresses.filter(({ selected }) => selected);
+
+  /**
+   * Get import button label text.
+   */
+  const getImportLabel = () => {
+    const len = getSelectedAddresses().length;
+    return len === 0
+      ? 'Import'
+      : `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
+  };
+
   return (
     <Scrollable
       $footerHeight={4}
@@ -193,63 +231,60 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               wide={true}
             />
             <UI.AccordionPanel>
-              <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
-                <span>
-                  <FontAwesomeIcon icon={faCircleDot} transform={'shrink-3'} />
-                  Establish a WalletConnect session to view addresses.
-                </span>
-              </InfoCard>
-              <ItemsColumn>
-                {wcFetchedAddresses.map(({ chainId, encoded, selected }, i) => (
-                  <ImportAddressRow key={encoded}>
-                    <UI.Identicon value={encoded} size={28} />
-                    <div className="addressInfo">
-                      <h2>
-                        {i + 1}. {chainId} Account
-                      </h2>
-                      <span>{ellipsisFn(encoded, 12)}</span>
-                    </div>
-                    <CheckboxRoot
-                      $theme={theme}
-                      className="CheckboxRoot"
-                      id={`${i + 1}-${chainId}`}
-                      checked={selected}
-                      disabled={false}
-                      onCheckedChange={(checked) => {
-                        setWcFetchedAddresses((prev) => {
-                          const updated = prev.map((data) =>
-                            data.encoded === encoded
-                              ? {
-                                  ...data,
-                                  selected:
-                                    typeof checked === 'string'
-                                      ? false
-                                      : Boolean(checked),
-                                }
-                              : data
-                          );
-                          return updated;
-                        });
-                      }}
-                    >
-                      <Checkbox.Indicator className="CheckboxIndicator">
-                        <CheckIcon />
-                      </Checkbox.Indicator>
-                    </CheckboxRoot>
-                  </ImportAddressRow>
-                ))}
-              </ItemsColumn>
+              {wcFetchedAddresses.length === 0 ? (
+                <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
+                  <span>
+                    <FontAwesomeIcon
+                      icon={faCircleDot}
+                      transform={'shrink-3'}
+                    />
+                    Establish a WalletConnect session to view addresses.
+                  </span>
+                </InfoCard>
+              ) : (
+                <>
+                  <ItemsColumn>
+                    {wcFetchedAddresses.map(
+                      ({ chainId, encoded, selected }, i) => (
+                        <ImportAddressRow key={encoded}>
+                          <UI.Identicon value={encoded} size={28} />
+                          <div className="addressInfo">
+                            <h2>
+                              {i + 1}. {chainId} Account
+                            </h2>
+                            <span>{ellipsisFn(encoded, 12)}</span>
+                          </div>
+                          <CheckboxRoot
+                            $theme={theme}
+                            className="CheckboxRoot"
+                            id={`${i + 1}-${chainId}`}
+                            checked={selected}
+                            disabled={false}
+                            onCheckedChange={(checked) => {
+                              handleSelectAddress(encoded, checked);
+                            }}
+                          >
+                            <Checkbox.Indicator className="CheckboxIndicator">
+                              <CheckIcon />
+                            </Checkbox.Indicator>
+                          </CheckboxRoot>
+                        </ImportAddressRow>
+                      )
+                    )}
+                  </ItemsColumn>
 
-              <AddressListFooter>
-                <div className="importBtn">
-                  <button
-                    disabled={false}
-                    onClick={() => console.log('todo: import')}
-                  >
-                    Import
-                  </button>
-                </div>
-              </AddressListFooter>
+                  <AddressListFooter>
+                    <div className="importBtn">
+                      <button
+                        disabled={getSelectedAddresses().length === 0}
+                        onClick={() => console.log('todo: import')}
+                      >
+                        {getImportLabel()}
+                      </button>
+                    </div>
+                  </AddressListFooter>
+                </>
+              )}
             </UI.AccordionPanel>
           </UI.AccordionItem>
         </UI.Accordion>
