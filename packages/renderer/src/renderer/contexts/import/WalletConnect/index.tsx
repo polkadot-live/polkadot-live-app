@@ -15,6 +15,7 @@ import type {
 } from './types';
 import { encodeAddress } from '@polkadot/util-crypto';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { getUnixTime } from 'date-fns';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -47,6 +48,12 @@ export const WalletConnectProvider = ({
 
   const wcProvider = useRef<UniversalProvider | null>(null);
   const wcModal = useRef<WalletConnectModal | null>(null);
+  const wcPairingTopic = useRef<string | null>(null);
+
+  const wcMetaRef = useRef<{
+    uri: string | undefined;
+    approval: AnyData;
+  } | null>(null);
 
   /**
    * WalletConnect networks and their selected state.
@@ -82,10 +89,19 @@ export const WalletConnectProvider = ({
   /**
    * Get namespaces of selected networks.
    */
-  const getNamespaces = () =>
-    wcNetworks
-      .filter(({ selected }) => selected)
-      .map(({ caipId }) => `polkadot:${caipId}`);
+  const getNamespaces = () => {
+    const selectedNetworks = wcNetworks.filter(({ selected }) => selected);
+    if (selectedNetworks.length > 0) {
+      return wcNetworks
+        .filter(({ selected }) => selected)
+        .map(({ caipId }) => `polkadot:${caipId}`);
+    } else {
+      return [
+        `polkadot:${WC_POLKADOT_CAIP_ID}`,
+        `polkadot:${WC_KUSAMA_CAIP_ID}`,
+      ];
+    }
+  };
 
   /**
    * Util for getting a chain ID's address prefix for encoding.
@@ -125,8 +141,10 @@ export const WalletConnectProvider = ({
         console.log('Session updated:', topic, params);
       });
 
-      provider.on('session_delete', (session: AnyData) => {
+      provider.on('session_delete', async (session: AnyData) => {
         console.log('Session deleted:', session);
+
+        await disconnectWcSession();
       });
 
       provider.on('connect', (event: AnyData) => {
@@ -175,41 +193,120 @@ export const WalletConnectProvider = ({
   });
 
   /**
+   * Create or restore a WalletConnect session.
+   */
+  const createSession = async () => {
+    try {
+      if (!wcInitialized) {
+        return;
+      }
+
+      // If an existing session exists, cache the pairing topic.
+      const pairingTopic = wcProvider.current!.session?.pairingTopic;
+      console.log('> Pairing topic:', pairingTopic);
+      wcPairingTopic.current = pairingTopic || null;
+
+      // If no pairing topic or session exists, create a new one.
+      if (!wcPairingTopic.current) {
+        console.log('> No existing session found, creating a new one.');
+
+        const { uri, approval } = await wcProvider.current!.client.connect(
+          getConnectionParams()
+        );
+
+        wcMetaRef.current = { uri, approval };
+      }
+
+      setWcSessionActive(true);
+      setWcInitialized(true);
+    } catch (error: AnyData) {
+      console.error('initWc: An unexpected error occurred:', error);
+    }
+  };
+
+  /**
+   * Restore an existing session.
+   * Note: Will prompt wallet to approve addresses.
+   */
+  const connectRestoredSession = async () => {
+    const sessionExists: boolean =
+      wcPairingTopic.current !== null &&
+      wcProvider.current?.session !== undefined;
+
+    /** Create new session if there's no session to restore. */
+    if (!sessionExists) {
+      /** Re-connect to get a new uri and approval function */
+      if (wcMetaRef.current === null) {
+        console.log('> Re-create session uri and approval.');
+        await createSession();
+      }
+
+      /** Open modal. */
+      if (wcMetaRef.current?.uri) {
+        wcModal.current!.openModal({ uri: wcMetaRef.current.uri });
+      }
+    } else {
+      const expiry = wcProvider.current!.session!.expiry;
+      const nowUnix = getUnixTime(new Date());
+
+      /** Existing session not expired. */
+      if (nowUnix <= expiry) {
+        const { approval } = await wcProvider.current!.client.connect({
+          pairingTopic: wcPairingTopic.current!,
+          requiredNamespaces: wcProvider.current?.session?.namespaces,
+        });
+
+        wcMetaRef.current = { approval, uri: undefined };
+        setWcSessionActive(true);
+
+        console.log('> Restored session');
+        return approval;
+      } else {
+        console.log('> Session expired. Creating a new one.');
+
+        /** Existing session expired. */
+        await disconnectWcSession();
+
+        /** Open modal. */
+        if (wcMetaRef.current?.uri) {
+          wcModal.current!.openModal({ uri: wcMetaRef.current.uri });
+        }
+      }
+    }
+  };
+
+  /**
    * Instantiate a universal provider using the projectId.
    */
   const connectWc = async () => {
     try {
-      // Set connecting flag.
-      setWcConnecting(true);
-
-      const params = getConnectionParams();
-      const { uri, approval } =
-        await wcProvider.current!.client.connect(params);
-
-      // Open the modal prompting the user to scan the QR code with their wallet app or copy
-      // the URI from the modal and paste into their wallet app to begin the session creation
-      // process.
-      if (uri) {
-        wcModal.current!.openModal({ uri });
+      if (!wcInitialized) {
+        return;
       }
 
+      /** Restore existing session or create a new one. */
+      setWcConnecting(true);
+      const approval = await connectRestoredSession();
       setWcConnecting(false);
 
-      // Await session approval from the wallet app.
-      // expiry: timestamp of session expiry
-      // pairingTopic: ID of pairing, attempt to connect if cached.
-      // await client.connect({ pairingTopic, requiredNamespaces });
-      const walletConnectSession = await approval();
+      /** Await session approval from the wallet app. */
+      const walletConnectSession = approval
+        ? await approval()
+        : await wcMetaRef.current!.approval();
+
+      /** Close modal if we're creating a new session. */
+      if (wcMetaRef.current?.uri) {
+        wcModal.current!.closeModal();
+      }
 
       setWcSessionActive(true);
-      wcModal.current!.closeModal();
 
-      // Get the accounts from the session for use in constructing transactions.
+      /** Get the accounts from the session for use in constructing transactions. */
       const wcAccounts = Object.values(walletConnectSession.namespaces)
-        .map((namespace) => namespace.accounts)
+        .map((namespace: AnyData) => namespace.accounts)
         .flat();
 
-      // Grab account addresses and their CAIP ID.
+      /** Grab account addresses and their CAIP ID. */
       const accounts: { address: string; caipId: string }[] = wcAccounts.map(
         (wcAccount) => ({
           address: wcAccount.split(':')[2],
@@ -217,7 +314,7 @@ export const WalletConnectProvider = ({
         })
       );
 
-      // Set received WalletConnect address state.
+      /** Set received WalletConnect address state. */
       setWcFetchedAddresses(() =>
         accounts.map(({ address, caipId }) => {
           const chainId = mapCaipChainId.get(caipId)!;
@@ -254,6 +351,8 @@ export const WalletConnectProvider = ({
       delete wcProvider.current.session;
     }
 
+    wcPairingTopic.current = null;
+    wcMetaRef.current = null;
     setWcSessionActive(false);
   };
 
@@ -262,9 +361,17 @@ export const WalletConnectProvider = ({
    */
   useEffect(() => {
     if (!wcProvider.current) {
+      console.log('> Init wallet connect provider.');
       initProvider();
     }
   }, []);
+
+  useEffect(() => {
+    if (wcInitialized) {
+      console.log('> Create session if one does not already exist.');
+      createSession();
+    }
+  }, [wcInitialized]);
 
   return (
     <WalletConnectContext.Provider
