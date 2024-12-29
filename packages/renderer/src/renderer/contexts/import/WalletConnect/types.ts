@@ -8,6 +8,7 @@ export interface WalletConnectContextInterface {
   wcConnecting: boolean;
   wcInitialized: boolean;
   wcSessionActive: boolean;
+  wcSessionRestored: boolean;
   connectWc: () => Promise<void>;
   disconnectWcSession: () => Promise<void>;
   wcFetchedAddresses: WcFetchedAddress[];
@@ -16,6 +17,7 @@ export interface WalletConnectContextInterface {
   >;
   wcNetworks: WcSelectNetwork[];
   setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
+  fetchAddressesFromExistingSession: () => void;
 }
 
 export interface WcSelectNetwork {
