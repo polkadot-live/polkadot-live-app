@@ -116,8 +116,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Render reusable offline warning info card.
    */
-  const renderOfflineWarning = () => (
-    <InfoCard>
+  const renderOfflineWarning = (marginTop = '0.5rem') => (
+    <InfoCard style={{ marginTop }}>
       <span className="warning">
         <FontAwesomeIcon icon={faExclamationTriangle} />
         <span>Currently offline. Please go online to enable connections.</span>
@@ -220,7 +220,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               <ItemsColumn>
                 {wcSessionRestored ? (
                   <>
-                    {!isConnected && renderOfflineWarning()}
+                    {!isConnected && renderOfflineWarning('0')}
                     <FlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
