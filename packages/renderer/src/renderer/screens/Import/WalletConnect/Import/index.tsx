@@ -170,16 +170,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {wcConnecting ||
-        (wcDisconnecting && (
-          <BarLoader
-            color={darkMode ? '#642763' : '#a772a6'}
-            width={'100%'}
-            height={2}
-            cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
-            speedMultiplier={0.75}
-          />
-        ))}
+      {(wcConnecting || wcDisconnecting) && (
+        <BarLoader
+          color={darkMode ? '#642763' : '#a772a6'}
+          width={'100%'}
+          height={2}
+          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          speedMultiplier={0.75}
+        />
+      )}
 
       {/** Bredcrumb */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
