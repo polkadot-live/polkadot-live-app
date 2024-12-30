@@ -149,6 +149,11 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
     setIsImporting(false);
     setShowImportUi(false);
+
+    /** Clear selected WalletAccount addresses. */
+    setWcFetchedAddresses((prev) =>
+      prev.map((item) => ({ ...item, selected: false }))
+    );
   };
 
   /**
