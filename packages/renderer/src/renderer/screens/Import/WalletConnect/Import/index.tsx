@@ -22,10 +22,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
+import { useWalletConnect } from '@app/contexts/import/WalletConnect';
 import { useEffect, useState } from 'react';
-import { useWalletConnect } from '@ren/renderer/contexts/import/WalletConnect';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
 import { FlexRow, WcSessionButton } from './Wrappers';
@@ -38,8 +40,10 @@ import {
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { wcAddresses } = useAddresses();
+  const { insertAccountStatus } = useAccountStatuses();
+  const { isAlreadyImported, wcAddresses } = useAddresses();
   const { darkMode, isConnected } = useConnections();
+  const { handleImportAddress } = useImportHandler();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
@@ -56,6 +60,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     wcSessionRestored,
   } = useWalletConnect();
 
+  const [isImporting, setIsImporting] = useState(false);
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: 2 }, (_, index) => index));
@@ -111,14 +116,45 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Render reusable offline warning info card.
    */
-  const renderOfflineWarning = () => (
-    <InfoCard>
+  const renderOfflineWarning = (marginTop = '0.5rem') => (
+    <InfoCard style={{ marginTop }}>
       <span className="warning">
         <FontAwesomeIcon icon={faExclamationTriangle} />
         <span>Currently offline. Please go online to enable connections.</span>
       </span>
     </InfoCard>
   );
+
+  /**
+   * Handle importing the selected WalletConnect addresses.
+   */
+  const handleImportProcess = async () => {
+    const selectedAddresses = getSelectedAddresses();
+    if (selectedAddresses.length === 0) {
+      return;
+    }
+
+    setIsImporting(true);
+    for (const selected of selectedAddresses) {
+      const { encoded } = selected;
+
+      if (isAlreadyImported(encoded)) {
+        continue;
+      }
+
+      const accountName = ellipsisFn(encoded);
+      await handleImportAddress(encoded, 'wallet-connect', accountName, false);
+      insertAccountStatus(encoded, 'wallet-connect');
+    }
+
+    setIsImporting(false);
+    setShowImportUi(false);
+
+    /** Clear selected WalletAccount addresses. */
+    setWcFetchedAddresses((prev) =>
+      prev.map((item) => ({ ...item, selected: false }))
+    );
+  };
 
   /**
    * Effects.
@@ -134,16 +170,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {wcConnecting ||
-        (wcDisconnecting && (
-          <BarLoader
-            color={darkMode ? '#642763' : '#a772a6'}
-            width={'100%'}
-            height={2}
-            cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
-            speedMultiplier={0.75}
-          />
-        ))}
+      {(wcConnecting || wcDisconnecting) && (
+        <BarLoader
+          color={darkMode ? '#642763' : '#a772a6'}
+          width={'100%'}
+          height={2}
+          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          speedMultiplier={0.75}
+        />
+      )}
 
       {/** Bredcrumb */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
@@ -185,7 +220,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               <ItemsColumn>
                 {wcSessionRestored ? (
                   <>
-                    {!isConnected && renderOfflineWarning()}
+                    {!isConnected && renderOfflineWarning('0')}
                     <FlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
@@ -333,20 +368,24 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             </h2>
                             <span>{ellipsisFn(encoded, 12)}</span>
                           </div>
-                          <CheckboxRoot
-                            $theme={theme}
-                            className="CheckboxRoot"
-                            id={`${i + 1}-${chainId}`}
-                            checked={selected}
-                            disabled={false}
-                            onCheckedChange={(checked) => {
-                              handleSelectAddress(encoded, checked);
-                            }}
-                          >
-                            <Checkbox.Indicator className="CheckboxIndicator">
-                              <CheckIcon />
-                            </Checkbox.Indicator>
-                          </CheckboxRoot>
+                          {isAlreadyImported(encoded) ? (
+                            <span className="imported">Imported</span>
+                          ) : (
+                            <CheckboxRoot
+                              $theme={theme}
+                              className="CheckboxRoot"
+                              id={`${i + 1}-${chainId}`}
+                              checked={selected}
+                              disabled={false}
+                              onCheckedChange={(checked) => {
+                                handleSelectAddress(encoded, checked);
+                              }}
+                            >
+                              <Checkbox.Indicator className="CheckboxIndicator">
+                                <CheckIcon />
+                              </Checkbox.Indicator>
+                            </CheckboxRoot>
+                          )}
                         </ImportAddressRow>
                       )
                     )}
@@ -355,8 +394,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <AddressListFooter>
                     <div className="importBtn">
                       <button
-                        disabled={getSelectedAddresses().length === 0}
-                        onClick={() => console.log('todo: import')}
+                        disabled={
+                          isImporting || getSelectedAddresses().length === 0
+                        }
+                        onClick={async () => await handleImportProcess()}
                       >
                         {getImportLabel()}
                       </button>

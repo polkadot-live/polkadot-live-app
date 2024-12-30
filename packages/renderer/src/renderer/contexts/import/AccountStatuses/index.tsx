@@ -28,7 +28,8 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { ledgerAddresses, readOnlyAddresses, vaultAddresses } = useAddresses();
+  const { ledgerAddresses, readOnlyAddresses, vaultAddresses, wcAddresses } =
+    useAddresses();
 
   /// Utility to initialize account statuses to false.
   const fetchAccountStatuses = (
@@ -54,6 +55,12 @@ export const AccountStatusesProvider = ({
         }
         return map;
       }
+      case 'wallet-connect': {
+        for (const { address } of wcAddresses) {
+          map.set(address, false);
+        }
+        return map;
+      }
       default: {
         throw new Error('unreachable');
       }
@@ -74,6 +81,11 @@ export const AccountStatusesProvider = ({
   const [readOnlyAccountStatuses, setReadOnlyAccountStatuses] = useState<
     Map<string, boolean>
   >(() => fetchAccountStatuses('read-only'));
+
+  /// Status of wallet-connect accounts.
+  const [wcAccountStatuses, setWcAccountStatuses] = useState<
+    Map<string, boolean>
+  >(() => fetchAccountStatuses('wallet-connect'));
 
   /// Set processing status of an account.
   const setStatusForAccount = (
@@ -106,6 +118,14 @@ export const AccountStatusesProvider = ({
         });
         break;
       }
+      case 'wallet-connect': {
+        setWcAccountStatuses((prev) => {
+          const cloned = new Map(prev);
+          cloned.set(address, status);
+          return cloned;
+        });
+        break;
+      }
       default: {
         break;
       }
@@ -123,6 +143,9 @@ export const AccountStatusesProvider = ({
       }
       case 'vault': {
         return vaultAccountStatuses.get(address) || null;
+      }
+      case 'wallet-connect': {
+        return wcAccountStatuses.get(address) || null;
       }
       default: {
         return null;
@@ -143,6 +166,10 @@ export const AccountStatusesProvider = ({
       }
       case 'vault': {
         vaultAccountStatuses.set(address, false);
+        break;
+      }
+      case 'wallet-connect': {
+        wcAccountStatuses.set(address, false);
         break;
       }
       default: {
@@ -172,6 +199,12 @@ export const AccountStatusesProvider = ({
         }
         break;
       }
+      case 'wallet-connect': {
+        if (wcAccountStatuses.has(address)) {
+          wcAccountStatuses.delete(address);
+        }
+        break;
+      }
       default: {
         break;
       }
@@ -184,9 +217,11 @@ export const AccountStatusesProvider = ({
         ledgerAccountStatuses,
         readOnlyAccountStatuses,
         vaultAccountStatuses,
+        wcAccountStatuses,
         setLedgerAccountStatuses,
         setReadOnlyAccountStatuses,
         setVaultAccountStatuses,
+        setWcAccountStatuses,
         setStatusForAccount,
         getStatusForAccount,
         insertAccountStatus,
