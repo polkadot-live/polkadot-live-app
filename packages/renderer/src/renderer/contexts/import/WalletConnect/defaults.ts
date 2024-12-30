@@ -6,6 +6,7 @@ import type { WalletConnectContextInterface } from './types';
 
 export const defaultWalletConnectContext: WalletConnectContextInterface = {
   wcConnecting: false,
+  wcDisconnecting: false,
   wcInitialized: false,
   wcSessionActive: false,
   wcSessionRestored: false,

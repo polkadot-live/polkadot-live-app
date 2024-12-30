@@ -46,17 +46,17 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
-    wcFetchedAddresses,
-    wcNetworks,
     connectWc,
+    disconnectWcSession,
     fetchAddressesFromExistingSession,
     setWcFetchedAddresses,
     setWcNetworks,
     wcConnecting,
+    wcDisconnecting,
+    wcFetchedAddresses,
     wcInitialized,
+    wcNetworks,
     wcSessionRestored,
-    disconnectWcSession,
-    //wcSessionActive,
   } = useWalletConnect();
 
   const getSelectedNetworkCount = () =>
@@ -118,15 +118,16 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       $footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '2rem' }}
     >
-      {wcConnecting && (
-        <BarLoader
-          color={darkMode ? '#642763' : '#a772a6'}
-          width={'100%'}
-          height={2}
-          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
-          speedMultiplier={0.75}
-        />
-      )}
+      {wcConnecting ||
+        (wcDisconnecting && (
+          <BarLoader
+            color={darkMode ? '#642763' : '#a772a6'}
+            width={'100%'}
+            height={2}
+            cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+            speedMultiplier={0.75}
+          />
+        ))}
 
       {/** Bredcrumb */}
       <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
@@ -181,7 +182,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     {/** Connect and Disconnect buttons */}
                     <WcSessionButton
                       disabled={
-                        !wcSessionRestored || wcConnecting || !wcInitialized
+                        !wcSessionRestored ||
+                        !wcInitialized ||
+                        wcConnecting ||
+                        wcDisconnecting
                       }
                       onClick={async () => await disconnectWcSession()}
                     >
@@ -190,7 +194,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                     <WcSessionButton
                       disabled={
-                        !wcSessionRestored || wcConnecting || !wcInitialized
+                        !wcSessionRestored ||
+                        !wcInitialized ||
+                        wcConnecting ||
+                        wcDisconnecting
                       }
                       onClick={() => {
                         fetchAddressesFromExistingSession();

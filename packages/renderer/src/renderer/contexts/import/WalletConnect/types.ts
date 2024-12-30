@@ -6,6 +6,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface WalletConnectContextInterface {
   wcConnecting: boolean;
+  wcDisconnecting: boolean;
   wcInitialized: boolean;
   wcSessionActive: boolean;
   wcSessionRestored: boolean;

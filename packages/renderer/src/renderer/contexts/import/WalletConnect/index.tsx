@@ -44,6 +44,7 @@ export const WalletConnectProvider = ({
   children: React.ReactNode;
 }) => {
   const [wcConnecting, setWcConnecting] = useState(false);
+  const [wcDisconnecting, setWcDisconnecting] = useState(false);
   const [wcInitialized, setWcInitialized] = useState(false);
   const [wcSessionActive, setWcSessionActive] = useState(false);
 
@@ -388,6 +389,7 @@ export const WalletConnectProvider = ({
       return;
     }
 
+    setWcDisconnecting(true);
     const topic = wcProvider.current.session?.topic;
     if (topic) {
       await wcProvider.current.client.disconnect({
@@ -402,6 +404,7 @@ export const WalletConnectProvider = ({
     wcMetaRef.current = null;
     setWcSessionActive(false);
     setStateWithRef(false, setWcSessionRestored, wcSessionRestoredRef);
+    setWcDisconnecting(false);
   };
 
   /**
@@ -430,6 +433,7 @@ export const WalletConnectProvider = ({
         setWcFetchedAddresses,
         setWcNetworks,
         wcConnecting,
+        wcDisconnecting,
         wcFetchedAddresses,
         wcInitialized,
         wcNetworks,
