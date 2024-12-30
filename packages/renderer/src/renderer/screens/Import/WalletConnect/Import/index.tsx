@@ -18,6 +18,7 @@ import {
   faCaretLeft,
   faCaretRight,
   faCircleDot,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
@@ -38,7 +39,7 @@ import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
-  const { darkMode } = useConnections();
+  const { darkMode, isConnected } = useConnections();
 
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
@@ -113,6 +114,18 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       : `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
   };
 
+  /**
+   * Render reusable offline warning info card.
+   */
+  const renderOfflineWarning = () => (
+    <InfoCard>
+      <span className="warning">
+        <FontAwesomeIcon icon={faExclamationTriangle} />
+        <span>Currently offline. Please go online to enable connections.</span>
+      </span>
+    </InfoCard>
+  );
+
   return (
     <Scrollable
       $footerHeight={4}
@@ -168,45 +181,49 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             <UI.AccordionPanel>
               <ItemsColumn>
                 {wcSessionRestored ? (
-                  <FlexRow>
-                    <InfoCard style={{ margin: '0', flex: 1 }}>
-                      <span>
-                        <FontAwesomeIcon
-                          icon={faCircleDot}
-                          transform={'shrink-3'}
-                        />
-                        <span>An existing session has been detected.</span>
-                      </span>
-                    </InfoCard>
+                  <>
+                    {!isConnected && renderOfflineWarning()}
+                    <FlexRow>
+                      <InfoCard style={{ margin: '0', flex: 1 }}>
+                        <span>
+                          <FontAwesomeIcon
+                            icon={faCircleDot}
+                            transform={'shrink-3'}
+                          />
+                          <span>An existing session has been detected.</span>
+                        </span>
+                      </InfoCard>
 
-                    {/** Connect and Disconnect buttons */}
-                    <WcSessionButton
-                      disabled={
-                        !wcSessionRestored ||
-                        !wcInitialized ||
-                        wcConnecting ||
-                        wcDisconnecting
-                      }
-                      onClick={async () => await disconnectWcSession()}
-                    >
-                      Disconnect
-                    </WcSessionButton>
+                      {/** Connect and Disconnect Buttons */}
+                      <WcSessionButton
+                        disabled={
+                          !isConnected ||
+                          !wcSessionRestored ||
+                          !wcInitialized ||
+                          wcConnecting ||
+                          wcDisconnecting
+                        }
+                        onClick={async () => await disconnectWcSession()}
+                      >
+                        Disconnect
+                      </WcSessionButton>
 
-                    <WcSessionButton
-                      disabled={
-                        !wcSessionRestored ||
-                        !wcInitialized ||
-                        wcConnecting ||
-                        wcDisconnecting
-                      }
-                      onClick={() => {
-                        fetchAddressesFromExistingSession();
-                        setAccordionActiveIndices([1]);
-                      }}
-                    >
-                      Fetch
-                    </WcSessionButton>
-                  </FlexRow>
+                      <WcSessionButton
+                        disabled={
+                          !wcSessionRestored ||
+                          !wcInitialized ||
+                          wcConnecting ||
+                          wcDisconnecting
+                        }
+                        onClick={() => {
+                          fetchAddressesFromExistingSession();
+                          setAccordionActiveIndices([1]);
+                        }}
+                      >
+                        Fetch
+                      </WcSessionButton>
+                    </FlexRow>
+                  </>
                 ) : (
                   <>
                     {wcNetworks.map(({ chainId, selected, ChainIcon }, i) => (
@@ -247,6 +264,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         </CheckboxRoot>
                       </ImportAddressRow>
                     ))}
+
+                    {!isConnected && renderOfflineWarning()}
                     <FlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
@@ -261,11 +280,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         </span>
                       </InfoCard>
 
-                      {/** Connect and Disconnect buttons */}
+                      {/** Connect Button */}
                       <WcSessionButton
                         disabled={
                           getSelectedNetworkCount() === 0 ||
                           wcConnecting ||
+                          !isConnected ||
                           !wcInitialized
                         }
                         onClick={async () => await handleConnect()}

@@ -5,18 +5,19 @@ import * as defaults from './defaults';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useConnections } from '@app/contexts/common/Connections';
 import { chainIcon } from '@ren/config/chains';
 import { getSdkError } from '@walletconnect/utils';
+import { encodeAddress } from '@polkadot/util-crypto';
+import { getUnixTime } from 'date-fns';
+import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   WalletConnectContextInterface,
   WcFetchedAddress,
   WcSelectNetwork,
 } from './types';
-import { encodeAddress } from '@polkadot/util-crypto';
-import type { ChainID } from '@polkadot-live/types/chains';
-import { getUnixTime } from 'date-fns';
-import { setStateWithRef } from '@w3ux/utils';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -43,6 +44,8 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isConnected } = useConnections();
+
   const [wcConnecting, setWcConnecting] = useState(false);
   const [wcDisconnecting, setWcDisconnecting] = useState(false);
   const [wcInitialized, setWcInitialized] = useState(false);
@@ -411,11 +414,18 @@ export const WalletConnectProvider = ({
    * Initialize the WalletConnect provider on initial render.
    */
   useEffect(() => {
-    if (!wcProvider.current) {
-      console.log('> Init wallet connect provider.');
+    if (isConnected && !wcProvider.current) {
+      console.log('> Init wallet connect provider (Mount).');
       initProvider();
     }
   }, []);
+
+  useEffect(() => {
+    if (isConnected && !wcProvider.current) {
+      console.log('> Init wallet connect provider (Online).');
+      initProvider();
+    }
+  }, [isConnected]);
 
   useEffect(() => {
     if (wcInitialized) {
