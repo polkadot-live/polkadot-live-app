@@ -369,20 +369,24 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             </h2>
                             <span>{ellipsisFn(encoded, 12)}</span>
                           </div>
-                          <CheckboxRoot
-                            $theme={theme}
-                            className="CheckboxRoot"
-                            id={`${i + 1}-${chainId}`}
-                            checked={selected}
-                            disabled={false}
-                            onCheckedChange={(checked) => {
-                              handleSelectAddress(encoded, checked);
-                            }}
-                          >
-                            <Checkbox.Indicator className="CheckboxIndicator">
-                              <CheckIcon />
-                            </Checkbox.Indicator>
-                          </CheckboxRoot>
+                          {isAlreadyImported(encoded) ? (
+                            <span className="imported">Imported</span>
+                          ) : (
+                            <CheckboxRoot
+                              $theme={theme}
+                              className="CheckboxRoot"
+                              id={`${i + 1}-${chainId}`}
+                              checked={selected}
+                              disabled={false}
+                              onCheckedChange={(checked) => {
+                                handleSelectAddress(encoded, checked);
+                              }}
+                            >
+                              <Checkbox.Indicator className="CheckboxIndicator">
+                                <CheckIcon />
+                              </Checkbox.Indicator>
+                            </CheckboxRoot>
+                          )}
                         </ImportAddressRow>
                       )
                     )}
