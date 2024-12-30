@@ -41,10 +41,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { wcAddresses } = useAddresses();
   const { darkMode, isConnected } = useConnections();
 
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(Array.from({ length: 2 }, (_, index) => index));
-
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
     connectWc,
@@ -60,14 +56,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     wcSessionRestored,
   } = useWalletConnect();
 
+  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
+    number[]
+  >(Array.from({ length: 2 }, (_, index) => index));
+
   const getSelectedNetworkCount = () =>
     wcNetworks.filter(({ selected }) => selected).length;
-
-  useEffect(() => {
-    if (wcFetchedAddresses.length > 0) {
-      setAccordionActiveIndices([1]);
-    }
-  }, [wcFetchedAddresses]);
 
   /**
    * Handle connect button click.
@@ -125,6 +119,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       </span>
     </InfoCard>
   );
+
+  /**
+   * Effects.
+   */
+  useEffect(() => {
+    if (wcFetchedAddresses.length > 0) {
+      setAccordionActiveIndices([1]);
+    }
+  }, [wcFetchedAddresses]);
 
   return (
     <Scrollable

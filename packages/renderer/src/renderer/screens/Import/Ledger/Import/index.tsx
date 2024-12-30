@@ -410,7 +410,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     <div className="importBtn">
                       <button
                         disabled={
-                          selectedAddresses.length === 0 || ledger.isFetching
+                          selectedAddresses.length === 0 ||
+                          ledger.isFetching ||
+                          ledger.isImporting
                         }
                         onClick={async () => await handleImportProcess()}
                       >
