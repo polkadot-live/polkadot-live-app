@@ -40,10 +40,8 @@ export const ConnectionsProvider = ({
   useEffect(() => {
     // Synchronize flags in store.
     const syncModeFlagsOnMount = async () => {
-      const onlineStatus = await window.myAPI.getModeFlag('isConnected');
-      setIsConnected(onlineStatus);
-      setIsOnlineMode(onlineStatus);
-
+      setIsConnected(await window.myAPI.getModeFlag('isConnected'));
+      setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
     };
@@ -77,6 +75,11 @@ export const ConnectionsProvider = ({
     syncModeFlagsOnMount();
   }, []);
 
+  /**
+   * Return flag indicating whether app is in online or offline mode.
+   */
+  const getOnlineMode = () => (isConnected && isOnlineMode ? true : false);
+
   return (
     <ConnectionsContext.Provider
       value={{
@@ -84,6 +87,7 @@ export const ConnectionsProvider = ({
         isConnected,
         isImporting,
         isOnlineMode,
+        getOnlineMode,
         setDarkMode,
         setIsConnected,
         setIsImporting,

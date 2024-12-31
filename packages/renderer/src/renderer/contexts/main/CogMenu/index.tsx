@@ -63,6 +63,7 @@ export const CogMenuProvider = ({
 
       // Relay online mode flag to renderers.
       window.myAPI.relayModeFlag('isOnlineMode', false);
+      window.myAPI.relayModeFlag('onlineMode', false);
     } else {
       // Confirm online connection.
       const status: boolean =
@@ -79,6 +80,7 @@ export const CogMenuProvider = ({
 
         // Relay online mode flag to renderers.
         window.myAPI.relayModeFlag('isOnlineMode', true);
+        window.myAPI.relayModeFlag('onlineMode', true);
       } else {
         // Render error alert.
         toast.error('You are offline.', {

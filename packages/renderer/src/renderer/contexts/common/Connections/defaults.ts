@@ -13,4 +13,5 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
   setIsImporting: (b) => {},
   setIsOnlineMode: (b) => {},
   setDarkMode: (b) => {},
+  getOnlineMode: () => true,
 };

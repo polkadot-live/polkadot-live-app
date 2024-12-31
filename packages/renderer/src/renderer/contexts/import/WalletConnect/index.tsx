@@ -44,7 +44,7 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode, isConnected, isOnlineMode } = useConnections();
 
   const [wcConnecting, setWcConnecting] = useState(false);
   const [wcDisconnecting, setWcDisconnecting] = useState(false);
@@ -414,18 +414,18 @@ export const WalletConnectProvider = ({
    * Initialize the WalletConnect provider on initial render.
    */
   useEffect(() => {
-    if (isConnected && !wcProvider.current) {
+    if (getOnlineMode() && !wcProvider.current) {
       console.log('> Init wallet connect provider (Mount).');
       initProvider();
     }
   }, []);
 
   useEffect(() => {
-    if (isConnected && !wcProvider.current) {
+    if (getOnlineMode() && !wcProvider.current) {
       console.log('> Init wallet connect provider (Online).');
       initProvider();
     }
-  }, [isConnected]);
+  }, [isConnected, isOnlineMode]);
 
   useEffect(() => {
     if (wcInitialized) {

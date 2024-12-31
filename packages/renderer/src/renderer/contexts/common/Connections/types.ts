@@ -10,4 +10,5 @@ export interface ConnectionsContextInterface {
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOnlineMode: React.Dispatch<React.SetStateAction<boolean>>;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  getOnlineMode: () => boolean;
 }
