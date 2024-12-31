@@ -28,6 +28,9 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app is in online mode.
   const [isConnected, setIsConnected] = useState(false);
 
+  // Flag shared between renderers (not main process).
+  const [isOnlineMode, setIsOnlineMode] = useState(false);
+
   // Flag set to `true` when app is importing data from backup file.
   const [isImporting, setIsImporting] = useState(false);
 
@@ -36,7 +39,11 @@ export const ConnectionsProvider = ({
 
   useEffect(() => {
     // Synchronize flags in store.
-    const syncModeFlags = async () => {
+    const syncModeFlagsOnMount = async () => {
+      const onlineStatus = await window.myAPI.getModeFlag('isConnected');
+      setIsConnected(onlineStatus);
+      setIsOnlineMode(onlineStatus);
+
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
     };
@@ -56,6 +63,10 @@ export const ConnectionsProvider = ({
             setDarkMode(flag);
             break;
           }
+          case 'isOnlineMode': {
+            setIsOnlineMode(flag);
+            break;
+          }
           default: {
             break;
           }
@@ -63,7 +74,7 @@ export const ConnectionsProvider = ({
       }
     );
 
-    syncModeFlags();
+    syncModeFlagsOnMount();
   }, []);
 
   return (
@@ -72,9 +83,11 @@ export const ConnectionsProvider = ({
         darkMode,
         isConnected,
         isImporting,
+        isOnlineMode,
         setDarkMode,
         setIsConnected,
         setIsImporting,
+        setIsOnlineMode,
       }}
     >
       {children}

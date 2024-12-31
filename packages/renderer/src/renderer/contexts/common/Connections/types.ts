@@ -4,8 +4,10 @@
 export interface ConnectionsContextInterface {
   isConnected: boolean;
   isImporting: boolean;
+  isOnlineMode: boolean;
   darkMode: boolean;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsOnlineMode: React.Dispatch<React.SetStateAction<boolean>>;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
 }

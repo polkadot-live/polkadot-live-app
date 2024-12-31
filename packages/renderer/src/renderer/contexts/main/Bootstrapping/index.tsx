@@ -198,7 +198,7 @@ export const BootstrappingProvider = ({
     // Report online status to renderer.
     setOnline(false);
 
-    // Notify import renderer of connection status.
+    // Notify renderers of connection status.
     for (const windowId of ['import', 'openGov']) {
       reportConnectionStatusToWindow(windowId, false);
     }

@@ -352,6 +352,12 @@ app.whenReady().then(async () => {
         break;
       }
 
+      case 'isOnlineMode': {
+        // Relay to renderers.
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
+
       case 'darkMode': {
         // Persist new flag to store.
         SettingsController.process({
@@ -379,6 +385,11 @@ app.whenReady().then(async () => {
     switch (modeId) {
       case 'isImporting': {
         return ConfigMain.importingData;
+      }
+      case 'isConnected': {
+        const status = OnlineStatusController.getStatus();
+        console.log(`> Online status: ${status}`);
+        return status;
       }
       default: {
         return false;
