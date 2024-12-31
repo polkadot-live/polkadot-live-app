@@ -78,7 +78,7 @@ export const ConnectionsProvider = ({
   /**
    * Return flag indicating whether app is in online or offline mode.
    */
-  const getOnlineMode = () => (isConnected && isOnlineMode ? true : false);
+  const getOnlineMode = () => isConnected && isOnlineMode;
 
   return (
     <ConnectionsContext.Provider
