@@ -75,7 +75,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "electron-unhandled": "^4.0.1",
-    "framer-motion": "^11.1.1",
+    "framer-motion": "^11.15.0",
     "html5-qrcode": "^2.3.8",
     "ip": "^2.0.1",
     "qrcode-generator": "^1.4.4",
