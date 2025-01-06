@@ -92,10 +92,6 @@ export const API: PreloadAPI = {
   sendConnectionTaskAsync: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:connection:async', task),
 
-  reportOnlineStatus: (callback) =>
-    // Report online status from main to renderer.
-    ipcRenderer.on('renderer:broadcast:onlineStatus', callback),
-
   /**
    * Platform
    */

@@ -21,7 +21,6 @@ export interface PreloadAPI {
 
   sendConnectionTask: (task: IpcTask) => void;
   sendConnectionTaskAsync: (task: IpcTask) => Promise<boolean | void>;
-  reportOnlineStatus: ApiReportOnlineStatus;
 
   sendEventTaskAsync: (task: IpcTask) => Promise<string | boolean>;
   sendEventTask: (task: IpcTask) => void;
@@ -101,10 +100,6 @@ type ApiReportNewEvent = (
 
 type ApiReportDismissEvent = (
   callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
-) => Electron.IpcRenderer;
-
-type ApiReportOnlineStatus = (
-  callback: (_: IpcRendererEvent, status: boolean) => void
 ) => Electron.IpcRenderer;
 
 type ApiOpenBrowserWindow = (url: string) => void;

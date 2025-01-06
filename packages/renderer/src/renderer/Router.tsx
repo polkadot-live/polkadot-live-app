@@ -11,24 +11,14 @@ import { Home } from './screens/Home';
 import { Import } from '@app/screens/Import';
 import { Settings } from './screens/Settings';
 import { OpenGov } from './screens/OpenGov';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useHelp } from './contexts/common/Help';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { IpcRendererEvent } from 'electron';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
-  const { setOnline } = useBootstrapping();
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
-
-  /// Listen for online status change.
-  useEffect(() => {
-    window.myAPI.reportOnlineStatus((_: IpcRendererEvent, status: boolean) => {
-      setOnline(status);
-    });
-  }, []);
 
   /// Return routes for the window being rendered.
   const addRoutesForWindow = () => {
