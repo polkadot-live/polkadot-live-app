@@ -141,26 +141,10 @@ export const WalletConnectProvider = ({
       });
 
       // Listen for WalletConnect events
-      provider.on('session_create', (session: AnyData) => {
-        console.log('Session created:', session);
-      });
-
-      provider.on('session_update', ({ topic, params }: AnyData) => {
-        console.log('Session updated:', topic, params);
-      });
-
+      // 'session_create', 'session_delete', 'session_update', 'connect', 'disconnect'
       provider.on('session_delete', async (session: AnyData) => {
         console.log('Session deleted:', session);
-
         await disconnectWcSession();
-      });
-
-      provider.on('connect', (event: AnyData) => {
-        console.log('Connected to Wallet:', event);
-      });
-
-      provider.on('disconnect', (event: AnyData) => {
-        console.log('Wallet disconnected:', event);
       });
 
       wcProvider.current = provider;
