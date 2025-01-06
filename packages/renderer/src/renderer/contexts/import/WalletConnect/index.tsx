@@ -129,6 +129,37 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Util for setting fetched addresses state.
+   */
+  const setFetchedAddresses = (namespaces: AnyData) => {
+    /** Get the accounts from the session. */
+    const wcAccounts = Object.values(namespaces)
+      .map((namespace: AnyData) => namespace.accounts)
+      .flat();
+
+    /** Grab account addresses and their CAIP ID. */
+    const accounts: { address: string; caipId: string }[] = wcAccounts.map(
+      (wcAccount) => ({
+        address: wcAccount.split(':')[2],
+        caipId: wcAccount.split(':')[1],
+      })
+    );
+    setWcFetchedAddresses(() =>
+      accounts.map(({ address, caipId }) => {
+        const chainId = mapCaipChainId.get(caipId)!;
+        const pref = getAddressPrefix(chainId);
+
+        return {
+          chainId,
+          encoded: encodeAddress(address, pref),
+          substrate: address,
+          selected: false,
+        };
+      })
+    );
+  };
+
+  /**
    * Init provider and modal.
    */
   const initProvider = async () => {
@@ -274,33 +305,8 @@ export const WalletConnectProvider = ({
       return;
     }
 
-    /** Get the accounts from the session. */
-    const wcAccounts = Object.values(namespaces)
-      .map((namespace: AnyData) => namespace.accounts)
-      .flat();
-
-    /** Grab account addresses and their CAIP ID. */
-    const accounts: { address: string; caipId: string }[] = wcAccounts.map(
-      (wcAccount) => ({
-        address: wcAccount.split(':')[2],
-        caipId: wcAccount.split(':')[1],
-      })
-    );
-
     /** Set received WalletConnect address state. */
-    setWcFetchedAddresses(() =>
-      accounts.map(({ address, caipId }) => {
-        const chainId = mapCaipChainId.get(caipId)!;
-        const pref = getAddressPrefix(chainId);
-
-        return {
-          chainId,
-          encoded: encodeAddress(address, pref),
-          substrate: address,
-          selected: false,
-        };
-      })
-    );
+    setFetchedAddresses(namespaces);
   };
 
   /**
@@ -333,34 +339,8 @@ export const WalletConnectProvider = ({
           wcModal.current!.closeModal();
         }
 
-        /** Get the accounts from the session. */
-        const wcAccounts = Object.values(walletConnectSession.namespaces)
-          .map((namespace: AnyData) => namespace.accounts)
-          .flat();
-
-        /** Grab account addresses and their CAIP ID. */
-        const accounts: { address: string; caipId: string }[] = wcAccounts.map(
-          (wcAccount) => ({
-            address: wcAccount.split(':')[2],
-            caipId: wcAccount.split(':')[1],
-          })
-        );
-
         /** Set received WalletConnect address state. */
-        setWcFetchedAddresses(() =>
-          accounts.map(({ address, caipId }) => {
-            const chainId = mapCaipChainId.get(caipId)!;
-            const pref = getAddressPrefix(chainId);
-
-            return {
-              chainId,
-              encoded: encodeAddress(address, pref),
-              substrate: address,
-              selected: false,
-            };
-          })
-        );
-
+        setFetchedAddresses(walletConnectSession.namespaces);
         setStateWithRef(true, setWcSessionRestored, wcSessionRestoredRef);
       }
     } catch (error: AnyData) {
