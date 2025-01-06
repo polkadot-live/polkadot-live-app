@@ -7,7 +7,6 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
 import type {
   AccountSource,
@@ -20,7 +19,6 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
-  const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
 
@@ -62,11 +60,6 @@ export const useImportMessagePorts = () => {
             case 'import:account:processing': {
               const { address, source, status } = ev.data.data;
               setStatusForAccount(address, source, status);
-              break;
-            }
-            case 'import:connection:status': {
-              const { status } = ev.data.data;
-              setIsConnected(status);
               break;
             }
             case 'import:address:update': {

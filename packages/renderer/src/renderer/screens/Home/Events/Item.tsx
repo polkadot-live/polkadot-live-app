@@ -21,8 +21,9 @@ import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
-import { useEvents } from '@app/contexts/main/Events';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useEvents } from '@app/contexts/main/Events';
 import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
@@ -37,8 +38,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
+  const { isConnecting } = useBootstrapping();
+  const { getOnlineMode } = useConnections();
   const { dismissEvent } = useEvents();
-  const { online: isOnline, isConnecting } = useBootstrapping();
   const { setTooltipTextAndOpen } = useTooltip();
 
   const { uid, title, subtitle, actions /*, data*/ } = event;
@@ -258,8 +260,8 @@ export const Item = memo(function Item({ event }: ItemProps) {
                         <ButtonMono
                           disabled={
                             event.stale ||
-                            !isOnline ||
-                            (isOnline && isConnecting)
+                            !getOnlineMode() ||
+                            (getOnlineMode() && isConnecting)
                           }
                           key={`action_${uid}_${i}`}
                           text={text || ''}

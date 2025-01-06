@@ -39,6 +39,7 @@ export class Config {
   // Flags to handle data processes.
   private static _exportingData = false;
   private static _importingData = false;
+  private static _onlineMode = false;
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -176,6 +177,14 @@ export class Config {
 
   static set importingData(flag: boolean) {
     Config._importingData = flag;
+  }
+
+  static get onlineMode(): boolean {
+    return Config._onlineMode;
+  }
+
+  static set onlineMode(flag: boolean) {
+    Config._onlineMode = flag;
   }
 
   // Setter for app's tray object.

@@ -23,7 +23,7 @@ export const AddHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressAdd } = useAddresses();
 
@@ -43,7 +43,7 @@ export const AddHandlerProvider = ({
     await updateAddressInStore(source, address, accountName);
 
     // Process added address in main renderer.
-    if (isConnected) {
+    if (getOnlineMode()) {
       postAddressToMainWindow(address, source, accountName);
     }
   };

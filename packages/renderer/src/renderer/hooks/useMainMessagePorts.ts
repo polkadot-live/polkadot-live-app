@@ -50,7 +50,7 @@ export const useMainMessagePorts = () => {
   const { importAddress, removeAddress, setAddresses } = useAddresses();
   const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
-  const { syncImportWindow, syncOpenGovWindow } = useBootstrapping();
+  const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
   const {
@@ -631,7 +631,6 @@ export const useMainMessagePorts = () => {
         };
 
         ConfigRenderer.portToImport.start();
-        await syncImportWindow();
         break;
       }
       case 'main-action:main': {

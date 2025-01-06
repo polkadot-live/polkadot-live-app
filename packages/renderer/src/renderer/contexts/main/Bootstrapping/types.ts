@@ -7,11 +7,9 @@ export interface BootstrappingInterface {
   appLoading: boolean;
   isAborting: boolean;
   isConnecting: boolean;
-  online: boolean;
   setAppLoading: (b: boolean) => void;
   setIsAborting: (b: boolean) => void;
   setIsConnecting: (b: boolean) => void;
-  setOnline: (b: boolean) => void;
   handleInitializeApp: () => Promise<void>;
   handleInitializeAppOffline: () => Promise<void>;
   handleInitializeAppOnline: () => Promise<void>;
@@ -19,6 +17,5 @@ export interface BootstrappingInterface {
     chainId: ChainID,
     newEndpoint: string
   ) => Promise<void>;
-  syncImportWindow: () => Promise<void>;
   syncOpenGovWindow: () => Promise<void>;
 }

@@ -28,6 +28,9 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app is in online mode.
   const [isConnected, setIsConnected] = useState(false);
 
+  // Flag shared between renderers (not main process).
+  const [isOnlineMode, setIsOnlineMode] = useState(false);
+
   // Flag set to `true` when app is importing data from backup file.
   const [isImporting, setIsImporting] = useState(false);
 
@@ -36,7 +39,9 @@ export const ConnectionsProvider = ({
 
   useEffect(() => {
     // Synchronize flags in store.
-    const syncModeFlags = async () => {
+    const syncModeFlagsOnMount = async () => {
+      setIsConnected(await window.myAPI.getModeFlag('isConnected'));
+      setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
     };
@@ -48,12 +53,20 @@ export const ConnectionsProvider = ({
         { modeId, flag }: { modeId: string; flag: boolean }
       ) => {
         switch (modeId) {
+          case 'darkMode': {
+            setDarkMode(flag);
+            break;
+          }
+          case 'isConnected': {
+            setIsConnected(flag);
+            break;
+          }
           case 'isImporting': {
             setIsImporting(flag);
             break;
           }
-          case 'darkMode': {
-            setDarkMode(flag);
+          case 'isOnlineMode': {
+            setIsOnlineMode(flag);
             break;
           }
           default: {
@@ -63,8 +76,13 @@ export const ConnectionsProvider = ({
       }
     );
 
-    syncModeFlags();
+    syncModeFlagsOnMount();
   }, []);
+
+  /**
+   * Return flag indicating whether app is in online or offline mode.
+   */
+  const getOnlineMode = () => isConnected && isOnlineMode;
 
   return (
     <ConnectionsContext.Provider
@@ -72,9 +90,12 @@ export const ConnectionsProvider = ({
         darkMode,
         isConnected,
         isImporting,
+        isOnlineMode,
+        getOnlineMode,
         setDarkMode,
         setIsConnected,
         setIsImporting,
+        setIsOnlineMode,
       }}
     >
       {children}

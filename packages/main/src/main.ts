@@ -344,14 +344,6 @@ app.whenReady().then(async () => {
 
   ipcMain.on('app:modeFlag:relay', (_, modeId: string, flag: boolean) => {
     switch (modeId) {
-      case 'isImporting': {
-        ConfigMain.importingData = flag;
-
-        // Relay to renderers.
-        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
-        break;
-      }
-
       case 'darkMode': {
         // Persist new flag to store.
         SettingsController.process({
@@ -369,6 +361,20 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
+      case 'isConnected': {
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
+      case 'isImporting': {
+        ConfigMain.importingData = flag;
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
+      case 'isOnlineMode': {
+        ConfigMain.onlineMode = flag;
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
       default: {
         break;
       }
@@ -377,8 +383,14 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('app:modeFlag:get', async (_, modeId: string) => {
     switch (modeId) {
+      case 'isConnected': {
+        return OnlineStatusController.getStatus();
+      }
       case 'isImporting': {
         return ConfigMain.importingData;
+      }
+      case 'isOnlineMode': {
+        return ConfigMain.onlineMode;
       }
       default: {
         return false;

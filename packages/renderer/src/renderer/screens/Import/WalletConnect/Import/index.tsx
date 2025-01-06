@@ -42,7 +42,7 @@ import type { ImportProps } from './types';
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { insertAccountStatus } = useAccountStatuses();
   const { isAlreadyImported, wcAddresses } = useAddresses();
-  const { darkMode, isConnected } = useConnections();
+  const { darkMode, getOnlineMode } = useConnections();
   const { handleImportAddress } = useImportHandler();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -220,7 +220,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               <ItemsColumn>
                 {wcSessionRestored ? (
                   <>
-                    {!isConnected && renderOfflineWarning('0')}
+                    {!getOnlineMode() && renderOfflineWarning('0')}
                     <FlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
@@ -235,7 +235,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       {/** Connect and Disconnect Buttons */}
                       <WcSessionButton
                         disabled={
-                          !isConnected ||
+                          !getOnlineMode() ||
                           !wcSessionRestored ||
                           !wcInitialized ||
                           wcConnecting ||
@@ -303,7 +303,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       </ImportAddressRow>
                     ))}
 
-                    {!isConnected && renderOfflineWarning()}
+                    {!getOnlineMode() && renderOfflineWarning()}
                     <FlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
@@ -322,9 +322,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       <WcSessionButton
                         disabled={
                           getSelectedNetworkCount() === 0 ||
-                          wcConnecting ||
-                          !isConnected ||
-                          !wcInitialized
+                          !getOnlineMode() ||
+                          !wcInitialized ||
+                          wcConnecting
                         }
                         onClick={async () => await handleConnect()}
                       >

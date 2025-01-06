@@ -44,7 +44,6 @@ export const BootstrappingProvider = ({
   const [appLoading, setAppLoading] = useState(false);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [online, setOnline] = useState<boolean>(false);
 
   const { addChain } = useChains();
   const { setAddresses } = useAddresses();
@@ -109,13 +108,14 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isOnline: boolean =
+      const isConnected: boolean =
         (await window.myAPI.sendConnectionTaskAsync({
           action: 'connection:getStatus',
           data: null,
         })) || false;
 
-      setOnline(isOnline);
+      window.myAPI.relayModeFlag('isOnlineMode', isConnected);
+      window.myAPI.relayModeFlag('isConnected', isConnected);
 
       // Initialize accounts from persisted state.
       await AccountsController.initialize();
@@ -124,7 +124,7 @@ export const BootstrappingProvider = ({
       APIsController.initialize(Array.from(ChainList.keys()));
 
       // Fetch up-to-date account data.
-      if (isOnline && !aborted) {
+      if (isConnected && !aborted) {
         // Connect required API instances before continuing.
         const chainIds = Array.from(AccountsController.accounts.keys());
         await Promise.all(
@@ -139,7 +139,7 @@ export const BootstrappingProvider = ({
       }
 
       // Initialize account and chain subscriptions.
-      if (!aborted && isOnline) {
+      if (!aborted && isConnected) {
         await Promise.all([
           AccountsController.subscribeAccounts(),
           SubscriptionsController.initChainSubscriptions(),
@@ -147,13 +147,13 @@ export const BootstrappingProvider = ({
       }
 
       // Initialise intervals controller and interval subscriptions.
-      await initIntervalsController(isOnline);
+      await initIntervalsController(isConnected);
 
       // Set accounts to render.
       setAddresses(AccountsController.getAllFlattenedAccountData());
 
       // Disconnect from any API instances that are not currently needed.
-      if (isOnline) {
+      if (isConnected) {
         await handleApiDisconnects();
       }
 
@@ -169,13 +169,6 @@ export const BootstrappingProvider = ({
       if (aborted) {
         await handleInitializeAppOffline();
         setIsAborting(false);
-      }
-
-      // Notify import renderer of connection status.
-      if (!aborted) {
-        for (const windowId of ['import', 'openGov']) {
-          reportConnectionStatusToWindow(windowId, isOnline);
-        }
       }
 
       // Wait 100ms to avoid a snapping loading spinner.
@@ -195,13 +188,16 @@ export const BootstrappingProvider = ({
     // Stop subscription intervals timer.
     IntervalsController.stopInterval();
 
-    // Report online status to renderer.
-    setOnline(false);
+    // Get the system's actual online connection status.
+    const isConnected =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
 
-    // Notify import renderer of connection status.
-    for (const windowId of ['import', 'openGov']) {
-      reportConnectionStatusToWindow(windowId, false);
-    }
+    // Report online status to renderers.
+    window.myAPI.relayModeFlag('isOnlineMode', false);
+    window.myAPI.relayModeFlag('isConnected', isConnected);
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -233,15 +229,6 @@ export const BootstrappingProvider = ({
         intervalRunning = false;
       }
     }, 1000);
-
-    // Report online status to renderer.
-    !aborted &&
-      setOnline(
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false
-      );
 
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
@@ -281,11 +268,16 @@ export const BootstrappingProvider = ({
     // Set application state.
     setSubscriptionsAndChainConnections();
 
-    // Notify import renderer of connection status.
+    // Report online status to renderers.
     if (!aborted) {
-      for (const windowId of ['import', 'openGov']) {
-        reportConnectionStatusToWindow(windowId, true);
-      }
+      const status =
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false;
+
+      window.myAPI.relayModeFlag('isOnlineMode', status);
+      window.myAPI.relayModeFlag('isConnected', status);
     }
 
     // Set config flag to false.
@@ -363,61 +355,8 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Report connection status to import renderer.
-  const reportConnectionStatusToWindow = (
-    windowId: string,
-    status: boolean
-  ) => {
-    switch (windowId) {
-      case 'import': {
-        RendererConfig.portToImport?.postMessage({
-          task: 'import:connection:status',
-          data: { status },
-        });
-        break;
-      }
-      case 'openGov': {
-        RendererConfig.portToOpenGov?.postMessage({
-          task: 'openGov:connection:status',
-          data: { status },
-        });
-        break;
-      }
-    }
-  };
-
-  /// Called when initializing a new port pair.
-  const reportCurrentConnectionStatusToWIndow = async (windowId: string) => {
-    const status: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
-    switch (windowId) {
-      case 'import': {
-        RendererConfig.portToImport?.postMessage({
-          task: 'import:connection:status',
-          data: { status },
-        });
-
-        break;
-      }
-      case 'openGov': {
-        RendererConfig.portToOpenGov?.postMessage({
-          task: 'openGov:connection:status',
-          data: { status },
-        });
-
-        break;
-      }
-    }
-  };
-
   /// Called when initializing the openGov window.
   const syncOpenGovWindow = async () => {
-    await reportCurrentConnectionStatusToWIndow('openGov');
-
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
@@ -433,27 +372,19 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Called when initializing the accounts window.
-  const syncImportWindow = async () => {
-    await reportCurrentConnectionStatusToWIndow('import');
-  };
-
   return (
     <BootstrappingContext.Provider
       value={{
         appLoading,
         isAborting,
         isConnecting,
-        online,
         setAppLoading,
         setIsAborting,
         setIsConnecting,
-        setOnline,
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
         handleNewEndpointForChain,
-        syncImportWindow,
         syncOpenGovWindow,
       }}
     >

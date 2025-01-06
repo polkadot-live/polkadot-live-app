@@ -10,6 +10,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/main/Chains';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@app/Utils';
@@ -17,7 +18,8 @@ import { SelectRpc } from './RpcSelect';
 
 export const Footer = () => {
   const { chains } = useChains();
-  const { online: isOnline, isConnecting, isAborting } = useBootstrapping();
+  const { isConnecting, isAborting } = useBootstrapping();
+  const { getOnlineMode } = useConnections();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -29,7 +31,7 @@ export const Footer = () => {
 
   /// Get header text.
   const getHeadingText = () =>
-    isOnline && !isConnecting && !isAborting
+    getOnlineMode() && !isConnecting && !isAborting
       ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
       : 'Offline';
 

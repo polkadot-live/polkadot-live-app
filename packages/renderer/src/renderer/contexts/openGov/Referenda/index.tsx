@@ -22,7 +22,7 @@ export const ReferendaProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
   /// Ref to indiciate if referenda data has been fetched.
@@ -43,7 +43,7 @@ export const ReferendaProvider = ({
   const fetchReferendaData = (chainId: ChainID) => {
     // Return early if offline or data is already fetched for the chain.
     if (
-      !isConnected ||
+      !getOnlineMode() ||
       (dataCachedRef.current === true && chainId === activeReferendaChainId)
     ) {
       return;
