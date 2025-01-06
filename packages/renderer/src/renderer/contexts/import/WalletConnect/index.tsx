@@ -249,10 +249,10 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Restore an existing session.
+   * Restore an existing session. Called when `Connect` UI button clicked.
    * Note: Will prompt wallet to approve addresses.
    */
-  const connectRestoredSession = async () => {
+  const restoreOrConnectSession = async () => {
     /** Create new session if there's no session to restore. */
     if (!wcSessionRestoredRef.current) {
       /** Re-connect to get a new uri and approval function */
@@ -295,7 +295,7 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Set addresses from existing session.
+   * Set addresses from existing session. Called with `Fetch` UI button clicked.
    */
   const fetchAddressesFromExistingSession = () => {
     /** Fetch accounts from restored session. */
@@ -323,7 +323,7 @@ export const WalletConnectProvider = ({
 
       /** Restore existing session or create a new one. */
       setWcConnecting(true);
-      const modalOpen = await connectRestoredSession();
+      const modalOpen = await restoreOrConnectSession();
       setWcConnecting(false);
 
       if (!modalOpen) {
