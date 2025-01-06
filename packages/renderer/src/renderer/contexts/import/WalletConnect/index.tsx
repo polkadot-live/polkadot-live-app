@@ -143,6 +143,7 @@ export const WalletConnectProvider = ({
         caipId: wcAccount.split(':')[1],
       })
     );
+
     setWcFetchedAddresses(() =>
       accounts.map(({ address, caipId }) => {
         const chainId = mapCaipChainId.get(caipId)!;
