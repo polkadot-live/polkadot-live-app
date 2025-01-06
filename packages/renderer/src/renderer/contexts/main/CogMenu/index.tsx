@@ -60,10 +60,6 @@ export const CogMenuProvider = ({
       handleAbortConnecting();
     } else if (isOnline) {
       await handleInitializeAppOffline();
-
-      // Relay online mode flag to renderers.
-      window.myAPI.relayModeFlag('isOnlineMode', false);
-      window.myAPI.relayModeFlag('onlineMode', false);
     } else {
       // Confirm online connection.
       const status: boolean =
@@ -77,10 +73,6 @@ export const CogMenuProvider = ({
         setIsConnecting(true);
         await handleInitializeAppOnline();
         setIsConnecting(false);
-
-        // Relay online mode flag to renderers.
-        window.myAPI.relayModeFlag('isOnlineMode', true);
-        window.myAPI.relayModeFlag('onlineMode', true);
       } else {
         // Render error alert.
         toast.error('You are offline.', {

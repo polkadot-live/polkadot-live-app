@@ -361,6 +361,10 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
+      case 'isConnected': {
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
       case 'isImporting': {
         ConfigMain.importingData = flag;
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });

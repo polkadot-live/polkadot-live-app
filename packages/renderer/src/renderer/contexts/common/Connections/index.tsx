@@ -53,12 +53,16 @@ export const ConnectionsProvider = ({
         { modeId, flag }: { modeId: string; flag: boolean }
       ) => {
         switch (modeId) {
-          case 'isImporting': {
-            setIsImporting(flag);
-            break;
-          }
           case 'darkMode': {
             setDarkMode(flag);
+            break;
+          }
+          case 'isConnected': {
+            setIsConnected(flag);
+            break;
+          }
+          case 'isImporting': {
+            setIsImporting(flag);
             break;
           }
           case 'isOnlineMode': {
