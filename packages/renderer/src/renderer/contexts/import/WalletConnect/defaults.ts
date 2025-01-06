@@ -8,7 +8,6 @@ export const defaultWalletConnectContext: WalletConnectContextInterface = {
   wcConnecting: false,
   wcDisconnecting: false,
   wcInitialized: false,
-  wcSessionActive: false,
   wcSessionRestored: false,
   connectWc: () => new Promise(() => {}),
   disconnectWcSession: () => new Promise(() => {}),

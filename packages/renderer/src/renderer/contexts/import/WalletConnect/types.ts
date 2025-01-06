@@ -8,7 +8,6 @@ export interface WalletConnectContextInterface {
   wcConnecting: boolean;
   wcDisconnecting: boolean;
   wcInitialized: boolean;
-  wcSessionActive: boolean;
   wcSessionRestored: boolean;
   connectWc: () => Promise<void>;
   disconnectWcSession: () => Promise<void>;

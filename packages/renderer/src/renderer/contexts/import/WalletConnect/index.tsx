@@ -49,7 +49,6 @@ export const WalletConnectProvider = ({
   const [wcConnecting, setWcConnecting] = useState(false);
   const [wcDisconnecting, setWcDisconnecting] = useState(false);
   const [wcInitialized, setWcInitialized] = useState(false);
-  const [wcSessionActive, setWcSessionActive] = useState(false);
 
   const [wcSessionRestored, setWcSessionRestored] = useState(false);
   const wcSessionRestoredRef = useRef<boolean>(false);
@@ -241,8 +240,6 @@ export const WalletConnectProvider = ({
       } else {
         setStateWithRef(true, setWcSessionRestored, wcSessionRestoredRef);
       }
-
-      setWcSessionActive(true);
     } catch (error: AnyData) {
       console.error('initWc: An unexpected error occurred:', error);
     }
@@ -369,7 +366,6 @@ export const WalletConnectProvider = ({
 
     wcPairingTopic.current = null;
     wcMetaRef.current = null;
-    setWcSessionActive(false);
     setStateWithRef(false, setWcSessionRestored, wcSessionRestoredRef);
     setWcDisconnecting(false);
   };
@@ -411,7 +407,6 @@ export const WalletConnectProvider = ({
         wcFetchedAddresses,
         wcInitialized,
         wcNetworks,
-        wcSessionActive,
         wcSessionRestored,
       }}
     >
