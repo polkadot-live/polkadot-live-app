@@ -230,18 +230,6 @@ export const BootstrappingProvider = ({
       }
     }, 1000);
 
-    // Report online status to renderers.
-    if (!aborted) {
-      const status =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
-
-      window.myAPI.relayModeFlag('isOnlineMode', status);
-      window.myAPI.relayModeFlag('isConnected', status);
-    }
-
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
@@ -279,6 +267,18 @@ export const BootstrappingProvider = ({
 
     // Set application state.
     setSubscriptionsAndChainConnections();
+
+    // Report online status to renderers.
+    if (!aborted) {
+      const status =
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false;
+
+      window.myAPI.relayModeFlag('isOnlineMode', status);
+      window.myAPI.relayModeFlag('isConnected', status);
+    }
 
     // Set config flag to false.
     RendererConfig.switchingToOnlineMode = false;
