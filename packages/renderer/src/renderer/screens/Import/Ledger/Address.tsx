@@ -23,7 +23,7 @@ export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
   const { address, index, isImported, name } = localAddress;
   const { handleAddressImport } = useAddresses();
   const { getStatusForAccount } = useAccountStatuses();
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
@@ -44,7 +44,7 @@ export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
       address={address}
       accountName={name}
       ChainIcon={chainIcon(getAddressChainId(address))}
-      isConnected={isConnected}
+      isConnected={getOnlineMode()}
       isImported={isImported}
       processingStatus={getStatusForAccount(address, 'ledger')}
       /* Handlers */

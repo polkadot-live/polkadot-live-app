@@ -161,7 +161,9 @@ export const LedgerHardwareProvider = ({
    */
   const getImportLabel = () => {
     const len = selectedAddresses.length;
-    return `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
+    return len === 0
+      ? 'Import'
+      : `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
   };
 
   /**

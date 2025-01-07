@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
+import { Config as ConfigMain } from '@/config/main';
 import http2 from 'http2';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -32,6 +33,9 @@ export class OnlineStatusController {
       // Handle initializing online status controller.
       case 'connection:init': {
         await this.initialize();
+
+        // Set app mode in main config.
+        ConfigMain.onlineMode = this.onlineStatus;
         return;
       }
       // Get connection status and send to frontend.

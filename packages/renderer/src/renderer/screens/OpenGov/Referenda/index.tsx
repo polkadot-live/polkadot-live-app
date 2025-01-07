@@ -34,7 +34,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
 
   const {
@@ -86,7 +86,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   /// Re-fetch referenda if app goes online from offline mode.
   useEffect(() => {
-    if (isConnected) {
+    if (getOnlineMode()) {
       setFetchingReferenda(true);
 
       ConfigOpenGov.portOpenGov.postMessage({
@@ -96,7 +96,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         },
       });
     }
-  }, [isConnected]);
+  }, [getOnlineMode()]);
 
   /// Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
@@ -309,7 +309,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             />
             <SortControlButton
               isActive={newestFirst}
-              isDisabled={!isConnected || fetchingReferenda}
+              isDisabled={!getOnlineMode() || fetchingReferenda}
               faIcon={faSort}
               onClick={() => setNewestFirst(!newestFirst)}
               onLabel="Newest First"
@@ -317,7 +317,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             />
             <SortControlButton
               isActive={groupingOn}
-              isDisabled={!isConnected || fetchingReferenda}
+              isDisabled={!getOnlineMode() || fetchingReferenda}
               faIcon={faLayerGroup}
               onClick={() => setGroupingOn(!groupingOn)}
               onLabel="Grouping"
@@ -326,7 +326,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             />
             <SortControlButton
               isActive={isExpandActive()}
-              isDisabled={!isConnected || fetchingReferenda || !groupingOn}
+              isDisabled={!getOnlineMode() || fetchingReferenda || !groupingOn}
               faIcon={faUpDown}
               onClick={() => handleExpandAll()}
               onLabel="Expanded"
@@ -336,18 +336,18 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <div
               className="tooltip-trigger-element"
               data-tooltip-text={
-                isConnected ? 'Refresh Referenda' : 'Currently Offline'
+                getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'
               }
               onMouseMove={() =>
                 setTooltipTextAndOpen(
-                  isConnected ? 'Refresh Referenda' : 'Currently Offline',
+                  getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline',
                   'bottom'
                 )
               }
             >
               <SortControlButton
                 isActive={true}
-                isDisabled={fetchingReferenda || !isConnected}
+                isDisabled={fetchingReferenda || !getOnlineMode()}
                 onClick={() => handleRefetchReferenda()}
                 faIcon={faArrowsRotate}
                 fixedWidth={false}
@@ -356,18 +356,18 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <div
               className="tooltip-trigger-element"
               data-tooltip-text={
-                isConnected ? 'Show Subscribed' : 'Currently Offline'
+                getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'
               }
               onMouseMove={() =>
                 setTooltipTextAndOpen(
-                  isConnected ? 'Show Subscribed' : 'Currently Offline',
+                  getOnlineMode() ? 'Show Subscribed' : 'Currently Offline',
                   'bottom'
                 )
               }
             >
               <SortControlButton
                 isActive={onlySubscribed}
-                isDisabled={!isConnected || fetchingReferenda}
+                isDisabled={!getOnlineMode() || fetchingReferenda}
                 faIcon={faEllipsisVertical}
                 onClick={() => handleToggleOnlySubscribed()}
                 fixedWidth={false}
@@ -389,7 +389,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
           {/* List referenda */}
           <section>
-            {!isConnected ? (
+            {!getOnlineMode() ? (
               <div style={{ padding: '0.5rem' }}>
                 <p>Currently offline.</p>
                 <p>Please reconnect to load OpenGov referenda.</p>

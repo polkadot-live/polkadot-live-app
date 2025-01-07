@@ -15,6 +15,7 @@ export type HelpItemKey =
   | 'help:import:vault'
   | 'help:import:ledger'
   | 'help:import:readOnly'
+  | 'help:import:walletConnect'
   | 'help:subscription:balances:transfers'
   | 'help:subscription:balances:frozen'
   | 'help:subscription:balances:reserved'

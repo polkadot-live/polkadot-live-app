@@ -39,7 +39,7 @@ export const OpenGov: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
 
   /// Connection status.
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
 
   /// Open help function.
   const { openHelp } = useHelp();
@@ -75,11 +75,11 @@ export const OpenGov: React.FC = () => {
       const intervalId = setInterval(() => {
         if (ConfigOpenGov.portExists()) {
           clearInterval(intervalId);
-          isConnected && initTreasury(treasuryChainId);
+          getOnlineMode() && initTreasury(treasuryChainId);
         }
       }, 1_000);
     } else {
-      isConnected && initTreasury(treasuryChainId);
+      getOnlineMode() && initTreasury(treasuryChainId);
     }
 
     const applyBorders = () => {
@@ -109,10 +109,10 @@ export const OpenGov: React.FC = () => {
 
   /// Reload treasury data if app goes online from offline mode.
   useEffect(() => {
-    if (isConnected) {
+    if (getOnlineMode()) {
       initTreasury(treasuryChainId);
     }
-  }, [isConnected]);
+  }, [getOnlineMode()]);
 
   /// Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
@@ -166,7 +166,7 @@ export const OpenGov: React.FC = () => {
             style={{ paddingTop: 0, paddingBottom: 20 }}
           >
             <TreasuryStats $chainId={treasuryChainId}>
-              {fetchingTreasuryData && isConnected ? (
+              {fetchingTreasuryData && getOnlineMode() ? (
                 <div className="loading-wrapper">
                   {renderPlaceholders(0, '68.47px', '0.5rem')}
                 </div>
@@ -203,7 +203,7 @@ export const OpenGov: React.FC = () => {
                         openHelp={openHelp}
                       />
                     </GridFourCol>,
-                    isConnected
+                    getOnlineMode()
                   )}
                 </>
               )}
@@ -265,7 +265,7 @@ export const OpenGov: React.FC = () => {
                       {wrapWithOfflineTooltip(
                         <div className="select-wrapper">
                           <select
-                            disabled={!isConnected}
+                            disabled={!getOnlineMode()}
                             id="select-treasury-chain"
                             value={treasuryChainId}
                             onChange={(e) => handleChangeStats(e)}
@@ -274,24 +274,28 @@ export const OpenGov: React.FC = () => {
                             <option value="Kusama">Kusama</option>
                           </select>
                         </div>,
-                        isConnected
+                        getOnlineMode()
                       )}
 
                       {/* Re-fetch Stats */}
                       <div
                         className="tooltip-trigger-element"
                         data-tooltip-text={
-                          isConnected ? 'Refresh Stats' : 'Currently Offline'
+                          getOnlineMode()
+                            ? 'Refresh Stats'
+                            : 'Currently Offline'
                         }
                         onMouseMove={() =>
                           setTooltipTextAndOpen(
-                            isConnected ? 'Refresh Stats' : 'Currently Offline'
+                            getOnlineMode()
+                              ? 'Refresh Stats'
+                              : 'Currently Offline'
                           )
                         }
                       >
                         <SortControlButton
                           isActive={true}
-                          isDisabled={fetchingTreasuryData || !isConnected}
+                          isDisabled={fetchingTreasuryData || !getOnlineMode()}
                           onClick={() => refetchTreasuryStats()}
                           faIcon={faArrowsRotate}
                           fixedWidth={false}

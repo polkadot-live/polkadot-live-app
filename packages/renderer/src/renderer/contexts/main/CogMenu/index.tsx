@@ -4,8 +4,9 @@
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
-import { useAppSettings } from '../AppSettings';
-import { useBootstrapping } from '../Bootstrapping';
+import { useAppSettings } from '@app/contexts/main/AppSettings';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useHelp } from '@app/contexts/common/Help';
 import { Flip, toast } from 'react-toastify';
 import type { CogMenuContextInterface } from './types';
@@ -26,12 +27,13 @@ export const CogMenuProvider = ({
     appLoading,
     isAborting,
     isConnecting,
-    online: isOnline,
     handleInitializeAppOnline,
     handleInitializeAppOffline,
     setIsAborting,
     setIsConnecting,
   } = useBootstrapping();
+
+  const { getOnlineMode } = useConnections();
 
   const { openHelp } = useHelp();
   const { handleToggleSilenceOsNotifications, silenceOsNotifications } =
@@ -41,7 +43,7 @@ export const CogMenuProvider = ({
   const getConnectionButtonText = (): string => {
     if (isConnecting || appLoading) {
       return 'Abort';
-    } else if (isOnline) {
+    } else if (getOnlineMode()) {
       return 'Disconnect';
     } else {
       return 'Connect';
@@ -58,7 +60,7 @@ export const CogMenuProvider = ({
   const handleConnectClick = async () => {
     if (isConnecting || appLoading) {
       handleAbortConnecting();
-    } else if (isOnline) {
+    } else if (getOnlineMode()) {
       await handleInitializeAppOffline();
     } else {
       // Confirm online connection.
@@ -157,7 +159,7 @@ export const CogMenuProvider = ({
   /// Get app flags.
   const getAppFlags = () => ({
     isConnecting,
-    isOnline,
+    isOnline: getOnlineMode(),
     isAborting,
     isLoading: appLoading,
   });

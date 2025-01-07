@@ -10,6 +10,7 @@ import {
   ModalMotionTwoSection,
 } from '@polkadot-live/ui/kits/overlay';
 import { ImportReadOnly } from './ReadOnly';
+import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@app/hooks/useImportMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import type { AccountSource } from '@polkadot-live/types/accounts';
@@ -29,8 +30,20 @@ export const Import: React.FC = () => {
     }
   }, [section]);
 
-  const getShowClass = (target: AccountSource) =>
-    source ? (source === target ? 'show' : 'hide') : 'hide';
+  const renderImportPage = () => {
+    switch (source) {
+      case 'ledger':
+        return <ImportLedger setSection={setSection} />;
+      case 'read-only':
+        return <ImportReadOnly setSection={setSection} />;
+      case 'vault':
+        return <ImportVault section={section} setSection={setSection} />;
+      case 'wallet-connect':
+        return <ImportWalletConnect setSection={setSection} />;
+      default:
+        return <p>Source not selected.</p>;
+    }
+  };
 
   return (
     <ModalSection type="carousel">
@@ -68,15 +81,7 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          <div className={getShowClass('ledger')}>
-            <ImportLedger setSection={setSection} curSource={source} />
-          </div>
-          <div className={getShowClass('vault')}>
-            <ImportVault section={section} setSection={setSection} />
-          </div>
-          <div className={getShowClass('read-only')}>
-            <ImportReadOnly section={section} setSection={setSection} />
-          </div>
+          {renderImportPage()}
         </div>
       </ModalMotionTwoSection>
     </ModalSection>

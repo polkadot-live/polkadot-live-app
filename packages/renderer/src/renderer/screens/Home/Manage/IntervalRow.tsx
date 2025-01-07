@@ -27,8 +27,8 @@ import type { IntervalRowProps } from './types';
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { setTooltipTextAndOpen } = useTooltip();
-  const { online: isConnected, isConnecting } = useBootstrapping();
-  const { isImporting } = useConnections();
+  const { isConnecting } = useBootstrapping();
+  const { getOnlineMode, isImporting } = useConnections();
 
   const {
     handleIntervalToggle,
@@ -53,12 +53,12 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   );
 
   const [isDisabled, setIsDisabled] = useState<boolean>(
-    isConnecting || !isConnected || isImporting
+    isConnecting || !getOnlineMode() || isImporting
   );
 
   useEffect(() => {
-    setIsDisabled(isConnecting || !isConnected || isImporting);
-  }, [isConnecting, isConnected, isImporting]);
+    setIsDisabled(isConnecting || !getOnlineMode() || isImporting);
+  }, [isConnecting, getOnlineMode(), isImporting]);
 
   useEffect(() => {
     const newStatusToBoolean = task.status === 'enable';
@@ -74,10 +74,10 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   }, [task.enableOsNotifications]);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!getOnlineMode()) {
       setIntervalClicked(false);
     }
-  }, [isConnected]);
+  }, [getOnlineMode()]);
 
   const handleToggle = async () => {
     await handleIntervalToggle(task);

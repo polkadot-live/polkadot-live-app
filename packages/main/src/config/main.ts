@@ -16,6 +16,7 @@ export class Config {
   private static _ledgerAddressesStorageKey = 'ledger_addresses';
   private static _vaultAddressesStorageKey = 'vault_addresses';
   private static _readOnlyAddressesStorageKey = 'read_only_addresses';
+  private static _wcAddressesStorageKey = 'wc_addresses';
 
   // Main window's docked properties.
   private static _dockedWidth = 490;
@@ -38,6 +39,7 @@ export class Config {
   // Flags to handle data processes.
   private static _exportingData = false;
   private static _importingData = false;
+  private static _onlineMode = false;
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -50,6 +52,9 @@ export class Config {
       }
       case 'read-only': {
         return Config._readOnlyAddressesStorageKey;
+      }
+      case 'wallet-connect': {
+        return Config._wcAddressesStorageKey;
       }
       default: {
         throw new Error('source not recognized');
@@ -172,6 +177,14 @@ export class Config {
 
   static set importingData(flag: boolean) {
     Config._importingData = flag;
+  }
+
+  static get onlineMode(): boolean {
+    return Config._onlineMode;
+  }
+
+  static set onlineMode(flag: boolean) {
+    Config._onlineMode = flag;
   }
 
   // Setter for app's tray object.

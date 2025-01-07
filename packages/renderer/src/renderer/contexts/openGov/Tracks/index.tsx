@@ -16,7 +16,7 @@ export const TracksContext = createContext<TracksContextInterface>(
 export const useTracks = () => useContext(TracksContext);
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
 
   /// Track data received from API.
   const [tracks, setTracks] = useState<Track[]>([]);
@@ -30,7 +30,10 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   /// Initiate fetching tracks.
   const fetchTracksData = (chainId: ChainID) => {
-    if (isConnected && (!dataCachedRef.current || activeChainId !== chainId)) {
+    if (
+      getOnlineMode() &&
+      (!dataCachedRef.current || activeChainId !== chainId)
+    ) {
       setActiveChainId(chainId);
       setFetchingTracks(true);
 

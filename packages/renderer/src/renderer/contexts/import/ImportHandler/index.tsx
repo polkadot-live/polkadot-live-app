@@ -29,7 +29,7 @@ export const ImportHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isConnected } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
 
@@ -43,7 +43,7 @@ export const ImportHandlerProvider = ({
     device?: AnyData
   ) => {
     // Set processing flag for account.
-    const doMainImport = isConnected && mainImport;
+    const doMainImport = getOnlineMode() && mainImport;
     setStatusForAccount(address, source, doMainImport);
 
     const local = constructRawAddress(
@@ -62,7 +62,7 @@ export const ImportHandlerProvider = ({
     await persistAddressToStore(source, local);
 
     // Send data to main renderer for processing.
-    if (isConnected && mainImport) {
+    if (getOnlineMode() && mainImport) {
       postAddressToMainWindow(address, source, accountName);
     }
   };

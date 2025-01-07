@@ -28,13 +28,13 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {
     // Update name in store in main process.
-    await renameAccountInStore(address, 'vault', newName);
+    await renameAccountInStore(address, 'wallet-connect', newName);
 
     // Post message to main renderer to process the account rename.
     postRenameAccount(who, newName);
 
     // Update import window address state
-    handleAddressImport(source, { ...localAddress, name: newName });
+    handleAddressImport('wallet-connect', { ...localAddress, name: newName });
   };
 
   return (
@@ -50,13 +50,13 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
       /* Handlers */
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={name} source="vault" />,
+          <Confirm address={address} name={name} source={source} />,
           'small'
         )
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete address={address} source="vault" setSection={setSection} />
+          <Delete address={address} source={source} setSection={setSection} />
         )
       }
       onRenameError={(message, toastId) =>
@@ -67,7 +67,7 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
       }
       openRemoveHandler={() =>
         openOverlayWith(
-          <Remove address={address} source="vault" accountName={name} />,
+          <Remove address={address} source={source} accountName={name} />,
           'small'
         )
       }

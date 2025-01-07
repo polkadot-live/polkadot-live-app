@@ -7,7 +7,6 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
 import type {
   AccountSource,
@@ -15,9 +14,11 @@ import type {
   LocalAddress,
 } from '@polkadot-live/types/accounts';
 
+// TODO: Move to WalletConnect file.
+const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
+
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
-  const { setIsConnected } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
 
@@ -26,6 +27,14 @@ export const useImportMessagePorts = () => {
    * @summary Handle messages sent to the import window.
    */
   const handleReceivedPort = (e: MessageEvent) => {
+    // TODO: May need to handle WalletConnect messages here.
+    // For now, don't do any further processing if message is from WalletConnect.
+    if (e.origin === WC_EVENT_ORIGIN) {
+      console.log('> WalletConnect event received:');
+      console.log(e);
+      return;
+    }
+
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
@@ -51,11 +60,6 @@ export const useImportMessagePorts = () => {
             case 'import:account:processing': {
               const { address, source, status } = ev.data.data;
               setStatusForAccount(address, source, status);
-              break;
-            }
-            case 'import:connection:status': {
-              const { status } = ev.data.data;
-              setIsConnected(status);
               break;
             }
             case 'import:address:update': {

@@ -6,9 +6,9 @@ import { executeIntervaledOneShot } from '@app/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { createContext, useContext } from 'react';
-import { useBootstrapping } from '../Bootstrapping';
-import { useManage } from '../Manage';
-import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useManage } from '@app/contexts/main/Manage';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from './types';
@@ -28,7 +28,7 @@ export const IntervalTasksManagerProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { online: isOnline } = useBootstrapping();
+  const { getOnlineMode } = useConnections();
   const { updateIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
   const { tryUpdateDynamicIntervalTask, tryRemoveIntervalSubscription } =
@@ -105,7 +105,7 @@ export const IntervalTasksManagerProvider = ({
   ) => {
     // Remove task from interval controller.
     task.status === 'enable' &&
-      IntervalsController.removeSubscription(task, isOnline);
+      IntervalsController.removeSubscription(task, getOnlineMode());
 
     // Set status to disable.
     task.status = 'disable';

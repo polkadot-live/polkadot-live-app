@@ -54,8 +54,8 @@ export const Permissions = ({
 }: PermissionsProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
-  const { isImporting } = useConnections();
-  const { online: isOnline, isConnecting } = useBootstrapping();
+  const { getOnlineMode, isImporting } = useConnections();
+  const { isConnecting } = useBootstrapping();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -146,7 +146,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!isOnline || isConnecting || isImporting) {
+    if (!getOnlineMode() || isConnecting || isImporting) {
       return true;
     }
 
@@ -171,7 +171,8 @@ export const Permissions = ({
   };
 
   /// Determines if interval task should be disabled.
-  const isIntervalTaskDisabled = () => !isOnline || isConnecting || isImporting;
+  const isIntervalTaskDisabled = () =>
+    !getOnlineMode() || isConnecting || isImporting;
 
   /// Get unique key for the task row component.
   const getKey = (
