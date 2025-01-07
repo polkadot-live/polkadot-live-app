@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.5.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.4.0-alpha...v0.5.0-alpha) (2025-01-07)
+
+
+### Features
+
+* fetching multiple ledger addresses ([#760](https://github.com/polkadot-live/polkadot-live-app/issues/760)) ([8eb3f56](https://github.com/polkadot-live/polkadot-live-app/commit/8eb3f5644389c98895924313f2bb6e638e622549))
+* import wallet connect addresses ([#769](https://github.com/polkadot-live/polkadot-live-app/issues/769)) ([4b58996](https://github.com/polkadot-live/polkadot-live-app/commit/4b589961a165a46d74723f23384c997940d519b8))
+* importing ledger addresses ([#761](https://github.com/polkadot-live/polkadot-live-app/issues/761)) ([18ec1c2](https://github.com/polkadot-live/polkadot-live-app/commit/18ec1c25a94fa07c05d7f075bce4a6e9ec539076))
+* improved ledger support 1 ([#758](https://github.com/polkadot-live/polkadot-live-app/issues/758)) ([1174a21](https://github.com/polkadot-live/polkadot-live-app/commit/1174a213e39d3ef4f33d6fa400679278abde2187))
+* ledger ui polish ([#763](https://github.com/polkadot-live/polkadot-live-app/issues/763)) ([2443fd9](https://github.com/polkadot-live/polkadot-live-app/commit/2443fd9f3c8a879789ce06de7df3b797a11fc633))
+* ui layout for importing ledger addresses ([#759](https://github.com/polkadot-live/polkadot-live-app/issues/759)) ([69dd592](https://github.com/polkadot-live/polkadot-live-app/commit/69dd5928a108fc282fa6ce0830047eb4982a7934))
+* wallet connect context ([#767](https://github.com/polkadot-live/polkadot-live-app/issues/767)) ([4a7bf6b](https://github.com/polkadot-live/polkadot-live-app/commit/4a7bf6badf05d48ffa93c6c5b0e078593bef58bb))
+* wallet connect dynamic ui ([#768](https://github.com/polkadot-live/polkadot-live-app/issues/768)) ([f7c516d](https://github.com/polkadot-live/polkadot-live-app/commit/f7c516d71a45efa31227f54fbfbbf59ba9452e62))
+* wallet connect integration ([#766](https://github.com/polkadot-live/polkadot-live-app/issues/766)) ([ae319a3](https://github.com/polkadot-live/polkadot-live-app/commit/ae319a354781f2160a2a43848961337fc676ffe7))
+* wallet connect ui foundation ([#765](https://github.com/polkadot-live/polkadot-live-app/issues/765)) ([62fa41b](https://github.com/polkadot-live/polkadot-live-app/commit/62fa41bbf7338745802b765c83c98aac97aa2a9d))
+
+
+### Bug Fixes
+
+* card text ([e813e15](https://github.com/polkadot-live/polkadot-live-app/commit/e813e15d314b027b52c56edd153cf98730ac0c39))
+* header icon tweaks ([491adae](https://github.com/polkadot-live/polkadot-live-app/commit/491adae9cb0e02e1083a5f3679cd6e717651a868))
+* online status relay ([#770](https://github.com/polkadot-live/polkadot-live-app/issues/770)) ([272d349](https://github.com/polkadot-live/polkadot-live-app/commit/272d3492957464fcff78bc9c958e571082d4ab3e))
+
 ## [0.4.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.3.0-alpha...v0.4.0-alpha) (2024-11-25)
 
 
