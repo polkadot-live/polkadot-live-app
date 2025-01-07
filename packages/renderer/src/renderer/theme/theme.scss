@@ -63,6 +63,11 @@ SPDX-License-Identifier: GPL-3.0-only */
   --badge-alpha-color: #959595;
   --badge-alpha-background: #2a2a2a;
 
+  /* Help Overlay */
+  --help-definition-fallback: #282728;
+  --help-definition-gradient-start: rgb(74 74 74 / 35%);
+  --help-definition-gradient-end: rgb(62 62 62 / 52%);
+
   /* Side Nav */
   --nav-background: #1a1919;
   --nav-button-background: #313131;
@@ -159,6 +164,11 @@ SPDX-License-Identifier: GPL-3.0-only */
   /* Header */
   --badge-alpha-color: #545454;
   --badge-alpha-background: #f1f1f1;
+
+  /* Help Overlay */
+  --help-definition-fallback: #c9c9c9;
+  --help-definition-gradient-start: rgb(177 177 177 /47%);
+  --help-definition-gradient-end: rgb(191 191 191 / 57%);
 
   /* Side Nav */
   --nav-background: #e5e6e6;

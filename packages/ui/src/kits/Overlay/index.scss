@@ -157,8 +157,8 @@ SPDX-License-Identifier: GPL-3.0-only */
 
   /* Blur effect */
   background: var(--modal-background-color);
+  backdrop-filter: brightness(90%) blur(8px);
   transition: backdrop-filter 0.5s;
-  backdrop-filter: blur(5px);
   z-index: 9;
 
   display: flex;
