@@ -63,6 +63,11 @@ export const darkTheme = {
   badgeAlphaColor: '#959595',
   badgeAlphaBackground: '#2a2a2a',
 
+  /* Help Overlay */
+  helpDefinitionFallback: '#282728',
+  helpDefinitionGradientStart: 'rgb(74 74 74 / 35%)',
+  helpDefinitionGradientEnd: 'rgb(62 62 62 / 52%)',
+
   /* Side Nav */
   navBackground: '#1a1919',
   navButtonBackground: '#313131',
@@ -158,6 +163,11 @@ export const lightThene = {
   /* Header */
   badgeAlphaColor: '#545454',
   badgeAlphaBackground: '#f1f1f1',
+
+  /* Help Overlay */
+  helpDefinitionFallback: '#c9c9c9',
+  helpDefinitionGradientStart: 'rgb(177 177 177 /47%)',
+  helpDefinitionGradientEnd: 'rgb(191 191 191 / 57%)',
 
   /* Side Nav */
   navBackground: '#e5e6e6',

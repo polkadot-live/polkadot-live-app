@@ -36,16 +36,20 @@ export const ListWrapper = styled(motion.div)`
 `;
 
 export const DefinitionWrapper = styled(motion.div)`
-  background: var(--background-surface);
-  border: 1px solid var(--border-primary-color);
-  border-radius: 0.375rem;
+  background: var(--help-definition-fallback);
+  background: linear-gradient(
+    32deg,
+    var(--help-definition-gradient-start) 0%,
+    var(--help-definition-gradient-end) 100%
+  );
+  border-radius: 1.5em;
 
   display: flex;
   flex-flow: row wrap;
   flex: 1;
   overflow: hidden;
   margin-bottom: 1rem;
-  padding: 1.5rem;
+  padding: 1.75rem;
   width: 100%;
 
   @media (min-width: 0px) and (max-width: 425px) {
