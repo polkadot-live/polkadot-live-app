@@ -7,18 +7,17 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export interface WalletConnectContextInterface {
   wcConnecting: boolean;
   wcDisconnecting: boolean;
+  wcFetchedAddresses: WcFetchedAddress[];
   wcInitialized: boolean;
-  wcSessionActive: boolean;
+  wcNetworks: WcSelectNetwork[];
   wcSessionRestored: boolean;
   connectWc: () => Promise<void>;
   disconnectWcSession: () => Promise<void>;
-  wcFetchedAddresses: WcFetchedAddress[];
+  fetchAddressesFromExistingSession: () => void;
   setWcFetchedAddresses: React.Dispatch<
     React.SetStateAction<WcFetchedAddress[]>
   >;
-  wcNetworks: WcSelectNetwork[];
   setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
-  fetchAddressesFromExistingSession: () => void;
 }
 
 export interface WcSelectNetwork {
