@@ -16,7 +16,7 @@ jobs:
     - name: Install System Libraries
       run: |
         sudo apt update
-        sudo apt install -y libudev-dev
+        sudo apt install -y libudev-dev libusb-1.0-0-dev
     - name: Install Python Setuptools
       run: python -m pip install setuptools
     - name: Install Dependencies
