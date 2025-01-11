@@ -3,25 +3,13 @@
 
 import styled from 'styled-components';
 
+/** TODO: Remove */
 export const FooterWrapper = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
   background-color: var(--background-default);
   border-top: 1px solid var(--border-primary-color);
-`;
-
-export const EstimatedFee = styled.div`
-  p {
-    color: var(--text-color-secondary);
-    padding: 0;
-    font-size: 1rem;
-    margin: 0.5rem 0;
-
-    > span {
-      margin: 0 0.5rem 0 0;
-    }
-  }
 `;
 
 export const QRViewerWrapper = styled.div`
