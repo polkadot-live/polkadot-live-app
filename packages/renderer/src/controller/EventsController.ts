@@ -16,7 +16,6 @@ import {
 } from '@ren/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
-import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   IntervalSubscription,
@@ -55,14 +54,15 @@ export class EventsController {
           data: { referendumId, ayeVotes, nayVotes },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Polkassembly',
               uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
-              text: 'Polkassembly',
             },
             {
+              label: 'Subsquare',
               uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
-              text: 'Subsquare',
             },
           ],
         };
@@ -84,14 +84,15 @@ export class EventsController {
           data: { referendumId, formattedTime },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Polkassembly',
               uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
-              text: 'Polkassembly',
             },
             {
+              label: 'Subsquare',
               uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
-              text: 'Subsquare',
             },
           ],
         };
@@ -113,14 +114,15 @@ export class EventsController {
           data: { referendumId, formattedApp, formattedSup },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Polkassembly',
               uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
-              text: 'Polkassembly',
             },
             {
+              label: 'Subsquare',
               uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
-              text: 'Subsquare',
             },
           ],
         };
@@ -159,7 +161,8 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -182,7 +185,8 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -216,7 +220,8 @@ export class EventsController {
           data: { free: newFree.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -250,7 +255,8 @@ export class EventsController {
           data: { frozen: newFrozen.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -284,7 +290,8 @@ export class EventsController {
           data: { frozen: newReserved.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -318,7 +325,8 @@ export class EventsController {
           data: { spendable: newSpendable.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
 
@@ -359,10 +367,9 @@ export class EventsController {
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [
             {
-              uri: 'bond',
-              text: 'Compound',
+              label: 'Compound',
               txMeta: {
                 eventUid: '',
                 from: address,
@@ -375,11 +382,10 @@ export class EventsController {
                 data: {
                   extra: pendingRewardsUnit.toNumber(),
                 },
-              } as ActionMeta,
+              },
             },
             {
-              uri: 'withdraw',
-              text: 'Withdraw',
+              label: 'Withdraw',
               txMeta: {
                 eventUid: '',
                 from: address,
@@ -392,11 +398,13 @@ export class EventsController {
                 data: {
                   extra: pendingRewardsUnit.toNumber(),
                 },
-              } as ActionMeta,
+              },
             },
+          ],
+          uriActions: [
             {
               uri: `https://staking.polkadot.cloud/#/pools?n=${chainId}&a=${address}`,
-              text: 'Dashboard',
+              label: 'Dashboard',
             },
           ],
         };
@@ -434,10 +442,11 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: `Subscan`,
               uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
-              text: `Subscan`,
             },
           ],
         };
@@ -475,10 +484,11 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: `Subscan`,
               uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
-              text: `Subscan`,
             },
           ],
         };
@@ -516,10 +526,11 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: `Subscan`,
               uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
-              text: `Subscan`,
             },
           ],
         };
@@ -560,7 +571,8 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [],
+          txActions: [],
+          uriActions: [],
         };
       }
       /**
@@ -594,14 +606,15 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Dashboard',
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
-              text: 'Dashboard',
             },
             {
+              label: 'Subscan',
               uri: `https://${chainId}.subscan.io/nominator/${address}?tab=reward`,
-              text: 'Subscan',
             },
           ],
         };
@@ -639,10 +652,11 @@ export class EventsController {
           },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Dashboard',
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
-              text: 'Dashboard',
             },
           ],
         };
@@ -678,10 +692,11 @@ export class EventsController {
           data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Dashboard',
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
-              text: 'Dashboard',
             },
           ],
         };
@@ -717,10 +732,11 @@ export class EventsController {
           data: { era, hasChanged },
           timestamp: getUnixTime(new Date()),
           stale: false,
-          actions: [
+          txActions: [],
+          uriActions: [
             {
+              label: 'Dashboard',
               uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
-              text: 'Dashboard',
             },
           ],
         };
