@@ -8,6 +8,7 @@ export * from './blockstream';
 export * from './communication';
 export * from './help';
 export * from './ledger';
+export * from './legacy';
 export * from './misc';
 export * from './openGov';
 export * from './orchestrator';

@@ -71,10 +71,14 @@ export interface EventInner {
   data: AnyData;
 }
 
-export interface EventAction {
+export interface TxAction {
+  label: string;
+  txMeta: ActionMeta;
+}
+
+export interface UriAction {
   uri: string;
-  text?: string;
-  txMeta?: ActionMeta;
+  label: string;
 }
 
 // Callback event interface
@@ -90,7 +94,8 @@ export interface EventCallback {
   subtitle: string;
   data: AnyJson;
   timestamp: number;
-  actions: EventAction[];
+  txActions: TxAction[];
+  uriActions: UriAction[];
   stale: boolean;
 }
 
