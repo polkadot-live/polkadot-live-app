@@ -8,32 +8,6 @@ import type { ChainID } from './chains';
 import type { ExtendedAccount } from './blockstream';
 import type { TaskAction } from './subscriptions';
 
-/** TODO: Move to file for legacy types. */
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace V05Alpha {
-  export interface EventAction {
-    uri: string;
-    text?: string;
-    txMeta?: ActionMeta;
-  }
-
-  export interface EventCallback {
-    uid: string;
-    category: string;
-    taskAction: TaskAction | string;
-    who: {
-      origin: 'account' | 'chain' | 'interval';
-      data: EventAccountData | EventChainData;
-    };
-    title: string;
-    subtitle: string;
-    data: AnyJson;
-    timestamp: number;
-    actions: EventAction[]; // Changed in later versions.
-    stale: boolean;
-  }
-}
-
 // Batch notification config.
 export interface BatchConfig {
   interval: number;
