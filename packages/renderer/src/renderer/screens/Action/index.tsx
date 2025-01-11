@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ActionItem, Tx } from '@polkadot-live/ui/components';
+import { Tx } from '@polkadot-live/ui/components';
 import BigNumber from 'bignumber.js';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { chainCurrency } from '@ren/config/chains';
@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
+import { TxActionItem } from './TxActionItem';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -27,7 +28,8 @@ export const Action = () => {
     useTxMeta();
 
   // Tx metadata.
-  const action = actionMeta?.action || '';
+  const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
+  const action = actionMeta?.action || tmpUid;
   const actionData = actionMeta?.data || {};
   const eventUid = actionMeta?.eventUid || '';
 
@@ -140,36 +142,11 @@ export const Action = () => {
         </SubmittedTxWrapper>
       )}
       <ContentWrapper>
-        {action === 'nominationPools_pendingRewards_bond' && (
-          <>
-            <h3>Nomination Pools: Compound Rewards</h3>
-            <div className="body">
-              <ActionItem
-                text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
-              />
-              <p>
-                Once submitted, your rewards will be bonded back into the pool.
-                You own these additional bonded funds and will be able to
-                withdraw them at any time.
-              </p>
-            </div>
-          </>
-        )}
-
-        {action === 'nominationPools_pendingRewards_withdraw' && (
-          <>
-            <h3>Nomination Pools: Claim Rewards</h3>
-            <div className="body">
-              <ActionItem
-                text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
-              />
-              <p>
-                Withdrawing rewards will immediately transfer them to your
-                account as free balance.
-              </p>
-            </div>
-          </>
-        )}
+        <TxActionItem
+          action={action}
+          actionData={actionData}
+          chainId={chainId}
+        />
 
         <Tx
           label={'Signer'}

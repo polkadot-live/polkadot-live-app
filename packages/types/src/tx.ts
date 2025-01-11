@@ -12,13 +12,17 @@ export type TxStatus =
   | 'finalized'
   | 'error';
 
+export type TxActionUid =
+  | 'nominationPools_pendingRewards_bond'
+  | 'nominationPools_pendingRewards_withdraw';
+
 export interface ActionMeta {
   // Account nonce.
   nonce?: BigNumber;
   // Name of account sending tx.
   accountName: string;
   // Type of transaction.
-  action: string;
+  action: TxActionUid;
   // Address of tx sender.
   from: string;
   // Pallet of associated transaction.
