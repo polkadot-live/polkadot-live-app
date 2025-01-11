@@ -1,7 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faPenToSquare, faWarning } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCoins,
+  faPenToSquare,
+  faWarning,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Wrapper } from './Wrapper';
 import { appendOrEmpty } from '@w3ux/utils';
@@ -20,6 +24,8 @@ export interface TxProps {
   notEnoughFunds: boolean;
   // warning messgae.
   dangerMessage: string;
+  // estimated fee.
+  estimatedFee: string;
   // signing component.
   SignerComponent: ReactElement;
   // display for.
@@ -36,29 +42,46 @@ export const Tx = ({
   name,
   notEnoughFunds,
   dangerMessage,
+  estimatedFee,
   SignerComponent,
   displayFor = 'default',
 }: TxProps) => (
   <Wrapper className={margin ? 'margin' : undefined}>
     <div className={`inner${appendOrEmpty(displayFor === 'canvas', 'canvas')}`}>
-      <p className="sign">
+      <div className="sign">
         <span className="badge">
-          <FontAwesomeIcon icon={faPenToSquare} className="icon" />
+          <FontAwesomeIcon
+            icon={faPenToSquare}
+            className="icon"
+            transform="shrink-3"
+          />
           {label}
         </span>
-        {name}
+
+        <span>{name}</span>
+
         {notEnoughFunds && (
           <span className="not-enough">
             / &nbsp;
             <FontAwesomeIcon
               icon={faWarning}
               className="danger"
-              transform="shrink-1"
+              transform="shrink-3"
             />{' '}
             <span className="danger">{dangerMessage}</span>
           </span>
         )}
-      </p>
+
+        <span className="badge">
+          <FontAwesomeIcon
+            icon={faCoins}
+            className="icon"
+            transform="shrink-3"
+          />
+          Estimated Fee
+        </span>
+        <span>{estimatedFee}</span>
+      </div>
       <section>{SignerComponent}</section>
     </div>
   </Wrapper>

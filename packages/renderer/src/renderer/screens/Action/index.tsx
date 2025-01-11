@@ -11,7 +11,7 @@ import { ellipsisFn } from '@w3ux/utils';
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
-import { FooterWrapper, SubmittedTxWrapper } from './Wrappers';
+import { SubmittedTxWrapper } from './Wrappers';
 import { useEffect, useState } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
@@ -94,7 +94,7 @@ export const Action = () => {
   const getTxStatusTitle = (): string => {
     switch (txStatus) {
       case 'pending':
-        return 'Transaction Pending...';
+        return 'Transaction Pending';
       case 'submitted':
         return 'Transaction Submitted';
       case 'in_block':
@@ -139,61 +139,60 @@ export const Action = () => {
           </div>
         </SubmittedTxWrapper>
       )}
-      <>
-        <ContentWrapper>
-          {action === 'nominationPools_pendingRewards_bond' && (
-            <>
-              <h3>Nomination Pools: Compound Rewards</h3>
-              <div className="body">
-                <ActionItem
-                  text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
-                />
-                <p>
-                  Once submitted, your rewards will be bonded back into the
-                  pool. You own these additional bonded funds and will be able
-                  to withdraw them at any time.
-                </p>
-              </div>
-            </>
-          )}
-
-          {action === 'nominationPools_pendingRewards_withdraw' && (
-            <>
-              <h3>Nomination Pools: Claim Rewards</h3>
-              <div className="body">
-                <ActionItem
-                  text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
-                />
-                <p>
-                  Withdrawing rewards will immediately transfer them to your
-                  account as free balance.
-                </p>
-              </div>
-            </>
-          )}
-        </ContentWrapper>
-
-        <FooterWrapper>
-          <Tx
-            label={'Signer'}
-            name={fromName}
-            notEnoughFunds={false}
-            dangerMessage={'Danger message'}
-            SignerComponent={
-              <Signer
-                txId={txId}
-                chain={chainId}
-                submitting={submitting}
-                valid={
-                  !submitting && estimatedFee !== '...' && nonce !== undefined
-                }
-                estimatedFee={estimatedFee}
-                from={from}
+      <ContentWrapper>
+        {action === 'nominationPools_pendingRewards_bond' && (
+          <>
+            <h3>Nomination Pools: Compound Rewards</h3>
+            <div className="body">
+              <ActionItem
+                text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
               />
-            }
-          />
-        </FooterWrapper>
-      </>
+              <p>
+                Once submitted, your rewards will be bonded back into the pool.
+                You own these additional bonded funds and will be able to
+                withdraw them at any time.
+              </p>
+            </div>
+          </>
+        )}
+
+        {action === 'nominationPools_pendingRewards_withdraw' && (
+          <>
+            <h3>Nomination Pools: Claim Rewards</h3>
+            <div className="body">
+              <ActionItem
+                text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
+              />
+              <p>
+                Withdrawing rewards will immediately transfer them to your
+                account as free balance.
+              </p>
+            </div>
+          </>
+        )}
+
+        <Tx
+          label={'Signer'}
+          name={fromName}
+          notEnoughFunds={false}
+          dangerMessage={'Danger message'}
+          estimatedFee={
+            estimatedFee === '0'
+              ? '...'
+              : `${estimatedFee} ${chainCurrency(chainId)}`
+          }
+          SignerComponent={
+            <Signer
+              txId={txId}
+              submitting={submitting}
+              valid={
+                !submitting && estimatedFee !== '...' && nonce !== undefined
+              }
+              from={from}
+            />
+          }
+        />
+      </ContentWrapper>
     </>
   );
 };

@@ -25,7 +25,10 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
 import { useTooltip } from '@polkadot-live/ui/contexts';
-import type { EventAccountData } from '@polkadot-live/types/reporter';
+import type {
+  EventAccountData,
+  EventAction,
+} from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import Governance from '@ren/config/svg/governance.svg?react';
@@ -81,7 +84,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
 
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event
   // _after_ the fade-out ensures there will be no race conditions. E.g. the UI rendering and
-  // removing the event before_ the event transition is finished.
+  // removing the event _before_ the event transition is finished.
   useEffect(() => {
     if (display === 'out') {
       dismissEvent({ uid, who: event.who });
@@ -99,7 +102,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const getSecondaryActions = () =>
     actions.filter(({ uri }) => isValidHttpUrl(uri));
 
-  // Flag to determine of primary actions exist for this event.
+  // Flag to determine if primary actions exist for this event.
   const hasPrimaryActions: boolean =
     getPrimaryActions().length > 0 && source !== 'read-only';
 
@@ -134,6 +137,28 @@ export const Item = memo(function Item({ event }: ItemProps) {
       : activeSide === 'left'
         ? 'closedLeft'
         : 'closedRight';
+
+  /**
+   * Open action window and initialize with the event's tx data.
+   */
+  const openActionWindow = async (action: EventAction, btnLabel: string) => {
+    window.myAPI.openWindow('action');
+
+    // Set nonce.
+    if (action.txMeta) {
+      action.txMeta.nonce = await getAddressNonce(address, chainId);
+    }
+
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:init',
+      data: JSON.stringify(action.txMeta),
+    });
+
+    // Analytics.
+    window.myAPI.umamiEvent('window-open-extrinsics', {
+      action: `${event.category}-${btnLabel?.toLowerCase()}`,
+    });
+  };
 
   return (
     <AnimatePresence>
@@ -265,29 +290,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                           }
                           key={`action_${uid}_${i}`}
                           text={text || ''}
-                          onClick={async () => {
-                            window.myAPI.openWindow('action');
-
-                            // Set nonce.
-                            if (action.txMeta) {
-                              action.txMeta.nonce = await getAddressNonce(
-                                address,
-                                chainId
-                              );
-                            }
-
-                            ConfigRenderer.portToAction?.postMessage({
-                              task: 'action:init',
-                              data: JSON.stringify(action.txMeta),
-                            });
-
-                            // Analytics.
-                            window.myAPI.umamiEvent('window-open-extrinsics', {
-                              action:
-                                `${event.category}-${text?.toLowerCase()}` ||
-                                'unknown',
-                            });
-                          }}
+                          onClick={async () =>
+                            openActionWindow(action, text || 'unknown')
+                          }
                         />
                       );
                     }
