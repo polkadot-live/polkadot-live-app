@@ -134,15 +134,17 @@ export const Item = memo(function Item({ event }: ItemProps) {
     // Set nonce.
     txMeta.nonce = await getAddressNonce(address, chainId);
 
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:init',
-      data: JSON.stringify(txMeta),
-    });
+    setTimeout(() => {
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(txMeta),
+      });
 
-    // Analytics.
-    window.myAPI.umamiEvent('window-open-extrinsics', {
-      action: `${event.category}-${btnLabel?.toLowerCase()}`,
-    });
+      // Analytics.
+      window.myAPI.umamiEvent('window-open-extrinsics', {
+        action: `${event.category}-${btnLabel?.toLowerCase()}`,
+      });
+    }, 1000);
   };
 
   return (

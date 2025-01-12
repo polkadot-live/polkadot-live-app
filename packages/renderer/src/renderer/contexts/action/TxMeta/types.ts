@@ -2,10 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
+import type {
+  ActionMeta,
+  ExtrinsicDynamicInfo,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 import type BigNumber from 'bignumber.js';
 
 export interface TxMetaContextInterface {
+  initTx: (actionMeta: ActionMeta) => void;
+  initTxDynamicInfo: (txId: string) => void;
+  setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
+  extrinsics: Map<string, ExtrinsicInfo>;
+
   txFees: BigNumber;
   notEnoughFunds: boolean;
   setTxFees: (f: BigNumber) => void;

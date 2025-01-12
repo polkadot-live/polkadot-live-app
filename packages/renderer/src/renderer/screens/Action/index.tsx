@@ -2,21 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Tx } from '@polkadot-live/ui/components';
-import BigNumber from 'bignumber.js';
-import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { chainCurrency } from '@ren/config/chains';
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
-import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
-import { SubmittedTxWrapper } from './Wrappers';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { TxActionItem } from './TxActionItem';
+import { Scrollable } from '@polkadot-live/ui/styles';
+
+//import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
+//import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { SubmittedTxWrapper } from './Wrappers';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -24,57 +25,56 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
-    useTxMeta();
+  const { extrinsics, estimatedFee, txId, txStatus } = useTxMeta();
 
   // Tx metadata.
-  const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
-  const action = actionMeta?.action || tmpUid;
-  const actionData = actionMeta?.data || {};
-  const eventUid = actionMeta?.eventUid || '';
+  //const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
+  //const action = actionMeta?.action || tmpUid;
+  //const actionData = actionMeta?.data || {};
+  //const eventUid = actionMeta?.eventUid || '';
 
-  const from: string = actionMeta?.from || '';
-  const fromName = actionMeta?.accountName || ellipsisFn(from);
+  //const from: string = actionMeta?.from || '';
+  //const fromName = actionMeta?.accountName || ellipsisFn(from);
 
-  const chainId = actionMeta?.chainId || 'Polkadot';
-  const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
-  const pallet = actionMeta?.pallet || '';
-  const method = actionMeta?.method || '';
-  const args = actionMeta?.args || [];
+  //const chainId = actionMeta?.chainId || 'Polkadot';
+  //const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
+  //const pallet = actionMeta?.pallet || '';
+  //const method = actionMeta?.method || '';
+  //const args = actionMeta?.args || [];
 
   // Store whether the tx is submitting.
-  const [submitting] = useState<boolean>(false);
+  //const [submitting] = useState<boolean>(false);
 
   // Send message to main renderer to initiate a new transaction.
-  useEffect(() => {
-    try {
-      ConfigAction.portAction.postMessage({
-        task: 'renderer:tx:init',
-        data: { chainId, from, nonce, pallet, method, args, eventUid },
-      });
-    } catch (err) {
-      console.log('Warning: Action port not received yet: renderer:tx:init');
-    }
-  }, [from, nonce, pallet, method]);
+  //useEffect(() => {
+  //  try {
+  //    ConfigAction.portAction.postMessage({
+  //      task: 'renderer:tx:init',
+  //      data: { chainId, from, nonce, pallet, method, args, eventUid },
+  //    });
+  //  } catch (err) {
+  //    console.log('Warning: Action port not received yet: renderer:tx:init');
+  //  }
+  //}, [from, nonce, pallet, method]);
 
   // Auto transaction submission and event dismiss when signature updates.
-  useEffect(() => {
-    if (getTxSignature()) {
-      try {
-        // Send signature and submit transaction on main window.
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:tx:vault:submit',
-          data: {
-            signature: getTxSignature(),
-          },
-        });
-      } catch (err) {
-        console.log(
-          'Warning: Action port not received yet: renderer:tx:vault:submit'
-        );
-      }
-    }
-  }, [getTxSignature()]);
+  //useEffect(() => {
+  //  if (getTxSignature()) {
+  //    try {
+  //      // Send signature and submit transaction on main window.
+  //      ConfigAction.portAction.postMessage({
+  //        task: 'renderer:tx:vault:submit',
+  //        data: {
+  //          signature: getTxSignature(),
+  //        },
+  //      });
+  //    } catch (err) {
+  //      console.log(
+  //        'Warning: Action port not received yet: renderer:tx:vault:submit'
+  //      );
+  //    }
+  //  }
+  //}, [getTxSignature()]);
 
   // Reset data in the main extrinsics controller on unmount.
   useEffect(
@@ -93,6 +93,7 @@ export const Action = () => {
   );
 
   // Utility to get title based on tx status.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getTxStatusTitle = (): string => {
     switch (txStatus) {
       case 'pending':
@@ -109,6 +110,7 @@ export const Action = () => {
   };
 
   // Utility to get subtitle based on tx status.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getTxStatusSubtitle = (): string | null => {
     switch (txStatus) {
       case 'submitted':
@@ -121,7 +123,12 @@ export const Action = () => {
   };
 
   return (
-    <>
+    <Scrollable
+      $footerHeight={0}
+      $headerHeight={0}
+      style={{ paddingTop: 0, paddingBottom: 20 }}
+    >
+      {/*
       {txStatus !== 'pending' && (
         <SubmittedTxWrapper>
           <div>
@@ -141,35 +148,48 @@ export const Action = () => {
           </div>
         </SubmittedTxWrapper>
       )}
+      */}
       <ContentWrapper>
-        <TxActionItem
-          action={action}
-          actionData={actionData}
-          chainId={chainId}
-        />
+        {Array.from(extrinsics.keys()).length === 0 && (
+          <p>No extrinsics created yet...</p>
+        )}
 
-        <Tx
-          label={'Signer'}
-          name={fromName}
-          notEnoughFunds={false}
-          dangerMessage={'Danger message'}
-          estimatedFee={
-            estimatedFee === '0'
-              ? '...'
-              : `${estimatedFee} ${chainCurrency(chainId)}`
-          }
-          SignerComponent={
-            <Signer
-              txId={txId}
-              submitting={submitting}
-              valid={
-                !submitting && estimatedFee !== '...' && nonce !== undefined
-              }
-              from={from}
-            />
-          }
-        />
+        {Array.from(extrinsics.keys()).length !== 0 &&
+          Array.from(extrinsics.entries()).map(([txUid, info]) => (
+            <div key={txUid} style={{ padding: '1rem 0' }}>
+              <TxActionItem
+                action={info.actionMeta.action}
+                actionData={info.actionMeta.data}
+                chainId={info.actionMeta.chainId}
+                key={txId}
+              />
+
+              <Tx
+                label={'Signer'}
+                name={ellipsisFn(info.actionMeta.from)}
+                notEnoughFunds={false}
+                dangerMessage={'Danger message'}
+                estimatedFee={
+                  estimatedFee === '0'
+                    ? '...'
+                    : `${estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
+                }
+                SignerComponent={
+                  <Signer
+                    txId={txId}
+                    submitting={info.submitting}
+                    valid={
+                      !info.submitting &&
+                      info.dynamicInfo !== undefined &&
+                      info.actionMeta.nonce !== undefined
+                    }
+                    from={info.actionMeta.from}
+                  />
+                }
+              />
+            </div>
+          ))}
       </ContentWrapper>
-    </>
+    </Scrollable>
   );
 };

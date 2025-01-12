@@ -40,6 +40,7 @@ import { useDataBackup } from '@app/contexts/main/DataBackup';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -281,18 +282,8 @@ export const useMainMessagePorts = () => {
    * @summary Initialize extrinsics controller with tx data.
    */
   const handleActionTxInit = async (ev: MessageEvent) => {
-    const { chainId, from, nonce, pallet, method, args, eventUid } =
-      ev.data.data;
-
-    await ExtrinsicsController.new(
-      chainId,
-      from,
-      nonce,
-      pallet,
-      method,
-      args,
-      eventUid
-    );
+    const info: ExtrinsicInfo = JSON.parse(ev.data.data);
+    await ExtrinsicsController.new(info);
   };
 
   /**

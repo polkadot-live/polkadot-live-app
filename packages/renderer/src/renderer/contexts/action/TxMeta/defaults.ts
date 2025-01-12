@@ -6,6 +6,11 @@ import BigNumber from 'bignumber.js';
 import type { TxMetaContextInterface } from './types';
 
 export const defaultTxMeta: TxMetaContextInterface = {
+  initTx: () => {},
+  initTxDynamicInfo: () => {},
+  setTxDynamicInfo: () => {},
+  extrinsics: new Map(),
+
   txFees: new BigNumber(0),
   notEnoughFunds: false,
   setTxFees: (f) => {},

@@ -8,40 +8,33 @@ import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { TxStatus } from '@polkadot-live/types/tx';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
+  // TODO: Remove static properties.
   static chainId: ChainID | null = null;
-
   static tx: AnyJson | null = null;
-
   static txId = 0;
-
   static estimatedFee: BigNumber = new BigNumber(0);
-
   static payload: AnyJson | null = null;
-
   static signature: AnyJson | null = null;
-
   static from: string | null = null;
-
   static eventUid: string | null = null;
 
   // instantiates a new tx based on the request received by renderer.
-  static new = async (
-    chainId: ChainID,
-    from: string,
-    accountNonce: number,
-    pallet: string,
-    method: string,
-    args: AnyJson[],
-    eventUid: string
-  ) => {
+  static new = async (info: ExtrinsicInfo) => {
     try {
+      const {
+        txId,
+        actionMeta: { chainId, from, nonce, pallet, method, args, eventUid },
+      } = info;
+
+      // TODO: Get nonce later.
+      const accountNonce = !nonce ? 0 : new BigNumber(nonce).toNumber();
+
       const origin = 'ExtrinsicsController.new';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
-
       console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
       // Instantiate tx.
@@ -51,7 +44,7 @@ export class ExtrinsicsController {
       this.from = from;
       this.txId = this.txId + 1;
 
-      // Set associated even uid.
+      // Set associated event uid.
       this.eventUid = eventUid;
 
       // Get estimated tx fee.
@@ -59,7 +52,6 @@ export class ExtrinsicsController {
       const estimatedFeePlank = new BigNumber(partialFee.toString());
       this.estimatedFee = estimatedFeePlank;
 
-      // Send tx data to action UI.
       const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
       console.log(`📝 Estimated fee: ${estimatedFee}`);
 
@@ -70,9 +62,9 @@ export class ExtrinsicsController {
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:report:data',
         data: {
+          txId,
+          txPayload: this.payload.toU8a(),
           estimatedFee: estimatedFee.toString(),
-          txId: this.txId,
-          payload: this.payload.toU8a(),
           genesisHash: this.payload.genesisHash,
         },
       });

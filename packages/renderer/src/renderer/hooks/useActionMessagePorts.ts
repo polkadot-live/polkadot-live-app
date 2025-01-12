@@ -4,27 +4,19 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
-import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 
 export const useActionMessagePorts = () => {
   /// Action window specific.
-  const {
-    setActionMeta,
-    setEstimatedFee,
-    setTxId,
-    setTxPayload,
-    setGenesisHash,
-    setTxStatus,
-  } = useTxMeta();
+  const { initTx, setTxDynamicInfo, setTxStatus } = useTxMeta();
 
   /**
    * @name handleInitAction
-   * @summary Set initial state for the action window.
+   * @summary Receives an event's action metadata and instantiates a new extrinsic structure.
    */
   const handleInitAction = (ev: MessageEvent) => {
     const data: ActionMeta = JSON.parse(ev.data.data);
-    console.log(data);
-    setActionMeta(data);
+    initTx(data);
   };
 
   /**
@@ -32,17 +24,22 @@ export const useActionMessagePorts = () => {
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { estimatedFee, txId, payload, genesisHash } = ev.data.data;
+    const { txId, txPayload, estimatedFee, genesisHash } = ev.data.data;
+    const txStatus: TxStatus = 'pending';
 
-    setEstimatedFee(estimatedFee);
-    setTxId(txId);
-    setTxPayload(txId, payload);
-    setGenesisHash(genesisHash);
+    setTxDynamicInfo(txId, {
+      estimatedFee,
+      genesisHash,
+      txPayload,
+      txStatus,
+    });
   };
 
   /**
    * @name handleSetTxStatus
    * @summary Update the transaction status.
+   *
+   * @todo Refactor into new system.
    */
   const handleSetTxStatus = (ev: MessageEvent) => {
     const { status } = ev.data.data;

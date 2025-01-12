@@ -38,3 +38,22 @@ export interface ActionMeta {
   // Args for tx API call.
   args: AnyData;
 }
+
+export interface ExtrinsicDynamicInfo {
+  estimatedFee: string;
+  genesisHash: string;
+  txPayload: AnyData;
+  txStatus: TxStatus;
+  txSignature?: AnyData;
+}
+
+export interface ExtrinsicInfo {
+  // Data received from the extrinsic's associated event.
+  actionMeta: ActionMeta;
+  // Unique identifier for the extrinsic.
+  txId: string;
+  // Data set dynamically before submitting the extrinsic.
+  dynamicInfo?: ExtrinsicDynamicInfo;
+  // Whether the extrinsic is submitting.
+  submitting: boolean;
+}
