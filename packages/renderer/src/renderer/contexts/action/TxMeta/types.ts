@@ -14,7 +14,13 @@ export interface TxMetaContextInterface {
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
+  getTxPayload: (txUid: string) => AnyJson;
+  getGenesisHash: (txUid: string) => AnyJson | null;
+  setTxSignature: (txId: string, s: AnyJson) => void;
+  submitTx: (txId: string) => void;
   extrinsics: Map<string, ExtrinsicInfo>;
+
+  //getTxSignature: () => AnyJson;
 
   txFees: BigNumber;
   notEnoughFunds: boolean;
@@ -23,13 +29,8 @@ export interface TxMetaContextInterface {
   sender: string | null;
   setSender: (s: string | null) => void;
   txFeesValid: boolean;
-  getTxPayload: () => AnyJson;
   setTxPayload: (u: number, s: AnyJson) => void;
-  getGenesisHash: () => AnyJson;
-  setGenesisHash: (h: AnyJson) => void;
   resetTxPayloads: () => void;
-  getTxSignature: () => AnyJson;
-  setTxSignature: (s: AnyJson) => void;
 
   actionMeta: ActionMeta | null;
   setActionMeta: (m: ActionMeta | null) => void;

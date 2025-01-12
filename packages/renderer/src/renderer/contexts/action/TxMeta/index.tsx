@@ -44,6 +44,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   useEffect(() => {
     if (updateCache) {
+      setExtrinsics(extrinsicsRef.current);
       setUpdateCache(false);
     }
   }, [updateCache]);
@@ -116,15 +117,40 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     dynamicInfo: ExtrinsicDynamicInfo
   ) => {
     try {
-      if (!extrinsics.has(txId)) {
+      const obj = extrinsicsRef.current.get(txId);
+      if (!obj) {
         throw new Error('Error: Extrinsic not found.');
       }
 
-      setExtrinsics((prev) => {
-        const obj = prev.get(txId)!;
-        obj.dynamicInfo = dynamicInfo;
-        prev.set(txId, obj);
-        return prev;
+      obj.dynamicInfo = dynamicInfo;
+      setUpdateCache(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  /**
+   * Send a completed and signed extrinsic to main renderer for submission.
+   */
+  const submitTx = (txId: string) => {
+    try {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
+        throw new Error('Error: Extrinsic not found.');
+      }
+      if (!info.dynamicInfo) {
+        throw new Error('Error: Extrinsic dynamic info not found.');
+      }
+      if (!info.dynamicInfo.txSignature) {
+        throw new Error('Error: Signature not found.');
+      }
+
+      // Send extrinsic info to main renderer and submit.
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:tx:vault:submit',
+        data: {
+          todo: 'todo',
+        },
       });
     } catch (err) {
       console.log(err);
@@ -143,8 +169,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [txFees, setTxFees] = useState(new BigNumber(0));
 
   // Optional signed transaction if extrinsics require manual signing (e.g. Ledger).
-  const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
-  const txSignatureRef = useRef(txSignature);
+  //const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
+  //const txSignatureRef = useRef(txSignature);
 
   // Store the payloads of transactions if extrinsics require manual signing (e.g. Ledger, Vault).
   // Payloads are calculated asynchronously and extrinsic associated with them may be cancelled. For
@@ -156,10 +182,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   } | null>(null);
   const txPayloadRef = useRef(txPayload);
 
-  // Store genesis hash of tx.
-  const [genesisHash, setGenesisHashState] = useState<string | null>(null);
-  const genesisHashRef = useRef(genesisHash);
-
   useEffect(() => {
     setNotEnoughFunds(freeBalance.minus(txFees).isLessThan(0));
   }, [txFees, sender]);
@@ -168,7 +190,33 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setTxFees(new BigNumber(0));
   };
 
-  const getTxPayload = () => txPayloadRef.current?.payload || null;
+  const getTxPayload = (txUid: string) => {
+    const info = extrinsicsRef.current.get(txUid);
+    if (!info) {
+      return null;
+    }
+    if (!info.dynamicInfo) {
+      return null;
+    }
+
+    return info.dynamicInfo.txPayload;
+  };
+
+  const setTxSignature = (txUid: string, s: AnyJson) => {
+    const info = extrinsicsRef.current.get(txUid);
+    if (!info) {
+      console.log('> no extrinsic found.');
+      return;
+    }
+    if (!info.dynamicInfo) {
+      console.log('> no dynamic info found.');
+      return;
+    }
+
+    // Set cache flag to update extrinsic state.
+    info.dynamicInfo.txSignature = s;
+    setUpdateCache(true);
+  };
 
   const setTxPayload = (theTxId: number, payload: AnyJson) => {
     setStateWithRef(
@@ -185,16 +233,17 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setStateWithRef(null, setTxPayloadState, txPayloadRef);
   };
 
-  const getGenesisHash = () => genesisHashRef.current;
+  const getGenesisHash = (txUid: string) => {
+    const info = extrinsicsRef.current.get(txUid);
+    if (!info) {
+      console.log('> no extrinsic found.');
+      return null;
+    }
+    if (!info.dynamicInfo) {
+      return null;
+    }
 
-  const setGenesisHash = (v: AnyJson) => {
-    setStateWithRef(v, setGenesisHashState, genesisHashRef);
-  };
-
-  const getTxSignature = () => txSignatureRef.current;
-
-  const setTxSignature = (s: AnyJson) => {
-    setStateWithRef(s, setTxSignatureState, txSignatureRef);
+    return info.dynamicInfo.genesisHash;
   };
 
   const txFeesValid = (() => {
@@ -210,6 +259,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         initTx,
         initTxDynamicInfo,
         setTxDynamicInfo,
+        setTxSignature,
+        submitTx,
         extrinsics,
 
         txFees,
@@ -222,10 +273,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         getTxPayload,
         setTxPayload,
         getGenesisHash,
-        setGenesisHash,
         resetTxPayloads,
-        getTxSignature,
-        setTxSignature,
+        //getTxSignature,
 
         actionMeta,
         setActionMeta,

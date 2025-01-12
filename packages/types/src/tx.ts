@@ -17,8 +17,6 @@ export type TxActionUid =
   | 'nominationPools_pendingRewards_withdraw';
 
 export interface ActionMeta {
-  // Account nonce.
-  nonce?: BigNumber;
   // Name of account sending tx.
   accountName: string;
   // Type of transaction.
@@ -40,6 +38,7 @@ export interface ActionMeta {
 }
 
 export interface ExtrinsicDynamicInfo {
+  accountNonce: BigNumber;
   estimatedFee: string;
   genesisHash: string;
   txPayload: AnyData;

@@ -19,9 +19,9 @@ import {
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
 
-export const SignOverlay = ({ from }: { from: string }) => {
-  const { getTxPayload, setTxSignature, getGenesisHash } = useTxMeta();
-  const payload = getTxPayload();
+export const SignOverlay = ({ from, txId }: { from: string; txId: string }) => {
+  const { getTxPayload, setTxSignature, getGenesisHash, submitTx } =
+    useTxMeta();
   const { setStatus: setOverlayStatus } = useOverlay();
 
   // Whether user is on sign or submit stage.
@@ -37,11 +37,12 @@ export const SignOverlay = ({ from }: { from: string }) => {
     if (data) {
       setOverlayStatus(0);
       const signature = `0x${data}`;
-
-      console.log('Setting signature:');
+      console.log('> Setting signature:');
       console.log(signature);
 
-      setTxSignature(signature);
+      // Submit transaction.
+      setTxSignature(txId, signature);
+      submitTx(txId);
     }
   };
 
@@ -72,8 +73,8 @@ export const SignOverlay = ({ from }: { from: string }) => {
           <QrDisplayPayload
             address={from || ''}
             cmd={2}
-            genesisHash={getGenesisHash()}
-            payload={payload}
+            genesisHash={getGenesisHash(txId)}
+            payload={getTxPayload(txId)}
             style={{ width: '100%', maxWidth: 250 }}
           />
         </div>

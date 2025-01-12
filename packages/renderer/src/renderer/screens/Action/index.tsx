@@ -25,7 +25,7 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { extrinsics, estimatedFee, txId, txStatus } = useTxMeta();
+  const { extrinsics, estimatedFee, txStatus } = useTxMeta();
 
   // Tx metadata.
   //const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
@@ -44,37 +44,6 @@ export const Action = () => {
 
   // Store whether the tx is submitting.
   //const [submitting] = useState<boolean>(false);
-
-  // Send message to main renderer to initiate a new transaction.
-  //useEffect(() => {
-  //  try {
-  //    ConfigAction.portAction.postMessage({
-  //      task: 'renderer:tx:init',
-  //      data: { chainId, from, nonce, pallet, method, args, eventUid },
-  //    });
-  //  } catch (err) {
-  //    console.log('Warning: Action port not received yet: renderer:tx:init');
-  //  }
-  //}, [from, nonce, pallet, method]);
-
-  // Auto transaction submission and event dismiss when signature updates.
-  //useEffect(() => {
-  //  if (getTxSignature()) {
-  //    try {
-  //      // Send signature and submit transaction on main window.
-  //      ConfigAction.portAction.postMessage({
-  //        task: 'renderer:tx:vault:submit',
-  //        data: {
-  //          signature: getTxSignature(),
-  //        },
-  //      });
-  //    } catch (err) {
-  //      console.log(
-  //        'Warning: Action port not received yet: renderer:tx:vault:submit'
-  //      );
-  //    }
-  //  }
-  //}, [getTxSignature()]);
 
   // Reset data in the main extrinsics controller on unmount.
   useEffect(
@@ -161,7 +130,7 @@ export const Action = () => {
                 action={info.actionMeta.action}
                 actionData={info.actionMeta.data}
                 chainId={info.actionMeta.chainId}
-                key={txId}
+                key={info.txId}
               />
 
               <Tx
@@ -176,13 +145,10 @@ export const Action = () => {
                 }
                 SignerComponent={
                   <Signer
-                    txId={txId}
+                    txId={info.txId}
+                    txBuilt={info.dynamicInfo !== undefined}
                     submitting={info.submitting}
-                    valid={
-                      !info.submitting &&
-                      info.dynamicInfo !== undefined &&
-                      info.actionMeta.nonce !== undefined
-                    }
+                    valid={!info.submitting}
                     from={info.actionMeta.from}
                   />
                 }

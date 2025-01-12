@@ -4,6 +4,7 @@
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
@@ -27,11 +28,12 @@ export class ExtrinsicsController {
     try {
       const {
         txId,
-        actionMeta: { chainId, from, nonce, pallet, method, args, eventUid },
+        actionMeta: { chainId, from, pallet, method, args, eventUid },
       } = info;
 
       // TODO: Get nonce later.
-      const accountNonce = !nonce ? 0 : new BigNumber(nonce).toNumber();
+      //const accountNonce = !nonce ? 0 : new BigNumber(nonce).toNumber();
+      const accountNonce = (await getAddressNonce(from, chainId)).toNumber();
 
       const origin = 'ExtrinsicsController.new';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
@@ -64,6 +66,7 @@ export class ExtrinsicsController {
         data: {
           txId,
           txPayload: this.payload.toU8a(),
+          accountNonce,
           estimatedFee: estimatedFee.toString(),
           genesisHash: this.payload.genesisHash,
         },

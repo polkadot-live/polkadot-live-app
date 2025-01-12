@@ -17,7 +17,6 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@ren/utils/EventUtils';
 import { renderTimeAgo } from '@ren/utils/TextUtils';
-import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
@@ -130,9 +129,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
    */
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
     window.myAPI.openWindow('action');
-
-    // Set nonce.
-    txMeta.nonce = await getAddressNonce(address, chainId);
 
     setTimeout(() => {
       ConfigRenderer.portToAction?.postMessage({
