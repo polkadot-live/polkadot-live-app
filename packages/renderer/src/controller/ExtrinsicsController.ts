@@ -13,26 +13,15 @@ import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
-  // TODO: Remove static properties.
-  static chainId: ChainID | null = null;
-  static tx: AnyJson | null = null;
-  static txId = 0;
-  static estimatedFee: BigNumber = new BigNumber(0);
-  static payload: AnyJson | null = null;
-  static signature: AnyJson | null = null;
-  static from: string | null = null;
-  static eventUid: string | null = null;
+  private static txPayloads = new Map<string, AnyJson>();
 
-  // instantiates a new tx based on the request received by renderer.
+  /**
+   * Instantiates a new tx based on the received extrinsic data.
+   */
   static new = async (info: ExtrinsicInfo) => {
     try {
-      const {
-        txId,
-        actionMeta: { chainId, from, pallet, method, args, eventUid },
-      } = info;
-
-      // TODO: Get nonce later.
-      //const accountNonce = !nonce ? 0 : new BigNumber(nonce).toNumber();
+      const { txId } = info;
+      const { chainId, from, pallet, method, args } = info.actionMeta;
       const accountNonce = (await getAddressNonce(from, chainId)).toNumber();
 
       const origin = 'ExtrinsicsController.new';
@@ -41,34 +30,33 @@ export class ExtrinsicsController {
 
       // Instantiate tx.
       const tx = api.tx[pallet][method](...args);
-      this.chainId = chainId;
-      this.tx = tx;
-      this.from = from;
-      this.txId = this.txId + 1;
-
-      // Set associated event uid.
-      this.eventUid = eventUid;
 
       // Get estimated tx fee.
       const { partialFee } = await tx.paymentInfo(from);
       const estimatedFeePlank = new BigNumber(partialFee.toString());
-      this.estimatedFee = estimatedFeePlank;
-
       const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
       console.log(`📝 Estimated fee: ${estimatedFee}`);
 
-      // Generate payload and store.
-      await this.buildPayload(chainId, from, accountNonce);
+      // Generate payload.
+      const txPayload = await this.buildPayload(
+        tx,
+        chainId,
+        from,
+        accountNonce
+      );
 
-      // Report Tx to Action UI.
+      // Add payload to map.
+      this.txPayloads.set(txId, txPayload);
+      console.log(`Send new extrinsic: ${txId}`);
+
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:report:data',
         data: {
-          txId,
-          txPayload: this.payload.toU8a(),
           accountNonce,
           estimatedFee: estimatedFee.toString(),
-          genesisHash: this.payload.genesisHash,
+          genesisHash: txPayload.genesisHash.toU8a(),
+          txId,
+          txPayload: txPayload.toU8a(),
         },
       });
     } catch (e) {
@@ -78,13 +66,16 @@ export class ExtrinsicsController {
     }
   };
 
-  // Build payload.
+  /**
+   * Build a transaction payload.
+   */
   static buildPayload = async (
+    tx: AnyJson,
     chainId: ChainID,
     from: string,
     accountNonce: number
   ) => {
-    // build and set payload of the transaction and store it in TxMetaContext.
+    // Build and set payload of the transaction and store it in TxMetaContext.
     const origin = 'ExtrinsicsController.buildPayload';
     const { api } = await getApiInstanceOrThrow(chainId, origin);
 
@@ -93,7 +84,8 @@ export class ExtrinsicsController {
       'BlockNumber',
       lastHeader.number.toNumber()
     );
-    const method = api.createType('Call', this.tx);
+
+    const method = api.createType('Call', tx);
     const era = api.registry.createType('ExtrinsicEra', {
       current: lastHeader.number.toNumber(),
       period: 64,
@@ -111,109 +103,127 @@ export class ExtrinsicsController {
       genesisHash: api.genesisHash.toHex(),
       method: method.toHex(),
       nonce: nonce.toHex(),
-      signedExtensions: api.registry.signedExtensions,
+      signedExtensions: [
+        'CheckNonZeroSender',
+        'CheckSpecVersion',
+        'CheckTxVersion',
+        'CheckGenesis',
+        'CheckMortality',
+        'CheckNonce',
+        'CheckWeight',
+        'ChargeTransactionPayment',
+      ],
       tip: api.registry.createType('Compact<Balance>', 0).toHex(),
-      version: this.tx.version,
+      version: tx.version,
     };
+
     const raw = api.registry.createType('ExtrinsicPayload', payload, {
       version: payload.version,
     });
-    this.setTxPayload(raw);
+
+    return raw;
   };
 
-  // Sets the payload.
-  static setTxPayload = (payload: AnyJson) => {
-    this.payload = payload;
-  };
+  /**
+   * Handles sending a signed transaction.
+   */
+  static submit = async (info: ExtrinsicInfo) => {
+    if (!info.dynamicInfo) {
+      // TODO: Throw error.
+      return;
+    }
+    if (!info.dynamicInfo.txSignature) {
+      // TODO: Throw error.
+      return;
+    }
 
-  // Sets the tx signature.
-  static setSignature = (signature: AnyJson) => {
-    this.signature = signature;
-  };
+    const { txId } = info;
+    const { from, method, pallet, args, eventUid, chainId } = info.actionMeta;
+    const { txSignature } = info.dynamicInfo;
+    // TODO: Check nonce hasn't changed.
 
-  // Resets the class members.
-  static reset() {
-    this.chainId = null;
-    this.tx = null;
-    this.txId = 0;
-    this.from = null;
-    this.estimatedFee = new BigNumber(0);
-    this.payload = null;
-    this.signature = null;
-  }
+    try {
+      // Build transaction.
+      const origin = 'ExtrinsicsController.new';
+      const { api } = await getApiInstanceOrThrow(chainId, origin);
+      const tx = api.tx[pallet][method](...args);
 
-  // handle signed transaction.
-  static submit = async () => {
-    // Cache correct event UID in function for lambdas.
-    const uid = this.eventUid || '';
-    const chainId = this.chainId || 'Polkadot';
+      // Get cached payload.
+      const txPayload = this.txPayloads.get(txId)!;
 
-    if (this.signature) {
-      try {
-        this.tx.addSignature(this.from, this.signature, this.payload);
+      // Add signature to transaction.
+      tx.addSignature(from, txSignature, txPayload.toU8a());
 
-        const unsub = await this.tx.send(({ status }: AnyJson) => {
-          if (status.isInBlock) {
-            // Report Tx Status to Action UI.
-            ExtrinsicsController.postTxStatus('in_block', uid, chainId);
+      const unsub = await tx.send(({ status }: AnyJson) => {
+        if (status.isInBlock) {
+          // Report Tx Status to Action UI.
+          ExtrinsicsController.postTxStatus(
+            'in_block',
+            txId,
+            chainId,
+            eventUid
+          );
 
-            // Show native OS notification.
-            window.myAPI.showNotification({
-              title: 'In Block',
-              body: 'Transaction is in block.',
-            });
-          } else if (status.isFinalized) {
-            // Report Tx Status to Action UI.
-            ExtrinsicsController.postTxStatus('finalized', uid, chainId);
+          // Show native OS notification.
+          window.myAPI.showNotification({
+            title: 'In Block',
+            body: 'Transaction is in block.',
+          });
+        } else if (status.isFinalized) {
+          // Report Tx Status to Action UI.
+          ExtrinsicsController.postTxStatus(
+            'finalized',
+            txId,
+            chainId,
+            eventUid
+          );
 
-            // Show native OS notification.
-            window.myAPI.showNotification({
-              title: 'Finalized',
-              body: 'Transaction was finalised.',
-            });
+          // Show native OS notification.
+          window.myAPI.showNotification({
+            title: 'Finalized',
+            body: 'Transaction was finalised.',
+          });
 
-            unsub();
-          }
-        });
+          unsub();
+        }
+      });
 
-        // Report Tx Status to Action UI.
-        ExtrinsicsController.postTxStatus('submitted', uid, chainId);
+      // Report Tx Status to Action UI.
+      ExtrinsicsController.postTxStatus('submitted', txId, chainId, eventUid);
 
-        // Show native OS notification.
-        window.myAPI.showNotification({
-          title: 'Transaction Submitted',
-          body: 'Transaction has been submitted and is processing.',
-        });
+      // Show native OS notification.
+      window.myAPI.showNotification({
+        title: 'Transaction Submitted',
+        body: 'Transaction has been submitted and is processing.',
+      });
+    } catch (e) {
+      ExtrinsicsController.postTxStatus('error', txId, chainId, eventUid);
 
-        this.reset();
-      } catch (e) {
-        ExtrinsicsController.postTxStatus('error', uid, chainId);
-
-        console.log(e);
-        // Handle error.
-      }
+      // TODO: Handle error.
+      console.log(e);
     }
   };
 
-  // Send tx status message to `action` window.
+  /**
+   * Send tx status message to `action` window.
+   */
   private static postTxStatus = (
     status: TxStatus,
-    uid: string,
-    chainId: ChainID
+    txId: string,
+    chainId: ChainID,
+    eventUid: string
   ) => {
     // Report status in actions window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',
-      data: {
-        status,
-      },
+      data: { status, txId },
     });
 
     // Mark event as stale if status is finalized.
     if (status === 'finalized') {
       window.myAPI.sendEventTask({
         action: 'events:makeStale',
-        data: { uid, chainId },
+        data: { uid: eventUid, chainId },
       });
     }
   };

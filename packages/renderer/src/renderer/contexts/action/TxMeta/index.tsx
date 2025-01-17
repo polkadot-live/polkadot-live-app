@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
-import { setStateWithRef } from '@w3ux/utils';
-import BigNumber from 'bignumber.js';
 import React, {
   createContext,
   useContext,
@@ -28,8 +26,6 @@ export const TxMetaContext = createContext<TxMetaContextInterface>(
 export const useTxMeta = () => useContext(TxMetaContext);
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
-  const freeBalance = new BigNumber(1000000000);
-
   /**
    * Collection of active extrinsics.
    */
@@ -79,11 +75,18 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
     if (alreadyExists !== undefined) {
+      console.log('> txId already exists.');
       return;
     }
 
     const txId = generateUID();
-    const info: ExtrinsicInfo = { txId, actionMeta, submitting: false };
+    const info: ExtrinsicInfo = {
+      actionMeta,
+      submitting: false,
+      txId,
+      txStatus: 'pending',
+    };
+
     extrinsicsRef.current.set(txId, info);
     setUpdateCache(true);
   };
@@ -98,7 +101,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('Error: Extrinsic not found.');
       }
 
-      // TODO: Move `nonce` to `dynamicInfo` structure and set before submission.
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:init',
         data: JSON.stringify(info),
@@ -148,59 +150,33 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       // Send extrinsic info to main renderer and submit.
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:vault:submit',
-        data: {
-          todo: 'todo',
-        },
+        data: { info: JSON.stringify(info) },
       });
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Action window metadata.
-  const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
+  /**
+   * Update the status of a transaction.
+   */
+  const updateTxStatus = (txId: string, txStatus: TxStatus) => {
+    try {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
+        throw new Error('Error: Extrinsic not found.');
+      }
 
-  // Transaction state.
-  const [notEnoughFunds, setNotEnoughFunds] = useState(false);
-  const [sender, setSender] = useState<string | null>(null);
-  const [txId, setTxId] = useState(0);
-  const [txStatus, setTxStatus] = useState<TxStatus>('pending');
-  const [txFees, setTxFees] = useState(new BigNumber(0));
-
-  // Optional signed transaction if extrinsics require manual signing (e.g. Ledger).
-  //const [txSignature, setTxSignatureState] = useState<AnyJson>(null);
-  //const txSignatureRef = useRef(txSignature);
-
-  // Store the payloads of transactions if extrinsics require manual signing (e.g. Ledger, Vault).
-  // Payloads are calculated asynchronously and extrinsic associated with them may be cancelled. For
-  // this reason we give every payload a txId, and check whether this txId matches the active
-  // extrinsic before submitting it.
-  const [txPayload, setTxPayloadState] = useState<{
-    payload: AnyJson;
-    txId: number;
-  } | null>(null);
-  const txPayloadRef = useRef(txPayload);
-
-  useEffect(() => {
-    setNotEnoughFunds(freeBalance.minus(txFees).isLessThan(0));
-  }, [txFees, sender]);
-
-  const resetTxFees = () => {
-    setTxFees(new BigNumber(0));
+      info.txStatus = txStatus;
+      setUpdateCache(true);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const getTxPayload = (txUid: string) => {
-    const info = extrinsicsRef.current.get(txUid);
-    if (!info) {
-      return null;
-    }
-    if (!info.dynamicInfo) {
-      return null;
-    }
-
-    return info.dynamicInfo.txPayload;
-  };
-
+  /**
+   * Set a transaction's signature.
+   */
   const setTxSignature = (txUid: string, s: AnyJson) => {
     const info = extrinsicsRef.current.get(txUid);
     if (!info) {
@@ -217,21 +193,24 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setUpdateCache(true);
   };
 
-  const setTxPayload = (theTxId: number, payload: AnyJson) => {
-    setStateWithRef(
-      {
-        payload,
-        txId: theTxId,
-      },
-      setTxPayloadState,
-      txPayloadRef
-    );
+  /**
+   * Get a transaction's raw payload.
+   */
+  const getTxPayload = (txUid: string) => {
+    const info = extrinsicsRef.current.get(txUid);
+    if (!info) {
+      return null;
+    }
+    if (!info.dynamicInfo) {
+      return null;
+    }
+
+    return info.dynamicInfo.txPayload;
   };
 
-  const resetTxPayloads = () => {
-    setStateWithRef(null, setTxPayloadState, txPayloadRef);
-  };
-
+  /**
+   * Get a transaction's raw genesis hash.
+   */
   const getGenesisHash = (txUid: string) => {
     const info = extrinsicsRef.current.get(txUid);
     if (!info) {
@@ -245,42 +224,42 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     return info.dynamicInfo.genesisHash;
   };
 
-  const txFeesValid = (() => {
-    if (txFees.isZero() || notEnoughFunds) {
-      return false;
-    }
-    return true;
-  })();
+  // Transaction state.
+  //const [notEnoughFunds, setNotEnoughFunds] = useState(false);
+
+  //const freeBalance = new BigNumber(1000000000);
+
+  //useEffect(() => {
+  //  setNotEnoughFunds(freeBalance.minus(txFees).isLessThan(0));
+  //}, [txFees, sender]);
+
+  //const resetTxFees = () => {
+  //  setTxFees(new BigNumber(0));
+  //};
+
+  //const txFeesValid = (() => {
+  //  if (txFees.isZero() || notEnoughFunds) {
+  //    return false;
+  //  }
+  //  return true;
+  //})();
 
   return (
     <TxMetaContext.Provider
       value={{
+        extrinsics,
+        getGenesisHash,
+        getTxPayload,
         initTx,
         initTxDynamicInfo,
         setTxDynamicInfo,
         setTxSignature,
         submitTx,
-        extrinsics,
+        updateTxStatus,
 
-        txFees,
-        notEnoughFunds,
-        setTxFees,
-        resetTxFees,
-        txFeesValid,
-        sender,
-        setSender,
-        getTxPayload,
-        setTxPayload,
-        getGenesisHash,
-        resetTxPayloads,
-        //getTxSignature,
-
-        actionMeta,
-        setActionMeta,
-        txId,
-        setTxId,
-        txStatus,
-        setTxStatus,
+        //notEnoughFunds,
+        //resetTxFees,
+        //txFeesValid,
       }}
     >
       {children}

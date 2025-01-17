@@ -4,11 +4,12 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
-import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
+import type { ActionMeta } from '@polkadot-live/types/tx';
+import BigNumber from 'bignumber.js';
 
 export const useActionMessagePorts = () => {
   /// Action window specific.
-  const { initTx, setTxDynamicInfo, setTxStatus } = useTxMeta();
+  const { initTx, setTxDynamicInfo, updateTxStatus } = useTxMeta();
 
   /**
    * @name handleInitAction
@@ -24,16 +25,13 @@ export const useActionMessagePorts = () => {
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { txId, txPayload, estimatedFee, genesisHash, accountNonce } =
-      ev.data.data;
-    const txStatus: TxStatus = 'pending';
+    const { accountNonce, estimatedFee, genesisHash, txId, txPayload } = ev.data.data;
 
     setTxDynamicInfo(txId, {
-      accountNonce,
+      accountNonce: new BigNumber(accountNonce),
       estimatedFee,
       genesisHash,
       txPayload,
-      txStatus,
     });
 
     console.log(`> Dynamic info and nonce set (${accountNonce})`);
@@ -41,14 +39,11 @@ export const useActionMessagePorts = () => {
 
   /**
    * @name handleSetTxStatus
-   * @summary Update the transaction status.
-   *
-   * @todo Refactor into new system.
+   * @summary Update the status for a transaction.
    */
   const handleSetTxStatus = (ev: MessageEvent) => {
-    const { status } = ev.data.data;
-
-    setTxStatus(status);
+    const { txId, status } = ev.data.data;
+    updateTxStatus(txId, status);
   };
 
   /**

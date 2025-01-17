@@ -8,34 +8,19 @@ import type {
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
-import type BigNumber from 'bignumber.js';
 
 export interface TxMetaContextInterface {
+  extrinsics: Map<string, ExtrinsicInfo>;
+  getGenesisHash: (txUid: string) => AnyJson | null;
+  getTxPayload: (txUid: string) => Uint8Array | null;
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
-  getTxPayload: (txUid: string) => AnyJson;
-  getGenesisHash: (txUid: string) => AnyJson | null;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
-  extrinsics: Map<string, ExtrinsicInfo>;
+  updateTxStatus: (txId: string, txStatus: TxStatus) => void;
 
-  //getTxSignature: () => AnyJson;
-
-  txFees: BigNumber;
-  notEnoughFunds: boolean;
-  setTxFees: (f: BigNumber) => void;
-  resetTxFees: () => void;
-  sender: string | null;
-  setSender: (s: string | null) => void;
-  txFeesValid: boolean;
-  setTxPayload: (u: number, s: AnyJson) => void;
-  resetTxPayloads: () => void;
-
-  actionMeta: ActionMeta | null;
-  setActionMeta: (m: ActionMeta | null) => void;
-  txId: number;
-  setTxId: (n: number) => void;
-  txStatus: TxStatus;
-  setTxStatus: (s: TxStatus) => void;
+  //notEnoughFunds: boolean;
+  //resetTxFees: () => void;
+  //txFeesValid: boolean;
 }

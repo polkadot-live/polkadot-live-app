@@ -71,10 +71,10 @@ export const SignOverlay = ({ from, txId }: { from: string; txId: string }) => {
       {stage === 1 && (
         <div className="viewer withBorder payload-wrapper">
           <QrDisplayPayload
-            address={from || ''}
+            address={from}
             cmd={2}
-            genesisHash={getGenesisHash(txId)}
-            payload={getTxPayload(txId)}
+            genesisHash={getGenesisHash(txId)!}
+            payload={getTxPayload(txId)!}
             style={{ width: '100%', maxWidth: 250 }}
           />
         </div>

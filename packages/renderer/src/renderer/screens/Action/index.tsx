@@ -3,7 +3,6 @@
 
 import { Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
-import { Config as ConfigAction } from '@ren/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
@@ -13,6 +12,7 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { TxActionItem } from './TxActionItem';
 import { Scrollable } from '@polkadot-live/ui/styles';
+import type { TxStatus } from 'packages/types/src';
 
 //import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 //import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
@@ -25,35 +25,13 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { extrinsics, txStatus } = useTxMeta();
-
-  // Tx metadata.
-  //const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
-  //const action = actionMeta?.action || tmpUid;
-  //const actionData = actionMeta?.data || {};
-  //const eventUid = actionMeta?.eventUid || '';
-
-  //const from: string = actionMeta?.from || '';
-  //const fromName = actionMeta?.accountName || ellipsisFn(from);
-
-  //const chainId = actionMeta?.chainId || 'Polkadot';
-  //const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
-  //const pallet = actionMeta?.pallet || '';
-  //const method = actionMeta?.method || '';
-  //const args = actionMeta?.args || [];
-
-  // Store whether the tx is submitting.
-  //const [submitting] = useState<boolean>(false);
+  const { extrinsics } = useTxMeta();
 
   // Reset data in the main extrinsics controller on unmount.
   useEffect(
     () => () => {
       try {
-        console.log('post renderer:tx:reset');
-
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:tx:reset',
-        });
+        // TODO: Get stored extrinsic data from main.
       } catch (err) {
         console.log('Warning: Action port not received yet: renderer:tx:reset');
       }
@@ -63,7 +41,7 @@ export const Action = () => {
 
   // Utility to get title based on tx status.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getTxStatusTitle = (): string => {
+  const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
         return 'Transaction Pending';
@@ -80,7 +58,7 @@ export const Action = () => {
 
   // Utility to get subtitle based on tx status.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getTxStatusSubtitle = (): string | null => {
+  const getTxStatusSubtitle = (txStatus: TxStatus): string | null => {
     switch (txStatus) {
       case 'submitted':
         return 'Waiting for block confirmation...';

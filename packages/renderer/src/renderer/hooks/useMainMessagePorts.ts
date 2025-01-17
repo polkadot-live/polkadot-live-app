@@ -291,10 +291,9 @@ export const useMainMessagePorts = () => {
    * @summary Set signature and submit transaction.
    */
   const handleTxVaultSubmit = (ev: MessageEvent) => {
-    const { signature } = ev.data.data;
-
-    ExtrinsicsController.setSignature(signature);
-    ExtrinsicsController.submit();
+    const { info: serialized } = ev.data.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    ExtrinsicsController.submit(info);
   };
 
   /**
@@ -638,11 +637,6 @@ export const useMainMessagePorts = () => {
             case 'renderer:tx:vault:submit': {
               console.log('> handle renderer:tx:vault:submit');
               handleTxVaultSubmit(ev);
-              break;
-            }
-            case 'renderer:tx:reset': {
-              console.log('> handle renderer:tx:reset');
-              ExtrinsicsController.reset();
               break;
             }
             default: {

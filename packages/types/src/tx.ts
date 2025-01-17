@@ -40,10 +40,9 @@ export interface ActionMeta {
 export interface ExtrinsicDynamicInfo {
   accountNonce: BigNumber;
   estimatedFee: string;
-  genesisHash: string;
-  txPayload: AnyData;
-  txStatus: TxStatus;
-  txSignature?: AnyData;
+  genesisHash: Uint8Array;
+  txPayload: Uint8Array;
+  txSignature?: `0x${string}`;
 }
 
 export interface ExtrinsicInfo {
@@ -51,6 +50,8 @@ export interface ExtrinsicInfo {
   actionMeta: ActionMeta;
   // Unique identifier for the extrinsic.
   txId: string;
+  // Status of transaction.
+  txStatus: TxStatus;
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
   // Whether the extrinsic is submitting.
