@@ -29,8 +29,6 @@ export const defaultTxMeta: TxMetaContextInterface = {
   actionMeta: null,
   setActionMeta: () => {},
   txId: 0,
-  estimatedFee: '...',
-  setEstimatedFee: (n) => {},
   setTxId: () => {},
   txStatus: 'pending',
   setTxStatus: (s) => {},

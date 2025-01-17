@@ -110,7 +110,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Sets an extrinsics dynamic data.
+   * Sets an extrinsic's dynamic data.
    */
   const setTxDynamicInfo = (
     txId: string,
@@ -161,7 +161,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [actionMeta, setActionMeta] = useState<ActionMeta | null>(null);
 
   // Transaction state.
-  const [estimatedFee, setEstimatedFee] = useState<string>('...');
   const [notEnoughFunds, setNotEnoughFunds] = useState(false);
   const [sender, setSender] = useState<string | null>(null);
   const [txId, setTxId] = useState(0);
@@ -278,8 +277,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
         actionMeta,
         setActionMeta,
-        estimatedFee,
-        setEstimatedFee,
         txId,
         setTxId,
         txStatus,

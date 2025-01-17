@@ -25,7 +25,7 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { extrinsics, estimatedFee, txStatus } = useTxMeta();
+  const { extrinsics, txStatus } = useTxMeta();
 
   // Tx metadata.
   //const tmpUid = 'nominationPools_pendingRewards_bond'; // TODO: Remove soon.
@@ -139,9 +139,9 @@ export const Action = () => {
                 notEnoughFunds={false}
                 dangerMessage={'Danger message'}
                 estimatedFee={
-                  estimatedFee === '0'
-                    ? '...'
-                    : `${estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
+                  info.dynamicInfo === undefined
+                    ? '-'
+                    : `${info.dynamicInfo?.estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
                 }
                 SignerComponent={
                   <Signer

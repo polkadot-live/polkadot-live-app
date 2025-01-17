@@ -34,8 +34,6 @@ export interface TxMetaContextInterface {
 
   actionMeta: ActionMeta | null;
   setActionMeta: (m: ActionMeta | null) => void;
-  estimatedFee: string;
-  setEstimatedFee: (n: string) => void;
   txId: number;
   setTxId: (n: number) => void;
   txStatus: TxStatus;
