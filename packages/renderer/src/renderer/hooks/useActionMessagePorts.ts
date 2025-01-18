@@ -5,26 +5,19 @@ import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import type { ActionMeta } from '@polkadot-live/types/tx';
+import BigNumber from 'bignumber.js';
 
 export const useActionMessagePorts = () => {
   /// Action window specific.
-  const {
-    setActionMeta,
-    setEstimatedFee,
-    setTxId,
-    setTxPayload,
-    setGenesisHash,
-    setTxStatus,
-  } = useTxMeta();
+  const { initTx, setTxDynamicInfo, updateTxStatus } = useTxMeta();
 
   /**
    * @name handleInitAction
-   * @summary Set initial state for the action window.
+   * @summary Receives an event's action metadata and instantiates a new extrinsic structure.
    */
   const handleInitAction = (ev: MessageEvent) => {
     const data: ActionMeta = JSON.parse(ev.data.data);
-    console.log(data);
-    setActionMeta(data);
+    initTx(data);
   };
 
   /**
@@ -32,22 +25,26 @@ export const useActionMessagePorts = () => {
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { estimatedFee, txId, payload, genesisHash } = ev.data.data;
+    const { accountNonce, estimatedFee, genesisHash, txId, txPayload } =
+      ev.data.data;
 
-    setEstimatedFee(estimatedFee);
-    setTxId(txId);
-    setTxPayload(txId, payload);
-    setGenesisHash(genesisHash);
+    setTxDynamicInfo(txId, {
+      accountNonce: new BigNumber(accountNonce),
+      estimatedFee,
+      genesisHash,
+      txPayload,
+    });
+
+    console.log(`> Dynamic info and nonce set (${accountNonce})`);
   };
 
   /**
    * @name handleSetTxStatus
-   * @summary Update the transaction status.
+   * @summary Update the status for a transaction.
    */
   const handleSetTxStatus = (ev: MessageEvent) => {
-    const { status } = ev.data.data;
-
-    setTxStatus(status);
+    const { txId, status } = ev.data.data;
+    updateTxStatus(txId, status);
   };
 
   /**

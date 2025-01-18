@@ -2,31 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
-import type BigNumber from 'bignumber.js';
+import type {
+  ActionMeta,
+  ExtrinsicDynamicInfo,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 
 export interface TxMetaContextInterface {
-  txFees: BigNumber;
-  notEnoughFunds: boolean;
-  setTxFees: (f: BigNumber) => void;
-  resetTxFees: () => void;
-  sender: string | null;
-  setSender: (s: string | null) => void;
-  txFeesValid: boolean;
-  getTxPayload: () => AnyJson;
-  setTxPayload: (u: number, s: AnyJson) => void;
-  getGenesisHash: () => AnyJson;
-  setGenesisHash: (h: AnyJson) => void;
-  resetTxPayloads: () => void;
-  getTxSignature: () => AnyJson;
-  setTxSignature: (s: AnyJson) => void;
+  extrinsics: Map<string, ExtrinsicInfo>;
+  getGenesisHash: (txUid: string) => AnyJson | null;
+  getTxPayload: (txUid: string) => Uint8Array | null;
+  initTx: (actionMeta: ActionMeta) => void;
+  initTxDynamicInfo: (txId: string) => void;
+  setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
+  setTxSignature: (txId: string, s: AnyJson) => void;
+  submitTx: (txId: string) => void;
+  updateTxStatus: (txId: string, txStatus: TxStatus) => void;
 
-  actionMeta: ActionMeta | null;
-  setActionMeta: (m: ActionMeta | null) => void;
-  estimatedFee: string;
-  setEstimatedFee: (n: string) => void;
-  txId: number;
-  setTxId: (n: number) => void;
-  txStatus: TxStatus;
-  setTxStatus: (s: TxStatus) => void;
+  //notEnoughFunds: boolean;
+  //resetTxFees: () => void;
+  //txFeesValid: boolean;
 }

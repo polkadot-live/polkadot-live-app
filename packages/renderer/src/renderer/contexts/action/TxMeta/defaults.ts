@@ -2,30 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
-import BigNumber from 'bignumber.js';
 import type { TxMetaContextInterface } from './types';
 
 export const defaultTxMeta: TxMetaContextInterface = {
-  txFees: new BigNumber(0),
-  notEnoughFunds: false,
-  setTxFees: (f) => {},
-  resetTxFees: () => {},
-  sender: null,
-  setSender: (s) => {},
-  txFeesValid: false,
-  getTxPayload: () => {},
+  extrinsics: new Map(),
   getGenesisHash: () => null,
-  setGenesisHash: (v) => {},
-  setTxPayload: (p, u) => {},
-  getTxSignature: () => null,
-  resetTxPayloads: () => {},
-  setTxSignature: (s) => {},
-  actionMeta: null,
-  setActionMeta: () => {},
-  txId: 0,
-  estimatedFee: '...',
-  setEstimatedFee: (n) => {},
-  setTxId: () => {},
-  txStatus: 'pending',
-  setTxStatus: (s) => {},
+  getTxPayload: () => null,
+  initTx: () => {},
+  initTxDynamicInfo: () => {},
+  setTxDynamicInfo: () => {},
+  setTxSignature: () => {},
+  submitTx: () => {},
+  updateTxStatus: () => {},
+
+  //notEnoughFunds: false,
+  //resetTxFees: () => {},
+  //txFeesValid: false,
 };

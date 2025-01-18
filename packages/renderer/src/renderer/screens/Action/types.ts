@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export interface SubmitProps {
-  txId?: number;
+  txId: string;
   submitting: boolean;
   valid: boolean;
 }

@@ -1,21 +1,23 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ActionItem, Tx } from '@polkadot-live/ui/components';
-import BigNumber from 'bignumber.js';
-import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
+import { Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
-import { Config as ConfigAction } from '@ren/config/processes/action';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
-import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Signer } from './Signer';
-import { SubmittedTxWrapper } from './Wrappers';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
+import { TxActionItem } from './TxActionItem';
+import { Scrollable } from '@polkadot-live/ui/styles';
+import type { TxStatus } from 'packages/types/src';
+
+//import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
+//import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { SubmittedTxWrapper } from './Wrappers';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -23,66 +25,13 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { actionMeta, getTxSignature, estimatedFee, txId, txStatus } =
-    useTxMeta();
-
-  // Tx metadata.
-  const action = actionMeta?.action || '';
-  const actionData = actionMeta?.data || {};
-  const eventUid = actionMeta?.eventUid || '';
-
-  const from: string = actionMeta?.from || '';
-  const fromName = actionMeta?.accountName || ellipsisFn(from);
-
-  const chainId = actionMeta?.chainId || 'Polkadot';
-  const nonce: BigNumber = actionMeta?.nonce || new BigNumber(0);
-  const pallet = actionMeta?.pallet || '';
-  const method = actionMeta?.method || '';
-  const args = actionMeta?.args || [];
-
-  // Store whether the tx is submitting.
-  const [submitting] = useState<boolean>(false);
-
-  // Send message to main renderer to initiate a new transaction.
-  useEffect(() => {
-    try {
-      ConfigAction.portAction.postMessage({
-        task: 'renderer:tx:init',
-        data: { chainId, from, nonce, pallet, method, args, eventUid },
-      });
-    } catch (err) {
-      console.log('Warning: Action port not received yet: renderer:tx:init');
-    }
-  }, [from, nonce, pallet, method]);
-
-  // Auto transaction submission and event dismiss when signature updates.
-  useEffect(() => {
-    if (getTxSignature()) {
-      try {
-        // Send signature and submit transaction on main window.
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:tx:vault:submit',
-          data: {
-            signature: getTxSignature(),
-          },
-        });
-      } catch (err) {
-        console.log(
-          'Warning: Action port not received yet: renderer:tx:vault:submit'
-        );
-      }
-    }
-  }, [getTxSignature()]);
+  const { extrinsics } = useTxMeta();
 
   // Reset data in the main extrinsics controller on unmount.
   useEffect(
     () => () => {
       try {
-        console.log('post renderer:tx:reset');
-
-        ConfigAction.portAction.postMessage({
-          task: 'renderer:tx:reset',
-        });
+        // TODO: Get stored extrinsic data from main.
       } catch (err) {
         console.log('Warning: Action port not received yet: renderer:tx:reset');
       }
@@ -91,7 +40,8 @@ export const Action = () => {
   );
 
   // Utility to get title based on tx status.
-  const getTxStatusTitle = (): string => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
         return 'Transaction Pending';
@@ -107,7 +57,8 @@ export const Action = () => {
   };
 
   // Utility to get subtitle based on tx status.
-  const getTxStatusSubtitle = (): string | null => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getTxStatusSubtitle = (txStatus: TxStatus): string | null => {
     switch (txStatus) {
       case 'submitted':
         return 'Waiting for block confirmation...';
@@ -119,7 +70,12 @@ export const Action = () => {
   };
 
   return (
-    <>
+    <Scrollable
+      $footerHeight={0}
+      $headerHeight={0}
+      style={{ paddingTop: 0, paddingBottom: 20 }}
+    >
+      {/*
       {txStatus !== 'pending' && (
         <SubmittedTxWrapper>
           <div>
@@ -139,60 +95,45 @@ export const Action = () => {
           </div>
         </SubmittedTxWrapper>
       )}
+      */}
       <ContentWrapper>
-        {action === 'nominationPools_pendingRewards_bond' && (
-          <>
-            <h3>Nomination Pools: Compound Rewards</h3>
-            <div className="body">
-              <ActionItem
-                text={`Compound ${actionData.extra.toString()} ${chainCurrency(chainId)}`}
-              />
-              <p>
-                Once submitted, your rewards will be bonded back into the pool.
-                You own these additional bonded funds and will be able to
-                withdraw them at any time.
-              </p>
-            </div>
-          </>
+        {Array.from(extrinsics.keys()).length === 0 && (
+          <p>No extrinsics created yet...</p>
         )}
 
-        {action === 'nominationPools_pendingRewards_withdraw' && (
-          <>
-            <h3>Nomination Pools: Claim Rewards</h3>
-            <div className="body">
-              <ActionItem
-                text={`Claim ${actionData.extra} ${chainCurrency(chainId)}`}
+        {Array.from(extrinsics.keys()).length !== 0 &&
+          Array.from(extrinsics.entries()).map(([txUid, info]) => (
+            <div key={txUid} style={{ padding: '1rem 0' }}>
+              <TxActionItem
+                action={info.actionMeta.action}
+                actionData={info.actionMeta.data}
+                chainId={info.actionMeta.chainId}
+                key={info.txId}
               />
-              <p>
-                Withdrawing rewards will immediately transfer them to your
-                account as free balance.
-              </p>
-            </div>
-          </>
-        )}
 
-        <Tx
-          label={'Signer'}
-          name={fromName}
-          notEnoughFunds={false}
-          dangerMessage={'Danger message'}
-          estimatedFee={
-            estimatedFee === '0'
-              ? '...'
-              : `${estimatedFee} ${chainCurrency(chainId)}`
-          }
-          SignerComponent={
-            <Signer
-              txId={txId}
-              submitting={submitting}
-              valid={
-                !submitting && estimatedFee !== '...' && nonce !== undefined
-              }
-              from={from}
-            />
-          }
-        />
+              <Tx
+                label={'Signer'}
+                name={ellipsisFn(info.actionMeta.from)}
+                notEnoughFunds={false}
+                dangerMessage={'Danger message'}
+                estimatedFee={
+                  info.dynamicInfo === undefined
+                    ? '-'
+                    : `${info.dynamicInfo?.estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
+                }
+                SignerComponent={
+                  <Signer
+                    txId={info.txId}
+                    txBuilt={info.dynamicInfo !== undefined}
+                    submitting={info.submitting}
+                    valid={!info.submitting}
+                    from={info.actionMeta.from}
+                  />
+                }
+              />
+            </div>
+          ))}
       </ContentWrapper>
-    </>
+    </Scrollable>
   );
 };
