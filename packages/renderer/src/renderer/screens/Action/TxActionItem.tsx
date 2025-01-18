@@ -6,6 +6,11 @@ import { chainCurrency } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 
+/**
+ * ActionItem component not currently in use.
+ * Refactor or deprecate.
+ */
+
 interface TxActionItemProps {
   action: keyof typeof ComponentFactory;
   actionData: AnyData;
@@ -13,7 +18,7 @@ interface TxActionItemProps {
 }
 
 // Define a map of actions to markup content.
-const ComponentFactory = {
+export const ComponentFactory = {
   nominationPools_pendingRewards_bond: {
     title: <h3>Nomination Pools: Compound Rewards</h3>,
     description: (
