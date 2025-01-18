@@ -4,159 +4,22 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import { Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { ComponentFactory } from './TxActionItem';
 import { Scrollable } from '@polkadot-live/ui/styles';
-import type { AnyData, TxStatus } from 'packages/types/src';
-// TMP
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import styled from 'styled-components';
+import { AccordionContent, AccordionTrigger } from './Accordion';
+import { AccordionWrapper } from './Accordion/Wrappers';
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 //import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 //import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { SubmittedTxWrapper } from './Wrappers';
-
-const AccordionWrapper = styled.div`
-  margin-top: 1rem;
-
-  .AccordionRoot {
-    width: 100%;
-  }
-
-  .AccordionItem {
-    overflow: hidden;
-  }
-  .AccordionItem:first-child {
-    margin-top: 0;
-    border-top-left-radius: 0.375rem;
-    border-top-right-radius: 0.375rem;
-  }
-  .AccordionItem:last-child {
-    border-bottom-left-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
-  }
-  // Focused item - applies to both header and content.
-  .AccordionItem:focus-within {
-    position: relative;
-  }
-
-  .AccordionHeader {
-    display: flex;
-    margin: 0.5rem 0 0.25rem;
-  }
-
-  .AccordionTrigger {
-    color: var(--text-color-primary);
-    display: flex;
-    flex: 1;
-    gap: 1rem;
-    background-color: transparent;
-    padding: 0.5rem 1rem;
-    height: 45px;
-    align-items: center;
-    font-family: InterSemiBold, sans-serif;
-    font-size: 1.2rem;
-    font-weight: 500;
-    line-height: 1.6rem;
-
-    .HeaderContent {
-      flex: 1;
-      text-align: left;
-    }
-  }
-  .AccordionTrigger:hover {
-    transition: background-color 0.15s ease-in-out;
-    &:hover {
-      background-color: var(--accordion-background-hover);
-    }
-  }
-
-  .AccordionContent {
-    overflow: hidden;
-  }
-  .AccordionContent[data-state='open'] {
-    animation: slideDown 200ms cubic-bezier(0.87, 0, 0.13, 1);
-  }
-  .AccordionContent[data-state='closed'] {
-    animation: slideUp 200ms cubic-bezier(0.87, 0, 0.13, 1);
-  }
-
-  .AccordionChevron {
-    margin-top: -2px;
-    color: var(--text-color-secondary);
-    transition: transform 200ms cubic-bezier(0.87, 0, 0.13, 1);
-    transform: rotate(-90deg);
-  }
-  .AccordionTrigger[data-state='open'] > .AccordionChevron {
-    transform: rotate(0deg);
-  }
-
-  // TMP
-  .AccordionContentText {
-    padding: 0 1.5rem;
-    p {
-      margin-top: 0.25rem;
-      padding: 0 0.5rem;
-      margin-bottom: 1rem;
-      line-height: 1.75rem;
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
-`;
-
-const AccordionTrigger = React.forwardRef(
-  ({ children, className, ...props }: AnyData, forwardedRef) => (
-    <Accordion.Header className="AccordionHeader">
-      <Accordion.Trigger
-        className={`AccordionTrigger ${className}`}
-        {...props}
-        ref={forwardedRef}
-      >
-        <ChevronDownIcon className="AccordionChevron" aria-hidden />
-        <div className="HeaderContent">{children}</div>
-      </Accordion.Trigger>
-    </Accordion.Header>
-  )
-);
-
-const AccordionContent = React.forwardRef(
-  ({ children, className, ...props }: AnyData, forwardRef) => (
-    <Accordion.Content
-      className={`AccordionContent ${className}`}
-      {...props}
-      ref={forwardRef}
-    >
-      <div className="AccordionContentText">{children}</div>
-    </Accordion.Content>
-  )
-);
-
-AccordionTrigger.displayName = 'AccordionTrigger';
-AccordionContent.displayName = 'AccordionContent';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -236,7 +99,7 @@ export const Action = () => {
       )}
       */}
 
-      <ContentWrapper style={{ padding: 0, margin: '0.25rem' }}>
+      <div style={{ padding: '0.5rem 1rem' }}>
         {Array.from(extrinsics.keys()).length === 0 && (
           <p>No extrinsics created yet...</p>
         )}
@@ -287,7 +150,7 @@ export const Action = () => {
             </Accordion.Root>
           </AccordionWrapper>
         )}
-      </ContentWrapper>
+      </div>
     </Scrollable>
   );
 };

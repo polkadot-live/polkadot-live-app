@@ -43,12 +43,12 @@ export const Wrapper = styled.div`
   }
 
   > .inner {
-    background: var(--background-surface);
+    background: transparent;
     width: 100%;
     display: flex;
     flex-direction: row;
     gap: 0.75rem;
-    padding: 1rem;
+    padding-bottom: 1rem;
 
     &.canvas {
       background: var(--background-canvas-card);
