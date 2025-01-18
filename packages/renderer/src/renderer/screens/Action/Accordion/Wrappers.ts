@@ -52,7 +52,17 @@ export const AccordionWrapper = styled.div`
       flex: 1;
       text-align: left;
       h3 {
+        flex: 1;
         font-size: 1.15rem !important;
+      }
+
+      .tx-status {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        font-size: 1rem;
+        text-align: left;
+        color: var(--text-color-secondary);
       }
     }
   }

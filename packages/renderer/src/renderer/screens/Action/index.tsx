@@ -14,12 +14,9 @@ import { ComponentFactory } from './TxActionItem';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import { AccordionContent, AccordionTrigger } from './Accordion';
 import { AccordionWrapper } from './Accordion/Wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import type { TxStatus } from '@polkadot-live/types/tx';
-
-//import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
-//import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { SubmittedTxWrapper } from './Wrappers';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -42,17 +39,16 @@ export const Action = () => {
   );
 
   // Utility to get title based on tx status.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
-        return 'Transaction Pending';
+        return 'Pending';
       case 'submitted':
-        return 'Transaction Submitted';
+        return 'Submitted';
       case 'in_block':
-        return 'Transaction In Block';
+        return 'In Block';
       case 'finalized':
-        return 'Transaction Finalized';
+        return 'Finalized';
       default:
         return 'An Error Occured';
     }
@@ -77,28 +73,6 @@ export const Action = () => {
       $headerHeight={0}
       style={{ paddingTop: 0, paddingBottom: 20 }}
     >
-      {/*
-      {txStatus !== 'pending' && (
-        <SubmittedTxWrapper>
-          <div>
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              style={{ width: '75px', height: '75px' }}
-            />
-          </div>
-          <h2>{getTxStatusTitle()}</h2>
-          <h4>{getTxStatusSubtitle() || `This window can be closed.`}</h4>
-          <div className="close">
-            <ButtonMonoInvert
-              text="Close Window"
-              lg
-              onClick={() => window.close()}
-            />
-          </div>
-        </SubmittedTxWrapper>
-      )}
-      */}
-
       <div style={{ padding: '0.5rem 1rem' }}>
         {Array.from(extrinsics.keys()).length === 0 && (
           <p>No extrinsics created yet...</p>
@@ -118,7 +92,16 @@ export const Action = () => {
                   value={txUid}
                 >
                   <AccordionTrigger>
-                    {ComponentFactory[info.actionMeta.action].title}
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                      {ComponentFactory[info.actionMeta.action].title}
+                      <span className="tx-status">
+                        <FontAwesomeIcon
+                          icon={faCircleDot}
+                          transform={'shrink-2'}
+                        />
+                        {getTxStatusTitle(info.txStatus)}
+                      </span>
+                    </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div>
