@@ -14,6 +14,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   setTxSignature: () => {},
   submitTx: () => {},
   updateTxStatus: () => {},
+  removeExtrinsic: () => {},
 
   //notEnoughFunds: false,
   //resetTxFees: () => {},

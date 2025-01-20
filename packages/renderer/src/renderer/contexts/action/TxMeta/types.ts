@@ -19,6 +19,7 @@ export interface TxMetaContextInterface {
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => void;
+  removeExtrinsic: (txId: string) => void;
 
   //notEnoughFunds: boolean;
   //resetTxFees: () => void;

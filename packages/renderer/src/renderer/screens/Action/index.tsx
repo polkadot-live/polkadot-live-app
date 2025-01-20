@@ -28,7 +28,7 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { extrinsics, initTxDynamicInfo } = useTxMeta();
+  const { extrinsics, initTxDynamicInfo, removeExtrinsic } = useTxMeta();
   const { openOverlayWith } = useOverlay();
 
   // Reset data in the main extrinsics controller on unmount.
@@ -117,7 +117,7 @@ export const Action = () => {
                       <ExtrinsicDropdownMenu
                         isBuilt={info.dynamicInfo !== undefined}
                         onBuild={() => initTxDynamicInfo(txUid)}
-                        onDelete={() => console.log('> TODO: Delete')}
+                        onDelete={() => removeExtrinsic(txUid)}
                         onSign={() =>
                           openOverlayWith(
                             <SignOverlay
