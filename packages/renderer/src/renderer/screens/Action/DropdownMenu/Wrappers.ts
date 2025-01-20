@@ -23,7 +23,7 @@ export const IconButton = styled.span`
 
 const dropdownMixin = css`
   background-color: var(--background-primary);
-  min-width: 220px;
+  min-width: 130px;
   border-radius: 6px;
   padding: 5px;
   animation-duration: 400ms;
@@ -53,10 +53,11 @@ const dropdownMixin = css`
     position: relative;
     max-height: 25px;
     font-size: 13px;
-    padding: 1.2rem 0.75rem 1.2rem 2.25rem;
+    padding: 1.2rem 0.75rem;
     border-radius: 0.375rem;
     user-select: none;
     outline: none;
+    cursor: pointer;
   }
   .DropdownMenuSubTrigger[data-state='open'] {
     background-color: var(--button-primary);
@@ -102,16 +103,21 @@ const dropdownMixin = css`
   .DropdownMenuArrow {
     fill: var(--background-primary);
   }
-
+  .LeftSlot {
+    padding-right: 1.25rem;
+    color: var(--text-secondary);
+  }
   .RightSlot {
     margin-left: auto;
     padding-left: 20px;
     color: var(--text-secondary);
   }
-  [data-highlighted] > .RightSlot {
+  [data-highlighted] > .RightSlot,
+  [data-highlighted] > .LeftSlot {
     color: var(--text-secondary);
   }
-  [data-disabled] .RightSlot {
+  [data-disabled] .RightSlot,
+  [data-disabled] .LeftSlot {
     opacity: 0.45;
   }
 

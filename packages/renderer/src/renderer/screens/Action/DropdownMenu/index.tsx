@@ -5,27 +5,34 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/renderer/theme/variables';
 
 import { useState } from 'react';
-import { useConnections } from '@ren/renderer/contexts/common/Connections';
+import { useConnections } from '@app/contexts/common/Connections';
 import {
   DotFilledIcon,
   CheckIcon,
   ChevronRightIcon,
 } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEllipsis,
+  faGlobe,
+  faHammer,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   DropdownMenuContent,
   DropdownMenuSubContent,
   IconButton,
 } from './Wrappers';
+import type { ExtrinsicDropdownMenuProps } from './types';
 
-export const DropdownMenuDemo = () => {
+export const ExtrinsicDropdownMenu = ({
+  isBuilt,
+  onBuild,
+  onSign,
+  onDelete,
+}: ExtrinsicDropdownMenuProps) => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const [bookmarksChecked, setBookmarksChecked] = useState(true);
-  const [urlsChecked, setUrlsChecked] = useState(true);
-  const [person, setPerson] = useState('pedro');
 
   return (
     <DropdownMenu.Root>
@@ -43,6 +50,72 @@ export const DropdownMenuDemo = () => {
           avoidCollisions={false}
           sideOffset={5}
         >
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            disabled={isBuilt}
+            onSelect={() => onBuild()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faHammer} transform={'shrink-4'} />
+            </div>
+            <span>Build</span>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            disabled={!isBuilt}
+            onSelect={() => onSign()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
+            </div>
+            <span>Sign</span>
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator className="DropdownMenuSeparator" />
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            onSelect={() => onDelete()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faTrash} transform={'shrink-3'} />
+            </div>
+            <span>Delete </span>
+          </DropdownMenu.Item>
+
+          {/** Arrow */}
+          <DropdownMenu.Arrow className="DropdownMenuArrow" />
+        </DropdownMenuContent>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+};
+
+export const DropdownMenuDemo = () => {
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+
+  const [boxOneChecked, setBoxOneChecked] = useState(true);
+  const [boxTwoChecked, setBoxTwoChecked] = useState(true);
+  const [radioVal, setRadioVal] = useState('radio-val-1');
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <IconButton aria-label="Extrinsic Actions">
+          <FontAwesomeIcon icon={faEllipsis} transform={'grow-10'} />
+        </IconButton>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenuContent
+          $theme={theme}
+          align="end"
+          side="bottom"
+          avoidCollisions={false}
+          sideOffset={5}
+        >
+          <DropdownMenu.Label className="DropdownMenuLabel">
+            Label 1
+          </DropdownMenu.Label>
           <DropdownMenu.Item className="DropdownMenuItem">
             Item 1 <div className="RightSlot">⌘+A</div>
           </DropdownMenu.Item>
@@ -87,8 +160,8 @@ export const DropdownMenuDemo = () => {
           {/** Checkbox Items */}
           <DropdownMenu.CheckboxItem
             className="DropdownMenuCheckboxItem"
-            checked={bookmarksChecked}
-            onCheckedChange={setBookmarksChecked}
+            checked={boxOneChecked}
+            onCheckedChange={setBoxOneChecked}
           >
             <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
               <CheckIcon />
@@ -97,8 +170,8 @@ export const DropdownMenuDemo = () => {
           </DropdownMenu.CheckboxItem>
           <DropdownMenu.CheckboxItem
             className="DropdownMenuCheckboxItem"
-            checked={urlsChecked}
-            onCheckedChange={setUrlsChecked}
+            checked={boxTwoChecked}
+            onCheckedChange={setBoxTwoChecked}
           >
             <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
               <CheckIcon />
@@ -112,7 +185,7 @@ export const DropdownMenuDemo = () => {
           <DropdownMenu.Label className="DropdownMenuLabel">
             Label 1
           </DropdownMenu.Label>
-          <DropdownMenu.RadioGroup value={person} onValueChange={setPerson}>
+          <DropdownMenu.RadioGroup value={radioVal} onValueChange={setRadioVal}>
             <DropdownMenu.RadioItem
               className="DropdownMenuRadioItem"
               value="radio-val-1"
