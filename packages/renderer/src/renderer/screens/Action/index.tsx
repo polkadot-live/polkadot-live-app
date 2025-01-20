@@ -17,6 +17,8 @@ import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import { DropdownMenuDemo } from './DropdownMenu';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -91,18 +93,27 @@ export const Action = () => {
                   className="AccordionItem"
                   value={txUid}
                 >
-                  <AccordionTrigger>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                  <div
+                    style={{ display: 'flex', gap: '2px', marginTop: '10px' }}
+                  >
+                    <AccordionTrigger>
+                      <ChevronDownIcon
+                        className="AccordionChevron"
+                        aria-hidden
+                      />
                       {ComponentFactory[info.actionMeta.action].title}
-                      <span className="tx-status">
+                      <span className="TxStatus">
                         <FontAwesomeIcon
                           icon={faCircleDot}
                           transform={'shrink-2'}
                         />
                         {getTxStatusTitle(info.txStatus)}
                       </span>
+                    </AccordionTrigger>
+                    <div className="HeaderContentDropdownWrapper">
+                      <DropdownMenuDemo />
                     </div>
-                  </AccordionTrigger>
+                  </div>
                   <AccordionContent>
                     <div>
                       {ComponentFactory[info.actionMeta.action].description}
