@@ -15,12 +15,13 @@ import { Scrollable } from '@polkadot-live/ui/styles';
 import { AccordionContent, AccordionTrigger } from './Accordion';
 import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleDot } from '@fortawesome/free-solid-svg-icons';
+import { faCircleDot, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import type { TxStatus } from '@polkadot-live/types/tx';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
+import { EmptyExtrinsicsWrapper } from './Wrappers';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -78,9 +79,17 @@ export const Action = () => {
       $headerHeight={0}
       style={{ paddingTop: 0, paddingBottom: 20 }}
     >
-      <div style={{ padding: '0.5rem 1rem' }}>
+      <div style={{ padding: '0.5rem 1rem', height: '90%' }}>
         {Array.from(extrinsics.keys()).length === 0 && (
-          <p>No extrinsics created yet...</p>
+          <EmptyExtrinsicsWrapper>
+            <div>
+              <FontAwesomeIcon
+                icon={faSpinner}
+                style={{ fontSize: '7rem', opacity: '0.6' }}
+              />
+              <p>No extrinsics have been added yet.</p>
+            </div>
+          </EmptyExtrinsicsWrapper>
         )}
 
         {Array.from(extrinsics.keys()).length !== 0 && (
