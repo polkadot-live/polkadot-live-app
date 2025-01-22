@@ -117,6 +117,14 @@ export const CogMenuProvider = ({
       },
     },
     {
+      label: 'Extrinsics',
+      disabled: appLoading,
+      onClick: () => {
+        window.myAPI.openWindow('action');
+        window.myAPI.umamiEvent('window-open-extrinsics', null);
+      },
+    },
+    {
       label: 'OpenGov',
       disabled: appLoading,
       onClick: () => {
