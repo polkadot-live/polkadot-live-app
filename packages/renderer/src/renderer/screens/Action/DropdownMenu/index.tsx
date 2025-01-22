@@ -25,6 +25,9 @@ import {
 } from './Wrappers';
 import type { ExtrinsicDropdownMenuProps } from './types';
 
+/**
+ * Dropdown menu component for extrinsic items.
+ */
 export const ExtrinsicDropdownMenu = ({
   isBuilt,
   onBuild,
@@ -89,6 +92,9 @@ export const ExtrinsicDropdownMenu = ({
   );
 };
 
+/**
+ * Dropdown menu demo component showcasing features.
+ */
 export const DropdownMenuDemo = () => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;

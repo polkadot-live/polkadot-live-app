@@ -17,8 +17,6 @@ export const IconButton = styled.span`
   &:hover {
     opacity: 1;
   }
-  //&:focus {
-  //}
 `;
 
 const dropdownMixin = css`
