@@ -117,12 +117,15 @@ export const AccordionWrapper = styled.div`
     transform: rotate(0deg);
   }
 
-  // TMP
-  .AccordionContentText {
-    padding: 0 1.5rem;
+  .AccordionContentInner {
+    background-color: var(--background-surface);
+    padding: 1rem 1rem;
+    margin-top: 1rem;
+    border-radius: 0.375rem;
     p {
-      margin: 1rem 0 1.25rem;
       padding: 0 0.5rem;
+      margin: 0;
+      margin-bottom: 1rem;
       line-height: 1.75rem;
     }
   }
