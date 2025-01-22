@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { forwardRef } from 'react';
 import type { AnyData } from '@polkadot-live/types/misc';
 
@@ -15,7 +14,6 @@ export const AccordionTrigger = forwardRef(
         {...props}
         ref={forwardedRef}
       >
-        <ChevronDownIcon className="AccordionChevron" aria-hidden />
         <div className="HeaderContent">{children}</div>
       </Accordion.Trigger>
     </Accordion.Header>

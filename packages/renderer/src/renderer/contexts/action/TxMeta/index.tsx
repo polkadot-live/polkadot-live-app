@@ -224,6 +224,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     return info.dynamicInfo.genesisHash;
   };
 
+  /**
+   * Removes an extrinsic from the collection from the collection
+   */
+  const removeExtrinsic = (txUid: string) => {
+    if (extrinsicsRef.current.delete(txUid)) {
+      setUpdateCache(true);
+    }
+  };
+
   // Transaction state.
   //const [notEnoughFunds, setNotEnoughFunds] = useState(false);
 
@@ -256,6 +265,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setTxSignature,
         submitTx,
         updateTxStatus,
+        removeExtrinsic,
 
         //notEnoughFunds,
         //resetTxFees,
