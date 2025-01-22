@@ -15,13 +15,17 @@ import { Scrollable } from '@polkadot-live/ui/styles';
 import { AccordionContent, AccordionTrigger } from './Accordion';
 import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleDot, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import type { TxStatus } from '@polkadot-live/types/tx';
+import {
+  faCircleDot,
+  faObjectGroup,
+  faSpinner,
+} from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -44,7 +48,7 @@ export const Action = () => {
     []
   );
 
-  // Utility to get title based on tx status.
+  // TMP: Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
@@ -57,6 +61,18 @@ export const Action = () => {
         return 'Finalized';
       default:
         return 'An Error Occured';
+    }
+  };
+
+  // TMP: Utility to get cartegory title.
+  const getCategoryTitle = (info: ExtrinsicInfo): string => {
+    switch (info.actionMeta.pallet) {
+      case 'nominationPools': {
+        return 'Nomination Pools';
+      }
+      default: {
+        return 'Unknown.';
+      }
     }
   };
 
@@ -114,12 +130,21 @@ export const Action = () => {
                         aria-hidden
                       />
                       {ComponentFactory[info.actionMeta.action].title}
-                      <span className="TxStatus">
-                        <FontAwesomeIcon
-                          icon={faCircleDot}
-                          transform={'shrink-2'}
-                        />
-                        {getTxStatusTitle(info.txStatus)}
+                      <span className="right">
+                        <div className="stat">
+                          <FontAwesomeIcon
+                            icon={faObjectGroup}
+                            transform={'shrink-2'}
+                          />
+                          {getCategoryTitle(info)}
+                        </div>
+                        <div className="stat">
+                          <FontAwesomeIcon
+                            icon={faCircleDot}
+                            transform={'shrink-2'}
+                          />
+                          {getTxStatusTitle(info.txStatus)}
+                        </div>
                       </span>
                     </AccordionTrigger>
                     <div className="HeaderContentDropdownWrapper">

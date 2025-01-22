@@ -77,13 +77,19 @@ export const AccordionWrapper = styled.div`
         font-size: 1.15rem !important;
       }
 
-      .TxStatus {
+      .right {
         color: var(--text-color-secondary);
         display: flex;
-        gap: 0.5rem;
+        gap: 1.5rem;
         align-items: center;
         font-size: 1rem;
-        text-align: left;
+
+        .stat {
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+          text-align: left;
+        }
       }
 
       &:hover {

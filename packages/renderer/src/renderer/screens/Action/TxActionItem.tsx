@@ -20,7 +20,7 @@ interface TxActionItemProps {
 // Define a map of actions to markup content.
 export const ComponentFactory = {
   nominationPools_pendingRewards_bond: {
-    title: <h3>Nomination Pools: Compound Rewards</h3>,
+    title: <h3>Compound Rewards</h3>,
     description: (
       <p>
         Once submitted, your rewards will be bonded back into the pool. You own
@@ -30,7 +30,7 @@ export const ComponentFactory = {
     ),
   },
   nominationPools_pendingRewards_withdraw: {
-    title: <h3>Nomination Pools: Claim Rewards</h3>,
+    title: <h3>Claim Rewards</h3>,
     description: (
       <p>
         Withdrawing rewards will immediately transfer them to your account as
