@@ -37,6 +37,15 @@ export interface ActionMeta {
   args: AnyData;
 }
 
+/**
+ * Minimal account structure to associate extrinsics with an address.
+ */
+export interface AddressInfo {
+  accountName: string;
+  address: string;
+  chainId: ChainID;
+}
+
 export interface ExtrinsicDynamicInfo {
   accountNonce: BigNumber;
   estimatedFee: string;

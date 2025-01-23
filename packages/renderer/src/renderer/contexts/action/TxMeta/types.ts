@@ -4,12 +4,14 @@
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ActionMeta,
+  AddressInfo,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
 
 export interface TxMetaContextInterface {
+  addressesInfo: AddressInfo[];
   extrinsics: Map<string, ExtrinsicInfo>;
   getGenesisHash: (txUid: string) => AnyJson | null;
   getTxPayload: (txUid: string) => Uint8Array | null;

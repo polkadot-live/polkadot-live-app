@@ -5,6 +5,7 @@
 import type { TxMetaContextInterface } from './types';
 
 export const defaultTxMeta: TxMetaContextInterface = {
+  addressesInfo: [],
   extrinsics: new Map(),
   getGenesisHash: () => null,
   getTxPayload: () => null,

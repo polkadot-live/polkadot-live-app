@@ -14,6 +14,7 @@ import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ActionMeta,
+  AddressInfo,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
   TxStatus,
@@ -36,11 +37,31 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [updateCache, setUpdateCache] = useState(false);
 
   /**
+   * Minimal account info to associate extrinsics with an address.
+   */
+  const [addressesInfo, setAddressesInfo] = useState<AddressInfo[]>([]);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
     if (updateCache) {
       setExtrinsics(extrinsicsRef.current);
+
+      // Rebuild addresses data.
+      const map = new Map<string, AddressInfo>();
+
+      for (const {
+        actionMeta: { accountName, from, chainId },
+      } of extrinsicsRef.current.values()) {
+        if (map.has(from)) {
+          continue;
+        }
+
+        map.set(from, { accountName, address: from, chainId });
+      }
+
+      setAddressesInfo([...Array.from(map.values())]);
       setUpdateCache(false);
     }
   }, [updateCache]);
@@ -256,6 +277,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TxMetaContext.Provider
       value={{
+        addressesInfo,
         extrinsics,
         getGenesisHash,
         getTxPayload,

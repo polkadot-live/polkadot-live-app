@@ -33,7 +33,8 @@ export const Action = () => {
   useDebug(window.myAPI.getWindowId());
 
   // Get state and setters from TxMeta context.
-  const { extrinsics, initTxDynamicInfo, removeExtrinsic } = useTxMeta();
+  const { addressesInfo, extrinsics, initTxDynamicInfo, removeExtrinsic } =
+    useTxMeta();
   const { openOverlayWith } = useOverlay();
 
   // Reset data in the main extrinsics controller on unmount.
@@ -99,6 +100,16 @@ export const Action = () => {
               Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
           }}
         >
+          {addressesInfo.length !== 0 && (
+            <ul>
+              {addressesInfo.map(({ accountName, address, chainId }) => (
+                <li key={address}>
+                  {accountName}-{chainId}-{address}
+                </li>
+              ))}
+            </ul>
+          )}
+
           {Array.from(extrinsics.keys()).length === 0 && (
             <EmptyExtrinsicsWrapper>
               <div>
