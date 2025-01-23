@@ -48,7 +48,6 @@ export const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     gap: 0.75rem;
-    padding-bottom: 1rem;
 
     &.canvas {
       background: var(--background-canvas-card);

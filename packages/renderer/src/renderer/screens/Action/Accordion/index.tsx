@@ -27,7 +27,7 @@ export const AccordionContent = forwardRef(
       {...props}
       ref={forwardedRef}
     >
-      <div className="AccordionContentText">{children}</div>
+      <div className="AccordionContentInner">{children}</div>
     </Accordion.Content>
   )
 );
