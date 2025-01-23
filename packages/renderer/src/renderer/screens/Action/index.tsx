@@ -92,7 +92,13 @@ export const Action = () => {
   return (
     <>
       <Scrollable $headerHeight={0}>
-        <div style={{ padding: '0.5rem 1rem 2rem' }}>
+        <div
+          style={{
+            padding: '0.5rem 1rem 2rem',
+            height:
+              Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
+          }}
+        >
           {Array.from(extrinsics.keys()).length === 0 && (
             <EmptyExtrinsicsWrapper>
               <div>
