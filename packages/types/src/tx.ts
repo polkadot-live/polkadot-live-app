@@ -43,6 +43,7 @@ export interface ActionMeta {
 export interface AddressInfo {
   accountName: string;
   address: string;
+  ChainIcon: AnyData;
   chainId: ChainID;
 }
 

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
+import { chainIcon } from '@ren/config/chains';
 import React, {
   createContext,
   useContext,
@@ -42,6 +43,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [addressesInfo, setAddressesInfo] = useState<AddressInfo[]>([]);
 
   /**
+   * Cache the addresses select box value.
+   */
+  const [selectedFilter, setSelectedFilter] = useState('all');
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
@@ -58,7 +64,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           continue;
         }
 
-        map.set(from, { accountName, address: from, chainId });
+        map.set(from, {
+          accountName,
+          address: from,
+          ChainIcon: chainIcon(chainId),
+          chainId,
+        });
       }
 
       setAddressesInfo([...Array.from(map.values())]);
@@ -248,10 +259,40 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Removes an extrinsic from the collection from the collection
    */
-  const removeExtrinsic = (txUid: string) => {
+  const removeExtrinsic = (txUid: string, fromAddress: string) => {
     if (extrinsicsRef.current.delete(txUid)) {
+      // Remove address info if there are no more extrinsics for the address.
+      const found = Array.from(extrinsicsRef.current.values()).find(
+        ({ actionMeta: { from } }) => from === fromAddress
+      );
+
+      if (!found) {
+        setAddressesInfo((prev) =>
+          prev.filter(({ address }) => address !== fromAddress)
+        );
+
+        setSelectedFilter('all');
+      }
+
       setUpdateCache(true);
     }
+  };
+
+  /**
+   * Filter extrinsics base on signer's address.
+   */
+  const getFilteredExtrinsics = () =>
+    selectedFilter === 'all'
+      ? Array.from(extrinsics.values())
+      : Array.from(extrinsics.values()).filter(
+          ({ actionMeta: { from } }) => from === selectedFilter
+        );
+
+  /**
+   * Update select filter and address info when filter changes.
+   */
+  const onFilterChange = (val: string) => {
+    setSelectedFilter(val);
   };
 
   // Transaction state.
@@ -279,10 +320,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         addressesInfo,
         extrinsics,
+        selectedFilter,
+        getFilteredExtrinsics,
         getGenesisHash,
         getTxPayload,
         initTx,
         initTxDynamicInfo,
+        onFilterChange,
         setTxDynamicInfo,
         setTxSignature,
         submitTx,

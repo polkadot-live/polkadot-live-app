@@ -13,15 +13,18 @@ import type {
 export interface TxMetaContextInterface {
   addressesInfo: AddressInfo[];
   extrinsics: Map<string, ExtrinsicInfo>;
+  selectedFilter: string;
+  getFilteredExtrinsics: (selectedFilter: string) => ExtrinsicInfo[];
   getGenesisHash: (txUid: string) => AnyJson | null;
   getTxPayload: (txUid: string) => Uint8Array | null;
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
+  onFilterChange: (val: string) => void;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => void;
-  removeExtrinsic: (txId: string) => void;
+  removeExtrinsic: (txId: string, fromAddress: string) => void;
 
   //notEnoughFunds: boolean;
   //resetTxFees: () => void;

@@ -7,10 +7,13 @@ import type { TxMetaContextInterface } from './types';
 export const defaultTxMeta: TxMetaContextInterface = {
   addressesInfo: [],
   extrinsics: new Map(),
+  selectedFilter: 'all',
+  getFilteredExtrinsics: () => [],
   getGenesisHash: () => null,
   getTxPayload: () => null,
   initTx: () => {},
   initTxDynamicInfo: () => {},
+  onFilterChange: () => {},
   setTxDynamicInfo: () => {},
   setTxSignature: () => {},
   submitTx: () => {},
