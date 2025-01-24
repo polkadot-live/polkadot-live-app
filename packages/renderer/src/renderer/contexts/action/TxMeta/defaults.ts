@@ -18,6 +18,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   setTxDynamicInfo: () => {},
   setTxSignature: () => {},
   submitTx: () => {},
+  updateAccountName: () => {},
   updateTxStatus: () => {},
   removeExtrinsic: () => {},
 

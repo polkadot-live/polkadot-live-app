@@ -352,6 +352,38 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
+   * Update an account name assocated with an address.
+   */
+  const updateAccountName = (address: string, newName: string) => {
+    // Update extrinsics state in actionMeta.
+    for (const [txId, info] of Array.from(extrinsicsRef.current.entries())) {
+      if (info.actionMeta.from !== address) {
+        continue;
+      }
+
+      extrinsicsRef.current.set(txId, {
+        ...info,
+        actionMeta: { ...info.actionMeta, accountName: newName },
+      });
+    }
+
+    // Update addresses info state.
+    setAddressesInfo((prev) => {
+      const updated = prev.map((i) => {
+        if (i.address === address) {
+          return { ...i, accountName: newName };
+        } else {
+          return { ...i };
+        }
+      });
+
+      return updated;
+    });
+
+    setUpdateCache(true);
+  };
+
+  /**
    * Utility to get cartegory title.
    */
   const getCategoryTitle = (info: ExtrinsicInfo): string => {
@@ -415,6 +447,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setTxDynamicInfo,
         setTxSignature,
         submitTx,
+        updateAccountName,
         updateTxStatus,
         removeExtrinsic,
 

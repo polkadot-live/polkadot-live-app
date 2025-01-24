@@ -80,7 +80,7 @@ export const renameAccountInStore = async (
 
 /**
  * @name postRenameAccount
- * @summary Post a message to the main renderer to process an account rename.
+ * @summary Post a message to main renderer to process an account rename.
  */
 export const postRenameAccount = (address: string, newName: string) => {
   ConfigImport.portImport.postMessage({

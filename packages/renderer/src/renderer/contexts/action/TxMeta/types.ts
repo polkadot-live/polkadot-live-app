@@ -24,6 +24,7 @@ export interface TxMetaContextInterface {
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
+  updateAccountName: (address: string, newName: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => void;
   removeExtrinsic: (txId: string, fromAddress: string) => void;
 
