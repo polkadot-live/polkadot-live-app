@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../theme/variables';
 
-import { Tx } from '@polkadot-live/ui/components';
+import { ActionItem, Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
@@ -124,7 +124,7 @@ export const Action = () => {
 
   return (
     <>
-      <Scrollable $headerHeight={0}>
+      <Scrollable $headerHeight={0} style={{ paddingTop: 0 }}>
         <div
           style={{
             padding: '0.5rem 1rem 2rem',
@@ -146,7 +146,14 @@ export const Action = () => {
 
           {Array.from(extrinsics.keys()).length !== 0 && (
             <>
-              <hr style={{ marginBottom: '2rem', borderColor: 'darkblue' }} />
+              <ActionItem
+                text={'Account Filter'}
+                style={{
+                  marginBottom: '1rem',
+                  fontSize: '1.1rem',
+                  color: 'var(--text-color-secondary)',
+                }}
+              />
               <Select.Root
                 value={selectedFilter}
                 defaultValue="all"
@@ -157,7 +164,7 @@ export const Action = () => {
                   $theme={theme}
                   value={selectedFilter}
                 >
-                  <Select.Value placeholder="All Extrinsics" />
+                  <Select.Value placeholder="All Accounts" />
                   <Select.Icon className="SelectIcon">
                     <ChevronDownIcon />
                   </Select.Icon>
@@ -182,7 +189,7 @@ export const Action = () => {
                                 height: '2.25rem',
                               }}
                             >
-                              All Extrinsics
+                              All Accounts
                             </div>
                           </div>
                         </SelectItem>
@@ -206,7 +213,15 @@ export const Action = () => {
                   </SelectContent>
                 </Select.Portal>
               </Select.Root>
-              <hr style={{ margin: '2rem 0', borderColor: 'darkblue' }} />
+
+              <ActionItem
+                text={'Manage Extrinsics'}
+                style={{
+                  margin: '2.75rem 0 0.25rem',
+                  fontSize: '1.1rem',
+                  color: 'var(--text-color-secondary)',
+                }}
+              />
 
               <AccordionWrapper>
                 <Accordion.Root
