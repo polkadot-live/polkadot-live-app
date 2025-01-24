@@ -80,13 +80,13 @@ export const AccordionWrapper = styled.div`
       .right {
         color: var(--text-color-secondary);
         display: flex;
-        gap: 1.5rem;
+        gap: 1.6rem;
         align-items: center;
         font-size: 1rem;
 
         .stat {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.6rem;
           align-items: center;
           text-align: left;
         }

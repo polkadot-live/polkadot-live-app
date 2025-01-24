@@ -22,6 +22,7 @@ import {
   faCircleDot,
   faObjectGroup,
   faSpinner,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import {
@@ -121,6 +122,17 @@ export const Action = () => {
     Array.from(extrinsics.values()).length === 0
       ? []
       : [getFilteredExtrinsics(selectedFilter)[0].txId];
+
+  const truncateString = (target: string, maxLength: number) => {
+    const targetLength = target.length;
+    if (targetLength <= maxLength) {
+      return target;
+    } else {
+      const truncated = target.slice(0, maxLength - 4);
+      const endSection = target.slice(targetLength - 4, targetLength);
+      return `${truncated}...${endSection}`;
+    }
+  };
 
   return (
     <>
@@ -249,6 +261,13 @@ export const Action = () => {
                           />
                           {ComponentFactory[info.actionMeta.action].title}
                           <span className="right">
+                            <div className="stat">
+                              <FontAwesomeIcon
+                                icon={faUser}
+                                transform={'shrink-2'}
+                              />
+                              {truncateString(info.actionMeta.accountName, 8)}
+                            </div>
                             <div className="stat">
                               <FontAwesomeIcon
                                 icon={faObjectGroup}
