@@ -117,6 +117,11 @@ export const Action = () => {
     }
   };
 
+  const getAccordionDefaultValue = () =>
+    Array.from(extrinsics.values()).length === 0
+      ? []
+      : [getFilteredExtrinsics(selectedFilter)[0].txId];
+
   return (
     <>
       <Scrollable $headerHeight={0}>
@@ -207,7 +212,7 @@ export const Action = () => {
                 <Accordion.Root
                   className="AccordionRoot"
                   type="multiple"
-                  defaultValue={[Array.from(extrinsics.keys())[0]]}
+                  defaultValue={getAccordionDefaultValue()}
                 >
                   {getFilteredExtrinsics(selectedFilter).map((info) => (
                     <Accordion.Item
