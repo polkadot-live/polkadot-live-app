@@ -45,6 +45,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import { getAddressChainId } from '../Utils';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -275,6 +276,16 @@ export const useMainMessagePorts = () => {
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
+
+    // Update account name in extrinsics window.
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:account:rename',
+      data: {
+        address,
+        chainId: getAddressChainId(address),
+        newName,
+      },
+    });
   };
 
   /**

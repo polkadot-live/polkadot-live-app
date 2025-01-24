@@ -4,12 +4,16 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
-import type { ActionMeta } from '@polkadot-live/types/tx';
 import BigNumber from 'bignumber.js';
+import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const useActionMessagePorts = () => {
-  /// Action window specific.
-  const { initTx, setTxDynamicInfo, updateTxStatus } = useTxMeta();
+  /**
+   * Action window specific.
+   */
+  const { initTx, setTxDynamicInfo, updateAccountName, updateTxStatus } =
+    useTxMeta();
 
   /**
    * @name handleInitAction
@@ -18,6 +22,21 @@ export const useActionMessagePorts = () => {
   const handleInitAction = (ev: MessageEvent) => {
     const data: ActionMeta = JSON.parse(ev.data.data);
     initTx(data);
+  };
+
+  /**
+   * @name handleAccountRename
+   * @summary Update extrinsics and address state to reflect an updated account name.
+   */
+  const handleAccountRename = (ev: MessageEvent) => {
+    interface Target {
+      address: string;
+      chainId: ChainID;
+      newName: string;
+    }
+
+    const { address, newName }: Target = ev.data.data;
+    updateAccountName(address, newName);
   };
 
   /**
@@ -74,6 +93,10 @@ export const useActionMessagePorts = () => {
             case 'action:tx:report:status': {
               console.log('> handle action:tx:report:status');
               handleSetTxStatus(ev);
+              break;
+            }
+            case 'action:account:rename': {
+              handleAccountRename(ev);
               break;
             }
             default: {
