@@ -162,6 +162,8 @@ export const API: PreloadAPI = {
    * Window lifecycle
    */
 
+  relayTask: (callback) => ipcRenderer.on('renderer:relay:task', callback),
+
   quitApp: async (): Promise<void> => {
     await ipcRenderer.invoke('app:quit');
   },
@@ -170,7 +172,8 @@ export const API: PreloadAPI = {
 
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
 
-  openWindow: async (id) => ipcRenderer.send(`${id}:open`),
+  openWindow: async (id, relayData) =>
+    ipcRenderer.send(`${id}:open`, relayData),
 
   minimizeWindow: (windowId: string) =>
     ipcRenderer.send('app:window:minimize', windowId),

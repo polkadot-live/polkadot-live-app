@@ -62,6 +62,50 @@ export const Home = () => {
   const [platform, setPlatform] = useState<string | null>(null);
 
   useEffect(() => {
+    // Listen for port task relays from main process.
+    window.myAPI.relayTask(
+      (
+        _: IpcRendererEvent,
+        windowId: string,
+        task: string,
+        serData: string
+      ) => {
+        switch (windowId) {
+          case 'action': {
+            ConfigRenderer.portToAction?.postMessage({
+              task,
+              data: serData,
+            });
+            break;
+          }
+          case 'import': {
+            ConfigRenderer.portToImport?.postMessage({
+              task,
+              data: serData,
+            });
+            break;
+          }
+          case 'openGov': {
+            ConfigRenderer.portToOpenGov?.postMessage({
+              task,
+              data: serData,
+            });
+            break;
+          }
+          case 'settings': {
+            ConfigRenderer.portToSettings?.postMessage({
+              task,
+              data: serData,
+            });
+            break;
+          }
+          default: {
+            return;
+          }
+        }
+      }
+    );
+
     // Listen for event callbacks.
     window.myAPI.reportNewEvent(
       (_: IpcRendererEvent, eventData: EventCallback) => {
