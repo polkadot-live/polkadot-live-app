@@ -22,6 +22,7 @@ import type {
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
+import { setStateWithRef } from '@w3ux/utils';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -48,6 +49,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Cache the addresses select box value.
    */
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const selectedFilterRef = useRef<string>('all');
 
   /**
    * Mechanism to update the extrinsics map when its reference is updated.
@@ -97,6 +99,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Initialize an extrinsic.
    */
   const initTx = (actionMeta: ActionMeta) => {
+    // Set selected account to the new transaction signer.
+    if (selectedFilterRef.current !== 'all') {
+      setStateWithRef(actionMeta.from, setSelectedFilter, selectedFilterRef);
+    }
+
     // Check if this extrinsic has already been initialized.
     const alreadyExists = Array.from(extrinsicsRef.current.values())
       .map((obj) => ({
@@ -125,8 +132,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       txId,
       txStatus: 'pending',
     };
-
     extrinsicsRef.current.set(txId, info);
+
     renderToast(
       'Extrinsic added.',
       `toast-${actionMeta.eventUid}-${actionMeta.action}`,
@@ -311,7 +318,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           prev.filter(({ address }) => address !== fromAddress)
         );
 
-        setSelectedFilter('all');
+        setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
 
       renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'error');
@@ -341,7 +348,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Update select filter and address info when filter changes.
    */
   const onFilterChange = (val: string) => {
-    setSelectedFilter(val);
+    setStateWithRef(val, setSelectedFilter, selectedFilterRef);
   };
 
   /**

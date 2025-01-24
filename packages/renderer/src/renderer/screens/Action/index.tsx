@@ -118,6 +118,7 @@ export const Action = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getAccordionDefaultValue = () =>
     Array.from(extrinsics.values()).length === 0
       ? []
@@ -239,7 +240,7 @@ export const Action = () => {
                 <Accordion.Root
                   className="AccordionRoot"
                   type="multiple"
-                  defaultValue={getAccordionDefaultValue()}
+                  defaultValue={[]}
                 >
                   {getFilteredExtrinsics(selectedFilter).map((info) => (
                     <Accordion.Item
