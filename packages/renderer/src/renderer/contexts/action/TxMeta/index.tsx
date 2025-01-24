@@ -279,20 +279,56 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Filter extrinsics base on signer's address.
+   * Filter extrinsics base on signer's address and sort alphabetically.
    */
   const getFilteredExtrinsics = () =>
     selectedFilter === 'all'
-      ? Array.from(extrinsics.values())
-      : Array.from(extrinsics.values()).filter(
-          ({ actionMeta: { from } }) => from === selectedFilter
-        );
+      ? Array.from(extrinsics.values()).sort((a, b) => {
+          const titleA = getHeaderTitle(a).toLowerCase();
+          const titleB = getHeaderTitle(b).toLowerCase();
+          return titleA.localeCompare(titleB);
+        })
+      : Array.from(extrinsics.values())
+          .filter(({ actionMeta: { from } }) => from === selectedFilter)
+          .sort((a, b) => {
+            const titleA = getHeaderTitle(a).toLowerCase();
+            const titleB = getHeaderTitle(b).toLowerCase();
+            return titleA.localeCompare(titleB);
+          });
 
   /**
    * Update select filter and address info when filter changes.
    */
   const onFilterChange = (val: string) => {
     setSelectedFilter(val);
+  };
+
+  /**
+   * Utility to get cartegory title.
+   */
+  const getCategoryTitle = (info: ExtrinsicInfo): string => {
+    switch (info.actionMeta.pallet) {
+      case 'nominationPools': {
+        return 'Nomination Pools';
+      }
+      default: {
+        return 'Unknown.';
+      }
+    }
+  };
+
+  /**
+   * Utility to get the accordion header title for an extrinsic.
+   */
+  const getHeaderTitle = (info: ExtrinsicInfo): string => {
+    switch (info.actionMeta.action) {
+      case 'nominationPools_pendingRewards_bond': {
+        return 'Compound Rewards';
+      }
+      case 'nominationPools_pendingRewards_withdraw': {
+        return 'Claim Rewards';
+      }
+    }
   };
 
   // Transaction state.
@@ -321,6 +357,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         addressesInfo,
         extrinsics,
         selectedFilter,
+        getCategoryTitle,
         getFilteredExtrinsics,
         getGenesisHash,
         getTxPayload,

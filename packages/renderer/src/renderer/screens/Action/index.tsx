@@ -32,10 +32,10 @@ import {
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
@@ -65,6 +65,7 @@ export const Action = () => {
     addressesInfo,
     extrinsics,
     selectedFilter,
+    getCategoryTitle,
     getFilteredExtrinsics,
     initTxDynamicInfo,
     onFilterChange,
@@ -100,18 +101,6 @@ export const Action = () => {
         return 'Finalized';
       default:
         return 'An Error Occured';
-    }
-  };
-
-  // TMP: Utility to get cartegory title.
-  const getCategoryTitle = (info: ExtrinsicInfo): string => {
-    switch (info.actionMeta.pallet) {
-      case 'nominationPools': {
-        return 'Nomination Pools';
-      }
-      default: {
-        return 'Unknown.';
-      }
     }
   };
 
