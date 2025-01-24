@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
+import { chainIcon } from '@ren/config/chains';
+import { Flip, toast } from 'react-toastify';
 import React, {
   createContext,
   useContext,
@@ -10,10 +12,12 @@ import React, {
   useState,
 } from 'react';
 import * as defaults from './defaults';
-import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ToastOptions } from 'react-toastify';
+import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
+  AddressInfo,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
   TxStatus,
@@ -36,11 +40,41 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [updateCache, setUpdateCache] = useState(false);
 
   /**
+   * Minimal account info to associate extrinsics with an address.
+   */
+  const [addressesInfo, setAddressesInfo] = useState<AddressInfo[]>([]);
+
+  /**
+   * Cache the addresses select box value.
+   */
+  const [selectedFilter, setSelectedFilter] = useState('all');
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
     if (updateCache) {
       setExtrinsics(extrinsicsRef.current);
+
+      // Rebuild addresses data.
+      const map = new Map<string, AddressInfo>();
+
+      for (const {
+        actionMeta: { accountName, from, chainId },
+      } of extrinsicsRef.current.values()) {
+        if (map.has(from)) {
+          continue;
+        }
+
+        map.set(from, {
+          accountName,
+          address: from,
+          ChainIcon: chainIcon(chainId),
+          chainId,
+        });
+      }
+
+      setAddressesInfo([...Array.from(map.values())]);
       setUpdateCache(false);
     }
   }, [updateCache]);
@@ -75,7 +109,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
     if (alreadyExists !== undefined) {
-      console.log('> txId already exists.');
+      renderToast(
+        'Extrinsic already added.',
+        `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+        'error'
+      );
+
       return;
     }
 
@@ -88,7 +127,40 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     extrinsicsRef.current.set(txId, info);
+    renderToast(
+      'Extrinsic added.',
+      `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+      'success'
+    );
+
     setUpdateCache(true);
+  };
+
+  /**
+   * Util for rendering a toast notification.
+   */
+  const renderToast = (
+    message: string,
+    toastId: string,
+    toastType: 'error' | 'success'
+  ) => {
+    const args: ToastOptions<unknown> = {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId,
+    };
+
+    toastType === 'success'
+      ? toast.success(message, args)
+      : toast.error(message, args);
   };
 
   /**
@@ -227,9 +299,76 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Removes an extrinsic from the collection from the collection
    */
-  const removeExtrinsic = (txUid: string) => {
+  const removeExtrinsic = (txUid: string, fromAddress: string) => {
     if (extrinsicsRef.current.delete(txUid)) {
+      // Remove address info if there are no more extrinsics for the address.
+      const found = Array.from(extrinsicsRef.current.values()).find(
+        ({ actionMeta: { from } }) => from === fromAddress
+      );
+
+      if (!found) {
+        setAddressesInfo((prev) =>
+          prev.filter(({ address }) => address !== fromAddress)
+        );
+
+        setSelectedFilter('all');
+      }
+
+      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'error');
       setUpdateCache(true);
+    }
+  };
+
+  /**
+   * Filter extrinsics base on signer's address and sort alphabetically.
+   */
+  const getFilteredExtrinsics = () =>
+    selectedFilter === 'all'
+      ? Array.from(extrinsics.values()).sort((a, b) => {
+          const titleA = getHeaderTitle(a).toLowerCase();
+          const titleB = getHeaderTitle(b).toLowerCase();
+          return titleA.localeCompare(titleB);
+        })
+      : Array.from(extrinsics.values())
+          .filter(({ actionMeta: { from } }) => from === selectedFilter)
+          .sort((a, b) => {
+            const titleA = getHeaderTitle(a).toLowerCase();
+            const titleB = getHeaderTitle(b).toLowerCase();
+            return titleA.localeCompare(titleB);
+          });
+
+  /**
+   * Update select filter and address info when filter changes.
+   */
+  const onFilterChange = (val: string) => {
+    setSelectedFilter(val);
+  };
+
+  /**
+   * Utility to get cartegory title.
+   */
+  const getCategoryTitle = (info: ExtrinsicInfo): string => {
+    switch (info.actionMeta.pallet) {
+      case 'nominationPools': {
+        return 'Nomination Pools';
+      }
+      default: {
+        return 'Unknown.';
+      }
+    }
+  };
+
+  /**
+   * Utility to get the accordion header title for an extrinsic.
+   */
+  const getHeaderTitle = (info: ExtrinsicInfo): string => {
+    switch (info.actionMeta.action) {
+      case 'nominationPools_pendingRewards_bond': {
+        return 'Compound Rewards';
+      }
+      case 'nominationPools_pendingRewards_withdraw': {
+        return 'Claim Rewards';
+      }
     }
   };
 
@@ -256,11 +395,16 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TxMetaContext.Provider
       value={{
+        addressesInfo,
         extrinsics,
+        selectedFilter,
+        getCategoryTitle,
+        getFilteredExtrinsics,
         getGenesisHash,
         getTxPayload,
         initTx,
         initTxDynamicInfo,
+        onFilterChange,
         setTxDynamicInfo,
         setTxSignature,
         submitTx,
