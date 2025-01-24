@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import {
   faAngleLeft,
@@ -128,19 +128,27 @@ export const Item = memo(function Item({ event }: ItemProps) {
    * Open action window and initialize with the event's tx data.
    */
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
-    window.myAPI.openWindow('action');
+    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
 
-    setTimeout(() => {
-      ConfigRenderer.portToAction?.postMessage({
+    if (!extrinsicsViewOpen) {
+      // Relay init task to extrinsics window after its DOM has loaded.
+      window.myAPI.openWindow('action', {
+        windowId: 'action',
         task: 'action:init',
-        data: JSON.stringify(txMeta),
+        serData: JSON.stringify(txMeta),
       });
 
       // Analytics.
       window.myAPI.umamiEvent('window-open-extrinsics', {
         action: `${event.category}-${btnLabel?.toLowerCase()}`,
       });
-    }, 1000);
+    } else {
+      // Send init task directly to extrinsics window if it's already open.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(txMeta),
+      });
+    }
   };
 
   return (

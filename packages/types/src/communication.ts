@@ -3,6 +3,12 @@
 
 import type { AnyData } from './misc';
 
+export interface RelayPortTask {
+  windowId: string;
+  task: string;
+  serData: string;
+}
+
 export interface TabData {
   id: number;
   label: string;
