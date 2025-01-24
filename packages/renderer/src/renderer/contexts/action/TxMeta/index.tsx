@@ -3,6 +3,7 @@
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { chainIcon } from '@ren/config/chains';
+import { Flip, toast } from 'react-toastify';
 import React, {
   createContext,
   useContext,
@@ -11,8 +12,9 @@ import React, {
   useState,
 } from 'react';
 import * as defaults from './defaults';
-import type { TxMetaContextInterface } from './types';
 import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ToastOptions } from 'react-toastify';
+import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
   AddressInfo,
@@ -107,7 +109,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
     if (alreadyExists !== undefined) {
-      console.log('> txId already exists.');
+      renderToast(
+        'Extrinsic already added.',
+        `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+        'error'
+      );
+
       return;
     }
 
@@ -120,7 +127,40 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     extrinsicsRef.current.set(txId, info);
+    renderToast(
+      'Extrinsic added.',
+      `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+      'success'
+    );
+
     setUpdateCache(true);
+  };
+
+  /**
+   * Util for rendering a toast notification.
+   */
+  const renderToast = (
+    message: string,
+    toastId: string,
+    toastType: 'error' | 'success'
+  ) => {
+    const args: ToastOptions<unknown> = {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId,
+    };
+
+    toastType === 'success'
+      ? toast.success(message, args)
+      : toast.error(message, args);
   };
 
   /**
@@ -274,6 +314,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setSelectedFilter('all');
       }
 
+      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'error');
       setUpdateCache(true);
     }
   };
