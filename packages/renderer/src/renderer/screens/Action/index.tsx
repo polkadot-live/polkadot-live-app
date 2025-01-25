@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../theme/variables';
 
-import { ActionItem, Tx } from '@polkadot-live/ui/components';
+import { ActionItem, Identicon, Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
@@ -22,7 +22,6 @@ import {
   faCircleDot,
   faObjectGroup,
   faSpinner,
-  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import {
@@ -30,7 +29,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from '@radix-ui/react-icons';
-import { useOverlay } from '@polkadot-live/ui/contexts';
+import { useOverlay, useTooltip } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
 import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
@@ -73,6 +72,7 @@ export const Action = () => {
     removeExtrinsic,
   } = useTxMeta();
   const { openOverlayWith } = useOverlay();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -263,10 +263,24 @@ export const Action = () => {
                           {ComponentFactory[info.actionMeta.action].title}
                           <span className="right">
                             <div className="stat">
-                              <FontAwesomeIcon
-                                icon={faUser}
-                                transform={'shrink-2'}
-                              />
+                              <div
+                                className="tooltip tooltip-trigger-element"
+                                data-tooltip-text={ellipsisFn(
+                                  info.actionMeta.from,
+                                  16
+                                )}
+                                onMouseMove={() =>
+                                  setTooltipTextAndOpen(
+                                    ellipsisFn(info.actionMeta.from, 16),
+                                    'top'
+                                  )
+                                }
+                              >
+                                <Identicon
+                                  value={info.actionMeta.from}
+                                  size={18}
+                                />
+                              </div>
                               {truncateString(info.actionMeta.accountName, 8)}
                             </div>
                             <div className="stat">
@@ -310,7 +324,35 @@ export const Action = () => {
                           {ComponentFactory[info.actionMeta.action].description}
                           <Tx
                             label={'Signer'}
-                            name={ellipsisFn(info.actionMeta.from)}
+                            TxSigner={
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.6rem',
+                                }}
+                              >
+                                <div
+                                  className="tooltip tooltip-trigger-element"
+                                  data-tooltip-text={ellipsisFn(
+                                    info.actionMeta.from,
+                                    16
+                                  )}
+                                  onMouseMove={() =>
+                                    setTooltipTextAndOpen(
+                                      ellipsisFn(info.actionMeta.from, 16),
+                                      'right'
+                                    )
+                                  }
+                                >
+                                  <Identicon
+                                    value={info.actionMeta.from}
+                                    size={18}
+                                  />
+                                </div>
+                                <span>{info.actionMeta.accountName}</span>
+                              </div>
+                            }
                             notEnoughFunds={false}
                             dangerMessage={'Danger message'}
                             estimatedFee={
