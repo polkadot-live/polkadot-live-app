@@ -15,7 +15,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEllipsis,
   faGlobe,
-  faHammer,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -30,7 +29,6 @@ import type { ExtrinsicDropdownMenuProps } from './types';
  */
 export const ExtrinsicDropdownMenu = ({
   isBuilt,
-  onBuild,
   onSign,
   onDelete,
 }: ExtrinsicDropdownMenuProps) => {
@@ -53,16 +51,6 @@ export const ExtrinsicDropdownMenu = ({
           avoidCollisions={false}
           sideOffset={5}
         >
-          <DropdownMenu.Item
-            className="DropdownMenuItem"
-            disabled={isBuilt}
-            onSelect={() => onBuild()}
-          >
-            <div className="LeftSlot">
-              <FontAwesomeIcon icon={faHammer} transform={'shrink-4'} />
-            </div>
-            <span>Build</span>
-          </DropdownMenu.Item>
           <DropdownMenu.Item
             className="DropdownMenuItem"
             disabled={!isBuilt}

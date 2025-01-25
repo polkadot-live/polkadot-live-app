@@ -67,7 +67,6 @@ export const Action = () => {
     selectedFilter,
     getCategoryTitle,
     getFilteredExtrinsics,
-    initTxDynamicInfo,
     onFilterChange,
     removeExtrinsic,
   } = useTxMeta();
@@ -302,7 +301,6 @@ export const Action = () => {
                         <div className="HeaderContentDropdownWrapper">
                           <ExtrinsicDropdownMenu
                             isBuilt={info.dynamicInfo !== undefined}
-                            onBuild={() => initTxDynamicInfo(info.txId)}
                             onDelete={() =>
                               removeExtrinsic(info.txId, info.actionMeta.from)
                             }
@@ -365,7 +363,10 @@ export const Action = () => {
                                 txId={info.txId}
                                 txBuilt={info.dynamicInfo !== undefined}
                                 submitting={info.submitting}
-                                valid={!info.submitting}
+                                valid={
+                                  !info.submitting &&
+                                  info.dynamicInfo !== undefined
+                                }
                                 from={info.actionMeta.from}
                               />
                             }

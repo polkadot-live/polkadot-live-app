@@ -144,7 +144,7 @@ export class ExtrinsicsController {
 
     try {
       // Build transaction.
-      const origin = 'ExtrinsicsController.new';
+      const origin = 'ExtrinsicsController.submit';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
       const tx = api.tx[pallet][method](...args);
 

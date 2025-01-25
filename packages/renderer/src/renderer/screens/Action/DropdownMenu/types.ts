@@ -3,7 +3,6 @@
 
 export interface ExtrinsicDropdownMenuProps {
   isBuilt: boolean;
-  onBuild: () => void;
   onSign: () => void;
   onDelete: () => void;
 }

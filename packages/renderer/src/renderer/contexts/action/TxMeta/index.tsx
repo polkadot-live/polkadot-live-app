@@ -134,40 +134,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     };
     extrinsicsRef.current.set(txId, info);
 
-    renderToast(
-      'Extrinsic added.',
-      `toast-${actionMeta.eventUid}-${actionMeta.action}`,
-      'success'
-    );
-
+    // Initialize tx in main renderer process.
+    initTxDynamicInfo(txId);
     setUpdateCache(true);
-  };
-
-  /**
-   * Util for rendering a toast notification.
-   */
-  const renderToast = (
-    message: string,
-    toastId: string,
-    toastType: 'error' | 'success'
-  ) => {
-    const args: ToastOptions<unknown> = {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId,
-    };
-
-    toastType === 'success'
-      ? toast.success(message, args)
-      : toast.error(message, args);
   };
 
   /**
@@ -205,6 +174,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       obj.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
+
+      // TODO: Stop loading spinner for tx.
+      renderToast(
+        'Extrinsic added.',
+        `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
+        'success'
+      );
     } catch (err) {
       console.log(err);
     }
@@ -409,6 +385,33 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         return 'Claim Rewards';
       }
     }
+  };
+
+  /**
+   * Util for rendering a toast notification.
+   */
+  const renderToast = (
+    message: string,
+    toastId: string,
+    toastType: 'error' | 'success'
+  ) => {
+    const args: ToastOptions<unknown> = {
+      position: 'top-center',
+      autoClose: 3000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      closeButton: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+      theme: 'dark',
+      transition: Flip,
+      toastId,
+    };
+
+    toastType === 'success'
+      ? toast.success(message, args)
+      : toast.error(message, args);
   };
 
   // Transaction state.
