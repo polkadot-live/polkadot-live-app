@@ -175,7 +175,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       obj.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
 
-      // TODO: Stop loading spinner for tx.
       renderToast(
         'Extrinsic added.',
         `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,

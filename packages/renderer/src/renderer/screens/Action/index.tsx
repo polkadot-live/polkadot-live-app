@@ -38,16 +38,6 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { TxStatus } from '@polkadot-live/types/tx';
 import { ScaleLoader } from 'react-spinners';
 
-/**
- <BarLoader
-    color={darkMode ? '#642763' : '#a772a6'}
-    width={'100%'}
-    height={2}
-    cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
-    speedMultiplier={0.75}
-  />
- */
-
 const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
   forwardedRef
