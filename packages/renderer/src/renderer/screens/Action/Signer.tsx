@@ -26,7 +26,7 @@ export const Signer = ({
           width={1.2}
           margin={2.75}
           speedMultiplier={0.8}
-          color="var(--text-dimmed)"
+          color="var(--text-color-secondary)"
         />
       )}
 

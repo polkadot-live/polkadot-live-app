@@ -274,10 +274,10 @@ export const Action = () => {
                             {info.dynamicInfo === undefined && (
                               <ScaleLoader
                                 height={15}
-                                width={1.2}
+                                width={1.5}
                                 margin={2.75}
                                 speedMultiplier={0.8}
-                                color="var(--text-dimmed)"
+                                color="var(--text-color-secondary)"
                               />
                             )}
                             <div className="stat">

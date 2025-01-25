@@ -125,6 +125,13 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Delete a cached extrinsic.
+   */
+  static deleteTx = (txId: string) => {
+    this.txPayloads.delete(txId);
+  };
+
+  /**
    * Handles sending a signed transaction.
    */
   static submit = async (info: ExtrinsicInfo) => {

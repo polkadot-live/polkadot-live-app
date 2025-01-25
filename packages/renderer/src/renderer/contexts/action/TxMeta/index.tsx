@@ -283,16 +283,24 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const removeExtrinsic = (txUid: string, fromAddress: string) => {
     if (extrinsicsRef.current.delete(txUid)) {
+      // Remove cached transaction in main process.
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:tx:delete',
+        data: { txId: txUid },
+      });
+
       // Remove address info if there are no more extrinsics for the address.
       const found = Array.from(extrinsicsRef.current.values()).find(
         ({ actionMeta: { from } }) => from === fromAddress
       );
 
       if (!found) {
+        // Update cached address state.
         setAddressesInfo((prev) =>
           prev.filter(({ address }) => address !== fromAddress)
         );
 
+        // Display all extrinsics.
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
 
