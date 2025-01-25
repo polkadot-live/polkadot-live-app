@@ -24,8 +24,8 @@ export interface TxProps {
   notEnoughFunds: boolean;
   // warning messgae.
   dangerMessage: string;
-  // estimated fee.
-  estimatedFee: string;
+  // for estimated fee.
+  EstimatedFee: ReactElement;
   // signing component.
   SignerComponent: ReactElement;
   // display for.
@@ -42,7 +42,7 @@ export const Tx = ({
   TxSigner,
   notEnoughFunds,
   dangerMessage,
-  estimatedFee,
+  EstimatedFee,
   SignerComponent,
   displayFor = 'default',
 }: TxProps) => (
@@ -80,7 +80,7 @@ export const Tx = ({
           />
           Estimated Fee
         </span>
-        <span>{estimatedFee}</span>
+        {EstimatedFee}
       </div>
       <section>{SignerComponent}</section>
     </div>

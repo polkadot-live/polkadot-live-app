@@ -135,6 +135,15 @@ export const Action = () => {
     }
   };
 
+  const truncateDecimalPlaces = (value: string, places = 4): string => {
+    const decimalIndex = value.indexOf('.');
+
+    return value.indexOf('.') === -1 ||
+      value.length - decimalIndex - 1 <= places
+      ? value
+      : value.slice(0, decimalIndex + (places + 1));
+  };
+
   return (
     <>
       <Scrollable $headerHeight={0} style={{ paddingTop: 0 }}>
@@ -363,10 +372,33 @@ export const Action = () => {
                             }
                             notEnoughFunds={false}
                             dangerMessage={'Danger message'}
-                            estimatedFee={
-                              info.dynamicInfo === undefined
-                                ? '-'
-                                : `${info.dynamicInfo?.estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
+                            EstimatedFee={
+                              info.dynamicInfo === undefined ? (
+                                <span>-</span>
+                              ) : (
+                                <div
+                                  className="tooltip tooltip-trigger-element"
+                                  style={{ cursor: 'default' }}
+                                  data-tooltip-text={`${ellipsisFn(
+                                    info.dynamicInfo?.estimatedFee,
+                                    16
+                                  )} ${chainCurrency(info.actionMeta.chainId)}`}
+                                  onMouseMove={() =>
+                                    setTooltipTextAndOpen(
+                                      `${
+                                        info.dynamicInfo?.estimatedFee ||
+                                        'error'
+                                      } ${chainCurrency(info.actionMeta.chainId)}`,
+                                      'top'
+                                    )
+                                  }
+                                >
+                                  {`${truncateDecimalPlaces(
+                                    info.dynamicInfo?.estimatedFee
+                                  )}
+                                  ${chainCurrency(info.actionMeta.chainId)}`}
+                                </div>
+                              )
                             }
                             SignerComponent={
                               <Signer
