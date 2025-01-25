@@ -5,23 +5,30 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import { SignOverlay } from './SignOverlay';
+import { ScaleLoader } from 'react-spinners';
 import type { SubmitProps } from './types';
 
 export const Signer = ({
   txId,
-  txBuilt,
   valid,
   from,
 }: SubmitProps & {
   from: string;
-  txBuilt: boolean;
   buttons?: React.ReactNode[];
 }) => {
   const { status: overlayStatus, openOverlayWith } = useOverlay();
 
   return (
     <div className="signer-container">
-      <p>{valid && txBuilt ? 'Ready to Submit' : 'Building Extrinsic'}</p>
+      {!valid && (
+        <ScaleLoader
+          height={15}
+          width={1.2}
+          margin={2.75}
+          speedMultiplier={0.8}
+          color="var(--text-dimmed)"
+        />
+      )}
 
       <ButtonSubmit
         text={overlayStatus !== 0 ? 'Signing' : 'Sign'}

@@ -36,6 +36,17 @@ import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import { ScaleLoader } from 'react-spinners';
+
+/**
+ <BarLoader
+    color={darkMode ? '#642763' : '#a772a6'}
+    width={'100%'}
+    height={2}
+    cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+    speedMultiplier={0.75}
+  />
+ */
 
 const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
@@ -261,6 +272,15 @@ export const Action = () => {
                           />
                           {ComponentFactory[info.actionMeta.action].title}
                           <span className="right">
+                            {info.dynamicInfo === undefined && (
+                              <ScaleLoader
+                                height={15}
+                                width={1.2}
+                                margin={2.75}
+                                speedMultiplier={0.8}
+                                color="var(--text-dimmed)"
+                              />
+                            )}
                             <div className="stat">
                               <div
                                 className="tooltip tooltip-trigger-element"
@@ -361,7 +381,6 @@ export const Action = () => {
                             SignerComponent={
                               <Signer
                                 txId={info.txId}
-                                txBuilt={info.dynamicInfo !== undefined}
                                 submitting={info.submitting}
                                 valid={
                                   !info.submitting &&
