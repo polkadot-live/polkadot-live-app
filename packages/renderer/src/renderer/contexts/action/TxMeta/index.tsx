@@ -297,7 +297,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
 
-      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'error');
+      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'success');
       setUpdateCache(true);
     }
   };
