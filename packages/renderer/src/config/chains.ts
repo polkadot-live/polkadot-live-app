@@ -103,13 +103,13 @@ export const ChainList = new Map<ChainID, Chain>([
       },
       endpoints: {
         rpcs: [
+          'wss://rpc-westend.luckyfriday.io',
           'wss://westend-rpc.polkadot.io',
           'wss://westend-rpc.dwellir.com',
           'wss://westend-rpc-tn.dwellir.com',
           'wss://rpc.ibp.network/westend',
           'wss://rpc.dotters.network/westend',
           'wss://westend-rpc.blockops.network/ws',
-          'wss://rpc-westend.luckyfriday.io',
           'wss://westend.public.curie.radiumblock.co/ws',
         ],
         lightClient: Sc.WellKnownChain.westend2,

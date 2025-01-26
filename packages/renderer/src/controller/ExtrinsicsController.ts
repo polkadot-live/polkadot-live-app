@@ -125,6 +125,13 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Delete a cached extrinsic.
+   */
+  static deleteTx = (txId: string) => {
+    this.txPayloads.delete(txId);
+  };
+
+  /**
    * Handles sending a signed transaction.
    */
   static submit = async (info: ExtrinsicInfo) => {
@@ -144,7 +151,7 @@ export class ExtrinsicsController {
 
     try {
       // Build transaction.
-      const origin = 'ExtrinsicsController.new';
+      const origin = 'ExtrinsicsController.submit';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
       const tx = api.tx[pallet][method](...args);
 

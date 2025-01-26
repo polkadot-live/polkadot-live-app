@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../theme/variables';
 
-import { ActionItem, Tx } from '@polkadot-live/ui/components';
+import { ActionItem, Identicon, Tx } from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
@@ -22,7 +22,6 @@ import {
   faCircleDot,
   faObjectGroup,
   faSpinner,
-  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import {
@@ -30,13 +29,14 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from '@radix-ui/react-icons';
-import { useOverlay } from '@polkadot-live/ui/contexts';
+import { useOverlay, useTooltip } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
 import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import { ScaleLoader } from 'react-spinners';
 
 const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
@@ -68,11 +68,11 @@ export const Action = () => {
     selectedFilter,
     getCategoryTitle,
     getFilteredExtrinsics,
-    initTxDynamicInfo,
     onFilterChange,
     removeExtrinsic,
   } = useTxMeta();
   const { openOverlayWith } = useOverlay();
+  const { setTooltipTextAndOpen } = useTooltip();
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -122,7 +122,7 @@ export const Action = () => {
   const getAccordionDefaultValue = () =>
     Array.from(extrinsics.values()).length === 0
       ? []
-      : [getFilteredExtrinsics(selectedFilter)[0].txId];
+      : [getFilteredExtrinsics()[0].txId];
 
   const truncateString = (target: string, maxLength: number) => {
     const targetLength = target.length;
@@ -133,6 +133,15 @@ export const Action = () => {
       const endSection = target.slice(targetLength - 4, targetLength);
       return `${truncated}...${endSection}`;
     }
+  };
+
+  const truncateDecimalPlaces = (value: string, places = 4): string => {
+    const decimalIndex = value.indexOf('.');
+
+    return value.indexOf('.') === -1 ||
+      value.length - decimalIndex - 1 <= places
+      ? value
+      : value.slice(0, decimalIndex + (places + 1));
   };
 
   return (
@@ -242,7 +251,7 @@ export const Action = () => {
                   type="multiple"
                   defaultValue={[]}
                 >
-                  {getFilteredExtrinsics(selectedFilter).map((info) => (
+                  {getFilteredExtrinsics().map((info) => (
                     <Accordion.Item
                       key={info.txId}
                       className="AccordionItem"
@@ -262,11 +271,34 @@ export const Action = () => {
                           />
                           {ComponentFactory[info.actionMeta.action].title}
                           <span className="right">
-                            <div className="stat">
-                              <FontAwesomeIcon
-                                icon={faUser}
-                                transform={'shrink-2'}
+                            {info.dynamicInfo === undefined && (
+                              <ScaleLoader
+                                height={15}
+                                width={1.5}
+                                margin={2.75}
+                                speedMultiplier={0.8}
+                                color="var(--text-color-secondary)"
                               />
+                            )}
+                            <div className="stat">
+                              <div
+                                className="tooltip tooltip-trigger-element"
+                                data-tooltip-text={ellipsisFn(
+                                  info.actionMeta.from,
+                                  16
+                                )}
+                                onMouseMove={() =>
+                                  setTooltipTextAndOpen(
+                                    ellipsisFn(info.actionMeta.from, 16),
+                                    'top'
+                                  )
+                                }
+                              >
+                                <Identicon
+                                  value={info.actionMeta.from}
+                                  size={18}
+                                />
+                              </div>
                               {truncateString(info.actionMeta.accountName, 8)}
                             </div>
                             <div className="stat">
@@ -288,7 +320,6 @@ export const Action = () => {
                         <div className="HeaderContentDropdownWrapper">
                           <ExtrinsicDropdownMenu
                             isBuilt={info.dynamicInfo !== undefined}
-                            onBuild={() => initTxDynamicInfo(info.txId)}
                             onDelete={() =>
                               removeExtrinsic(info.txId, info.actionMeta.from)
                             }
@@ -310,20 +341,73 @@ export const Action = () => {
                           {ComponentFactory[info.actionMeta.action].description}
                           <Tx
                             label={'Signer'}
-                            name={ellipsisFn(info.actionMeta.from)}
+                            TxSigner={
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.6rem',
+                                }}
+                              >
+                                <div
+                                  className="tooltip tooltip-trigger-element"
+                                  data-tooltip-text={ellipsisFn(
+                                    info.actionMeta.from,
+                                    16
+                                  )}
+                                  onMouseMove={() =>
+                                    setTooltipTextAndOpen(
+                                      ellipsisFn(info.actionMeta.from, 16),
+                                      'right'
+                                    )
+                                  }
+                                >
+                                  <Identicon
+                                    value={info.actionMeta.from}
+                                    size={18}
+                                  />
+                                </div>
+                                <span>{info.actionMeta.accountName}</span>
+                              </div>
+                            }
                             notEnoughFunds={false}
                             dangerMessage={'Danger message'}
-                            estimatedFee={
-                              info.dynamicInfo === undefined
-                                ? '-'
-                                : `${info.dynamicInfo?.estimatedFee} ${chainCurrency(info.actionMeta.chainId)}`
+                            EstimatedFee={
+                              info.dynamicInfo === undefined ? (
+                                <span>-</span>
+                              ) : (
+                                <div
+                                  className="tooltip tooltip-trigger-element"
+                                  style={{ cursor: 'default' }}
+                                  data-tooltip-text={`${ellipsisFn(
+                                    info.dynamicInfo?.estimatedFee,
+                                    16
+                                  )} ${chainCurrency(info.actionMeta.chainId)}`}
+                                  onMouseMove={() =>
+                                    setTooltipTextAndOpen(
+                                      `${
+                                        info.dynamicInfo?.estimatedFee ||
+                                        'error'
+                                      } ${chainCurrency(info.actionMeta.chainId)}`,
+                                      'top'
+                                    )
+                                  }
+                                >
+                                  {`${truncateDecimalPlaces(
+                                    info.dynamicInfo?.estimatedFee
+                                  )}
+                                  ${chainCurrency(info.actionMeta.chainId)}`}
+                                </div>
+                              )
                             }
                             SignerComponent={
                               <Signer
                                 txId={info.txId}
-                                txBuilt={info.dynamicInfo !== undefined}
                                 submitting={info.submitting}
-                                valid={!info.submitting}
+                                valid={
+                                  !info.submitting &&
+                                  info.dynamicInfo !== undefined
+                                }
                                 from={info.actionMeta.from}
                               />
                             }

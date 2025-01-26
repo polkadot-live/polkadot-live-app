@@ -308,6 +308,15 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleTxDelete
+   * @summary Delete a cached transaction.
+   */
+  const handleTxDelete = (ev: MessageEvent) => {
+    const { txId } = ev.data.data;
+    ExtrinsicsController.deleteTx(txId);
+  };
+
+  /**
    * @name handleGetTracks
    * @summary Use API to get a network's OpenGov tracks.
    */
@@ -648,6 +657,11 @@ export const useMainMessagePorts = () => {
             case 'renderer:tx:vault:submit': {
               console.log('> handle renderer:tx:vault:submit');
               handleTxVaultSubmit(ev);
+              break;
+            }
+            case 'renderer:tx:delete': {
+              console.log('> handle renderer:tx:delete');
+              handleTxDelete(ev);
               break;
             }
             default: {

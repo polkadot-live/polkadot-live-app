@@ -143,6 +143,8 @@ export const Item = memo(function Item({ event }: ItemProps) {
         action: `${event.category}-${btnLabel?.toLowerCase()}`,
       });
     } else {
+      window.myAPI.openWindow('action');
+
       // Send init task directly to extrinsics window if it's already open.
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:init',
