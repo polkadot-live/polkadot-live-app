@@ -122,7 +122,7 @@ export const Action = () => {
   const getAccordionDefaultValue = () =>
     Array.from(extrinsics.values()).length === 0
       ? []
-      : [getFilteredExtrinsics(selectedFilter)[0].txId];
+      : [getFilteredExtrinsics()[0].txId];
 
   const truncateString = (target: string, maxLength: number) => {
     const targetLength = target.length;
@@ -251,7 +251,7 @@ export const Action = () => {
                   type="multiple"
                   defaultValue={[]}
                 >
-                  {getFilteredExtrinsics(selectedFilter).map((info) => (
+                  {getFilteredExtrinsics().map((info) => (
                     <Accordion.Item
                       key={info.txId}
                       className="AccordionItem"

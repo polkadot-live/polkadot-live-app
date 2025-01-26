@@ -15,7 +15,7 @@ export interface TxMetaContextInterface {
   extrinsics: Map<string, ExtrinsicInfo>;
   selectedFilter: string;
   getCategoryTitle: (info: ExtrinsicInfo) => string;
-  getFilteredExtrinsics: (selectedFilter: string) => ExtrinsicInfo[];
+  getFilteredExtrinsics: () => ExtrinsicInfo[];
   getGenesisHash: (txUid: string) => AnyJson | null;
   getTxPayload: (txUid: string) => Uint8Array | null;
   initTx: (actionMeta: ActionMeta) => void;
