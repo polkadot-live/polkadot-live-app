@@ -49,7 +49,6 @@ export interface AddressInfo {
 
 export interface ExtrinsicDynamicInfo {
   accountNonce: BigNumber;
-  estimatedFee: string;
   genesisHash: Uint8Array;
   txPayload: Uint8Array;
   txSignature?: `0x${string}`;
@@ -58,6 +57,8 @@ export interface ExtrinsicDynamicInfo {
 export interface ExtrinsicInfo {
   // Data received from the extrinsic's associated event.
   actionMeta: ActionMeta;
+  // Estimated fee as a string.
+  estimatedFee?: string;
   // Unique identifier for the extrinsic.
   txId: string;
   // Status of transaction.
