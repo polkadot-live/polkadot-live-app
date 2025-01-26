@@ -23,6 +23,8 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
+import { SignOverlay } from '@app/screens/Action/SignOverlay';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -31,6 +33,8 @@ export const TxMetaContext = createContext<TxMetaContextInterface>(
 export const useTxMeta = () => useContext(TxMetaContext);
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
+  const { openOverlayWith } = useOverlay();
+
   /**
    * Collection of active extrinsics.
    */
@@ -138,8 +142,57 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     extrinsicsRef.current.set(txId, info);
 
     // Initialize tx in main renderer process.
-    initTxDynamicInfo(txId);
+    initEstimatedFee(txId);
     setUpdateCache(true);
+  };
+
+  /**
+   * Instructs the main renderer to calculate and return an extrinsic's
+   * estimated fee.
+   */
+  const initEstimatedFee = (txId: string) => {
+    try {
+      const info = extrinsics.get(txId);
+      if (!info) {
+        throw new Error('Error: Extrinsic not found.');
+      }
+
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:tx:init',
+        data: JSON.stringify(info),
+      });
+    } catch (err) {
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      console.log(err);
+    }
+  };
+
+  /**
+   * Sets an extrinsic's estimated fee received from the main renderer.
+   */
+  const setEstimatedFee = (txId: string, estimatedFee: string) => {
+    console.log(`> SET ESTIMATED FEE: ${estimatedFee}`);
+
+    try {
+      const obj = extrinsicsRef.current.get(txId);
+      if (!obj) {
+        throw new Error('Error: Extrinsic not found.');
+      }
+
+      obj.estimatedFee = estimatedFee;
+      setUpdateCache(true);
+
+      renderToast(
+        'Extrinsic added.',
+        `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
+        'success'
+      );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // Relay building extrinsic flag to app.
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    }
   };
 
   /**
@@ -152,12 +205,14 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('Error: Extrinsic not found.');
       }
 
+      // Relay building extrinsic flag to app.
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+
       ConfigAction.portAction.postMessage({
-        task: 'renderer:tx:init',
+        task: 'renderer:tx:build',
         data: JSON.stringify(info),
       });
     } catch (err) {
-      console.log('Warning: Action port not received yet: renderer:tx:init');
       console.log(err);
     }
   };
@@ -178,16 +233,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       obj.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
 
-      renderToast(
-        'Extrinsic added.',
-        `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
-        'success'
-      );
-
-      // Relay building extrinsic flag to app.
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      const { from } = obj.actionMeta;
+      openOverlayWith(<SignOverlay txId={txId} from={from} />, 'small', true);
     } catch (err) {
       console.log(err);
+    } finally {
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     }
   };
 
@@ -462,6 +513,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         initTx,
         initTxDynamicInfo,
         onFilterChange,
+        setEstimatedFee,
         setTxDynamicInfo,
         setTxSignature,
         submitTx,

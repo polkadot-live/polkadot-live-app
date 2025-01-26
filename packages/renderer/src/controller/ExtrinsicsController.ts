@@ -11,9 +11,14 @@ import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
+interface CachedExtrinsicData {
+  tx: AnyJson;
+  payload?: AnyJson;
+}
+
 // TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
-  private static txPayloads = new Map<string, AnyJson>();
+  private static txPayloads = new Map<string, CachedExtrinsicData>();
 
   /**
    * Instantiates a new tx based on the received extrinsic data.
@@ -22,7 +27,6 @@ export class ExtrinsicsController {
     try {
       const { txId } = info;
       const { chainId, from, pallet, method, args } = info.actionMeta;
-      const accountNonce = (await getAddressNonce(from, chainId)).toNumber();
 
       const origin = 'ExtrinsicsController.new';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
@@ -30,6 +34,7 @@ export class ExtrinsicsController {
 
       // Instantiate tx.
       const tx = api.tx[pallet][method](...args);
+      this.txPayloads.set(txId, { tx });
 
       // Get estimated tx fee.
       const { partialFee } = await tx.paymentInfo(from);
@@ -37,32 +42,48 @@ export class ExtrinsicsController {
       const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
       console.log(`📝 Estimated fee: ${estimatedFee}`);
 
-      // Generate payload.
-      const txPayload = await this.buildPayload(
-        tx,
-        chainId,
-        from,
-        accountNonce
-      );
-
-      // Add payload to map.
-      this.txPayloads.set(txId, txPayload);
-      console.log(`Send new extrinsic: ${txId}`);
-
       ConfigRenderer.portToAction?.postMessage({
-        task: 'action:tx:report:data',
-        data: {
-          accountNonce,
-          estimatedFee: estimatedFee.toString(),
-          genesisHash: txPayload.genesisHash.toU8a(),
-          txId,
-          txPayload: txPayload.toU8a(),
-        },
+        task: 'action:tx:setEstimatedFee',
+        data: { txId, estimatedFee: estimatedFee.toString() },
       });
     } catch (e) {
       console.log('Error:');
       console.log(e);
       // Send error to action window?
+    }
+  };
+
+  /**
+   * Build and cache a transaction payload and send it back to action window.
+   */
+  static build = async (info: ExtrinsicInfo) => {
+    try {
+      const { txId } = info;
+      const { chainId, from } = info.actionMeta;
+      const nonce = (await getAddressNonce(from, chainId)).toNumber();
+
+      // Generate payload.
+      const cached = this.txPayloads.get(txId);
+      if (cached === undefined) {
+        throw new Error('Error: Cached extrinsic data not found.');
+      }
+
+      // Build and cache payload.
+      const { tx } = cached;
+      const txPayload = await this.buildPayload(tx, chainId, from, nonce);
+      this.txPayloads.set(txId, { tx, payload: txPayload });
+
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:tx:report:data',
+        data: {
+          accountNonce: nonce,
+          genesisHash: txPayload.genesisHash.toU8a(),
+          txId,
+          txPayload: txPayload.toU8a(),
+        },
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -135,30 +156,27 @@ export class ExtrinsicsController {
    * Handles sending a signed transaction.
    */
   static submit = async (info: ExtrinsicInfo) => {
-    if (!info.dynamicInfo) {
-      // TODO: Throw error.
-      return;
-    }
-    if (!info.dynamicInfo.txSignature) {
-      // TODO: Throw error.
-      return;
-    }
-
     const { txId } = info;
     const { from, method, pallet, args, eventUid, chainId } = info.actionMeta;
-    const { txSignature } = info.dynamicInfo;
-    // TODO: Check nonce hasn't changed.
 
     try {
+      if (!info.dynamicInfo) {
+        throw new Error('Error: Extrinsic not built.');
+      }
+      if (!info.dynamicInfo.txSignature) {
+        throw new Error('Error: Extrinsic signature not found.');
+      }
+
       // Build transaction.
       const origin = 'ExtrinsicsController.submit';
       const { api } = await getApiInstanceOrThrow(chainId, origin);
       const tx = api.tx[pallet][method](...args);
 
       // Get cached payload.
-      const txPayload = this.txPayloads.get(txId)!;
+      const { payload: txPayload } = this.txPayloads.get(txId)!;
 
       // Add signature to transaction.
+      const { txSignature } = info.dynamicInfo;
       tx.addSignature(from, txSignature, txPayload.toU8a());
 
       const unsub = await tx.send(({ status }: AnyJson) => {
@@ -205,8 +223,6 @@ export class ExtrinsicsController {
       });
     } catch (e) {
       ExtrinsicsController.postTxStatus('error', txId, chainId, eventUid);
-
-      // TODO: Handle error.
       console.log(e);
     }
   };

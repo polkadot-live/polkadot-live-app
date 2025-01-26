@@ -298,6 +298,15 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name handleTxBuild
+   * @summary Build and cache an extrinsic payload.
+   */
+  const handleTxBuild = async (ev: MessageEvent) => {
+    const info: ExtrinsicInfo = JSON.parse(ev.data.data);
+    await ExtrinsicsController.build(info);
+  };
+
+  /**
    * @name handleTxVaultSubmit
    * @summary Set signature and submit transaction.
    */
@@ -650,8 +659,11 @@ export const useMainMessagePorts = () => {
           // Message received from `action`.
           switch (ev.data.task) {
             case 'renderer:tx:init': {
-              console.log('> handle renderer:tx:init');
               await handleActionTxInit(ev);
+              break;
+            }
+            case 'renderer:tx:build': {
+              await handleTxBuild(ev);
               break;
             }
             case 'renderer:tx:vault:submit': {

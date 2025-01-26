@@ -70,7 +70,7 @@ export const Action = () => {
   const { openOverlayWith } = useOverlay();
   const { setTooltipTextAndOpen } = useTooltip();
 
-  const { darkMode } = useConnections();
+  const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   // Reset data in the main extrinsics controller on unmount.
@@ -258,7 +258,7 @@ export const Action = () => {
                         />
                         {ComponentFactory[info.actionMeta.action].title}
                         <span className="right">
-                          {info.dynamicInfo === undefined && (
+                          {info.estimatedFee === undefined && (
                             <ScaleLoader
                               height={15}
                               width={1.5}
@@ -306,7 +306,7 @@ export const Action = () => {
                       </AccordionTrigger>
                       <div className="HeaderContentDropdownWrapper">
                         <ExtrinsicDropdownMenu
-                          isBuilt={info.dynamicInfo !== undefined}
+                          isBuilt={info.estimatedFee !== undefined}
                           onDelete={() =>
                             removeExtrinsic(info.txId, info.actionMeta.from)
                           }
@@ -360,28 +360,26 @@ export const Action = () => {
                           notEnoughFunds={false}
                           dangerMessage={'Danger message'}
                           EstimatedFee={
-                            info.dynamicInfo === undefined ? (
+                            info.estimatedFee === undefined ? (
                               <span>-</span>
                             ) : (
                               <div
                                 className="tooltip tooltip-trigger-element"
                                 style={{ cursor: 'default' }}
                                 data-tooltip-text={`${ellipsisFn(
-                                  info.dynamicInfo?.estimatedFee,
+                                  info.estimatedFee || '-',
                                   16
                                 )} ${chainCurrency(info.actionMeta.chainId)}`}
                                 onMouseMove={() =>
                                   setTooltipTextAndOpen(
                                     `${
-                                      info.dynamicInfo?.estimatedFee || 'error'
+                                      info.estimatedFee || 'error'
                                     } ${chainCurrency(info.actionMeta.chainId)}`,
                                     'top'
                                   )
                                 }
                               >
-                                {`${truncateDecimalPlaces(
-                                  info.dynamicInfo?.estimatedFee
-                                )}
+                                {`${truncateDecimalPlaces(info.estimatedFee || '-')}
                                   ${chainCurrency(info.actionMeta.chainId)}`}
                               </div>
                             )
@@ -391,10 +389,10 @@ export const Action = () => {
                               txId={info.txId}
                               submitting={info.submitting}
                               valid={
+                                !isBuildingExtrinsic &&
                                 !info.submitting &&
-                                info.dynamicInfo !== undefined
+                                info.estimatedFee !== undefined
                               }
-                              from={info.actionMeta.from}
                             />
                           }
                         />

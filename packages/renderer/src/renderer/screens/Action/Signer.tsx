@@ -4,19 +4,18 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { SignOverlay } from './SignOverlay';
 import { ScaleLoader } from 'react-spinners';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { SubmitProps } from './types';
 
 export const Signer = ({
   txId,
   valid,
-  from,
 }: SubmitProps & {
-  from: string;
   buttons?: React.ReactNode[];
 }) => {
-  const { status: overlayStatus, openOverlayWith } = useOverlay();
+  const { status: overlayStatus } = useOverlay();
+  const { initTxDynamicInfo } = useTxMeta();
 
   return (
     <div className="signer-container">
@@ -31,15 +30,11 @@ export const Signer = ({
       )}
 
       <ButtonSubmit
-        text={overlayStatus !== 0 ? 'Signing' : 'Sign'}
+        text="Sign"
         iconLeft={faSquarePen}
         iconTransform="grow-2"
         onClick={async () => {
-          openOverlayWith(
-            <SignOverlay txId={txId} from={from} />,
-            'small',
-            true
-          );
+          initTxDynamicInfo(txId);
         }}
         disabled={!valid}
         pulse={!(!valid || overlayStatus !== 0)}

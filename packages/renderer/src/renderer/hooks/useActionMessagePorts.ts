@@ -12,8 +12,13 @@ export const useActionMessagePorts = () => {
   /**
    * Action window specific.
    */
-  const { initTx, setTxDynamicInfo, updateAccountName, updateTxStatus } =
-    useTxMeta();
+  const {
+    initTx,
+    setEstimatedFee,
+    setTxDynamicInfo,
+    updateAccountName,
+    updateTxStatus,
+  } = useTxMeta();
 
   /**
    * @name handleInitAction
@@ -40,16 +45,28 @@ export const useActionMessagePorts = () => {
   };
 
   /**
+   * @name handleSetEstimatedFee
+   * @summary Set an extrinsic's estimated fee received from the main renderer.
+   */
+  const handleSetEstimatedFee = (ev: MessageEvent) => {
+    interface Target {
+      txId: string;
+      estimatedFee: string;
+    }
+
+    const { txId, estimatedFee }: Target = ev.data.data;
+    setEstimatedFee(txId, estimatedFee);
+  };
+
+  /**
    * @name handleTxReportData
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { accountNonce, estimatedFee, genesisHash, txId, txPayload } =
-      ev.data.data;
+    const { accountNonce, genesisHash, txId, txPayload } = ev.data.data;
 
     setTxDynamicInfo(txId, {
       accountNonce: new BigNumber(accountNonce),
-      estimatedFee,
       genesisHash,
       txPayload,
     });
@@ -97,6 +114,10 @@ export const useActionMessagePorts = () => {
             }
             case 'action:account:rename': {
               handleAccountRename(ev);
+              break;
+            }
+            case 'action:tx:setEstimatedFee': {
+              handleSetEstimatedFee(ev);
               break;
             }
             default: {
