@@ -4,7 +4,6 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { ScaleLoader } from 'react-spinners';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { SubmitProps } from './types';
 
@@ -19,16 +18,6 @@ export const Signer = ({
 
   return (
     <div className="signer-container">
-      {!valid && (
-        <ScaleLoader
-          height={15}
-          width={1.2}
-          margin={2.75}
-          speedMultiplier={0.8}
-          color="var(--text-color-secondary)"
-        />
-      )}
-
       <ButtonSubmit
         text="Sign"
         iconLeft={faSquarePen}

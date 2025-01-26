@@ -32,7 +32,7 @@ import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TxStatus } from '@polkadot-live/types/tx';
-import { ScaleLoader } from 'react-spinners';
+import { BarLoader } from 'react-spinners';
 
 const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
@@ -143,6 +143,15 @@ export const Action = () => {
   return (
     <>
       <Scrollable $headerHeight={0} style={{ paddingTop: 0 }}>
+        {isBuildingExtrinsic && (
+          <BarLoader
+            color={darkMode ? '#642763' : '#a772a6'}
+            width={'100%'}
+            height={2}
+            cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+            speedMultiplier={0.75}
+          />
+        )}
         <div
           style={{
             padding: '0.5rem 1rem 2rem',
@@ -258,15 +267,6 @@ export const Action = () => {
                         />
                         {ComponentFactory[info.actionMeta.action].title}
                         <span className="right">
-                          {info.estimatedFee === undefined && (
-                            <ScaleLoader
-                              height={15}
-                              width={1.5}
-                              margin={2.75}
-                              speedMultiplier={0.8}
-                              color="var(--text-color-secondary)"
-                            />
-                          )}
                           <div className="stat">
                             <div
                               className="tooltip tooltip-trigger-element"
