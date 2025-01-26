@@ -313,14 +313,16 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Filter extrinsics base on signer's address and sort alphabetically.
    */
   const getFilteredExtrinsics = () =>
-    selectedFilter === 'all'
+    selectedFilterRef.current === 'all'
       ? Array.from(extrinsics.values()).sort((a, b) => {
           const titleA = getHeaderTitle(a).toLowerCase();
           const titleB = getHeaderTitle(b).toLowerCase();
           return titleA.localeCompare(titleB);
         })
       : Array.from(extrinsics.values())
-          .filter(({ actionMeta: { from } }) => from === selectedFilter)
+          .filter(
+            ({ actionMeta: { from } }) => from === selectedFilterRef.current
+          )
           .sort((a, b) => {
             const titleA = getHeaderTitle(a).toLowerCase();
             const titleB = getHeaderTitle(b).toLowerCase();
