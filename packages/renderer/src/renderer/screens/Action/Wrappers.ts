@@ -13,7 +13,6 @@ export const FooterWrapper = styled.div`
 `;
 
 export const EmptyExtrinsicsWrapper = styled.div`
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,14 +21,16 @@ export const EmptyExtrinsicsWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    text-align: center;
+    text-align: left;
 
     svg {
       color: var(--text-color-secondary);
     }
     p {
-      color: var(--text-color-primary);
+      color: var(--text-color-secondary);
+      opacity: 0.8;
       font-size: 1.25rem;
+      text-align: left;
     }
   }
 `;

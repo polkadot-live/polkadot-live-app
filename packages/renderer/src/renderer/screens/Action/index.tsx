@@ -18,11 +18,7 @@ import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { AccordionContent, AccordionTrigger } from './Accordion';
 import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleDot,
-  faObjectGroup,
-  faSpinner,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleDot, faObjectGroup } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import {
   CheckIcon,
@@ -154,133 +150,192 @@ export const Action = () => {
               Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
           }}
         >
+          <ActionItem
+            text={'Account Filter'}
+            style={{
+              marginBottom: '1rem',
+              fontSize: '1.1rem',
+              color: 'var(--text-color-secondary)',
+            }}
+          />
+          <Select.Root
+            value={selectedFilter}
+            defaultValue="all"
+            onValueChange={onFilterChange}
+          >
+            <SelectTrigger
+              aria-label="Address Filter"
+              $theme={theme}
+              value={selectedFilter}
+            >
+              <Select.Value placeholder="All Accounts" />
+              <Select.Icon className="SelectIcon">
+                <ChevronDownIcon />
+              </Select.Icon>
+            </SelectTrigger>
+            <Select.Portal>
+              <SelectContent $theme={theme} position="popper" sideOffset={3}>
+                <Select.ScrollUpButton className="SelectScrollButton">
+                  <ChevronUpIcon />
+                </Select.ScrollUpButton>
+                <Select.Viewport className="SelectViewport">
+                  <Select.Group>
+                    <SelectItem key={'all-extrinsics'} value={'all'}>
+                      <div className="innerRow">
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            height: '2.25rem',
+                          }}
+                        >
+                          All Accounts
+                        </div>
+                      </div>
+                    </SelectItem>
+                    {addressesInfo.map(
+                      ({ accountName, address, ChainIcon }) => (
+                        <SelectItem key={address} value={address}>
+                          <div className="innerRow">
+                            <div>
+                              <ChainIcon width={'25px'} />
+                            </div>
+                            <div>{accountName}</div>
+                          </div>
+                        </SelectItem>
+                      )
+                    )}
+                  </Select.Group>
+                </Select.Viewport>
+                <Select.ScrollDownButton className="SelectScrollButton">
+                  <ChevronDownIcon />
+                </Select.ScrollDownButton>
+              </SelectContent>
+            </Select.Portal>
+          </Select.Root>
+
+          <ActionItem
+            text={'Manage Extrinsics'}
+            style={{
+              margin: '2.75rem 0 0.25rem',
+              fontSize: '1.1rem',
+              color: 'var(--text-color-secondary)',
+            }}
+          />
+
           {Array.from(extrinsics.keys()).length === 0 && (
             <EmptyExtrinsicsWrapper>
               <div>
-                <FontAwesomeIcon
-                  icon={faSpinner}
-                  style={{ fontSize: '7rem', opacity: '0.6' }}
-                />
                 <p>No extrinsics have been added yet.</p>
               </div>
             </EmptyExtrinsicsWrapper>
           )}
 
-          {Array.from(extrinsics.keys()).length !== 0 && (
-            <>
-              <ActionItem
-                text={'Account Filter'}
-                style={{
-                  marginBottom: '1rem',
-                  fontSize: '1.1rem',
-                  color: 'var(--text-color-secondary)',
-                }}
-              />
-              <Select.Root
-                value={selectedFilter}
-                defaultValue="all"
-                onValueChange={onFilterChange}
+          {Array.from(extrinsics.keys()).length > 0 && (
+            <AccordionWrapper>
+              <Accordion.Root
+                className="AccordionRoot"
+                type="multiple"
+                defaultValue={[]}
               >
-                <SelectTrigger
-                  aria-label="Address Filter"
-                  $theme={theme}
-                  value={selectedFilter}
-                >
-                  <Select.Value placeholder="All Accounts" />
-                  <Select.Icon className="SelectIcon">
-                    <ChevronDownIcon />
-                  </Select.Icon>
-                </SelectTrigger>
-                <Select.Portal>
-                  <SelectContent
-                    $theme={theme}
-                    position="popper"
-                    sideOffset={3}
+                {getFilteredExtrinsics().map((info) => (
+                  <Accordion.Item
+                    key={info.txId}
+                    className="AccordionItem"
+                    value={info.txId}
                   >
-                    <Select.ScrollUpButton className="SelectScrollButton">
-                      <ChevronUpIcon />
-                    </Select.ScrollUpButton>
-                    <Select.Viewport className="SelectViewport">
-                      <Select.Group>
-                        <SelectItem key={'all-extrinsics'} value={'all'}>
-                          <div className="innerRow">
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '2px',
+                        marginTop: '10px',
+                      }}
+                    >
+                      <AccordionTrigger>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        {ComponentFactory[info.actionMeta.action].title}
+                        <span className="right">
+                          {info.dynamicInfo === undefined && (
+                            <ScaleLoader
+                              height={15}
+                              width={1.5}
+                              margin={2.75}
+                              speedMultiplier={0.8}
+                              color="var(--text-color-secondary)"
+                            />
+                          )}
+                          <div className="stat">
+                            <div
+                              className="tooltip tooltip-trigger-element"
+                              data-tooltip-text={ellipsisFn(
+                                info.actionMeta.from,
+                                16
+                              )}
+                              onMouseMove={() =>
+                                setTooltipTextAndOpen(
+                                  ellipsisFn(info.actionMeta.from, 16),
+                                  'top'
+                                )
+                              }
+                            >
+                              <Identicon
+                                value={info.actionMeta.from}
+                                size={18}
+                              />
+                            </div>
+                            {truncateString(info.actionMeta.accountName, 8)}
+                          </div>
+                          <div className="stat">
+                            <FontAwesomeIcon
+                              icon={faObjectGroup}
+                              transform={'shrink-2'}
+                            />
+                            {getCategoryTitle(info)}
+                          </div>
+                          <div className="stat">
+                            <FontAwesomeIcon
+                              icon={faCircleDot}
+                              transform={'shrink-2'}
+                            />
+                            {getTxStatusTitle(info.txStatus)}
+                          </div>
+                        </span>
+                      </AccordionTrigger>
+                      <div className="HeaderContentDropdownWrapper">
+                        <ExtrinsicDropdownMenu
+                          isBuilt={info.dynamicInfo !== undefined}
+                          onDelete={() =>
+                            removeExtrinsic(info.txId, info.actionMeta.from)
+                          }
+                          onSign={() =>
+                            openOverlayWith(
+                              <SignOverlay
+                                txId={info.txId}
+                                from={info.actionMeta.from}
+                              />,
+                              'small',
+                              true
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <AccordionContent>
+                      <div>
+                        {ComponentFactory[info.actionMeta.action].description}
+                        <Tx
+                          label={'Signer'}
+                          TxSigner={
                             <div
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                height: '2.25rem',
+                                gap: '0.6rem',
                               }}
                             >
-                              All Accounts
-                            </div>
-                          </div>
-                        </SelectItem>
-                        {addressesInfo.map(
-                          ({ accountName, address, ChainIcon }) => (
-                            <SelectItem key={address} value={address}>
-                              <div className="innerRow">
-                                <div>
-                                  <ChainIcon width={'25px'} />
-                                </div>
-                                <div>{accountName}</div>
-                              </div>
-                            </SelectItem>
-                          )
-                        )}
-                      </Select.Group>
-                    </Select.Viewport>
-                    <Select.ScrollDownButton className="SelectScrollButton">
-                      <ChevronDownIcon />
-                    </Select.ScrollDownButton>
-                  </SelectContent>
-                </Select.Portal>
-              </Select.Root>
-
-              <ActionItem
-                text={'Manage Extrinsics'}
-                style={{
-                  margin: '2.75rem 0 0.25rem',
-                  fontSize: '1.1rem',
-                  color: 'var(--text-color-secondary)',
-                }}
-              />
-
-              <AccordionWrapper>
-                <Accordion.Root
-                  className="AccordionRoot"
-                  type="multiple"
-                  defaultValue={[]}
-                >
-                  {getFilteredExtrinsics().map((info) => (
-                    <Accordion.Item
-                      key={info.txId}
-                      className="AccordionItem"
-                      value={info.txId}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: '2px',
-                          marginTop: '10px',
-                        }}
-                      >
-                        <AccordionTrigger>
-                          <ChevronDownIcon
-                            className="AccordionChevron"
-                            aria-hidden
-                          />
-                          {ComponentFactory[info.actionMeta.action].title}
-                          <span className="right">
-                            {info.dynamicInfo === undefined && (
-                              <ScaleLoader
-                                height={15}
-                                width={1.5}
-                                margin={2.75}
-                                speedMultiplier={0.8}
-                                color="var(--text-color-secondary)"
-                              />
-                            )}
-                            <div className="stat">
                               <div
                                 className="tooltip tooltip-trigger-element"
                                 data-tooltip-text={ellipsisFn(
@@ -290,7 +345,7 @@ export const Action = () => {
                                 onMouseMove={() =>
                                   setTooltipTextAndOpen(
                                     ellipsisFn(info.actionMeta.from, 16),
-                                    'top'
+                                    'right'
                                   )
                                 }
                               >
@@ -299,126 +354,56 @@ export const Action = () => {
                                   size={18}
                                 />
                               </div>
-                              {truncateString(info.actionMeta.accountName, 8)}
+                              <span>{info.actionMeta.accountName}</span>
                             </div>
-                            <div className="stat">
-                              <FontAwesomeIcon
-                                icon={faObjectGroup}
-                                transform={'shrink-2'}
-                              />
-                              {getCategoryTitle(info)}
-                            </div>
-                            <div className="stat">
-                              <FontAwesomeIcon
-                                icon={faCircleDot}
-                                transform={'shrink-2'}
-                              />
-                              {getTxStatusTitle(info.txStatus)}
-                            </div>
-                          </span>
-                        </AccordionTrigger>
-                        <div className="HeaderContentDropdownWrapper">
-                          <ExtrinsicDropdownMenu
-                            isBuilt={info.dynamicInfo !== undefined}
-                            onDelete={() =>
-                              removeExtrinsic(info.txId, info.actionMeta.from)
-                            }
-                            onSign={() =>
-                              openOverlayWith(
-                                <SignOverlay
-                                  txId={info.txId}
-                                  from={info.actionMeta.from}
-                                />,
-                                'small',
-                                true
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                      <AccordionContent>
-                        <div>
-                          {ComponentFactory[info.actionMeta.action].description}
-                          <Tx
-                            label={'Signer'}
-                            TxSigner={
+                          }
+                          notEnoughFunds={false}
+                          dangerMessage={'Danger message'}
+                          EstimatedFee={
+                            info.dynamicInfo === undefined ? (
+                              <span>-</span>
+                            ) : (
                               <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '0.6rem',
-                                }}
-                              >
-                                <div
-                                  className="tooltip tooltip-trigger-element"
-                                  data-tooltip-text={ellipsisFn(
-                                    info.actionMeta.from,
-                                    16
-                                  )}
-                                  onMouseMove={() =>
-                                    setTooltipTextAndOpen(
-                                      ellipsisFn(info.actionMeta.from, 16),
-                                      'right'
-                                    )
-                                  }
-                                >
-                                  <Identicon
-                                    value={info.actionMeta.from}
-                                    size={18}
-                                  />
-                                </div>
-                                <span>{info.actionMeta.accountName}</span>
-                              </div>
-                            }
-                            notEnoughFunds={false}
-                            dangerMessage={'Danger message'}
-                            EstimatedFee={
-                              info.dynamicInfo === undefined ? (
-                                <span>-</span>
-                              ) : (
-                                <div
-                                  className="tooltip tooltip-trigger-element"
-                                  style={{ cursor: 'default' }}
-                                  data-tooltip-text={`${ellipsisFn(
-                                    info.dynamicInfo?.estimatedFee,
-                                    16
-                                  )} ${chainCurrency(info.actionMeta.chainId)}`}
-                                  onMouseMove={() =>
-                                    setTooltipTextAndOpen(
-                                      `${
-                                        info.dynamicInfo?.estimatedFee ||
-                                        'error'
-                                      } ${chainCurrency(info.actionMeta.chainId)}`,
-                                      'top'
-                                    )
-                                  }
-                                >
-                                  {`${truncateDecimalPlaces(
-                                    info.dynamicInfo?.estimatedFee
-                                  )}
-                                  ${chainCurrency(info.actionMeta.chainId)}`}
-                                </div>
-                              )
-                            }
-                            SignerComponent={
-                              <Signer
-                                txId={info.txId}
-                                submitting={info.submitting}
-                                valid={
-                                  !info.submitting &&
-                                  info.dynamicInfo !== undefined
+                                className="tooltip tooltip-trigger-element"
+                                style={{ cursor: 'default' }}
+                                data-tooltip-text={`${ellipsisFn(
+                                  info.dynamicInfo?.estimatedFee,
+                                  16
+                                )} ${chainCurrency(info.actionMeta.chainId)}`}
+                                onMouseMove={() =>
+                                  setTooltipTextAndOpen(
+                                    `${
+                                      info.dynamicInfo?.estimatedFee || 'error'
+                                    } ${chainCurrency(info.actionMeta.chainId)}`,
+                                    'top'
+                                  )
                                 }
-                                from={info.actionMeta.from}
-                              />
-                            }
-                          />
-                        </div>
-                      </AccordionContent>
-                    </Accordion.Item>
-                  ))}
-                </Accordion.Root>
-              </AccordionWrapper>
-            </>
+                              >
+                                {`${truncateDecimalPlaces(
+                                  info.dynamicInfo?.estimatedFee
+                                )}
+                                  ${chainCurrency(info.actionMeta.chainId)}`}
+                              </div>
+                            )
+                          }
+                          SignerComponent={
+                            <Signer
+                              txId={info.txId}
+                              submitting={info.submitting}
+                              valid={
+                                !info.submitting &&
+                                info.dynamicInfo !== undefined
+                              }
+                              from={info.actionMeta.from}
+                            />
+                          }
+                        />
+                      </div>
+                    </AccordionContent>
+                  </Accordion.Item>
+                ))}
+              </Accordion.Root>
+            </AccordionWrapper>
           )}
         </div>
       </Scrollable>
