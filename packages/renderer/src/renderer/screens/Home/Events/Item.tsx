@@ -39,7 +39,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
   const { isConnecting } = useBootstrapping();
-  const { getOnlineMode } = useConnections();
+  const { getOnlineMode, isBuildingExtrinsic } = useConnections();
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -128,6 +128,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
    * Open action window and initialize with the event's tx data.
    */
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
+    // Relay building extrinsic flag to app.
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+
     const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
 
     if (!extrinsicsViewOpen) {
@@ -274,6 +277,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                       return (
                         <ButtonMono
                           disabled={
+                            isBuildingExtrinsic ||
                             event.stale ||
                             !getOnlineMode() ||
                             (getOnlineMode() && isConnecting)

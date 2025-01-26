@@ -375,6 +375,11 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
         break;
       }
+      case 'isBuildingExtrinsic': {
+        ConfigMain.isBuildingExtrinsic = flag;
+        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        break;
+      }
       default: {
         break;
       }
@@ -391,6 +396,9 @@ app.whenReady().then(async () => {
       }
       case 'isOnlineMode': {
         return ConfigMain.onlineMode;
+      }
+      case 'isBuildingExtrinsic': {
+        return ConfigMain.isBuildingExtrinsic;
       }
       default: {
         return false;
