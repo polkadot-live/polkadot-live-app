@@ -116,6 +116,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
     if (alreadyExists !== undefined) {
+      // Relay building extrinsic flag to app.
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+
       renderToast(
         'Extrinsic already added.',
         `toast-${actionMeta.eventUid}-${actionMeta.action}`,
@@ -180,6 +183,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
         'success'
       );
+
+      // Relay building extrinsic flag to app.
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     } catch (err) {
       console.log(err);
     }

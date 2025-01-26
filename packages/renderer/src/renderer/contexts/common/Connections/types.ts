@@ -6,9 +6,11 @@ export interface ConnectionsContextInterface {
   isImporting: boolean;
   isOnlineMode: boolean;
   darkMode: boolean;
+  isBuildingExtrinsic: boolean;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOnlineMode: React.Dispatch<React.SetStateAction<boolean>>;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
   getOnlineMode: () => boolean;
+  setIsBuildingExtrinsic: React.Dispatch<React.SetStateAction<boolean>>;
 }

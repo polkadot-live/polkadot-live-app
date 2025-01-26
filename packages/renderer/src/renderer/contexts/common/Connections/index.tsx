@@ -37,6 +37,9 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
 
+  // Flag set to `true` when an extrinsic is getting built.
+  const [isBuildingExtrinsic, setIsBuildingExtrinsic] = useState(false);
+
   useEffect(() => {
     // Synchronize flags in store.
     const syncModeFlagsOnMount = async () => {
@@ -44,6 +47,9 @@ export const ConnectionsProvider = ({
       setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+      setIsBuildingExtrinsic(
+        await window.myAPI.getModeFlag('isBuildingExtrinsic')
+      );
     };
 
     // Listen for synching events.
@@ -69,6 +75,10 @@ export const ConnectionsProvider = ({
             setIsOnlineMode(flag);
             break;
           }
+          case 'isBuildingExtrinsic': {
+            setIsBuildingExtrinsic(flag);
+            break;
+          }
           default: {
             break;
           }
@@ -91,11 +101,13 @@ export const ConnectionsProvider = ({
         isConnected,
         isImporting,
         isOnlineMode,
+        isBuildingExtrinsic,
         getOnlineMode,
         setDarkMode,
         setIsConnected,
         setIsImporting,
         setIsOnlineMode,
+        setIsBuildingExtrinsic,
       }}
     >
       {children}

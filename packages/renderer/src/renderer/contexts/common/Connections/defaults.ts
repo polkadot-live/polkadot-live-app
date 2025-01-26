@@ -9,9 +9,11 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
   isImporting: false,
   isOnlineMode: false,
   darkMode: true,
+  isBuildingExtrinsic: false,
   setIsConnected: (b) => {},
   setIsImporting: (b) => {},
   setIsOnlineMode: (b) => {},
   setDarkMode: (b) => {},
   getOnlineMode: () => true,
+  setIsBuildingExtrinsic: (b) => {},
 };
