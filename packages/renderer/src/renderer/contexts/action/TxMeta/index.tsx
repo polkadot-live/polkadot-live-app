@@ -116,12 +116,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     // Check if this extrinsic has already been initialized.
     const alreadyExists = Array.from(extrinsicsRef.current.values())
       .map((obj) => ({
-        eventUid: obj.actionMeta.eventUid,
         action: obj.actionMeta.action,
+        from: obj.actionMeta.from,
+        txStatus: obj.txStatus,
       }))
       .find(
-        ({ eventUid, action }) =>
-          eventUid === actionMeta.eventUid && action === actionMeta.action
+        ({ action, from, txStatus }) =>
+          from === actionMeta.from &&
+          action === actionMeta.action &&
+          txStatus === 'pending'
       );
 
     if (alreadyExists !== undefined) {

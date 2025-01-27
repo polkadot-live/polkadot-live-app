@@ -3,6 +3,13 @@
 
 import type { AnyData } from './misc';
 
+export type SyncFlag =
+  | 'darkMode'
+  | 'isBuildingExtrinsic'
+  | 'isConnected'
+  | 'isImporting'
+  | 'isOnlineMode';
+
 export interface RelayPortTask {
   windowId: string;
   task: string;

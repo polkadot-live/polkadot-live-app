@@ -7,7 +7,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
-import type { IpcTask } from '@polkadot-live/types/communication';
+import type { IpcTask, SyncFlag } from '@polkadot-live/types/communication';
 
 if (!process.env.VITEST) {
   console.log(global.location.search);
@@ -195,12 +195,12 @@ export const API: PreloadAPI = {
    */
 
   // Returns a mode flag cached in the main process to the requesting renderer.
-  getModeFlag: async (modeId: string): Promise<boolean> =>
-    await ipcRenderer.invoke('app:modeFlag:get', modeId),
+  getModeFlag: async (syncId: SyncFlag): Promise<boolean> =>
+    await ipcRenderer.invoke('app:modeFlag:get', syncId),
 
   // Called when a mode flag changes in any renderer to broadcast it to every renderer.
-  relayModeFlag: (modeId: string, flag: boolean) =>
-    ipcRenderer.send('app:modeFlag:relay', modeId, flag),
+  relayModeFlag: (syncId: SyncFlag, flag: boolean) =>
+    ipcRenderer.send('app:modeFlag:relay', syncId, flag),
 
   // Callback provided in useModeFlagsSyncing hook to sync state between renderers.
   syncModeFlags: (callback) =>
