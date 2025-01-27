@@ -83,6 +83,7 @@ export class EventsController {
         // Persist new event to store.
         const { event: eventWithUid, wasPersisted } = this.persistEvent(event);
 
+        // TODO: Decouple showing notification from this function.
         // Show notification if event was added and notification data was received.
         if ((wasPersisted || isOneShot) && notification) {
           const { title, body, subtitle } = notification;
@@ -159,7 +160,17 @@ export class EventsController {
     wasPersisted: boolean;
   } {
     // Set event UID and persist if it's unique.
-    event.uid === '' && (event.uid = getUid());
+    if (event.uid === '') {
+      const uid = getUid();
+      event.uid = uid;
+
+      // Tx action also cache the event UID.
+      event.txActions = event.txActions.map((obj) => {
+        obj.txMeta.eventUid = uid;
+        return obj;
+      });
+    }
+
     const stored = this.getEventsFromStore();
     const { events, updated } = pushUniqueEvent(event, stored);
 

@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { EventItem } from './Wrappers';
 import {
   faAngleLeft,
@@ -17,20 +17,17 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@ren/utils/EventUtils';
 import { renderTimeAgo } from '@ren/utils/TextUtils';
-import { getAddressNonce } from '@ren/utils/AccountUtils';
-import { ellipsisFn, isValidHttpUrl } from '@w3ux/utils';
+import { ellipsisFn } from '@w3ux/utils';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
 import { useTooltip } from '@polkadot-live/ui/contexts';
-import type {
-  EventAccountData,
-  EventAction,
-} from '@polkadot-live/types/reporter';
-import type { ItemProps } from './types';
+import type { ActionMeta } from 'packages/types/src';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { EventAccountData } from '@polkadot-live/types/reporter';
+import type { ItemProps } from './types';
 import Governance from '@ren/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
@@ -42,11 +39,11 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
   const { isConnecting } = useBootstrapping();
-  const { getOnlineMode } = useConnections();
+  const { getOnlineMode, isBuildingExtrinsic } = useConnections();
   const { dismissEvent } = useEvents();
   const { setTooltipTextAndOpen } = useTooltip();
 
-  const { uid, title, subtitle, actions /*, data*/ } = event;
+  const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
 
   // Extract address from event.
   const address =
@@ -94,39 +91,28 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const showIconTooltip = () =>
     event.category !== 'openGov' && event.category !== 'debugging';
 
-  // Get primary actions that will always be rendered.
-  const getPrimaryActions = () =>
-    actions.filter(({ uri }) => !isValidHttpUrl(uri));
-
-  // Get secondary actions for rendering in actions menu.
-  const getSecondaryActions = () =>
-    actions.filter(({ uri }) => isValidHttpUrl(uri));
-
   // Flag to determine if primary actions exist for this event.
-  const hasPrimaryActions: boolean =
-    getPrimaryActions().length > 0 && source !== 'read-only';
-
-  const hasSecondaryActions: boolean = getSecondaryActions().length > 0;
+  const hasTxActions: boolean = txActions.length > 0 && source !== 'read-only';
+  const hasUriActions: boolean = uriActions.length > 0;
 
   // Variants for actions section.
   const actionsVariants = {
     openLeft: { height: 'auto', marginLeft: 0 },
     openRight: {
       height: 'auto',
-      marginLeft: hasPrimaryActions ? '-114%' : '-100%',
+      marginLeft: hasTxActions ? '-114%' : '-100%',
     },
     closedLeft: { height: 0, marginLeft: 0 },
     closedRight: {
       height: 0,
-      marginLeft: hasPrimaryActions ? '-114%' : '-100%',
+      marginLeft: hasUriActions ? '-114%' : '-100%',
     },
   };
 
   // Flag indicating if action buttons are showing.
-  const [showActions, setShowActions] = useState(hasPrimaryActions);
-
+  const [showActions, setShowActions] = useState(hasTxActions);
   const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
-    hasPrimaryActions ? 'left' : hasSecondaryActions ? 'right' : 'left'
+    hasTxActions ? 'left' : hasUriActions ? 'right' : 'left'
   );
 
   const getActionsVariant = () =>
@@ -141,23 +127,33 @@ export const Item = memo(function Item({ event }: ItemProps) {
   /**
    * Open action window and initialize with the event's tx data.
    */
-  const openActionWindow = async (action: EventAction, btnLabel: string) => {
-    window.myAPI.openWindow('action');
+  const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
+    // Relay building extrinsic flag to app.
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
 
-    // Set nonce.
-    if (action.txMeta) {
-      action.txMeta.nonce = await getAddressNonce(address, chainId);
+    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
+
+    if (!extrinsicsViewOpen) {
+      // Relay init task to extrinsics window after its DOM has loaded.
+      window.myAPI.openWindow('action', {
+        windowId: 'action',
+        task: 'action:init',
+        serData: JSON.stringify(txMeta),
+      });
+
+      // Analytics.
+      window.myAPI.umamiEvent('window-open-extrinsics', {
+        action: `${event.category}-${btnLabel?.toLowerCase()}`,
+      });
+    } else {
+      window.myAPI.openWindow('action');
+
+      // Send init task directly to extrinsics window if it's already open.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(txMeta),
+      });
     }
-
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:init',
-      data: JSON.stringify(action.txMeta),
-    });
-
-    // Analytics.
-    window.myAPI.umamiEvent('window-open-extrinsics', {
-      action: `${event.category}-${btnLabel?.toLowerCase()}`,
-    });
   };
 
   return (
@@ -206,7 +202,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
           </div>
 
           {/* Expand actions button */}
-          {hasSecondaryActions && (
+          {hasUriActions && (
             <div
               className="show-actions-btn"
               onClick={() => setShowActions(!showActions)}
@@ -251,7 +247,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
               </div>
             </section>
 
-            {actions.length > 0 && (
+            {(hasTxActions || hasUriActions) && (
               <motion.section
                 className="actions-wrapper"
                 initial={{ marginLeft: 0 }}
@@ -259,12 +255,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 variants={actionsVariants}
                 transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
               >
-                {/* Render primary actions */}
+                {/** Tx Actions */}
                 <div className="actions">
-                  {getPrimaryActions().map((action, i) => {
-                    const { text } = action;
-                    action.txMeta && (action.txMeta.eventUid = event.uid);
-
+                  {txActions.map(({ label, txMeta }, i) => {
                     if (source === 'ledger') {
                       return (
                         <div
@@ -277,28 +270,27 @@ export const Item = memo(function Item({ event }: ItemProps) {
                             )
                           }
                         >
-                          <ButtonMono disabled={true} text={text || ''} />
+                          <ButtonMono disabled={true} text={label} />
                         </div>
                       );
                     } else if (source !== 'read-only') {
                       return (
                         <ButtonMono
                           disabled={
+                            isBuildingExtrinsic ||
                             event.stale ||
                             !getOnlineMode() ||
                             (getOnlineMode() && isConnecting)
                           }
                           key={`action_${uid}_${i}`}
-                          text={text || ''}
-                          onClick={async () =>
-                            openActionWindow(action, text || 'unknown')
-                          }
+                          text={label}
+                          onClick={async () => openActionWindow(txMeta, label)}
                         />
                       );
                     }
                   })}
 
-                  {hasSecondaryActions && (
+                  {hasUriActions && (
                     <ButtonMonoInvert
                       text="Links"
                       iconRight={faAngleRight}
@@ -307,8 +299,10 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     />
                   )}
                 </div>
+
+                {/** URI Actions */}
                 <div className="actions">
-                  {hasPrimaryActions && (
+                  {hasTxActions && (
                     <ButtonMono
                       text=""
                       iconLeft={faAngleLeft}
@@ -317,25 +311,20 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     />
                   )}
 
-                  {getSecondaryActions().map((action, i) => {
-                    const { uri, text } = action;
-                    action.txMeta && (action.txMeta.eventUid = event.uid);
-
-                    return (
-                      <ButtonMonoInvert
-                        key={`action_${uid}_${i}`}
-                        text={text || ''}
-                        iconRight={faExternalLinkAlt}
-                        iconTransform="shrink-2"
-                        onClick={() => {
-                          window.myAPI.openBrowserURL(uri);
-                          window.myAPI.umamiEvent('link-open', {
-                            dest: text?.toLowerCase() || 'unknown',
-                          });
-                        }}
-                      />
-                    );
-                  })}
+                  {uriActions.map(({ uri, label }, i) => (
+                    <ButtonMonoInvert
+                      key={`action_${uid}_${i}`}
+                      text={label}
+                      iconRight={faExternalLinkAlt}
+                      iconTransform="shrink-2"
+                      onClick={() => {
+                        window.myAPI.openBrowserURL(uri);
+                        window.myAPI.umamiEvent('link-open', {
+                          dest: label.toLowerCase(),
+                        });
+                      }}
+                    />
+                  ))}
                 </div>
               </motion.section>
             )}

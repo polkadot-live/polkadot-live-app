@@ -19,13 +19,13 @@ export interface TxProps {
   // account type for the transaction signing.
   label: string;
   // account id
-  name: string;
+  TxSigner: ReactElement;
   // whether there is enough funds for the transaction.
   notEnoughFunds: boolean;
   // warning messgae.
   dangerMessage: string;
-  // estimated fee.
-  estimatedFee: string;
+  // for estimated fee.
+  EstimatedFee: ReactElement;
   // signing component.
   SignerComponent: ReactElement;
   // display for.
@@ -39,10 +39,10 @@ export interface TxProps {
 export const Tx = ({
   margin,
   label,
-  name,
+  TxSigner,
   notEnoughFunds,
   dangerMessage,
-  estimatedFee,
+  EstimatedFee,
   SignerComponent,
   displayFor = 'default',
 }: TxProps) => (
@@ -58,7 +58,7 @@ export const Tx = ({
           {label}
         </span>
 
-        <span>{name}</span>
+        <span>{TxSigner}</span>
 
         {notEnoughFunds && (
           <span className="not-enough">
@@ -80,7 +80,7 @@ export const Tx = ({
           />
           Estimated Fee
         </span>
-        <span>{estimatedFee}</span>
+        {EstimatedFee}
       </div>
       <section>{SignerComponent}</section>
     </div>

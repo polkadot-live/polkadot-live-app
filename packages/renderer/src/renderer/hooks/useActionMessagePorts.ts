@@ -4,27 +4,58 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
+import BigNumber from 'bignumber.js';
 import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const useActionMessagePorts = () => {
-  /// Action window specific.
+  /**
+   * Action window specific.
+   */
   const {
-    setActionMeta,
+    initTx,
     setEstimatedFee,
-    setTxId,
-    setTxPayload,
-    setGenesisHash,
-    setTxStatus,
+    setTxDynamicInfo,
+    updateAccountName,
+    updateTxStatus,
   } = useTxMeta();
 
   /**
    * @name handleInitAction
-   * @summary Set initial state for the action window.
+   * @summary Receives an event's action metadata and instantiates a new extrinsic structure.
    */
   const handleInitAction = (ev: MessageEvent) => {
     const data: ActionMeta = JSON.parse(ev.data.data);
-    console.log(data);
-    setActionMeta(data);
+    initTx(data);
+  };
+
+  /**
+   * @name handleAccountRename
+   * @summary Update extrinsics and address state to reflect an updated account name.
+   */
+  const handleAccountRename = (ev: MessageEvent) => {
+    interface Target {
+      address: string;
+      chainId: ChainID;
+      newName: string;
+    }
+
+    const { address, newName }: Target = ev.data.data;
+    updateAccountName(address, newName);
+  };
+
+  /**
+   * @name handleSetEstimatedFee
+   * @summary Set an extrinsic's estimated fee received from the main renderer.
+   */
+  const handleSetEstimatedFee = (ev: MessageEvent) => {
+    interface Target {
+      txId: string;
+      estimatedFee: string;
+    }
+
+    const { txId, estimatedFee }: Target = ev.data.data;
+    setEstimatedFee(txId, estimatedFee);
   };
 
   /**
@@ -32,22 +63,24 @@ export const useActionMessagePorts = () => {
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { estimatedFee, txId, payload, genesisHash } = ev.data.data;
+    const { accountNonce, genesisHash, txId, txPayload } = ev.data.data;
 
-    setEstimatedFee(estimatedFee);
-    setTxId(txId);
-    setTxPayload(txId, payload);
-    setGenesisHash(genesisHash);
+    setTxDynamicInfo(txId, {
+      accountNonce: new BigNumber(accountNonce),
+      genesisHash,
+      txPayload,
+    });
+
+    console.log(`> Dynamic info and nonce set (${accountNonce})`);
   };
 
   /**
    * @name handleSetTxStatus
-   * @summary Update the transaction status.
+   * @summary Update the status for a transaction.
    */
   const handleSetTxStatus = (ev: MessageEvent) => {
-    const { status } = ev.data.data;
-
-    setTxStatus(status);
+    const { txId, status } = ev.data.data;
+    updateTxStatus(txId, status);
   };
 
   /**
@@ -65,18 +98,23 @@ export const useActionMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'action:init': {
-              console.log('> handle action:init');
               handleInitAction(ev);
               break;
             }
             case 'action:tx:report:data': {
-              console.log('> handle action:tx:report:data');
               handleTxReportData(ev);
               break;
             }
             case 'action:tx:report:status': {
-              console.log('> handle action:tx:report:status');
               handleSetTxStatus(ev);
+              break;
+            }
+            case 'action:account:rename': {
+              handleAccountRename(ev);
+              break;
+            }
+            case 'action:tx:setEstimatedFee': {
+              handleSetEstimatedFee(ev);
               break;
             }
             default: {

@@ -4,31 +4,40 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { SignOverlay } from './SignOverlay';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { SubmitProps } from './types';
 
 export const Signer = ({
+  info,
   valid,
-  from,
 }: SubmitProps & {
-  from: string;
   buttons?: React.ReactNode[];
 }) => {
-  const { status: overlayStatus, openOverlayWith } = useOverlay();
+  const { getOnlineMode } = useConnections();
+  const { status: overlayStatus } = useOverlay();
+  const { initTxDynamicInfo } = useTxMeta();
+
+  const enablePulse = () => {
+    const cond1 = !(!valid || overlayStatus !== 0);
+    const cond2 = info.txStatus === 'pending';
+    return cond1 && cond2;
+  };
+
+  const getButtonText = () =>
+    info.txStatus === 'finalized' ? 'Submitted' : 'Sign';
 
   return (
     <div className="signer-container">
-      <p>{valid ? 'Ready to Submit' : '...'}</p>
-
       <ButtonSubmit
-        text={overlayStatus !== 0 ? 'Signing' : 'Sign'}
+        text={getButtonText()}
         iconLeft={faSquarePen}
         iconTransform="grow-2"
         onClick={async () => {
-          openOverlayWith(<SignOverlay from={from} />, 'small', true);
+          initTxDynamicInfo(info.txId);
         }}
-        disabled={!valid}
-        pulse={!(!valid || overlayStatus !== 0)}
+        disabled={!valid || info.txStatus !== 'pending' || !getOnlineMode()}
+        pulse={enablePulse()}
       />
     </div>
   );

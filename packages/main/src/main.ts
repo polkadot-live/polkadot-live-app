@@ -34,7 +34,7 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { IpcTask } from '@polkadot-live/types/communication';
+import type { IpcTask, SyncFlag } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from 'packages/types/src';
 
@@ -342,8 +342,8 @@ app.whenReady().then(async () => {
     SettingsController.getAppSettings()
   );
 
-  ipcMain.on('app:modeFlag:relay', (_, modeId: string, flag: boolean) => {
-    switch (modeId) {
+  ipcMain.on('app:modeFlag:relay', (_, syncId: SyncFlag, flag: boolean) => {
+    switch (syncId) {
       case 'darkMode': {
         // Persist new flag to store.
         SettingsController.process({
@@ -358,21 +358,26 @@ app.whenReady().then(async () => {
         );
 
         // Relay to renderers.
-        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isConnected': {
-        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isImporting': {
         ConfigMain.importingData = flag;
-        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isOnlineMode': {
         ConfigMain.onlineMode = flag;
-        WindowsController.relayIpc('renderer:modeFlag:set', { modeId, flag });
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
+        break;
+      }
+      case 'isBuildingExtrinsic': {
+        ConfigMain.isBuildingExtrinsic = flag;
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       default: {
@@ -381,8 +386,8 @@ app.whenReady().then(async () => {
     }
   });
 
-  ipcMain.handle('app:modeFlag:get', async (_, modeId: string) => {
-    switch (modeId) {
+  ipcMain.handle('app:modeFlag:get', async (_, syncId: SyncFlag) => {
+    switch (syncId) {
       case 'isConnected': {
         return OnlineStatusController.getStatus();
       }
@@ -391,6 +396,9 @@ app.whenReady().then(async () => {
       }
       case 'isOnlineMode': {
         return ConfigMain.onlineMode;
+      }
+      case 'isBuildingExtrinsic': {
+        return ConfigMain.isBuildingExtrinsic;
       }
       default: {
         return false;

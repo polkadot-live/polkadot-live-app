@@ -2,31 +2,36 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
-import type BigNumber from 'bignumber.js';
+import type {
+  ActionMeta,
+  AddressInfo,
+  ExtrinsicDynamicInfo,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 
 export interface TxMetaContextInterface {
-  txFees: BigNumber;
-  notEnoughFunds: boolean;
-  setTxFees: (f: BigNumber) => void;
-  resetTxFees: () => void;
-  sender: string | null;
-  setSender: (s: string | null) => void;
-  txFeesValid: boolean;
-  getTxPayload: () => AnyJson;
-  setTxPayload: (u: number, s: AnyJson) => void;
-  getGenesisHash: () => AnyJson;
-  setGenesisHash: (h: AnyJson) => void;
-  resetTxPayloads: () => void;
-  getTxSignature: () => AnyJson;
-  setTxSignature: (s: AnyJson) => void;
+  addressesInfo: AddressInfo[];
+  extrinsics: Map<string, ExtrinsicInfo>;
+  selectedFilter: string;
+  showMockUI: boolean;
+  getCategoryTitle: (info: ExtrinsicInfo) => string;
+  getFilteredExtrinsics: () => ExtrinsicInfo[];
+  getGenesisHash: (txUid: string) => AnyJson | null;
+  getTxPayload: (txUid: string) => Uint8Array | null;
+  initTx: (actionMeta: ActionMeta) => void;
+  initTxDynamicInfo: (txId: string) => void;
+  onFilterChange: (val: string) => void;
+  setEstimatedFee: (txId: string, estimatedFee: string) => void;
+  setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
+  setTxSignature: (txId: string, s: AnyJson) => void;
+  submitTx: (txId: string) => void;
+  submitMockTx: (txId: string) => void;
+  updateAccountName: (address: string, newName: string) => void;
+  updateTxStatus: (txId: string, txStatus: TxStatus) => void;
+  removeExtrinsic: (txId: string, fromAddress: string) => void;
 
-  actionMeta: ActionMeta | null;
-  setActionMeta: (m: ActionMeta | null) => void;
-  estimatedFee: string;
-  setEstimatedFee: (n: string) => void;
-  txId: number;
-  setTxId: (n: number) => void;
-  txStatus: TxStatus;
-  setTxStatus: (s: TxStatus) => void;
+  //notEnoughFunds: boolean;
+  //resetTxFees: () => void;
+  //txFeesValid: boolean;
 }

@@ -40,6 +40,7 @@ export class Config {
   private static _exportingData = false;
   private static _importingData = false;
   private static _onlineMode = false;
+  private static _isBuildingExtrinsic = false;
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -185,6 +186,14 @@ export class Config {
 
   static set onlineMode(flag: boolean) {
     Config._onlineMode = flag;
+  }
+
+  static get isBuildingExtrinsic(): boolean {
+    return Config._isBuildingExtrinsic;
+  }
+
+  static set isBuildingExtrinsic(flag: boolean) {
+    Config._isBuildingExtrinsic = flag;
   }
 
   // Setter for app's tray object.

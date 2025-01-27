@@ -4,7 +4,12 @@
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
-import type { IpcTask, TabData } from './communication';
+import type {
+  IpcTask,
+  RelayPortTask,
+  SyncFlag,
+  TabData,
+} from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
@@ -46,7 +51,17 @@ export interface PreloadAPI {
 
   showNotification: ApiShowNotification;
 
-  openWindow: (id: string) => void;
+  relayTask: (
+    callback: (
+      _: IpcRendererEvent,
+      windowId: string,
+      task: string,
+      serData: string
+    ) => void
+  ) => Electron.IpcRenderer;
+
+  openWindow: (id: string, relayData?: RelayPortTask) => Promise<void>;
+
   openDevTools: (windowId: string) => void;
   restoreWindow: (windowId: string) => void;
   minimizeWindow: (windowId: string) => void;
@@ -54,14 +69,14 @@ export interface PreloadAPI {
   closeWindow: ApiCloseWindow;
   quitApp: ApiEmptyPromiseRequest;
 
-  getModeFlag: (modeId: string) => Promise<boolean>;
+  getModeFlag: (syncId: SyncFlag) => Promise<boolean>;
   syncModeFlags: (
     callback: (
       _: IpcRendererEvent,
-      data: { modeId: string; flag: boolean }
+      data: { syncId: SyncFlag; flag: boolean }
     ) => void
   ) => void;
-  relayModeFlag: (modeId: string, flag: boolean) => void;
+  relayModeFlag: (syncId: SyncFlag, flag: boolean) => void;
 
   handleOpenTab: (
     callback: (_: IpcRendererEvent, tabData: TabData) => void

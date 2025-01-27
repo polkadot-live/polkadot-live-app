@@ -5,6 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
+import type { SyncFlag } from '@polkadot-live/types/communication';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -37,6 +38,9 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
 
+  // Flag set to `true` when an extrinsic is getting built.
+  const [isBuildingExtrinsic, setIsBuildingExtrinsic] = useState(false);
+
   useEffect(() => {
     // Synchronize flags in store.
     const syncModeFlagsOnMount = async () => {
@@ -44,15 +48,18 @@ export const ConnectionsProvider = ({
       setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+      setIsBuildingExtrinsic(
+        await window.myAPI.getModeFlag('isBuildingExtrinsic')
+      );
     };
 
     // Listen for synching events.
     window.myAPI.syncModeFlags(
       (
         _: IpcRendererEvent,
-        { modeId, flag }: { modeId: string; flag: boolean }
+        { syncId, flag }: { syncId: SyncFlag; flag: boolean }
       ) => {
-        switch (modeId) {
+        switch (syncId) {
           case 'darkMode': {
             setDarkMode(flag);
             break;
@@ -67,6 +74,10 @@ export const ConnectionsProvider = ({
           }
           case 'isOnlineMode': {
             setIsOnlineMode(flag);
+            break;
+          }
+          case 'isBuildingExtrinsic': {
+            setIsBuildingExtrinsic(flag);
             break;
           }
           default: {
@@ -91,11 +102,13 @@ export const ConnectionsProvider = ({
         isConnected,
         isImporting,
         isOnlineMode,
+        isBuildingExtrinsic,
         getOnlineMode,
         setDarkMode,
         setIsConnected,
         setIsImporting,
         setIsOnlineMode,
+        setIsBuildingExtrinsic,
       }}
     >
       {children}

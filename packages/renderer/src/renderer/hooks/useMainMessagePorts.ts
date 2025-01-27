@@ -40,10 +40,12 @@ import { useDataBackup } from '@app/contexts/main/DataBackup';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import { getAddressChainId } from '../Utils';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -274,6 +276,16 @@ export const useMainMessagePorts = () => {
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
+
+    // Update account name in extrinsics window.
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:account:rename',
+      data: {
+        address,
+        chainId: getAddressChainId(address),
+        newName,
+      },
+    });
   };
 
   /**
@@ -281,18 +293,17 @@ export const useMainMessagePorts = () => {
    * @summary Initialize extrinsics controller with tx data.
    */
   const handleActionTxInit = async (ev: MessageEvent) => {
-    const { chainId, from, nonce, pallet, method, args, eventUid } =
-      ev.data.data;
+    const info: ExtrinsicInfo = JSON.parse(ev.data.data);
+    await ExtrinsicsController.new(info);
+  };
 
-    await ExtrinsicsController.new(
-      chainId,
-      from,
-      nonce,
-      pallet,
-      method,
-      args,
-      eventUid
-    );
+  /**
+   * @name handleTxBuild
+   * @summary Build and cache an extrinsic payload.
+   */
+  const handleTxBuild = async (ev: MessageEvent) => {
+    const info: ExtrinsicInfo = JSON.parse(ev.data.data);
+    await ExtrinsicsController.build(info);
   };
 
   /**
@@ -300,10 +311,27 @@ export const useMainMessagePorts = () => {
    * @summary Set signature and submit transaction.
    */
   const handleTxVaultSubmit = (ev: MessageEvent) => {
-    const { signature } = ev.data.data;
+    const { info: serialized } = ev.data.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    ExtrinsicsController.submit(info);
+  };
+  /**
+   * @name handleTxMockSubmit
+   * @summary Mock an extrinsic submission for UI testing.
+   */
+  const handleTxMockSubmit = (ev: MessageEvent) => {
+    const { info: serialized } = ev.data.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    ExtrinsicsController.mockSubmit(info);
+  };
 
-    ExtrinsicsController.setSignature(signature);
-    ExtrinsicsController.submit();
+  /**
+   * @name handleTxDelete
+   * @summary Delete a cached transaction.
+   */
+  const handleTxDelete = (ev: MessageEvent) => {
+    const { txId } = ev.data.data;
+    ExtrinsicsController.deleteTx(txId);
   };
 
   /**
@@ -640,8 +668,15 @@ export const useMainMessagePorts = () => {
           // Message received from `action`.
           switch (ev.data.task) {
             case 'renderer:tx:init': {
-              console.log('> handle renderer:tx:init');
               await handleActionTxInit(ev);
+              break;
+            }
+            case 'renderer:tx:build': {
+              await handleTxBuild(ev);
+              break;
+            }
+            case 'renderer:tx:mock:submit': {
+              handleTxMockSubmit(ev);
               break;
             }
             case 'renderer:tx:vault:submit': {
@@ -649,9 +684,9 @@ export const useMainMessagePorts = () => {
               handleTxVaultSubmit(ev);
               break;
             }
-            case 'renderer:tx:reset': {
-              console.log('> handle renderer:tx:reset');
-              ExtrinsicsController.reset();
+            case 'renderer:tx:delete': {
+              console.log('> handle renderer:tx:delete');
+              handleTxDelete(ev);
               break;
             }
             default: {

@@ -12,13 +12,15 @@ export type TxStatus =
   | 'finalized'
   | 'error';
 
+export type TxActionUid =
+  | 'nominationPools_pendingRewards_bond'
+  | 'nominationPools_pendingRewards_withdraw';
+
 export interface ActionMeta {
-  // Account nonce.
-  nonce?: BigNumber;
   // Name of account sending tx.
   accountName: string;
   // Type of transaction.
-  action: string;
+  action: TxActionUid;
   // Address of tx sender.
   from: string;
   // Pallet of associated transaction.
@@ -33,4 +35,36 @@ export interface ActionMeta {
   eventUid: string;
   // Args for tx API call.
   args: AnyData;
+}
+
+/**
+ * Minimal account structure to associate extrinsics with an address.
+ */
+export interface AddressInfo {
+  accountName: string;
+  address: string;
+  ChainIcon: AnyData;
+  chainId: ChainID;
+}
+
+export interface ExtrinsicDynamicInfo {
+  accountNonce: BigNumber;
+  genesisHash: Uint8Array;
+  txPayload: Uint8Array;
+  txSignature?: `0x${string}`;
+}
+
+export interface ExtrinsicInfo {
+  // Data received from the extrinsic's associated event.
+  actionMeta: ActionMeta;
+  // Estimated fee as a string.
+  estimatedFee?: string;
+  // Unique identifier for the extrinsic.
+  txId: string;
+  // Status of transaction.
+  txStatus: TxStatus;
+  // Data set dynamically before submitting the extrinsic.
+  dynamicInfo?: ExtrinsicDynamicInfo;
+  // Whether the extrinsic is submitting.
+  submitting: boolean;
 }

@@ -12,6 +12,29 @@ export const FooterWrapper = styled.div`
   border-top: 1px solid var(--border-primary-color);
 `;
 
+export const EmptyExtrinsicsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: left;
+
+    svg {
+      color: var(--text-color-secondary);
+    }
+    p {
+      color: var(--text-color-secondary);
+      opacity: 0.8;
+      font-size: 1.25rem;
+      text-align: left;
+    }
+  }
+`;
+
 export const QRViewerWrapper = styled.div`
   width: 100%;
   display: flex;

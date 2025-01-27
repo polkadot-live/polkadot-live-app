@@ -11,6 +11,7 @@
     "./communication": "./src/communication.ts",
     "./help": "./src/help.ts",
     "./ledger": "./src/ledger.ts",
+    "./legacy": "./src/legacy.ts",
     "./misc": "./src/misc.ts",
     "./openGov": "./src/openGov.ts",
     "./orchestrator": "./src/orchestrator.ts",
