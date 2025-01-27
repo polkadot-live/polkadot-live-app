@@ -91,7 +91,7 @@
     "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.5",
     "socket.io": "^4.7.5",
-    "styled-components": "^6.1.8",
+    "styled-components": "^6.1.14",
     "svg-inline-loader": "^0.8.2"
   },
   "devDependencies": {
