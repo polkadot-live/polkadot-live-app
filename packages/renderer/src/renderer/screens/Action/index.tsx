@@ -66,6 +66,7 @@ export const Action = () => {
     getFilteredExtrinsics,
     onFilterChange,
     removeExtrinsic,
+    submitMockTx,
   } = useTxMeta();
   const { openOverlayWith } = useOverlay();
   const { setTooltipTextAndOpen } = useTooltip();
@@ -97,7 +98,7 @@ export const Action = () => {
       case 'finalized':
         return 'Finalized';
       default:
-        return 'An Error Occured';
+        return 'Error Occured';
     }
   };
 
@@ -139,6 +140,9 @@ export const Action = () => {
       ? value
       : value.slice(0, decimalIndex + (places + 1));
   };
+
+  const fadeTxIcon = (txStatus: TxStatus) =>
+    txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
   return (
     <>
@@ -298,6 +302,7 @@ export const Action = () => {
                           <div className="stat">
                             <FontAwesomeIcon
                               icon={faCircleDot}
+                              fade={fadeTxIcon(info.txStatus)}
                               transform={'shrink-2'}
                             />
                             {getTxStatusTitle(info.txStatus)}
@@ -307,6 +312,7 @@ export const Action = () => {
                       <div className="HeaderContentDropdownWrapper">
                         <ExtrinsicDropdownMenu
                           isBuilt={info.estimatedFee !== undefined}
+                          txStatus={info.txStatus}
                           onDelete={() =>
                             removeExtrinsic(info.txId, info.actionMeta.from)
                           }
@@ -320,6 +326,7 @@ export const Action = () => {
                               true
                             )
                           }
+                          onMockSign={() => submitMockTx(info.txId)}
                         />
                       </div>
                     </div>
@@ -386,8 +393,7 @@ export const Action = () => {
                           }
                           SignerComponent={
                             <Signer
-                              txId={info.txId}
-                              submitting={info.submitting}
+                              info={info}
                               valid={
                                 !isBuildingExtrinsic &&
                                 !info.submitting &&

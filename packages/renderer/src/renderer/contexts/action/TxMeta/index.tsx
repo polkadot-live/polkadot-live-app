@@ -56,6 +56,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const selectedFilterRef = useRef<string>('all');
 
   /**
+   * Flag to enable mock UI.
+   */
+  const [showMockUI] = useState(false);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
@@ -171,8 +176,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Sets an extrinsic's estimated fee received from the main renderer.
    */
   const setEstimatedFee = (txId: string, estimatedFee: string) => {
-    console.log(`> SET ESTIMATED FEE: ${estimatedFee}`);
-
     try {
       const obj = extrinsicsRef.current.get(txId);
       if (!obj) {
@@ -246,6 +249,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Send a completed and signed extrinsic to main renderer for submission.
    */
   const submitTx = (txId: string) => {
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -265,7 +270,26 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       console.log(err);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     }
+  };
+
+  /**
+   * Submit a mock extrinsic.
+   */
+  const submitMockTx = (txId: string) => {
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+
+    const info = extrinsicsRef.current.get(txId);
+    if (!info) {
+      throw new Error('Error: Extrinsic not found.');
+    }
+
+    // Send extrinsic info to main renderer and submit.
+    ConfigAction.portAction.postMessage({
+      task: 'renderer:tx:mock:submit',
+      data: { info: JSON.stringify(info) },
+    });
   };
 
   /**
@@ -280,6 +304,10 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       info.txStatus = txStatus;
       setUpdateCache(true);
+
+      if (txStatus === 'error' || txStatus === 'finalized') {
+        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -505,6 +533,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         addressesInfo,
         extrinsics,
+        showMockUI,
         selectedFilter,
         getCategoryTitle,
         getFilteredExtrinsics,
@@ -516,6 +545,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setEstimatedFee,
         setTxDynamicInfo,
         setTxSignature,
+        submitMockTx,
         submitTx,
         updateAccountName,
         updateTxStatus,

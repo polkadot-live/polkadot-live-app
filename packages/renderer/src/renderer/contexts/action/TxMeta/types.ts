@@ -14,6 +14,7 @@ export interface TxMetaContextInterface {
   addressesInfo: AddressInfo[];
   extrinsics: Map<string, ExtrinsicInfo>;
   selectedFilter: string;
+  showMockUI: boolean;
   getCategoryTitle: (info: ExtrinsicInfo) => string;
   getFilteredExtrinsics: () => ExtrinsicInfo[];
   getGenesisHash: (txUid: string) => AnyJson | null;
@@ -25,6 +26,7 @@ export interface TxMetaContextInterface {
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
+  submitMockTx: (txId: string) => void;
   updateAccountName: (address: string, newName: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => void;
   removeExtrinsic: (txId: string, fromAddress: string) => void;

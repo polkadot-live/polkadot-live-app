@@ -315,6 +315,15 @@ export const useMainMessagePorts = () => {
     const info: ExtrinsicInfo = JSON.parse(serialized);
     ExtrinsicsController.submit(info);
   };
+  /**
+   * @name handleTxMockSubmit
+   * @summary Mock an extrinsic submission for UI testing.
+   */
+  const handleTxMockSubmit = (ev: MessageEvent) => {
+    const { info: serialized } = ev.data.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    ExtrinsicsController.mockSubmit(info);
+  };
 
   /**
    * @name handleTxDelete
@@ -664,6 +673,10 @@ export const useMainMessagePorts = () => {
             }
             case 'renderer:tx:build': {
               await handleTxBuild(ev);
+              break;
+            }
+            case 'renderer:tx:mock:submit': {
+              handleTxMockSubmit(ev);
               break;
             }
             case 'renderer:tx:vault:submit': {

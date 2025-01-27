@@ -153,11 +153,39 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Mock submitting a transaction.
+   */
+  static mockSubmit = (info: ExtrinsicInfo, interval = 3000) => {
+    let mockStatus: TxStatus = 'submitted';
+    this.postTxStatus(mockStatus, info);
+
+    const intervalId = setInterval(() => {
+      switch (mockStatus) {
+        case 'submitted': {
+          mockStatus = 'in_block';
+          this.postTxStatus('submitted', info, true);
+          break;
+        }
+        case 'in_block': {
+          mockStatus = 'finalized';
+          this.postTxStatus('in_block', info, true);
+          break;
+        }
+        case 'finalized': {
+          clearInterval(intervalId);
+          this.postTxStatus(mockStatus, info, true);
+          break;
+        }
+      }
+    }, interval);
+  };
+
+  /**
    * Handles sending a signed transaction.
    */
   static submit = async (info: ExtrinsicInfo) => {
     const { txId } = info;
-    const { from, method, pallet, args, eventUid, chainId } = info.actionMeta;
+    const { from, method, pallet, args, chainId } = info.actionMeta;
 
     try {
       if (!info.dynamicInfo) {
@@ -181,29 +209,15 @@ export class ExtrinsicsController {
 
       const unsub = await tx.send(({ status }: AnyJson) => {
         if (status.isInBlock) {
-          // Report Tx Status to Action UI.
-          ExtrinsicsController.postTxStatus(
-            'in_block',
-            txId,
-            chainId,
-            eventUid
-          );
+          this.postTxStatus('in_block', info);
 
-          // Show native OS notification.
           window.myAPI.showNotification({
             title: 'In Block',
             body: 'Transaction is in block.',
           });
         } else if (status.isFinalized) {
-          // Report Tx Status to Action UI.
-          ExtrinsicsController.postTxStatus(
-            'finalized',
-            txId,
-            chainId,
-            eventUid
-          );
+          this.postTxStatus('finalized', info);
 
-          // Show native OS notification.
           window.myAPI.showNotification({
             title: 'Finalized',
             body: 'Transaction was finalised.',
@@ -213,17 +227,16 @@ export class ExtrinsicsController {
         }
       });
 
-      // Report Tx Status to Action UI.
-      ExtrinsicsController.postTxStatus('submitted', txId, chainId, eventUid);
+      this.postTxStatus('submitted', info);
 
-      // Show native OS notification.
       window.myAPI.showNotification({
         title: 'Transaction Submitted',
         body: 'Transaction has been submitted and is processing.',
       });
     } catch (e) {
-      ExtrinsicsController.postTxStatus('error', txId, chainId, eventUid);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       console.log(e);
+      this.postTxStatus('error', info);
     }
   };
 
@@ -232,10 +245,14 @@ export class ExtrinsicsController {
    */
   private static postTxStatus = (
     status: TxStatus,
-    txId: string,
-    chainId: ChainID,
-    eventUid: string
+    info: ExtrinsicInfo,
+    isMock = false
   ) => {
+    const {
+      txId,
+      actionMeta: { eventUid, chainId },
+    } = info;
+
     // Report status in actions window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',
@@ -243,7 +260,7 @@ export class ExtrinsicsController {
     });
 
     // Mark event as stale if status is finalized.
-    if (status === 'finalized') {
+    if (status === 'finalized' && !isMock) {
       window.myAPI.sendEventTask({
         action: 'events:makeStale',
         data: { uid: eventUid, chainId },
