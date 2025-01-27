@@ -14,6 +14,7 @@ export interface TxMetaContextInterface {
   addressesInfo: AddressInfo[];
   extrinsics: Map<string, ExtrinsicInfo>;
   selectedFilter: string;
+  showMockUI: boolean;
   getCategoryTitle: (info: ExtrinsicInfo) => string;
   getFilteredExtrinsics: () => ExtrinsicInfo[];
   getGenesisHash: (txUid: string) => AnyJson | null;

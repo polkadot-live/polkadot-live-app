@@ -8,6 +8,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   addressesInfo: [],
   extrinsics: new Map(),
   selectedFilter: 'all',
+  showMockUI: false,
   getCategoryTitle: () => '',
   getFilteredExtrinsics: () => [],
   getGenesisHash: () => null,

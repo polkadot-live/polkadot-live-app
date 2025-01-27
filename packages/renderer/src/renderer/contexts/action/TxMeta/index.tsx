@@ -56,6 +56,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const selectedFilterRef = useRef<string>('all');
 
   /**
+   * Flag to enable mock UI.
+   */
+  const [showMockUI] = useState(false);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
@@ -528,6 +533,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         addressesInfo,
         extrinsics,
+        showMockUI,
         selectedFilter,
         getCategoryTitle,
         getFilteredExtrinsics,

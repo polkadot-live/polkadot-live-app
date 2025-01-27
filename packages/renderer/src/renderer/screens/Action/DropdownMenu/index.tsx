@@ -23,6 +23,7 @@ import {
   IconButton,
 } from './Wrappers';
 import type { ExtrinsicDropdownMenuProps } from './types';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 
 /**
  * Dropdown menu component for extrinsic items.
@@ -34,6 +35,7 @@ export const ExtrinsicDropdownMenu = ({
   onMockSign,
   onDelete,
 }: ExtrinsicDropdownMenuProps) => {
+  const { showMockUI } = useTxMeta();
   const { darkMode, isBuildingExtrinsic } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
@@ -65,16 +67,20 @@ export const ExtrinsicDropdownMenu = ({
             </div>
             <span>Sign</span>
           </DropdownMenu.Item>
-          <DropdownMenu.Item
-            className="DropdownMenuItem"
-            disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
-            onSelect={() => onMockSign()}
-          >
-            <div className="LeftSlot">
-              <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
-            </div>
-            <span>Mock Sign</span>
-          </DropdownMenu.Item>
+
+          {showMockUI && (
+            <DropdownMenu.Item
+              className="DropdownMenuItem"
+              disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
+              onSelect={() => onMockSign()}
+            >
+              <div className="LeftSlot">
+                <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
+              </div>
+              <span>Mock Sign</span>
+            </DropdownMenu.Item>
+          )}
+
           <DropdownMenu.Separator className="DropdownMenuSeparator" />
           <DropdownMenu.Item
             className="DropdownMenuItem"
