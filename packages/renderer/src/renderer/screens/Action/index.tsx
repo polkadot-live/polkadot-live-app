@@ -18,7 +18,11 @@ import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { AccordionContent, AccordionTrigger } from './Accordion';
 import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleDot, faObjectGroup } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleDot,
+  faObjectGroup,
+  faWarning,
+} from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import {
   CheckIcon,
@@ -71,7 +75,7 @@ export const Action = () => {
   const { openOverlayWith } = useOverlay();
   const { setTooltipTextAndOpen } = useTooltip();
 
-  const { isBuildingExtrinsic, darkMode } = useConnections();
+  const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   // Reset data in the main extrinsics controller on unmount.
@@ -417,6 +421,25 @@ export const Action = () => {
             <div className="footer-stat">
               <h2>Total Extrinsics:</h2>
               <span>{Array.from(extrinsics.keys()).length}</span>
+            </div>
+          </section>
+          <section className="right">
+            <div className="footer-stat">
+              {!getOnlineMode() && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: 'var(--accent-warning)',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faWarning} transform={'shrink-2'} />
+                  <span style={{ color: 'var(--accent-warning)' }}>
+                    Switch to online mode to sign extrinsics
+                  </span>
+                </div>
+              )}
             </div>
           </section>
         </div>

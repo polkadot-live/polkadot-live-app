@@ -4,6 +4,7 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { SubmitProps } from './types';
 
@@ -13,6 +14,7 @@ export const Signer = ({
 }: SubmitProps & {
   buttons?: React.ReactNode[];
 }) => {
+  const { getOnlineMode } = useConnections();
   const { status: overlayStatus } = useOverlay();
   const { initTxDynamicInfo } = useTxMeta();
 
@@ -34,7 +36,7 @@ export const Signer = ({
         onClick={async () => {
           initTxDynamicInfo(info.txId);
         }}
-        disabled={!valid || info.txStatus !== 'pending'}
+        disabled={!valid || info.txStatus !== 'pending' || !getOnlineMode()}
         pulse={enablePulse()}
       />
     </div>

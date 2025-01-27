@@ -36,10 +36,14 @@ export const ExtrinsicDropdownMenu = ({
   onDelete,
 }: ExtrinsicDropdownMenuProps) => {
   const { showMockUI } = useTxMeta();
-  const { darkMode, isBuildingExtrinsic } = useConnections();
+  const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  const disableOnStatus = () => (txStatus !== 'pending' ? true : false);
+  const disableSign = () =>
+    !getOnlineMode() ||
+    isBuildingExtrinsic ||
+    !isBuilt ||
+    txStatus !== 'pending';
 
   return (
     <DropdownMenu.Root>
@@ -59,7 +63,7 @@ export const ExtrinsicDropdownMenu = ({
         >
           <DropdownMenu.Item
             className="DropdownMenuItem"
-            disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
+            disabled={disableSign()}
             onSelect={() => onSign()}
           >
             <div className="LeftSlot">
@@ -71,7 +75,7 @@ export const ExtrinsicDropdownMenu = ({
           {showMockUI && (
             <DropdownMenu.Item
               className="DropdownMenuItem"
-              disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
+              disabled={disableSign()}
               onSelect={() => onMockSign()}
             >
               <div className="LeftSlot">
