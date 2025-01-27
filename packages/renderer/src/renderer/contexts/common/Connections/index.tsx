@@ -5,6 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
+import type { SyncFlag } from '@polkadot-live/types/communication';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -56,9 +57,9 @@ export const ConnectionsProvider = ({
     window.myAPI.syncModeFlags(
       (
         _: IpcRendererEvent,
-        { modeId, flag }: { modeId: string; flag: boolean }
+        { syncId, flag }: { syncId: SyncFlag; flag: boolean }
       ) => {
-        switch (modeId) {
+        switch (syncId) {
           case 'darkMode': {
             setDarkMode(flag);
             break;
