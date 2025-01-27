@@ -16,7 +16,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   initTx: () => {},
   initTxDynamicInfo: () => {},
   onFilterChange: () => {},
-  setEstimatedFee: () => {},
+  setEstimatedFee: () => new Promise(() => {}),
   setTxDynamicInfo: () => {},
   setTxSignature: () => {},
   submitTx: () => {},

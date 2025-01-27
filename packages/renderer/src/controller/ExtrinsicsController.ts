@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { store } from '@/main';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { getAddressNonce } from '@ren/utils/AccountUtils';
@@ -11,7 +10,6 @@ import { planckToUnit } from '@w3ux/utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
-import type { IpcTask } from '@polkadot-live/types/communication';
 
 interface CachedExtrinsicData {
   tx: AnyJson;
@@ -19,59 +17,7 @@ interface CachedExtrinsicData {
 }
 
 export class ExtrinsicsController {
-  private static storeKey = 'persisted_extrinsics';
   private static txPayloads = new Map<string, CachedExtrinsicData>();
-
-  /**
-   * Process an async IPC task.
-   */
-  static processAsync(task: IpcTask): void {
-    switch (task.action) {
-      case 'extrinsics:persist': {
-        this.persist(task);
-        return;
-      }
-      default: {
-        return;
-      }
-    }
-  }
-
-  /**
-   * Persist a received extrinsic to store.
-   */
-  private static persist(task: IpcTask) {
-    const { serialized }: { serialized: string } = task.data;
-    const info: ExtrinsicInfo = JSON.parse(serialized);
-
-    // Remove dynamic info.
-    info.dynamicInfo = undefined;
-
-    const stored = this.getExtrinsicsFromStore();
-    const updated = stored.filter((i) => i.txId !== info.txId).concat([info]);
-    this.persistExtrinsicsToStore(updated);
-  }
-
-  /**
-   * Utility to get and parse extrinsics from store.
-   */
-  private static getExtrinsicsFromStore = (): ExtrinsicInfo[] => {
-    const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey
-    ) as string;
-
-    return !stored ? [] : JSON.parse(stored);
-  };
-
-  /**
-   * Utility to persist an extrinsics array to store.
-   */
-  private static persistExtrinsicsToStore = (extrinsics: ExtrinsicInfo[]) => {
-    (store as Record<string, AnyJson>).set(
-      this.storeKey,
-      JSON.stringify(extrinsics)
-    );
-  };
 
   /**
    * Instantiates a new tx based on the received extrinsic data.

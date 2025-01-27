@@ -31,6 +31,8 @@ export interface PreloadAPI {
   sendEventTask: (task: IpcTask) => void;
   reportStaleEvent: ApiReportStaleEvent;
 
+  sendExtrinsicsTaskAsync: (task: IpcTask) => Promise<void>;
+
   sendWorkspaceTask: (task: IpcTask) => void;
   fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
 

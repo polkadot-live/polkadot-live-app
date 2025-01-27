@@ -19,6 +19,7 @@ import { AccountsController } from '@/controller/AccountsController';
 import { AddressesController } from '@/controller/AddressesController';
 import { AnalyticsController } from '@/controller/AnalyticsController';
 import { BackupController } from '@/controller/BackupController';
+import { ExtrinsicsController } from '@/controller/ExtrinsicsController';
 import { EventsController } from '@/controller/EventsController';
 import { IntervalsController } from '@/controller/IntervalsController';
 import { OnlineStatusController } from '@/controller/OnlineStatusController';
@@ -205,6 +206,14 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:task:event:async', async (_, task: IpcTask) =>
     EventsController.processAsync(task)
+  );
+
+  /**
+   * Extrinsics
+   */
+
+  ipcMain.handle('main:task:extrinsics:async', async (_, task: IpcTask) =>
+    ExtrinsicsController.processAsync(task)
   );
 
   /**

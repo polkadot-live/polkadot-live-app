@@ -83,6 +83,13 @@ export const API: PreloadAPI = {
     ipcRenderer.on('renderer:event:dismiss', callback),
 
   /**
+   * Extrinsics
+   */
+
+  sendExtrinsicsTaskAsync: async (task: IpcTask) =>
+    await ipcRenderer.invoke('main:task:extrinsics:async', task),
+
+  /**
    * Online status
    */
 

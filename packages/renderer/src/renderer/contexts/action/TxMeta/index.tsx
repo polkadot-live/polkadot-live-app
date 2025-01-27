@@ -177,21 +177,25 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Sets an extrinsic's estimated fee received from the main renderer.
    */
-  const setEstimatedFee = (txId: string, estimatedFee: string) => {
+  const setEstimatedFee = async (txId: string, estimatedFee: string) => {
     try {
-      const obj = extrinsicsRef.current.get(txId);
-      if (!obj) {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
 
-      obj.estimatedFee = estimatedFee;
+      info.estimatedFee = estimatedFee;
       setUpdateCache(true);
 
-      // TODO: Persist new extrinsic to store.
+      // Persist new extrinsic to store.
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:persist',
+        data: { serialized: JSON.stringify(info) },
+      });
 
       renderToast(
         'Extrinsic added.',
-        `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
+        `toast-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
         'success'
       );
     } catch (err) {
