@@ -153,6 +153,34 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Mock submitting a transaction.
+   */
+  static mockSubmit = (info: ExtrinsicInfo) => {
+    let mockStatus: TxStatus = 'submitted';
+    this.postTxStatus(mockStatus, info);
+
+    const intervalId = setInterval(() => {
+      switch (mockStatus) {
+        case 'submitted': {
+          mockStatus = 'in_block';
+          this.postTxStatus(mockStatus, info, true);
+          break;
+        }
+        case 'in_block': {
+          mockStatus = 'finalized';
+          this.postTxStatus(mockStatus, info, true);
+          break;
+        }
+        case 'finalized': {
+          clearInterval(intervalId);
+          this.postTxStatus(mockStatus, info, true);
+          break;
+        }
+      }
+    }, 3000);
+  };
+
+  /**
    * Handles sending a signed transaction.
    */
   static submit = async (info: ExtrinsicInfo) => {
@@ -214,7 +242,11 @@ export class ExtrinsicsController {
   /**
    * Send tx status message to `action` window.
    */
-  private static postTxStatus = (status: TxStatus, info: ExtrinsicInfo) => {
+  private static postTxStatus = (
+    status: TxStatus,
+    info: ExtrinsicInfo,
+    isMock = false
+  ) => {
     const {
       txId,
       actionMeta: { eventUid, chainId },
@@ -227,7 +259,7 @@ export class ExtrinsicsController {
     });
 
     // Mark event as stale if status is finalized.
-    if (status === 'finalized') {
+    if (status === 'finalized' && !isMock) {
       window.myAPI.sendEventTask({
         action: 'events:makeStale',
         data: { uid: eventUid, chainId },

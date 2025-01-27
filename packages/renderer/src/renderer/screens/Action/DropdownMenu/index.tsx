@@ -29,11 +29,15 @@ import type { ExtrinsicDropdownMenuProps } from './types';
  */
 export const ExtrinsicDropdownMenu = ({
   isBuilt,
+  txStatus,
   onSign,
+  onMockSign,
   onDelete,
 }: ExtrinsicDropdownMenuProps) => {
-  const { darkMode } = useConnections();
+  const { darkMode, isBuildingExtrinsic } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+
+  const disableOnStatus = () => (txStatus !== 'pending' ? true : false);
 
   return (
     <DropdownMenu.Root>
@@ -53,7 +57,7 @@ export const ExtrinsicDropdownMenu = ({
         >
           <DropdownMenu.Item
             className="DropdownMenuItem"
-            disabled={!isBuilt}
+            disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
             onSelect={() => onSign()}
           >
             <div className="LeftSlot">
@@ -61,16 +65,26 @@ export const ExtrinsicDropdownMenu = ({
             </div>
             <span>Sign</span>
           </DropdownMenu.Item>
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            disabled={!isBuilt || isBuildingExtrinsic || disableOnStatus()}
+            onSelect={() => onMockSign()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
+            </div>
+            <span>Mock Sign</span>
+          </DropdownMenu.Item>
           <DropdownMenu.Separator className="DropdownMenuSeparator" />
           <DropdownMenu.Item
             className="DropdownMenuItem"
-            disabled={!isBuilt}
+            disabled={!isBuilt || isBuildingExtrinsic}
             onSelect={() => onDelete()}
           >
             <div className="LeftSlot">
               <FontAwesomeIcon icon={faTrash} transform={'shrink-3'} />
             </div>
-            <span>Delete </span>
+            <span>Delete</span>
           </DropdownMenu.Item>
 
           {/** Arrow */}
