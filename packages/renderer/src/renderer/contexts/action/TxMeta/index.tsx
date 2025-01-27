@@ -187,6 +187,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       obj.estimatedFee = estimatedFee;
       setUpdateCache(true);
 
+      // TODO: Persist new extrinsic to store.
+
       renderToast(
         'Extrinsic added.',
         `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
