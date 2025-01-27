@@ -157,7 +157,7 @@ export class ExtrinsicsController {
    */
   static submit = async (info: ExtrinsicInfo) => {
     const { txId } = info;
-    const { from, method, pallet, args, eventUid, chainId } = info.actionMeta;
+    const { from, method, pallet, args, chainId } = info.actionMeta;
 
     try {
       if (!info.dynamicInfo) {
@@ -181,29 +181,15 @@ export class ExtrinsicsController {
 
       const unsub = await tx.send(({ status }: AnyJson) => {
         if (status.isInBlock) {
-          // Report Tx Status to Action UI.
-          ExtrinsicsController.postTxStatus(
-            'in_block',
-            txId,
-            chainId,
-            eventUid
-          );
+          this.postTxStatus('in_block', info);
 
-          // Show native OS notification.
           window.myAPI.showNotification({
             title: 'In Block',
             body: 'Transaction is in block.',
           });
         } else if (status.isFinalized) {
-          // Report Tx Status to Action UI.
-          ExtrinsicsController.postTxStatus(
-            'finalized',
-            txId,
-            chainId,
-            eventUid
-          );
+          this.postTxStatus('finalized', info);
 
-          // Show native OS notification.
           window.myAPI.showNotification({
             title: 'Finalized',
             body: 'Transaction was finalised.',
@@ -213,16 +199,14 @@ export class ExtrinsicsController {
         }
       });
 
-      // Report Tx Status to Action UI.
-      ExtrinsicsController.postTxStatus('submitted', txId, chainId, eventUid);
+      this.postTxStatus('submitted', info);
 
-      // Show native OS notification.
       window.myAPI.showNotification({
         title: 'Transaction Submitted',
         body: 'Transaction has been submitted and is processing.',
       });
     } catch (e) {
-      ExtrinsicsController.postTxStatus('error', txId, chainId, eventUid);
+      this.postTxStatus('error', info);
       console.log(e);
     }
   };
@@ -230,12 +214,12 @@ export class ExtrinsicsController {
   /**
    * Send tx status message to `action` window.
    */
-  private static postTxStatus = (
-    status: TxStatus,
-    txId: string,
-    chainId: ChainID,
-    eventUid: string
-  ) => {
+  private static postTxStatus = (status: TxStatus, info: ExtrinsicInfo) => {
+    const {
+      txId,
+      actionMeta: { eventUid, chainId },
+    } = info;
+
     // Report status in actions window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',

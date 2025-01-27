@@ -171,8 +171,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Sets an extrinsic's estimated fee received from the main renderer.
    */
   const setEstimatedFee = (txId: string, estimatedFee: string) => {
-    console.log(`> SET ESTIMATED FEE: ${estimatedFee}`);
-
     try {
       const obj = extrinsicsRef.current.get(txId);
       if (!obj) {

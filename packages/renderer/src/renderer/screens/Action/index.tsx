@@ -97,7 +97,7 @@ export const Action = () => {
       case 'finalized':
         return 'Finalized';
       default:
-        return 'An Error Occured';
+        return 'Error Occured';
     }
   };
 
