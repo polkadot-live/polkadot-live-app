@@ -58,7 +58,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Flag to enable mock UI.
    */
-  const [showMockUI] = useState(false);
+  const [showMockUI] = useState(true);
 
   /**
    * Mechanism to update the extrinsics map when its reference is updated.
@@ -143,7 +143,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     const txId = generateUID();
     const info: ExtrinsicInfo = {
       actionMeta,
-      submitting: false,
       txId,
       txStatus: 'pending',
     };

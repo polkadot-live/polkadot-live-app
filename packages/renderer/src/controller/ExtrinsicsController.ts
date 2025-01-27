@@ -16,7 +16,6 @@ interface CachedExtrinsicData {
   payload?: AnyJson;
 }
 
-// TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
 
@@ -47,9 +46,9 @@ export class ExtrinsicsController {
         data: { txId, estimatedFee: estimatedFee.toString() },
       });
     } catch (e) {
+      // TODO: Send error to action window?
       console.log('Error:');
       console.log(e);
-      // Send error to action window?
     }
   };
 

@@ -400,7 +400,6 @@ export const Action = () => {
                               info={info}
                               valid={
                                 !isBuildingExtrinsic &&
-                                !info.submitting &&
                                 info.estimatedFee !== undefined
                               }
                             />
