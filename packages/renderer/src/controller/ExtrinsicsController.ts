@@ -155,7 +155,7 @@ export class ExtrinsicsController {
   /**
    * Mock submitting a transaction.
    */
-  static mockSubmit = (info: ExtrinsicInfo) => {
+  static mockSubmit = (info: ExtrinsicInfo, interval = 3000) => {
     let mockStatus: TxStatus = 'submitted';
     this.postTxStatus(mockStatus, info);
 
@@ -163,12 +163,12 @@ export class ExtrinsicsController {
       switch (mockStatus) {
         case 'submitted': {
           mockStatus = 'in_block';
-          this.postTxStatus(mockStatus, info, true);
+          this.postTxStatus('submitted', info, true);
           break;
         }
         case 'in_block': {
           mockStatus = 'finalized';
-          this.postTxStatus(mockStatus, info, true);
+          this.postTxStatus('in_block', info, true);
           break;
         }
         case 'finalized': {
@@ -177,7 +177,7 @@ export class ExtrinsicsController {
           break;
         }
       }
-    }, 3000);
+    }, interval);
   };
 
   /**

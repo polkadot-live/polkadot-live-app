@@ -8,7 +8,7 @@ import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { SubmitProps } from './types';
 
 export const Signer = ({
-  txId,
+  info,
   valid,
 }: SubmitProps & {
   buttons?: React.ReactNode[];
@@ -23,9 +23,9 @@ export const Signer = ({
         iconLeft={faSquarePen}
         iconTransform="grow-2"
         onClick={async () => {
-          initTxDynamicInfo(txId);
+          initTxDynamicInfo(info.txId);
         }}
-        disabled={!valid}
+        disabled={!valid || info.txStatus !== 'pending'}
         pulse={!(!valid || overlayStatus !== 0)}
       />
     </div>

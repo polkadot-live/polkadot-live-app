@@ -393,8 +393,7 @@ export const Action = () => {
                           }
                           SignerComponent={
                             <Signer
-                              txId={info.txId}
-                              submitting={info.submitting}
+                              info={info}
                               valid={
                                 !isBuildingExtrinsic &&
                                 !info.submitting &&
