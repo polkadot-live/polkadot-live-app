@@ -244,6 +244,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Send a completed and signed extrinsic to main renderer for submission.
    */
   const submitTx = (txId: string) => {
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -263,6 +265,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       console.log(err);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     }
   };
 

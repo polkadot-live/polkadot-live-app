@@ -234,8 +234,9 @@ export class ExtrinsicsController {
         body: 'Transaction has been submitted and is processing.',
       });
     } catch (e) {
-      this.postTxStatus('error', info);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       console.log(e);
+      this.postTxStatus('error', info);
     }
   };
 
