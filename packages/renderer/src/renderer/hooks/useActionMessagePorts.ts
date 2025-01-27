@@ -98,17 +98,14 @@ export const useActionMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'action:init': {
-              console.log('> handle action:init');
               handleInitAction(ev);
               break;
             }
             case 'action:tx:report:data': {
-              console.log('> handle action:tx:report:data');
               handleTxReportData(ev);
               break;
             }
             case 'action:tx:report:status': {
-              console.log('> handle action:tx:report:status');
               handleSetTxStatus(ev);
               break;
             }
