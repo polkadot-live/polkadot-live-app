@@ -58,7 +58,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Flag to enable mock UI.
    */
-  const [showMockUI] = useState(false);
+  const [showMockUI] = useState(true);
 
   /**
    * Fetch stored extrinsics when window loads.
@@ -326,7 +326,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update the status of a transaction.
    */
-  const updateTxStatus = (txId: string, txStatus: TxStatus) => {
+  const updateTxStatus = async (txId: string, txStatus: TxStatus) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -339,6 +339,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (txStatus === 'error' || txStatus === 'finalized') {
         window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       }
+
+      // Update tx status in store.
+      const sendInfo: ExtrinsicInfo = { ...info, dynamicInfo: undefined };
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:update',
+        data: { serialized: JSON.stringify(sendInfo) },
+      });
     } catch (err) {
       console.log(err);
     }

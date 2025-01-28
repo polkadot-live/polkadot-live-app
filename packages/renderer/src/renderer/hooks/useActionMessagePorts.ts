@@ -78,9 +78,9 @@ export const useActionMessagePorts = () => {
    * @name handleSetTxStatus
    * @summary Update the status for a transaction.
    */
-  const handleSetTxStatus = (ev: MessageEvent) => {
+  const handleSetTxStatus = async (ev: MessageEvent) => {
     const { txId, status } = ev.data.data;
-    updateTxStatus(txId, status);
+    await updateTxStatus(txId, status);
   };
 
   /**
@@ -106,7 +106,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:tx:report:status': {
-              handleSetTxStatus(ev);
+              await handleSetTxStatus(ev);
               break;
             }
             case 'action:account:rename': {

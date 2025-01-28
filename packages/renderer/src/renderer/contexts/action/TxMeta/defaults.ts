@@ -22,7 +22,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   submitTx: () => {},
   submitMockTx: () => {},
   updateAccountName: () => {},
-  updateTxStatus: () => {},
+  updateTxStatus: () => new Promise(() => {}),
   removeExtrinsic: () => new Promise(() => {}),
 
   //notEnoughFunds: false,

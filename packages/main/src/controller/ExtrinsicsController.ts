@@ -25,10 +25,25 @@ export class ExtrinsicsController {
         this.remove(task);
         return;
       }
+      case 'extrinsics:update': {
+        this.update(task);
+        return;
+      }
       default: {
         return;
       }
     }
+  }
+
+  /**
+   * Update an extrinsic in the store.
+   */
+  private static update(task: IpcTask) {
+    const { serialized }: { serialized: string } = task.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    const stored = this.getExtrinsicsFromStore();
+    const updated = stored.map((i) => (i.txId === info.txId ? { ...info } : i));
+    this.persistExtrinsicsToStore(updated);
   }
 
   /**
