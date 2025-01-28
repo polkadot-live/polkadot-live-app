@@ -58,7 +58,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Flag to enable mock UI.
    */
-  const [showMockUI] = useState(true);
+  const [showMockUI] = useState(false);
 
   /**
    * Mechanism to update the extrinsics map when its reference is updated.
@@ -374,18 +374,21 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Removes an extrinsic from the collection from the collection
    */
-  const removeExtrinsic = async (txUid: string, fromAddress: string) => {
-    if (extrinsicsRef.current.delete(txUid)) {
+  const removeExtrinsic = async (info: ExtrinsicInfo) => {
+    const { txId } = info;
+    const fromAddress = info.actionMeta.from;
+
+    if (extrinsicsRef.current.delete(txId)) {
       // Remove cached transaction in main process.
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:delete',
-        data: { txId: txUid },
+        data: { txId },
       });
 
       // Remove extrinsic from store.
       await window.myAPI.sendExtrinsicsTaskAsync({
         action: 'extrinsics:remove',
-        data: { txId: txUid },
+        data: { txId },
       });
 
       // Remove address info if there are no more extrinsics for the address.
@@ -403,7 +406,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
 
-      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'success');
+      renderToast('Extrinsic removed.', `toast-remove-${txId}`, 'success');
       setUpdateCache(true);
     }
   };

@@ -29,7 +29,7 @@ export interface TxMetaContextInterface {
   submitMockTx: (txId: string) => void;
   updateAccountName: (address: string, newName: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => void;
-  removeExtrinsic: (txId: string, fromAddress: string) => Promise<void>;
+  removeExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
 
   //notEnoughFunds: boolean;
   //resetTxFees: () => void;
