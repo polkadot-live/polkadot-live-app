@@ -18,6 +18,10 @@ export class ExtrinsicsController {
         this.persist(task);
         return;
       }
+      case 'extrinsics:remove': {
+        this.remove(task);
+        return;
+      }
       default: {
         return;
       }
@@ -47,6 +51,16 @@ export class ExtrinsicsController {
     });
 
     const updated = [...filtered, info];
+    this.persistExtrinsicsToStore(updated);
+  }
+
+  /**
+   * Remove an extrinsic from store.
+   */
+  private static remove(task: IpcTask) {
+    const { txId } = task.data;
+    const stored = this.getExtrinsicsFromStore();
+    const updated = stored.filter((info) => info.txId !== txId);
     this.persistExtrinsicsToStore(updated);
   }
 

@@ -374,11 +374,17 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Removes an extrinsic from the collection from the collection
    */
-  const removeExtrinsic = (txUid: string, fromAddress: string) => {
+  const removeExtrinsic = async (txUid: string, fromAddress: string) => {
     if (extrinsicsRef.current.delete(txUid)) {
       // Remove cached transaction in main process.
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:delete',
+        data: { txId: txUid },
+      });
+
+      // Remove extrinsic from store.
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:remove',
         data: { txId: txUid },
       });
 

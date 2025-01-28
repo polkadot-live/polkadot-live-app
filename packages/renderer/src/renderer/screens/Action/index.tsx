@@ -317,8 +317,11 @@ export const Action = () => {
                         <ExtrinsicDropdownMenu
                           isBuilt={info.estimatedFee !== undefined}
                           txStatus={info.txStatus}
-                          onDelete={() =>
-                            removeExtrinsic(info.txId, info.actionMeta.from)
+                          onDelete={async () =>
+                            await removeExtrinsic(
+                              info.txId,
+                              info.actionMeta.from
+                            )
                           }
                           onSign={() =>
                             openOverlayWith(
