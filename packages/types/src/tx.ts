@@ -65,6 +65,4 @@ export interface ExtrinsicInfo {
   txStatus: TxStatus;
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
-  // Whether the extrinsic is submitting.
-  submitting: boolean;
 }
