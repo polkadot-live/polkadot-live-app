@@ -58,6 +58,7 @@ export interface IpcTask {
     | 'events:update:accountName'
     | 'events:import'
     // Extrinsics
+    | 'extrinsics:getAll'
     | 'extrinsics:persist'
     | 'extrinsics:remove'
     // Subscriptions (Account)

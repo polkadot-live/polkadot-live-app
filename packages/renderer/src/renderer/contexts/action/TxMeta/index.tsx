@@ -61,6 +61,29 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [showMockUI] = useState(false);
 
   /**
+   * Fetch stored extrinsics when window loads.
+   */
+  useEffect(() => {
+    const fetchExtrinsics = async () => {
+      const ser = (await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:getAll',
+        data: null,
+      })) as string;
+
+      // Parse the array and store data the extrinsics map ref.
+      const parsed: ExtrinsicInfo[] = JSON.parse(ser);
+
+      for (const info of parsed) {
+        extrinsicsRef.current.set(info.txId, { ...info });
+      }
+
+      // Trigger cache flag to update addresses state.
+      setUpdateCache(true);
+    };
+    fetchExtrinsics();
+  }, []);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
