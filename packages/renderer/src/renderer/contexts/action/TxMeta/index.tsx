@@ -70,7 +70,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         data: null,
       })) as string;
 
-      // Parse the array and store data the extrinsics map ref.
+      // Parse the array and set data in the extrinsics map ref.
       const parsed: ExtrinsicInfo[] = JSON.parse(ser);
 
       for (const info of parsed) {
