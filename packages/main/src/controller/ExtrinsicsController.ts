@@ -12,8 +12,11 @@ export class ExtrinsicsController {
   /**
    * Process an async IPC task.
    */
-  static processAsync(task: IpcTask): void {
+  static processAsync(task: IpcTask): string | void {
     switch (task.action) {
+      case 'extrinsics:getAll': {
+        return this.getAll();
+      }
       case 'extrinsics:persist': {
         this.persist(task);
         return;
@@ -26,6 +29,13 @@ export class ExtrinsicsController {
         return;
       }
     }
+  }
+
+  /**
+   * Get all stored extrinsics in serialized form.
+   */
+  private static getAll(): string {
+    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
   }
 
   /**

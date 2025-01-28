@@ -61,6 +61,29 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [showMockUI] = useState(false);
 
   /**
+   * Fetch stored extrinsics when window loads.
+   */
+  useEffect(() => {
+    const fetchExtrinsics = async () => {
+      const ser = (await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:getAll',
+        data: null,
+      })) as string;
+
+      // Parse the array and set data in the extrinsics map ref.
+      const parsed: ExtrinsicInfo[] = JSON.parse(ser);
+
+      for (const info of parsed) {
+        extrinsicsRef.current.set(info.txId, { ...info });
+      }
+
+      // Trigger cache flag to update addresses state.
+      setUpdateCache(true);
+    };
+    fetchExtrinsics();
+  }, []);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
@@ -133,7 +156,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic already added.',
-        `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+        `toast-already-exists-${actionMeta.eventUid}-${actionMeta.action}`,
         'error'
       );
 
@@ -187,7 +210,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       info.estimatedFee = estimatedFee;
       setUpdateCache(true);
 
-      // Persist new extrinsic to store.
+      // Persist extrinsic to store.
       await window.myAPI.sendExtrinsicsTaskAsync({
         action: 'extrinsics:persist',
         data: { serialized: JSON.stringify(info) },
@@ -195,7 +218,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic added.',
-        `toast-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
+        `toast-added-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
         'success'
       );
     } catch (err) {
