@@ -48,14 +48,14 @@ export const useActionMessagePorts = () => {
    * @name handleSetEstimatedFee
    * @summary Set an extrinsic's estimated fee received from the main renderer.
    */
-  const handleSetEstimatedFee = (ev: MessageEvent) => {
+  const handleSetEstimatedFee = async (ev: MessageEvent) => {
     interface Target {
       txId: string;
       estimatedFee: string;
     }
 
     const { txId, estimatedFee }: Target = ev.data.data;
-    setEstimatedFee(txId, estimatedFee);
+    await setEstimatedFee(txId, estimatedFee);
   };
 
   /**
@@ -78,16 +78,16 @@ export const useActionMessagePorts = () => {
    * @name handleSetTxStatus
    * @summary Update the status for a transaction.
    */
-  const handleSetTxStatus = (ev: MessageEvent) => {
+  const handleSetTxStatus = async (ev: MessageEvent) => {
     const { txId, status } = ev.data.data;
-    updateTxStatus(txId, status);
+    await updateTxStatus(txId, status);
   };
 
   /**
    * @name handleReceivedPort
    * @summary Handle messages sent to the action window..
    */
-  const handleReceivedPort = (e: MessageEvent) => {
+  const handleReceivedPort = async (e: MessageEvent) => {
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
@@ -106,7 +106,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:tx:report:status': {
-              handleSetTxStatus(ev);
+              await handleSetTxStatus(ev);
               break;
             }
             case 'action:account:rename': {
@@ -114,7 +114,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:tx:setEstimatedFee': {
-              handleSetEstimatedFee(ev);
+              await handleSetEstimatedFee(ev);
               break;
             }
             default: {

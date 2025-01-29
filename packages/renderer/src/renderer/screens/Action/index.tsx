@@ -103,6 +103,8 @@ export const Action = () => {
         return 'Finalized';
       default:
         return 'Error Occured';
+      case 'submitted-unkown':
+        return 'Submitted';
     }
   };
 
@@ -317,9 +319,7 @@ export const Action = () => {
                         <ExtrinsicDropdownMenu
                           isBuilt={info.estimatedFee !== undefined}
                           txStatus={info.txStatus}
-                          onDelete={() =>
-                            removeExtrinsic(info.txId, info.actionMeta.from)
-                          }
+                          onDelete={async () => await removeExtrinsic(info)}
                           onSign={() =>
                             openOverlayWith(
                               <SignOverlay
@@ -400,7 +400,6 @@ export const Action = () => {
                               info={info}
                               valid={
                                 !isBuildingExtrinsic &&
-                                !info.submitting &&
                                 info.estimatedFee !== undefined
                               }
                             />

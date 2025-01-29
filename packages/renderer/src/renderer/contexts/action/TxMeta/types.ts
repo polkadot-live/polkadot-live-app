@@ -22,14 +22,14 @@ export interface TxMetaContextInterface {
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   onFilterChange: (val: string) => void;
-  setEstimatedFee: (txId: string, estimatedFee: string) => void;
+  setEstimatedFee: (txId: string, estimatedFee: string) => Promise<void>;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   submitMockTx: (txId: string) => void;
   updateAccountName: (address: string, newName: string) => void;
-  updateTxStatus: (txId: string, txStatus: TxStatus) => void;
-  removeExtrinsic: (txId: string, fromAddress: string) => void;
+  updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
+  removeExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
 
   //notEnoughFunds: boolean;
   //resetTxFees: () => void;

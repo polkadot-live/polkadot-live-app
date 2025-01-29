@@ -61,6 +61,38 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const [showMockUI] = useState(false);
 
   /**
+   * Fetch stored extrinsics when window loads.
+   */
+  useEffect(() => {
+    const fetchExtrinsics = async () => {
+      const ser = (await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:getAll',
+        data: null,
+      })) as string;
+
+      // Parse the array and set data in the extrinsics map ref.
+      const parsed: ExtrinsicInfo[] = JSON.parse(ser);
+
+      for (const info of parsed) {
+        // Set status to `submitted-unknown` if app was closed before tx was finalized.
+        if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
+          info.txStatus = 'submitted-unkown';
+
+          await window.myAPI.sendExtrinsicsTaskAsync({
+            action: 'extrinsics:persist',
+            data: { serialized: JSON.stringify(info) },
+          });
+        }
+        extrinsicsRef.current.set(info.txId, { ...info });
+      }
+
+      // Trigger cache flag to update addresses state.
+      setUpdateCache(true);
+    };
+    fetchExtrinsics();
+  }, []);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {
@@ -133,7 +165,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic already added.',
-        `toast-${actionMeta.eventUid}-${actionMeta.action}`,
+        `toast-already-exists-${actionMeta.eventUid}-${actionMeta.action}`,
         'error'
       );
 
@@ -143,7 +175,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     const txId = generateUID();
     const info: ExtrinsicInfo = {
       actionMeta,
-      submitting: false,
       txId,
       txStatus: 'pending',
     };
@@ -178,19 +209,25 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Sets an extrinsic's estimated fee received from the main renderer.
    */
-  const setEstimatedFee = (txId: string, estimatedFee: string) => {
+  const setEstimatedFee = async (txId: string, estimatedFee: string) => {
     try {
-      const obj = extrinsicsRef.current.get(txId);
-      if (!obj) {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
 
-      obj.estimatedFee = estimatedFee;
+      info.estimatedFee = estimatedFee;
       setUpdateCache(true);
+
+      // Persist extrinsic to store.
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:persist',
+        data: { serialized: JSON.stringify(info) },
+      });
 
       renderToast(
         'Extrinsic added.',
-        `toast-${obj.actionMeta.eventUid}-${obj.actionMeta.action}`,
+        `toast-added-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
         'success'
       );
     } catch (err) {
@@ -298,7 +335,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update the status of a transaction.
    */
-  const updateTxStatus = (txId: string, txStatus: TxStatus) => {
+  const updateTxStatus = async (txId: string, txStatus: TxStatus) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -311,6 +348,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (txStatus === 'error' || txStatus === 'finalized') {
         window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       }
+
+      // Update tx status in store.
+      const sendInfo: ExtrinsicInfo = { ...info, dynamicInfo: undefined };
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:update',
+        data: { serialized: JSON.stringify(sendInfo) },
+      });
     } catch (err) {
       console.log(err);
     }
@@ -369,12 +413,21 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Removes an extrinsic from the collection from the collection
    */
-  const removeExtrinsic = (txUid: string, fromAddress: string) => {
-    if (extrinsicsRef.current.delete(txUid)) {
+  const removeExtrinsic = async (info: ExtrinsicInfo) => {
+    const { txId } = info;
+    const fromAddress = info.actionMeta.from;
+
+    if (extrinsicsRef.current.delete(txId)) {
       // Remove cached transaction in main process.
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:delete',
-        data: { txId: txUid },
+        data: { txId },
+      });
+
+      // Remove extrinsic from store.
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:remove',
+        data: { txId },
       });
 
       // Remove address info if there are no more extrinsics for the address.
@@ -392,7 +445,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
 
-      renderToast('Extrinsic removed.', `toast-remove-${txUid}`, 'success');
+      renderToast('Extrinsic removed.', `toast-remove-${txId}`, 'success');
       setUpdateCache(true);
     }
   };

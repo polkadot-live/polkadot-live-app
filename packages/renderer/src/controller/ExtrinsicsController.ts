@@ -16,7 +16,6 @@ interface CachedExtrinsicData {
   payload?: AnyJson;
 }
 
-// TODO: Create an Extrinsic model and instantiate when constructing a transaction.
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
 
@@ -47,9 +46,9 @@ export class ExtrinsicsController {
         data: { txId, estimatedFee: estimatedFee.toString() },
       });
     } catch (e) {
+      // TODO: Send error to action window?
       console.log('Error:');
       console.log(e);
-      // Send error to action window?
     }
   };
 
@@ -61,6 +60,17 @@ export class ExtrinsicsController {
       const { txId } = info;
       const { chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
+
+      // Create tx if it's not cached already.
+      if (!this.txPayloads.has(txId)) {
+        const origin = 'ExtrinsicsController.build';
+        const { api } = await getApiInstanceOrThrow(chainId, origin);
+
+        // Instantiate tx.
+        const { pallet, method, args } = info.actionMeta;
+        const tx = api.tx[pallet][method](...args);
+        this.txPayloads.set(txId, { tx });
+      }
 
       // Generate payload.
       const cached = this.txPayloads.get(txId);
