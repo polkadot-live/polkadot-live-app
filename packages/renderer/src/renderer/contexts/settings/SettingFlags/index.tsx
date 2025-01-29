@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Flip, toast } from 'react-toastify';
 import type { SettingFlagsContextInterface } from './types';
-import type { SettingItem } from '@app/screens/Settings/types';
+import type { SettingItem } from '@polkadot-live/types/settings';
 
 export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
   defaults.defaultSettingFlagsContext
@@ -20,7 +20,11 @@ export const SettingFlagsProvider = ({
 }) => {
   /// Store state of switch settings.
   const [windowDocked, setWindowDocked] = useState(true);
-  const [silenceOsNotifications, setSilenceOsNotifications] = useState(true);
+  const [silenceOsNotifications, setSilenceOsNotifications] = useState(false);
+  const [
+    silenceExtrinsicsOsNotifications,
+    setSilenceExtrinsicsOsNotifications,
+  ] = useState(false);
   const [showOnAllWorkspaces, setShowOnAllWorkspaces] = useState(false);
   const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
     useState(false);
@@ -36,6 +40,7 @@ export const SettingFlagsProvider = ({
       const {
         appDocked,
         appSilenceOsNotifications,
+        appSilenceExtrinsicsOsNotifications,
         appShowOnAllWorkspaces,
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
@@ -46,6 +51,7 @@ export const SettingFlagsProvider = ({
 
       setWindowDocked(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
+      setSilenceExtrinsicsOsNotifications(appSilenceExtrinsicsOsNotifications);
       setShowOnAllWorkspaces(appShowOnAllWorkspaces);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
@@ -67,6 +73,9 @@ export const SettingFlagsProvider = ({
       }
       case 'settings:execute:silenceOsNotifications': {
         return silenceOsNotifications;
+      }
+      case 'settings:execute:silenceExtrinsicsOsNotifications': {
+        return silenceExtrinsicsOsNotifications;
       }
       case 'settings:execute:showOnAllWorkspaces': {
         return showOnAllWorkspaces;
@@ -109,6 +118,14 @@ export const SettingFlagsProvider = ({
           toggledOn: !silenceOsNotifications,
         };
         setSilenceOsNotifications(!silenceOsNotifications);
+        break;
+      }
+      case 'settings:execute:silenceExtrinsicsOsNotifications': {
+        umamiData = {
+          settingId: 'silence-extrinsics-notifications',
+          toggledOn: !silenceExtrinsicsOsNotifications,
+        };
+        setSilenceExtrinsicsOsNotifications(!silenceExtrinsicsOsNotifications);
         break;
       }
       case 'settings:execute:showOnAllWorkspaces': {

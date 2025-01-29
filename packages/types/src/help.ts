@@ -41,6 +41,7 @@ export type HelpItemKey =
   | 'help:settings:enablePolkassembly'
   | 'help:settings:hideDockIcon'
   | 'help:settings:keepOutdatedEvents'
+  | 'help:settings:silenceExtrinsicsOsNotifications'
   | 'help:openGov:track'
   | 'help:openGov:origin'
   | 'help:openGov:maxDeciding'

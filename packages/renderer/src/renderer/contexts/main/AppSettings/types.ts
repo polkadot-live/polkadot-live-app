@@ -4,12 +4,14 @@
 export interface AppSettingsContextInterface {
   dockToggled: boolean;
   silenceOsNotifications: boolean;
+  silenceExtrinsicsOsNotifications: boolean;
   showDebuggingSubscriptions: boolean;
   enableAutomaticSubscriptions: boolean;
   enablePolkassemblyApi: boolean;
   hideDockIcon: boolean;
   sideNavCollapsed: boolean;
   setSilenceOsNotifications: (b: boolean) => void;
+  handleToggleSilenceExtrinsicOsNotifications: () => void;
   handleDockedToggle: () => void;
   handleToggleSilenceOsNotifications: () => void;
   handleToggleShowDebuggingSubscriptions: () => void;

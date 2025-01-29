@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { SettingItem } from '@app/screens/Settings/types';
+import type { SettingItem } from '@polkadot-live/types/settings';
 import { faFileExport, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
 export const SettingsList: SettingItem[] = [
@@ -75,6 +75,15 @@ export const SettingsList: SettingItem[] = [
     helpKey: 'help:settings:keepOutdatedEvents',
     settingType: 'switch',
     title: 'Keep Outdated Events',
+    platforms: ['darwin', 'win32', 'linux'],
+  },
+  {
+    action: 'settings:execute:silenceExtrinsicsOsNotifications',
+    category: 'Extrinsics',
+    enabled: false,
+    helpKey: 'help:settings:silenceExtrinsicsOsNotifications',
+    settingType: 'switch',
+    title: 'Silence OS Notifications for Extrinsics',
     platforms: ['darwin', 'win32', 'linux'],
   },
   {
