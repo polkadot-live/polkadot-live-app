@@ -9,8 +9,8 @@ import { useHelp } from '@app/contexts/common/Help';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useSettingFlags } from '@app/contexts/settings/SettingFlags';
-import type { SettingItem, SettingProps } from './types';
-import type { SettingAction } from '@polkadot-live/types/settings';
+import type { SettingProps } from './types';
+import type { SettingAction, SettingItem } from '@polkadot-live/types/settings';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;

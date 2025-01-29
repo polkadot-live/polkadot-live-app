@@ -1,6 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { HelpItemKey } from './help';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
+
+export type OsPlatform = 'darwin' | 'linux' | 'win32';
+
 export interface PersistedSettings {
   appDocked: boolean;
   appDarkMode: boolean;
@@ -14,8 +19,6 @@ export interface PersistedSettings {
   appCollapseSideNav: boolean;
 }
 
-export type OsPlatform = 'darwin' | 'linux' | 'win32';
-
 export type SettingAction =
   | 'settings:execute:dockedWindow'
   | 'settings:execute:showOnAllWorkspaces'
@@ -28,3 +31,15 @@ export type SettingAction =
   | 'settings:execute:keepOutdatedEvents'
   | 'settings:execute:hideDockIcon'
   | 'settings:execute:collapseSideNav';
+
+export interface SettingItem {
+  action: SettingAction;
+  category: string;
+  title: string;
+  enabled: boolean;
+  helpKey: HelpItemKey;
+  settingType: string;
+  buttonText?: string;
+  buttonIcon?: IconProp;
+  platforms: OsPlatform[];
+}

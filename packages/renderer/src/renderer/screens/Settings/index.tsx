@@ -16,8 +16,7 @@ import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
-import type { OsPlatform } from '@polkadot-live/types/settings';
-import type { SettingItem } from './types';
+import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
