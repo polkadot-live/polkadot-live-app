@@ -46,7 +46,12 @@ export const Settings: React.FC = () => {
     }
 
     // Insert categories in a desired order.
-    for (const category of ['General', 'Subscriptions', 'Backup']) {
+    for (const category of [
+      'General',
+      'Subscriptions',
+      'Extrinsics',
+      'Backup',
+    ]) {
       map.set(category, []);
     }
 
