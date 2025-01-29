@@ -163,27 +163,60 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Utility for getting silence settings.
+   */
+  static silenceOsNotifications = async (): Promise<boolean> => {
+    const appSettings = await window.myAPI.getAppSettings();
+    return (
+      appSettings.appSilenceOsNotifications ||
+      appSettings.appSilenceExtrinsicsOsNotifications
+    );
+  };
+
+  /**
    * Mock submitting a transaction.
    */
   static mockSubmit = (info: ExtrinsicInfo, interval = 3000) => {
     let mockStatus: TxStatus = 'submitted';
     this.postTxStatus(mockStatus, info);
 
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       switch (mockStatus) {
         case 'submitted': {
           mockStatus = 'in_block';
           this.postTxStatus('submitted', info, true);
+
+          if (!(await this.silenceOsNotifications())) {
+            window.myAPI.showNotification({
+              title: 'Transaction Submitted',
+              body: 'Transaction has been submitted and is processing.',
+            });
+          }
+
           break;
         }
         case 'in_block': {
           mockStatus = 'finalized';
           this.postTxStatus('in_block', info, true);
+
+          if (!(await this.silenceOsNotifications())) {
+            window.myAPI.showNotification({
+              title: 'In Block',
+              body: 'Transaction is in block.',
+            });
+          }
           break;
         }
         case 'finalized': {
           clearInterval(intervalId);
           this.postTxStatus(mockStatus, info, true);
+
+          if (!(await this.silenceOsNotifications())) {
+            window.myAPI.showNotification({
+              title: 'Finalized',
+              body: 'Transaction was finalised.',
+            });
+          }
           break;
         }
       }
@@ -217,21 +250,25 @@ export class ExtrinsicsController {
       const { txSignature } = info.dynamicInfo;
       tx.addSignature(from, txSignature, txPayload.toU8a());
 
-      const unsub = await tx.send(({ status }: AnyJson) => {
+      const unsub = await tx.send(async ({ status }: AnyJson) => {
         if (status.isInBlock) {
           this.postTxStatus('in_block', info);
 
-          window.myAPI.showNotification({
-            title: 'In Block',
-            body: 'Transaction is in block.',
-          });
+          if (!(await this.silenceOsNotifications())) {
+            window.myAPI.showNotification({
+              title: 'In Block',
+              body: 'Transaction is in block.',
+            });
+          }
         } else if (status.isFinalized) {
           this.postTxStatus('finalized', info);
 
-          window.myAPI.showNotification({
-            title: 'Finalized',
-            body: 'Transaction was finalised.',
-          });
+          if (!(await this.silenceOsNotifications())) {
+            window.myAPI.showNotification({
+              title: 'Finalized',
+              body: 'Transaction was finalised.',
+            });
+          }
 
           unsub();
         }
@@ -239,10 +276,12 @@ export class ExtrinsicsController {
 
       this.postTxStatus('submitted', info);
 
-      window.myAPI.showNotification({
-        title: 'Transaction Submitted',
-        body: 'Transaction has been submitted and is processing.',
-      });
+      if (!(await this.silenceOsNotifications())) {
+        window.myAPI.showNotification({
+          title: 'Transaction Submitted',
+          body: 'Transaction has been submitted and is processing.',
+        });
+      }
     } catch (e) {
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       console.log(e);

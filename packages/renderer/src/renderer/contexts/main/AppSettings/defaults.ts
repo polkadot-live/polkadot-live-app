@@ -7,6 +7,7 @@ import type { AppSettingsContextInterface } from './types';
 export const defaultAppSettingsContext: AppSettingsContextInterface = {
   dockToggled: true,
   silenceOsNotifications: false,
+  silenceExtrinsicsOsNotifications: false,
   showDebuggingSubscriptions: false,
   enableAutomaticSubscriptions: true,
   enablePolkassemblyApi: true,

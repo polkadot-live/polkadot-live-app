@@ -224,7 +224,7 @@ export const HelpConfig: HelpItems = [
     key: 'help:settings:silenceExtrinsicsOsNotifications',
     title: 'Silence OS Notifications for Extrinsics',
     definition: [
-      'Enable to silence native OS notifications that are shown when submitting extrinsics.',
+      'Turn on to silence native OS notifications that are shown when submitting extrinsics.',
       "OS notifications will not be displayed when a submitted extrinsic changes its status, such as when it's included in a block or finalized.",
     ],
   },

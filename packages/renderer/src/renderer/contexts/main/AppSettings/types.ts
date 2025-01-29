@@ -4,6 +4,7 @@
 export interface AppSettingsContextInterface {
   dockToggled: boolean;
   silenceOsNotifications: boolean;
+  silenceExtrinsicsOsNotifications: boolean;
   showDebuggingSubscriptions: boolean;
   enableAutomaticSubscriptions: boolean;
   enablePolkassemblyApi: boolean;

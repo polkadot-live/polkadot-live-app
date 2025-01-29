@@ -176,6 +176,7 @@ export const AppSettingsProvider = ({
       value={{
         dockToggled,
         silenceOsNotifications,
+        silenceExtrinsicsOsNotifications,
         showDebuggingSubscriptions,
         enableAutomaticSubscriptions,
         enablePolkassemblyApi,
