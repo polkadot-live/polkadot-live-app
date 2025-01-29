@@ -10,6 +10,7 @@ export interface AppSettingsContextInterface {
   hideDockIcon: boolean;
   sideNavCollapsed: boolean;
   setSilenceOsNotifications: (b: boolean) => void;
+  handleToggleSilenceExtrinsicOsNotifications: () => void;
   handleDockedToggle: () => void;
   handleToggleSilenceOsNotifications: () => void;
   handleToggleShowDebuggingSubscriptions: () => void;

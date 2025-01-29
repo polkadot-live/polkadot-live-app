@@ -25,6 +25,12 @@ export const AppSettingsProvider = ({
   const [silenceOsNotifications, setSilenceOsNotifications] =
     useState<boolean>(false);
 
+  /// Silence extrinsics notifications.
+  const [
+    silenceExtrinsicsOsNotifications,
+    setSilenceExtrinsicsOsNotifications,
+  ] = useState<boolean>(false);
+
   /// Show debugging subscriptions.
   const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
     useState<boolean>(false);
@@ -49,6 +55,7 @@ export const AppSettingsProvider = ({
       const {
         appDocked,
         appSilenceOsNotifications,
+        appSilenceExtrinsicsOsNotifications,
         appShowDebuggingSubscriptions,
         appEnableAutomaticSubscriptions,
         appEnablePolkassemblyApi,
@@ -67,6 +74,7 @@ export const AppSettingsProvider = ({
       // Set settings state.
       setDockToggled(appDocked);
       setSilenceOsNotifications(appSilenceOsNotifications);
+      setSilenceExtrinsicsOsNotifications(appSilenceExtrinsicsOsNotifications);
       setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
       setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
       setEnablePolkassemblyApi(appEnablePolkassemblyApi);
@@ -77,7 +85,7 @@ export const AppSettingsProvider = ({
     initSettings();
   }, []);
 
-  /// Handle toggling a setting.
+  /// Handle toggling a setting in main process.
   const handleToggleSetting = (settingAction: SettingAction) => {
     window.myAPI.sendSettingTask({
       action: 'settings:toggle',
@@ -108,6 +116,12 @@ export const AppSettingsProvider = ({
     });
 
     handleToggleSetting('settings:execute:silenceOsNotifications');
+  };
+
+  /// Handle toggling extrinsics native OS notifications.
+  const handleToggleSilenceExtrinsicOsNotifications = () => {
+    setSilenceExtrinsicsOsNotifications(!silenceExtrinsicsOsNotifications);
+    handleToggleSetting('settings:execute:silenceExtrinsicsOsNotifications');
   };
 
   /// Handle toggling show debugging subscriptions.
@@ -170,6 +184,7 @@ export const AppSettingsProvider = ({
         setSilenceOsNotifications,
         handleDockedToggle,
         handleToggleSilenceOsNotifications,
+        handleToggleSilenceExtrinsicOsNotifications,
         handleToggleShowDebuggingSubscriptions,
         handleToggleEnableAutomaticSubscriptions,
         handleToggleEnablePolkassemblyApi,

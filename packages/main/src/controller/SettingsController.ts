@@ -29,6 +29,7 @@ export class SettingsController {
         appDocked: false,
         appDarkMode: true,
         appSilenceOsNotifications: false,
+        appSilenceExtrinsicsOsNotifications: false,
         appShowOnAllWorkspaces: true,
         appShowDebuggingSubscriptions: false,
         appEnableAutomaticSubscriptions: true,
@@ -114,6 +115,11 @@ export class SettingsController {
       case 'settings:execute:silenceOsNotifications': {
         const flag = !settings.appSilenceOsNotifications;
         settings.appSilenceOsNotifications = flag;
+        break;
+      }
+      case 'settings:execute:silenceExtrinsicsOsNotifications': {
+        const flag = !settings.appSilenceExtrinsicsOsNotifications;
+        settings.appSilenceExtrinsicsOsNotifications = flag;
         break;
       }
       case 'settings:execute:enableAutomaticSubscriptions': {

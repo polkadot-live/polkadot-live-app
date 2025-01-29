@@ -65,6 +65,7 @@ export const useMainMessagePorts = () => {
   const {
     handleDockedToggle,
     handleToggleSilenceOsNotifications,
+    handleToggleSilenceExtrinsicOsNotifications,
     handleToggleShowDebuggingSubscriptions,
     handleToggleEnableAutomaticSubscriptions,
     handleToggleEnablePolkassemblyApi,
@@ -717,6 +718,10 @@ export const useMainMessagePorts = () => {
             }
             case 'settings:execute:silenceOsNotifications': {
               handleToggleSilenceOsNotifications();
+              break;
+            }
+            case 'settings:execute:silenceExtrinsicsOsNotifications': {
+              handleToggleSilenceExtrinsicOsNotifications();
               break;
             }
             case 'settings:execute:showDebuggingSubscriptions': {

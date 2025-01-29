@@ -10,6 +10,7 @@ export interface PersistedSettings {
   appDocked: boolean;
   appDarkMode: boolean;
   appSilenceOsNotifications: boolean;
+  appSilenceExtrinsicsOsNotifications: boolean;
   appShowOnAllWorkspaces: boolean;
   appShowDebuggingSubscriptions: boolean;
   appEnableAutomaticSubscriptions: boolean;
