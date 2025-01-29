@@ -78,6 +78,15 @@ export const SettingsList: SettingItem[] = [
     platforms: ['darwin', 'win32', 'linux'],
   },
   {
+    action: 'settings:execute:silenceExtrinsicsOsNotifications',
+    category: 'Extrinsics',
+    enabled: false,
+    helpKey: 'help:settings:silenceExtrinsicsOsNotifications',
+    settingType: 'switch',
+    title: 'Silence OS Notifications for Extrinsics',
+    platforms: ['darwin', 'win32', 'linux'],
+  },
+  {
     action: 'settings:execute:importData',
     category: 'Backup',
     buttonIcon: faFileImport,

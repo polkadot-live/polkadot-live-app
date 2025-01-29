@@ -30,7 +30,8 @@ export type SettingAction =
   | 'settings:execute:enablePolkassembly'
   | 'settings:execute:keepOutdatedEvents'
   | 'settings:execute:hideDockIcon'
-  | 'settings:execute:collapseSideNav';
+  | 'settings:execute:collapseSideNav'
+  | 'settings:execute:silenceExtrinsicsOsNotifications';
 
 export interface SettingItem {
   action: SettingAction;
