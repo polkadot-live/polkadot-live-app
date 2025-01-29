@@ -74,6 +74,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       const parsed: ExtrinsicInfo[] = JSON.parse(ser);
 
       for (const info of parsed) {
+        // Set status to `submitted-unknown` if app was closed before tx was finalized.
+        if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
+          info.txStatus = 'submitted-unkown';
+
+          await window.myAPI.sendExtrinsicsTaskAsync({
+            action: 'extrinsics:persist',
+            data: { serialized: JSON.stringify(info) },
+          });
+        }
         extrinsicsRef.current.set(info.txId, { ...info });
       }
 

@@ -103,6 +103,8 @@ export const Action = () => {
         return 'Finalized';
       default:
         return 'Error Occured';
+      case 'submitted-unkown':
+        return 'Submitted';
     }
   };
 
