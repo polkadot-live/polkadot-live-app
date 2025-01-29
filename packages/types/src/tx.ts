@@ -10,7 +10,9 @@ export type TxStatus =
   | 'submitted'
   | 'in_block'
   | 'finalized'
-  | 'error';
+  | 'error'
+  // Used when the app was closed before extrinsic was finalized.
+  | 'submitted-unkown';
 
 export type TxActionUid =
   | 'nominationPools_pendingRewards_bond'

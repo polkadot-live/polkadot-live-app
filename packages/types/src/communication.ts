@@ -61,6 +61,7 @@ export interface IpcTask {
     | 'extrinsics:getAll'
     | 'extrinsics:persist'
     | 'extrinsics:remove'
+    | 'extrinsics:update'
     // Subscriptions (Account)
     | 'subscriptions:account:getAll'
     | 'subscriptions:account:update'

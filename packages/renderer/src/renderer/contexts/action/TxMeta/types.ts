@@ -28,7 +28,7 @@ export interface TxMetaContextInterface {
   submitTx: (txId: string) => void;
   submitMockTx: (txId: string) => void;
   updateAccountName: (address: string, newName: string) => void;
-  updateTxStatus: (txId: string, txStatus: TxStatus) => void;
+  updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
   removeExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
 
   //notEnoughFunds: boolean;

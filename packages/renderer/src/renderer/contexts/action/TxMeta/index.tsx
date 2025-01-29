@@ -74,6 +74,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       const parsed: ExtrinsicInfo[] = JSON.parse(ser);
 
       for (const info of parsed) {
+        // Set status to `submitted-unknown` if app was closed before tx was finalized.
+        if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
+          info.txStatus = 'submitted-unkown';
+
+          await window.myAPI.sendExtrinsicsTaskAsync({
+            action: 'extrinsics:persist',
+            data: { serialized: JSON.stringify(info) },
+          });
+        }
         extrinsicsRef.current.set(info.txId, { ...info });
       }
 
@@ -326,7 +335,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update the status of a transaction.
    */
-  const updateTxStatus = (txId: string, txStatus: TxStatus) => {
+  const updateTxStatus = async (txId: string, txStatus: TxStatus) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -339,6 +348,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (txStatus === 'error' || txStatus === 'finalized') {
         window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       }
+
+      // Update tx status in store.
+      const sendInfo: ExtrinsicInfo = { ...info, dynamicInfo: undefined };
+      await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:update',
+        data: { serialized: JSON.stringify(sendInfo) },
+      });
     } catch (err) {
       console.log(err);
     }
