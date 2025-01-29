@@ -58,7 +58,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Flag to enable mock UI.
    */
-  const [showMockUI] = useState(true);
+  const [showMockUI] = useState(false);
 
   /**
    * Fetch stored extrinsics when window loads.
