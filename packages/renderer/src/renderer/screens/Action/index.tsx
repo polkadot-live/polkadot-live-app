@@ -5,11 +5,18 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../theme/variables';
 
-import { ActionItem, Identicon, Tx } from '@polkadot-live/ui/components';
+import {
+  ActionItem,
+  Identicon,
+  Tx,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
-import { forwardRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
@@ -24,37 +31,13 @@ import {
   faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@radix-ui/react-icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { useOverlay, useTooltip } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
-import { SelectContent, SelectTrigger } from '../Import/Ledger/Import/Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { TxStatus } from '@polkadot-live/types/tx';
 import { BarLoader } from 'react-spinners';
-
-const SelectItem = forwardRef(function SelectItem(
-  { children, className, ...props }: AnyData,
-  forwardedRef
-) {
-  return (
-    <Select.Item
-      className={`SelectItem ${className}`}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="SelectItemIndicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 export const Action = () => {
   // Set up port communication for `action` window.

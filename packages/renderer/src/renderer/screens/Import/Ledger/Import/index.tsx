@@ -6,7 +6,7 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -35,7 +35,7 @@ import {
   faExclamationTriangle,
   faX,
 } from '@fortawesome/free-solid-svg-icons';
-import { ConnectButton, SelectTrigger, SelectContent } from './Wrappers';
+import { ConnectButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
@@ -47,25 +47,6 @@ import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import type { ImportProps } from './types';
-import type { AnyData } from '@polkadot-live/types/misc';
-
-const SelectItem = forwardRef(function SelectItem(
-  { children, className, ...props }: AnyData,
-  forwardedRef
-) {
-  return (
-    <Select.Item
-      className={`SelectItem ${className}`}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="SelectItemIndicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { darkMode } = useConnections();
@@ -231,14 +212,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   value={ledger.selectedNetworkState}
                   onValueChange={(val) => ledger.setSelectedNetwork(val)}
                 >
-                  <SelectTrigger $theme={theme} aria-label="Network">
+                  <UI.SelectTrigger $theme={theme} aria-label="Network">
                     <Select.Value placeholder="Select Network" />
                     <Select.Icon className="SelectIcon">
                       <ChevronDownIcon />
                     </Select.Icon>
-                  </SelectTrigger>
+                  </UI.SelectTrigger>
                   <Select.Portal>
-                    <SelectContent
+                    <UI.SelectContent
                       $theme={theme}
                       position="popper"
                       sideOffset={3}
@@ -256,7 +237,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               iconWidth,
                               iconFill,
                             }) => (
-                              <SelectItem key={ledgerId} value={network}>
+                              <UI.SelectItem key={ledgerId} value={network}>
                                 <div className="innerRow">
                                   <div>
                                     <ChainIcon
@@ -270,7 +251,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   </div>
                                   <div>{network}</div>
                                 </div>
-                              </SelectItem>
+                              </UI.SelectItem>
                             )
                           )}
                         </Select.Group>
@@ -278,7 +259,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       <Select.ScrollDownButton className="SelectScrollButton">
                         <ChevronDownIcon />
                       </Select.ScrollDownButton>
-                    </SelectContent>
+                    </UI.SelectContent>
                   </Select.Portal>
                 </Select.Root>
 
