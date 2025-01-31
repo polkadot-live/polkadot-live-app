@@ -4,14 +4,6 @@
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { AnyData } from '@polkadot-live/types/misc';
 
-export interface LedgerNetworkData {
-  network: string;
-  ledgerId: string;
-  ChainIcon: AnyData;
-  iconWidth: number;
-  iconFill: string;
-}
-
 export interface RawLedgerAddress {
   address: string;
   pubKey: string;
@@ -28,7 +20,6 @@ export interface LedgerHardwareContextInterface {
   deviceConnected: boolean;
   isFetching: boolean;
   isImporting: boolean;
-  networkData: LedgerNetworkData[];
   pageIndex: number;
   receivedAddresses: RawLedgerAddress[];
   selectedAddresses: NamedRawLedgerAddress[];

@@ -46,6 +46,7 @@ import { InfoCardSteps } from '../../InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
+import { getSelectNetworkData } from '@ren/config/chains';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
@@ -229,31 +230,37 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       </Select.ScrollUpButton>
                       <Select.Viewport className="SelectViewport">
                         <Select.Group>
-                          {ledger.networkData.map(
-                            ({
-                              network,
-                              ledgerId,
-                              ChainIcon,
-                              iconWidth,
-                              iconFill,
-                            }) => (
-                              <UI.SelectItem key={ledgerId} value={network}>
-                                <div className="innerRow">
-                                  <div>
-                                    <ChainIcon
-                                      width={iconWidth}
-                                      fill={iconFill}
-                                      style={{
-                                        marginLeft:
-                                          network === 'Polkadot' ? '2px' : '0',
-                                      }}
-                                    />
-                                  </div>
-                                  <div>{network}</div>
-                                </div>
-                              </UI.SelectItem>
+                          {getSelectNetworkData(darkMode)
+                            .filter(({ network }) =>
+                              ['Polkadot', 'Kusama'].includes(network)
                             )
-                          )}
+                            .map(
+                              ({
+                                network,
+                                ledgerId,
+                                ChainIcon,
+                                iconWidth,
+                                iconFill,
+                              }) => (
+                                <UI.SelectItem key={ledgerId} value={network}>
+                                  <div className="innerRow">
+                                    <div>
+                                      <ChainIcon
+                                        width={iconWidth}
+                                        fill={iconFill}
+                                        style={{
+                                          marginLeft:
+                                            network === 'Polkadot'
+                                              ? '2px'
+                                              : '0',
+                                        }}
+                                      />
+                                    </div>
+                                    <div>{network}</div>
+                                  </div>
+                                </UI.SelectItem>
+                              )
+                            )}
                         </Select.Group>
                       </Select.Viewport>
                       <Select.ScrollDownButton className="SelectScrollButton">

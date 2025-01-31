@@ -4,11 +4,8 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { defaultLedgerHardwareContext } from './defaults';
 import { setStateWithRef } from '@w3ux/utils';
-import { chainIcon } from '@ren/config/chains';
-import { useConnections } from '../../common/Connections';
 import type {
   LedgerHardwareContextInterface,
-  LedgerNetworkData,
   NamedRawLedgerAddress,
   RawLedgerAddress,
 } from './types';
@@ -32,8 +29,6 @@ export const LedgerHardwareProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { darkMode } = useConnections();
-
   const [deviceConnected, setDeviceConnected] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -56,26 +51,6 @@ export const LedgerHardwareProvider = ({
   const [selectedAddresses, setSelectedAddresses] = useState<
     NamedRawLedgerAddress[]
   >([]);
-
-  /**
-   * Ledger supported network data.
-   */
-  const networkData: LedgerNetworkData[] = [
-    {
-      network: 'Polkadot',
-      ledgerId: 'dot',
-      ChainIcon: chainIcon('Polkadot'),
-      iconWidth: 18,
-      iconFill: '#ac2461',
-    },
-    {
-      network: 'Kusama',
-      ledgerId: 'kusama',
-      ChainIcon: chainIcon('Kusama'),
-      iconWidth: 24,
-      iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
-    },
-  ];
 
   /**
    * Reset selected addresses and page index when connecting to another network.
@@ -273,7 +248,6 @@ export const LedgerHardwareProvider = ({
         deviceConnected,
         isFetching,
         isImporting,
-        networkData,
         pageIndex,
         receivedAddresses,
         selectedAddresses,
