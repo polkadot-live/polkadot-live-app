@@ -13,6 +13,7 @@ export * from './Identicon';
 export * from './Menu';
 export * from './Overlay';
 export * from './Padlock';
+export * from './SelectBox';
 export * from './ShiftingMeter';
 export * from './Spinners';
 export * from './SideNav';
