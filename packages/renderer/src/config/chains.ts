@@ -7,7 +7,7 @@ import PolkadotIcon from './svg/polkadotIcon.svg?react';
 import WestendIcon from './svg/westendIcon.svg?react';
 import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
 
 interface Chain {
@@ -131,3 +131,29 @@ export const chainUnits = (chain: ChainID) =>
   (ChainList.get(chain) as Chain).units;
 
 export const getCategory = (category: string) => CategoryList.get(category);
+
+export const getSelectNetworkData = (
+  darkMode: boolean
+): SelectNetworkData[] => [
+  {
+    network: 'Polkadot',
+    ledgerId: 'dot',
+    ChainIcon: chainIcon('Polkadot'),
+    iconWidth: 18,
+    iconFill: '#ac2461',
+  },
+  {
+    network: 'Kusama',
+    ledgerId: 'kusama',
+    ChainIcon: chainIcon('Kusama'),
+    iconWidth: 24,
+    iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
+  },
+  {
+    network: 'Westend',
+    ledgerId: '',
+    ChainIcon: chainIcon('Westend'),
+    iconWidth: 24,
+    iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
+  },
+];
