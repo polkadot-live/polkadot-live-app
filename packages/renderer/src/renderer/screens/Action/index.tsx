@@ -6,6 +6,9 @@ import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../theme/variables';
 
 import {
+  AccordionContent,
+  AccordionTrigger,
+  AccordionWrapper,
   ActionItem,
   Identicon,
   Tx,
@@ -22,8 +25,6 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { ComponentFactory } from './TxActionItem';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
-import { AccordionContent, AccordionTrigger } from './Accordion';
-import { AccordionWrapper } from './Accordion/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
