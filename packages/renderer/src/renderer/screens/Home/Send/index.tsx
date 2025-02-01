@@ -17,8 +17,19 @@ import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faCopy } from '@fortawesome/free-solid-svg-icons';
-import { AddButton, InputWrapper } from './Wrappers';
+import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
 import type { ActionItemSendProps, SelectBoxProps } from './types';
+
+/** Progress bar component */
+const ProgressBar = ({ value, max }: { value: number; max: number }) => {
+  const percentage = (value / max) * 100;
+
+  return (
+    <ProgressBarWrapper>
+      <div className="progress-fill" style={{ width: `${percentage}%` }} />
+    </ProgressBarWrapper>
+  );
+};
 
 /** Action item component */
 const ActionItemSend = ({ text }: ActionItemSendProps) => (
@@ -74,6 +85,9 @@ export const Send: React.FC = () => {
   const [sender, setSender] = useState('');
   const [receiver, setReceiver] = useState('');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [progress, setProgress] = useState(20);
+
   const mockAddresses = [
     {
       accountName: 'Mock Account 1',
@@ -107,6 +121,10 @@ export const Send: React.FC = () => {
       }}
     >
       <MainHeading>Send</MainHeading>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <ProgressBar value={progress} max={100} />
+      </div>
 
       {/** Network Section */}
       <div style={{ display: 'none' }}>

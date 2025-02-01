@@ -54,3 +54,17 @@ export const AddButton = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export const ProgressBarWrapper = styled.div`
+  background-color: var(--background-surface);
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+
+  .progress-fill {
+    background-color: var(--accent-primary);
+    height: 100%;
+    transition: width 0.2s ease-in-out;
+  }
+`;
