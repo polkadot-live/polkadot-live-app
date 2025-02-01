@@ -12,12 +12,14 @@ import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faCaretDown,
   faChevronRight,
   faCircleCheck,
   faCopy,
 } from '@fortawesome/free-solid-svg-icons';
 import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
 import type { SelectBoxProps } from './types';
+import styled from 'styled-components';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -159,6 +161,7 @@ export const Send: React.FC = () => {
                     </div>
                   }
                 />
+                <NextStepArrow complete={true} />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -202,6 +205,7 @@ export const Send: React.FC = () => {
                     </div>
                   }
                 />
+                <NextStepArrow complete={false} />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -223,6 +227,7 @@ export const Send: React.FC = () => {
                   <span>DOT</span>
                 </InputWrapper>
                 <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
+                <NextStepArrow complete={false} />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -317,4 +322,32 @@ const TriggerContent = ({
       />
     </div>
   </>
+);
+
+const NextStepArrowWrapper = styled.div<{ $complete: boolean }>`
+  > button {
+    text-align: center;
+    width: 100%;
+    font-size: 2rem;
+    color: ${(props) =>
+      props.$complete
+        ? 'var(--accent-success)'
+        : 'var(--text-color-secondary)'};
+    opacity: ${(props) => (props.$complete ? '1' : '0.15')};
+    transition: all 0.2s ease-out;
+    cursor: ${(props) => (props.$complete ? 'pointer' : 'not-allowed')};
+
+    &:hover {
+      filter: ${(props) =>
+        props.$complete ? 'brightness(140%)' : 'brightness(100%)'};
+    }
+  }
+`;
+
+const NextStepArrow = ({ complete }: { complete: boolean }) => (
+  <NextStepArrowWrapper $complete={complete}>
+    <button>
+      <FontAwesomeIcon icon={faCaretDown} />
+    </button>
+  </NextStepArrowWrapper>
 );
