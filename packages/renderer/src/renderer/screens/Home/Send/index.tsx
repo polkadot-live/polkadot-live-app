@@ -16,7 +16,11 @@ import { getSelectNetworkData } from '@ren/config/chains';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight, faCopy } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronRight,
+  faCircleCheck,
+  faCopy,
+} from '@fortawesome/free-solid-svg-icons';
 import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
 import type { ActionItemSendProps, SelectBoxProps } from './types';
 
@@ -167,8 +171,7 @@ export const Send: React.FC = () => {
           {/** Sender Section */}
           <Accordion.Item className="AccordionItem" value="section-sender">
             <UI.AccordionTrigger narrow={true}>
-              <ChevronDownIcon className="AccordionChevron" aria-hidden />
-              <h4>Sender</h4>
+              <TriggerContent label="Sender" complete={true} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -211,8 +214,7 @@ export const Send: React.FC = () => {
           {/** Receiver Section */}
           <Accordion.Item className="AccordionItem" value="section-receiver">
             <UI.AccordionTrigger narrow={true}>
-              <ChevronDownIcon className="AccordionChevron" aria-hidden />
-              <h4>Receiver</h4>
+              <TriggerContent label="Receiver" complete={false} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -255,8 +257,7 @@ export const Send: React.FC = () => {
           {/** Send Amount Section */}
           <Accordion.Item className="AccordionItem" value="section-send-amount">
             <UI.AccordionTrigger narrow={true}>
-              <ChevronDownIcon className="AccordionChevron" aria-hidden />
-              <h4>Send Amount</h4>
+              <TriggerContent label="Send Amount" complete={false} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -277,8 +278,7 @@ export const Send: React.FC = () => {
           {/** Summary Section */}
           <Accordion.Item className="AccordionItem" value="section-summary">
             <UI.AccordionTrigger narrow={true}>
-              <ChevronDownIcon className="AccordionChevron" aria-hidden />
-              <h4>Summary</h4>
+              <TriggerContent label="Summary" complete={false} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -341,4 +341,28 @@ const InfoPanel = ({
       <span style={{ color: 'var(--text-color-primary)' }}>{Content}</span>
     </div>
   </div>
+);
+
+const TriggerContent = ({
+  label,
+  complete,
+}: {
+  label: string;
+  complete: boolean;
+}) => (
+  <>
+    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+    <h4 style={{ flex: 1 }}>{label}</h4>
+    <div className="right">
+      <FontAwesomeIcon
+        style={
+          complete
+            ? { color: 'var(--accent-success)' }
+            : { color: 'inherit', opacity: '0.25' }
+        }
+        icon={faCircleCheck}
+        transform={'grow-4'}
+      />
+    </div>
+  </>
 );

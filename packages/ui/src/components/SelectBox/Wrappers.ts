@@ -127,6 +127,7 @@ export const SelectContent = styled(Select.Content).attrs<{
   .SelectScrollButton {
     background-color: var(--background);
     color: var(--text-primary);
+    opacity: 0.6;
     display: flex;
     align-items: center;
     justify-content: center;
