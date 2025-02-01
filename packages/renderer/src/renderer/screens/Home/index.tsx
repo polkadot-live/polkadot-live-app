@@ -12,10 +12,11 @@ import { useEvents } from '@app/contexts/main/Events';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
-import { Summary } from '@app/screens/Home/Summary';
 import { Events } from './Events';
 import { Footer } from './Footer';
 import { Manage } from './Manage';
+import { Send } from './Send';
+import { Summary } from '@app/screens/Home/Summary';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import IconSVG from '@app/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
@@ -230,6 +231,9 @@ export const Home = () => {
                   <Manage addresses={getAddresses()} />
                 </div>
               )}
+
+              {/* Send */}
+              {sideNav.selectedId === 3 && <Send />}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>

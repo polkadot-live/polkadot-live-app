@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './Accordion';
+export * from './AccordionRx';
 export * from './ActionItem';
 export * from './Cards';
 export * from './Common';
