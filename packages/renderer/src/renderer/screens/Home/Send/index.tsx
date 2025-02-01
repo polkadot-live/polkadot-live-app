@@ -156,8 +156,18 @@ export const Send: React.FC = () => {
                         alignItems: 'center',
                       }}
                     >
-                      <span>{ellipsisFn(sender, 12)}</span>
-                      <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
+                      {sender === '' ? (
+                        <span>-</span>
+                      ) : (
+                        <>
+                          <span>{ellipsisFn(sender, 12)}</span>
+                          <FontAwesomeIcon
+                            icon={faCopy}
+                            transform={'shrink-2'}
+                          />
+                        </>
+                      )}
+                      <span></span>
                     </div>
                   }
                 />
@@ -200,8 +210,17 @@ export const Send: React.FC = () => {
                         alignItems: 'center',
                       }}
                     >
-                      <span>{ellipsisFn(receiver, 12)}</span>
-                      <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
+                      {receiver === '' ? (
+                        <span>-</span>
+                      ) : (
+                        <>
+                          <span>{ellipsisFn(receiver, 12)}</span>
+                          <FontAwesomeIcon
+                            icon={faCopy}
+                            transform={'shrink-2'}
+                          />
+                        </>
+                      )}
                     </div>
                   }
                 />
