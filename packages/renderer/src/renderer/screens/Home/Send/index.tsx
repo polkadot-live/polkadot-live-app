@@ -5,14 +5,9 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
-import {
-  ActionItem,
-  Identicon,
-  MainHeading,
-} from '@polkadot-live/ui/components';
+import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { getSelectNetworkData } from '@ren/config/chains';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,7 +17,7 @@ import {
   faCopy,
 } from '@fortawesome/free-solid-svg-icons';
 import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
-import type { ActionItemSendProps, SelectBoxProps } from './types';
+import type { SelectBoxProps } from './types';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -34,17 +29,6 @@ const ProgressBar = ({ value, max }: { value: number; max: number }) => {
     </ProgressBarWrapper>
   );
 };
-
-/** Action item component */
-const ActionItemSend = ({ text }: ActionItemSendProps) => (
-  <ActionItem
-    text={text}
-    style={{
-      fontSize: '1.1rem',
-      color: 'var(--text-color-secondary)',
-    }}
-  />
-);
 
 /** Select box wrapper */
 const SelectBox = ({
@@ -84,8 +68,6 @@ const SelectBox = ({
 
 /** Send component. */
 export const Send: React.FC = () => {
-  const { darkMode } = useConnections();
-  const [selectedNetwork, setSelectedNetwork] = useState<string>('Polkadot');
   const [sender, setSender] = useState('');
   const [receiver, setReceiver] = useState('');
 
@@ -128,36 +110,6 @@ export const Send: React.FC = () => {
 
       <div style={{ marginBottom: '1rem' }}>
         <ProgressBar value={progress} max={100} />
-      </div>
-
-      {/** Network Section */}
-      <div style={{ display: 'none' }}>
-        <ActionItemSend text={'Network'} />
-        <SelectBox
-          value={selectedNetwork}
-          ariaLabel="Network"
-          placeholder="Select Network"
-          onValueChange={(val) => setSelectedNetwork(val)}
-        >
-          {getSelectNetworkData(darkMode).map(
-            ({ network, ledgerId, ChainIcon, iconWidth, iconFill }) => (
-              <UI.SelectItem key={ledgerId} value={network}>
-                <div className="innerRow">
-                  <div>
-                    <ChainIcon
-                      width={iconWidth}
-                      fill={iconFill}
-                      style={{
-                        marginLeft: network === 'Polkadot' ? '2px' : '0',
-                      }}
-                    />
-                  </div>
-                  <div>{network}</div>
-                </div>
-              </UI.SelectItem>
-            )
-          )}
-        </SelectBox>
       </div>
 
       <UI.AccordionWrapper>
