@@ -9,6 +9,7 @@ import {
   faCubesStacked,
   faDownLeftAndUpRightToCenter,
   faGaugeSimple,
+  faPaperPlane,
   faUpRightAndDownLeftFromCenter,
 } from '@fortawesome/free-solid-svg-icons';
 import type { SideNavProps } from './SideNav.types';
@@ -36,6 +37,7 @@ export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
         icon={faCubesStacked}
         label={'Subscribe'}
       />
+      <NavItem id={3} navState={navState} icon={faPaperPlane} label={'Send'} />
 
       <NavItemWrapper
         $active={false}
