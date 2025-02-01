@@ -33,7 +33,7 @@ export const InputWrapper = styled.div`
 `;
 
 export const AddButton = styled.button`
-  background-color: var(--button-background-primary);
+  background-color: var(--button-pink-background);
   margin-top: 0.4rem;
 
   display: flex;

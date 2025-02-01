@@ -130,6 +130,13 @@ export const AccordionWrapper = styled.div`
     }
   }
 
+  .AccordionContentInnerAlternate {
+    background-color: transparent;
+    padding: 0;
+    margin-top: 1rem;
+    border-radius: 0.375rem;
+  }
+
   @keyframes slideDown {
     from {
       height: 0;

@@ -27,7 +27,7 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   justify-content: start;
   border-radius: 0.375rem;
   padding: 1.1rem 1.25rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   gap: 1rem;
 
   /** Same class as select item */
@@ -90,7 +90,7 @@ export const SelectContent = styled(Select.Content).attrs<{
     position: relative;
     padding: 1rem 1.25rem;
     gap: 0.25rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1rem;
     border-radius: 0.375rem;
     user-select: none;

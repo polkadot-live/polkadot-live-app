@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
@@ -137,100 +138,149 @@ export const Send: React.FC = () => {
         </SelectBox>
       </div>
 
-      {/** Sender Section */}
-      <ActionItemSend text={'Sender'} />
-      <FlexColumn>
-        <SelectBox
-          value={sender}
-          ariaLabel="Sender"
-          placeholder="Select Sender"
-          onValueChange={(val) => setSender(val)}
+      <UI.AccordionWrapper>
+        {/** TODO: defaultValue, onValueChange */}
+        <Accordion.Root
+          className="AccordionRoot"
+          style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+          type="multiple"
+          defaultValue={['section-sender']}
         >
-          {mockAddresses.map(({ accountName, address }) => (
-            <UI.SelectItem key={`sender-${address}`} value={address}>
-              <div className="innerRow">
-                <div>
-                  <Identicon value={address} size={20} />
-                </div>
-                <div>{accountName}</div>
-              </div>
-            </UI.SelectItem>
-          ))}
-        </SelectBox>
-        <InfoPanel
-          label={'Sending Address:'}
-          Content={
-            <div
-              style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}
-            >
-              <span>{ellipsisFn(sender, 12)}</span>
-              <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
-            </div>
-          }
-        />
-      </FlexColumn>
+          {/** Sender Section */}
+          <Accordion.Item className="AccordionItem" value="section-sender">
+            <UI.AccordionTrigger narrow={true}>
+              <ChevronDownIcon className="AccordionChevron" aria-hidden />
+              <h4>Sender</h4>
+            </UI.AccordionTrigger>
+            <UI.AccordionContent narrow={true}>
+              <FlexColumn>
+                <SelectBox
+                  value={sender}
+                  ariaLabel="Sender"
+                  placeholder="Select Sender"
+                  onValueChange={(val) => setSender(val)}
+                >
+                  {mockAddresses.map(({ accountName, address }) => (
+                    <UI.SelectItem key={`sender-${address}`} value={address}>
+                      <div className="innerRow">
+                        <div>
+                          <Identicon value={address} size={20} />
+                        </div>
+                        <div>{accountName}</div>
+                      </div>
+                    </UI.SelectItem>
+                  ))}
+                </SelectBox>
+                <InfoPanel
+                  label={'Sending Address:'}
+                  Content={
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span>{ellipsisFn(sender, 12)}</span>
+                      <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
+                    </div>
+                  }
+                />
+              </FlexColumn>
+            </UI.AccordionContent>
+          </Accordion.Item>
 
-      {/** Receiver Section */}
-      <ActionItemSend text={'Receiver'} />
-      <FlexColumn>
-        <SelectBox
-          value={receiver}
-          ariaLabel="Receiver"
-          placeholder="Select Receiver"
-          onValueChange={(val) => setReceiver(val)}
-        >
-          {mockAddresses.map(({ accountName, address }) => (
-            <UI.SelectItem key={`receiver-${address}`} value={address}>
-              <div className="innerRow">
-                <div>
-                  <Identicon value={address} size={20} />
-                </div>
-                <div>{accountName}</div>
-              </div>
-            </UI.SelectItem>
-          ))}
-        </SelectBox>
-        <InfoPanel
-          label={'Receiving Address:'}
-          Content={
-            <div
-              style={{
-                display: 'flex',
-                gap: '0.8rem',
-                alignItems: 'center',
-              }}
-            >
-              <span>{ellipsisFn(receiver, 12)}</span>
-              <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
-            </div>
-          }
-        />
-      </FlexColumn>
+          {/** Receiver Section */}
+          <Accordion.Item className="AccordionItem" value="section-receiver">
+            <UI.AccordionTrigger narrow={true}>
+              <ChevronDownIcon className="AccordionChevron" aria-hidden />
+              <h4>Receiver</h4>
+            </UI.AccordionTrigger>
+            <UI.AccordionContent narrow={true}>
+              <FlexColumn>
+                <SelectBox
+                  value={receiver}
+                  ariaLabel="Receiver"
+                  placeholder="Select Receiver"
+                  onValueChange={(val) => setReceiver(val)}
+                >
+                  {mockAddresses.map(({ accountName, address }) => (
+                    <UI.SelectItem key={`receiver-${address}`} value={address}>
+                      <div className="innerRow">
+                        <div>
+                          <Identicon value={address} size={20} />
+                        </div>
+                        <div>{accountName}</div>
+                      </div>
+                    </UI.SelectItem>
+                  ))}
+                </SelectBox>
+                <InfoPanel
+                  label={'Receiving Address:'}
+                  Content={
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span>{ellipsisFn(receiver, 12)}</span>
+                      <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
+                    </div>
+                  }
+                />
+              </FlexColumn>
+            </UI.AccordionContent>
+          </Accordion.Item>
 
-      {/** Send Amount Section */}
-      <ActionItemSend text={'Send Amount'} />
-      <FlexColumn>
-        <InputWrapper>
-          <input
-            type="number"
-            disabled={false}
-            defaultValue={0}
-            onChange={(e) => console.log(e)}
-          />
-          <span>DOT</span>
-        </InputWrapper>
-        <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
-      </FlexColumn>
+          {/** Send Amount Section */}
+          <Accordion.Item className="AccordionItem" value="section-send-amount">
+            <UI.AccordionTrigger narrow={true}>
+              <ChevronDownIcon className="AccordionChevron" aria-hidden />
+              <h4>Send Amount</h4>
+            </UI.AccordionTrigger>
+            <UI.AccordionContent narrow={true}>
+              <FlexColumn>
+                <InputWrapper>
+                  <input
+                    type="number"
+                    disabled={false}
+                    defaultValue={0}
+                    onChange={(e) => console.log(e)}
+                  />
+                  <span>DOT</span>
+                </InputWrapper>
+                <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
+              </FlexColumn>
+            </UI.AccordionContent>
+          </Accordion.Item>
 
-      <ActionItemSend text={'Summary'} />
-      <FlexColumn>
-        <InfoPanel label={'Network:'} Content={'Polkadot'} />
-        <InfoPanel label={'Estimated Fee:'} Content={'0.1 DOT'} />
-        <AddButton onClick={() => console.log('Add')} disabled={false}>
-          <FontAwesomeIcon icon={faChevronRight} transform={'shrink-4'} />
-          <span>Proceed</span>
-        </AddButton>
-      </FlexColumn>
+          {/** Summary Section */}
+          <Accordion.Item className="AccordionItem" value="section-summary">
+            <UI.AccordionTrigger narrow={true}>
+              <ChevronDownIcon className="AccordionChevron" aria-hidden />
+              <h4>Summary</h4>
+            </UI.AccordionTrigger>
+            <UI.AccordionContent narrow={true}>
+              <FlexColumn>
+                <InfoPanel label={'Network:'} Content={'Polkadot'} />
+                <InfoPanel label={'Sender:'} Content={'Mock Account 1'} />
+                <InfoPanel label={'Receiver:'} Content={'Mock Account 2'} />
+                <InfoPanel label={'Send Amount:'} Content={'10 DOT'} />
+                <InfoPanel label={'Estimated Fee:'} Content={'0.1 DOT'} />
+                <AddButton onClick={() => console.log('Add')} disabled={false}>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    transform={'shrink-4'}
+                  />
+                  <span>Proceed</span>
+                </AddButton>
+              </FlexColumn>
+            </UI.AccordionContent>
+          </Accordion.Item>
+        </Accordion.Root>
+      </UI.AccordionWrapper>
     </div>
   );
 };
@@ -257,7 +307,6 @@ const InfoPanel = ({
       padding: '1rem',
       backgroundColor: 'var(--background-surface)',
       border: '0.375rem',
-      color: 'var(--text-color-secondary)',
     }}
   >
     <div
@@ -268,8 +317,10 @@ const InfoPanel = ({
         opacity: '0.85',
       }}
     >
-      <span style={{ flex: 1 }}>{label}</span>
-      <span>{Content}</span>
+      <span style={{ flex: 1, color: 'var(--text-color-secondary)' }}>
+        {label}
+      </span>
+      <span style={{ color: 'var(--text-color-primary)' }}>{Content}</span>
     </div>
   </div>
 );
