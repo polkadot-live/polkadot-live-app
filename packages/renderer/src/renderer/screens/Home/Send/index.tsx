@@ -153,7 +153,7 @@ export const Send: React.FC = () => {
       }
       result = result.concat(addresses as LocalAddress[]);
     }
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   };
 
   /**
@@ -164,7 +164,9 @@ export const Send: React.FC = () => {
     for (const addresses of addressMap.values()) {
       result = result.concat(addresses);
     }
-    return result;
+
+    // TODO: Filter accounts by sender address network.
+    return result.sort((a, b) => a.name.localeCompare(b.name));
   };
 
   return (
