@@ -10,6 +10,7 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
+import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretDown,
@@ -24,6 +25,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { SelectBoxProps } from './types';
 
 /** Progress bar component */
@@ -86,6 +88,7 @@ export const Send: React.FC = () => {
 
   const [sender, setSender] = useState('');
   const [receiver, setReceiver] = useState('');
+  const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progress, setProgress] = useState(20);
@@ -140,6 +143,16 @@ export const Send: React.FC = () => {
   }, [updateCache]);
 
   /**
+   * Sender value changed callback.
+   */
+  const handleSenderChange = (senderAddress: string) => {
+    setSender(senderAddress);
+    setSenderNetwork(getAddressChainId(senderAddress));
+
+    // TODO: Reset other send fields.
+  };
+
+  /**
    * Return all addresses capable of signing extrinsics.
    */
   const getSenderAccounts = () => {
@@ -165,8 +178,20 @@ export const Send: React.FC = () => {
       result = result.concat(addresses);
     }
 
-    // TODO: Filter accounts by sender address network.
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+    // Filter accounts on sender address network.
+    return (
+      result
+        .filter(({ address }) => {
+          if (!senderNetwork) {
+            return true;
+          } else {
+            return getAddressChainId(address) === senderNetwork;
+          }
+        })
+        // Don't include sender in list.
+        .filter(({ address }) => address !== sender)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    );
   };
 
   return (
@@ -203,7 +228,7 @@ export const Send: React.FC = () => {
                   value={sender}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
-                  onValueChange={(val) => setSender(val)}
+                  onValueChange={(val) => handleSenderChange(val)}
                 >
                   {getSenderAccounts().map(({ name: accountName, address }) => (
                     <UI.SelectItem key={`sender-${address}`} value={address}>
