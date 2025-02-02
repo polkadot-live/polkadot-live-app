@@ -201,6 +201,24 @@ export const Send: React.FC = () => {
   };
 
   /**
+   * Remove zero when send amount field focused.
+   */
+  const handleSendAmountFocus = () => {
+    if (sendAmount === '0') {
+      setSendAmount('');
+    }
+  };
+
+  /**
+   * Add zero when send amount field blurred and empty.
+   */
+  const handleSendAmountBlur = () => {
+    if (sendAmount === '') {
+      setSendAmount('0');
+    }
+  };
+
+  /**
    * Return all addresses capable of signing extrinsics.
    */
   const getSenderAccounts = () => {
@@ -242,6 +260,15 @@ export const Send: React.FC = () => {
     );
   };
 
+  /**
+   * Conditions to enable the proceed button.
+   */
+  const proceedDisabled = () =>
+    sender === null ||
+    receiver === null ||
+    sendAmount === '0' ||
+    sendAmount === '';
+
   return (
     <div
       style={{
@@ -268,7 +295,7 @@ export const Send: React.FC = () => {
           {/** Sender Section */}
           <Accordion.Item className="AccordionItem" value="section-sender">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Sender" complete={true} />
+              <TriggerContent label="Sender" complete={sender !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -322,7 +349,7 @@ export const Send: React.FC = () => {
           {/** Receiver Section */}
           <Accordion.Item className="AccordionItem" value="section-receiver">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Receiver" complete={false} />
+              <TriggerContent label="Receiver" complete={receiver !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -380,7 +407,10 @@ export const Send: React.FC = () => {
           {/** Send Amount Section */}
           <Accordion.Item className="AccordionItem" value="section-send-amount">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Send Amount" complete={false} />
+              <TriggerContent
+                label="Send Amount"
+                complete={sendAmount !== '0' && sendAmount !== ''}
+              />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -391,6 +421,8 @@ export const Send: React.FC = () => {
                     value={sendAmount}
                     defaultValue={'0'}
                     onChange={(e) => handleSendAmountChange(e)}
+                    onFocus={() => handleSendAmountFocus()}
+                    onBlur={() => handleSendAmountBlur()}
                   />
                   <span>DOT</span>
                 </InputWrapper>
@@ -432,7 +464,10 @@ export const Send: React.FC = () => {
                       : `${estimatedFee} ${chainCurrency(senderNetwork!)}`
                   }
                 />
-                <AddButton onClick={() => console.log('Add')} disabled={false}>
+                <AddButton
+                  onClick={() => console.log('Add')}
+                  disabled={proceedDisabled()}
+                >
                   <FontAwesomeIcon
                     icon={faChevronRight}
                     transform={'shrink-4'}
