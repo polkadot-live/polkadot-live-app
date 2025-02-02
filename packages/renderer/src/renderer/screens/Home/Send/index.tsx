@@ -26,6 +26,7 @@ import type {
   LocalAddress,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChangeEvent } from 'react';
 import type { SelectBoxProps } from './types';
 
 /** Progress bar component */
@@ -86,9 +87,10 @@ export const Send: React.FC = () => {
   const addressMapRef = useRef<typeof addressMap>(addressMap);
   const [updateCache, setUpdateCache] = useState(false);
 
-  const [sender, setSender] = useState('');
-  const [receiver, setReceiver] = useState('');
+  const [sender, setSender] = useState<null | string>(null);
+  const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
+  const [sendAmount, setSendAmount] = useState<string>('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progress, setProgress] = useState(20);
@@ -149,7 +151,19 @@ export const Send: React.FC = () => {
     setSender(senderAddress);
     setSenderNetwork(getAddressChainId(senderAddress));
 
-    // TODO: Reset other send fields.
+    // Reset other send fields.
+    setReceiver(null);
+    setSendAmount('0');
+  };
+
+  /**
+   * Send amount changed callback.
+   */
+  const handleSendAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value;
+    if (val === '' || !isNaN(Number(val))) {
+      setSendAmount(val === '' ? '' : val);
+    }
   };
 
   /**
@@ -225,7 +239,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
-                  value={sender}
+                  value={sender || ''}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
                   onValueChange={(val) => handleSenderChange(val)}
@@ -251,7 +265,7 @@ export const Send: React.FC = () => {
                         alignItems: 'center',
                       }}
                     >
-                      {sender === '' ? (
+                      {!sender ? (
                         <span>-</span>
                       ) : (
                         <>
@@ -279,7 +293,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
-                  value={receiver}
+                  value={receiver || ''}
                   ariaLabel="Receiver"
                   placeholder="Select Receiver"
                   onValueChange={(val) => setReceiver(val)}
@@ -310,7 +324,7 @@ export const Send: React.FC = () => {
                         alignItems: 'center',
                       }}
                     >
-                      {receiver === '' ? (
+                      {!receiver ? (
                         <span>-</span>
                       ) : (
                         <>
@@ -339,9 +353,10 @@ export const Send: React.FC = () => {
                 <InputWrapper>
                   <input
                     type="number"
-                    disabled={false}
-                    defaultValue={0}
-                    onChange={(e) => console.log(e)}
+                    disabled={!sender}
+                    value={sendAmount}
+                    defaultValue={'0'}
+                    onChange={(e) => handleSendAmountChange(e)}
                   />
                   <span>DOT</span>
                 </InputWrapper>

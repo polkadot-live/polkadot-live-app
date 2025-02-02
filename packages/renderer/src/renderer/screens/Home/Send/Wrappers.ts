@@ -17,6 +17,12 @@ export const InputWrapper = styled.div`
     font-weight: 500;
     width: 100%;
     text-align: left;
+    cursor: default;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
   }
   span {
     color: var(--text-color-primary);
