@@ -8,7 +8,7 @@ import * as themeVariables from '../../../theme/variables';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -81,6 +81,8 @@ export const Send: React.FC = () => {
   const [addressMap, setAddressMap] = useState(
     new Map<AccountSource, LocalAddress[] | LedgerLocalAddress[]>()
   );
+  const addressMapRef = useRef<typeof addressMap>(addressMap);
+  const [updateCache, setUpdateCache] = useState(false);
 
   const [sender, setSender] = useState('');
   const [receiver, setReceiver] = useState('');
@@ -106,18 +108,14 @@ export const Send: React.FC = () => {
           case 'read-only':
           case 'wallet-connect': {
             const parsed: LocalAddress[] = JSON.parse(ser);
-            setAddressMap((pv) => {
-              pv.set(source, parsed);
-              return pv;
-            });
+            addressMapRef.current.set(source, parsed);
+            setUpdateCache(true);
             break;
           }
           case 'ledger': {
             const parsed: LedgerLocalAddress[] = JSON.parse(ser);
-            setAddressMap((pv) => {
-              pv.set(source, parsed);
-              return pv;
-            });
+            addressMapRef.current.set(source, parsed);
+            setUpdateCache(true);
             break;
           }
           default: {
@@ -131,6 +129,32 @@ export const Send: React.FC = () => {
 
     fetch();
   }, []);
+
+  /**
+   * Mechanism for updating address map state from an async process.
+   */
+  useEffect(() => {
+    if (updateCache) {
+      setAddressMap(addressMapRef.current);
+    }
+  }, [updateCache]);
+
+  /**
+   * Return all addresses capable of signing extrinsics.
+   */
+  const getSenderAccounts = () => {
+    const targetSources: AccountSource[] = ['vault'];
+    let result: LocalAddress[] = [];
+
+    for (const source of targetSources) {
+      const addresses = addressMap.get(source);
+      if (!addresses || addresses.length === 0) {
+        continue;
+      }
+      result = result.concat(addresses as LocalAddress[]);
+    }
+    return result;
+  };
 
   const mockAddresses = [
     {
@@ -191,7 +215,7 @@ export const Send: React.FC = () => {
                   placeholder="Select Sender"
                   onValueChange={(val) => setSender(val)}
                 >
-                  {mockAddresses.map(({ accountName, address }) => (
+                  {getSenderAccounts().map(({ name: accountName, address }) => (
                     <UI.SelectItem key={`sender-${address}`} value={address}>
                       <div className="innerRow">
                         <div>
