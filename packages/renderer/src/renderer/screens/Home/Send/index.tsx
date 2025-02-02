@@ -8,7 +8,7 @@ import * as themeVariables from '../../../theme/variables';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,8 +18,13 @@ import {
   faCopy,
 } from '@fortawesome/free-solid-svg-icons';
 import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
-import type { SelectBoxProps } from './types';
 import styled from 'styled-components';
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@polkadot-live/types/accounts';
+import type { SelectBoxProps } from './types';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -70,11 +75,62 @@ const SelectBox = ({
 
 /** Send component. */
 export const Send: React.FC = () => {
+  /**
+   * Addresses fetched from main process.
+   */
+  const [addressMap, setAddressMap] = useState(
+    new Map<AccountSource, LocalAddress[] | LedgerLocalAddress[]>()
+  );
+
   const [sender, setSender] = useState('');
   const [receiver, setReceiver] = useState('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progress, setProgress] = useState(20);
+
+  /**
+   * Fetch stored addresss from main when component loads.
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      const serialized = (await window.myAPI.rawAccountTask({
+        action: 'raw-account:getAll',
+        data: null,
+      })) as string;
+
+      const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
+
+      for (const [source, ser] of parsedMap.entries()) {
+        switch (source) {
+          case 'vault':
+          case 'read-only':
+          case 'wallet-connect': {
+            const parsed: LocalAddress[] = JSON.parse(ser);
+            setAddressMap((pv) => {
+              pv.set(source, parsed);
+              return pv;
+            });
+            break;
+          }
+          case 'ledger': {
+            const parsed: LedgerLocalAddress[] = JSON.parse(ser);
+            setAddressMap((pv) => {
+              pv.set(source, parsed);
+              return pv;
+            });
+            break;
+          }
+          default: {
+            continue;
+          }
+        }
+      }
+
+      console.log(addressMap);
+    };
+
+    fetch();
+  }, []);
 
   const mockAddresses = [
     {
