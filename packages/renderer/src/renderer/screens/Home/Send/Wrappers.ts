@@ -17,6 +17,12 @@ export const InputWrapper = styled.div`
     font-weight: 500;
     width: 100%;
     text-align: left;
+    cursor: default;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
   }
   span {
     color: var(--text-color-primary);
@@ -66,5 +72,29 @@ export const ProgressBarWrapper = styled.div`
     background-color: var(--accent-primary);
     height: 100%;
     transition: width 0.2s ease-in-out;
+  }
+`;
+
+export const NextStepArrowWrapper = styled.div<{ $complete: boolean }>`
+  margin-top: 0.75rem;
+  > button {
+    svg {
+      background-color: ${(props) =>
+        props.$complete ? '#417041' : 'var(--text-color-secondary)'};
+      width: 22px;
+      height: 22px;
+      border-radius: 100%;
+    }
+    text-align: center;
+    width: 100%;
+    color: var(--background-surface);
+    opacity: ${(props) => (props.$complete ? '1' : '0.15')};
+    transition: all 0.2s ease-out;
+    cursor: ${(props) => (props.$complete ? 'pointer' : 'not-allowed')};
+
+    &:hover {
+      filter: ${(props) =>
+        props.$complete ? 'brightness(140%)' : 'brightness(100%)'};
+    }
   }
 `;
