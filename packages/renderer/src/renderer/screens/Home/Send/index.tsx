@@ -79,7 +79,7 @@ export const Send: React.FC = () => {
    * Addresses fetched from main process.
    */
   const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, LocalAddress[] | LedgerLocalAddress[]>()
+    new Map<AccountSource, (LocalAddress | LedgerLocalAddress)[]>()
   );
   const addressMapRef = useRef<typeof addressMap>(addressMap);
   const [updateCache, setUpdateCache] = useState(false);
@@ -156,28 +156,16 @@ export const Send: React.FC = () => {
     return result;
   };
 
-  const mockAddresses = [
-    {
-      accountName: 'Mock Account 1',
-      address: 'MockAddress1',
-    },
-    {
-      accountName: 'Mock Account 2',
-      address: 'MockAddress2',
-    },
-    {
-      accountName: 'Mock Account 3',
-      address: 'MockAddress3',
-    },
-    {
-      accountName: 'Mock Account 4',
-      address: 'MockAddress4',
-    },
-    {
-      accountName: 'Mock Account 5',
-      address: 'MockAddress5',
-    },
-  ];
+  /**
+   * Return all addresses for receiver address list.
+   */
+  const getReceiverAccounts = () => {
+    let result: (LocalAddress | LedgerLocalAddress)[] = [];
+    for (const addresses of addressMap.values()) {
+      result = result.concat(addresses);
+    }
+    return result;
+  };
 
   return (
     <div
@@ -269,16 +257,21 @@ export const Send: React.FC = () => {
                   placeholder="Select Receiver"
                   onValueChange={(val) => setReceiver(val)}
                 >
-                  {mockAddresses.map(({ accountName, address }) => (
-                    <UI.SelectItem key={`receiver-${address}`} value={address}>
-                      <div className="innerRow">
-                        <div>
-                          <Identicon value={address} size={20} />
+                  {getReceiverAccounts().map(
+                    ({ name: accountName, address }) => (
+                      <UI.SelectItem
+                        key={`receiver-${address}`}
+                        value={address}
+                      >
+                        <div className="innerRow">
+                          <div>
+                            <Identicon value={address} size={20} />
+                          </div>
+                          <div>{accountName}</div>
                         </div>
-                        <div>{accountName}</div>
-                      </div>
-                    </UI.SelectItem>
-                  ))}
+                      </UI.SelectItem>
+                    )
+                  )}
                 </SelectBox>
                 <InfoPanel
                   label={'Receiving Address:'}
