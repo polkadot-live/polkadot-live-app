@@ -87,6 +87,7 @@ export const Send: React.FC = () => {
   );
   const addressMapRef = useRef<typeof addressMap>(addressMap);
   const [updateCache, setUpdateCache] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const [sender, setSender] = useState<null | string>(null);
   const [receiver, setReceiver] = useState<null | string>(null);
@@ -95,9 +96,6 @@ export const Send: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedFee, setEstimatedFee] = useState<string>('');
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [progress, setProgress] = useState(0);
 
   /**
    * Fetch stored addresss from main when component loads.
@@ -132,8 +130,6 @@ export const Send: React.FC = () => {
           }
         }
       }
-
-      console.log(addressMap);
     };
 
     fetch();
