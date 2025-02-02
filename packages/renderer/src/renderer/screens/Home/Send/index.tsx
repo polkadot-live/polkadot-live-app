@@ -154,6 +154,7 @@ export const Send: React.FC = () => {
   useEffect(() => {
     if (updateCache) {
       setAddressMap(addressMapRef.current);
+      setUpdateCache(false);
     }
   }, [updateCache]);
 
