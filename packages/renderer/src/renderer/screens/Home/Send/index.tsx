@@ -28,6 +28,7 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SelectBoxProps } from './types';
+import { chainCurrency } from '@ren/config/chains';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -91,6 +92,9 @@ export const Send: React.FC = () => {
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('');
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [estimatedFee, setEstimatedFee] = useState<string>('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progress, setProgress] = useState(20);
@@ -373,11 +377,31 @@ export const Send: React.FC = () => {
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
-                <InfoPanel label={'Network:'} Content={'Polkadot'} />
-                <InfoPanel label={'Sender:'} Content={'Mock Account 1'} />
-                <InfoPanel label={'Receiver:'} Content={'Mock Account 2'} />
-                <InfoPanel label={'Send Amount:'} Content={'10 DOT'} />
-                <InfoPanel label={'Estimated Fee:'} Content={'0.1 DOT'} />
+                <InfoPanel label={'Network:'} Content={senderNetwork || '-'} />
+                <InfoPanel
+                  label={'Sender:'}
+                  Content={!sender ? '-' : ellipsisFn(sender!, 12)}
+                />
+                <InfoPanel
+                  label={'Receiver:'}
+                  Content={!receiver ? '-' : ellipsisFn(receiver, 12)}
+                />
+                <InfoPanel
+                  label={'Send Amount:'}
+                  Content={
+                    sendAmount === ''
+                      ? '-'
+                      : `${sendAmount} ${chainCurrency(senderNetwork!)}`
+                  }
+                />
+                <InfoPanel
+                  label={'Estimated Fee:'}
+                  Content={
+                    estimatedFee === ''
+                      ? '-'
+                      : `${estimatedFee} ${chainCurrency(senderNetwork!)}`
+                  }
+                />
                 <AddButton onClick={() => console.log('Add')} disabled={false}>
                   <FontAwesomeIcon
                     icon={faChevronRight}
