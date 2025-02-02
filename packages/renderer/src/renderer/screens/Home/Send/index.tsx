@@ -94,6 +94,13 @@ export const Send: React.FC = () => {
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('0');
 
+  /**
+   * Accordion state.
+   */
+  const [accordionValue, setAccordionValue] = useState<string[]>([
+    'section-sender',
+  ]);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedFee, setEstimatedFee] = useState<string>('');
 
@@ -265,6 +272,26 @@ export const Send: React.FC = () => {
     sendAmount === '0' ||
     sendAmount === '';
 
+  /**
+   * Handle clicking a green next step arrow.
+   */
+  const handleNextStep = (completed: string) => {
+    switch (completed) {
+      case 'section-sender': {
+        setAccordionValue(['section-receiver']);
+        break;
+      }
+      case 'section-receiver': {
+        setAccordionValue(['section-send-amount']);
+        break;
+      }
+      case 'section-send-amount': {
+        setAccordionValue(['section-summary']);
+        break;
+      }
+    }
+  };
+
   return (
     <div
       style={{
@@ -286,7 +313,8 @@ export const Send: React.FC = () => {
           className="AccordionRoot"
           style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
           type="multiple"
-          defaultValue={['section-sender']}
+          value={accordionValue}
+          onValueChange={(val) => setAccordionValue(val)}
         >
           {/** Sender Section */}
           <Accordion.Item className="AccordionItem" value="section-sender">
@@ -337,7 +365,10 @@ export const Send: React.FC = () => {
                     </div>
                   }
                 />
-                <NextStepArrow complete={true} />
+                <NextStepArrow
+                  complete={sender !== null}
+                  onClick={() => handleNextStep('section-sender')}
+                />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -395,7 +426,10 @@ export const Send: React.FC = () => {
                     </div>
                   }
                 />
-                <NextStepArrow complete={false} />
+                <NextStepArrow
+                  complete={receiver !== null}
+                  onClick={() => handleNextStep('section-receiver')}
+                />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -423,7 +457,10 @@ export const Send: React.FC = () => {
                   <span>DOT</span>
                 </InputWrapper>
                 <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
-                <NextStepArrow complete={false} />
+                <NextStepArrow
+                  complete={!(sendAmount === '0' || sendAmount === '')}
+                  onClick={() => handleNextStep('section-send-amount')}
+                />
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
@@ -544,14 +581,18 @@ const TriggerContent = ({
 );
 
 const NextStepArrowWrapper = styled.div<{ $complete: boolean }>`
+  margin-top: 0.75rem;
   > button {
+    svg {
+      background-color: ${(props) =>
+        props.$complete ? '#417041' : 'var(--text-color-secondary)'};
+      width: 22px;
+      height: 22px;
+      border-radius: 100%;
+    }
     text-align: center;
     width: 100%;
-    font-size: 2rem;
-    color: ${(props) =>
-      props.$complete
-        ? 'var(--accent-success)'
-        : 'var(--text-color-secondary)'};
+    color: var(--background-surface);
     opacity: ${(props) => (props.$complete ? '1' : '0.15')};
     transition: all 0.2s ease-out;
     cursor: ${(props) => (props.$complete ? 'pointer' : 'not-allowed')};
@@ -563,10 +604,16 @@ const NextStepArrowWrapper = styled.div<{ $complete: boolean }>`
   }
 `;
 
-const NextStepArrow = ({ complete }: { complete: boolean }) => (
+const NextStepArrow = ({
+  complete,
+  onClick,
+}: {
+  complete: boolean;
+  onClick: () => void;
+}) => (
   <NextStepArrowWrapper $complete={complete}>
-    <button>
-      <FontAwesomeIcon icon={faCaretDown} />
+    <button disabled={!complete} onClick={() => onClick()}>
+      <FontAwesomeIcon icon={faCaretDown} transform={'shrink-6'} />
     </button>
   </NextStepArrowWrapper>
 );
