@@ -91,13 +91,13 @@ export const Send: React.FC = () => {
   const [sender, setSender] = useState<null | string>(null);
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
-  const [sendAmount, setSendAmount] = useState<string>('');
+  const [sendAmount, setSendAmount] = useState<string>('0');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [estimatedFee, setEstimatedFee] = useState<string>('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [progress, setProgress] = useState(20);
+  const [progress, setProgress] = useState(0);
 
   /**
    * Fetch stored addresss from main when component loads.
@@ -147,6 +147,36 @@ export const Send: React.FC = () => {
       setAddressMap(addressMapRef.current);
     }
   }, [updateCache]);
+
+  /**
+   * Progress bar controller.
+   */
+  useEffect(() => {
+    let conditions = 0;
+
+    sender && (conditions += 1);
+    receiver && (conditions += 1);
+    sendAmount !== '0' && sendAmount !== '' && (conditions += 1);
+
+    switch (conditions) {
+      case 1: {
+        setProgress(100 / 3);
+        break;
+      }
+      case 2: {
+        setProgress((100 / 3) * 2);
+        break;
+      }
+      case 3: {
+        setProgress(100);
+        break;
+      }
+      default: {
+        setProgress(0);
+        break;
+      }
+    }
+  }, [sender, receiver, sendAmount]);
 
   /**
    * Sender value changed callback.
@@ -389,7 +419,7 @@ export const Send: React.FC = () => {
                 <InfoPanel
                   label={'Send Amount:'}
                   Content={
-                    sendAmount === ''
+                    sendAmount === '0'
                       ? '-'
                       : `${sendAmount} ${chainCurrency(senderNetwork!)}`
                   }
