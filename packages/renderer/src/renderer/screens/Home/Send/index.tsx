@@ -5,6 +5,8 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
+
+import { chainCurrency } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
@@ -18,8 +20,13 @@ import {
   faCircleCheck,
   faCopy,
 } from '@fortawesome/free-solid-svg-icons';
-import { AddButton, InputWrapper, ProgressBarWrapper } from './Wrappers';
-import styled from 'styled-components';
+import {
+  AddButton,
+  InputWrapper,
+  NextStepArrowWrapper,
+  ProgressBarWrapper,
+} from './Wrappers';
+
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -27,8 +34,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SelectBoxProps } from './types';
-import { chainCurrency } from '@ren/config/chains';
+import type { SelectBoxProps, SendAccordionValue } from './types';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -97,7 +103,7 @@ export const Send: React.FC = () => {
   /**
    * Accordion state.
    */
-  const [accordionValue, setAccordionValue] = useState<string[]>([
+  const [accordionValue, setAccordionValue] = useState<SendAccordionValue[]>([
     'section-sender',
   ]);
 
@@ -275,7 +281,7 @@ export const Send: React.FC = () => {
   /**
    * Handle clicking a green next step arrow.
    */
-  const handleNextStep = (completed: string) => {
+  const handleNextStep = (completed: SendAccordionValue) => {
     switch (completed) {
       case 'section-sender': {
         setAccordionValue(['section-receiver']);
@@ -314,7 +320,9 @@ export const Send: React.FC = () => {
           style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
           type="multiple"
           value={accordionValue}
-          onValueChange={(val) => setAccordionValue(val)}
+          onValueChange={(val) =>
+            setAccordionValue(val as SendAccordionValue[])
+          }
         >
           {/** Sender Section */}
           <Accordion.Item className="AccordionItem" value="section-sender">
@@ -579,30 +587,6 @@ const TriggerContent = ({
     </div>
   </>
 );
-
-const NextStepArrowWrapper = styled.div<{ $complete: boolean }>`
-  margin-top: 0.75rem;
-  > button {
-    svg {
-      background-color: ${(props) =>
-        props.$complete ? '#417041' : 'var(--text-color-secondary)'};
-      width: 22px;
-      height: 22px;
-      border-radius: 100%;
-    }
-    text-align: center;
-    width: 100%;
-    color: var(--background-surface);
-    opacity: ${(props) => (props.$complete ? '1' : '0.15')};
-    transition: all 0.2s ease-out;
-    cursor: ${(props) => (props.$complete ? 'pointer' : 'not-allowed')};
-
-    &:hover {
-      filter: ${(props) =>
-        props.$complete ? 'brightness(140%)' : 'brightness(100%)'};
-    }
-  }
-`;
 
 const NextStepArrow = ({
   complete,
