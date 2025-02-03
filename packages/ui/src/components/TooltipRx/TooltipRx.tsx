@@ -7,10 +7,10 @@ import type { RadixTooltipProps } from './types';
 
 /** Tooltip component */
 export const TooltipRx = ({
+  open,
   text,
   theme,
   onOpenChange,
-  open,
   children,
 }: RadixTooltipProps) => (
   <Tooltip.Provider>

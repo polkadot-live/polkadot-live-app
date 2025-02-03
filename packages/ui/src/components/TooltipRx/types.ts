@@ -5,8 +5,8 @@ import type { AnyData } from '@polkadot-live/types/misc';
 
 export interface RadixTooltipProps {
   children: React.ReactNode;
+  open: boolean;
   text: string;
   theme: AnyData;
-  open: boolean;
   onOpenChange: (open: boolean) => void;
 }
