@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   AddButton,
+  CopyButton,
   InputWrapper,
   NextStepArrowWrapper,
   ProgressBarWrapper,
@@ -229,6 +230,12 @@ export const Send: React.FC = () => {
   };
 
   /**
+   * Handle copy to clickboard.
+   */
+  const handleClipboardCopy = async (text: string) =>
+    await window.myAPI.copyToClipboard(text);
+
+  /**
    * Return all addresses capable of signing extrinsics.
    */
   const getSenderAccounts = () => {
@@ -364,10 +371,16 @@ export const Send: React.FC = () => {
                       ) : (
                         <>
                           <span>{ellipsisFn(sender, 12)}</span>
-                          <FontAwesomeIcon
-                            icon={faCopy}
-                            transform={'shrink-2'}
-                          />
+                          <CopyButton
+                            onClick={async () =>
+                              await handleClipboardCopy(sender)
+                            }
+                          >
+                            <FontAwesomeIcon
+                              icon={faCopy}
+                              transform={'shrink-2'}
+                            />
+                          </CopyButton>
                         </>
                       )}
                       <span></span>
