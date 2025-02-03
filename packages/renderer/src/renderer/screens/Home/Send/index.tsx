@@ -50,7 +50,7 @@ const RadixTooltip = ({ text, children }: RadixTooltipProps) => {
 
   return (
     <Tooltip.Provider>
-      <Tooltip.Root delayDuration={0} onOpenChange={(val) => console.log(val)}>
+      <Tooltip.Root delayDuration={0}>
         <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
         <Tooltip.Portal>
           <TooltipContent
