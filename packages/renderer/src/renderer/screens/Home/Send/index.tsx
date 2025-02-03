@@ -5,7 +5,6 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
-import * as Tooltip from '@radix-ui/react-tooltip';
 
 import { chainCurrency } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
@@ -27,7 +26,6 @@ import {
   InputWrapper,
   NextStepArrowWrapper,
   ProgressBarWrapper,
-  TooltipContent,
 } from './Wrappers';
 
 import type {
@@ -37,35 +35,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type {
-  RadixTooltipProps,
-  SelectBoxProps,
-  SendAccordionValue,
-} from './types';
-
-/** Tooltip component */
-const RadixTooltip = ({ text, children }: RadixTooltipProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  return (
-    <Tooltip.Provider>
-      <Tooltip.Root delayDuration={0}>
-        <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
-        <Tooltip.Portal>
-          <TooltipContent
-            $theme={theme}
-            className="TooltipContent"
-            sideOffset={5}
-          >
-            {text}
-            <Tooltip.Arrow className="TooltipArrow" />
-          </TooltipContent>
-        </Tooltip.Portal>
-      </Tooltip.Root>
-    </Tooltip.Provider>
-  );
-};
+import type { SelectBoxProps, SendAccordionValue } from './types';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -130,6 +100,9 @@ export const Send: React.FC = () => {
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('0');
+
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /**
    * Accordion state.
@@ -398,7 +371,7 @@ export const Send: React.FC = () => {
                     ) : (
                       <>
                         <span>{ellipsisFn(sender, 12)}</span>
-                        <RadixTooltip text={'Copy Address'}>
+                        <UI.TooltipRx theme={theme} text={'Copy Address'}>
                           <CopyButton
                             onClick={async () =>
                               await handleClipboardCopy(sender)
@@ -409,7 +382,7 @@ export const Send: React.FC = () => {
                               transform={'shrink-2'}
                             />
                           </CopyButton>
-                        </RadixTooltip>
+                        </UI.TooltipRx>
                       </>
                     )}
                   </div>
@@ -464,7 +437,7 @@ export const Send: React.FC = () => {
                     ) : (
                       <>
                         <span>{ellipsisFn(receiver, 12)}</span>
-                        <RadixTooltip text={'Copy Address'}>
+                        <UI.TooltipRx theme={theme} text={'Copy Address'}>
                           <CopyButton
                             onClick={async () =>
                               await handleClipboardCopy(receiver)
@@ -475,7 +448,7 @@ export const Send: React.FC = () => {
                               transform={'shrink-2'}
                             />
                           </CopyButton>
-                        </RadixTooltip>
+                        </UI.TooltipRx>
                       </>
                     )}
                   </div>
@@ -503,7 +476,6 @@ export const Send: React.FC = () => {
                     type="number"
                     disabled={!sender}
                     value={sendAmount}
-                    defaultValue={'0'}
                     onChange={(e) => handleSendAmountChange(e)}
                     onFocus={() => handleSendAmountFocus()}
                     onBlur={() => handleSendAmountBlur()}

@@ -22,4 +22,5 @@ export * from './SortControls';
 export * from './Stats';
 export * from './Switch';
 export * from './Tooltip';
+export * from './TooltipRx';
 export * from './Tx';
