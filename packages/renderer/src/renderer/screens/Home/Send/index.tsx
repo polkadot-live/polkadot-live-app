@@ -54,13 +54,18 @@ const SelectBox = ({
   ariaLabel,
   placeholder,
   value,
+  disabled = false,
   onValueChange,
 }: SelectBoxProps) => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   return (
-    <Select.Root value={value} onValueChange={onValueChange}>
+    <Select.Root
+      value={value}
+      disabled={disabled}
+      onValueChange={onValueChange}
+    >
       <UI.SelectTrigger $theme={theme} aria-label={ariaLabel}>
         <Select.Value placeholder={placeholder} />
         <Select.Icon className="SelectIcon">
@@ -318,6 +323,9 @@ export const Send: React.FC = () => {
     }
   };
 
+  const emptySenders = getSenderAccounts().length === 0;
+  const emptyReceivers = getReceiverAccounts().length === 0;
+
   return (
     <div
       style={{
@@ -351,6 +359,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
+                  disabled={emptySenders}
                   value={sender || ''}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
@@ -367,47 +376,58 @@ export const Send: React.FC = () => {
                     </UI.SelectItem>
                   ))}
                 </SelectBox>
-                <InfoPanelSingle>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '0.8rem',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {!sender ? (
-                      <span>-</span>
-                    ) : (
-                      <>
-                        <span>{ellipsisFn(sender, 12)}</span>
-                        <UI.TooltipRx
-                          theme={theme}
-                          open={tooltipAOpen}
-                          text={tooltipAText}
-                          onOpenChange={(val) => {
-                            setTooltipAOpen(val);
-                            if (!val) {
-                              setTooltipAText('Copy Address');
-                            }
-                          }}
-                        >
-                          <CopyButton
-                            onClick={async () => {
-                              await handleClipboardCopy(sender);
-                              setTooltipAText('Copied!');
-                              setTooltipAOpen(true);
+
+                {emptySenders ? (
+                  <InfoPanelSingle>
+                    <span style={{ color: 'var(--accent-warning)' }}>
+                      No managed accounts are capable of signing extrinsics
+                    </span>
+                  </InfoPanelSingle>
+                ) : (
+                  <InfoPanelSingle>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {!sender ? (
+                        <span style={{ opacity: '0.5' }}>
+                          No account selected
+                        </span>
+                      ) : (
+                        <>
+                          <span>{ellipsisFn(sender, 12)}</span>
+                          <UI.TooltipRx
+                            theme={theme}
+                            open={tooltipAOpen}
+                            text={tooltipAText}
+                            onOpenChange={(val) => {
+                              setTooltipAOpen(val);
+                              if (!val) {
+                                setTooltipAText('Copy Address');
+                              }
                             }}
                           >
-                            <FontAwesomeIcon
-                              icon={faCopy}
-                              transform={'shrink-2'}
-                            />
-                          </CopyButton>
-                        </UI.TooltipRx>
-                      </>
-                    )}
-                  </div>
-                </InfoPanelSingle>
+                            <CopyButton
+                              onClick={async () => {
+                                await handleClipboardCopy(sender);
+                                setTooltipAText('Copied!');
+                                setTooltipAOpen(true);
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faCopy}
+                                transform={'shrink-2'}
+                              />
+                            </CopyButton>
+                          </UI.TooltipRx>
+                        </>
+                      )}
+                    </div>
+                  </InfoPanelSingle>
+                )}
                 <NextStepArrow
                   complete={sender !== null}
                   onClick={() => handleNextStep('section-sender')}
@@ -424,6 +444,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
+                  disabled={emptyReceivers}
                   value={receiver || ''}
                   ariaLabel="Receiver"
                   placeholder="Select Receiver"
@@ -445,47 +466,57 @@ export const Send: React.FC = () => {
                     )
                   )}
                 </SelectBox>
-                <InfoPanelSingle>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '0.8rem',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {!receiver ? (
-                      <span>-</span>
-                    ) : (
-                      <>
-                        <span>{ellipsisFn(receiver, 12)}</span>
-                        <UI.TooltipRx
-                          theme={theme}
-                          open={tooltipBOpen}
-                          text={tooltipBText}
-                          onOpenChange={(val) => {
-                            setTooltipBOpen(val);
-                            if (!val) {
-                              setTooltipBText('Copy Address');
-                            }
-                          }}
-                        >
-                          <CopyButton
-                            onClick={async () => {
-                              await handleClipboardCopy(receiver);
-                              setTooltipBText('Copied!');
-                              setTooltipBOpen(true);
+                {emptyReceivers ? (
+                  <InfoPanelSingle>
+                    <span style={{ color: 'var(--accent-warning)' }}>
+                      No managed accounts found on this network
+                    </span>
+                  </InfoPanelSingle>
+                ) : (
+                  <InfoPanelSingle>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {!receiver ? (
+                        <span style={{ opacity: '0.5' }}>
+                          No account selected
+                        </span>
+                      ) : (
+                        <>
+                          <span>{ellipsisFn(receiver, 12)}</span>
+                          <UI.TooltipRx
+                            theme={theme}
+                            open={tooltipBOpen}
+                            text={tooltipBText}
+                            onOpenChange={(val) => {
+                              setTooltipBOpen(val);
+                              if (!val) {
+                                setTooltipBText('Copy Address');
+                              }
                             }}
                           >
-                            <FontAwesomeIcon
-                              icon={faCopy}
-                              transform={'shrink-2'}
-                            />
-                          </CopyButton>
-                        </UI.TooltipRx>
-                      </>
-                    )}
-                  </div>
-                </InfoPanelSingle>
+                            <CopyButton
+                              onClick={async () => {
+                                await handleClipboardCopy(receiver);
+                                setTooltipBText('Copied!');
+                                setTooltipBOpen(true);
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faCopy}
+                                transform={'shrink-2'}
+                              />
+                            </CopyButton>
+                          </UI.TooltipRx>
+                        </>
+                      )}
+                    </div>
+                  </InfoPanelSingle>
+                )}
                 <NextStepArrow
                   complete={receiver !== null}
                   onClick={() => handleNextStep('section-receiver')}

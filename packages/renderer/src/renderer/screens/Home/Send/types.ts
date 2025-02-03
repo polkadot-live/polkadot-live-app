@@ -12,5 +12,6 @@ export interface SelectBoxProps {
   ariaLabel: string;
   placeholder: string;
   value: string;
+  disabled?: boolean;
   onValueChange: (val: string) => void;
 }
