@@ -7,10 +7,6 @@ export type SendAccordionValue =
   | 'section-send-amount'
   | 'section-summary';
 
-export interface RadixTooltipProps {
-  children: React.ReactNode;
-  text: string;
-}
 export interface SelectBoxProps {
   children: React.ReactNode;
   ariaLabel: string;
