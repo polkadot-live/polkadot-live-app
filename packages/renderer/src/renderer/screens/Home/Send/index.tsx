@@ -105,6 +105,15 @@ export const Send: React.FC = () => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /**
+   * Tooltips state.
+   */
+  const [tooltipAOpen, setTooltipAOpen] = useState<boolean>(false);
+  const [tooltipAText, setTooltipAText] = useState('Copy Address');
+
+  const [tooltipBOpen, setTooltipBOpen] = useState<boolean>(false);
+  const [tooltipBText, setTooltipBText] = useState('Copy Address');
+
+  /**
    * Accordion state.
    */
   const [accordionValue, setAccordionValue] = useState<SendAccordionValue[]>([
@@ -371,11 +380,23 @@ export const Send: React.FC = () => {
                     ) : (
                       <>
                         <span>{ellipsisFn(sender, 12)}</span>
-                        <UI.TooltipRx theme={theme} text={'Copy Address'}>
-                          <CopyButton
-                            onClick={async () =>
-                              await handleClipboardCopy(sender)
+                        <UI.TooltipRx
+                          theme={theme}
+                          open={tooltipAOpen}
+                          text={tooltipAText}
+                          onOpenChange={(val) => {
+                            setTooltipAOpen(val);
+                            if (!val) {
+                              setTooltipAText('Copy Address');
                             }
+                          }}
+                        >
+                          <CopyButton
+                            onClick={async () => {
+                              await handleClipboardCopy(sender);
+                              setTooltipAText('Copied!');
+                              setTooltipAOpen(true);
+                            }}
                           >
                             <FontAwesomeIcon
                               icon={faCopy}
@@ -437,11 +458,23 @@ export const Send: React.FC = () => {
                     ) : (
                       <>
                         <span>{ellipsisFn(receiver, 12)}</span>
-                        <UI.TooltipRx theme={theme} text={'Copy Address'}>
-                          <CopyButton
-                            onClick={async () =>
-                              await handleClipboardCopy(receiver)
+                        <UI.TooltipRx
+                          theme={theme}
+                          open={tooltipBOpen}
+                          text={tooltipBText}
+                          onOpenChange={(val) => {
+                            setTooltipBOpen(val);
+                            if (!val) {
+                              setTooltipBText('Copy Address');
                             }
+                          }}
+                        >
+                          <CopyButton
+                            onClick={async () => {
+                              await handleClipboardCopy(receiver);
+                              setTooltipBText('Copied!');
+                              setTooltipBOpen(true);
+                            }}
                           >
                             <FontAwesomeIcon
                               icon={faCopy}

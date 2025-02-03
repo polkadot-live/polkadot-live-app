@@ -7,4 +7,6 @@ export interface RadixTooltipProps {
   children: React.ReactNode;
   text: string;
   theme: AnyData;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
