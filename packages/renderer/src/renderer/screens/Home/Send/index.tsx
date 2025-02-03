@@ -543,7 +543,7 @@ export const Send: React.FC = () => {
                   />
                   <span>DOT</span>
                 </InputWrapper>
-                <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
+                <InfoPanel label={'Spendable Balance:'}>100 DOT</InfoPanel>
                 <NextStepArrow
                   complete={!(sendAmount === '0' || sendAmount === '')}
                   onClick={() => handleNextStep('section-send-amount')}
@@ -559,59 +559,56 @@ export const Send: React.FC = () => {
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
-                <InfoPanel label={'Network:'} Content={senderNetwork || '-'} />
-                <InfoPanel
-                  label={'Sender:'}
-                  Content={
-                    !sender ? (
-                      '-'
-                    ) : (
-                      <FlexRow>
-                        <span>{ellipsisFn(sender!, 12)}</span>
-                        <CopyButtonWithTooltip
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(sender)
-                          }
-                        />
-                      </FlexRow>
-                    )
-                  }
-                />
-                <InfoPanel
-                  label={'Receiver:'}
-                  Content={
-                    !receiver ? (
-                      '-'
-                    ) : (
-                      <FlexRow>
-                        <span>{ellipsisFn(receiver, 12)}</span>
-                        <CopyButtonWithTooltip
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(receiver)
-                          }
-                        />
-                      </FlexRow>
-                    )
-                  }
-                />
-                <InfoPanel
-                  label={'Send Amount:'}
-                  Content={
-                    sendAmount === '0'
-                      ? '-'
-                      : `${sendAmount} ${chainCurrency(senderNetwork!)}`
-                  }
-                />
-                <InfoPanel
-                  label={'Estimated Fee:'}
-                  Content={
-                    estimatedFee === ''
-                      ? '-'
-                      : `${estimatedFee} ${chainCurrency(senderNetwork!)}`
-                  }
-                />
+                <InfoPanel label={'Network:'}>{senderNetwork || '-'}</InfoPanel>
+
+                {/** Sender */}
+                <InfoPanel label={'Sender:'}>
+                  {!sender ? (
+                    '-'
+                  ) : (
+                    <FlexRow>
+                      <span>{ellipsisFn(sender!, 12)}</span>
+                      <CopyButtonWithTooltip
+                        theme={theme}
+                        onCopyClick={async () =>
+                          await handleClipboardCopy(sender)
+                        }
+                      />
+                    </FlexRow>
+                  )}
+                </InfoPanel>
+
+                {/** Receiver */}
+                <InfoPanel label={'Receiver:'}>
+                  {!receiver ? (
+                    '-'
+                  ) : (
+                    <FlexRow>
+                      <span>{ellipsisFn(receiver, 12)}</span>
+                      <CopyButtonWithTooltip
+                        theme={theme}
+                        onCopyClick={async () =>
+                          await handleClipboardCopy(receiver)
+                        }
+                      />
+                    </FlexRow>
+                  )}
+                </InfoPanel>
+
+                {/** Send Amount */}
+                <InfoPanel label={'Send Amount:'}>
+                  {sendAmount === '0'
+                    ? '-'
+                    : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
+                </InfoPanel>
+
+                {/** Estimated Fee */}
+                <InfoPanel label={'Estimated Fee:'}>
+                  {estimatedFee === ''
+                    ? '-'
+                    : `${estimatedFee} ${chainCurrency(senderNetwork!)}`}
+                </InfoPanel>
+
                 <AddButton
                   onClick={() => console.log('Add')}
                   disabled={proceedDisabled()}
@@ -639,10 +636,10 @@ const FlexColumn = ({ children }: { children: React.ReactNode }) => (
 
 const InfoPanel = ({
   label,
-  Content,
+  children,
 }: {
   label: string;
-  Content: React.ReactNode;
+  children: React.ReactNode;
 }) => (
   <div
     style={{
@@ -666,7 +663,7 @@ const InfoPanel = ({
       <span style={{ flex: 1, color: 'var(--text-color-secondary)' }}>
         {label}
       </span>
-      <span style={{ color: 'var(--text-color-primary)' }}>{Content}</span>
+      <span style={{ color: 'var(--text-color-primary)' }}>{children}</span>
     </div>
   </div>
 );
