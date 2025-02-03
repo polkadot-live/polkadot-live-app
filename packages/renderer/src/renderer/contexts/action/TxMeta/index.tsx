@@ -3,7 +3,6 @@
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { chainIcon } from '@ren/config/chains';
-import { Flip, toast } from 'react-toastify';
 import React, {
   createContext,
   useContext,
@@ -13,7 +12,6 @@ import React, {
 } from 'react';
 import * as defaults from './defaults';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ToastOptions } from 'react-toastify';
 import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
@@ -25,6 +23,7 @@ import type {
 import { setStateWithRef } from '@w3ux/utils';
 import { SignOverlay } from '@app/screens/Action/SignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -535,33 +534,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         return 'Claim Rewards';
       }
     }
-  };
-
-  /**
-   * Util for rendering a toast notification.
-   */
-  const renderToast = (
-    message: string,
-    toastId: string,
-    toastType: 'error' | 'success'
-  ) => {
-    const args: ToastOptions<unknown> = {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId,
-    };
-
-    toastType === 'success'
-      ? toast.success(message, args)
-      : toast.error(message, args);
   };
 
   // Transaction state.

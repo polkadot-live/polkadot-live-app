@@ -6,9 +6,15 @@ import { TooltipContent } from './TooltipRx.styles';
 import type { RadixTooltipProps } from './types';
 
 /** Tooltip component */
-export const TooltipRx = ({ text, theme, children }: RadixTooltipProps) => (
+export const TooltipRx = ({
+  open,
+  text,
+  theme,
+  onOpenChange,
+  children,
+}: RadixTooltipProps) => (
   <Tooltip.Provider>
-    <Tooltip.Root delayDuration={0}>
+    <Tooltip.Root open={open} onOpenChange={onOpenChange} delayDuration={0}>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
         <TooltipContent
