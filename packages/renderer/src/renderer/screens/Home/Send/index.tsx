@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 import { chainCurrency } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
@@ -22,9 +23,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   AddButton,
+  CopyButton,
   InputWrapper,
   NextStepArrowWrapper,
   ProgressBarWrapper,
+  TooltipContent,
 } from './Wrappers';
 
 import type {
@@ -34,7 +37,35 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SelectBoxProps, SendAccordionValue } from './types';
+import type {
+  RadixTooltipProps,
+  SelectBoxProps,
+  SendAccordionValue,
+} from './types';
+
+/** Tooltip component */
+const RadixTooltip = ({ text, children }: RadixTooltipProps) => {
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+
+  return (
+    <Tooltip.Provider>
+      <Tooltip.Root delayDuration={0}>
+        <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
+        <Tooltip.Portal>
+          <TooltipContent
+            $theme={theme}
+            className="TooltipContent"
+            sideOffset={5}
+          >
+            {text}
+            <Tooltip.Arrow className="TooltipArrow" />
+          </TooltipContent>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+};
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -229,6 +260,12 @@ export const Send: React.FC = () => {
   };
 
   /**
+   * Handle copy to clickboard.
+   */
+  const handleClipboardCopy = async (text: string) =>
+    await window.myAPI.copyToClipboard(text);
+
+  /**
    * Return all addresses capable of signing extrinsics.
    */
   const getSenderAccounts = () => {
@@ -315,7 +352,6 @@ export const Send: React.FC = () => {
       </div>
 
       <UI.AccordionWrapper>
-        {/** TODO: defaultValue, onValueChange */}
         <Accordion.Root
           className="AccordionRoot"
           style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
@@ -349,31 +385,35 @@ export const Send: React.FC = () => {
                     </UI.SelectItem>
                   ))}
                 </SelectBox>
-                <InfoPanel
-                  label={'Sending Address:'}
-                  Content={
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '0.8rem',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {!sender ? (
-                        <span>-</span>
-                      ) : (
-                        <>
-                          <span>{ellipsisFn(sender, 12)}</span>
-                          <FontAwesomeIcon
-                            icon={faCopy}
-                            transform={'shrink-2'}
-                          />
-                        </>
-                      )}
-                      <span></span>
-                    </div>
-                  }
-                />
+                <InfoPanelSingle>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '0.8rem',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {!sender ? (
+                      <span>-</span>
+                    ) : (
+                      <>
+                        <span>{ellipsisFn(sender, 12)}</span>
+                        <RadixTooltip text={'Copy Address'}>
+                          <CopyButton
+                            onClick={async () =>
+                              await handleClipboardCopy(sender)
+                            }
+                          >
+                            <FontAwesomeIcon
+                              icon={faCopy}
+                              transform={'shrink-2'}
+                            />
+                          </CopyButton>
+                        </RadixTooltip>
+                      </>
+                    )}
+                  </div>
+                </InfoPanelSingle>
                 <NextStepArrow
                   complete={sender !== null}
                   onClick={() => handleNextStep('section-sender')}
@@ -411,30 +451,35 @@ export const Send: React.FC = () => {
                     )
                   )}
                 </SelectBox>
-                <InfoPanel
-                  label={'Receiving Address:'}
-                  Content={
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '0.8rem',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {!receiver ? (
-                        <span>-</span>
-                      ) : (
-                        <>
-                          <span>{ellipsisFn(receiver, 12)}</span>
-                          <FontAwesomeIcon
-                            icon={faCopy}
-                            transform={'shrink-2'}
-                          />
-                        </>
-                      )}
-                    </div>
-                  }
-                />
+                <InfoPanelSingle>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '0.8rem',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {!receiver ? (
+                      <span>-</span>
+                    ) : (
+                      <>
+                        <span>{ellipsisFn(receiver, 12)}</span>
+                        <RadixTooltip text={'Copy Address'}>
+                          <CopyButton
+                            onClick={async () =>
+                              await handleClipboardCopy(receiver)
+                            }
+                          >
+                            <FontAwesomeIcon
+                              icon={faCopy}
+                              transform={'shrink-2'}
+                            />
+                          </CopyButton>
+                        </RadixTooltip>
+                      </>
+                    )}
+                  </div>
+                </InfoPanelSingle>
                 <NextStepArrow
                   complete={receiver !== null}
                   onClick={() => handleNextStep('section-receiver')}
@@ -561,6 +606,32 @@ const InfoPanel = ({
         {label}
       </span>
       <span style={{ color: 'var(--text-color-primary)' }}>{Content}</span>
+    </div>
+  </div>
+);
+
+const InfoPanelSingle = ({ children }: { children: React.ReactNode }) => (
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem',
+      fontSize: '1rem',
+      padding: '1rem',
+      backgroundColor: 'var(--background-surface)',
+      border: '0.375rem',
+    }}
+  >
+    <div
+      style={{
+        display: 'flex',
+        gap: '0.5rem',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: '0.85',
+      }}
+    >
+      <span style={{ color: 'var(--text-color-secondary)' }}>{children}</span>
     </div>
   </div>
 );
