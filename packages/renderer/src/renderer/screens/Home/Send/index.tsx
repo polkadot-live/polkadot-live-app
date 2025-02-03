@@ -23,6 +23,7 @@ import {
 import {
   AddButton,
   CopyButton,
+  FlexRow,
   InputWrapper,
   NextStepArrowWrapper,
   ProgressBarWrapper,
@@ -33,6 +34,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SelectBoxProps, SendAccordionValue } from './types';
@@ -89,6 +91,46 @@ const SelectBox = ({
   );
 };
 
+/**
+ * Copy button with tooltip component.
+ */
+interface CopyButtonWithTooltipProps {
+  theme: AnyData;
+  onCopyClick: () => Promise<void>;
+}
+
+const CopyButtonWithTooltip = ({
+  theme,
+  onCopyClick,
+}: CopyButtonWithTooltipProps) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [text, setText] = useState<string>('Copy Address');
+
+  return (
+    <UI.TooltipRx
+      theme={theme}
+      open={open}
+      text={text}
+      onOpenChange={(val) => {
+        setOpen(val);
+        if (!val) {
+          setText('Copy Address');
+        }
+      }}
+    >
+      <CopyButton
+        onClick={async () => {
+          await onCopyClick();
+          setText('Copied!');
+          setOpen(true);
+        }}
+      >
+        <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
+      </CopyButton>
+    </UI.TooltipRx>
+  );
+};
+
 /** Send component. */
 export const Send: React.FC = () => {
   /**
@@ -108,15 +150,6 @@ export const Send: React.FC = () => {
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  /**
-   * Tooltips state.
-   */
-  const [tooltipAOpen, setTooltipAOpen] = useState<boolean>(false);
-  const [tooltipAText, setTooltipAText] = useState('Copy Address');
-
-  const [tooltipBOpen, setTooltipBOpen] = useState<boolean>(false);
-  const [tooltipBText, setTooltipBText] = useState('Copy Address');
 
   /**
    * Accordion state.
@@ -399,30 +432,12 @@ export const Send: React.FC = () => {
                       ) : (
                         <>
                           <span>{ellipsisFn(sender, 12)}</span>
-                          <UI.TooltipRx
+                          <CopyButtonWithTooltip
                             theme={theme}
-                            open={tooltipAOpen}
-                            text={tooltipAText}
-                            onOpenChange={(val) => {
-                              setTooltipAOpen(val);
-                              if (!val) {
-                                setTooltipAText('Copy Address');
-                              }
-                            }}
-                          >
-                            <CopyButton
-                              onClick={async () => {
-                                await handleClipboardCopy(sender);
-                                setTooltipAText('Copied!');
-                                setTooltipAOpen(true);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCopy}
-                                transform={'shrink-2'}
-                              />
-                            </CopyButton>
-                          </UI.TooltipRx>
+                            onCopyClick={async () =>
+                              await handleClipboardCopy(sender)
+                            }
+                          />
                         </>
                       )}
                     </div>
@@ -488,30 +503,12 @@ export const Send: React.FC = () => {
                       ) : (
                         <>
                           <span>{ellipsisFn(receiver, 12)}</span>
-                          <UI.TooltipRx
+                          <CopyButtonWithTooltip
                             theme={theme}
-                            open={tooltipBOpen}
-                            text={tooltipBText}
-                            onOpenChange={(val) => {
-                              setTooltipBOpen(val);
-                              if (!val) {
-                                setTooltipBText('Copy Address');
-                              }
-                            }}
-                          >
-                            <CopyButton
-                              onClick={async () => {
-                                await handleClipboardCopy(receiver);
-                                setTooltipBText('Copied!');
-                                setTooltipBOpen(true);
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faCopy}
-                                transform={'shrink-2'}
-                              />
-                            </CopyButton>
-                          </UI.TooltipRx>
+                            onCopyClick={async () =>
+                              await handleClipboardCopy(receiver)
+                            }
+                          />
                         </>
                       )}
                     </div>
@@ -565,11 +562,39 @@ export const Send: React.FC = () => {
                 <InfoPanel label={'Network:'} Content={senderNetwork || '-'} />
                 <InfoPanel
                   label={'Sender:'}
-                  Content={!sender ? '-' : ellipsisFn(sender!, 12)}
+                  Content={
+                    !sender ? (
+                      '-'
+                    ) : (
+                      <FlexRow>
+                        <span>{ellipsisFn(sender!, 12)}</span>
+                        <CopyButtonWithTooltip
+                          theme={theme}
+                          onCopyClick={async () =>
+                            await handleClipboardCopy(sender)
+                          }
+                        />
+                      </FlexRow>
+                    )
+                  }
                 />
                 <InfoPanel
                   label={'Receiver:'}
-                  Content={!receiver ? '-' : ellipsisFn(receiver, 12)}
+                  Content={
+                    !receiver ? (
+                      '-'
+                    ) : (
+                      <FlexRow>
+                        <span>{ellipsisFn(receiver, 12)}</span>
+                        <CopyButtonWithTooltip
+                          theme={theme}
+                          onCopyClick={async () =>
+                            await handleClipboardCopy(receiver)
+                          }
+                        />
+                      </FlexRow>
+                    )
+                  }
                 />
                 <InfoPanel
                   label={'Send Amount:'}
