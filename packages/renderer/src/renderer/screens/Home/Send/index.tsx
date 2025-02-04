@@ -5,11 +5,11 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
-import { chainCurrency } from '@ren/config/chains';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -33,7 +33,7 @@ import type {
 import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
 
-import type BigNumber from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { AddressWithTooltipProps, SendAccordionValue } from './types';
@@ -62,8 +62,10 @@ export const Send: React.FC = () => {
   const [sender, setSender] = useState<null | string>(null);
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
+
   const [sendAmount, setSendAmount] = useState<string>('0');
   const [spendable, setSpendable] = useState<BigNumber | null>(null);
+  const [validAmount, setValidAmount] = useState(true);
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -134,7 +136,7 @@ export const Send: React.FC = () => {
 
     sender && (conditions += 1);
     receiver && (conditions += 1);
-    sendAmount !== '0' && sendAmount !== '' && (conditions += 1);
+    sendAmount !== '0' && sendAmount !== '' && validAmount && (conditions += 1);
 
     switch (conditions) {
       case 1: {
@@ -177,8 +179,25 @@ export const Send: React.FC = () => {
    */
   const handleSendAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
-    if (val === '' || !isNaN(Number(val))) {
+    if (val === '' || val === '0') {
       setSendAmount(val === '' ? '' : val);
+      setValidAmount(true);
+    } else if (!isNaN(Number(val))) {
+      setSendAmount(val === '' ? '' : val);
+
+      // Preliminary checks.
+      if (!spendable) {
+        setValidAmount(false);
+        return;
+      }
+
+      // Check if send amount is less than spendable amount.
+      const units = chainUnits(senderNetwork!);
+      const amountAsUnit = new BigNumber(val);
+      const spendableAsUnit = planckToUnit(spendable!, units);
+      setValidAmount(spendableAsUnit.gte(amountAsUnit));
+    } else {
+      setValidAmount(false);
     }
   };
 
@@ -255,7 +274,8 @@ export const Send: React.FC = () => {
     sender === null ||
     receiver === null ||
     sendAmount === '0' ||
-    sendAmount === '';
+    sendAmount === '' ||
+    !validAmount;
 
   /**
    * Handle clicking a green next step arrow.
@@ -451,15 +471,21 @@ export const Send: React.FC = () => {
             <UI.AccordionTrigger narrow={true}>
               <TriggerContent
                 label="Send Amount"
-                complete={sendAmount !== '0' && sendAmount !== ''}
+                complete={
+                  sendAmount !== '0' && sendAmount !== '' && validAmount
+                }
               />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
-                <InputWrapper>
+                <InputWrapper
+                  style={{
+                    border: `solid 1px ${validAmount ? 'transparent' : '#6a2727'}`,
+                  }}
+                >
                   <input
                     type="number"
-                    disabled={!sender}
+                    disabled={!sender || !senderNetwork}
                     value={sendAmount}
                     onChange={(e) => handleSendAmountChange(e)}
                     onFocus={() => handleSendAmountFocus()}
@@ -475,7 +501,9 @@ export const Send: React.FC = () => {
                     : '-'}
                 </InfoPanel>
                 <NextStepArrow
-                  complete={!(sendAmount === '0' || sendAmount === '')}
+                  complete={
+                    !(sendAmount === '0' || sendAmount === '') && validAmount
+                  }
                   onClick={() => handleNextStep('section-send-amount')}
                 />
               </FlexColumn>
@@ -527,7 +555,7 @@ export const Send: React.FC = () => {
 
                 {/** Send Amount */}
                 <InfoPanel label={'Send Amount:'}>
-                  {sendAmount === '0'
+                  {sendAmount === '0' || sendAmount === '' || !validAmount
                     ? '-'
                     : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
