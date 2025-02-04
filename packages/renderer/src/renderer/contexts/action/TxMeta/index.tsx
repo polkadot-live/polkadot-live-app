@@ -142,7 +142,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         ({ action, from, txStatus }) =>
           from === actionMeta.from &&
           action === actionMeta.action &&
-          txStatus === 'pending'
+          txStatus === 'pending' &&
+          // Allow duplicate balance extrinsics.
+          action !== 'balances_transferKeepAlive'
       );
 
     if (alreadyExists !== undefined) {
