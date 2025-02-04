@@ -16,7 +16,8 @@ export type TxStatus =
 
 export type TxActionUid =
   | 'nominationPools_pendingRewards_bond'
-  | 'nominationPools_pendingRewards_withdraw';
+  | 'nominationPools_pendingRewards_withdraw'
+  | 'balances_transferKeepAlive';
 
 export interface ActionMeta {
   // Name of account sending tx.

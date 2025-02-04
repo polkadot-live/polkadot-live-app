@@ -5,11 +5,12 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -34,6 +35,7 @@ import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
 
 import BigNumber from 'bignumber.js';
+import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { AddressWithTooltipProps, SendAccordionValue } from './types';
@@ -157,6 +159,64 @@ export const Send: React.FC = () => {
       }
     }
   }, [sender, receiver, sendAmount]);
+
+  /**
+   * Handle proceed click.
+   */
+  const handleProceedClick = async () => {
+    if (!(senderNetwork && sender && receiver)) {
+      return;
+    }
+
+    // Data for action meta.
+    const senderObj = getSenderAccounts().find(
+      ({ address }) => address === sender
+    )!;
+
+    const sendAmountPlank = unitToPlanck(
+      sendAmount.toString(),
+      chainUnits(senderNetwork)
+    ).toString();
+
+    // Action meta.
+    const actionMeta: ActionMeta = {
+      accountName: senderObj.name,
+      action: 'balances_transferKeepAlive',
+      from: sender,
+      pallet: 'balances',
+      method: 'transferKeepAlive',
+      chainId: senderNetwork,
+      data: null,
+      eventUid: '',
+      args: [receiver, sendAmountPlank],
+    };
+
+    // Send extrinsic to action window.
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
+
+    if (!extrinsicsViewOpen) {
+      // Relay init task to extrinsics window after its DOM has loaded.
+      window.myAPI.openWindow('action', {
+        windowId: 'action',
+        task: 'action:init',
+        serData: JSON.stringify(actionMeta),
+      });
+
+      // Analytics.
+      window.myAPI.umamiEvent('window-open-extrinsics', {
+        action: `send-transfer-keep-alive`,
+      });
+    } else {
+      window.myAPI.openWindow('action');
+
+      // Send init task directly to extrinsics window if it's already open.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(actionMeta),
+      });
+    }
+  };
 
   /**
    * Sender value changed callback.
@@ -569,7 +629,7 @@ export const Send: React.FC = () => {
                 </InfoPanel>
 
                 <AddButton
-                  onClick={() => console.log('Add')}
+                  onClick={async () => await handleProceedClick()}
                   disabled={proceedDisabled()}
                 >
                   <FontAwesomeIcon

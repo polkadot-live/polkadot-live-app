@@ -24,6 +24,7 @@ import { setStateWithRef } from '@w3ux/utils';
 import { SignOverlay } from '@app/screens/Action/SignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
+import { generateUID } from '@ren/utils/AccountUtils';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -120,20 +121,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       setUpdateCache(false);
     }
   }, [updateCache]);
-
-  /**
-   * Util for generating a UID in the browser.
-   */
-  const generateUID = (): string => {
-    // Generate a random 16-byte array.
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-
-    // Convert to a hexadecimal string.
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-      ''
-    );
-  };
 
   /**
    * Initialize an extrinsic.
@@ -516,6 +503,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       case 'nominationPools': {
         return 'Nomination Pools';
       }
+      case 'balances': {
+        return 'Balances';
+      }
       default: {
         return 'Unknown.';
       }
@@ -532,6 +522,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
       case 'nominationPools_pendingRewards_withdraw': {
         return 'Claim Rewards';
+      }
+      default: {
+        return 'Unknown';
       }
     }
   };

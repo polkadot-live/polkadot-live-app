@@ -38,6 +38,12 @@ export const ComponentFactory = {
       </p>
     ),
   },
+  balances_transferKeepAlive: {
+    title: <h3>Transfer Keep Alive</h3>,
+    description: (
+      <p>Transfer the {"chain's"} native token to a recipient address.</p>
+    ),
+  },
 };
 
 export const TxActionItem = ({
@@ -51,6 +57,8 @@ export const TxActionItem = ({
         return `Compound ${actionData.extra} ${chainCurrency(chainId)}`;
       case 'nominationPools_pendingRewards_withdraw':
         return `Claim ${actionData.extra} ${chainCurrency(chainId)}`;
+      case 'balances_transferKeepAlive':
+        return 'Transfer Keep Alive';
     }
   };
 

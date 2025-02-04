@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as ApiUtils from '@ren/utils/ApiUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import BigNumber from 'bignumber.js';
 import {
@@ -24,7 +25,21 @@ import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
-import * as ApiUtils from '@ren/utils/ApiUtils';
+
+/**
+ * @name generateUID
+ * @summary Util for generating a UID in the browser.
+ */
+export const generateUID = (): string => {
+  // Generate a random 16-byte array.
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+
+  // Convert to a hexadecimal string.
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    ''
+  );
+};
 
 /**
  * @name fetchAccountBalances
