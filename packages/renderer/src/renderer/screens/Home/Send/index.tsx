@@ -172,6 +172,7 @@ export const Send: React.FC = () => {
     // Reset other send fields.
     setReceiver(null);
     setSendAmount('0');
+    setValidAmount(true);
   };
 
   /**
