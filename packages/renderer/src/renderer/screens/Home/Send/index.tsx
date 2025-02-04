@@ -34,10 +34,14 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SelectBoxProps, SendAccordionValue } from './types';
+import type {
+  AddressWithTooltipProps,
+  CopyButtonWithTooltipProps,
+  SelectBoxProps,
+  SendAccordionValue,
+} from './types';
 
 /** Progress bar component */
 const ProgressBar = ({ value, max }: { value: number; max: number }) => {
@@ -94,11 +98,6 @@ const SelectBox = ({
 /**
  * Copy button with tooltip component.
  */
-interface CopyButtonWithTooltipProps {
-  theme: AnyData;
-  onCopyClick: () => Promise<void>;
-}
-
 const CopyButtonWithTooltip = ({
   theme,
   onCopyClick,
@@ -134,11 +133,6 @@ const CopyButtonWithTooltip = ({
 /**
  * Address with tooltip component.
  */
-interface AddressWithTooltipProps {
-  theme: AnyData;
-  address: string;
-}
-
 const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
   <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
     <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
