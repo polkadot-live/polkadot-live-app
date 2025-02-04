@@ -456,7 +456,9 @@ export const Send: React.FC = () => {
                     onFocus={() => handleSendAmountFocus()}
                     onBlur={() => handleSendAmountBlur()}
                   />
-                  <span>DOT</span>
+                  <span>
+                    {senderNetwork ? chainCurrency(senderNetwork) : '-'}
+                  </span>
                 </InputWrapper>
                 <InfoPanel label={'Spendable Balance:'}>100 DOT</InfoPanel>
                 <NextStepArrow
