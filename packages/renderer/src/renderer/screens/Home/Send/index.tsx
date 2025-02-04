@@ -2,32 +2,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
 import { chainCurrency } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { AddButton, FlexRow, InputWrapper } from './Wrappers';
 import {
-  faCaretDown,
-  faChevronRight,
-  faCircleCheck,
-  faCopy,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  AddButton,
-  CopyButton,
-  FlexRow,
-  InputWrapper,
-  NextStepArrowWrapper,
-  ProgressBarWrapper,
-} from './Wrappers';
+  CopyButtonWithTooltip,
+  FlexColumn,
+  InfoPanel,
+  InfoPanelSingle,
+  NextStepArrow,
+  ProgressBar,
+  SelectBox,
+  TriggerContent,
+} from './SendHelpers';
 
 import type {
   AccountSource,
@@ -36,99 +32,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type {
-  AddressWithTooltipProps,
-  CopyButtonWithTooltipProps,
-  SelectBoxProps,
-  SendAccordionValue,
-} from './types';
-
-/** Progress bar component */
-const ProgressBar = ({ value, max }: { value: number; max: number }) => {
-  const percentage = (value / max) * 100;
-
-  return (
-    <ProgressBarWrapper>
-      <div className="progress-fill" style={{ width: `${percentage}%` }} />
-    </ProgressBarWrapper>
-  );
-};
-
-/** Select box wrapper */
-const SelectBox = ({
-  children,
-  ariaLabel,
-  placeholder,
-  value,
-  disabled = false,
-  onValueChange,
-}: SelectBoxProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  return (
-    <Select.Root
-      value={value}
-      disabled={disabled}
-      onValueChange={onValueChange}
-    >
-      <UI.SelectTrigger $theme={theme} aria-label={ariaLabel}>
-        <Select.Value placeholder={placeholder} />
-        <Select.Icon className="SelectIcon">
-          <ChevronDownIcon />
-        </Select.Icon>
-      </UI.SelectTrigger>
-      <Select.Portal>
-        <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
-          <Select.ScrollUpButton className="SelectScrollButton">
-            <ChevronUpIcon />
-          </Select.ScrollUpButton>
-          <Select.Viewport className="SelectViewport">
-            <Select.Group>{children}</Select.Group>
-          </Select.Viewport>
-          <Select.ScrollDownButton className="SelectScrollButton">
-            <ChevronDownIcon />
-          </Select.ScrollDownButton>
-        </UI.SelectContent>
-      </Select.Portal>
-    </Select.Root>
-  );
-};
-
-/**
- * Copy button with tooltip component.
- */
-const CopyButtonWithTooltip = ({
-  theme,
-  onCopyClick,
-}: CopyButtonWithTooltipProps) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [text, setText] = useState<string>('Copy Address');
-
-  return (
-    <UI.TooltipRx
-      theme={theme}
-      open={open}
-      text={text}
-      onOpenChange={(val) => {
-        setOpen(val);
-        if (!val) {
-          setText('Copy Address');
-        }
-      }}
-    >
-      <CopyButton
-        onClick={async () => {
-          await onCopyClick();
-          setText('Copied!');
-          setOpen(true);
-        }}
-      >
-        <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
-      </CopyButton>
-    </UI.TooltipRx>
-  );
-};
+import type { AddressWithTooltipProps, SendAccordionValue } from './types';
 
 /**
  * Address with tooltip component.
@@ -638,107 +542,3 @@ export const Send: React.FC = () => {
     </div>
   );
 };
-
-const FlexColumn = ({ children }: { children: React.ReactNode }) => (
-  <section style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-    {children}
-  </section>
-);
-
-const InfoPanel = ({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      fontSize: '1rem',
-      padding: '1rem',
-      backgroundColor: 'var(--background-surface)',
-      border: '0.375rem',
-    }}
-  >
-    <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        alignItems: 'center',
-        opacity: '0.85',
-      }}
-    >
-      <span style={{ flex: 1, color: 'var(--text-color-secondary)' }}>
-        {label}
-      </span>
-      <span style={{ color: 'var(--text-color-primary)' }}>{children}</span>
-    </div>
-  </div>
-);
-
-const InfoPanelSingle = ({ children }: { children: React.ReactNode }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      fontSize: '1rem',
-      padding: '1rem',
-      backgroundColor: 'var(--background-surface)',
-      border: '0.375rem',
-    }}
-  >
-    <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: '0.85',
-      }}
-    >
-      <span style={{ color: 'var(--text-color-secondary)' }}>{children}</span>
-    </div>
-  </div>
-);
-
-const TriggerContent = ({
-  label,
-  complete,
-}: {
-  label: string;
-  complete: boolean;
-}) => (
-  <>
-    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-    <h4 style={{ flex: 1 }}>{label}</h4>
-    <div className="right">
-      <FontAwesomeIcon
-        style={
-          complete
-            ? { color: 'var(--accent-success)' }
-            : { color: 'inherit', opacity: '0.25' }
-        }
-        icon={faCircleCheck}
-        transform={'grow-4'}
-      />
-    </div>
-  </>
-);
-
-const NextStepArrow = ({
-  complete,
-  onClick,
-}: {
-  complete: boolean;
-  onClick: () => void;
-}) => (
-  <NextStepArrowWrapper $complete={complete}>
-    <button disabled={!complete} onClick={() => onClick()}>
-      <FontAwesomeIcon icon={faCaretDown} transform={'shrink-6'} />
-    </button>
-  </NextStepArrowWrapper>
-);
