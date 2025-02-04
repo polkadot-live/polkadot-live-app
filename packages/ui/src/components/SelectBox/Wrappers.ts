@@ -59,6 +59,16 @@ export const SelectTrigger = styled(Select.Trigger).attrs<{
   &:hover {
     background-color: var(--background-hover);
   }
+  /* Disabled */
+  &[data-disabled] {
+    cursor: not-allowed;
+    span {
+      opacity: 0.4;
+    }
+    &:hover {
+      background-color: var(--background);
+    }
+  }
 `;
 
 /**

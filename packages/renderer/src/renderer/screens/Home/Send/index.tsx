@@ -2,31 +2,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
 import { chainCurrency } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { AddButton, FlexRow, InputWrapper } from './Wrappers';
 import {
-  faCaretDown,
-  faChevronRight,
-  faCircleCheck,
-  faCopy,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  AddButton,
-  CopyButton,
-  InputWrapper,
-  NextStepArrowWrapper,
-  ProgressBarWrapper,
-} from './Wrappers';
+  CopyButtonWithTooltip,
+  FlexColumn,
+  InfoPanel,
+  InfoPanelSingle,
+  NextStepArrow,
+  ProgressBar,
+  SelectBox,
+  TriggerContent,
+} from './SendHelpers';
 
 import type {
   AccountSource,
@@ -35,54 +32,16 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SelectBoxProps, SendAccordionValue } from './types';
+import type { AddressWithTooltipProps, SendAccordionValue } from './types';
 
-/** Progress bar component */
-const ProgressBar = ({ value, max }: { value: number; max: number }) => {
-  const percentage = (value / max) * 100;
-
-  return (
-    <ProgressBarWrapper>
-      <div className="progress-fill" style={{ width: `${percentage}%` }} />
-    </ProgressBarWrapper>
-  );
-};
-
-/** Select box wrapper */
-const SelectBox = ({
-  children,
-  ariaLabel,
-  placeholder,
-  value,
-  onValueChange,
-}: SelectBoxProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  return (
-    <Select.Root value={value} onValueChange={onValueChange}>
-      <UI.SelectTrigger $theme={theme} aria-label={ariaLabel}>
-        <Select.Value placeholder={placeholder} />
-        <Select.Icon className="SelectIcon">
-          <ChevronDownIcon />
-        </Select.Icon>
-      </UI.SelectTrigger>
-      <Select.Portal>
-        <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
-          <Select.ScrollUpButton className="SelectScrollButton">
-            <ChevronUpIcon />
-          </Select.ScrollUpButton>
-          <Select.Viewport className="SelectViewport">
-            <Select.Group>{children}</Select.Group>
-          </Select.Viewport>
-          <Select.ScrollDownButton className="SelectScrollButton">
-            <ChevronDownIcon />
-          </Select.ScrollDownButton>
-        </UI.SelectContent>
-      </Select.Portal>
-    </Select.Root>
-  );
-};
+/**
+ * Address with tooltip component.
+ */
+const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
+  <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
+    <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
+  </UI.TooltipRx>
+);
 
 /** Send component. */
 export const Send: React.FC = () => {
@@ -103,15 +62,6 @@ export const Send: React.FC = () => {
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  /**
-   * Tooltips state.
-   */
-  const [tooltipAOpen, setTooltipAOpen] = useState<boolean>(false);
-  const [tooltipAText, setTooltipAText] = useState('Copy Address');
-
-  const [tooltipBOpen, setTooltipBOpen] = useState<boolean>(false);
-  const [tooltipBText, setTooltipBText] = useState('Copy Address');
 
   /**
    * Accordion state.
@@ -318,6 +268,9 @@ export const Send: React.FC = () => {
     }
   };
 
+  const emptySenders = getSenderAccounts().length === 0;
+  const emptyReceivers = getReceiverAccounts().length === 0;
+
   return (
     <div
       style={{
@@ -351,6 +304,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
+                  disabled={emptySenders}
                   value={sender || ''}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
@@ -367,47 +321,40 @@ export const Send: React.FC = () => {
                     </UI.SelectItem>
                   ))}
                 </SelectBox>
-                <InfoPanelSingle>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '0.8rem',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {!sender ? (
-                      <span>-</span>
-                    ) : (
-                      <>
-                        <span>{ellipsisFn(sender, 12)}</span>
-                        <UI.TooltipRx
-                          theme={theme}
-                          open={tooltipAOpen}
-                          text={tooltipAText}
-                          onOpenChange={(val) => {
-                            setTooltipAOpen(val);
-                            if (!val) {
-                              setTooltipAText('Copy Address');
+
+                {emptySenders ? (
+                  <InfoPanelSingle>
+                    <span style={{ color: 'var(--accent-warning)' }}>
+                      No managed accounts are capable of signing extrinsics
+                    </span>
+                  </InfoPanelSingle>
+                ) : (
+                  <InfoPanelSingle>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {!sender ? (
+                        <span style={{ opacity: '0.5' }}>
+                          No account selected
+                        </span>
+                      ) : (
+                        <>
+                          <AddressWithTooltip theme={theme} address={sender} />
+                          <CopyButtonWithTooltip
+                            theme={theme}
+                            onCopyClick={async () =>
+                              await handleClipboardCopy(sender)
                             }
-                          }}
-                        >
-                          <CopyButton
-                            onClick={async () => {
-                              await handleClipboardCopy(sender);
-                              setTooltipAText('Copied!');
-                              setTooltipAOpen(true);
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faCopy}
-                              transform={'shrink-2'}
-                            />
-                          </CopyButton>
-                        </UI.TooltipRx>
-                      </>
-                    )}
-                  </div>
-                </InfoPanelSingle>
+                          />
+                        </>
+                      )}
+                    </div>
+                  </InfoPanelSingle>
+                )}
                 <NextStepArrow
                   complete={sender !== null}
                   onClick={() => handleNextStep('section-sender')}
@@ -424,6 +371,7 @@ export const Send: React.FC = () => {
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
+                  disabled={emptyReceivers}
                   value={receiver || ''}
                   ariaLabel="Receiver"
                   placeholder="Select Receiver"
@@ -445,47 +393,42 @@ export const Send: React.FC = () => {
                     )
                   )}
                 </SelectBox>
-                <InfoPanelSingle>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '0.8rem',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {!receiver ? (
-                      <span>-</span>
-                    ) : (
-                      <>
-                        <span>{ellipsisFn(receiver, 12)}</span>
-                        <UI.TooltipRx
-                          theme={theme}
-                          open={tooltipBOpen}
-                          text={tooltipBText}
-                          onOpenChange={(val) => {
-                            setTooltipBOpen(val);
-                            if (!val) {
-                              setTooltipBText('Copy Address');
+                {emptyReceivers ? (
+                  <InfoPanelSingle>
+                    <span style={{ color: 'var(--accent-warning)' }}>
+                      No managed accounts found on this network
+                    </span>
+                  </InfoPanelSingle>
+                ) : (
+                  <InfoPanelSingle>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '0.8rem',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {!receiver ? (
+                        <span style={{ opacity: '0.5' }}>
+                          No account selected
+                        </span>
+                      ) : (
+                        <>
+                          <AddressWithTooltip
+                            theme={theme}
+                            address={receiver}
+                          />
+                          <CopyButtonWithTooltip
+                            theme={theme}
+                            onCopyClick={async () =>
+                              await handleClipboardCopy(receiver)
                             }
-                          }}
-                        >
-                          <CopyButton
-                            onClick={async () => {
-                              await handleClipboardCopy(receiver);
-                              setTooltipBText('Copied!');
-                              setTooltipBOpen(true);
-                            }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faCopy}
-                              transform={'shrink-2'}
-                            />
-                          </CopyButton>
-                        </UI.TooltipRx>
-                      </>
-                    )}
-                  </div>
-                </InfoPanelSingle>
+                          />
+                        </>
+                      )}
+                    </div>
+                  </InfoPanelSingle>
+                )}
                 <NextStepArrow
                   complete={receiver !== null}
                   onClick={() => handleNextStep('section-receiver')}
@@ -513,9 +456,11 @@ export const Send: React.FC = () => {
                     onFocus={() => handleSendAmountFocus()}
                     onBlur={() => handleSendAmountBlur()}
                   />
-                  <span>DOT</span>
+                  <span>
+                    {senderNetwork ? chainCurrency(senderNetwork) : '-'}
+                  </span>
                 </InputWrapper>
-                <InfoPanel label={'Spendable Balance:'} Content={'100 DOT'} />
+                <InfoPanel label={'Spendable Balance:'}>100 DOT</InfoPanel>
                 <NextStepArrow
                   complete={!(sendAmount === '0' || sendAmount === '')}
                   onClick={() => handleNextStep('section-send-amount')}
@@ -531,31 +476,56 @@ export const Send: React.FC = () => {
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
-                <InfoPanel label={'Network:'} Content={senderNetwork || '-'} />
-                <InfoPanel
-                  label={'Sender:'}
-                  Content={!sender ? '-' : ellipsisFn(sender!, 12)}
-                />
-                <InfoPanel
-                  label={'Receiver:'}
-                  Content={!receiver ? '-' : ellipsisFn(receiver, 12)}
-                />
-                <InfoPanel
-                  label={'Send Amount:'}
-                  Content={
-                    sendAmount === '0'
-                      ? '-'
-                      : `${sendAmount} ${chainCurrency(senderNetwork!)}`
-                  }
-                />
-                <InfoPanel
-                  label={'Estimated Fee:'}
-                  Content={
-                    estimatedFee === ''
-                      ? '-'
-                      : `${estimatedFee} ${chainCurrency(senderNetwork!)}`
-                  }
-                />
+                <InfoPanel label={'Network:'}>{senderNetwork || '-'}</InfoPanel>
+
+                {/** Sender */}
+                <InfoPanel label={'Sender:'}>
+                  {!sender ? (
+                    '-'
+                  ) : (
+                    <FlexRow>
+                      <AddressWithTooltip theme={theme} address={sender} />
+                      <CopyButtonWithTooltip
+                        theme={theme}
+                        onCopyClick={async () =>
+                          await handleClipboardCopy(sender)
+                        }
+                      />
+                    </FlexRow>
+                  )}
+                </InfoPanel>
+
+                {/** Receiver */}
+                <InfoPanel label={'Receiver:'}>
+                  {!receiver ? (
+                    '-'
+                  ) : (
+                    <FlexRow>
+                      <AddressWithTooltip theme={theme} address={receiver} />
+                      <CopyButtonWithTooltip
+                        theme={theme}
+                        onCopyClick={async () =>
+                          await handleClipboardCopy(receiver)
+                        }
+                      />
+                    </FlexRow>
+                  )}
+                </InfoPanel>
+
+                {/** Send Amount */}
+                <InfoPanel label={'Send Amount:'}>
+                  {sendAmount === '0'
+                    ? '-'
+                    : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
+                </InfoPanel>
+
+                {/** Estimated Fee */}
+                <InfoPanel label={'Estimated Fee:'}>
+                  {estimatedFee === ''
+                    ? '-'
+                    : `${estimatedFee} ${chainCurrency(senderNetwork!)}`}
+                </InfoPanel>
+
                 <AddButton
                   onClick={() => console.log('Add')}
                   disabled={proceedDisabled()}
@@ -574,107 +544,3 @@ export const Send: React.FC = () => {
     </div>
   );
 };
-
-const FlexColumn = ({ children }: { children: React.ReactNode }) => (
-  <section style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-    {children}
-  </section>
-);
-
-const InfoPanel = ({
-  label,
-  Content,
-}: {
-  label: string;
-  Content: React.ReactNode;
-}) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      fontSize: '1rem',
-      padding: '1rem',
-      backgroundColor: 'var(--background-surface)',
-      border: '0.375rem',
-    }}
-  >
-    <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        alignItems: 'center',
-        opacity: '0.85',
-      }}
-    >
-      <span style={{ flex: 1, color: 'var(--text-color-secondary)' }}>
-        {label}
-      </span>
-      <span style={{ color: 'var(--text-color-primary)' }}>{Content}</span>
-    </div>
-  </div>
-);
-
-const InfoPanelSingle = ({ children }: { children: React.ReactNode }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      fontSize: '1rem',
-      padding: '1rem',
-      backgroundColor: 'var(--background-surface)',
-      border: '0.375rem',
-    }}
-  >
-    <div
-      style={{
-        display: 'flex',
-        gap: '0.5rem',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: '0.85',
-      }}
-    >
-      <span style={{ color: 'var(--text-color-secondary)' }}>{children}</span>
-    </div>
-  </div>
-);
-
-const TriggerContent = ({
-  label,
-  complete,
-}: {
-  label: string;
-  complete: boolean;
-}) => (
-  <>
-    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-    <h4 style={{ flex: 1 }}>{label}</h4>
-    <div className="right">
-      <FontAwesomeIcon
-        style={
-          complete
-            ? { color: 'var(--accent-success)' }
-            : { color: 'inherit', opacity: '0.25' }
-        }
-        icon={faCircleCheck}
-        transform={'grow-4'}
-      />
-    </div>
-  </>
-);
-
-const NextStepArrow = ({
-  complete,
-  onClick,
-}: {
-  complete: boolean;
-  onClick: () => void;
-}) => (
-  <NextStepArrowWrapper $complete={complete}>
-    <button disabled={!complete} onClick={() => onClick()}>
-      <FontAwesomeIcon icon={faCaretDown} transform={'shrink-6'} />
-    </button>
-  </NextStepArrowWrapper>
-);

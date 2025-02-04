@@ -9,6 +9,7 @@ import type { RadixTooltipProps } from './types';
 export const TooltipRx = ({
   open,
   text,
+  style,
   theme,
   onOpenChange,
   children,
@@ -20,6 +21,7 @@ export const TooltipRx = ({
         <TooltipContent
           $theme={theme}
           className="TooltipContent"
+          style={style}
           sideOffset={5}
         >
           {text}
