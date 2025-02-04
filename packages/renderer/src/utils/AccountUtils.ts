@@ -61,6 +61,78 @@ export const fetchBalanceForAccount = async (account: Account) => {
 };
 
 /**
+ * @name getBalanceForAccount
+ * @summary Return an account's current balance.
+ */
+export const getBalanceForAccount = async (
+  address: string,
+  chainId: ChainID
+): Promise<AccountBalance> => {
+  const origin = 'getBalanceForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const result: AnyJson = await api.query.system.account(address);
+
+  const balance: AccountBalance = {
+    nonce: new BigNumber(rmCommas(String(result.nonce))),
+    free: new BigNumber(rmCommas(String(result.data.free))),
+    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
+    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
+  };
+
+  // Update account data if it is being managed by controller.
+  const account = AccountsController.get(chainId, address);
+  if (account) {
+    account.balance = balance;
+    await AccountsController.set(account.chain, account);
+  }
+
+  return balance;
+};
+
+/**
+ * @name getExistentialDeposit
+ * @summary Return the requested network's existential deposit as a big number.
+ */
+export const getExistentialDeposit = async (
+  chainId: ChainID
+): Promise<BigNumber> => {
+  const origin = 'getExistentialDeposit';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  return new BigNumber(
+    rmCommas(String(api.consts.balances.existentialDeposit))
+  );
+};
+
+/**
+ * @name getSpendableBalance
+ * @summary Return the requested account's spendable balance as a big number.
+ */
+export const getSpendableBalance = async (
+  address: string,
+  chainId: ChainID
+): Promise<BigNumber | null> => {
+  const balance = await getBalanceForAccount(address, chainId);
+
+  // Spendable balance equation:
+  // spendable = free - max(max(frozen, reserved), ed)
+  const free = new BigNumber(rmCommas(String(balance.free)));
+  const frozen = new BigNumber(rmCommas(String(balance.frozen)));
+  const reserved = new BigNumber(rmCommas(String(balance.reserved)));
+  const ed = await getExistentialDeposit(chainId);
+
+  let spendable = free.minus(
+    BigNumber.max(BigNumber.max(frozen, reserved), ed)
+  );
+
+  const zero = new BigNumber(0);
+  if (spendable.lt(zero)) {
+    spendable = new BigNumber(0);
+  }
+
+  return spendable;
+};
+
+/**
  * @name fetchAccountNominatingData
  * @summary Fetch an account's nominated validator ids.
  */

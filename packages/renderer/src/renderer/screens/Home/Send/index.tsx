@@ -30,6 +30,10 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
+import { getSpendableBalance } from '@ren/utils/AccountUtils';
+import { getBalanceText } from '@ren/utils/TextUtils';
+
+import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { AddressWithTooltipProps, SendAccordionValue } from './types';
@@ -59,6 +63,7 @@ export const Send: React.FC = () => {
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('0');
+  const [spendable, setSpendable] = useState<BigNumber | null>(null);
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -154,9 +159,13 @@ export const Send: React.FC = () => {
   /**
    * Sender value changed callback.
    */
-  const handleSenderChange = (senderAddress: string) => {
+  const handleSenderChange = async (senderAddress: string) => {
+    const chainId = getAddressChainId(senderAddress);
     setSender(senderAddress);
-    setSenderNetwork(getAddressChainId(senderAddress));
+    setSenderNetwork(chainId);
+
+    const result = await getSpendableBalance(senderAddress, chainId);
+    setSpendable(result);
 
     // Reset other send fields.
     setReceiver(null);
@@ -308,7 +317,7 @@ export const Send: React.FC = () => {
                   value={sender || ''}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
-                  onValueChange={(val) => handleSenderChange(val)}
+                  onValueChange={async (val) => await handleSenderChange(val)}
                 >
                   {getSenderAccounts().map(({ name: accountName, address }) => (
                     <UI.SelectItem key={`sender-${address}`} value={address}>
@@ -460,7 +469,11 @@ export const Send: React.FC = () => {
                     {senderNetwork ? chainCurrency(senderNetwork) : '-'}
                   </span>
                 </InputWrapper>
-                <InfoPanel label={'Spendable Balance:'}>100 DOT</InfoPanel>
+                <InfoPanel label={'Spendable Balance:'}>
+                  {spendable && senderNetwork
+                    ? getBalanceText(spendable, senderNetwork)
+                    : '-'}
+                </InfoPanel>
                 <NextStepArrow
                   complete={!(sendAmount === '0' || sendAmount === '')}
                   onClick={() => handleNextStep('section-send-amount')}
