@@ -131,6 +131,20 @@ const CopyButtonWithTooltip = ({
   );
 };
 
+/**
+ * Address with tooltip component.
+ */
+interface AddressWithTooltipProps {
+  theme: AnyData;
+  address: string;
+}
+
+const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
+  <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
+    <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
+  </UI.TooltipRx>
+);
+
 /** Send component. */
 export const Send: React.FC = () => {
   /**
@@ -431,7 +445,7 @@ export const Send: React.FC = () => {
                         </span>
                       ) : (
                         <>
-                          <span>{ellipsisFn(sender, 12)}</span>
+                          <AddressWithTooltip theme={theme} address={sender} />
                           <CopyButtonWithTooltip
                             theme={theme}
                             onCopyClick={async () =>
@@ -502,7 +516,10 @@ export const Send: React.FC = () => {
                         </span>
                       ) : (
                         <>
-                          <span>{ellipsisFn(receiver, 12)}</span>
+                          <AddressWithTooltip
+                            theme={theme}
+                            address={receiver}
+                          />
                           <CopyButtonWithTooltip
                             theme={theme}
                             onCopyClick={async () =>
@@ -567,7 +584,7 @@ export const Send: React.FC = () => {
                     '-'
                   ) : (
                     <FlexRow>
-                      <span>{ellipsisFn(sender!, 12)}</span>
+                      <AddressWithTooltip theme={theme} address={sender} />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
@@ -584,7 +601,7 @@ export const Send: React.FC = () => {
                     '-'
                   ) : (
                     <FlexRow>
-                      <span>{ellipsisFn(receiver, 12)}</span>
+                      <AddressWithTooltip theme={theme} address={receiver} />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
