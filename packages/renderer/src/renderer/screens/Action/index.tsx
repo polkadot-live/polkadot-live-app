@@ -19,7 +19,6 @@ import {
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
-import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
@@ -62,19 +61,7 @@ export const Action = () => {
   const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  // Reset data in the main extrinsics controller on unmount.
-  useEffect(
-    () => () => {
-      try {
-        // TODO: Get stored extrinsic data from main.
-      } catch (err) {
-        console.log('Warning: Action port not received yet: renderer:tx:reset');
-      }
-    },
-    []
-  );
-
-  // TMP: Utility to get title based on tx status.
+  // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
@@ -91,25 +78,6 @@ export const Action = () => {
         return 'Submitted';
     }
   };
-
-  // Utility to get subtitle based on tx status.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getTxStatusSubtitle = (txStatus: TxStatus): string | null => {
-    switch (txStatus) {
-      case 'submitted':
-        return 'Waiting for block confirmation...';
-      case 'in_block':
-        return 'Waiting for finalized confirmation...';
-      default:
-        return null;
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getAccordionDefaultValue = () =>
-    Array.from(extrinsics.values()).length === 0
-      ? []
-      : [getFilteredExtrinsics()[0].txId];
 
   const truncateString = (target: string, maxLength: number) => {
     const targetLength = target.length;
