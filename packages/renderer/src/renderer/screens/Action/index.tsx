@@ -6,13 +6,11 @@ import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../theme/variables';
 
-import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
-import { Signer } from './Signer';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
-import { getExtrinsicSubtitle, getExtrinsicTitle } from './Helpers';
+import { ExtrinsicItemContent, getExtrinsicTitle } from './Helpers';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -78,15 +76,6 @@ export const Action = () => {
       const endSection = target.slice(targetLength - 4, targetLength);
       return `${truncated}...${endSection}`;
     }
-  };
-
-  const truncateDecimalPlaces = (value: string, places = 4): string => {
-    const decimalIndex = value.indexOf('.');
-
-    return value.indexOf('.') === -1 ||
-      value.length - decimalIndex - 1 <= places
-      ? value
-      : value.slice(0, decimalIndex + (places + 1));
   };
 
   const fadeTxIcon = (txStatus: TxStatus) =>
@@ -277,77 +266,7 @@ export const Action = () => {
                       </div>
                     </div>
                     <UI.AccordionContent>
-                      <div>
-                        {getExtrinsicSubtitle(info)}
-                        <UI.Tx
-                          label={'Signer'}
-                          TxSigner={
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.6rem',
-                              }}
-                            >
-                              <div
-                                className="tooltip tooltip-trigger-element"
-                                data-tooltip-text={ellipsisFn(
-                                  info.actionMeta.from,
-                                  16
-                                )}
-                                onMouseMove={() =>
-                                  setTooltipTextAndOpen(
-                                    ellipsisFn(info.actionMeta.from, 16),
-                                    'right'
-                                  )
-                                }
-                              >
-                                <UI.Identicon
-                                  value={info.actionMeta.from}
-                                  size={18}
-                                />
-                              </div>
-                              <span>{info.actionMeta.accountName}</span>
-                            </div>
-                          }
-                          notEnoughFunds={false}
-                          dangerMessage={'Danger message'}
-                          EstimatedFee={
-                            info.estimatedFee === undefined ? (
-                              <span>-</span>
-                            ) : (
-                              <div
-                                className="tooltip tooltip-trigger-element"
-                                style={{ cursor: 'default' }}
-                                data-tooltip-text={`${ellipsisFn(
-                                  info.estimatedFee || '-',
-                                  16
-                                )} ${chainCurrency(info.actionMeta.chainId)}`}
-                                onMouseMove={() =>
-                                  setTooltipTextAndOpen(
-                                    `${
-                                      info.estimatedFee || 'error'
-                                    } ${chainCurrency(info.actionMeta.chainId)}`,
-                                    'top'
-                                  )
-                                }
-                              >
-                                {`${truncateDecimalPlaces(info.estimatedFee || '-')}
-                                  ${chainCurrency(info.actionMeta.chainId)}`}
-                              </div>
-                            )
-                          }
-                          SignerComponent={
-                            <Signer
-                              info={info}
-                              valid={
-                                !isBuildingExtrinsic &&
-                                info.estimatedFee !== undefined
-                              }
-                            />
-                          }
-                        />
-                      </div>
+                      <ExtrinsicItemContent info={info} />
                     </UI.AccordionContent>
                   </Accordion.Item>
                 ))}

@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { ReactElement } from 'react';
 
 export type DisplayFor = 'default' | 'modal' | 'canvas';
@@ -22,4 +23,10 @@ export interface TxProps {
   SignerComponent: ReactElement;
   // display for.
   displayFor?: DisplayFor;
+}
+
+export interface TxInfoBadgeProps {
+  children: React.ReactElement;
+  icon: IconDefinition;
+  label: string;
 }

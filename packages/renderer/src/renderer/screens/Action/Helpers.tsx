@@ -1,13 +1,43 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../theme/variables';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,
 } from '@polkadot-live/types/tx';
 import BigNumber from 'bignumber.js';
-import { planckToUnit } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import {
+  Identicon,
+  TooltipRx,
+  TxInfoBadge,
+} from '@polkadot-live/ui/components';
+import {
+  faCoins,
+  faPenToSquare,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
+
+// TMP
+import { useConnections } from '@app/contexts/common/Connections';
+import { Signer } from './Signer';
+import { FlexRow } from '@polkadot-live/ui/styles';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ExtrinsicItemContentProps } from './types';
+
+/**
+ * @name truncateDecimalPlaces
+ * @summary Truncate a number represented as a string.
+ */
+export const truncateDecimalPlaces = (value: string, places = 4): string => {
+  const decimalIndex = value.indexOf('.');
+
+  return value.indexOf('.') === -1 || value.length - decimalIndex - 1 <= places
+    ? value
+    : value.slice(0, decimalIndex + (places + 1));
+};
 
 /**
  * @name getExtrinsicTitle
@@ -28,53 +58,166 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
 };
 
 /**
- * @name getExtrinsicSubtitle
- * @summary Return the extrinsic item's subtitle.
+ * @name SignerBadge
+ * @summary Render signer badge for extrinsic item.
  */
+const SignerBadge = ({
+  info,
+  theme,
+}: {
+  info: ExtrinsicInfo;
+  theme: AnyData;
+}) => (
+  <TxInfoBadge icon={faPenToSquare} label={'Signer'}>
+    <FlexRow $gap={'0.75rem'}>
+      <TooltipRx text={ellipsisFn(info.actionMeta.from, 12)} theme={theme}>
+        <span>
+          <Identicon value={info.actionMeta.from} size={18} />
+        </span>
+      </TooltipRx>
+      <span>{info.actionMeta.accountName}</span>
+    </FlexRow>
+  </TxInfoBadge>
+);
 
-export const getExtrinsicSubtitle = (info: ExtrinsicInfo): React.ReactNode => {
+/**
+ * @name EstimatedFeeBadge
+ * @summary Render an estimated fee badge for extrinsic item.
+ */
+const EstimatedFeeBadge = ({
+  info,
+  theme,
+}: {
+  info: ExtrinsicInfo;
+  theme: AnyData;
+}) => {
+  const { chainId } = info.actionMeta;
+  const currency = chainCurrency(chainId);
+
+  const estimatedFee = info.estimatedFee
+    ? `${info.estimatedFee} ${currency}`
+    : '-';
+
+  const truncEstimatedFee = info.estimatedFee
+    ? `${truncateDecimalPlaces(info.estimatedFee)} ${currency}`
+    : '-';
+
+  return (
+    <TxInfoBadge icon={faCoins} label={'Estimated Fee'}>
+      <TooltipRx text={`${estimatedFee}`} theme={theme}>
+        <span>{truncEstimatedFee}</span>
+      </TooltipRx>
+    </TxInfoBadge>
+  );
+};
+
+/**
+ * @name ExtrinsicItemContent
+ * @summary Return the extrinsic item's content.
+ */
+export const ExtrinsicItemContent = ({
+  info,
+}: ExtrinsicItemContentProps): React.ReactNode => {
+  const { isBuildingExtrinsic, darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const { chainId, data: serData } = info.actionMeta;
+
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
       const {
         sendAmount: planck,
         recipientAccountName,
+        recipientAddress,
       }: ExTransferKeepAliveData = JSON.parse(serData);
 
       const units = chainUnits(chainId);
       const bnPlanck = new BigNumber(planck);
       const bnUnit = planckToUnit(bnPlanck, units);
+      const currency = chainCurrency(chainId);
+      const fmtAmount = <b>{`${bnUnit.toString()} ${currency}`}</b>;
 
       return (
-        <p>
-          Transfer{' '}
-          <b>
-            {bnUnit.toString()} {chainCurrency(chainId)}
-          </b>{' '}
-          to account <b>{recipientAccountName}</b>.
-        </p>
+        <>
+          <p>
+            Transfer {fmtAmount} to account {recipientAccountName}.
+          </p>
+          <FlexRow $gap={'1rem'}>
+            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+              {/* Signing Account */}
+              <SignerBadge info={info} theme={theme} />
+              {/* Recipient */}
+              <TxInfoBadge icon={faUser} label={'Recipient'}>
+                <FlexRow $gap={'0.75rem'}>
+                  <TooltipRx
+                    text={ellipsisFn(recipientAddress, 12)}
+                    theme={theme}
+                  >
+                    <span>
+                      <Identicon value={recipientAddress} size={18} />
+                    </span>
+                  </TooltipRx>
+                  <span>{recipientAccountName}</span>
+                </FlexRow>
+              </TxInfoBadge>
+              {/* Estimated Fee */}
+              <EstimatedFeeBadge info={info} theme={theme} />
+            </FlexRow>
+
+            {/* Signer */}
+            <Signer
+              info={info}
+              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+            />
+          </FlexRow>
+        </>
       );
     }
     case 'nominationPools_pendingRewards_bond': {
+      const currency = chainCurrency(chainId);
+      const fmtAmount = <b>{`${serData.extra} ${currency}`}</b>;
+
       return (
-        <p>
-          Compound{' '}
-          <b>
-            {serData.extra} {chainCurrency(chainId)}
-          </b>
-          .
-        </p>
+        <>
+          <p>Compound {fmtAmount}.</p>
+          <FlexRow $gap={'1rem'}>
+            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+              {/* Signing Account */}
+              <SignerBadge info={info} theme={theme} />
+              {/* Estimated Fee */}
+              <EstimatedFeeBadge info={info} theme={theme} />
+            </FlexRow>
+
+            {/* Signer */}
+            <Signer
+              info={info}
+              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+            />
+          </FlexRow>
+        </>
       );
     }
     case 'nominationPools_pendingRewards_withdraw': {
+      const currency = chainCurrency(chainId);
+      const fmtAmount = <b>{`${serData.extra} ${currency}`}</b>;
+
       return (
-        <p>
-          Claim{' '}
-          <b>
-            {serData.extra} {chainCurrency(chainId)}
-          </b>
-          .
-        </p>
+        <>
+          <p>Claim {fmtAmount}.</p>
+          <FlexRow $gap={'1rem'}>
+            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+              {/* Signing Account */}
+              <SignerBadge info={info} theme={theme} />
+              {/* Estimated Fee */}
+              <EstimatedFeeBadge info={info} theme={theme} />
+            </FlexRow>
+
+            {/* Signer */}
+            <Signer
+              info={info}
+              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+            />
+          </FlexRow>
+        </>
       );
     }
   }
@@ -83,6 +226,7 @@ export const getExtrinsicSubtitle = (info: ExtrinsicInfo): React.ReactNode => {
 /**
  * @name getExtrinsicDescription
  * @summary Return the extrinsic item's description.
+ * @deprecated
  */
 export const getExtrinsicDescription = (info: ExtrinsicInfo) => {
   switch (info.actionMeta.action) {

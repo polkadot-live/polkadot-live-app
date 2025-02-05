@@ -14,6 +14,7 @@ import type { TxProps } from './types';
 /**
  * @name Tx
  * @summary A wrapper to handle transaction submission.
+ * @deprecated
  */
 export const Tx = ({
   margin,
