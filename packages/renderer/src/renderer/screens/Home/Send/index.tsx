@@ -39,7 +39,10 @@ import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
 
 import BigNumber from 'bignumber.js';
-import type { ActionMeta } from '@polkadot-live/types/tx';
+import type {
+  ActionMeta,
+  ExTransferKeepAliveData,
+} from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { AddressWithTooltipProps, SendAccordionValue } from './types';
@@ -186,10 +189,21 @@ export const Send: React.FC = () => {
       ({ address }) => address === sender
     )!;
 
-    const sendAmountPlank = unitToPlanck(
+    const recipientObj = getReceiverAccounts().find(
+      ({ address }) => address === receiver
+    )!;
+
+    const sendAmountPlanck: string = unitToPlanck(
       sendAmount.toString(),
       chainUnits(senderNetwork)
     ).toString();
+
+    // Specific data for transfer extrinsic.
+    const balanceData: ExTransferKeepAliveData = {
+      recipientAddress: recipientObj.address,
+      recipientAccountName: recipientObj.name,
+      sendAmount: sendAmountPlanck,
+    };
 
     // Action meta.
     const actionMeta: ActionMeta = {
@@ -199,9 +213,9 @@ export const Send: React.FC = () => {
       pallet: 'balances',
       method: 'transferKeepAlive',
       chainId: senderNetwork,
-      data: null,
+      data: JSON.stringify(balanceData),
       eventUid: '',
-      args: [receiver, sendAmountPlank],
+      args: [receiver, sendAmountPlanck],
     };
 
     // Send extrinsic to action window.

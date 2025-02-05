@@ -23,7 +23,7 @@ import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
-import { ComponentFactory } from './TxActionItem';
+import { getExtrinsicSubtitle, getExtrinsicTitle } from './Helpers';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -259,7 +259,7 @@ export const Action = () => {
                           className="AccordionChevron"
                           aria-hidden
                         />
-                        {ComponentFactory[info.actionMeta.action].title}
+                        <h3>{getExtrinsicTitle(info)}</h3>
                         <span className="right">
                           <div className="stat">
                             <div
@@ -320,7 +320,7 @@ export const Action = () => {
                     </div>
                     <AccordionContent>
                       <div>
-                        {ComponentFactory[info.actionMeta.action].description}
+                        <p>{getExtrinsicSubtitle(info)}</p>
                         <Tx
                           label={'Signer'}
                           TxSigner={

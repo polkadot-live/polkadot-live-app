@@ -69,3 +69,12 @@ export interface ExtrinsicInfo {
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
 }
+
+/**
+ * Specific data send with a transfer extrinsic.
+ */
+export interface ExTransferKeepAliveData {
+  recipientAddress: string;
+  recipientAccountName: string;
+  sendAmount: string;
+}
