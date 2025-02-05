@@ -457,18 +457,18 @@ export const Send: React.FC = () => {
             </UI.AccordionContent>
           </Accordion.Item>
 
-          {/** Receiver Section */}
+          {/** Recipient Section */}
           <Accordion.Item className="AccordionItem" value="section-receiver">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Receiver" complete={receiver !== null} />
+              <TriggerContent label="Recipient" complete={receiver !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
                   disabled={emptyReceivers}
                   value={receiver || ''}
-                  ariaLabel="Receiver"
-                  placeholder="Select Receiver"
+                  ariaLabel="Recipient"
+                  placeholder="Select Recipient"
                   onValueChange={(val) => setReceiver(val)}
                 >
                   {getReceiverAccounts().map(
@@ -603,7 +603,7 @@ export const Send: React.FC = () => {
                 </InfoPanel>
 
                 {/** Receiver */}
-                <InfoPanel label={'Receiver:'}>
+                <InfoPanel label={'Recipient:'}>
                   {!receiver ? (
                     '-'
                   ) : (
