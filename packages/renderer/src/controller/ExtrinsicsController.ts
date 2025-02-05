@@ -75,7 +75,7 @@ export class ExtrinsicsController {
   static build = async (info: ExtrinsicInfo) => {
     try {
       const { txId } = info;
-      const { chainId, from } = info.actionMeta;
+      const { action, chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
 
       // Create tx if it's not cached already.
@@ -85,7 +85,15 @@ export class ExtrinsicsController {
 
         // Instantiate tx.
         const { pallet, method, args } = info.actionMeta;
-        const tx = api.tx[pallet][method](...args);
+
+        let pargs: AnyData;
+        if (action === 'balances_transferKeepAlive') {
+          pargs = [args[0], BigInt(args[1])];
+        } else {
+          pargs = args;
+        }
+
+        const tx = api.tx[pallet][method](...pargs);
         this.txPayloads.set(txId, { tx });
       }
 
