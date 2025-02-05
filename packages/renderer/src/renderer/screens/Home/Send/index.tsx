@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
+import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
@@ -13,13 +14,17 @@ import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
 import {
   faBurst,
   faCheck,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
+import { getSpendableBalance } from '@ren/utils/AccountUtils';
+import { getBalanceText } from '@ren/utils/TextUtils';
 import {
+  AccountNameWithTooltip,
+  AddressWithTooltip,
   CopyButtonWithTooltip,
   FlexColumn,
   InfoPanel,
@@ -35,45 +40,14 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import { getSpendableBalance } from '@ren/utils/AccountUtils';
-import { getBalanceText } from '@ren/utils/TextUtils';
-
-import BigNumber from 'bignumber.js';
 import type {
   ActionMeta,
   ExTransferKeepAliveData,
 } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type {
-  AccountNameWithTooltipProps,
-  AddressWithTooltipProps,
-  SendAccordionValue,
-} from './types';
+import type { SendAccordionValue } from './types';
 
-/**
- * Address with tooltip component.
- */
-const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
-  <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
-    <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
-  </UI.TooltipRx>
-);
-
-/**
- * Account name with tooltip component.
- */
-const AccountNameWithTooltip = ({
-  theme,
-  address,
-  accountName,
-}: AccountNameWithTooltipProps) => (
-  <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
-    <span style={{ cursor: 'default' }}>{accountName}</span>
-  </UI.TooltipRx>
-);
-
-/** Send component. */
 export const Send: React.FC = () => {
   /**
    * Addresses fetched from main process.

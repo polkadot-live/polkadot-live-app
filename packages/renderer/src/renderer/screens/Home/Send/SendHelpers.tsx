@@ -7,6 +7,7 @@ import * as themeVariables from '../../../theme/variables';
 
 import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
+import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +22,39 @@ import {
   ProgressBarWrapper,
 } from './Wrappers';
 
-import type { CopyButtonWithTooltipProps, SelectBoxProps } from './types';
+import type {
+  AccountNameWithTooltipProps,
+  AddressWithTooltipProps,
+  CopyButtonWithTooltipProps,
+  SelectBoxProps,
+} from './types';
+
+/**
+ * @name AddressWithTooltip
+ * @summary Address with tooltip component.
+ */
+export const AddressWithTooltip = ({
+  theme,
+  address,
+}: AddressWithTooltipProps) => (
+  <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
+    <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
+  </UI.TooltipRx>
+);
+
+/**
+ * @name AccountNameWithTooltip
+ * @summary Account name with tooltip component.
+ */
+export const AccountNameWithTooltip = ({
+  theme,
+  address,
+  accountName,
+}: AccountNameWithTooltipProps) => (
+  <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
+    <span style={{ cursor: 'default' }}>{accountName}</span>
+  </UI.TooltipRx>
+);
 
 /**
  * @name ProgressBar
