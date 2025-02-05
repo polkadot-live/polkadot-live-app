@@ -13,7 +13,11 @@ import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBurst, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBurst,
+  faCheck,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
 import {
   CopyButtonWithTooltip,
@@ -69,6 +73,8 @@ export const Send: React.FC = () => {
   const [fetchingSpendable, setFetchingSpendable] = useState(false);
   const [spendable, setSpendable] = useState<BigNumber | null>(null);
   const [validAmount, setValidAmount] = useState(true);
+
+  const [summaryComplete, setSummaryComplete] = useState(false);
 
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -132,6 +138,13 @@ export const Send: React.FC = () => {
   }, [updateCache]);
 
   /**
+   * Control summary complete flag.
+   */
+  useEffect(() => {
+    setSummaryComplete(false);
+  }, [sender, receiver, sendAmount]);
+
+  /**
    * Progress bar controller.
    */
   useEffect(() => {
@@ -168,6 +181,8 @@ export const Send: React.FC = () => {
     if (!(senderNetwork && sender && receiver)) {
       return;
     }
+
+    setSummaryComplete(true);
 
     // Data for action meta.
     const senderObj = getSenderAccounts().find(
@@ -353,7 +368,8 @@ export const Send: React.FC = () => {
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
-    !validAmount;
+    !validAmount ||
+    summaryComplete;
 
   /**
    * Handle clicking a green next step arrow.
@@ -592,7 +608,7 @@ export const Send: React.FC = () => {
           {/** Summary Section */}
           <Accordion.Item className="AccordionItem" value="section-summary">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Summary" complete={false} />
+              <TriggerContent label="Summary" complete={summaryComplete} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -663,10 +679,10 @@ export const Send: React.FC = () => {
                     disabled={proceedDisabled()}
                   >
                     <FontAwesomeIcon
-                      icon={faChevronRight}
+                      icon={summaryComplete ? faCheck : faChevronRight}
                       transform={'shrink-4'}
                     />
-                    <span>Proceed</span>
+                    <span>{summaryComplete ? 'Completed' : 'Proceed'}</span>
                   </ActionButton>
                 </FlexRow>
               </FlexColumn>
