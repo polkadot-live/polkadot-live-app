@@ -86,9 +86,6 @@ export const Send: React.FC = () => {
     'section-sender',
   ]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [estimatedFee, setEstimatedFee] = useState<string>('');
-
   /**
    * Fetch stored addresss from main when component loads.
    */
@@ -653,13 +650,6 @@ export const Send: React.FC = () => {
                   {sendAmount === '0' || sendAmount === '' || !validAmount
                     ? '-'
                     : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
-                </InfoPanel>
-
-                {/** Estimated Fee */}
-                <InfoPanel label={'Estimated Fee:'}>
-                  {estimatedFee === ''
-                    ? '-'
-                    : `${estimatedFee} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
 
                 <FlexRow>
