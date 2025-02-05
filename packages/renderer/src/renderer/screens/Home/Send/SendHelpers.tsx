@@ -7,6 +7,7 @@ import * as themeVariables from '../../../theme/variables';
 
 import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
+import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -223,13 +224,23 @@ export const SelectBox = ({
 export const TriggerContent = ({
   label,
   complete,
+  loading = false,
 }: {
   label: string;
   complete: boolean;
+  loading?: boolean;
 }) => (
   <>
     <ChevronDownIcon className="AccordionChevron" aria-hidden />
-    <h4 style={{ flex: 1 }}>{label}</h4>
+    <h4 style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <span>{label}</span>
+      <PuffLoader
+        loading={loading}
+        size={16}
+        color={'var(--text-color-secondary)'}
+      />
+    </h4>
+
     <div className="right">
       <FontAwesomeIcon
         style={

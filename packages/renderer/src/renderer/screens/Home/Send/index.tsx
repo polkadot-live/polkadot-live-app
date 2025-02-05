@@ -64,8 +64,9 @@ export const Send: React.FC = () => {
   const [sender, setSender] = useState<null | string>(null);
   const [receiver, setReceiver] = useState<null | string>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
-
   const [sendAmount, setSendAmount] = useState<string>('0');
+
+  const [fetchingSpendable, setFetchingSpendable] = useState(false);
   const [spendable, setSpendable] = useState<BigNumber | null>(null);
   const [validAmount, setValidAmount] = useState(true);
 
@@ -222,12 +223,15 @@ export const Send: React.FC = () => {
    * Sender value changed callback.
    */
   const handleSenderChange = async (senderAddress: string) => {
+    setFetchingSpendable(true);
+
     const chainId = getAddressChainId(senderAddress);
     setSender(senderAddress);
     setSenderNetwork(chainId);
 
     const result = await getSpendableBalance(senderAddress, chainId);
     setSpendable(result);
+    setFetchingSpendable(false);
 
     // Reset other send fields.
     setReceiver(null);
@@ -532,6 +536,7 @@ export const Send: React.FC = () => {
             <UI.AccordionTrigger narrow={true}>
               <TriggerContent
                 label="Send Amount"
+                loading={fetchingSpendable}
                 complete={
                   sendAmount !== '0' && sendAmount !== '' && validAmount
                 }
@@ -546,7 +551,7 @@ export const Send: React.FC = () => {
                 >
                   <input
                     type="number"
-                    disabled={!sender || !senderNetwork}
+                    disabled={!sender || !senderNetwork || fetchingSpendable}
                     value={sendAmount}
                     onChange={(e) => handleSendAmountChange(e)}
                     onFocus={() => handleSendAmountFocus()}
