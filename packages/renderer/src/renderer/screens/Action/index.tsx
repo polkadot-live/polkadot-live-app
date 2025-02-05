@@ -288,7 +288,7 @@ export const Action = () => {
                     </div>
                     <AccordionContent>
                       <div>
-                        <p>{getExtrinsicSubtitle(info)}</p>
+                        {getExtrinsicSubtitle(info)}
                         <Tx
                           label={'Signer'}
                           TxSigner={

@@ -32,7 +32,7 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
  * @summary Return the extrinsic item's subtitle.
  */
 
-export const getExtrinsicSubtitle = (info: ExtrinsicInfo) => {
+export const getExtrinsicSubtitle = (info: ExtrinsicInfo): React.ReactNode => {
   const { chainId, data: serData } = info.actionMeta;
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
@@ -45,13 +45,37 @@ export const getExtrinsicSubtitle = (info: ExtrinsicInfo) => {
       const bnPlanck = new BigNumber(planck);
       const bnUnit = planckToUnit(bnPlanck, units);
 
-      return `Transfer ${bnUnit.toString()} ${chainCurrency(chainId)} to account ${recipientAccountName}.`;
+      return (
+        <p>
+          Transfer{' '}
+          <b>
+            {bnUnit.toString()} {chainCurrency(chainId)}
+          </b>{' '}
+          to account <b>{recipientAccountName}</b>.
+        </p>
+      );
     }
     case 'nominationPools_pendingRewards_bond': {
-      return `Compound ${serData.extra} ${chainCurrency(chainId)}.`;
+      return (
+        <p>
+          Compound{' '}
+          <b>
+            {serData.extra} {chainCurrency(chainId)}
+          </b>
+          .
+        </p>
+      );
     }
     case 'nominationPools_pendingRewards_withdraw': {
-      return `Claim ${serData.extra} ${chainCurrency(chainId)}.`;
+      return (
+        <p>
+          Claim{' '}
+          <b>
+            {serData.extra} {chainCurrency(chainId)}
+          </b>
+          .
+        </p>
+      );
     }
   }
 };
