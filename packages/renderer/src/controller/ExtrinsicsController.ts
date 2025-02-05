@@ -7,7 +7,7 @@ import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
-import type { AnyJson } from '@polkadot-live/types/misc';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
@@ -20,26 +20,43 @@ export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
 
   /**
+   * Independent method to get an estimated transaction fee.
+   */
+  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<BigNumber> => {
+    const { txId } = info;
+    const { action, chainId, from, pallet, method, args } = info.actionMeta;
+
+    let pargs: AnyData;
+    if (action === 'balances_transferKeepAlive') {
+      pargs = [args[0], BigInt(args[1])];
+    } else {
+      pargs = args;
+    }
+
+    const origin = 'ExtrinsicsController.getEstimatedFee';
+    const { api } = await getApiInstanceOrThrow(chainId, origin);
+    console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${pargs}`);
+
+    // Instantiate tx.
+    const tx = api.tx[pallet][method](...pargs);
+    this.txPayloads.set(txId, { tx });
+
+    // Get estimated tx fee.
+    const { partialFee } = await tx.paymentInfo(from);
+    const estimatedFeePlank = new BigNumber(partialFee.toString());
+    const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
+    console.log(`📝 Estimated fee: ${estimatedFee}`);
+
+    return estimatedFee;
+  };
+
+  /**
    * Instantiates a new tx based on the received extrinsic data.
    */
   static new = async (info: ExtrinsicInfo) => {
     try {
       const { txId } = info;
-      const { chainId, from, pallet, method, args } = info.actionMeta;
-
-      const origin = 'ExtrinsicsController.new';
-      const { api } = await getApiInstanceOrThrow(chainId, origin);
-      console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
-
-      // Instantiate tx.
-      const tx = api.tx[pallet][method](...args);
-      this.txPayloads.set(txId, { tx });
-
-      // Get estimated tx fee.
-      const { partialFee } = await tx.paymentInfo(from);
-      const estimatedFeePlank = new BigNumber(partialFee.toString());
-      const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
-      console.log(`📝 Estimated fee: ${estimatedFee}`);
+      const estimatedFee = await this.getEstimatedFee(info);
 
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:setEstimatedFee',

@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as ApiUtils from '@ren/utils/ApiUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import BigNumber from 'bignumber.js';
 import {
@@ -24,7 +25,21 @@ import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
-import * as ApiUtils from '@ren/utils/ApiUtils';
+
+/**
+ * @name generateUID
+ * @summary Util for generating a UID in the browser.
+ */
+export const generateUID = (): string => {
+  // Generate a random 16-byte array.
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+
+  // Convert to a hexadecimal string.
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    ''
+  );
+};
 
 /**
  * @name fetchAccountBalances
@@ -58,6 +73,78 @@ export const fetchBalanceForAccount = async (account: Account) => {
   } as AccountBalance;
 
   await AccountsController.set(account.chain, account);
+};
+
+/**
+ * @name getBalanceForAccount
+ * @summary Return an account's current balance.
+ */
+export const getBalanceForAccount = async (
+  address: string,
+  chainId: ChainID
+): Promise<AccountBalance> => {
+  const origin = 'getBalanceForAccount';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const result: AnyJson = await api.query.system.account(address);
+
+  const balance: AccountBalance = {
+    nonce: new BigNumber(rmCommas(String(result.nonce))),
+    free: new BigNumber(rmCommas(String(result.data.free))),
+    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
+    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
+  };
+
+  // Update account data if it is being managed by controller.
+  const account = AccountsController.get(chainId, address);
+  if (account) {
+    account.balance = balance;
+    await AccountsController.set(account.chain, account);
+  }
+
+  return balance;
+};
+
+/**
+ * @name getExistentialDeposit
+ * @summary Return the requested network's existential deposit as a big number.
+ */
+export const getExistentialDeposit = async (
+  chainId: ChainID
+): Promise<BigNumber> => {
+  const origin = 'getExistentialDeposit';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  return new BigNumber(
+    rmCommas(String(api.consts.balances.existentialDeposit))
+  );
+};
+
+/**
+ * @name getSpendableBalance
+ * @summary Return the requested account's spendable balance as a big number.
+ */
+export const getSpendableBalance = async (
+  address: string,
+  chainId: ChainID
+): Promise<BigNumber | null> => {
+  const balance = await getBalanceForAccount(address, chainId);
+
+  // Spendable balance equation:
+  // spendable = free - max(max(frozen, reserved), ed)
+  const free = new BigNumber(rmCommas(String(balance.free)));
+  const frozen = new BigNumber(rmCommas(String(balance.frozen)));
+  const reserved = new BigNumber(rmCommas(String(balance.reserved)));
+  const ed = await getExistentialDeposit(chainId);
+
+  let spendable = free.minus(
+    BigNumber.max(BigNumber.max(frozen, reserved), ed)
+  );
+
+  const zero = new BigNumber(0);
+  if (spendable.lt(zero)) {
+    spendable = new BigNumber(0);
+  }
+
+  return spendable;
 };
 
 /**

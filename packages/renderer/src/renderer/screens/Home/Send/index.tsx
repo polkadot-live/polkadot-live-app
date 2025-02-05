@@ -5,15 +5,20 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
-import { chainCurrency } from '@ren/config/chains';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
+import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { AddButton, FlexRow, InputWrapper } from './Wrappers';
+import {
+  faBurst,
+  faCheck,
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
 import {
   CopyButtonWithTooltip,
   FlexColumn,
@@ -30,6 +35,11 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
+import { getSpendableBalance } from '@ren/utils/AccountUtils';
+import { getBalanceText } from '@ren/utils/TextUtils';
+
+import BigNumber from 'bignumber.js';
+import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { AddressWithTooltipProps, SendAccordionValue } from './types';
@@ -60,6 +70,12 @@ export const Send: React.FC = () => {
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('0');
 
+  const [fetchingSpendable, setFetchingSpendable] = useState(false);
+  const [spendable, setSpendable] = useState<BigNumber | null>(null);
+  const [validAmount, setValidAmount] = useState(true);
+
+  const [summaryComplete, setSummaryComplete] = useState(false);
+
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
@@ -69,9 +85,6 @@ export const Send: React.FC = () => {
   const [accordionValue, setAccordionValue] = useState<SendAccordionValue[]>([
     'section-sender',
   ]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [estimatedFee, setEstimatedFee] = useState<string>('');
 
   /**
    * Fetch stored addresss from main when component loads.
@@ -122,6 +135,13 @@ export const Send: React.FC = () => {
   }, [updateCache]);
 
   /**
+   * Control summary complete flag.
+   */
+  useEffect(() => {
+    setSummaryComplete(false);
+  }, [sender, receiver, sendAmount]);
+
+  /**
    * Progress bar controller.
    */
   useEffect(() => {
@@ -129,7 +149,7 @@ export const Send: React.FC = () => {
 
     sender && (conditions += 1);
     receiver && (conditions += 1);
-    sendAmount !== '0' && sendAmount !== '' && (conditions += 1);
+    sendAmount !== '0' && sendAmount !== '' && validAmount && (conditions += 1);
 
     switch (conditions) {
       case 1: {
@@ -152,15 +172,96 @@ export const Send: React.FC = () => {
   }, [sender, receiver, sendAmount]);
 
   /**
+   * Handle proceed click.
+   */
+  const handleProceedClick = async () => {
+    if (!(senderNetwork && sender && receiver)) {
+      return;
+    }
+
+    setSummaryComplete(true);
+
+    // Data for action meta.
+    const senderObj = getSenderAccounts().find(
+      ({ address }) => address === sender
+    )!;
+
+    const sendAmountPlank = unitToPlanck(
+      sendAmount.toString(),
+      chainUnits(senderNetwork)
+    ).toString();
+
+    // Action meta.
+    const actionMeta: ActionMeta = {
+      accountName: senderObj.name,
+      action: 'balances_transferKeepAlive',
+      from: sender,
+      pallet: 'balances',
+      method: 'transferKeepAlive',
+      chainId: senderNetwork,
+      data: null,
+      eventUid: '',
+      args: [receiver, sendAmountPlank],
+    };
+
+    // Send extrinsic to action window.
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
+
+    if (!extrinsicsViewOpen) {
+      // Relay init task to extrinsics window after its DOM has loaded.
+      window.myAPI.openWindow('action', {
+        windowId: 'action',
+        task: 'action:init',
+        serData: JSON.stringify(actionMeta),
+      });
+
+      // Analytics.
+      window.myAPI.umamiEvent('window-open-extrinsics', {
+        action: `send-transfer-keep-alive`,
+      });
+    } else {
+      window.myAPI.openWindow('action');
+
+      // Send init task directly to extrinsics window if it's already open.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(actionMeta),
+      });
+    }
+  };
+
+  /**
+   * Handle clicking the reset button.
+   */
+  const handleResetClick = () => {
+    setSender(null);
+    setSenderNetwork(null);
+    setReceiver(null);
+    setSpendable(null);
+    setValidAmount(true);
+    setSendAmount('0');
+    setAccordionValue(['section-sender']);
+  };
+
+  /**
    * Sender value changed callback.
    */
-  const handleSenderChange = (senderAddress: string) => {
+  const handleSenderChange = async (senderAddress: string) => {
+    setFetchingSpendable(true);
+
+    const chainId = getAddressChainId(senderAddress);
     setSender(senderAddress);
-    setSenderNetwork(getAddressChainId(senderAddress));
+    setSenderNetwork(chainId);
+
+    const result = await getSpendableBalance(senderAddress, chainId);
+    setSpendable(result);
+    setFetchingSpendable(false);
 
     // Reset other send fields.
     setReceiver(null);
     setSendAmount('0');
+    setValidAmount(true);
   };
 
   /**
@@ -168,8 +269,25 @@ export const Send: React.FC = () => {
    */
   const handleSendAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
-    if (val === '' || !isNaN(Number(val))) {
+    if (val === '' || val === '0') {
       setSendAmount(val === '' ? '' : val);
+      setValidAmount(true);
+    } else if (!isNaN(Number(val))) {
+      setSendAmount(val === '' ? '' : val);
+
+      // Preliminary checks.
+      if (!spendable) {
+        setValidAmount(false);
+        return;
+      }
+
+      // Check if send amount is less than spendable amount.
+      const units = chainUnits(senderNetwork!);
+      const amountAsUnit = new BigNumber(val);
+      const spendableAsUnit = planckToUnit(spendable!, units);
+      setValidAmount(spendableAsUnit.gte(amountAsUnit));
+    } else {
+      setValidAmount(false);
     }
   };
 
@@ -246,7 +364,9 @@ export const Send: React.FC = () => {
     sender === null ||
     receiver === null ||
     sendAmount === '0' ||
-    sendAmount === '';
+    sendAmount === '' ||
+    !validAmount ||
+    summaryComplete;
 
   /**
    * Handle clicking a green next step arrow.
@@ -308,7 +428,7 @@ export const Send: React.FC = () => {
                   value={sender || ''}
                   ariaLabel="Sender"
                   placeholder="Select Sender"
-                  onValueChange={(val) => handleSenderChange(val)}
+                  onValueChange={async (val) => await handleSenderChange(val)}
                 >
                   {getSenderAccounts().map(({ name: accountName, address }) => (
                     <UI.SelectItem key={`sender-${address}`} value={address}>
@@ -363,18 +483,18 @@ export const Send: React.FC = () => {
             </UI.AccordionContent>
           </Accordion.Item>
 
-          {/** Receiver Section */}
+          {/** Recipient Section */}
           <Accordion.Item className="AccordionItem" value="section-receiver">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Receiver" complete={receiver !== null} />
+              <TriggerContent label="Recipient" complete={receiver !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
                 <SelectBox
                   disabled={emptyReceivers}
                   value={receiver || ''}
-                  ariaLabel="Receiver"
-                  placeholder="Select Receiver"
+                  ariaLabel="Recipient"
+                  placeholder="Select Recipient"
                   onValueChange={(val) => setReceiver(val)}
                 >
                   {getReceiverAccounts().map(
@@ -442,15 +562,22 @@ export const Send: React.FC = () => {
             <UI.AccordionTrigger narrow={true}>
               <TriggerContent
                 label="Send Amount"
-                complete={sendAmount !== '0' && sendAmount !== ''}
+                loading={fetchingSpendable}
+                complete={
+                  sendAmount !== '0' && sendAmount !== '' && validAmount
+                }
               />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
-                <InputWrapper>
+                <InputWrapper
+                  style={{
+                    border: `solid 1px ${validAmount ? 'transparent' : '#6a2727'}`,
+                  }}
+                >
                   <input
                     type="number"
-                    disabled={!sender}
+                    disabled={!sender || !senderNetwork || fetchingSpendable}
                     value={sendAmount}
                     onChange={(e) => handleSendAmountChange(e)}
                     onFocus={() => handleSendAmountFocus()}
@@ -460,9 +587,15 @@ export const Send: React.FC = () => {
                     {senderNetwork ? chainCurrency(senderNetwork) : '-'}
                   </span>
                 </InputWrapper>
-                <InfoPanel label={'Spendable Balance:'}>100 DOT</InfoPanel>
+                <InfoPanel label={'Spendable Balance:'}>
+                  {spendable && senderNetwork
+                    ? getBalanceText(spendable, senderNetwork)
+                    : '-'}
+                </InfoPanel>
                 <NextStepArrow
-                  complete={!(sendAmount === '0' || sendAmount === '')}
+                  complete={
+                    !(sendAmount === '0' || sendAmount === '') && validAmount
+                  }
                   onClick={() => handleNextStep('section-send-amount')}
                 />
               </FlexColumn>
@@ -472,7 +605,7 @@ export const Send: React.FC = () => {
           {/** Summary Section */}
           <Accordion.Item className="AccordionItem" value="section-summary">
             <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Summary" complete={false} />
+              <TriggerContent label="Summary" complete={summaryComplete} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
               <FlexColumn>
@@ -496,7 +629,7 @@ export const Send: React.FC = () => {
                 </InfoPanel>
 
                 {/** Receiver */}
-                <InfoPanel label={'Receiver:'}>
+                <InfoPanel label={'Recipient:'}>
                   {!receiver ? (
                     '-'
                   ) : (
@@ -514,28 +647,34 @@ export const Send: React.FC = () => {
 
                 {/** Send Amount */}
                 <InfoPanel label={'Send Amount:'}>
-                  {sendAmount === '0'
+                  {sendAmount === '0' || sendAmount === '' || !validAmount
                     ? '-'
                     : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
 
-                {/** Estimated Fee */}
-                <InfoPanel label={'Estimated Fee:'}>
-                  {estimatedFee === ''
-                    ? '-'
-                    : `${estimatedFee} ${chainCurrency(senderNetwork!)}`}
-                </InfoPanel>
-
-                <AddButton
-                  onClick={() => console.log('Add')}
-                  disabled={proceedDisabled()}
-                >
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    transform={'shrink-4'}
-                  />
-                  <span>Proceed</span>
-                </AddButton>
+                <FlexRow>
+                  <ActionButton
+                    style={{ flex: 1 }}
+                    $backgroundColor={'var(--button-background-secondary)'}
+                    onClick={() => handleResetClick()}
+                    disabled={false}
+                  >
+                    <FontAwesomeIcon icon={faBurst} transform={'shrink-4'} />
+                    <span>Reset</span>
+                  </ActionButton>
+                  <ActionButton
+                    style={{ flex: 3 }}
+                    $backgroundColor={'var(--button-pink-background)'}
+                    onClick={async () => await handleProceedClick()}
+                    disabled={proceedDisabled()}
+                  >
+                    <FontAwesomeIcon
+                      icon={summaryComplete ? faCheck : faChevronRight}
+                      transform={'shrink-4'}
+                    />
+                    <span>{summaryComplete ? 'Completed' : 'Proceed'}</span>
+                  </ActionButton>
+                </FlexRow>
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>
