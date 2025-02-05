@@ -45,7 +45,11 @@ import type {
 } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { AddressWithTooltipProps, SendAccordionValue } from './types';
+import type {
+  AccountNameWithTooltipProps,
+  AddressWithTooltipProps,
+  SendAccordionValue,
+} from './types';
 
 /**
  * Address with tooltip component.
@@ -53,6 +57,19 @@ import type { AddressWithTooltipProps, SendAccordionValue } from './types';
 const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
   <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
     <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
+  </UI.TooltipRx>
+);
+
+/**
+ * Account name with tooltip component.
+ */
+const AccountNameWithTooltip = ({
+  theme,
+  address,
+  accountName,
+}: AccountNameWithTooltipProps) => (
+  <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
+    <span style={{ cursor: 'default' }}>{accountName}</span>
   </UI.TooltipRx>
 );
 
@@ -402,6 +419,21 @@ export const Send: React.FC = () => {
     }
   };
 
+  /**
+   * Utility for getting sender and receiver account names.
+   */
+  const getSenderAccountName = () =>
+    !sender
+      ? '-'
+      : getSenderAccounts().find(({ address }) => address === sender)?.name ||
+        ellipsisFn(sender, 12);
+
+  const getRecipientAccountName = () =>
+    !receiver
+      ? '-'
+      : getReceiverAccounts().find(({ address }) => address === receiver)
+          ?.name || ellipsisFn(receiver, 12);
+
   const emptySenders = getSenderAccounts().length === 0;
   const emptyReceivers = getReceiverAccounts().length === 0;
 
@@ -631,7 +663,11 @@ export const Send: React.FC = () => {
                     '-'
                   ) : (
                     <FlexRow>
-                      <AddressWithTooltip theme={theme} address={sender} />
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={sender}
+                        accountName={getSenderAccountName()}
+                      />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
@@ -648,7 +684,11 @@ export const Send: React.FC = () => {
                     '-'
                   ) : (
                     <FlexRow>
-                      <AddressWithTooltip theme={theme} address={receiver} />
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={receiver}
+                        accountName={getRecipientAccountName()}
+                      />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
