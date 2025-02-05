@@ -13,8 +13,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { AddButton, FlexRow, InputWrapper } from './Wrappers';
+import { faBurst, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
 import {
   CopyButtonWithTooltip,
   FlexColumn,
@@ -217,6 +217,19 @@ export const Send: React.FC = () => {
         data: JSON.stringify(actionMeta),
       });
     }
+  };
+
+  /**
+   * Handle clicking the reset button.
+   */
+  const handleResetClick = () => {
+    setSender(null);
+    setSenderNetwork(null);
+    setReceiver(null);
+    setSpendable(null);
+    setValidAmount(true);
+    setSendAmount('0');
+    setAccordionValue(['section-sender']);
   };
 
   /**
@@ -633,16 +646,29 @@ export const Send: React.FC = () => {
                     : `${estimatedFee} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
 
-                <AddButton
-                  onClick={async () => await handleProceedClick()}
-                  disabled={proceedDisabled()}
-                >
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    transform={'shrink-4'}
-                  />
-                  <span>Proceed</span>
-                </AddButton>
+                <FlexRow>
+                  <ActionButton
+                    style={{ flex: 1 }}
+                    $backgroundColor={'var(--button-background-secondary)'}
+                    onClick={() => handleResetClick()}
+                    disabled={false}
+                  >
+                    <FontAwesomeIcon icon={faBurst} transform={'shrink-4'} />
+                    <span>Reset</span>
+                  </ActionButton>
+                  <ActionButton
+                    style={{ flex: 3 }}
+                    $backgroundColor={'var(--button-pink-background)'}
+                    onClick={async () => await handleProceedClick()}
+                    disabled={proceedDisabled()}
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronRight}
+                      transform={'shrink-4'}
+                    />
+                    <span>Proceed</span>
+                  </ActionButton>
+                </FlexRow>
               </FlexColumn>
             </UI.AccordionContent>
           </Accordion.Item>

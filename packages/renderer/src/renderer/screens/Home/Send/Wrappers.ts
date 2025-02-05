@@ -44,8 +44,8 @@ export const InputWrapper = styled.div`
   }
 `;
 
-export const AddButton = styled.button`
-  background-color: var(--button-pink-background);
+export const ActionButton = styled.button<{ $backgroundColor: string }>`
+  background-color: ${(props) => props.$backgroundColor};
   margin-top: 0.4rem;
 
   display: flex;
