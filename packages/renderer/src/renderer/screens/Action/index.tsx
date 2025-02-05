@@ -3,19 +3,9 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
+import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../theme/variables';
 
-import {
-  AccordionContent,
-  AccordionTrigger,
-  AccordionWrapper,
-  ActionItem,
-  Identicon,
-  Tx,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@polkadot-live/ui/components';
 import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { Signer } from './Signer';
@@ -121,7 +111,7 @@ export const Action = () => {
               Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
           }}
         >
-          <ActionItem
+          <UI.ActionItem
             text={'Account Filter'}
             style={{
               marginBottom: '1rem',
@@ -134,7 +124,7 @@ export const Action = () => {
             defaultValue="all"
             onValueChange={onFilterChange}
           >
-            <SelectTrigger
+            <UI.SelectTrigger
               aria-label="Address Filter"
               $theme={theme}
               value={selectedFilter}
@@ -143,15 +133,15 @@ export const Action = () => {
               <Select.Icon className="SelectIcon">
                 <ChevronDownIcon />
               </Select.Icon>
-            </SelectTrigger>
+            </UI.SelectTrigger>
             <Select.Portal>
-              <SelectContent $theme={theme} position="popper" sideOffset={3}>
+              <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
                 <Select.ScrollUpButton className="SelectScrollButton">
                   <ChevronUpIcon />
                 </Select.ScrollUpButton>
                 <Select.Viewport className="SelectViewport">
                   <Select.Group>
-                    <SelectItem key={'all-extrinsics'} value={'all'}>
+                    <UI.SelectItem key={'all-extrinsics'} value={'all'}>
                       <div className="innerRow">
                         <div
                           style={{
@@ -163,17 +153,17 @@ export const Action = () => {
                           All Accounts
                         </div>
                       </div>
-                    </SelectItem>
+                    </UI.SelectItem>
                     {addressesInfo.map(
                       ({ accountName, address, ChainIcon }) => (
-                        <SelectItem key={address} value={address}>
+                        <UI.SelectItem key={address} value={address}>
                           <div className="innerRow">
                             <div>
                               <ChainIcon width={'25px'} />
                             </div>
                             <div>{accountName}</div>
                           </div>
-                        </SelectItem>
+                        </UI.SelectItem>
                       )
                     )}
                   </Select.Group>
@@ -181,11 +171,11 @@ export const Action = () => {
                 <Select.ScrollDownButton className="SelectScrollButton">
                   <ChevronDownIcon />
                 </Select.ScrollDownButton>
-              </SelectContent>
+              </UI.SelectContent>
             </Select.Portal>
           </Select.Root>
 
-          <ActionItem
+          <UI.ActionItem
             text={'Manage Extrinsics'}
             style={{
               margin: '2.75rem 0 0.25rem',
@@ -203,7 +193,7 @@ export const Action = () => {
           )}
 
           {Array.from(extrinsics.keys()).length > 0 && (
-            <AccordionWrapper>
+            <UI.AccordionWrapper>
               <Accordion.Root
                 className="AccordionRoot"
                 type="multiple"
@@ -222,7 +212,7 @@ export const Action = () => {
                         marginTop: '10px',
                       }}
                     >
-                      <AccordionTrigger>
+                      <UI.AccordionTrigger>
                         <ChevronDownIcon
                           className="AccordionChevron"
                           aria-hidden
@@ -243,7 +233,7 @@ export const Action = () => {
                                 )
                               }
                             >
-                              <Identicon
+                              <UI.Identicon
                                 value={info.actionMeta.from}
                                 size={18}
                               />
@@ -266,7 +256,7 @@ export const Action = () => {
                             {getTxStatusTitle(info.txStatus)}
                           </div>
                         </span>
-                      </AccordionTrigger>
+                      </UI.AccordionTrigger>
                       <div className="HeaderContentDropdownWrapper">
                         <ExtrinsicDropdownMenu
                           isBuilt={info.estimatedFee !== undefined}
@@ -286,10 +276,10 @@ export const Action = () => {
                         />
                       </div>
                     </div>
-                    <AccordionContent>
+                    <UI.AccordionContent>
                       <div>
                         {getExtrinsicSubtitle(info)}
-                        <Tx
+                        <UI.Tx
                           label={'Signer'}
                           TxSigner={
                             <div
@@ -312,7 +302,7 @@ export const Action = () => {
                                   )
                                 }
                               >
-                                <Identicon
+                                <UI.Identicon
                                   value={info.actionMeta.from}
                                   size={18}
                                 />
@@ -358,11 +348,11 @@ export const Action = () => {
                           }
                         />
                       </div>
-                    </AccordionContent>
+                    </UI.AccordionContent>
                   </Accordion.Item>
                 ))}
               </Accordion.Root>
-            </AccordionWrapper>
+            </UI.AccordionWrapper>
           )}
         </div>
       </Scrollable>
