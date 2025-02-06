@@ -9,7 +9,11 @@ import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { planckToUnit } from '@w3ux/utils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
+import type {
+  ActionMeta,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 
 interface CachedExtrinsicData {
   tx: AnyJson;
@@ -20,11 +24,10 @@ export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
 
   /**
-   * Independent method to get an estimated transaction fee.
+   * Construct an extrinsic's arguments.
    */
-  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<BigNumber> => {
-    const { txId } = info;
-    const { action, chainId, from, pallet, method, args } = info.actionMeta;
+  static getExtrinsicArgs = (actionMeta: ActionMeta): AnyData => {
+    const { action, args } = actionMeta;
 
     let pargs: AnyData;
     if (action === 'balances_transferKeepAlive') {
@@ -33,12 +36,23 @@ export class ExtrinsicsController {
       pargs = args;
     }
 
+    return pargs;
+  };
+
+  /**
+   * Independent method to get an estimated transaction fee.
+   */
+  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<BigNumber> => {
+    const { txId, actionMeta } = info;
+    const { chainId, from, pallet, method } = info.actionMeta;
+
+    const args = this.getExtrinsicArgs(actionMeta);
     const origin = 'ExtrinsicsController.getEstimatedFee';
     const { api } = await getApiInstanceOrThrow(chainId, origin);
-    console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${pargs}`);
+    console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
     // Instantiate tx.
-    const tx = api.tx[pallet][method](...pargs);
+    const tx = api.tx[pallet][method](...args);
     this.txPayloads.set(txId, { tx });
 
     // Get estimated tx fee.
@@ -74,8 +88,8 @@ export class ExtrinsicsController {
    */
   static build = async (info: ExtrinsicInfo) => {
     try {
-      const { txId } = info;
-      const { action, chainId, from } = info.actionMeta;
+      const { txId, actionMeta } = info;
+      const { chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
 
       // Create tx if it's not cached already.
@@ -84,16 +98,9 @@ export class ExtrinsicsController {
         const { api } = await getApiInstanceOrThrow(chainId, origin);
 
         // Instantiate tx.
-        const { pallet, method, args } = info.actionMeta;
-
-        let pargs: AnyData;
-        if (action === 'balances_transferKeepAlive') {
-          pargs = [args[0], BigInt(args[1])];
-        } else {
-          pargs = args;
-        }
-
-        const tx = api.tx[pallet][method](...pargs);
+        const { pallet, method } = info.actionMeta;
+        const args = this.getExtrinsicArgs(actionMeta);
+        const tx = api.tx[pallet][method](...args);
         this.txPayloads.set(txId, { tx });
       }
 
@@ -253,23 +260,15 @@ export class ExtrinsicsController {
    */
   static submit = async (info: ExtrinsicInfo) => {
     const { txId } = info;
-    const { from, method, pallet, args, chainId } = info.actionMeta;
+    const { from } = info.actionMeta;
 
     try {
-      if (!info.dynamicInfo) {
-        throw new Error('Error: Extrinsic not built.');
-      }
-      if (!info.dynamicInfo.txSignature) {
-        throw new Error('Error: Extrinsic signature not found.');
+      if (!(info.dynamicInfo && info.dynamicInfo.txSignature)) {
+        throw new Error('Error: Extrinsic not built or signature missing.');
       }
 
-      // Build transaction.
-      const origin = 'ExtrinsicsController.submit';
-      const { api } = await getApiInstanceOrThrow(chainId, origin);
-      const tx = api.tx[pallet][method](...args);
-
-      // Get cached payload.
-      const { payload: txPayload } = this.txPayloads.get(txId)!;
+      // Get cached tx and payload.
+      const { payload: txPayload, tx } = this.txPayloads.get(txId)!;
 
       // Add signature to transaction.
       const { txSignature } = info.dynamicInfo;
