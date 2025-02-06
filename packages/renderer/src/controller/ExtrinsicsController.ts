@@ -333,12 +333,14 @@ export class ExtrinsicsController {
       data: { status, txId },
     });
 
-    // Mark event as stale if status is finalized.
-    if (status === 'finalized' && !isMock) {
-      window.myAPI.sendEventTask({
-        action: 'events:makeStale',
-        data: { uid: eventUid, chainId },
-      });
+    if (eventUid) {
+      // Mark event as stale if status is finalized.
+      if (status === 'finalized' && !isMock) {
+        window.myAPI.sendEventTask({
+          action: 'events:makeStale',
+          data: { uid: eventUid, chainId },
+        });
+      }
     }
   };
 }

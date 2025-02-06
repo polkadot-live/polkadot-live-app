@@ -34,10 +34,10 @@ export interface ActionMeta {
   chainId: ChainID;
   // Any data that the transaction call requires.
   data: AnyData;
-  // Unique identifier of the action's associated event.
-  eventUid: string;
   // Args for tx API call.
   args: AnyData;
+  // Unique identifier of the action's associated event.
+  eventUid?: string;
 }
 
 /**

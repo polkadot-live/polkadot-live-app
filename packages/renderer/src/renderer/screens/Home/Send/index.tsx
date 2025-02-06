@@ -205,7 +205,6 @@ export const Send: React.FC = () => {
       method: 'transferKeepAlive',
       chainId: senderNetwork,
       data: JSON.stringify(balanceData),
-      eventUid: '',
       args: [receiver, sendAmountPlanck],
     };
 
