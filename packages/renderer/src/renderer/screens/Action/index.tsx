@@ -10,7 +10,8 @@ import { ellipsisFn } from '@w3ux/utils';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
-import { ExtrinsicItemContent, getExtrinsicTitle } from './Helpers';
+import { getExtrinsicTitle } from './Helpers';
+import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
