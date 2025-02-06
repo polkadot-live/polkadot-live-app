@@ -1,3 +1,6 @@
+// Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import * as themeVariables from '../../theme/variables';
 import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
