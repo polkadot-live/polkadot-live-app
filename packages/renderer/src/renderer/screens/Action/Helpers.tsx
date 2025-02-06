@@ -173,8 +173,11 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_bond': {
-      const currency = chainCurrency(chainId);
-      const fmtAmount = <b>{`${serData.extra} ${currency}`}</b>;
+      const bnPendingRewardsPlanck = new BigNumber(serData.extra);
+      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
+      const fmtAmount = (
+        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
+      );
 
       return (
         <>
@@ -197,8 +200,11 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_withdraw': {
-      const currency = chainCurrency(chainId);
-      const fmtAmount = <b>{`${serData.extra} ${currency}`}</b>;
+      const bnPendingRewardsPlanck = new BigNumber(serData.extra);
+      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
+      const fmtAmount = (
+        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
+      );
 
       return (
         <>
