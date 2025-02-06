@@ -3,3 +3,4 @@
 
 export * from './ScrollWrappers';
 export * from './StatsFooter';
+export * from './flex';

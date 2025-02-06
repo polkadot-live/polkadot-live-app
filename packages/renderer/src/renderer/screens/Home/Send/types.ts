@@ -8,6 +8,12 @@ export interface AddressWithTooltipProps {
   address: string;
 }
 
+export interface AccountNameWithTooltipProps {
+  theme: AnyData;
+  address: string;
+  accountName: string;
+}
+
 export interface CopyButtonWithTooltipProps {
   theme: AnyData;
   onCopyClick: () => Promise<void>;

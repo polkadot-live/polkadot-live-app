@@ -3,6 +3,30 @@
 
 import styled from 'styled-components';
 
+export const TxInfoBadgeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.25rem;
+  font-size: 0.9rem;
+
+  span {
+    cursor: default;
+  }
+  .badge {
+    border: 1px solid var(--border-secondary-color);
+    border-radius: 0.45rem;
+    padding: 0.5rem 0.75rem;
+
+    > svg {
+      margin-right: 0.5rem;
+    }
+  }
+  > .icon {
+    margin-right: 0.3rem;
+  }
+`;
+
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

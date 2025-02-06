@@ -4,7 +4,9 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
+import { FlexRow } from '@polkadot-live/ui/styles';
 
+import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
@@ -13,13 +15,17 @@ import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ActionButton, InputWrapper } from './Wrappers';
 import {
   faBurst,
   faCheck,
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
+import { getSpendableBalance } from '@ren/utils/AccountUtils';
+import { getBalanceText } from '@ren/utils/TextUtils';
 import {
+  AccountNameWithTooltip,
+  AddressWithTooltip,
   CopyButtonWithTooltip,
   FlexColumn,
   InfoPanel,
@@ -35,25 +41,14 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import { getSpendableBalance } from '@ren/utils/AccountUtils';
-import { getBalanceText } from '@ren/utils/TextUtils';
-
-import BigNumber from 'bignumber.js';
-import type { ActionMeta } from '@polkadot-live/types/tx';
+import type {
+  ActionMeta,
+  ExTransferKeepAliveData,
+} from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { AddressWithTooltipProps, SendAccordionValue } from './types';
+import type { SendAccordionValue } from './types';
 
-/**
- * Address with tooltip component.
- */
-const AddressWithTooltip = ({ theme, address }: AddressWithTooltipProps) => (
-  <UI.TooltipRx style={{ fontSize: '0.9rem ' }} theme={theme} text={address}>
-    <span style={{ cursor: 'default' }}>{ellipsisFn(address, 12)}</span>
-  </UI.TooltipRx>
-);
-
-/** Send component. */
 export const Send: React.FC = () => {
   /**
    * Addresses fetched from main process.
@@ -186,10 +181,21 @@ export const Send: React.FC = () => {
       ({ address }) => address === sender
     )!;
 
-    const sendAmountPlank = unitToPlanck(
+    const recipientObj = getReceiverAccounts().find(
+      ({ address }) => address === receiver
+    )!;
+
+    const sendAmountPlanck: string = unitToPlanck(
       sendAmount.toString(),
       chainUnits(senderNetwork)
     ).toString();
+
+    // Specific data for transfer extrinsic.
+    const balanceData: ExTransferKeepAliveData = {
+      recipientAddress: recipientObj.address,
+      recipientAccountName: recipientObj.name,
+      sendAmount: sendAmountPlanck,
+    };
 
     // Action meta.
     const actionMeta: ActionMeta = {
@@ -199,9 +205,8 @@ export const Send: React.FC = () => {
       pallet: 'balances',
       method: 'transferKeepAlive',
       chainId: senderNetwork,
-      data: null,
-      eventUid: '',
-      args: [receiver, sendAmountPlank],
+      data: JSON.stringify(balanceData),
+      args: [receiver, sendAmountPlanck],
     };
 
     // Send extrinsic to action window.
@@ -387,6 +392,21 @@ export const Send: React.FC = () => {
       }
     }
   };
+
+  /**
+   * Utility for getting sender and receiver account names.
+   */
+  const getSenderAccountName = () =>
+    !sender
+      ? '-'
+      : getSenderAccounts().find(({ address }) => address === sender)?.name ||
+        ellipsisFn(sender, 12);
+
+  const getRecipientAccountName = () =>
+    !receiver
+      ? '-'
+      : getReceiverAccounts().find(({ address }) => address === receiver)
+          ?.name || ellipsisFn(receiver, 12);
 
   const emptySenders = getSenderAccounts().length === 0;
   const emptyReceivers = getReceiverAccounts().length === 0;
@@ -616,8 +636,12 @@ export const Send: React.FC = () => {
                   {!sender ? (
                     '-'
                   ) : (
-                    <FlexRow>
-                      <AddressWithTooltip theme={theme} address={sender} />
+                    <FlexRow $gap={'0.75rem'}>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={sender}
+                        accountName={getSenderAccountName()}
+                      />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
@@ -633,8 +657,12 @@ export const Send: React.FC = () => {
                   {!receiver ? (
                     '-'
                   ) : (
-                    <FlexRow>
-                      <AddressWithTooltip theme={theme} address={receiver} />
+                    <FlexRow $gap={'0.75rem'}>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={receiver}
+                        accountName={getRecipientAccountName()}
+                      />
                       <CopyButtonWithTooltip
                         theme={theme}
                         onCopyClick={async () =>
@@ -652,7 +680,7 @@ export const Send: React.FC = () => {
                     : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
 
-                <FlexRow>
+                <FlexRow $gap={'0.5rem'}>
                   <ActionButton
                     style={{ flex: 1 }}
                     $backgroundColor={'var(--button-background-secondary)'}

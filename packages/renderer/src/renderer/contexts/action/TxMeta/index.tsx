@@ -153,7 +153,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic already added.',
-        `toast-already-exists-${actionMeta.eventUid}-${actionMeta.action}`,
+        `toast-already-exists-${String(Date.now())}`,
         'error'
       );
 
@@ -215,7 +215,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic added.',
-        `toast-added-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
+        `toast-added-${String(Date.now())}`,
         'success'
       );
     } catch (err) {

@@ -68,7 +68,12 @@ export class ExtrinsicsController {
     const stored = this.getExtrinsicsFromStore();
 
     const filtered = stored.filter((i) => {
-      if (i.actionMeta.from === from && i.actionMeta.action === action) {
+      if (
+        i.actionMeta.from === from &&
+        i.actionMeta.action === action &&
+        // Allow duplicate balance extrinsics.
+        action !== 'balances_transferKeepAlive'
+      ) {
         return i.txStatus !== info.txStatus ? true : false;
       } else {
         return true;

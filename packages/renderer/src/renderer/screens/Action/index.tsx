@@ -3,27 +3,15 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
+import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../theme/variables';
 
-import {
-  AccordionContent,
-  AccordionTrigger,
-  AccordionWrapper,
-  ActionItem,
-  Identicon,
-  Tx,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@polkadot-live/ui/components';
-import { chainCurrency } from '@ren/config/chains';
 import { ellipsisFn } from '@w3ux/utils';
-import { Signer } from './Signer';
-import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
-import { ComponentFactory } from './TxActionItem';
+import { getExtrinsicTitle } from './Helpers';
+import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -62,19 +50,7 @@ export const Action = () => {
   const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  // Reset data in the main extrinsics controller on unmount.
-  useEffect(
-    () => () => {
-      try {
-        // TODO: Get stored extrinsic data from main.
-      } catch (err) {
-        console.log('Warning: Action port not received yet: renderer:tx:reset');
-      }
-    },
-    []
-  );
-
-  // TMP: Utility to get title based on tx status.
+  // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
       case 'pending':
@@ -92,25 +68,6 @@ export const Action = () => {
     }
   };
 
-  // Utility to get subtitle based on tx status.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getTxStatusSubtitle = (txStatus: TxStatus): string | null => {
-    switch (txStatus) {
-      case 'submitted':
-        return 'Waiting for block confirmation...';
-      case 'in_block':
-        return 'Waiting for finalized confirmation...';
-      default:
-        return null;
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getAccordionDefaultValue = () =>
-    Array.from(extrinsics.values()).length === 0
-      ? []
-      : [getFilteredExtrinsics()[0].txId];
-
   const truncateString = (target: string, maxLength: number) => {
     const targetLength = target.length;
     if (targetLength <= maxLength) {
@@ -120,15 +77,6 @@ export const Action = () => {
       const endSection = target.slice(targetLength - 4, targetLength);
       return `${truncated}...${endSection}`;
     }
-  };
-
-  const truncateDecimalPlaces = (value: string, places = 4): string => {
-    const decimalIndex = value.indexOf('.');
-
-    return value.indexOf('.') === -1 ||
-      value.length - decimalIndex - 1 <= places
-      ? value
-      : value.slice(0, decimalIndex + (places + 1));
   };
 
   const fadeTxIcon = (txStatus: TxStatus) =>
@@ -153,7 +101,7 @@ export const Action = () => {
               Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
           }}
         >
-          <ActionItem
+          <UI.ActionItem
             text={'Account Filter'}
             style={{
               marginBottom: '1rem',
@@ -166,7 +114,7 @@ export const Action = () => {
             defaultValue="all"
             onValueChange={onFilterChange}
           >
-            <SelectTrigger
+            <UI.SelectTrigger
               aria-label="Address Filter"
               $theme={theme}
               value={selectedFilter}
@@ -175,15 +123,15 @@ export const Action = () => {
               <Select.Icon className="SelectIcon">
                 <ChevronDownIcon />
               </Select.Icon>
-            </SelectTrigger>
+            </UI.SelectTrigger>
             <Select.Portal>
-              <SelectContent $theme={theme} position="popper" sideOffset={3}>
+              <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
                 <Select.ScrollUpButton className="SelectScrollButton">
                   <ChevronUpIcon />
                 </Select.ScrollUpButton>
                 <Select.Viewport className="SelectViewport">
                   <Select.Group>
-                    <SelectItem key={'all-extrinsics'} value={'all'}>
+                    <UI.SelectItem key={'all-extrinsics'} value={'all'}>
                       <div className="innerRow">
                         <div
                           style={{
@@ -195,17 +143,17 @@ export const Action = () => {
                           All Accounts
                         </div>
                       </div>
-                    </SelectItem>
+                    </UI.SelectItem>
                     {addressesInfo.map(
                       ({ accountName, address, ChainIcon }) => (
-                        <SelectItem key={address} value={address}>
+                        <UI.SelectItem key={address} value={address}>
                           <div className="innerRow">
                             <div>
                               <ChainIcon width={'25px'} />
                             </div>
                             <div>{accountName}</div>
                           </div>
-                        </SelectItem>
+                        </UI.SelectItem>
                       )
                     )}
                   </Select.Group>
@@ -213,11 +161,11 @@ export const Action = () => {
                 <Select.ScrollDownButton className="SelectScrollButton">
                   <ChevronDownIcon />
                 </Select.ScrollDownButton>
-              </SelectContent>
+              </UI.SelectContent>
             </Select.Portal>
           </Select.Root>
 
-          <ActionItem
+          <UI.ActionItem
             text={'Manage Extrinsics'}
             style={{
               margin: '2.75rem 0 0.25rem',
@@ -235,7 +183,7 @@ export const Action = () => {
           )}
 
           {Array.from(extrinsics.keys()).length > 0 && (
-            <AccordionWrapper>
+            <UI.AccordionWrapper>
               <Accordion.Root
                 className="AccordionRoot"
                 type="multiple"
@@ -254,12 +202,12 @@ export const Action = () => {
                         marginTop: '10px',
                       }}
                     >
-                      <AccordionTrigger>
+                      <UI.AccordionTrigger>
                         <ChevronDownIcon
                           className="AccordionChevron"
                           aria-hidden
                         />
-                        {ComponentFactory[info.actionMeta.action].title}
+                        <h3>{getExtrinsicTitle(info)}</h3>
                         <span className="right">
                           <div className="stat">
                             <div
@@ -275,7 +223,7 @@ export const Action = () => {
                                 )
                               }
                             >
-                              <Identicon
+                              <UI.Identicon
                                 value={info.actionMeta.from}
                                 size={18}
                               />
@@ -298,7 +246,7 @@ export const Action = () => {
                             {getTxStatusTitle(info.txStatus)}
                           </div>
                         </span>
-                      </AccordionTrigger>
+                      </UI.AccordionTrigger>
                       <div className="HeaderContentDropdownWrapper">
                         <ExtrinsicDropdownMenu
                           isBuilt={info.estimatedFee !== undefined}
@@ -318,83 +266,13 @@ export const Action = () => {
                         />
                       </div>
                     </div>
-                    <AccordionContent>
-                      <div>
-                        {ComponentFactory[info.actionMeta.action].description}
-                        <Tx
-                          label={'Signer'}
-                          TxSigner={
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.6rem',
-                              }}
-                            >
-                              <div
-                                className="tooltip tooltip-trigger-element"
-                                data-tooltip-text={ellipsisFn(
-                                  info.actionMeta.from,
-                                  16
-                                )}
-                                onMouseMove={() =>
-                                  setTooltipTextAndOpen(
-                                    ellipsisFn(info.actionMeta.from, 16),
-                                    'right'
-                                  )
-                                }
-                              >
-                                <Identicon
-                                  value={info.actionMeta.from}
-                                  size={18}
-                                />
-                              </div>
-                              <span>{info.actionMeta.accountName}</span>
-                            </div>
-                          }
-                          notEnoughFunds={false}
-                          dangerMessage={'Danger message'}
-                          EstimatedFee={
-                            info.estimatedFee === undefined ? (
-                              <span>-</span>
-                            ) : (
-                              <div
-                                className="tooltip tooltip-trigger-element"
-                                style={{ cursor: 'default' }}
-                                data-tooltip-text={`${ellipsisFn(
-                                  info.estimatedFee || '-',
-                                  16
-                                )} ${chainCurrency(info.actionMeta.chainId)}`}
-                                onMouseMove={() =>
-                                  setTooltipTextAndOpen(
-                                    `${
-                                      info.estimatedFee || 'error'
-                                    } ${chainCurrency(info.actionMeta.chainId)}`,
-                                    'top'
-                                  )
-                                }
-                              >
-                                {`${truncateDecimalPlaces(info.estimatedFee || '-')}
-                                  ${chainCurrency(info.actionMeta.chainId)}`}
-                              </div>
-                            )
-                          }
-                          SignerComponent={
-                            <Signer
-                              info={info}
-                              valid={
-                                !isBuildingExtrinsic &&
-                                info.estimatedFee !== undefined
-                              }
-                            />
-                          }
-                        />
-                      </div>
-                    </AccordionContent>
+                    <UI.AccordionContent>
+                      <ExtrinsicItemContent info={info} />
+                    </UI.AccordionContent>
                   </Accordion.Item>
                 ))}
               </Accordion.Root>
-            </AccordionWrapper>
+            </UI.AccordionWrapper>
           )}
         </div>
       </Scrollable>
