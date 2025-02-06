@@ -4,6 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
+import { FlexRow } from '@polkadot-live/ui/styles';
 
 import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
@@ -14,7 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ActionButton, FlexRow, InputWrapper } from './Wrappers';
+import { ActionButton, InputWrapper } from './Wrappers';
 import {
   faBurst,
   faCheck,
@@ -635,7 +636,7 @@ export const Send: React.FC = () => {
                   {!sender ? (
                     '-'
                   ) : (
-                    <FlexRow>
+                    <FlexRow $gap={'0.75rem'}>
                       <AccountNameWithTooltip
                         theme={theme}
                         address={sender}
@@ -656,7 +657,7 @@ export const Send: React.FC = () => {
                   {!receiver ? (
                     '-'
                   ) : (
-                    <FlexRow>
+                    <FlexRow $gap={'0.75rem'}>
                       <AccountNameWithTooltip
                         theme={theme}
                         address={receiver}
@@ -679,7 +680,7 @@ export const Send: React.FC = () => {
                     : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
                 </InfoPanel>
 
-                <FlexRow>
+                <FlexRow $gap={'0.5rem'}>
                   <ActionButton
                     style={{ flex: 1 }}
                     $backgroundColor={'var(--button-background-secondary)'}

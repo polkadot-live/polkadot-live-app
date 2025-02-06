@@ -30,7 +30,7 @@ import { useWalletConnect } from '@app/contexts/import/WalletConnect';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
-import { FlexRow, WcSessionButton } from './Wrappers';
+import { WcFlexRow, WcSessionButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
@@ -221,7 +221,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 {wcSessionRestored ? (
                   <>
                     {!getOnlineMode() && renderOfflineWarning('0')}
-                    <FlexRow>
+                    <WcFlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
                           <FontAwesomeIcon
@@ -260,7 +260,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       >
                         Fetch
                       </WcSessionButton>
-                    </FlexRow>
+                    </WcFlexRow>
                   </>
                 ) : (
                   <>
@@ -304,7 +304,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     ))}
 
                     {!getOnlineMode() && renderOfflineWarning()}
-                    <FlexRow>
+                    <WcFlexRow>
                       <InfoCard style={{ margin: '0', flex: 1 }}>
                         <span>
                           <FontAwesomeIcon
@@ -330,7 +330,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       >
                         Connect
                       </WcSessionButton>
-                    </FlexRow>
+                    </WcFlexRow>
                   </>
                 )}
               </ItemsColumn>
