@@ -228,6 +228,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   /**
    * Requests an extrinsic's dynamic data. Call before submitting an extrinsic.
+   * Confirms the extrinsic is valid and can be submitted, by checking sufficient balances, etc.
    */
   const initTxDynamicInfo = (txId: string) => {
     try {

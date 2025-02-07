@@ -125,7 +125,7 @@ export const getExistentialDeposit = async (
 export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
-): Promise<BigNumber | null> => {
+): Promise<BigNumber> => {
   const balance = await getBalanceForAccount(address, chainId);
 
   // Spendable balance equation:

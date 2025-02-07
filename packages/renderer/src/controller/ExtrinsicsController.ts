@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { getAddressNonce } from '@ren/utils/AccountUtils';
+import { getAddressNonce, getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
-import { planckToUnit } from '@w3ux/utils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -58,10 +56,9 @@ export class ExtrinsicsController {
     // Get estimated tx fee.
     const { partialFee } = await tx.paymentInfo(from);
     const estimatedFeePlank = new BigNumber(partialFee.toString());
-    const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
-    console.log(`📝 Estimated fee: ${estimatedFee}`);
+    console.log(`📝 Estimated fee: ${estimatedFeePlank.toString()}`);
 
-    return estimatedFee;
+    return estimatedFeePlank;
   };
 
   /**
@@ -80,6 +77,39 @@ export class ExtrinsicsController {
       // TODO: Send error to action window?
       console.log('Error:');
       console.log(e);
+    }
+  };
+
+  /**
+   * Verify that an extrinsic is valid and can be submitted.
+   * For example, check account balance is sufficient, etc.
+   */
+  static verifyExtrinsic = async (info: ExtrinsicInfo): Promise<boolean> => {
+    const { action, chainId, from } = info.actionMeta;
+    const args = this.getExtrinsicArgs(info.actionMeta);
+
+    switch (action) {
+      case 'balances_transferKeepAlive': {
+        // Check spendable balance is sufficient.
+        const { estimatedFee } = info;
+        if (!estimatedFee) {
+          return false;
+        }
+
+        // args[1]: BigInt to string to BigNumber.
+        const bnSendAmount = new BigNumber(args[1].toString());
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+        return bnSpendable.gte(bnSendAmount.plus(bnFee));
+      }
+      case 'nominationPools_pendingRewards_bond': {
+        // TODO: Check bond can be submitted.
+        return true;
+      }
+      case 'nominationPools_pendingRewards_withdraw': {
+        // TODO: Check withdraw can be submitted.
+        return true;
+      }
     }
   };
 
@@ -114,6 +144,11 @@ export class ExtrinsicsController {
       const { tx } = cached;
       const txPayload = await this.buildPayload(tx, chainId, from, nonce);
       this.txPayloads.set(txId, { tx, payload: txPayload });
+
+      // Verify extrinsic is valid for submission.
+      const extrinsicValid = await this.verifyExtrinsic(info);
+      console.log(`> EXTRINSIC VALID: ${extrinsicValid}`);
+      // TODO: Send error message back to extrinsics window if extrinsic is not valid.
 
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:report:data',
