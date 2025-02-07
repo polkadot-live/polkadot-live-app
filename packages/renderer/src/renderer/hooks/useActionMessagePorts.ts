@@ -14,6 +14,7 @@ export const useActionMessagePorts = () => {
    */
   const {
     initTx,
+    notifyInvalidExtrinsic,
     setEstimatedFee,
     setTxDynamicInfo,
     updateAccountName,
@@ -84,6 +85,15 @@ export const useActionMessagePorts = () => {
   };
 
   /**
+   * @name handleInvalidExtrinsic
+   * @summary Render an error message if an extrinsic is invalid.
+   */
+  const handleInvalidExtrinsic = (ev: MessageEvent) => {
+    const { message }: { message: string } = ev.data.data;
+    notifyInvalidExtrinsic(message);
+  };
+
+  /**
    * @name handleReceivedPort
    * @summary Handle messages sent to the action window..
    */
@@ -115,6 +125,10 @@ export const useActionMessagePorts = () => {
             }
             case 'action:tx:setEstimatedFee': {
               await handleSetEstimatedFee(ev);
+              break;
+            }
+            case 'action:tx:invalid': {
+              handleInvalidExtrinsic(ev);
               break;
             }
             default: {

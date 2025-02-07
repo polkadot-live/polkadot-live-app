@@ -17,6 +17,10 @@ interface CachedExtrinsicData {
   tx: AnyJson;
   payload?: AnyJson;
 }
+interface VerifyExtrinsicResult {
+  isValid: boolean;
+  reason?: string;
+}
 
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
@@ -84,7 +88,9 @@ export class ExtrinsicsController {
    * Verify that an extrinsic is valid and can be submitted.
    * For example, check account balance is sufficient, etc.
    */
-  static verifyExtrinsic = async (info: ExtrinsicInfo): Promise<boolean> => {
+  static verifyExtrinsic = async (
+    info: ExtrinsicInfo
+  ): Promise<VerifyExtrinsicResult> => {
     const { action, chainId, from } = info.actionMeta;
     const args = this.getExtrinsicArgs(info.actionMeta);
 
@@ -93,22 +99,26 @@ export class ExtrinsicsController {
         // Check spendable balance is sufficient.
         const { estimatedFee } = info;
         if (!estimatedFee) {
-          return false;
+          return { isValid: false, reason: 'Estimated fee not set' };
         }
 
         // args[1]: BigInt to string to BigNumber.
         const bnSendAmount = new BigNumber(args[1].toString());
         const bnSpendable = await getSpendableBalance(from, chainId);
         const bnFee = new BigNumber(estimatedFee);
-        return bnSpendable.gte(bnSendAmount.plus(bnFee));
+        const isValid = bnSpendable.gte(bnSendAmount.plus(bnFee));
+
+        return isValid
+          ? { isValid }
+          : { isValid, reason: 'Insufficient balance' };
       }
       case 'nominationPools_pendingRewards_bond': {
         // TODO: Check bond can be submitted.
-        return true;
+        return { isValid: true };
       }
       case 'nominationPools_pendingRewards_withdraw': {
         // TODO: Check withdraw can be submitted.
-        return true;
+        return { isValid: true };
       }
     }
   };
@@ -146,19 +156,25 @@ export class ExtrinsicsController {
       this.txPayloads.set(txId, { tx, payload: txPayload });
 
       // Verify extrinsic is valid for submission.
-      const extrinsicValid = await this.verifyExtrinsic(info);
-      console.log(`> EXTRINSIC VALID: ${extrinsicValid}`);
-      // TODO: Send error message back to extrinsics window if extrinsic is not valid.
+      const verifyResult = await this.verifyExtrinsic(info);
+      console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
 
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:tx:report:data',
-        data: {
-          accountNonce: nonce,
-          genesisHash: txPayload.genesisHash.toU8a(),
-          txId,
-          txPayload: txPayload.toU8a(),
-        },
-      });
+      if (verifyResult.isValid) {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:report:data',
+          data: {
+            accountNonce: nonce,
+            genesisHash: txPayload.genesisHash.toU8a(),
+            txId,
+            txPayload: txPayload.toU8a(),
+          },
+        });
+      } else {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:invalid',
+          data: { message: verifyResult.reason || 'Reason unknown.' },
+        });
+      }
     } catch (err) {
       console.log(err);
     }
