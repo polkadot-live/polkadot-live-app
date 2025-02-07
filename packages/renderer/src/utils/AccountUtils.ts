@@ -209,6 +209,23 @@ export const fetchNominationPoolDataForAccount = async (account: Account) => {
 };
 
 /**
+ * @name getNominationPoolRewards
+ * @summary Get nomination pool rewards for an arbitrary address.
+ */
+export const getNominationPoolRewards = async (
+  address: string,
+  chainId: ChainID
+) => {
+  const origin = 'getNominationPoolRewards';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+
+  const result: AnyJson =
+    await api.call.nominationPoolsApi.pendingRewards(address);
+
+  return new BigNumber(rmCommas(String(result)));
+};
+
+/**
  * @name setNominationPoolDataForAccount
  * @summary Utility that uses an API instance to get and update an account's nomination
  * pool data.

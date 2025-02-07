@@ -3,8 +3,13 @@
 
 import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { getAddressNonce, getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
+import {
+  getAddressNonce,
+  getNominationPoolRewards,
+  getSpendableBalance,
+} from '@ren/utils/AccountUtils';
+
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -91,17 +96,17 @@ export class ExtrinsicsController {
   static verifyExtrinsic = async (
     info: ExtrinsicInfo
   ): Promise<VerifyExtrinsicResult> => {
+    // Check estimated fee exists.
+    const { estimatedFee } = info;
+    if (!estimatedFee) {
+      return { isValid: false, reason: 'Estimated fee not set' };
+    }
+
     const { action, chainId, from } = info.actionMeta;
     const args = this.getExtrinsicArgs(info.actionMeta);
 
     switch (action) {
       case 'balances_transferKeepAlive': {
-        // Check spendable balance is sufficient.
-        const { estimatedFee } = info;
-        if (!estimatedFee) {
-          return { isValid: false, reason: 'Estimated fee not set' };
-        }
-
         // args[1]: BigInt to string to BigNumber.
         const bnSendAmount = new BigNumber(args[1].toString());
         const bnSpendable = await getSpendableBalance(from, chainId);
@@ -112,12 +117,30 @@ export class ExtrinsicsController {
           ? { isValid }
           : { isValid, reason: 'Insufficient balance' };
       }
+      case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {
-        // TODO: Check bond can be submitted.
-        return { isValid: true };
-      }
-      case 'nominationPools_pendingRewards_withdraw': {
-        // TODO: Check withdraw can be submitted.
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+
+        // Check sufficient balance.
+        if (!bnSpendable.gte(bnFee)) {
+          return { isValid: false, reason: 'Insufficient balance' };
+        }
+
+        // Check rewards are current (extrinsic is not outdated).
+        const { extra }: { extra: string } = info.actionMeta.data;
+        const bnExtRewards = new BigNumber(extra);
+        const bnCurRewards = await getNominationPoolRewards(from, chainId);
+
+        if (!bnExtRewards.isEqualTo(bnCurRewards)) {
+          return { isValid: false, reason: 'Outdated extrinsic' };
+        }
+
+        // Check rewards are non-zero.
+        if (bnExtRewards.isZero()) {
+          return { isValid: false, reason: 'No pending rewards' };
+        }
+
         return { isValid: true };
       }
     }
