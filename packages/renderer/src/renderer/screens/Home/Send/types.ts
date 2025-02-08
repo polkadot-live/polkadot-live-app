@@ -14,11 +14,6 @@ export interface AccountNameWithTooltipProps {
   accountName: string;
 }
 
-export interface CopyButtonWithTooltipProps {
-  theme: AnyData;
-  onCopyClick: () => Promise<void>;
-}
-
 export type SendAccordionValue =
   | 'section-sender'
   | 'section-receiver'

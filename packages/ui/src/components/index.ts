@@ -5,6 +5,7 @@ export * from './Accordion';
 export * from './AccordionRx';
 export * from './ActionItem';
 export * from './Cards';
+export * from './CopyButton';
 export * from './Common';
 export * from './DragClose';
 export * from './Hardware';

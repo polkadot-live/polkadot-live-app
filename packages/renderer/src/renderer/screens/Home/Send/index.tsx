@@ -26,7 +26,6 @@ import { getBalanceText } from '@ren/utils/TextUtils';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,
-  CopyButtonWithTooltip,
   FlexColumn,
   InfoPanel,
   InfoPanelSingle,
@@ -484,7 +483,7 @@ export const Send: React.FC = () => {
                       ) : (
                         <>
                           <AddressWithTooltip theme={theme} address={sender} />
-                          <CopyButtonWithTooltip
+                          <UI.CopyButton
                             theme={theme}
                             onCopyClick={async () =>
                               await handleClipboardCopy(sender)
@@ -558,7 +557,7 @@ export const Send: React.FC = () => {
                             theme={theme}
                             address={receiver}
                           />
-                          <CopyButtonWithTooltip
+                          <UI.CopyButton
                             theme={theme}
                             onCopyClick={async () =>
                               await handleClipboardCopy(receiver)
@@ -642,7 +641,7 @@ export const Send: React.FC = () => {
                         address={sender}
                         accountName={getSenderAccountName()}
                       />
-                      <CopyButtonWithTooltip
+                      <UI.CopyButton
                         theme={theme}
                         onCopyClick={async () =>
                           await handleClipboardCopy(sender)
@@ -663,7 +662,7 @@ export const Send: React.FC = () => {
                         address={receiver}
                         accountName={getRecipientAccountName()}
                       />
-                      <CopyButtonWithTooltip
+                      <UI.CopyButton
                         theme={theme}
                         onCopyClick={async () =>
                           await handleClipboardCopy(receiver)
