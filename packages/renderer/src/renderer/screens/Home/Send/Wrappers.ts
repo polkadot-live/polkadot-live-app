@@ -61,13 +61,6 @@ export const ActionButton = styled.button<{ $backgroundColor: string }>`
   }
 `;
 
-export const CopyButton = styled.button`
-  font-size: 1.15rem;
-  &:hover {
-    filter: brightness(130%);
-  }
-`;
-
 export const ProgressBarWrapper = styled.div`
   background-color: var(--background-surface);
   width: 100%;

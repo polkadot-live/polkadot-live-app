@@ -12,7 +12,7 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexRow, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
@@ -21,7 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { useOverlay, useTooltip } from '@polkadot-live/ui/contexts';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -45,7 +45,6 @@ export const Action = () => {
     submitMockTx,
   } = useTxMeta();
   const { openOverlayWith } = useOverlay();
-  const { setTooltipTextAndOpen } = useTooltip();
 
   const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -144,18 +143,26 @@ export const Action = () => {
                         </div>
                       </div>
                     </UI.SelectItem>
-                    {addressesInfo.map(
-                      ({ accountName, address, ChainIcon }) => (
-                        <UI.SelectItem key={address} value={address}>
-                          <div className="innerRow">
-                            <div>
-                              <ChainIcon width={'25px'} />
-                            </div>
-                            <div>{accountName}</div>
-                          </div>
-                        </UI.SelectItem>
-                      )
-                    )}
+                    {addressesInfo.map(({ accountName, address }) => (
+                      <UI.SelectItem key={address} value={address}>
+                        <div className="innerRow">
+                          <FlexRow $gap={'1rem'}>
+                            <UI.TooltipRx
+                              theme={theme}
+                              text={ellipsisFn(address, 12)}
+                            >
+                              <span style={{ marginLeft: '1rem' }}>
+                                <UI.Identicon
+                                  value={address}
+                                  fontSize={'2rem'}
+                                />
+                              </span>
+                            </UI.TooltipRx>
+                            <span>{accountName}</span>
+                          </FlexRow>
+                        </div>
+                      </UI.SelectItem>
+                    ))}
                   </Select.Group>
                 </Select.Viewport>
                 <Select.ScrollDownButton className="SelectScrollButton">
@@ -195,13 +202,7 @@ export const Action = () => {
                     className="AccordionItem"
                     value={info.txId}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '2px',
-                        marginTop: '10px',
-                      }}
-                    >
+                    <FlexRow $gap={'2px'} style={{ marginTop: '10px' }}>
                       <UI.AccordionTrigger>
                         <ChevronDownIcon
                           className="AccordionChevron"
@@ -210,24 +211,17 @@ export const Action = () => {
                         <h3>{getExtrinsicTitle(info)}</h3>
                         <span className="right">
                           <div className="stat">
-                            <div
-                              className="tooltip tooltip-trigger-element"
-                              data-tooltip-text={ellipsisFn(
-                                info.actionMeta.from,
-                                16
-                              )}
-                              onMouseMove={() =>
-                                setTooltipTextAndOpen(
-                                  ellipsisFn(info.actionMeta.from, 16),
-                                  'top'
-                                )
-                              }
+                            <UI.TooltipRx
+                              text={ellipsisFn(info.actionMeta.from, 12)}
+                              theme={theme}
                             >
-                              <UI.Identicon
-                                value={info.actionMeta.from}
-                                size={18}
-                              />
-                            </div>
+                              <span>
+                                <UI.Identicon
+                                  value={info.actionMeta.from}
+                                  fontSize={'1.25rem'}
+                                />
+                              </span>
+                            </UI.TooltipRx>
                             {truncateString(info.actionMeta.accountName, 8)}
                           </div>
                           <div className="stat">
@@ -265,7 +259,7 @@ export const Action = () => {
                           onMockSign={() => submitMockTx(info.txId)}
                         />
                       </div>
-                    </div>
+                    </FlexRow>
                     <UI.AccordionContent>
                       <ExtrinsicItemContent info={info} />
                     </UI.AccordionContent>

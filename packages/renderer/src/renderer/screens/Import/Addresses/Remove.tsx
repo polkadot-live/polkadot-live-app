@@ -19,7 +19,7 @@ export const Remove = ({ address, source, accountName }: RemoveProps) => {
 
   return (
     <ConfirmWrapper>
-      <Identicon value={address} size={60} />
+      <Identicon value={address} fontSize={'4rem'} />
       <h3>Remove Account</h3>
       <h5>{address}</h5>
       <p>

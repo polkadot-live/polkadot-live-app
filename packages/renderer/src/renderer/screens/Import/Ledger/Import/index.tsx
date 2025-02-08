@@ -346,7 +346,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <ItemsColumn>
                     {receivedAddresses.map(({ address, pubKey }, i) => (
                       <ImportAddressRow key={address}>
-                        <UI.Identicon value={address} size={28} />
+                        <UI.Identicon value={address} fontSize={'2.5rem'} />
                         <div className="addressInfo">
                           <h2>
                             {connectedNetwork} Ledger Account{' '}

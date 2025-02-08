@@ -6,13 +6,12 @@ import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 import { FlexRow } from '@polkadot-live/ui/styles';
 
-import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-import { ellipsisFn, planckToUnit, unitToPlanck } from '@w3ux/utils';
+import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
@@ -26,7 +25,6 @@ import { getBalanceText } from '@ren/utils/TextUtils';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,
-  CopyButtonWithTooltip,
   FlexColumn,
   InfoPanel,
   InfoPanelSingle,
@@ -45,6 +43,7 @@ import type {
   ActionMeta,
   ExTransferKeepAliveData,
 } from '@polkadot-live/types/tx';
+import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SendAccordionValue } from './types';
@@ -270,30 +269,74 @@ export const Send: React.FC = () => {
   };
 
   /**
+   * Utility to truncate a send amount to the network's allowable decimal places.
+   */
+  const truncateDecimals = (amount: string, chainId: ChainID): string => {
+    const decimals = chainUnits(chainId);
+    const [integerPart, decimalPart] = amount.split('.');
+
+    if (!decimalPart) {
+      return integerPart;
+    }
+
+    const truncatedDecimal = decimalPart.slice(0, decimals);
+    return `${integerPart}.${truncatedDecimal}`;
+  };
+
+  /**
+   * Removes leading zeros from a numeric string but keeps a single zero if a decimal follows.
+   */
+  const removeLeadingZeros = (value: string): string => {
+    // Remove unnecessary leading zeros.
+    let cleaned = value.replace(/^0+(?=\d)/, '');
+
+    // If the first character is ".", prepend "0"
+    if (cleaned.startsWith('.')) {
+      cleaned = '0' + cleaned;
+    }
+
+    // Ensure empty string returns "0"
+    return cleaned || '0';
+  };
+
+  /**
    * Send amount changed callback.
    */
   const handleSendAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
-    if (val === '' || val === '0') {
-      setSendAmount(val === '' ? '' : val);
-      setValidAmount(true);
-    } else if (!isNaN(Number(val))) {
-      setSendAmount(val === '' ? '' : val);
 
-      // Preliminary checks.
-      if (!spendable) {
+    // Check for sender network and spendable flag.
+    if (!(senderNetwork !== null && spendable !== null)) {
+      setValidAmount(false);
+      return;
+    }
+    // Check for zero values.
+    if (val === '' || val === '0') {
+      setSendAmount(val);
+      setValidAmount(true);
+      return;
+    }
+    if (!isNaN(Number(val))) {
+      // Truncate to network's allowable decimal places and remove any leading zeros.
+      const tmp: string = removeLeadingZeros(val);
+      const amount = truncateDecimals(tmp, senderNetwork);
+      setSendAmount(amount);
+
+      // Check for negative value.
+      if (Number(amount) < 0) {
+        setSendAmount(amount);
         setValidAmount(false);
         return;
       }
 
       // Check if send amount is less than spendable amount.
-      const units = chainUnits(senderNetwork!);
-      const amountAsUnit = new BigNumber(val);
-      const spendableAsUnit = planckToUnit(spendable!, units);
-      setValidAmount(spendableAsUnit.gte(amountAsUnit));
-    } else {
-      setValidAmount(false);
+      const units = chainUnits(senderNetwork);
+      const bnAmountAsPlanck = unitToPlanck(amount, units);
+      setValidAmount(spendable.gte(bnAmountAsPlanck));
+      return;
     }
+
+    setValidAmount(false);
   };
 
   /**
@@ -454,7 +497,7 @@ export const Send: React.FC = () => {
                     <UI.SelectItem key={`sender-${address}`} value={address}>
                       <div className="innerRow">
                         <div>
-                          <Identicon value={address} size={20} />
+                          <Identicon value={address} fontSize={'2.1rem'} />
                         </div>
                         <div>{accountName}</div>
                       </div>
@@ -484,7 +527,7 @@ export const Send: React.FC = () => {
                       ) : (
                         <>
                           <AddressWithTooltip theme={theme} address={sender} />
-                          <CopyButtonWithTooltip
+                          <UI.CopyButton
                             theme={theme}
                             onCopyClick={async () =>
                               await handleClipboardCopy(sender)
@@ -525,7 +568,7 @@ export const Send: React.FC = () => {
                       >
                         <div className="innerRow">
                           <div>
-                            <Identicon value={address} size={20} />
+                            <Identicon value={address} fontSize={'2.1rem'} />
                           </div>
                           <div>{accountName}</div>
                         </div>
@@ -558,7 +601,7 @@ export const Send: React.FC = () => {
                             theme={theme}
                             address={receiver}
                           />
-                          <CopyButtonWithTooltip
+                          <UI.CopyButton
                             theme={theme}
                             onCopyClick={async () =>
                               await handleClipboardCopy(receiver)
@@ -642,7 +685,7 @@ export const Send: React.FC = () => {
                         address={sender}
                         accountName={getSenderAccountName()}
                       />
-                      <CopyButtonWithTooltip
+                      <UI.CopyButton
                         theme={theme}
                         onCopyClick={async () =>
                           await handleClipboardCopy(sender)
@@ -663,7 +706,7 @@ export const Send: React.FC = () => {
                         address={receiver}
                         accountName={getRecipientAccountName()}
                       />
-                      <CopyButtonWithTooltip
+                      <UI.CopyButton
                         theme={theme}
                         onCopyClick={async () =>
                           await handleClipboardCopy(receiver)

@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
+  CopyButton,
   Identicon,
   TooltipRx,
   TxInfoBadge,
@@ -60,10 +61,19 @@ export const ExtrinsicItemContent = ({
                     theme={theme}
                   >
                     <span>
-                      <Identicon value={recipientAddress} size={18} />
+                      <Identicon value={recipientAddress} fontSize={'1.5rem'} />
                     </span>
                   </TooltipRx>
                   <span>{recipientAccountName}</span>
+                  <span>
+                    <CopyButton
+                      iconFontSize={'0.95rem'}
+                      theme={theme}
+                      onCopyClick={async () =>
+                        await window.myAPI.copyToClipboard(recipientAddress)
+                      }
+                    />
+                  </span>
                 </FlexRow>
               </TxInfoBadge>
               {/* Estimated Fee */}

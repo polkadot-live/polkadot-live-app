@@ -28,6 +28,7 @@ export const AccordionWrapper = styled.div`
     background-color: var(--background-surface);
     display: flex;
     align-items: center;
+    align-self: stretch;
     justify-content: center;
     padding: 0 0.75rem;
     border-top-right-radius: 0.375rem;

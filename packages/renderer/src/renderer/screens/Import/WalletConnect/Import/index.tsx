@@ -361,7 +361,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     {wcFetchedAddresses.map(
                       ({ chainId, encoded, selected }, i) => (
                         <ImportAddressRow key={encoded}>
-                          <UI.Identicon value={encoded} size={28} />
+                          <UI.Identicon value={encoded} fontSize={'2.5rem'} />
                           <div className="addressInfo">
                             <h2>
                               {i + 1}. {chainId} Account

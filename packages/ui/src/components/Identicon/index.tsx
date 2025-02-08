@@ -11,8 +11,8 @@ const Wrapper = styled.div`
   }
 `;
 
-export const Identicon = ({ value, size }: IdenticonProps) => (
-  <Wrapper style={{ width: `${size}px`, height: `${size}px` }}>
-    <Polkicon address={value} size={size} />
+export const Identicon = ({ value, fontSize = '2rem' }: IdenticonProps) => (
+  <Wrapper>
+    <Polkicon address={value} fontSize={fontSize} />
   </Wrapper>
 );

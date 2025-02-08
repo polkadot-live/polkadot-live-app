@@ -103,7 +103,7 @@ export const HardwareAddress = ({
             }
           >
             <div className="identicon">
-              <Identicon value={address} size={28} />
+              <Identicon value={address} />
             </div>
           </div>
           <div>

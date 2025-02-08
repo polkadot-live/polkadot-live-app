@@ -6,26 +6,16 @@ import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
 import { useConnections } from '@app/contexts/common/Connections';
-import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCaretDown,
-  faCircleCheck,
-  faCopy,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  CopyButton,
-  NextStepArrowWrapper,
-  ProgressBarWrapper,
-} from './Wrappers';
+import { faCaretDown, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { NextStepArrowWrapper, ProgressBarWrapper } from './Wrappers';
 
 import type {
   AccountNameWithTooltipProps,
   AddressWithTooltipProps,
-  CopyButtonWithTooltipProps,
   SelectBoxProps,
 } from './types';
 
@@ -67,42 +57,6 @@ export const ProgressBar = ({ value, max }: { value: number; max: number }) => {
     <ProgressBarWrapper>
       <div className="progress-fill" style={{ width: `${percentage}%` }} />
     </ProgressBarWrapper>
-  );
-};
-
-/**
- * @name CopyButtonWithTooltip
- * @summary Copy button with tooltip component.
- */
-export const CopyButtonWithTooltip = ({
-  theme,
-  onCopyClick,
-}: CopyButtonWithTooltipProps) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [text, setText] = useState<string>('Copy Address');
-
-  return (
-    <UI.TooltipRx
-      theme={theme}
-      open={open}
-      text={text}
-      onOpenChange={(val) => {
-        setOpen(val);
-        if (!val) {
-          setText('Copy Address');
-        }
-      }}
-    >
-      <CopyButton
-        onClick={async () => {
-          await onCopyClick();
-          setText('Copied!');
-          setOpen(true);
-        }}
-      >
-        <FontAwesomeIcon icon={faCopy} transform={'shrink-2'} />
-      </CopyButton>
-    </UI.TooltipRx>
   );
 };
 
