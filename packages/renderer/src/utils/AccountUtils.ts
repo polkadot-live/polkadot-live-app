@@ -125,7 +125,7 @@ export const getExistentialDeposit = async (
 export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
-): Promise<BigNumber | null> => {
+): Promise<BigNumber> => {
   const balance = await getBalanceForAccount(address, chainId);
 
   // Spendable balance equation:
@@ -206,6 +206,23 @@ export const fetchAccountNominationPoolData = async () => {
  */
 export const fetchNominationPoolDataForAccount = async (account: Account) => {
   await setNominationPoolDataForAccount(account);
+};
+
+/**
+ * @name getNominationPoolRewards
+ * @summary Get nomination pool rewards for an arbitrary address.
+ */
+export const getNominationPoolRewards = async (
+  address: string,
+  chainId: ChainID
+) => {
+  const origin = 'getNominationPoolRewards';
+  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+
+  const result: AnyJson =
+    await api.call.nominationPoolsApi.pendingRewards(address);
+
+  return new BigNumber(rmCommas(String(result)));
 };
 
 /**

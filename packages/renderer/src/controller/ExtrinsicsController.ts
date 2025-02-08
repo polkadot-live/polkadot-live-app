@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
-import { planckToUnit } from '@w3ux/utils';
+import {
+  getAddressNonce,
+  getNominationPoolRewards,
+  getSpendableBalance,
+} from '@ren/utils/AccountUtils';
+
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -18,6 +21,10 @@ import type {
 interface CachedExtrinsicData {
   tx: AnyJson;
   payload?: AnyJson;
+}
+interface VerifyExtrinsicResult {
+  isValid: boolean;
+  reason?: string;
 }
 
 export class ExtrinsicsController {
@@ -58,10 +65,9 @@ export class ExtrinsicsController {
     // Get estimated tx fee.
     const { partialFee } = await tx.paymentInfo(from);
     const estimatedFeePlank = new BigNumber(partialFee.toString());
-    const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
-    console.log(`📝 Estimated fee: ${estimatedFee}`);
+    console.log(`📝 Estimated fee: ${estimatedFeePlank.toString()}`);
 
-    return estimatedFee;
+    return estimatedFeePlank;
   };
 
   /**
@@ -80,6 +86,63 @@ export class ExtrinsicsController {
       // TODO: Send error to action window?
       console.log('Error:');
       console.log(e);
+    }
+  };
+
+  /**
+   * Verify that an extrinsic is valid and can be submitted.
+   * For example, check account balance is sufficient, etc.
+   */
+  static verifyExtrinsic = async (
+    info: ExtrinsicInfo
+  ): Promise<VerifyExtrinsicResult> => {
+    // Check estimated fee exists.
+    const { estimatedFee } = info;
+    if (!estimatedFee) {
+      return { isValid: false, reason: 'Estimated fee not set' };
+    }
+
+    const { action, chainId, from } = info.actionMeta;
+    const args = this.getExtrinsicArgs(info.actionMeta);
+
+    switch (action) {
+      case 'balances_transferKeepAlive': {
+        // args[1]: BigInt to string to BigNumber.
+        const bnSendAmount = new BigNumber(args[1].toString());
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+        const isValid = bnSpendable.gte(bnSendAmount.plus(bnFee));
+
+        return isValid
+          ? { isValid }
+          : { isValid, reason: 'Insufficient balance' };
+      }
+      case 'nominationPools_pendingRewards_withdraw':
+      case 'nominationPools_pendingRewards_bond': {
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+
+        // Check sufficient balance.
+        if (!bnSpendable.gte(bnFee)) {
+          return { isValid: false, reason: 'Insufficient balance' };
+        }
+
+        // Check rewards are current (extrinsic is not outdated).
+        const { extra }: { extra: string } = info.actionMeta.data;
+        const bnExtRewards = new BigNumber(extra);
+        const bnCurRewards = await getNominationPoolRewards(from, chainId);
+
+        if (!bnExtRewards.isEqualTo(bnCurRewards)) {
+          return { isValid: false, reason: 'Outdated extrinsic' };
+        }
+
+        // Check rewards are non-zero.
+        if (bnExtRewards.isZero()) {
+          return { isValid: false, reason: 'No pending rewards' };
+        }
+
+        return { isValid: true };
+      }
     }
   };
 
@@ -115,15 +178,26 @@ export class ExtrinsicsController {
       const txPayload = await this.buildPayload(tx, chainId, from, nonce);
       this.txPayloads.set(txId, { tx, payload: txPayload });
 
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:tx:report:data',
-        data: {
-          accountNonce: nonce,
-          genesisHash: txPayload.genesisHash.toU8a(),
-          txId,
-          txPayload: txPayload.toU8a(),
-        },
-      });
+      // Verify extrinsic is valid for submission.
+      const verifyResult = await this.verifyExtrinsic(info);
+      console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
+
+      if (verifyResult.isValid) {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:report:data',
+          data: {
+            accountNonce: nonce,
+            genesisHash: txPayload.genesisHash.toU8a(),
+            txId,
+            txPayload: txPayload.toU8a(),
+          },
+        });
+      } else {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:invalid',
+          data: { message: verifyResult.reason || 'Reason unknown.' },
+        });
+      }
     } catch (err) {
       console.log(err);
     }

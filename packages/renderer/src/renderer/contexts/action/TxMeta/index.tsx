@@ -228,6 +228,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   /**
    * Requests an extrinsic's dynamic data. Call before submitting an extrinsic.
+   * Confirms the extrinsic is valid and can be submitted, by checking sufficient balances, etc.
    */
   const initTxDynamicInfo = (txId: string) => {
     try {
@@ -271,6 +272,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     }
+  };
+
+  /**
+   * Render an error notification if an extrinsic is not valid for submission.
+   */
+  const notifyInvalidExtrinsic = (message: string) => {
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    const text = `Invalid extrinsic - ${message}`;
+    renderToast(text, `invalid-extrinsic-${String(Date.now())}`, 'error');
   };
 
   /**
@@ -565,6 +575,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         initTx,
         initTxDynamicInfo,
         onFilterChange,
+        notifyInvalidExtrinsic,
         setEstimatedFee,
         setTxDynamicInfo,
         setTxSignature,

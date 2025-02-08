@@ -1,8 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chainCurrency } from '@ren/config/chains';
-import { ellipsisFn } from '@w3ux/utils';
+import BigNumber from 'bignumber.js';
+import { chainCurrency, chainUnits } from '@ren/config/chains';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
   Identicon,
   TooltipRx,
@@ -77,16 +78,18 @@ export const EstimatedFeeBadge = ({
   info: ExtrinsicInfo;
   theme: AnyData;
 }) => {
-  const { chainId } = info.actionMeta;
-  const currency = chainCurrency(chainId);
+  let estimatedFee = '-';
+  let truncEstimatedFee = '-';
 
-  const estimatedFee = info.estimatedFee
-    ? `${info.estimatedFee} ${currency}`
-    : '-';
+  if (info.estimatedFee) {
+    const { chainId } = info.actionMeta;
+    const currency = chainCurrency(chainId);
+    const bnPlanck = new BigNumber(info.estimatedFee);
+    const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
 
-  const truncEstimatedFee = info.estimatedFee
-    ? `${truncateDecimalPlaces(info.estimatedFee)} ${currency}`
-    : '-';
+    estimatedFee = `${bnUnit.toString()} ${currency}`;
+    truncEstimatedFee = `${truncateDecimalPlaces(bnUnit.toString())} ${currency}`;
+  }
 
   return (
     <TxInfoBadge icon={faCoins} label={'Estimated Fee'}>
