@@ -1435,6 +1435,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/hashes@npm:^1.5.0":
+  version: 1.7.1
+  resolution: "@noble/hashes@npm:1.7.1"
+  checksum: 2f8ec0338ccc92b576a0f5c16ab9c017a3a494062f1fbb569ae641c5e7eab32072f9081acaa96b5048c0898f972916c818ea63cbedda707886a4b5ffcfbf94e3
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -1860,6 +1867,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-api/substrate-bindings@npm:^0.9.3":
+  version: 0.9.4
+  resolution: "@polkadot-api/substrate-bindings@npm:0.9.4"
+  dependencies:
+    "@noble/hashes": "npm:^1.5.0"
+    "@polkadot-api/utils": "npm:0.1.2"
+    "@scure/base": "npm:^1.1.9"
+    scale-ts: "npm:^1.6.1"
+  checksum: eb4226807a07ed8f65ae641a1973d8b0b97410392b7c8d23002c9881d4098f31e31a14157a4e4adf250afd66355406a6108995d14a72ff3dfc15b17f314d2e61
+  languageName: node
+  linkType: hard
+
 "@polkadot-api/substrate-client@npm:^0.1.2":
   version: 0.1.4
   resolution: "@polkadot-api/substrate-client@npm:0.1.4"
@@ -1874,6 +1893,13 @@ __metadata:
   version: 0.1.0
   resolution: "@polkadot-api/utils@npm:0.1.0"
   checksum: 9b24522a30d0519df2d2bbfc65f7dbc94233950f829c4a6b042e02cc43b70c0ec43a7d06056cd7084d09e32d7c42caa2695732d25f673a31430391bed116fcae
+  languageName: node
+  linkType: hard
+
+"@polkadot-api/utils@npm:0.1.2":
+  version: 0.1.2
+  resolution: "@polkadot-api/utils@npm:0.1.2"
+  checksum: 530270141ab7a8d114aff68adabbc643a7b7f5abcfb974a5dac5044e1f5a459881f427e357a7eadfecf55847da5e48828be6dbcf502dd22e097c87546762a036
   languageName: node
   linkType: hard
 
@@ -3769,6 +3795,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@scure/base@npm:^1.1.9":
+  version: 1.2.4
+  resolution: "@scure/base@npm:1.2.4"
+  checksum: 469c8aee80d6d6973e1aac6184befa04568f1b4016e40c889025f4a721575db9c1ca0c2ead80613896cce929392740322a18da585a427f157157e797dc0a42a9
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.27.8":
   version: 0.27.8
   resolution: "@sinclair/typebox@npm:0.27.8"
@@ -5036,23 +5069,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/extension-assets@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "@w3ux/extension-assets@npm:0.2.6"
-  peerDependencies:
-    react: ^18
-  checksum: e789249b579c8786669cbeb13e0835bd790a092b61964f7714ec758b6d8b211287e09b934b02890991ffa660ba8bc18626364f5d7bf111e42ae640bb48258691
+"@w3ux/crypto@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@w3ux/crypto@npm:1.0.0"
+  dependencies:
+    blakejs: "npm:^1.2.1"
+  checksum: c32d5ca52496d06a1e57d7dceb739c00cf099221a90998461827be6f685923a7b848f2c3d6b7c85839dcd307b08593a65b411d9e7b8a7ddf579fb8cadc02a00b
   languageName: node
   linkType: hard
 
-"@w3ux/react-polkicon@npm:1.2.0-alpha.8":
-  version: 1.2.0-alpha.8
-  resolution: "@w3ux/react-polkicon@npm:1.2.0-alpha.8"
+"@w3ux/extension-assets@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@w3ux/extension-assets@npm:1.0.0"
+  peerDependencies:
+    react: ^18
+  checksum: 9bfb505d485e10f3d5f8a346be4232c630bc76bf9b3cf172fbe75d6253c3e178e6025863f63b23343bf769bdd11ddafdc8a7b9fae96beee90f03e57d512c1047
+  languageName: node
+  linkType: hard
+
+"@w3ux/react-polkicon@npm:^2.0.1-alpha.0":
+  version: 2.0.1-alpha.0
+  resolution: "@w3ux/react-polkicon@npm:2.0.1-alpha.0"
   dependencies:
-    "@polkadot/util": "npm:^12.6.2"
-    "@w3ux/utils": "npm:^0.3.0"
-    framer-motion: "npm:^11.2.10"
-  checksum: 8c7ea390b6b686c195f2d59b2d8a7255cb6c368d712ca65227b0aa4cd08fbddd203c3063464af141d9b6988d97c22eaeab5a8f0040215be6c4ceffedc7defa7e
+    "@polkadot-api/substrate-bindings": "npm:^0.9.3"
+    "@w3ux/crypto": "npm:1.0.0"
+  checksum: 4390646debb6f4f09717806a10ecb811d48e96c32ac7a958944e321a9c4b3330d538b154e7a23891b4808b764bf8525203c26d7075270a3b280504d14cda555e
   languageName: node
   linkType: hard
 
@@ -5064,17 +5105,6 @@ __metadata:
     "@polkadot/util": "npm:^12.6.2"
     bignumber.js: "npm:^9.1.1"
   checksum: 8e454e8e56482989caaf9fbd06e8068895ce8d41df51911be80219fca0ed3463b4ef40ed091d3c4e26ae15b498dc6807075164bcd48c52db577ab53322c0a200
-  languageName: node
-  linkType: hard
-
-"@w3ux/utils@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@w3ux/utils@npm:0.3.0"
-  dependencies:
-    "@polkadot/keyring": "npm:^12.6.2"
-    "@polkadot/util": "npm:^12.6.2"
-    bignumber.js: "npm:^9.1.1"
-  checksum: 8e5b231d4d39c0c5fa88d81f2fdcdf7a8f5a4fd5e8047124c8953fe539bc120593d80801432837247911a0fcc6eb877867c545283d1bdb2b1a7103ebf24257cf
   languageName: node
   linkType: hard
 
@@ -6269,6 +6299,13 @@ __metadata:
     inherits: "npm:^2.0.4"
     readable-stream: "npm:^3.4.0"
   checksum: 528a9c3d7d6b87af98c46f10a887654d027c28c503c7f7de87440e643f0056d7a2319a967762b8ec18150c64799d2825a277147a752a0570a7407c0b705b0d01
+  languageName: node
+  linkType: hard
+
+"blakejs@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "blakejs@npm:1.2.1"
+  checksum: c284557ce55b9c70203f59d381f1b85372ef08ee616a90162174d1291a45d3e5e809fdf9edab6e998740012538515152471dc4f1f9dbfa974ba2b9c1f7b9aad7
   languageName: node
   linkType: hard
 
@@ -8996,26 +9033,6 @@ __metadata:
     react-dom:
       optional: true
   checksum: 0f80828f27ab18937a0dee55efacbd124f248f8eb869e581aeabbbbd755eb2cd42f70f5490edf1280abdef3d08c4c0d3f404db8fe6d32583d3842cb575f09cdb
-  languageName: node
-  linkType: hard
-
-"framer-motion@npm:^11.2.10":
-  version: 11.2.11
-  resolution: "framer-motion@npm:11.2.11"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@emotion/is-prop-valid": "*"
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  peerDependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 1ba86d3266a19beed99498a61002353498d9348a32175919ce9d1b50609be3d2af8a199596ca92db674398fbd38c1f1b131a38306972e8a588050aa0a572672d
   languageName: node
   linkType: hard
 
@@ -12814,8 +12831,8 @@ __metadata:
     "@typescript-eslint/parser": "npm:^7.7.0"
     "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@vitest/ui": "npm:2.1.5"
-    "@w3ux/extension-assets": "npm:^0.2.6"
-    "@w3ux/react-polkicon": "npm:1.2.0-alpha.8"
+    "@w3ux/extension-assets": "npm:^1.0.0"
+    "@w3ux/react-polkicon": "npm:^2.0.1-alpha.0"
     "@w3ux/utils": "npm:0.4.0-alpha.0"
     "@walletconnect/modal": "npm:^2.7.0"
     "@walletconnect/universal-provider": "npm:^2.17.3"
@@ -14027,6 +14044,13 @@ __metadata:
   version: 1.6.0
   resolution: "scale-ts@npm:1.6.0"
   checksum: ce4ea3559c6b6bdf2a62454aac83cc3151ae93d1a507ddb8e95e83ce1190085aed61c46901bd42d41d8f8ba58279d7e37057c68c2b674c2d39b8cf5d169e90dd
+  languageName: node
+  linkType: hard
+
+"scale-ts@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "scale-ts@npm:1.6.1"
+  checksum: bbcf476029095152189c5bd210922b43342e8bfb712bf56237de172d55b528e090419e80da67c627a8f706a228237346b82de527755d7f197bb4d822c6383dfd
   languageName: node
   linkType: hard
 

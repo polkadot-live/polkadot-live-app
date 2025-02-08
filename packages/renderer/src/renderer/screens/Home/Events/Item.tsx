@@ -236,7 +236,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                       style={{ opacity: '0.85' }}
                     />
                   ) : (
-                    <Identicon value={address} size={32} />
+                    <Identicon value={address} fontSize={'2.75rem'} />
                   )}
                 </div>
               </div>

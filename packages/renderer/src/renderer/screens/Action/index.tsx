@@ -210,7 +210,7 @@ export const Action = () => {
                               <span>
                                 <UI.Identicon
                                   value={info.actionMeta.from}
-                                  size={18}
+                                  fontSize={'1.25rem'}
                                 />
                               </span>
                             </UI.TooltipRx>

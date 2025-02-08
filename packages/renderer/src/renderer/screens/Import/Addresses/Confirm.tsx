@@ -19,7 +19,7 @@ export const Confirm = ({ address, name, source }: ConfirmProps) => {
 
   return (
     <ConfirmWrapper>
-      <Identicon value={address} size={60} />
+      <Identicon value={address} fontSize={'4rem'} />
       <h3>Add Account</h3>
       <h5>{address}</h5>
       <p>

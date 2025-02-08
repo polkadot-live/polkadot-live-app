@@ -60,7 +60,7 @@ export const SignerBadge = ({
     <FlexRow $gap={'0.6rem'}>
       <TooltipRx text={ellipsisFn(info.actionMeta.from, 12)} theme={theme}>
         <span>
-          <Identicon value={info.actionMeta.from} size={18} />
+          <Identicon value={info.actionMeta.from} fontSize={'1.5rem'} />
         </span>
       </TooltipRx>
       <span>{info.actionMeta.accountName}</span>

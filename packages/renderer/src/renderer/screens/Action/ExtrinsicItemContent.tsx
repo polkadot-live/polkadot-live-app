@@ -61,7 +61,7 @@ export const ExtrinsicItemContent = ({
                     theme={theme}
                   >
                     <span>
-                      <Identicon value={recipientAddress} size={18} />
+                      <Identicon value={recipientAddress} fontSize={'1.5rem'} />
                     </span>
                   </TooltipRx>
                   <span>{recipientAccountName}</span>

@@ -213,7 +213,10 @@ export const Accounts = ({
                                   )
                                 }
                               >
-                                <Identicon value={address} size={26} />
+                                <Identicon
+                                  value={address}
+                                  fontSize={'2.25rem'}
+                                />
                               </span>
                               <div className="content">
                                 <h3>{name}</h3>

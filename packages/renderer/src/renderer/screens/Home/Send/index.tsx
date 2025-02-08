@@ -453,7 +453,7 @@ export const Send: React.FC = () => {
                     <UI.SelectItem key={`sender-${address}`} value={address}>
                       <div className="innerRow">
                         <div>
-                          <Identicon value={address} size={20} />
+                          <Identicon value={address} fontSize={'2.1rem'} />
                         </div>
                         <div>{accountName}</div>
                       </div>
@@ -524,7 +524,7 @@ export const Send: React.FC = () => {
                       >
                         <div className="innerRow">
                           <div>
-                            <Identicon value={address} size={20} />
+                            <Identicon value={address} fontSize={'2.1rem'} />
                           </div>
                           <div>{accountName}</div>
                         </div>
