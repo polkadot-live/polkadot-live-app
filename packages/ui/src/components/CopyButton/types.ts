@@ -8,4 +8,5 @@ export interface CopyButtonProps {
   onCopyClick: () => Promise<void>;
   defaultText?: string;
   clickedText?: string;
+  iconFontSize?: string;
 }

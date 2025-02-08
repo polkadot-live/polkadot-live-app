@@ -17,6 +17,7 @@ export const CopyButton = ({
   onCopyClick,
   defaultText = 'Copy Address',
   clickedText = 'Copied!',
+  iconFontSize,
 }: CopyButtonProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [text, setText] = useState<string>(defaultText);
@@ -34,6 +35,7 @@ export const CopyButton = ({
       }}
     >
       <CopyButtonWrapper
+        $fontSize={iconFontSize}
         onClick={async () => {
           await onCopyClick();
           setText(clickedText);

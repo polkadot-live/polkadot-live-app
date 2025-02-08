@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
+  CopyButton,
   Identicon,
   TooltipRx,
   TxInfoBadge,
@@ -56,13 +57,22 @@ export const SignerBadge = ({
   theme: AnyData;
 }) => (
   <TxInfoBadge icon={faPenToSquare} label={'Signer'}>
-    <FlexRow $gap={'0.75rem'}>
+    <FlexRow $gap={'0.6rem'}>
       <TooltipRx text={ellipsisFn(info.actionMeta.from, 12)} theme={theme}>
         <span>
           <Identicon value={info.actionMeta.from} size={18} />
         </span>
       </TooltipRx>
       <span>{info.actionMeta.accountName}</span>
+      <span>
+        <CopyButton
+          iconFontSize={'0.95rem'}
+          theme={theme}
+          onCopyClick={async () =>
+            await window.myAPI.copyToClipboard(info.actionMeta.from)
+          }
+        />
+      </span>
     </FlexRow>
   </TxInfoBadge>
 );

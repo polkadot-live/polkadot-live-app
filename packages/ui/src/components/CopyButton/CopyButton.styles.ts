@@ -3,8 +3,10 @@
 
 import styled from 'styled-components';
 
-export const CopyButtonWrapper = styled.button`
-  font-size: 1.15rem;
+export const CopyButtonWrapper = styled.button<{
+  $fontSize?: string;
+}>`
+  font-size: ${(props) => (props.$fontSize ? props.$fontSize : '1.15rem')};
   &:hover {
     filter: brightness(130%);
   }
