@@ -143,18 +143,26 @@ export const Action = () => {
                         </div>
                       </div>
                     </UI.SelectItem>
-                    {addressesInfo.map(
-                      ({ accountName, address, ChainIcon }) => (
-                        <UI.SelectItem key={address} value={address}>
-                          <div className="innerRow">
-                            <div>
-                              <ChainIcon width={'25px'} />
-                            </div>
-                            <div>{accountName}</div>
-                          </div>
-                        </UI.SelectItem>
-                      )
-                    )}
+                    {addressesInfo.map(({ accountName, address }) => (
+                      <UI.SelectItem key={address} value={address}>
+                        <div className="innerRow">
+                          <FlexRow $gap={'1rem'}>
+                            <UI.TooltipRx
+                              theme={theme}
+                              text={ellipsisFn(address, 12)}
+                            >
+                              <span style={{ marginLeft: '1rem' }}>
+                                <UI.Identicon
+                                  value={address}
+                                  fontSize={'2rem'}
+                                />
+                              </span>
+                            </UI.TooltipRx>
+                            <span>{accountName}</span>
+                          </FlexRow>
+                        </div>
+                      </UI.SelectItem>
+                    ))}
                   </Select.Group>
                 </Select.Viewport>
                 <Select.ScrollDownButton className="SelectScrollButton">
