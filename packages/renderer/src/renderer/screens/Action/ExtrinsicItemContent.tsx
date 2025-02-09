@@ -11,13 +11,17 @@ import {
   TooltipRx,
   TxInfoBadge,
 } from '@polkadot-live/ui/components';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faExclamationTriangle,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { EstimatedFeeBadge, SignerBadge } from './Helpers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 /**
  * @name ExtrinsicItemContent
@@ -46,9 +50,22 @@ export const ExtrinsicItemContent = ({
 
       return (
         <>
+          <FlexRow
+            $gap={'0.75rem'}
+            style={{
+              marginBottom: '1rem',
+              padding: '0 0.5rem',
+              color: 'var(--accent-warning)',
+            }}
+          >
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+            Make sure that you confirm the send amount and recipient on your
+            signing device before signing the transaction.
+          </FlexRow>
           <p>
             Transfer {fmtAmount} to account {recipientAccountName}.
           </p>
+
           <FlexRow $gap={'1rem'}>
             <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
               {/* Signing Account */}
