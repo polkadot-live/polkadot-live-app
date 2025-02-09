@@ -22,6 +22,7 @@ import {
   CaretRightIcon,
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
+import { InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
@@ -40,7 +41,6 @@ import {
   AddressListFooter,
   CheckboxRoot,
   ImportAddressRow,
-  InfoCard,
 } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
@@ -283,31 +283,22 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
               {/** Error and Status Messages */}
               {showConnectStatus && !ledger.deviceConnected && (
-                <InfoCard>
-                  <span className="warning">
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    <span>
-                      {
-                        determineStatusFromCodes(ledger.statusCodes, false)
-                          .title
-                      }
-                    </span>
-                    <button
-                      className="dismiss"
-                      onClick={() => setShowConnectStatus(false)}
-                    >
-                      <FontAwesomeIcon icon={faX} />
-                    </button>
+                <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                  <span>
+                    {determineStatusFromCodes(ledger.statusCodes, false).title}
                   </span>
+                  <button
+                    className="dismiss"
+                    onClick={() => setShowConnectStatus(false)}
+                  >
+                    <FontAwesomeIcon icon={faX} />
+                  </button>
                 </InfoCard>
               )}
 
               {showConnectStatus && ledger.selectedNetworkState === '' && (
-                <InfoCard>
-                  <span className="warning">
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    Select a network.
-                  </span>
+                <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                  <span>Select a network.</span>
                 </InfoCard>
               )}
 
@@ -332,14 +323,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             />
             <UI.AccordionPanel>
               {!ledger.deviceConnected ? (
-                <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
-                  <span>
-                    <FontAwesomeIcon
-                      icon={faCircleDot}
-                      transform={'shrink-3'}
-                    />
-                    Connect a Ledger device to view its addresses.
-                  </span>
+                <InfoCard
+                  icon={faCircleDot}
+                  iconTransform={'shrink-3'}
+                  style={{ marginTop: '0', marginBottom: '0.75rem' }}
+                >
+                  <span>Connect a Ledger device to view its addresses.</span>
                 </InfoCard>
               ) : (
                 <>

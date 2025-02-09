@@ -19,6 +19,7 @@ import {
   faBurst,
   faCheck,
   faChevronRight,
+  faCircleInfo,
 } from '@fortawesome/free-solid-svg-icons';
 import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
@@ -464,6 +465,12 @@ export const Send: React.FC = () => {
       }}
     >
       <MainHeading>Send</MainHeading>
+
+      <UI.InfoCard icon={faCircleInfo}>
+        <span style={{ lineHeight: '1.5rem' }}>
+          Send native tokens to a recipient on the same network.
+        </span>
+      </UI.InfoCard>
 
       <div style={{ marginBottom: '1rem' }}>
         <ProgressBar value={progress} max={100} />
