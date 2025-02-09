@@ -75,7 +75,7 @@ export const AccordionWrapper = styled.div`
 
       h3 {
         flex: 1;
-        font-size: 1.15rem !important;
+        font-size: 1.08rem !important;
       }
 
       .right {

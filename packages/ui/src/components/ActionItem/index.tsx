@@ -20,6 +20,7 @@ export const ActionItem = ({
   onToggle,
   inactive = false,
   inlineButton,
+  showIcon = true,
 }: ActionItemProps) => {
   const [toggle, setToggle] = useState<boolean | undefined>(toggled);
 
@@ -31,9 +32,11 @@ export const ActionItem = ({
         opacity: inactive ? 0.3 : 1,
       }}
     >
-      {toggled === undefined ? (
+      {showIcon && toggled === undefined && (
         <FontAwesomeIcon icon={faChevronRight} transform="shrink-6" />
-      ) : (
+      )}
+
+      {showIcon && toggled && (
         <button
           type="button"
           className="toggle"

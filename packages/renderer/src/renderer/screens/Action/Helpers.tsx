@@ -12,8 +12,12 @@ import {
 } from '@polkadot-live/ui/components';
 import { faCoins, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FlexRow } from '@polkadot-live/ui/styles';
+import { TriggerHeader } from './Wrappers';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type {
+  ExTransferKeepAliveData,
+  ExtrinsicInfo,
+} from '@polkadot-live/types/tx';
 
 /**
  * @name truncateDecimalPlaces
@@ -32,15 +36,54 @@ export const truncateDecimalPlaces = (value: string, places = 4): string => {
  * @summary Return the extrinsic item's title.
  */
 export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
-  switch (info.actionMeta.action) {
+  const { action } = info.actionMeta;
+  const MAXLEN = 7;
+
+  switch (action) {
     case 'balances_transferKeepAlive': {
-      return 'Transfer';
+      const { chainId, data: serData } = info.actionMeta;
+      const { sendAmount }: ExTransferKeepAliveData = JSON.parse(serData);
+      const bnPlanck = new BigNumber(sendAmount);
+      const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
+
+      const fmtAmount =
+        bnUnit.toString().length > MAXLEN
+          ? ellipsisFn(bnUnit.toString(), MAXLEN, 'end')
+          : bnUnit.toString();
+
+      return (
+        <TriggerHeader>
+          Transfer
+          <span>
+            {fmtAmount} {chainCurrency(chainId)}
+          </span>
+        </TriggerHeader>
+      );
     }
+    case 'nominationPools_pendingRewards_withdraw':
     case 'nominationPools_pendingRewards_bond': {
-      return 'Compound Rewards';
-    }
-    case 'nominationPools_pendingRewards_withdraw': {
-      return 'Claim Rewards';
+      const { chainId, data } = info.actionMeta;
+      const bnPendingRewardsPlanck = new BigNumber(data.extra);
+      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
+
+      const fmtAmount =
+        bnUnit.toString().length > MAXLEN
+          ? ellipsisFn(bnUnit.toString(), MAXLEN, 'end')
+          : bnUnit.toString();
+
+      const title =
+        action === 'nominationPools_pendingRewards_bond'
+          ? 'Compound Rewards'
+          : 'Claim Rewards';
+
+      return (
+        <TriggerHeader>
+          {title}
+          <span>
+            {fmtAmount} {chainCurrency(chainId)}
+          </span>
+        </TriggerHeader>
+      );
     }
   }
 };
