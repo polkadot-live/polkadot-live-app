@@ -208,7 +208,7 @@ export const Action = () => {
                           className="AccordionChevron"
                           aria-hidden
                         />
-                        <h3>{getExtrinsicTitle(info)}</h3>
+                        {getExtrinsicTitle(info)}
                         <span className="right">
                           <div className="stat">
                             <UI.TooltipRx
