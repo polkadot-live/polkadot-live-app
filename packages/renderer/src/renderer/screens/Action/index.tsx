@@ -83,7 +83,7 @@ export const Action = () => {
 
   return (
     <>
-      <Scrollable $headerHeight={0} style={{ paddingTop: 0 }}>
+      <Scrollable $headerHeight={0} style={{ padding: '0 0.25rem' }}>
         {isBuildingExtrinsic && (
           <BarLoader
             color={darkMode ? '#642763' : '#a772a6'}
@@ -101,6 +101,7 @@ export const Action = () => {
           }}
         >
           <UI.ActionItem
+            showIcon={false}
             text={'Account Filter'}
             style={{
               marginBottom: '1rem',
@@ -173,6 +174,7 @@ export const Action = () => {
           </Select.Root>
 
           <UI.ActionItem
+            showIcon={false}
             text={'Manage Extrinsics'}
             style={{
               margin: '2.75rem 0 0.25rem',
