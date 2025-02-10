@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './Accordion';
+export * from './AccordionRx';
 export * from './ActionItem';
 export * from './Cards';
+export * from './CopyButton';
 export * from './Common';
 export * from './DragClose';
 export * from './Hardware';
@@ -13,6 +15,7 @@ export * from './Identicon';
 export * from './Menu';
 export * from './Overlay';
 export * from './Padlock';
+export * from './SelectBox';
 export * from './ShiftingMeter';
 export * from './Spinners';
 export * from './SideNav';
@@ -20,4 +23,5 @@ export * from './SortControls';
 export * from './Stats';
 export * from './Switch';
 export * from './Tooltip';
+export * from './TooltipRx';
 export * from './Tx';

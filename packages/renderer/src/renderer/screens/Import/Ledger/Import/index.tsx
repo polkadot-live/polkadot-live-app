@@ -6,7 +6,7 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -22,6 +22,7 @@ import {
   CaretRightIcon,
 } from '@radix-ui/react-icons';
 import { Scrollable } from '@polkadot-live/ui/styles';
+import { InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
@@ -35,37 +36,18 @@ import {
   faExclamationTriangle,
   faX,
 } from '@fortawesome/free-solid-svg-icons';
-import { ConnectButton, SelectTrigger, SelectContent } from './Wrappers';
+import { ConnectButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
   ImportAddressRow,
-  InfoCard,
 } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { ContentWrapper } from '../../../Wrappers';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
+import { getSelectNetworkData } from '@ren/config/chains';
 import type { ImportProps } from './types';
-import type { AnyData } from '@polkadot-live/types/misc';
-
-const SelectItem = forwardRef(function SelectItem(
-  { children, className, ...props }: AnyData,
-  forwardedRef
-) {
-  return (
-    <Select.Item
-      className={`SelectItem ${className}`}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="SelectItemIndicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { darkMode } = useConnections();
@@ -231,14 +213,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   value={ledger.selectedNetworkState}
                   onValueChange={(val) => ledger.setSelectedNetwork(val)}
                 >
-                  <SelectTrigger $theme={theme} aria-label="Network">
+                  <UI.SelectTrigger $theme={theme} aria-label="Network">
                     <Select.Value placeholder="Select Network" />
                     <Select.Icon className="SelectIcon">
                       <ChevronDownIcon />
                     </Select.Icon>
-                  </SelectTrigger>
+                  </UI.SelectTrigger>
                   <Select.Portal>
-                    <SelectContent
+                    <UI.SelectContent
                       $theme={theme}
                       position="popper"
                       sideOffset={3}
@@ -248,37 +230,43 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       </Select.ScrollUpButton>
                       <Select.Viewport className="SelectViewport">
                         <Select.Group>
-                          {ledger.networkData.map(
-                            ({
-                              network,
-                              ledgerId,
-                              ChainIcon,
-                              iconWidth,
-                              iconFill,
-                            }) => (
-                              <SelectItem key={ledgerId} value={network}>
-                                <div className="innerRow">
-                                  <div>
-                                    <ChainIcon
-                                      width={iconWidth}
-                                      fill={iconFill}
-                                      style={{
-                                        marginLeft:
-                                          network === 'Polkadot' ? '2px' : '0',
-                                      }}
-                                    />
-                                  </div>
-                                  <div>{network}</div>
-                                </div>
-                              </SelectItem>
+                          {getSelectNetworkData(darkMode)
+                            .filter(({ network }) =>
+                              ['Polkadot', 'Kusama'].includes(network)
                             )
-                          )}
+                            .map(
+                              ({
+                                network,
+                                ledgerId,
+                                ChainIcon,
+                                iconWidth,
+                                iconFill,
+                              }) => (
+                                <UI.SelectItem key={ledgerId} value={network}>
+                                  <div className="innerRow">
+                                    <div>
+                                      <ChainIcon
+                                        width={iconWidth}
+                                        fill={iconFill}
+                                        style={{
+                                          marginLeft:
+                                            network === 'Polkadot'
+                                              ? '2px'
+                                              : '0',
+                                        }}
+                                      />
+                                    </div>
+                                    <div>{network}</div>
+                                  </div>
+                                </UI.SelectItem>
+                              )
+                            )}
                         </Select.Group>
                       </Select.Viewport>
                       <Select.ScrollDownButton className="SelectScrollButton">
                         <ChevronDownIcon />
                       </Select.ScrollDownButton>
-                    </SelectContent>
+                    </UI.SelectContent>
                   </Select.Portal>
                 </Select.Root>
 
@@ -295,31 +283,22 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
               {/** Error and Status Messages */}
               {showConnectStatus && !ledger.deviceConnected && (
-                <InfoCard>
-                  <span className="warning">
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    <span>
-                      {
-                        determineStatusFromCodes(ledger.statusCodes, false)
-                          .title
-                      }
-                    </span>
-                    <button
-                      className="dismiss"
-                      onClick={() => setShowConnectStatus(false)}
-                    >
-                      <FontAwesomeIcon icon={faX} />
-                    </button>
+                <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                  <span>
+                    {determineStatusFromCodes(ledger.statusCodes, false).title}
                   </span>
+                  <button
+                    className="dismiss"
+                    onClick={() => setShowConnectStatus(false)}
+                  >
+                    <FontAwesomeIcon icon={faX} />
+                  </button>
                 </InfoCard>
               )}
 
               {showConnectStatus && ledger.selectedNetworkState === '' && (
-                <InfoCard>
-                  <span className="warning">
-                    <FontAwesomeIcon icon={faExclamationTriangle} />
-                    Select a network.
-                  </span>
+                <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                  <span>Select a network.</span>
                 </InfoCard>
               )}
 
@@ -344,21 +323,19 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             />
             <UI.AccordionPanel>
               {!ledger.deviceConnected ? (
-                <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
-                  <span>
-                    <FontAwesomeIcon
-                      icon={faCircleDot}
-                      transform={'shrink-3'}
-                    />
-                    Connect a Ledger device to view its addresses.
-                  </span>
+                <InfoCard
+                  icon={faCircleDot}
+                  iconTransform={'shrink-3'}
+                  style={{ marginTop: '0', marginBottom: '0.75rem' }}
+                >
+                  <span>Connect a Ledger device to view its addresses.</span>
                 </InfoCard>
               ) : (
                 <>
                   <ItemsColumn>
                     {receivedAddresses.map(({ address, pubKey }, i) => (
                       <ImportAddressRow key={address}>
-                        <UI.Identicon value={address} size={28} />
+                        <UI.Identicon value={address} fontSize={'2.5rem'} />
                         <div className="addressInfo">
                           <h2>
                             {connectedNetwork} Ledger Account{' '}

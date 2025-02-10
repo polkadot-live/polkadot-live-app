@@ -1,8 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
-import { chainUnits } from '@ren/config/chains';
 import {
   checkAccountWithProperties,
   checkFlattenedAccountWithProperties,
@@ -15,8 +13,9 @@ import {
   getNominationPoolStateText,
 } from '@ren/utils/TextUtils';
 import { getUnixTime } from 'date-fns';
-import { planckToUnit } from '@w3ux/utils';
+
 import type { AnyData } from '@polkadot-live/types/misc';
+import type BigNumber from 'bignumber.js';
 import type {
   IntervalSubscription,
   ApiCallEntry,
@@ -344,11 +343,6 @@ export class EventsController {
 
         const pendingRewardsPlanck = miscData.pendingRewardsPlanck as BigNumber;
 
-        const pendingRewardsUnit = planckToUnit(
-          new BigNumber(poolPendingRewards.toString()),
-          chainUnits(chainId)
-        );
-
         return {
           uid: '',
           category: 'nominationPools',
@@ -380,7 +374,7 @@ export class EventsController {
                 chainId,
                 args: [{ Rewards: null }],
                 data: {
-                  extra: pendingRewardsUnit.toNumber(),
+                  extra: pendingRewardsPlanck.toString(),
                 },
               },
             },
@@ -396,7 +390,7 @@ export class EventsController {
                 chainId,
                 args: [],
                 data: {
-                  extra: pendingRewardsUnit.toNumber(),
+                  extra: pendingRewardsPlanck.toString(),
                 },
               },
             },

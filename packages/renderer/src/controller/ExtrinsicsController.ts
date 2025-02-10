@@ -2,22 +2,73 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { getAddressNonce } from '@ren/utils/AccountUtils';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
-import { planckToUnit } from '@w3ux/utils';
-import type { AnyJson } from '@polkadot-live/types/misc';
+import {
+  getAddressNonce,
+  getNominationPoolRewards,
+  getSpendableBalance,
+} from '@ren/utils/AccountUtils';
+
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
+import type {
+  ActionMeta,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 
 interface CachedExtrinsicData {
   tx: AnyJson;
   payload?: AnyJson;
 }
+interface VerifyExtrinsicResult {
+  isValid: boolean;
+  reason?: string;
+}
 
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
+
+  /**
+   * Construct an extrinsic's arguments.
+   */
+  static getExtrinsicArgs = (actionMeta: ActionMeta): AnyData => {
+    const { action, args } = actionMeta;
+
+    let pargs: AnyData;
+    if (action === 'balances_transferKeepAlive') {
+      pargs = [args[0], BigInt(args[1])];
+    } else {
+      pargs = args;
+    }
+
+    return pargs;
+  };
+
+  /**
+   * Independent method to get an estimated transaction fee.
+   */
+  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<BigNumber> => {
+    const { txId, actionMeta } = info;
+    const { chainId, from, pallet, method } = info.actionMeta;
+
+    const args = this.getExtrinsicArgs(actionMeta);
+    const origin = 'ExtrinsicsController.getEstimatedFee';
+    const { api } = await getApiInstanceOrThrow(chainId, origin);
+    console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
+
+    // Instantiate tx.
+    const tx = api.tx[pallet][method](...args);
+    this.txPayloads.set(txId, { tx });
+
+    // Get estimated tx fee.
+    const { partialFee } = await tx.paymentInfo(from);
+    const estimatedFeePlank = new BigNumber(partialFee.toString());
+    console.log(`📝 Estimated fee: ${estimatedFeePlank.toString()}`);
+
+    return estimatedFeePlank;
+  };
 
   /**
    * Instantiates a new tx based on the received extrinsic data.
@@ -25,21 +76,7 @@ export class ExtrinsicsController {
   static new = async (info: ExtrinsicInfo) => {
     try {
       const { txId } = info;
-      const { chainId, from, pallet, method, args } = info.actionMeta;
-
-      const origin = 'ExtrinsicsController.new';
-      const { api } = await getApiInstanceOrThrow(chainId, origin);
-      console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
-
-      // Instantiate tx.
-      const tx = api.tx[pallet][method](...args);
-      this.txPayloads.set(txId, { tx });
-
-      // Get estimated tx fee.
-      const { partialFee } = await tx.paymentInfo(from);
-      const estimatedFeePlank = new BigNumber(partialFee.toString());
-      const estimatedFee = planckToUnit(estimatedFeePlank, chainUnits(chainId));
-      console.log(`📝 Estimated fee: ${estimatedFee}`);
+      const estimatedFee = await this.getEstimatedFee(info);
 
       ConfigRenderer.portToAction?.postMessage({
         task: 'action:tx:setEstimatedFee',
@@ -53,11 +90,68 @@ export class ExtrinsicsController {
   };
 
   /**
+   * Verify that an extrinsic is valid and can be submitted.
+   * For example, check account balance is sufficient, etc.
+   */
+  static verifyExtrinsic = async (
+    info: ExtrinsicInfo
+  ): Promise<VerifyExtrinsicResult> => {
+    // Check estimated fee exists.
+    const { estimatedFee } = info;
+    if (!estimatedFee) {
+      return { isValid: false, reason: 'Estimated fee not set' };
+    }
+
+    const { action, chainId, from } = info.actionMeta;
+    const args = this.getExtrinsicArgs(info.actionMeta);
+
+    switch (action) {
+      case 'balances_transferKeepAlive': {
+        // args[1]: BigInt to string to BigNumber.
+        const bnSendAmount = new BigNumber(args[1].toString());
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+        const isValid = bnSpendable.gte(bnSendAmount.plus(bnFee));
+
+        return isValid
+          ? { isValid }
+          : { isValid, reason: 'Insufficient balance' };
+      }
+      case 'nominationPools_pendingRewards_withdraw':
+      case 'nominationPools_pendingRewards_bond': {
+        const bnSpendable = await getSpendableBalance(from, chainId);
+        const bnFee = new BigNumber(estimatedFee);
+
+        // Check sufficient balance.
+        if (!bnSpendable.gte(bnFee)) {
+          return { isValid: false, reason: 'Insufficient balance' };
+        }
+
+        // Check rewards are current (extrinsic is not outdated).
+        const { extra }: { extra: string } = info.actionMeta.data;
+        const bnExtRewards = new BigNumber(extra);
+        const bnCurRewards = await getNominationPoolRewards(from, chainId);
+
+        if (!bnExtRewards.isEqualTo(bnCurRewards)) {
+          return { isValid: false, reason: 'Outdated extrinsic' };
+        }
+
+        // Check rewards are non-zero.
+        if (bnExtRewards.isZero()) {
+          return { isValid: false, reason: 'No pending rewards' };
+        }
+
+        return { isValid: true };
+      }
+    }
+  };
+
+  /**
    * Build and cache a transaction payload and send it back to action window.
    */
   static build = async (info: ExtrinsicInfo) => {
     try {
-      const { txId } = info;
+      const { txId, actionMeta } = info;
       const { chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
 
@@ -67,7 +161,8 @@ export class ExtrinsicsController {
         const { api } = await getApiInstanceOrThrow(chainId, origin);
 
         // Instantiate tx.
-        const { pallet, method, args } = info.actionMeta;
+        const { pallet, method } = info.actionMeta;
+        const args = this.getExtrinsicArgs(actionMeta);
         const tx = api.tx[pallet][method](...args);
         this.txPayloads.set(txId, { tx });
       }
@@ -83,15 +178,26 @@ export class ExtrinsicsController {
       const txPayload = await this.buildPayload(tx, chainId, from, nonce);
       this.txPayloads.set(txId, { tx, payload: txPayload });
 
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:tx:report:data',
-        data: {
-          accountNonce: nonce,
-          genesisHash: txPayload.genesisHash.toU8a(),
-          txId,
-          txPayload: txPayload.toU8a(),
-        },
-      });
+      // Verify extrinsic is valid for submission.
+      const verifyResult = await this.verifyExtrinsic(info);
+      console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
+
+      if (verifyResult.isValid) {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:report:data',
+          data: {
+            accountNonce: nonce,
+            genesisHash: txPayload.genesisHash.toU8a(),
+            txId,
+            txPayload: txPayload.toU8a(),
+          },
+        });
+      } else {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:invalid',
+          data: { message: verifyResult.reason || 'Reason unknown.' },
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -228,23 +334,15 @@ export class ExtrinsicsController {
    */
   static submit = async (info: ExtrinsicInfo) => {
     const { txId } = info;
-    const { from, method, pallet, args, chainId } = info.actionMeta;
+    const { from } = info.actionMeta;
 
     try {
-      if (!info.dynamicInfo) {
-        throw new Error('Error: Extrinsic not built.');
-      }
-      if (!info.dynamicInfo.txSignature) {
-        throw new Error('Error: Extrinsic signature not found.');
+      if (!(info.dynamicInfo && info.dynamicInfo.txSignature)) {
+        throw new Error('Error: Extrinsic not built or signature missing.');
       }
 
-      // Build transaction.
-      const origin = 'ExtrinsicsController.submit';
-      const { api } = await getApiInstanceOrThrow(chainId, origin);
-      const tx = api.tx[pallet][method](...args);
-
-      // Get cached payload.
-      const { payload: txPayload } = this.txPayloads.get(txId)!;
+      // Get cached tx and payload.
+      const { payload: txPayload, tx } = this.txPayloads.get(txId)!;
 
       // Add signature to transaction.
       const { txSignature } = info.dynamicInfo;
@@ -308,12 +406,14 @@ export class ExtrinsicsController {
       data: { status, txId },
     });
 
-    // Mark event as stale if status is finalized.
-    if (status === 'finalized' && !isMock) {
-      window.myAPI.sendEventTask({
-        action: 'events:makeStale',
-        data: { uid: eventUid, chainId },
-      });
+    if (eventUid) {
+      // Mark event as stale if status is finalized.
+      if (status === 'finalized' && !isMock) {
+        window.myAPI.sendEventTask({
+          action: 'events:makeStale',
+          data: { uid: eventUid, chainId },
+        });
+      }
     }
   };
 }

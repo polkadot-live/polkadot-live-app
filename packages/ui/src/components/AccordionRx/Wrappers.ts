@@ -28,6 +28,7 @@ export const AccordionWrapper = styled.div`
     background-color: var(--background-surface);
     display: flex;
     align-items: center;
+    align-self: stretch;
     justify-content: center;
     padding: 0 0.75rem;
     border-top-right-radius: 0.375rem;
@@ -74,7 +75,7 @@ export const AccordionWrapper = styled.div`
 
       h3 {
         flex: 1;
-        font-size: 1.15rem !important;
+        font-size: 1.08rem !important;
       }
 
       .right {
@@ -128,6 +129,13 @@ export const AccordionWrapper = styled.div`
       margin-bottom: 1rem;
       line-height: 1.75rem;
     }
+  }
+
+  .AccordionContentInnerAlternate {
+    background-color: transparent;
+    padding: 0;
+    margin-top: 1rem;
+    border-radius: 0.375rem;
   }
 
   @keyframes slideDown {

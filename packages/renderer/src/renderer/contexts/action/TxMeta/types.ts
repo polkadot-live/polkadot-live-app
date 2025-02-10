@@ -22,6 +22,7 @@ export interface TxMetaContextInterface {
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   onFilterChange: (val: string) => void;
+  notifyInvalidExtrinsic: (message: string) => void;
   setEstimatedFee: (txId: string, estimatedFee: string) => Promise<void>;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;

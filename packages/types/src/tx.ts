@@ -16,7 +16,8 @@ export type TxStatus =
 
 export type TxActionUid =
   | 'nominationPools_pendingRewards_bond'
-  | 'nominationPools_pendingRewards_withdraw';
+  | 'nominationPools_pendingRewards_withdraw'
+  | 'balances_transferKeepAlive';
 
 export interface ActionMeta {
   // Name of account sending tx.
@@ -33,10 +34,10 @@ export interface ActionMeta {
   chainId: ChainID;
   // Any data that the transaction call requires.
   data: AnyData;
-  // Unique identifier of the action's associated event.
-  eventUid: string;
   // Args for tx API call.
   args: AnyData;
+  // Unique identifier of the action's associated event.
+  eventUid?: string;
 }
 
 /**
@@ -67,4 +68,13 @@ export interface ExtrinsicInfo {
   txStatus: TxStatus;
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
+}
+
+/**
+ * Specific data send with a transfer extrinsic.
+ */
+export interface ExTransferKeepAliveData {
+  recipientAddress: string;
+  recipientAccountName: string;
+  sendAmount: string;
 }

@@ -3,6 +3,7 @@
 
 import {
   app,
+  clipboard,
   ipcMain,
   powerMonitor,
   protocol,
@@ -258,6 +259,10 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('app:platform:get', async () => process.platform as string);
+
+  ipcMain.handle('main:clipboard:copy', async (_, text) =>
+    clipboard.writeText(text)
+  );
 
   /**
    * Websockets

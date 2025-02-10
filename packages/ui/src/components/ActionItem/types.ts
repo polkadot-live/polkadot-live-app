@@ -17,4 +17,6 @@ export type ActionItemProps = ComponentBase & {
   inactive?: boolean;
   // optional inline button.
   inlineButton?: ReactNode;
+  // whether to the toggle icon.
+  showIcon?: boolean;
 };

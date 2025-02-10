@@ -14,6 +14,7 @@ import {
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { ContentWrapper } from '../../../Wrappers';
 import { Scrollable } from '@polkadot-live/ui/styles';
+import { InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
   faCaretRight,
@@ -28,14 +29,12 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useWalletConnect } from '@app/contexts/import/WalletConnect';
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
-import { FlexRow, WcSessionButton } from './Wrappers';
+import { WcFlexRow, WcSessionButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
   ImportAddressRow,
-  InfoCard,
 } from '../../Wrappers';
 import type { ImportProps } from './types';
 
@@ -117,11 +116,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
    * Render reusable offline warning info card.
    */
   const renderOfflineWarning = (marginTop = '0.5rem') => (
-    <InfoCard style={{ marginTop }}>
-      <span className="warning">
-        <FontAwesomeIcon icon={faExclamationTriangle} />
-        <span>Currently offline. Please go online to enable connections.</span>
-      </span>
+    <InfoCard
+      kind={'warning'}
+      icon={faExclamationTriangle}
+      style={{ marginTop }}
+    >
+      <span>Currently offline. Please go online to enable connections.</span>
     </InfoCard>
   );
 
@@ -221,15 +221,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 {wcSessionRestored ? (
                   <>
                     {!getOnlineMode() && renderOfflineWarning('0')}
-                    <FlexRow>
-                      <InfoCard style={{ margin: '0', flex: 1 }}>
-                        <span>
-                          <FontAwesomeIcon
-                            icon={faCircleDot}
-                            transform={'shrink-3'}
-                          />
-                          <span>An existing session has been detected.</span>
-                        </span>
+                    <WcFlexRow>
+                      <InfoCard
+                        icon={faCircleDot}
+                        iconTransform={'shrink-3'}
+                        style={{ margin: '0', flex: 1 }}
+                      >
+                        <span>An existing session has been detected.</span>
                       </InfoCard>
 
                       {/** Connect and Disconnect Buttons */}
@@ -260,7 +258,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       >
                         Fetch
                       </WcSessionButton>
-                    </FlexRow>
+                    </WcFlexRow>
                   </>
                 ) : (
                   <>
@@ -304,17 +302,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     ))}
 
                     {!getOnlineMode() && renderOfflineWarning()}
-                    <FlexRow>
-                      <InfoCard style={{ margin: '0', flex: 1 }}>
-                        <span>
-                          <FontAwesomeIcon
-                            icon={faCircleDot}
-                            transform={'shrink-3'}
-                          />
-                          <span style={{ flex: 1 }}>
-                            Select your target networks and click Connect to
-                            fetch addresses via WalletConnect.
-                          </span>
+                    <WcFlexRow>
+                      <InfoCard
+                        icon={faCircleDot}
+                        iconTransform={'shrink-3'}
+                        style={{ margin: '0', flex: 1 }}
+                      >
+                        <span style={{ flex: 1 }}>
+                          Select your target networks and click Connect to fetch
+                          addresses via WalletConnect.
                         </span>
                       </InfoCard>
 
@@ -330,7 +326,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       >
                         Connect
                       </WcSessionButton>
-                    </FlexRow>
+                    </WcFlexRow>
                   </>
                 )}
               </ItemsColumn>
@@ -346,12 +342,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             />
             <UI.AccordionPanel>
               {wcFetchedAddresses.length === 0 ? (
-                <InfoCard style={{ marginTop: '0', marginBottom: '0.75rem' }}>
+                <InfoCard
+                  icon={faCircleDot}
+                  iconTransform={'shrink-3'}
+                  style={{ marginTop: '0', marginBottom: '0.75rem' }}
+                >
                   <span>
-                    <FontAwesomeIcon
-                      icon={faCircleDot}
-                      transform={'shrink-3'}
-                    />
                     Establish a WalletConnect session to view addresses.
                   </span>
                 </InfoCard>
@@ -361,7 +357,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     {wcFetchedAddresses.map(
                       ({ chainId, encoded, selected }, i) => (
                         <ImportAddressRow key={encoded}>
-                          <UI.Identicon value={encoded} size={28} />
+                          <UI.Identicon value={encoded} fontSize={'2.5rem'} />
                           <div className="addressInfo">
                             <h2>
                               {i + 1}. {chainId} Account

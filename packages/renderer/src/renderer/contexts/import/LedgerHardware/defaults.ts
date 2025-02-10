@@ -9,7 +9,6 @@ export const defaultLedgerHardwareContext: LedgerHardwareContextInterface = {
   deviceConnected: false,
   isFetching: false,
   isImporting: false,
-  networkData: [],
   pageIndex: 0,
   receivedAddresses: [],
   selectedAddresses: [],

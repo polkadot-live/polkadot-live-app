@@ -136,7 +136,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
           <div className="content">
             <div className="inner">
               <div className="identicon">
-                <Identicon value={editName} size={28} />
+                <Identicon value={editName} fontSize={'2.5rem'} />
               </div>
               <div>
                 <section className="row" style={{ paddingLeft: '1.25rem' }}>

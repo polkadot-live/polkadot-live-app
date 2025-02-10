@@ -3,6 +3,10 @@
 
 import type { ExtrinsicInfo } from 'packages/types/src';
 
+export interface ExtrinsicItemContentProps {
+  info: ExtrinsicInfo;
+}
+
 export interface SubmitProps {
   info: ExtrinsicInfo;
   valid: boolean;

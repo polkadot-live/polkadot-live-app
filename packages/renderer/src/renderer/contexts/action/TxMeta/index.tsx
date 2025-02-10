@@ -3,7 +3,6 @@
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { chainIcon } from '@ren/config/chains';
-import { Flip, toast } from 'react-toastify';
 import React, {
   createContext,
   useContext,
@@ -13,7 +12,6 @@ import React, {
 } from 'react';
 import * as defaults from './defaults';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ToastOptions } from 'react-toastify';
 import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
@@ -25,6 +23,8 @@ import type {
 import { setStateWithRef } from '@w3ux/utils';
 import { SignOverlay } from '@app/screens/Action/SignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
+import { generateUID } from '@ren/utils/AccountUtils';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -123,20 +123,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   }, [updateCache]);
 
   /**
-   * Util for generating a UID in the browser.
-   */
-  const generateUID = (): string => {
-    // Generate a random 16-byte array.
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-
-    // Convert to a hexadecimal string.
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-      ''
-    );
-  };
-
-  /**
    * Initialize an extrinsic.
    */
   const initTx = (actionMeta: ActionMeta) => {
@@ -156,7 +142,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         ({ action, from, txStatus }) =>
           from === actionMeta.from &&
           action === actionMeta.action &&
-          txStatus === 'pending'
+          txStatus === 'pending' &&
+          // Allow duplicate balance extrinsics.
+          action !== 'balances_transferKeepAlive'
       );
 
     if (alreadyExists !== undefined) {
@@ -165,7 +153,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic already added.',
-        `toast-already-exists-${actionMeta.eventUid}-${actionMeta.action}`,
+        `toast-already-exists-${String(Date.now())}`,
         'error'
       );
 
@@ -227,7 +215,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       renderToast(
         'Extrinsic added.',
-        `toast-added-${info.actionMeta.eventUid}-${info.actionMeta.action}`,
+        `toast-added-${String(Date.now())}`,
         'success'
       );
     } catch (err) {
@@ -240,6 +228,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   /**
    * Requests an extrinsic's dynamic data. Call before submitting an extrinsic.
+   * Confirms the extrinsic is valid and can be submitted, by checking sufficient balances, etc.
    */
   const initTxDynamicInfo = (txId: string) => {
     try {
@@ -283,6 +272,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     }
+  };
+
+  /**
+   * Render an error notification if an extrinsic is not valid for submission.
+   */
+  const notifyInvalidExtrinsic = (message: string) => {
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    const text = `Invalid extrinsic - ${message}`;
+    renderToast(text, `invalid-extrinsic-${String(Date.now())}`, 'error');
   };
 
   /**
@@ -517,6 +515,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       case 'nominationPools': {
         return 'Nomination Pools';
       }
+      case 'balances': {
+        return 'Balances';
+      }
       default: {
         return 'Unknown.';
       }
@@ -534,34 +535,10 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       case 'nominationPools_pendingRewards_withdraw': {
         return 'Claim Rewards';
       }
+      default: {
+        return 'Unknown';
+      }
     }
-  };
-
-  /**
-   * Util for rendering a toast notification.
-   */
-  const renderToast = (
-    message: string,
-    toastId: string,
-    toastType: 'error' | 'success'
-  ) => {
-    const args: ToastOptions<unknown> = {
-      position: 'top-center',
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId,
-    };
-
-    toastType === 'success'
-      ? toast.success(message, args)
-      : toast.error(message, args);
   };
 
   // Transaction state.
@@ -598,6 +575,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         initTx,
         initTxDynamicInfo,
         onFilterChange,
+        notifyInvalidExtrinsic,
         setEstimatedFee,
         setTxDynamicInfo,
         setTxSignature,
