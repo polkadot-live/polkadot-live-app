@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
-import type { SyncFlag } from '@polkadot-live/types/communication';
+import type { SyncFlag, WcSyncFlags } from '@polkadot-live/types/communication';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -40,6 +40,13 @@ export const ConnectionsProvider = ({
 
   // Flag set to `true` when an extrinsic is getting built.
   const [isBuildingExtrinsic, setIsBuildingExtrinsic] = useState(false);
+
+  // WalletConnect flags.
+  const [wcSyncFlags, setWcSyncFlags] = useState<WcSyncFlags>({
+    wcConnecting: false,
+    wcDisconnecting: false,
+    wcInitialized: false,
+  });
 
   useEffect(() => {
     // Synchronize flags in store.
@@ -80,6 +87,18 @@ export const ConnectionsProvider = ({
             setIsBuildingExtrinsic(flag);
             break;
           }
+          case 'wc:connecting': {
+            setWcSyncFlags((pv) => ({ ...pv, wcConnecting: flag }));
+            break;
+          }
+          case 'wc:disconnecting': {
+            setWcSyncFlags((pv) => ({ ...pv, wcDisconnecting: flag }));
+            break;
+          }
+          case 'wc:initialized': {
+            setWcSyncFlags((pv) => ({ ...pv, wcInitialized: flag }));
+            break;
+          }
           default: {
             break;
           }
@@ -103,6 +122,7 @@ export const ConnectionsProvider = ({
         isImporting,
         isOnlineMode,
         isBuildingExtrinsic,
+        wcSyncFlags,
         getOnlineMode,
         setDarkMode,
         setIsConnected,

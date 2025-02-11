@@ -394,6 +394,12 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
+      case 'wc:connecting':
+      case 'wc:disconnecting':
+      case 'wc:initialized': {
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
+        break;
+      }
       default: {
         break;
       }
