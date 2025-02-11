@@ -47,6 +47,9 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import { getAddressChainId } from '../Utils';
 
+// TODO: Move to WalletConnect file.
+const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
+
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
@@ -629,6 +632,14 @@ export const useMainMessagePorts = () => {
    */
   const handleReceivedPort = async (e: MessageEvent) => {
     console.log(`received port: ${e.data.target}`);
+
+    // TODO: May need to handle WalletConnect messages here.
+    // For now, don't do any further processing if message is from WalletConnect.
+    if (e.origin === WC_EVENT_ORIGIN) {
+      console.log('> WalletConnect event received:');
+      console.log(e);
+      return;
+    }
 
     switch (e.data.target) {
       case 'main-import:main': {

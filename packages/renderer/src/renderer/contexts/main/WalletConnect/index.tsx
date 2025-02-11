@@ -8,16 +8,11 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { chainIcon } from '@ren/config/chains';
 import { getSdkError } from '@walletconnect/utils';
-import { encodeAddress } from '@polkadot/util-crypto';
 import { getUnixTime } from 'date-fns';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type {
-  WalletConnectContextInterface,
-  WcFetchedAddress,
-  WcSelectNetwork,
-} from './types';
+import type { WalletConnectContextInterface, WcSelectNetwork } from './types';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -26,9 +21,7 @@ const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
 const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
 
-/**
- * @todo Keep in import window
- */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mapCaipChainId = new Map<string, ChainID>([
   [WC_POLKADOT_CAIP_ID, 'Polkadot'],
   [WC_KUSAMA_CAIP_ID, 'Kusama'],
@@ -59,9 +52,6 @@ export const WalletConnectProvider = ({
   const [wcSessionRestored, setWcSessionRestored] = useState(false);
   const wcSessionRestoredRef = useRef<boolean>(false);
 
-  /**
-   * @todo Move to main renderer
-   */
   const wcProvider = useRef<UniversalProvider | null>(null);
   const wcModal = useRef<WalletConnectModal | null>(null);
   const wcPairingTopic = useRef<string | null>(null);
@@ -73,8 +63,6 @@ export const WalletConnectProvider = ({
 
   /**
    * WalletConnect networks and their selected state.
-   *
-   * @todo Move to main renderer
    */
   const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>([
     {
@@ -98,19 +86,7 @@ export const WalletConnectProvider = ({
   ]);
 
   /**
-   * Fetched addresses with WalletConnect.
-   *
-   * @todo Keep in import renderer
-   */
-  const [wcFetchedAddresses, setWcFetchedAddresses] = useState<
-    WcFetchedAddress[]
-  >([]);
-
-  /**
    * Get namespaces of selected networks.
-   *
-   * @todo Move wcNetworks to main renderer
-   * @todo Send selected network ChainIDs to main renderer
    */
   const getNamespaces = () => {
     const selectedNetworks = wcNetworks.filter(({ selected }) => selected);
@@ -123,25 +99,6 @@ export const WalletConnectProvider = ({
         `polkadot:${WC_POLKADOT_CAIP_ID}`,
         `polkadot:${WC_KUSAMA_CAIP_ID}`,
       ];
-    }
-  };
-
-  /**
-   * Util for getting a chain ID's address prefix for encoding.
-   *
-   * @todo Keep in import window
-   */
-  const getAddressPrefix = (chainId: ChainID) => {
-    switch (chainId) {
-      case 'Polkadot': {
-        return 0;
-      }
-      case 'Kusama': {
-        return 2;
-      }
-      case 'Westend': {
-        return 42;
-      }
     }
   };
 
@@ -164,25 +121,27 @@ export const WalletConnectProvider = ({
       })
     );
 
-    setWcFetchedAddresses(() =>
-      accounts.map(({ address, caipId }) => {
-        const chainId = mapCaipChainId.get(caipId)!;
-        const pref = getAddressPrefix(chainId);
-
-        return {
-          chainId,
-          encoded: encodeAddress(address, pref),
-          substrate: address,
-          selected: false,
-        };
-      })
+    console.log(
+      `TODO: Send ${accounts.length} fetched accounts to import window`
     );
+
+    //setWcFetchedAddresses(() =>
+    //  accounts.map(({ address, caipId }) => {
+    //    const chainId = mapCaipChainId.get(caipId)!;
+    //    const pref = getAddressPrefix(chainId);
+
+    //    return {
+    //      chainId,
+    //      encoded: encodeAddress(address, pref),
+    //      substrate: address,
+    //      selected: false,
+    //    };
+    //  })
+    //);
   };
 
   /**
    * Init provider and modal.
-   *
-   * @todo Move to main renderer
    */
   const initProvider = async () => {
     if (!wcProvider.current) {
@@ -225,8 +184,6 @@ export const WalletConnectProvider = ({
    * Requires up to 3 different chain namespaces (polkadot, kusama and westend).
    * The supported methods, chains, and events can all be defined by the dapp
    * team based on the requirements of the dapp.
-   *
-   * @todo Move to main renderer
    */
   const getConnectionParams = () => ({
     requiredNamespaces: {
@@ -242,7 +199,6 @@ export const WalletConnectProvider = ({
   /**
    * Create or restore a WalletConnect session.
    *
-   * @todo Move to main renderer
    * @todo Send existing session flag to import window to sync UI
    */
   const createSession = async () => {
@@ -276,8 +232,6 @@ export const WalletConnectProvider = ({
   /**
    * Restore an existing session. Called when `Connect` UI button clicked.
    * Note: Will prompt wallet to approve addresses.
-   *
-   * @todo Move to main renderer
    */
   const restoreOrConnectSession = async () => {
     /** Create new session if there's no session to restore. */
@@ -293,7 +247,7 @@ export const WalletConnectProvider = ({
 
       return true;
     } else {
-      /** NOTE: This branch is currently not run based on the UI. */
+      /** NOTE: This branch is currently not run based on the import UI. */
       const expiry = wcProvider.current!.session!.expiry;
       const nowUnix = getUnixTime(new Date());
 
@@ -323,8 +277,6 @@ export const WalletConnectProvider = ({
 
   /**
    * Set addresses from existing session. Called with `Fetch` UI button clicked.
-   *
-   * @todo Move to main renderer
    */
   const fetchAddressesFromExistingSession = () => {
     /** Fetch accounts from restored session. */
@@ -341,7 +293,6 @@ export const WalletConnectProvider = ({
   /**
    * Establish a session or use an existing session to fetch addresses.
    *
-   * @todo Move to main renderer
    * @todo Send fetched addresses to import window via port message
    * @todo UI allows calling this function only when creating a new session. Can be simplified
    */
@@ -380,8 +331,6 @@ export const WalletConnectProvider = ({
 
   /**
    * Disconnect from the current session.
-   *
-   * @todo Move to main renderer
    */
   const disconnectWcSession = async () => {
     if (!wcProvider.current) {
@@ -407,8 +356,6 @@ export const WalletConnectProvider = ({
 
   /**
    * Initialize the WalletConnect provider on initial render.
-   *
-   * @todo Move to main renderer
    */
   useEffect(() => {
     if (getOnlineMode() && !wcProvider.current) {
@@ -437,11 +384,11 @@ export const WalletConnectProvider = ({
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
-        setWcFetchedAddresses,
+        //setWcFetchedAddresses,
         setWcNetworks,
         wcConnecting,
         wcDisconnecting,
-        wcFetchedAddresses,
+        //wcFetchedAddresses,
         wcInitialized,
         wcNetworks,
         wcSessionRestored,
