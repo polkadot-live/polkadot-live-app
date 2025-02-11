@@ -46,6 +46,9 @@ export const WalletConnectProvider = ({
 }) => {
   const { getOnlineMode, isConnected, isOnlineMode } = useConnections();
 
+  /**
+   * @todo Make flags relay app flags
+   */
   const [wcConnecting, setWcConnecting] = useState(false);
   const [wcDisconnecting, setWcDisconnecting] = useState(false);
   const [wcInitialized, setWcInitialized] = useState(false);
@@ -53,6 +56,9 @@ export const WalletConnectProvider = ({
   const [wcSessionRestored, setWcSessionRestored] = useState(false);
   const wcSessionRestoredRef = useRef<boolean>(false);
 
+  /**
+   * @todo Move to main renderer
+   */
   const wcProvider = useRef<UniversalProvider | null>(null);
   const wcModal = useRef<WalletConnectModal | null>(null);
   const wcPairingTopic = useRef<string | null>(null);
@@ -64,6 +70,8 @@ export const WalletConnectProvider = ({
 
   /**
    * WalletConnect networks and their selected state.
+   *
+   * @todo Move to main renderer
    */
   const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>([
     {
@@ -88,6 +96,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Fetched addresses with WalletConnect.
+   *
+   * @todo Keep in import renderer
    */
   const [wcFetchedAddresses, setWcFetchedAddresses] = useState<
     WcFetchedAddress[]
@@ -95,6 +105,9 @@ export const WalletConnectProvider = ({
 
   /**
    * Get namespaces of selected networks.
+   *
+   * @todo Move wcNetworks to main renderer
+   * @todo Send selected network ChainIDs to main renderer
    */
   const getNamespaces = () => {
     const selectedNetworks = wcNetworks.filter(({ selected }) => selected);
@@ -112,6 +125,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Util for getting a chain ID's address prefix for encoding.
+   *
+   * @todo Move to main renderer
    */
   const getAddressPrefix = (chainId: ChainID) => {
     switch (chainId) {
@@ -129,6 +144,9 @@ export const WalletConnectProvider = ({
 
   /**
    * Util for setting fetched addresses state.
+   *
+   * @todo Move to main renderer
+   * @todo Send fetched addresses to import window via port message
    */
   const setFetchedAddresses = (namespaces: AnyData) => {
     /** Get the accounts from the session. */
@@ -161,6 +179,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Init provider and modal.
+   *
+   * @todo Move to main renderer
    */
   const initProvider = async () => {
     if (!wcProvider.current) {
@@ -181,8 +201,8 @@ export const WalletConnectProvider = ({
       wcProvider.current = provider;
     }
 
+    // Instantiate a standalone modal using the dapp's WalletConnect projectId.
     if (!wcModal.current) {
-      // Create a standalone modal using the dapp's WalletConnect projectId.
       const modal = new WalletConnectModal({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
@@ -203,6 +223,8 @@ export const WalletConnectProvider = ({
    * Requires up to 3 different chain namespaces (polkadot, kusama and westend).
    * The supported methods, chains, and events can all be defined by the dapp
    * team based on the requirements of the dapp.
+   *
+   * @todo Move to main renderer
    */
   const getConnectionParams = () => ({
     requiredNamespaces: {
@@ -217,6 +239,9 @@ export const WalletConnectProvider = ({
 
   /**
    * Create or restore a WalletConnect session.
+   *
+   * @todo Move to main renderer
+   * @todo Send existing session flag to import window to sync UI
    */
   const createSession = async () => {
     try {
@@ -249,6 +274,8 @@ export const WalletConnectProvider = ({
   /**
    * Restore an existing session. Called when `Connect` UI button clicked.
    * Note: Will prompt wallet to approve addresses.
+   *
+   * @todo Move to main renderer
    */
   const restoreOrConnectSession = async () => {
     /** Create new session if there's no session to restore. */
@@ -294,6 +321,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Set addresses from existing session. Called with `Fetch` UI button clicked.
+   *
+   * @todo Move to main renderer
    */
   const fetchAddressesFromExistingSession = () => {
     /** Fetch accounts from restored session. */
@@ -308,10 +337,11 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Instantiate a universal provider using the projectId.
+   * Establish a session or use an existing session to fetch addresses.
    *
-   * NOTE: UI allows calling this function only when creating a new
-   * session. Can be simplified.
+   * @todo Move to main renderer
+   * @todo Send fetched addresses to import window via port message
+   * @todo UI allows calling this function only when creating a new session. Can be simplified
    */
   const connectWc = async () => {
     try {
@@ -348,6 +378,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Disconnect from the current session.
+   *
+   * @todo Move to main renderer
    */
   const disconnectWcSession = async () => {
     if (!wcProvider.current) {
@@ -373,6 +405,8 @@ export const WalletConnectProvider = ({
 
   /**
    * Initialize the WalletConnect provider on initial render.
+   *
+   * @todo Move to main renderer
    */
   useEffect(() => {
     if (getOnlineMode() && !wcProvider.current) {
