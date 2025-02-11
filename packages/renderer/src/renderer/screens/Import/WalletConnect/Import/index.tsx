@@ -39,9 +39,14 @@ import {
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
+  const {
+    darkMode,
+    getOnlineMode,
+    wcSyncFlags: { wcConnecting, wcDisconnecting, wcInitialized },
+  } = useConnections();
+
   const { insertAccountStatus } = useAccountStatuses();
   const { isAlreadyImported, wcAddresses } = useAddresses();
-  const { darkMode, getOnlineMode } = useConnections();
   const { handleImportAddress } = useImportHandler();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -51,10 +56,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     fetchAddressesFromExistingSession,
     setWcFetchedAddresses,
     setWcNetworks,
-    wcConnecting,
-    wcDisconnecting,
     wcFetchedAddresses,
-    wcInitialized,
     wcNetworks,
     wcSessionRestored,
   } = useWalletConnect();

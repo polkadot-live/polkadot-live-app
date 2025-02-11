@@ -394,9 +394,21 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
-      case 'wc:connecting':
-      case 'wc:disconnecting':
+      case 'wc:connecting': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcConnecting: flag };
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
+        break;
+      }
+      case 'wc:disconnecting': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcDisconnecting: flag };
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
+        break;
+      }
       case 'wc:initialized': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcInitialized: flag };
         WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
@@ -419,6 +431,15 @@ app.whenReady().then(async () => {
       }
       case 'isBuildingExtrinsic': {
         return ConfigMain.isBuildingExtrinsic;
+      }
+      case 'wc:connecting': {
+        return ConfigMain.wcSyncFlags.wcConnecting;
+      }
+      case 'wc:disconnecting': {
+        return ConfigMain.wcSyncFlags.wcDisconnecting;
+      }
+      case 'wc:initialized': {
+        return ConfigMain.wcSyncFlags.wcInitialized;
       }
       default: {
         return false;

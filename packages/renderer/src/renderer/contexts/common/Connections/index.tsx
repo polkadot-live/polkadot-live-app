@@ -55,9 +55,23 @@ export const ConnectionsProvider = ({
       setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+
       setIsBuildingExtrinsic(
         await window.myAPI.getModeFlag('isBuildingExtrinsic')
       );
+
+      // Get WalletConnect flags asynchronously.
+      const results = await Promise.all([
+        window.myAPI.getModeFlag('wc:connecting'),
+        window.myAPI.getModeFlag('wc:disconnecting'),
+        window.myAPI.getModeFlag('wc:initialized'),
+      ]);
+
+      setWcSyncFlags({
+        wcConnecting: results[0],
+        wcDisconnecting: results[1],
+        wcInitialized: results[2],
+      });
     };
 
     // Listen for synching events.
