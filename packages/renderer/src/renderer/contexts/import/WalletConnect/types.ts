@@ -4,22 +4,21 @@
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 
-export interface WalletConnectContextInterface {
-  wcConnecting: boolean;
-  wcDisconnecting: boolean;
+export interface WalletConnectImportContextInterface {
   wcFetchedAddresses: WcFetchedAddress[];
-  wcInitialized: boolean;
   wcNetworks: WcSelectNetwork[];
-  wcSessionRestored: boolean;
-  connectWc: () => Promise<void>;
-  disconnectWcSession: () => Promise<void>;
-  fetchAddressesFromExistingSession: () => void;
+  handleConnect: () => Promise<void>;
+  handleDisconnect: () => Promise<void>;
+  handleFetch: () => void;
+  setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
   setWcFetchedAddresses: React.Dispatch<
     React.SetStateAction<WcFetchedAddress[]>
   >;
-  setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
 }
 
+/**
+ * @todo Move to types package or import window
+ */
 export interface WcSelectNetwork {
   caipId: string;
   ChainIcon: AnyData;

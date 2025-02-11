@@ -27,7 +27,7 @@ import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
-import { useWalletConnect } from '@app/contexts/import/WalletConnect';
+import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcFlexRow, WcSessionButton } from './Wrappers';
@@ -42,7 +42,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const {
     darkMode,
     getOnlineMode,
-    wcSyncFlags: { wcConnecting, wcDisconnecting, wcInitialized },
+    wcSyncFlags: {
+      wcConnecting,
+      wcDisconnecting,
+      wcInitialized,
+      wcSessionRestored,
+    },
   } = useConnections();
 
   const { insertAccountStatus } = useAccountStatuses();
@@ -51,15 +56,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
-    connectWc,
-    disconnectWcSession,
-    fetchAddressesFromExistingSession,
-    setWcFetchedAddresses,
-    setWcNetworks,
     wcFetchedAddresses,
     wcNetworks,
-    wcSessionRestored,
-  } = useWalletConnect();
+    handleConnect,
+    handleDisconnect,
+    handleFetch,
+    setWcFetchedAddresses,
+    setWcNetworks,
+  } = useWalletConnectImport();
 
   const [isImporting, setIsImporting] = useState(false);
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
@@ -68,13 +72,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
   const getSelectedNetworkCount = () =>
     wcNetworks.filter(({ selected }) => selected).length;
-
-  /**
-   * Handle connect button click.
-   */
-  const handleConnect = async () => {
-    await connectWc();
-  };
 
   /**
    * Handle address checkbox click.
@@ -241,7 +238,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           wcConnecting ||
                           wcDisconnecting
                         }
-                        onClick={async () => await disconnectWcSession()}
+                        onClick={async () => await handleDisconnect()}
                       >
                         Disconnect
                       </WcSessionButton>
@@ -254,7 +251,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           wcDisconnecting
                         }
                         onClick={() => {
-                          fetchAddressesFromExistingSession();
+                          handleFetch();
                           setAccordionActiveIndices([1]);
                         }}
                       >

@@ -49,6 +49,7 @@ export class Config {
     wcConnecting: false,
     wcDisconnecting: false,
     wcInitialized: false,
+    wcSessionRestored: false,
   };
 
   // Return the local storage key for corresponding source addresses.

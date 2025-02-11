@@ -14,6 +14,7 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
     wcConnecting: false,
     wcDisconnecting: false,
     wcInitialized: false,
+    wcSessionRestored: false,
   },
   setIsConnected: (b) => {},
   setIsImporting: (b) => {},

@@ -2,21 +2,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
+import { encodeAddress } from '@polkadot/util-crypto';
 import { useConnections } from '@app/contexts/common/Connections';
-import { chainIcon } from '@ren/config/chains';
 import { getSdkError } from '@walletconnect/utils';
 import { getUnixTime } from 'date-fns';
-import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { WalletConnectContextInterface, WcSelectNetwork } from './types';
+import type {
+  WalletConnectContextInterface,
+  WcFetchedAddress,
+  WcSelectNetwork,
+} from './types';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
 
+// TODO: Move constants and network array to config file.
 const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
 const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
@@ -44,10 +49,9 @@ export const WalletConnectProvider = ({
     getOnlineMode,
     isConnected,
     isOnlineMode,
-    wcSyncFlags: { wcInitialized },
+    wcSyncFlags: { wcInitialized, wcSessionRestored },
   } = useConnections();
 
-  const [wcSessionRestored, setWcSessionRestored] = useState(false);
   const wcSessionRestoredRef = useRef<boolean>(false);
 
   const wcProvider = useRef<UniversalProvider | null>(null);
@@ -59,37 +63,19 @@ export const WalletConnectProvider = ({
     approval: AnyData;
   } | null>(null);
 
-  /**
-   * WalletConnect networks and their selected state.
-   */
-  const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>([
-    {
-      caipId: WC_POLKADOT_CAIP_ID,
-      ChainIcon: chainIcon('Polkadot'),
-      chainId: 'Polkadot',
-      selected: false,
-    },
-    {
-      caipId: WC_KUSAMA_CAIP_ID,
-      ChainIcon: chainIcon('Kusama'),
-      chainId: 'Kusama',
-      selected: false,
-    },
-    {
-      caipId: WC_WESTEND_CAIP_ID,
-      ChainIcon: chainIcon('Westend'),
-      chainId: 'Westend',
-      selected: false,
-    },
-  ]);
+  const wcInitializedRef = useRef(false);
+  const wcNetworksRef = useRef<WcSelectNetwork[]>([]);
 
   /**
    * Get namespaces of selected networks.
    */
   const getNamespaces = () => {
-    const selectedNetworks = wcNetworks.filter(({ selected }) => selected);
+    const selectedNetworks = wcNetworksRef.current.filter(
+      ({ selected }) => selected
+    );
+
     if (selectedNetworks.length > 0) {
-      return wcNetworks
+      return wcNetworksRef.current
         .filter(({ selected }) => selected)
         .map(({ caipId }) => `polkadot:${caipId}`);
     } else {
@@ -101,9 +87,24 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Util for getting a chain ID's address prefix for encoding.
+   */
+  const getAddressPrefix = (chainId: ChainID) => {
+    switch (chainId) {
+      case 'Polkadot': {
+        return 0;
+      }
+      case 'Kusama': {
+        return 2;
+      }
+      case 'Westend': {
+        return 42;
+      }
+    }
+  };
+
+  /**
    * Util for setting fetched addresses state.
-   *
-   * @todo Send fetched addresses to import window via port message
    */
   const setFetchedAddresses = (namespaces: AnyData) => {
     /** Get the accounts from the session. */
@@ -119,23 +120,25 @@ export const WalletConnectProvider = ({
       })
     );
 
-    console.log(
-      `TODO: Send ${accounts.length} fetched accounts to import window`
+    // Send fetched accounts to import window.
+    const fetchedAddresses: WcFetchedAddress[] = accounts.map(
+      ({ address, caipId }) => {
+        const chainId = mapCaipChainId.get(caipId)!;
+        const pref = getAddressPrefix(chainId);
+
+        return {
+          chainId,
+          encoded: encodeAddress(address, pref),
+          substrate: address,
+          selected: false,
+        };
+      }
     );
 
-    //setWcFetchedAddresses(() =>
-    //  accounts.map(({ address, caipId }) => {
-    //    const chainId = mapCaipChainId.get(caipId)!;
-    //    const pref = getAddressPrefix(chainId);
-
-    //    return {
-    //      chainId,
-    //      encoded: encodeAddress(address, pref),
-    //      substrate: address,
-    //      selected: false,
-    //    };
-    //  })
-    //);
+    ConfigRenderer.portToImport?.postMessage({
+      task: 'import:wc:set:fetchedAddresses',
+      data: { fetchedAddresses: JSON.stringify(fetchedAddresses) },
+    });
   };
 
   /**
@@ -173,8 +176,6 @@ export const WalletConnectProvider = ({
     }
 
     console.log('> WalletConnect Initialized');
-
-    //setWcInitialized(true);
     window.myAPI.relayModeFlag('wc:initialized', true);
   };
 
@@ -203,7 +204,7 @@ export const WalletConnectProvider = ({
    */
   const createSession = async () => {
     try {
-      if (!wcInitialized) {
+      if (!wcInitializedRef.current) {
         return;
       }
 
@@ -222,7 +223,7 @@ export const WalletConnectProvider = ({
 
         wcMetaRef.current = { uri, approval };
       } else {
-        setStateWithRef(true, setWcSessionRestored, wcSessionRestoredRef);
+        window.myAPI.relayModeFlag('wc:session:restored', true);
       }
     } catch (error: AnyData) {
       console.error('initWc: An unexpected error occurred:', error);
@@ -282,25 +283,30 @@ export const WalletConnectProvider = ({
     /** Fetch accounts from restored session. */
     const namespaces = wcProvider.current?.session?.namespaces;
     if (!namespaces) {
+      // TODO: Send error notification in import window.
       console.log('> Unable to get namespaces of restored session.');
       return;
     }
 
     /** Set received WalletConnect address state. */
     setFetchedAddresses(namespaces);
+
+    /** Set restored session flag. */
+    window.myAPI.relayModeFlag('wc:session:restored', true);
   };
 
   /**
    * Establish a session or use an existing session to fetch addresses.
-   *
-   * @todo Send fetched addresses to import window via port message
-   * @todo UI allows calling this function only when creating a new session. Can be simplified
+   * @todo UI allows calling this function only when creating a new session. Can be simplified.
    */
-  const connectWc = async () => {
+  const connectWc = async (wcNetworks: WcSelectNetwork[]) => {
     try {
-      if (!wcInitialized) {
+      if (!wcInitializedRef.current) {
         return;
       }
+
+      /** Cache received networks. */
+      wcNetworksRef.current = wcNetworks;
 
       /** Restore existing session or create a new one. */
       window.myAPI.relayModeFlag('wc:connecting', true);
@@ -322,10 +328,10 @@ export const WalletConnectProvider = ({
 
         /** Set received WalletConnect address state. */
         setFetchedAddresses(walletConnectSession.namespaces);
-        setStateWithRef(true, setWcSessionRestored, wcSessionRestoredRef);
+        window.myAPI.relayModeFlag('wc:session:restored', true);
       }
     } catch (error: AnyData) {
-      console.error('initWc: An unexpected error occurred:', error);
+      console.error('connectWc: An unexpected error occurred:', error);
     }
   };
 
@@ -350,7 +356,8 @@ export const WalletConnectProvider = ({
 
     wcPairingTopic.current = null;
     wcMetaRef.current = null;
-    setStateWithRef(false, setWcSessionRestored, wcSessionRestoredRef);
+
+    window.myAPI.relayModeFlag('wc:session:restored', false);
     window.myAPI.relayModeFlag('wc:disconnecting', false);
   };
 
@@ -372,11 +379,17 @@ export const WalletConnectProvider = ({
   }, [isConnected, isOnlineMode]);
 
   useEffect(() => {
+    wcInitializedRef.current = wcInitialized;
+
     if (wcInitialized) {
       console.log('> Create session if one does not already exist.');
       createSession();
     }
   }, [wcInitialized]);
+
+  useEffect(() => {
+    wcSessionRestoredRef.current = wcSessionRestored;
+  }, [wcSessionRestored]);
 
   return (
     <WalletConnectContext.Provider
@@ -384,8 +397,6 @@ export const WalletConnectProvider = ({
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
-        setWcNetworks,
-        wcNetworks,
         wcSessionRestored,
       }}
     >

@@ -46,6 +46,7 @@ export const ConnectionsProvider = ({
     wcConnecting: false,
     wcDisconnecting: false,
     wcInitialized: false,
+    wcSessionRestored: false,
   });
 
   useEffect(() => {
@@ -65,12 +66,14 @@ export const ConnectionsProvider = ({
         window.myAPI.getModeFlag('wc:connecting'),
         window.myAPI.getModeFlag('wc:disconnecting'),
         window.myAPI.getModeFlag('wc:initialized'),
+        window.myAPI.getModeFlag('wc:session:restored'),
       ]);
 
       setWcSyncFlags({
         wcConnecting: results[0],
         wcDisconnecting: results[1],
         wcInitialized: results[2],
+        wcSessionRestored: results[3],
       });
     };
 
@@ -111,6 +114,10 @@ export const ConnectionsProvider = ({
           }
           case 'wc:initialized': {
             setWcSyncFlags((pv) => ({ ...pv, wcInitialized: flag }));
+            break;
+          }
+          case 'wc:session:restored': {
+            setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored: flag }));
             break;
           }
           default: {

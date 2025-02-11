@@ -35,7 +35,7 @@ import { AddHandlerProvider } from '@app/contexts/import/AddHandler';
 import { RemoveHandlerProvider } from '@app/contexts/import/RemoveHandler';
 import { DeleteHandlerProvider } from '@app/contexts/import/DeleteHandler';
 import { LedgerHardwareProvider } from '@app/contexts/import/LedgerHardware';
-import { WalletConnectProvider } from '@app/contexts/import/WalletConnect';
+import { WalletConnectImportProvider } from '@app/contexts/import/WalletConnect';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from '@app/contexts/settings/SettingFlags';
@@ -108,7 +108,7 @@ const getProvidersForWindow = () => {
         // Requires useConnections
         LedgerHardwareProvider,
         // Requires useConnections
-        WalletConnectProvider
+        WalletConnectImportProvider
       )(Theme);
     }
     case 'settings': {

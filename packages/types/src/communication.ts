@@ -12,7 +12,8 @@ export type SyncFlag =
   // WalletConnect
   | 'wc:connecting'
   | 'wc:disconnecting'
-  | 'wc:initialized';
+  | 'wc:initialized'
+  | 'wc:session:restored';
 
 export interface RelayPortTask {
   windowId: string;
@@ -99,4 +100,5 @@ export interface WcSyncFlags {
   wcConnecting: boolean;
   wcDisconnecting: boolean;
   wcInitialized: boolean;
+  wcSessionRestored: boolean;
 }

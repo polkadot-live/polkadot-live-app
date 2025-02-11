@@ -35,6 +35,7 @@ import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { useDataBackup } from '@app/contexts/main/DataBackup';
+import { useWalletConnect } from '@app/contexts/main/WalletConnect';
 
 /// Types.
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
@@ -45,6 +46,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { WcSelectNetwork } from '@app/contexts/import/WalletConnect/types';
 import { getAddressChainId } from '../Utils';
 
 // TODO: Move to WalletConnect file.
@@ -57,6 +59,9 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
+
+  const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
+    useWalletConnect();
 
   const {
     updateRenderedSubscriptions,
@@ -291,6 +296,28 @@ export const useMainMessagePorts = () => {
       },
     });
   };
+
+  /**
+   * @name handleWcConnect
+   * @summary Connect to a WalletConnect session to fetch addresses.
+   */
+  const handleConnectWc = async (ev: MessageEvent) => {
+    const wcNetworks: WcSelectNetwork[] = JSON.parse(ev.data.data.networks);
+    await connectWc(wcNetworks);
+  };
+
+  /**
+   * @name handleDisconnectWc
+   * @summary Disconnect from an established WalletConnect session.
+   */
+  const handleDisconnectWc = async () => await disconnectWcSession();
+
+  /**
+   * @name handleFetchWcSessionAddresses
+   * @summary Fetch addresses from an established WalletConnect session.
+   */
+  const handleFetchWcSessionAddresses = () =>
+    fetchAddressesFromExistingSession();
 
   /**
    * @name handleActionTxInit
@@ -662,6 +689,18 @@ export const useMainMessagePorts = () => {
             }
             case 'renderer:account:rename': {
               await handleRenameAccount(ev);
+              break;
+            }
+            case 'renderer:wc:connect': {
+              await handleConnectWc(ev);
+              break;
+            }
+            case 'renderer:wc:disconnect': {
+              await handleDisconnectWc();
+              break;
+            }
+            case 'renderer:wc:fetch': {
+              handleFetchWcSessionAddresses();
               break;
             }
             default: {

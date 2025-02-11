@@ -7,12 +7,14 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
 import { useEffect } from 'react';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
+import type { WcFetchedAddress } from '@app/contexts/import/WalletConnect/types';
 
 // TODO: Move to WalletConnect file.
 const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
@@ -21,6 +23,7 @@ export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
+  const { setWcFetchedAddresses } = useWalletConnectImport();
 
   /**
    * @name handleReceivedPort
@@ -66,6 +69,13 @@ export const useImportMessagePorts = () => {
               // Update state for an address.
               const { address, source } = ev.data.data;
               handleAddressImport(source, address);
+              break;
+            }
+            case 'import:wc:set:fetchedAddresses': {
+              const parsed: WcFetchedAddress[] = JSON.parse(
+                ev.data.data.fetchedAddresses
+              );
+              setWcFetchedAddresses(parsed);
               break;
             }
             default: {

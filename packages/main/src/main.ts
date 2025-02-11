@@ -412,6 +412,12 @@ app.whenReady().then(async () => {
         WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
+      case 'wc:session:restored': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcSessionRestored: flag };
+        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
+        break;
+      }
       default: {
         break;
       }
@@ -440,6 +446,9 @@ app.whenReady().then(async () => {
       }
       case 'wc:initialized': {
         return ConfigMain.wcSyncFlags.wcInitialized;
+      }
+      case 'wc:session:restored': {
+        return ConfigMain.wcSyncFlags.wcSessionRestored;
       }
       default: {
         return false;
