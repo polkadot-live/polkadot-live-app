@@ -40,14 +40,12 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { getOnlineMode, isConnected, isOnlineMode } = useConnections();
-
-  /**
-   * @todo Make flags relay app flags
-   */
-  const [wcConnecting, setWcConnecting] = useState(false);
-  const [wcDisconnecting, setWcDisconnecting] = useState(false);
-  const [wcInitialized, setWcInitialized] = useState(false);
+  const {
+    getOnlineMode,
+    isConnected,
+    isOnlineMode,
+    wcSyncFlags: { wcInitialized },
+  } = useConnections();
 
   const [wcSessionRestored, setWcSessionRestored] = useState(false);
   const wcSessionRestoredRef = useRef<boolean>(false);
@@ -175,7 +173,9 @@ export const WalletConnectProvider = ({
     }
 
     console.log('> WalletConnect Initialized');
-    setWcInitialized(true);
+
+    //setWcInitialized(true);
+    window.myAPI.relayModeFlag('wc:initialized', true);
   };
 
   /**
@@ -303,9 +303,9 @@ export const WalletConnectProvider = ({
       }
 
       /** Restore existing session or create a new one. */
-      setWcConnecting(true);
+      window.myAPI.relayModeFlag('wc:connecting', true);
       const modalOpen = await restoreOrConnectSession();
-      setWcConnecting(false);
+      window.myAPI.relayModeFlag('wc:connecting', false);
 
       if (!modalOpen) {
         /** Fetch accounts from restored session. */
@@ -337,7 +337,7 @@ export const WalletConnectProvider = ({
       return;
     }
 
-    setWcDisconnecting(true);
+    window.myAPI.relayModeFlag('wc:disconnecting', true);
     const topic = wcProvider.current.session?.topic;
     if (topic) {
       await wcProvider.current.client.disconnect({
@@ -351,7 +351,7 @@ export const WalletConnectProvider = ({
     wcPairingTopic.current = null;
     wcMetaRef.current = null;
     setStateWithRef(false, setWcSessionRestored, wcSessionRestoredRef);
-    setWcDisconnecting(false);
+    window.myAPI.relayModeFlag('wc:disconnecting', false);
   };
 
   /**
@@ -384,12 +384,7 @@ export const WalletConnectProvider = ({
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
-        //setWcFetchedAddresses,
         setWcNetworks,
-        wcConnecting,
-        wcDisconnecting,
-        //wcFetchedAddresses,
-        wcInitialized,
         wcNetworks,
         wcSessionRestored,
       }}
