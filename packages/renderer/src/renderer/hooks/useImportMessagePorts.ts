@@ -7,34 +7,27 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
 import { useEffect } from 'react';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-
-// TODO: Move to WalletConnect file.
-const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
+import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
+  const { setWcFetchedAddresses } = useWalletConnectImport();
 
   /**
    * @name handleReceivedPort
    * @summary Handle messages sent to the import window.
    */
   const handleReceivedPort = (e: MessageEvent) => {
-    // TODO: May need to handle WalletConnect messages here.
-    // For now, don't do any further processing if message is from WalletConnect.
-    if (e.origin === WC_EVENT_ORIGIN) {
-      console.log('> WalletConnect event received:');
-      console.log(e);
-      return;
-    }
-
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
@@ -66,6 +59,18 @@ export const useImportMessagePorts = () => {
               // Update state for an address.
               const { address, source } = ev.data.data;
               handleAddressImport(source, address);
+              break;
+            }
+            case 'import:wc:set:fetchedAddresses': {
+              const parsed: WcFetchedAddress[] = JSON.parse(
+                ev.data.data.fetchedAddresses
+              );
+              setWcFetchedAddresses(parsed);
+              break;
+            }
+            case 'import:toast:show': {
+              const { message, toastId, toastType } = ev.data.data;
+              renderToast(message, toastId, toastType);
               break;
             }
             default: {

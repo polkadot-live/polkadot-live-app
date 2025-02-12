@@ -1,35 +1,24 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  WcFetchedAddress,
+  WcSelectNetwork,
+} from '@polkadot-live/types/walletConnect';
 
-export interface WalletConnectContextInterface {
-  wcConnecting: boolean;
-  wcDisconnecting: boolean;
+export interface WalletConnectImportContextInterface {
+  isImporting: boolean;
   wcFetchedAddresses: WcFetchedAddress[];
-  wcInitialized: boolean;
   wcNetworks: WcSelectNetwork[];
-  wcSessionRestored: boolean;
-  connectWc: () => Promise<void>;
-  disconnectWcSession: () => Promise<void>;
-  fetchAddressesFromExistingSession: () => void;
+  getSelectedAddresses: () => WcFetchedAddress[];
+  handleConnect: () => Promise<void>;
+  handleDisconnect: () => Promise<void>;
+  handleFetch: () => void;
+  handleImportProcess: (
+    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>
+  ) => Promise<void>;
+  setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
   setWcFetchedAddresses: React.Dispatch<
     React.SetStateAction<WcFetchedAddress[]>
   >;
-  setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
-}
-
-export interface WcSelectNetwork {
-  caipId: string;
-  ChainIcon: AnyData;
-  chainId: ChainID;
-  selected: boolean;
-}
-
-export interface WcFetchedAddress {
-  chainId: ChainID;
-  encoded: string;
-  substrate: string;
-  selected: boolean;
 }

@@ -23,6 +23,7 @@ import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
+import { getAddressChainId } from '../Utils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -35,6 +36,7 @@ import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { useDataBackup } from '@app/contexts/main/DataBackup';
+import { useWalletConnect } from '@app/contexts/main/WalletConnect';
 
 /// Types.
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
@@ -45,7 +47,10 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import { getAddressChainId } from '../Utils';
+import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
+
+// TODO: Move to WalletConnect file.
+const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -54,6 +59,9 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
+
+  const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
+    useWalletConnect();
 
   const {
     updateRenderedSubscriptions,
@@ -288,6 +296,28 @@ export const useMainMessagePorts = () => {
       },
     });
   };
+
+  /**
+   * @name handleWcConnect
+   * @summary Connect to a WalletConnect session to fetch addresses.
+   */
+  const handleConnectWc = async (ev: MessageEvent) => {
+    const wcNetworks: WcSelectNetwork[] = JSON.parse(ev.data.data.networks);
+    await connectWc(wcNetworks);
+  };
+
+  /**
+   * @name handleDisconnectWc
+   * @summary Disconnect from an established WalletConnect session.
+   */
+  const handleDisconnectWc = async () => await disconnectWcSession();
+
+  /**
+   * @name handleFetchWcSessionAddresses
+   * @summary Fetch addresses from an established WalletConnect session.
+   */
+  const handleFetchWcSessionAddresses = () =>
+    fetchAddressesFromExistingSession();
 
   /**
    * @name handleActionTxInit
@@ -628,6 +658,14 @@ export const useMainMessagePorts = () => {
    * sets up message handlers accordingly.
    */
   const handleReceivedPort = async (e: MessageEvent) => {
+    // TODO: May need to handle WalletConnect messages here.
+    // For now, don't do any further processing if message is from WalletConnect.
+    if (e.origin === WC_EVENT_ORIGIN) {
+      console.log('> WalletConnect event received:');
+      console.log(e);
+      return;
+    }
+
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
@@ -651,6 +689,18 @@ export const useMainMessagePorts = () => {
             }
             case 'renderer:account:rename': {
               await handleRenameAccount(ev);
+              break;
+            }
+            case 'renderer:wc:connect': {
+              await handleConnectWc(ev);
+              break;
+            }
+            case 'renderer:wc:disconnect': {
+              await handleDisconnectWc();
+              break;
+            }
+            case 'renderer:wc:fetch': {
+              handleFetchWcSessionAddresses();
               break;
             }
             default: {

@@ -4,6 +4,7 @@
 import { MessageChannelMain } from 'electron';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
+import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {
@@ -41,6 +42,12 @@ export class Config {
   private static _importingData = false;
   private static _onlineMode = false;
   private static _isBuildingExtrinsic = false;
+  private static _wcSyncFlags: WcSyncFlags = {
+    wcConnecting: false,
+    wcDisconnecting: false,
+    wcInitialized: false,
+    wcSessionRestored: false,
+  };
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -194,6 +201,14 @@ export class Config {
 
   static set isBuildingExtrinsic(flag: boolean) {
     Config._isBuildingExtrinsic = flag;
+  }
+
+  static get wcSyncFlags(): WcSyncFlags {
+    return Config._wcSyncFlags;
+  }
+
+  static set wcSyncFlags(flags: WcSyncFlags) {
+    Config._wcSyncFlags = flags;
   }
 
   // Setter for app's tray object.

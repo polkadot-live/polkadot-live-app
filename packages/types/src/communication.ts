@@ -8,7 +8,12 @@ export type SyncFlag =
   | 'isBuildingExtrinsic'
   | 'isConnected'
   | 'isImporting'
-  | 'isOnlineMode';
+  | 'isOnlineMode'
+  // WalletConnect
+  | 'wc:connecting'
+  | 'wc:disconnecting'
+  | 'wc:initialized'
+  | 'wc:session:restored';
 
 export interface RelayPortTask {
   windowId: string;

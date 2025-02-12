@@ -10,6 +10,12 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
   isOnlineMode: false,
   darkMode: true,
   isBuildingExtrinsic: false,
+  wcSyncFlags: {
+    wcConnecting: false,
+    wcDisconnecting: false,
+    wcInitialized: false,
+    wcSessionRestored: false,
+  },
   setIsConnected: (b) => {},
   setIsImporting: (b) => {},
   setIsOnlineMode: (b) => {},
