@@ -17,9 +17,6 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 
-// TODO: Move to WalletConnect file.
-const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
-
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
@@ -31,14 +28,6 @@ export const useImportMessagePorts = () => {
    * @summary Handle messages sent to the import window.
    */
   const handleReceivedPort = (e: MessageEvent) => {
-    // TODO: May need to handle WalletConnect messages here.
-    // For now, don't do any further processing if message is from WalletConnect.
-    if (e.origin === WC_EVENT_ORIGIN) {
-      console.log('> WalletConnect event received:');
-      console.log(e);
-      return;
-    }
-
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {

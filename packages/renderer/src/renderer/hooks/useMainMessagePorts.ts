@@ -658,8 +658,6 @@ export const useMainMessagePorts = () => {
    * sets up message handlers accordingly.
    */
   const handleReceivedPort = async (e: MessageEvent) => {
-    console.log(`received port: ${e.data.target}`);
-
     // TODO: May need to handle WalletConnect messages here.
     // For now, don't do any further processing if message is from WalletConnect.
     if (e.origin === WC_EVENT_ORIGIN) {
@@ -667,6 +665,8 @@ export const useMainMessagePorts = () => {
       console.log(e);
       return;
     }
+
+    console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
       case 'main-import:main': {
