@@ -7,11 +7,16 @@ import type {
 } from '@polkadot-live/types/walletConnect';
 
 export interface WalletConnectImportContextInterface {
+  isImporting: boolean;
   wcFetchedAddresses: WcFetchedAddress[];
   wcNetworks: WcSelectNetwork[];
+  getSelectedAddresses: () => WcFetchedAddress[];
   handleConnect: () => Promise<void>;
   handleDisconnect: () => Promise<void>;
   handleFetch: () => void;
+  handleImportProcess: (
+    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>
+  ) => Promise<void>;
   setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;
   setWcFetchedAddresses: React.Dispatch<
     React.SetStateAction<WcFetchedAddress[]>

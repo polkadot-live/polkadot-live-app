@@ -5,11 +5,15 @@ import * as defaults from './defaults';
 import { Config as ConfigImport } from '@ren/config/processes/import';
 import { chainIcon } from '@ren/config/chains';
 import { createContext, useContext, useState } from 'react';
+import { ellipsisFn } from '@w3ux/utils';
 import type { WalletConnectImportContextInterface } from './types';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useAddresses } from '@app/contexts/import/Addresses';
+import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 // TODO: Move constants and network array to config file.
 const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
@@ -29,6 +33,12 @@ export const WalletConnectImportProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { insertAccountStatus } = useAccountStatuses();
+  const { isAlreadyImported } = useAddresses();
+  const { handleImportAddress } = useImportHandler();
+
+  const [isImporting, setIsImporting] = useState(false);
+
   /**
    * WalletConnect networks and their selected state.
    */
@@ -94,14 +104,56 @@ export const WalletConnectImportProvider = ({
     });
   };
 
+  /**
+   * Util for getting the selected addresses to import.
+   */
+  const getSelectedAddresses = () =>
+    wcFetchedAddresses.filter(({ selected }) => selected);
+
+  /**
+   * Handle importing the selected WalletConnect addresses.
+   */
+  const handleImportProcess = async (
+    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    const selectedAddresses = getSelectedAddresses();
+    if (selectedAddresses.length === 0) {
+      return;
+    }
+
+    setIsImporting(true);
+    for (const selected of selectedAddresses) {
+      const { encoded } = selected;
+
+      if (isAlreadyImported(encoded)) {
+        continue;
+      }
+
+      const accountName = ellipsisFn(encoded);
+      await handleImportAddress(encoded, 'wallet-connect', accountName, false);
+      insertAccountStatus(encoded, 'wallet-connect');
+    }
+
+    setIsImporting(false);
+    setShowImportUi(false);
+
+    // Clear selected WalletAccount addresses.
+    setWcFetchedAddresses((prev) =>
+      prev.map((item) => ({ ...item, selected: false }))
+    );
+  };
+
   return (
     <WalletConnectImportContext.Provider
       value={{
+        isImporting,
         wcFetchedAddresses,
         wcNetworks,
+        getSelectedAddresses,
         handleConnect,
         handleDisconnect,
         handleFetch,
+        handleImportProcess,
         setWcNetworks,
         setWcFetchedAddresses,
       }}

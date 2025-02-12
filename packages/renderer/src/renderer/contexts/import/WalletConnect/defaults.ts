@@ -6,11 +6,14 @@ import type { WalletConnectImportContextInterface } from './types';
 
 export const defaultWalletConnectImportContext: WalletConnectImportContextInterface =
   {
+    isImporting: false,
     wcFetchedAddresses: [],
     wcNetworks: [],
+    getSelectedAddresses: () => [],
     handleConnect: () => new Promise(() => {}),
     handleDisconnect: () => new Promise(() => {}),
     handleFetch: () => {},
     setWcFetchedAddresses: () => {},
+    handleImportProcess: () => new Promise(() => {}),
     setWcNetworks: () => {},
   };

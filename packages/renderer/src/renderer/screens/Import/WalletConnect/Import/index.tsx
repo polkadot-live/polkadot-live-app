@@ -23,10 +23,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
-import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
-import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
@@ -50,22 +48,22 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     },
   } = useConnections();
 
-  const { insertAccountStatus } = useAccountStatuses();
   const { isAlreadyImported, wcAddresses } = useAddresses();
-  const { handleImportAddress } = useImportHandler();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
+    isImporting,
     wcFetchedAddresses,
     wcNetworks,
+    getSelectedAddresses,
     handleConnect,
     handleDisconnect,
     handleFetch,
     setWcFetchedAddresses,
+    handleImportProcess,
     setWcNetworks,
   } = useWalletConnectImport();
 
-  const [isImporting, setIsImporting] = useState(false);
   const [accordionActiveIndices, setAccordionActiveIndices] = useState<
     number[]
   >(Array.from({ length: 2 }, (_, index) => index));
@@ -96,12 +94,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   };
 
   /**
-   * Get the selected addresses to import.
-   */
-  const getSelectedAddresses = () =>
-    wcFetchedAddresses.filter(({ selected }) => selected);
-
-  /**
    * Get import button label text.
    */
   const getImportLabel = () => {
@@ -123,37 +115,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       <span>Currently offline. Please go online to enable connections.</span>
     </InfoCard>
   );
-
-  /**
-   * Handle importing the selected WalletConnect addresses.
-   */
-  const handleImportProcess = async () => {
-    const selectedAddresses = getSelectedAddresses();
-    if (selectedAddresses.length === 0) {
-      return;
-    }
-
-    setIsImporting(true);
-    for (const selected of selectedAddresses) {
-      const { encoded } = selected;
-
-      if (isAlreadyImported(encoded)) {
-        continue;
-      }
-
-      const accountName = ellipsisFn(encoded);
-      await handleImportAddress(encoded, 'wallet-connect', accountName, false);
-      insertAccountStatus(encoded, 'wallet-connect');
-    }
-
-    setIsImporting(false);
-    setShowImportUi(false);
-
-    /** Clear selected WalletAccount addresses. */
-    setWcFetchedAddresses((prev) =>
-      prev.map((item) => ({ ...item, selected: false }))
-    );
-  };
 
   /**
    * Effects.
@@ -392,7 +353,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         disabled={
                           isImporting || getSelectedAddresses().length === 0
                         }
-                        onClick={async () => await handleImportProcess()}
+                        onClick={async () =>
+                          await handleImportProcess(setShowImportUi)
+                        }
                       >
                         {getImportLabel()}
                       </button>
