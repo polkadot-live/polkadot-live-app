@@ -281,8 +281,16 @@ export const WalletConnectProvider = ({
     /** Fetch accounts from restored session. */
     const namespaces = wcProvider.current?.session?.namespaces;
     if (!namespaces) {
-      // TODO: Send error notification in import window.
-      console.log('> Unable to get namespaces of restored session.');
+      // Render toast error notification in import window.
+      ConfigRenderer.portToImport?.postMessage({
+        task: 'import:toast:show',
+        data: {
+          message: 'Session Error - Establish a new session',
+          toastId: `wc-error-${String(Date.now())}`,
+          toastType: 'error',
+        },
+      });
+
       return;
     }
 

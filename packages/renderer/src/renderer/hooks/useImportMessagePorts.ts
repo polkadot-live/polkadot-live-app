@@ -9,6 +9,7 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
 import { useEffect } from 'react';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type {
   AccountSource,
   LedgerLocalAddress,
@@ -76,6 +77,11 @@ export const useImportMessagePorts = () => {
                 ev.data.data.fetchedAddresses
               );
               setWcFetchedAddresses(parsed);
+              break;
+            }
+            case 'import:toast:show': {
+              const { message, toastId, toastType } = ev.data.data;
+              renderToast(message, toastId, toastType);
               break;
             }
             default: {
