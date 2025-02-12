@@ -21,7 +21,8 @@ export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
-  const { setWcFetchedAddresses } = useWalletConnectImport();
+  const { setWcFetchedAddresses, handleOpenCloseWcModal } =
+    useWalletConnectImport();
 
   /**
    * @name handleReceivedPort
@@ -59,6 +60,15 @@ export const useImportMessagePorts = () => {
               // Update state for an address.
               const { address, source } = ev.data.data;
               handleAddressImport(source, address);
+              break;
+            }
+            case 'import:wc:modal:open': {
+              const { uri } = ev.data.data;
+              await handleOpenCloseWcModal(true, uri);
+              break;
+            }
+            case 'import:wc:modal:close': {
+              handleOpenCloseWcModal(false);
               break;
             }
             case 'import:wc:set:fetchedAddresses': {
