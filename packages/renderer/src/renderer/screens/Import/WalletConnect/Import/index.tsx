@@ -25,7 +25,7 @@ import {
 /** Temp */
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
-import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
+import { useWalletConnectImport } from '@app/contexts/import/WalletConnectImport';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcFlexRow, WcSessionButton } from './Wrappers';
