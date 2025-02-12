@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import * as wcConfig from '@ren/config/walletConnect';
+
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { WalletConnectModal } from '@walletconnect/modal';
@@ -18,19 +20,10 @@ import type {
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
 
-const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
-const WC_RELAY_URL = 'wss://relay.walletconnect.com';
-
-// TODO: Move constants and network array to config file.
-const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
-const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
-const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mapCaipChainId = new Map<string, ChainID>([
-  [WC_POLKADOT_CAIP_ID, 'Polkadot'],
-  [WC_KUSAMA_CAIP_ID, 'Kusama'],
-  [WC_WESTEND_CAIP_ID, 'Westend'],
+  [wcConfig.WC_POLKADOT_CAIP_ID, 'Polkadot'],
+  [wcConfig.WC_KUSAMA_CAIP_ID, 'Kusama'],
+  [wcConfig.WC_WESTEND_CAIP_ID, 'Westend'],
 ]);
 
 export const WalletConnectContext =
@@ -80,8 +73,8 @@ export const WalletConnectProvider = ({
         .map(({ caipId }) => `polkadot:${caipId}`);
     } else {
       return [
-        `polkadot:${WC_POLKADOT_CAIP_ID}`,
-        `polkadot:${WC_KUSAMA_CAIP_ID}`,
+        `polkadot:${wcConfig.WC_POLKADOT_CAIP_ID}`,
+        `polkadot:${wcConfig.WC_KUSAMA_CAIP_ID}`,
       ];
     }
   };
@@ -148,8 +141,8 @@ export const WalletConnectProvider = ({
     if (!wcProvider.current) {
       // Instantiate provider.
       const provider = await UniversalProvider.init({
-        projectId: WC_PROJECT_ID,
-        relayUrl: WC_RELAY_URL,
+        projectId: wcConfig.WC_PROJECT_ID,
+        relayUrl: wcConfig.WC_RELAY_URL,
         // TODO: metadata
       });
 
@@ -169,7 +162,7 @@ export const WalletConnectProvider = ({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: WC_PROJECT_ID,
+        projectId: wcConfig.WC_PROJECT_ID,
       });
 
       wcModal.current = modal;

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import * as wcConfig from '@ren/config/walletConnect';
+
 import { Config as ConfigImport } from '@ren/config/processes/import';
-import { chainIcon } from '@ren/config/chains';
 import { createContext, useContext, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import type { WalletConnectImportContextInterface } from './types';
@@ -14,11 +15,6 @@ import type {
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
-
-// TODO: Move constants and network array to config file.
-const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
-const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
-const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
 
 export const WalletConnectImportContext =
   createContext<WalletConnectImportContextInterface>(
@@ -42,26 +38,9 @@ export const WalletConnectImportProvider = ({
   /**
    * WalletConnect networks and their selected state.
    */
-  const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>([
-    {
-      caipId: WC_POLKADOT_CAIP_ID,
-      ChainIcon: chainIcon('Polkadot'),
-      chainId: 'Polkadot',
-      selected: false,
-    },
-    {
-      caipId: WC_KUSAMA_CAIP_ID,
-      ChainIcon: chainIcon('Kusama'),
-      chainId: 'Kusama',
-      selected: false,
-    },
-    {
-      caipId: WC_WESTEND_CAIP_ID,
-      ChainIcon: chainIcon('Westend'),
-      chainId: 'Westend',
-      selected: false,
-    },
-  ]);
+  const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>(
+    wcConfig.WcNetworks
+  );
 
   /**
    * Fetched addresses with WalletConnect.
