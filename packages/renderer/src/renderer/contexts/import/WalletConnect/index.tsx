@@ -5,11 +5,11 @@ import * as defaults from './defaults';
 import { Config as ConfigImport } from '@ren/config/processes/import';
 import { chainIcon } from '@ren/config/chains';
 import { createContext, useContext, useState } from 'react';
+import type { WalletConnectImportContextInterface } from './types';
 import type {
-  WalletConnectImportContextInterface,
   WcFetchedAddress,
   WcSelectNetwork,
-} from './types';
+} from '@polkadot-live/types/walletConnect';
 
 // TODO: Move constants and network array to config file.
 const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';

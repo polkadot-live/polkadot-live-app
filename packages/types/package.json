@@ -20,6 +20,7 @@
     "./settings": "./src/settings.ts",
     "./subscriptions": "./src/subscriptions.ts",
     "./tx": "./src/tx.ts",
+    "./walletConnect": "./src/walletConnect.ts",
     "./chains": "./src/chains/index.ts",
     "./chains/polkadot": "./src/chains/polkadot.ts",
     "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"

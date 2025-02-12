@@ -5,7 +5,8 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
-import type { SyncFlag, WcSyncFlags } from '@polkadot-live/types/communication';
+import type { SyncFlag } from '@polkadot-live/types/communication';
+import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 
 /**
  * Automatically listens for and sets mode flag state when they are

@@ -12,11 +12,11 @@ import { getSdkError } from '@walletconnect/utils';
 import { getUnixTime } from 'date-fns';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { WalletConnectContextInterface } from './types';
 import type {
-  WalletConnectContextInterface,
   WcFetchedAddress,
   WcSelectNetwork,
-} from './types';
+} from '@polkadot-live/types/walletConnect';
 
 const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -199,8 +199,6 @@ export const WalletConnectProvider = ({
 
   /**
    * Create or restore a WalletConnect session.
-   *
-   * @todo Send existing session flag to import window to sync UI
    */
   const createSession = async () => {
     try {

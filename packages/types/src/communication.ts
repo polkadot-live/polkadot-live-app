@@ -95,10 +95,3 @@ export interface IpcTask {
     | 'websockets:server:stop';
   data: AnyData;
 }
-
-export interface WcSyncFlags {
-  wcConnecting: boolean;
-  wcDisconnecting: boolean;
-  wcInitialized: boolean;
-  wcSessionRestored: boolean;
-}

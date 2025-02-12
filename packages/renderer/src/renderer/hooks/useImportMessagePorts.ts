@@ -14,7 +14,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import type { WcFetchedAddress } from '@app/contexts/import/WalletConnect/types';
+import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 
 // TODO: Move to WalletConnect file.
 const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';

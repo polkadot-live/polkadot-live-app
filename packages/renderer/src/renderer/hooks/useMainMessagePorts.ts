@@ -23,6 +23,7 @@ import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
+import { getAddressChainId } from '../Utils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -46,8 +47,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { WcSelectNetwork } from '@app/contexts/import/WalletConnect/types';
-import { getAddressChainId } from '../Utils';
+import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 // TODO: Move to WalletConnect file.
 const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';

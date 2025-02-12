@@ -3,11 +3,8 @@
 
 import { MessageChannelMain } from 'electron';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import type {
-  PortPair,
-  PortPairID,
-  WcSyncFlags,
-} from '@polkadot-live/types/communication';
+import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
+import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {
