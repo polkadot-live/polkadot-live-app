@@ -7,7 +7,7 @@ import { Config as ConfigImport } from '@ren/config/processes/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
-import { useWalletConnectImport } from '@app/contexts/import/WalletConnect';
+import { useWalletConnectImport } from '@app/contexts/import/WalletConnectImport';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {
