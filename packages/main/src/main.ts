@@ -370,58 +370,50 @@ app.whenReady().then(async () => {
         WindowsController.setWindowsBackgroundColor(
           appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
         );
-
-        // Relay to renderers.
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isConnected': {
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isImporting': {
         ConfigMain.importingData = flag;
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isOnlineMode': {
         ConfigMain.onlineMode = flag;
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'isBuildingExtrinsic': {
         ConfigMain.isBuildingExtrinsic = flag;
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'wc:connecting': {
         const pv = { ...ConfigMain.wcSyncFlags };
         ConfigMain.wcSyncFlags = { ...pv, wcConnecting: flag };
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'wc:disconnecting': {
         const pv = { ...ConfigMain.wcSyncFlags };
         ConfigMain.wcSyncFlags = { ...pv, wcDisconnecting: flag };
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'wc:initialized': {
         const pv = { ...ConfigMain.wcSyncFlags };
         ConfigMain.wcSyncFlags = { ...pv, wcInitialized: flag };
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       case 'wc:session:restored': {
         const pv = { ...ConfigMain.wcSyncFlags };
         ConfigMain.wcSyncFlags = { ...pv, wcSessionRestored: flag };
-        WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
         break;
       }
       default: {
         break;
       }
     }
+
+    // Relay to renderers.
+    WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
   });
 
   ipcMain.handle('app:modeFlag:get', async (_, syncId: SyncFlag) => {
