@@ -15,5 +15,6 @@ export const defaultWalletConnectImportContext: WalletConnectImportContextInterf
     handleFetch: () => {},
     setWcFetchedAddresses: () => {},
     handleImportProcess: () => new Promise(() => {}),
+    handleOpenCloseWcModal: () => new Promise(() => {}),
     setWcNetworks: () => {},
   };

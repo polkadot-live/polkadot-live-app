@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import * as wcConfig from '@ren/config/walletConnect';
 
 import { Config as ConfigImport } from '@ren/config/processes/import';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import type { WalletConnectImportContextInterface } from './types';
 import type {
@@ -15,6 +15,7 @@ import type {
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
+import { WalletConnectModal } from '@walletconnect/modal';
 
 export const WalletConnectImportContext =
   createContext<WalletConnectImportContextInterface>(
@@ -36,11 +37,32 @@ export const WalletConnectImportProvider = ({
   const [isImporting, setIsImporting] = useState(false);
 
   /**
+   * WalletConnect modal.
+   */
+  const wcModal = useRef<WalletConnectModal | null>(null);
+
+  /**
    * WalletConnect networks and their selected state.
    */
   const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>(
     wcConfig.WcNetworks
   );
+
+  /**
+   * Instantiate modal when component mounts.
+   */
+  useEffect(() => {
+    if (!wcModal.current) {
+      const modal = new WalletConnectModal({
+        enableExplorer: false,
+        explorerRecommendedWalletIds: 'NONE',
+        explorerExcludedWalletIds: 'ALL',
+        projectId: wcConfig.WC_PROJECT_ID,
+      });
+
+      wcModal.current = modal;
+    }
+  }, []);
 
   /**
    * Fetched addresses with WalletConnect.
@@ -81,6 +103,18 @@ export const WalletConnectImportProvider = ({
       task: 'renderer:wc:fetch',
       data: null,
     });
+  };
+
+  /**
+   * Handle opening and closing WalletConnect modal.
+   */
+  const handleOpenCloseWcModal = async (open: boolean, uri?: string) => {
+    if (open && uri && wcModal.current) {
+      await wcModal.current.openModal({ uri });
+    }
+    if (!open && wcModal.current) {
+      wcModal.current.closeModal();
+    }
   };
 
   /**
@@ -133,6 +167,7 @@ export const WalletConnectImportProvider = ({
         handleDisconnect,
         handleFetch,
         handleImportProcess,
+        handleOpenCloseWcModal,
         setWcNetworks,
         setWcFetchedAddresses,
       }}
