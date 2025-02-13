@@ -22,6 +22,7 @@ import type {
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
 import { SignOverlay } from '@app/screens/Action/SignOverlay';
+import { WcSignOverlay } from '@app/screens/Action/WcSignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { generateUID } from '@ren/utils/AccountUtils';
@@ -249,6 +250,17 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getOverlayComponent = (info: ExtrinsicInfo) => {
+    switch (info.actionMeta.source) {
+      case 'vault':
+        return <SignOverlay txId={info.txId} from={info.actionMeta.from} />;
+      case 'wallet-connect':
+        return <WcSignOverlay info={info} />;
+      default:
+        <span>Error: Unknown Source</span>;
+    }
+  };
+
   /**
    * Sets an extrinsic's dynamic data.
    */
@@ -257,16 +269,16 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     dynamicInfo: ExtrinsicDynamicInfo
   ) => {
     try {
-      const obj = extrinsicsRef.current.get(txId);
-      if (!obj) {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
 
-      obj.dynamicInfo = dynamicInfo;
+      info.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
 
-      const { from } = obj.actionMeta;
-      openOverlayWith(<SignOverlay txId={txId} from={from} />, 'small', true);
+      // Open sign overlay.
+      openOverlayWith(getOverlayComponent(info), 'small', true);
     } catch (err) {
       console.log(err);
     } finally {

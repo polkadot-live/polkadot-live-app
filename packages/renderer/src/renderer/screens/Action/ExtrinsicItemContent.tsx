@@ -67,7 +67,10 @@ export const ExtrinsicItemContent = ({
           </p>
 
           <FlexRow $gap={'1rem'}>
-            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+            <FlexRow
+              $gap={'1rem'}
+              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
+            >
               {/* Signing Account */}
               <SignerBadge info={info} theme={theme} />
               {/* Recipient */}
@@ -117,7 +120,10 @@ export const ExtrinsicItemContent = ({
         <>
           <p>Compound {fmtAmount}.</p>
           <FlexRow $gap={'1rem'}>
-            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+            <FlexRow
+              $gap={'1rem'}
+              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
+            >
               {/* Signing Account */}
               <SignerBadge info={info} theme={theme} />
               {/* Estimated Fee */}
@@ -144,7 +150,10 @@ export const ExtrinsicItemContent = ({
         <>
           <p>Claim {fmtAmount}.</p>
           <FlexRow $gap={'1rem'}>
-            <FlexRow $gap={'1rem'} style={{ flex: 1 }}>
+            <FlexRow
+              $gap={'1rem'}
+              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
+            >
               {/* Signing Account */}
               <SignerBadge info={info} theme={theme} />
               {/* Estimated Fee */}

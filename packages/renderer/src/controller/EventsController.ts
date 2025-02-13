@@ -366,6 +366,7 @@ export class EventsController {
               label: 'Compound',
               txMeta: {
                 eventUid: '',
+                source,
                 from: address,
                 accountName,
                 action: 'nominationPools_pendingRewards_bond',
@@ -382,6 +383,7 @@ export class EventsController {
               label: 'Withdraw',
               txMeta: {
                 eventUid: '',
+                source,
                 from: address,
                 accountName,
                 action: 'nominationPools_pendingRewards_withdraw',
