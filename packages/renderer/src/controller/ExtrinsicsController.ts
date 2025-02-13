@@ -19,8 +19,9 @@ import type {
 } from '@polkadot-live/types/tx';
 
 interface CachedExtrinsicData {
-  tx: AnyJson;
-  payload?: AnyJson;
+  tx: AnyData;
+  raw?: AnyData;
+  payload?: AnyData;
 }
 interface VerifyExtrinsicResult {
   isValid: boolean;
@@ -29,6 +30,11 @@ interface VerifyExtrinsicResult {
 
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
+
+  /**
+   * Get a payload object (currently required by WalletConnect)
+   */
+  static getTransactionPayload = (txId: string) => this.txPayloads.get(txId);
 
   /**
    * Construct an extrinsic's arguments.
@@ -175,8 +181,14 @@ export class ExtrinsicsController {
 
       // Build and cache payload.
       const { tx } = cached;
-      const txPayload = await this.buildPayload(tx, chainId, from, nonce);
-      this.txPayloads.set(txId, { tx, payload: txPayload });
+      const { rawPayload, payload } = await this.buildPayload(
+        tx,
+        chainId,
+        from,
+        nonce
+      );
+
+      this.txPayloads.set(txId, { ...cached, raw: rawPayload, payload });
 
       // Verify extrinsic is valid for submission.
       const verifyResult = await this.verifyExtrinsic(info);
@@ -187,9 +199,9 @@ export class ExtrinsicsController {
           task: 'action:tx:report:data',
           data: {
             accountNonce: nonce,
-            genesisHash: txPayload.genesisHash.toU8a(),
+            genesisHash: rawPayload.genesisHash.toU8a(),
             txId,
-            txPayload: txPayload.toU8a(),
+            txPayload: rawPayload.toU8a(),
           },
         });
       } else {
@@ -254,11 +266,11 @@ export class ExtrinsicsController {
       version: tx.version,
     };
 
-    const raw = api.registry.createType('ExtrinsicPayload', payload, {
+    const rawPayload = api.registry.createType('ExtrinsicPayload', payload, {
       version: payload.version,
     });
 
-    return raw;
+    return { rawPayload, payload };
   };
 
   /**

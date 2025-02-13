@@ -5,6 +5,7 @@ import * as defaults from './defaults';
 import * as wcConfig from '@ren/config/walletConnect';
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
@@ -17,6 +18,7 @@ import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
+import type { ExtrinsicInfo } from 'packages/types/src';
 
 const mapCaipChainId = new Map<string, ChainID>([
   [wcConfig.WC_POLKADOT_CAIP_ID, 'Polkadot'],
@@ -72,6 +74,7 @@ export const WalletConnectProvider = ({
       return [
         `polkadot:${wcConfig.WC_POLKADOT_CAIP_ID}`,
         `polkadot:${wcConfig.WC_KUSAMA_CAIP_ID}`,
+        `polkadot:${wcConfig.WC_WESTEND_CAIP_ID}`,
       ];
     }
   };
@@ -211,6 +214,10 @@ export const WalletConnectProvider = ({
   const cacheOrPrepareSession = async (
     modalWindow: 'import' | 'extrinsics'
   ) => {
+    if (!wcInitializedRef.current) {
+      throw new Error('Error: WalletConnect not initialized');
+    }
+
     // Get existing session or generate a new uri and approval.
     await tryCacheSession();
 
@@ -225,7 +232,10 @@ export const WalletConnectProvider = ({
           break;
         }
         case 'extrinsics': {
-          // TODO: Open modal in extrinsics window.
+          ConfigRenderer.portToAction?.postMessage({
+            task: 'action:wc:modal:open',
+            data: { uri: wcMetaRef.current.uri },
+          });
           break;
         }
       }
@@ -266,10 +276,6 @@ export const WalletConnectProvider = ({
    */
   const connectWc = async (wcNetworks: WcSelectNetwork[]) => {
     try {
-      if (!wcInitializedRef.current) {
-        return;
-      }
-
       // Cache received networks.
       wcNetworksRef.current = wcNetworks;
 
@@ -301,6 +307,70 @@ export const WalletConnectProvider = ({
     } catch (error: AnyData) {
       console.error(error);
     }
+  };
+
+  /**
+   * Ensure a session exists before signing an extrinsic.
+   */
+  const wcEstablishSessionForExtrinsic = async () => {
+    try {
+      window.myAPI.relayModeFlag('wc:connecting', true);
+      await cacheOrPrepareSession('extrinsics');
+
+      window.myAPI.relayModeFlag('wc:connecting', false);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+
+      // Await approval and cache session and pairing topic.
+      const session = await wcMetaRef.current!.approval();
+      wcSession.current = session;
+      wcPairingTopic.current = session.pairingTopic;
+
+      // Close modal in extrinsics window.
+      if (wcMetaRef.current?.uri) {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:wc:modal:close',
+          data: null,
+        });
+      }
+
+      window.myAPI.relayModeFlag('wc:session:restored', true);
+    } catch (error: AnyData) {
+      console.log(error);
+    }
+  };
+
+  /**
+   * Sign an extrinsic via WalletConnect.
+   */
+  const wcSignExtrinsic = async (info: ExtrinsicInfo) => {
+    const { txId } = info;
+    const txData = ExtrinsicsController.getTransactionPayload(txId);
+
+    if (
+      !(wcSession.current && wcProvider.current && txData && txData.payload)
+    ) {
+      console.log('> TODO: Signing error');
+      return;
+    }
+
+    const { from, chainId } = info.actionMeta;
+    const topic = wcSession.current.topic;
+    const caip = wcConfig.getWalletConnectChainId(chainId);
+
+    const result = await wcProvider.current.client.request({
+      chainId: `polkadot:${caip}`,
+      topic,
+      request: {
+        method: 'polkadot_signTransaction',
+        params: {
+          address: from,
+          transactionPayload: txData.payload,
+        },
+      },
+    });
+
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    console.log(result);
   };
 
   /**
@@ -362,10 +432,12 @@ export const WalletConnectProvider = ({
   return (
     <WalletConnectContext.Provider
       value={{
+        wcSessionRestored,
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
-        wcSessionRestored,
+        wcEstablishSessionForExtrinsic,
+        wcSignExtrinsic,
       }}
     >
       {children}

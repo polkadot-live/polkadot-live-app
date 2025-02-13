@@ -13,6 +13,7 @@ export const useActionMessagePorts = () => {
    * Action window specific.
    */
   const {
+    handleOpenCloseWcModal,
     initTx,
     notifyInvalidExtrinsic,
     setEstimatedFee,
@@ -129,6 +130,15 @@ export const useActionMessagePorts = () => {
             }
             case 'action:tx:invalid': {
               handleInvalidExtrinsic(ev);
+              break;
+            }
+            case 'action:wc:modal:open': {
+              const { uri } = ev.data.data;
+              await handleOpenCloseWcModal(true, uri);
+              break;
+            }
+            case 'action:wc:modal:close': {
+              handleOpenCloseWcModal(false);
               break;
             }
             default: {

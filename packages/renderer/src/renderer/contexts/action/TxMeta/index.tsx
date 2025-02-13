@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as wcConfig from '@ren/config/walletConnect';
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { chainIcon } from '@ren/config/chains';
 import React, {
@@ -26,6 +27,7 @@ import { WcSignOverlay } from '@app/screens/Action/WcSignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { generateUID } from '@ren/utils/AccountUtils';
+import { WalletConnectModal } from '@walletconnect/modal';
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -60,6 +62,27 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Flag to enable mock UI.
    */
   const [showMockUI] = useState(false);
+
+  /**
+   * WalletConnect modal.
+   */
+  const wcModal = useRef<WalletConnectModal | null>(null);
+
+  /**
+   * Instantiate WalletConnect modal when component mounts.
+   */
+  useEffect(() => {
+    if (!wcModal.current) {
+      const modal = new WalletConnectModal({
+        enableExplorer: false,
+        explorerRecommendedWalletIds: 'NONE',
+        explorerExcludedWalletIds: 'ALL',
+        projectId: wcConfig.WC_PROJECT_ID,
+      });
+
+      wcModal.current = modal;
+    }
+  }, []);
 
   /**
    * Fetch stored extrinsics when window loads.
@@ -553,6 +576,18 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /**
+   * Utility to handle opening and closing WalletConnect modal.
+   */
+  const handleOpenCloseWcModal = async (open: boolean, uri?: string) => {
+    if (open && uri && wcModal.current) {
+      await wcModal.current.openModal({ uri });
+    }
+    if (!open && wcModal.current) {
+      wcModal.current.closeModal();
+    }
+  };
+
   // Transaction state.
   //const [notEnoughFunds, setNotEnoughFunds] = useState(false);
 
@@ -584,6 +619,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         getFilteredExtrinsics,
         getGenesisHash,
         getTxPayload,
+        handleOpenCloseWcModal,
         initTx,
         initTxDynamicInfo,
         onFilterChange,

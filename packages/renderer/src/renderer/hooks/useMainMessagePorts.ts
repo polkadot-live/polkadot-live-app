@@ -60,8 +60,13 @@ export const useMainMessagePorts = () => {
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
-  const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
-    useWalletConnect();
+  const {
+    connectWc,
+    disconnectWcSession,
+    fetchAddressesFromExistingSession,
+    wcEstablishSessionForExtrinsic,
+    wcSignExtrinsic,
+  } = useWalletConnect();
 
   const {
     updateRenderedSubscriptions,
@@ -738,6 +743,16 @@ export const useMainMessagePorts = () => {
             case 'renderer:tx:delete': {
               console.log('> handle renderer:tx:delete');
               handleTxDelete(ev);
+              break;
+            }
+            case 'renderer:wc:connect:action': {
+              await wcEstablishSessionForExtrinsic();
+              break;
+            }
+            case 'renderer:wc:sign': {
+              const { info: serialized } = ev.data.data;
+              const info: ExtrinsicInfo = JSON.parse(serialized);
+              await wcSignExtrinsic(info);
               break;
             }
             default: {

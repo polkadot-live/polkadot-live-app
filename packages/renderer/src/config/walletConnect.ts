@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { chainIcon } from '@ren/config/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 export const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
@@ -32,3 +33,14 @@ export const WcNetworks: WcSelectNetwork[] = [
     selected: false,
   },
 ];
+
+export const getWalletConnectChainId = (chainId: ChainID) => {
+  switch (chainId) {
+    case 'Polkadot':
+      return WC_POLKADOT_CAIP_ID;
+    case 'Kusama':
+      return WC_KUSAMA_CAIP_ID;
+    case 'Westend':
+      return WC_WESTEND_CAIP_ID;
+  }
+};

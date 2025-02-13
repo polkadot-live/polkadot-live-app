@@ -9,4 +9,6 @@ export const defaultWalletConnectContext: WalletConnectContextInterface = {
   connectWc: () => new Promise(() => {}),
   disconnectWcSession: () => new Promise(() => {}),
   fetchAddressesFromExistingSession: () => {},
+  wcEstablishSessionForExtrinsic: () => new Promise(() => {}),
+  wcSignExtrinsic: () => new Promise(() => {}),
 };

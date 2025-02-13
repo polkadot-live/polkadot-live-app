@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 export interface WalletConnectContextInterface {
@@ -8,4 +9,6 @@ export interface WalletConnectContextInterface {
   connectWc: (wcNetworks: WcSelectNetwork[]) => Promise<void>;
   disconnectWcSession: () => Promise<void>;
   fetchAddressesFromExistingSession: () => void;
+  wcEstablishSessionForExtrinsic: () => Promise<void>;
+  wcSignExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
 }
