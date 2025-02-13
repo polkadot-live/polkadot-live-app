@@ -185,10 +185,11 @@ export const WalletConnectProvider = ({
         return;
       }
 
-      // If an existing session exists, cache the pairing topic.
-      const pairingTopic = wcProvider.current!.session?.pairingTopic;
-      wcPairingTopic.current = pairingTopic || null;
-      console.log('> Pairing topic:', pairingTopic);
+      // Cache an existing session and pairing topic.
+      if (wcProvider.current?.session) {
+        wcPairingTopic.current = wcProvider.current.session.pairingTopic;
+        wcSession.current = wcProvider.current.session;
+      }
 
       // If no session exists, get a new approval function.
       if (!wcProvider.current?.session) {
@@ -264,12 +265,8 @@ export const WalletConnectProvider = ({
    * Set addresses from existing session. Called with `Fetch` UI button clicked.
    */
   const fetchAddressesFromExistingSession = () => {
-    // Fetch accounts from a restored or new session.
-    const namespaces = wcProvider.current?.session?.namespaces
-      ? wcProvider.current.session.namespaces
-      : wcSession.current
-        ? wcSession.current.namespaces
-        : null;
+    // Fetch accounts from the cached session.
+    const namespaces = wcSession.current ? wcSession.current.namespaces : null;
 
     if (!namespaces) {
       // Render toast error notification in import window.
@@ -285,10 +282,10 @@ export const WalletConnectProvider = ({
       return;
     }
 
-    /** Set received WalletConnect address state. */
+    // Set received WalletConnect address state.
     setFetchedAddresses(namespaces);
 
-    /** Set restored session flag. */
+    // Set restored session flag.
     window.myAPI.relayModeFlag('wc:session:restored', true);
   };
 
@@ -302,10 +299,10 @@ export const WalletConnectProvider = ({
         return;
       }
 
-      /** Cache received networks. */
+      // Cache received networks.
       wcNetworksRef.current = wcNetworks;
 
-      /** Restore existing session or create a new one. */
+      // Restore existing session or create a new one.
       window.myAPI.relayModeFlag('wc:connecting', true);
       const modalOpen = await restoreOrConnectSession();
       window.myAPI.relayModeFlag('wc:connecting', false);
@@ -313,9 +310,10 @@ export const WalletConnectProvider = ({
       if (!modalOpen) {
         fetchAddressesFromExistingSession();
       } else {
-        // Await session approval from the wallet app and set new session.
-        const walletConnectSession = await wcMetaRef.current!.approval();
-        wcSession.current = walletConnectSession;
+        // Await approval and cache session and pairing topic.
+        const session = await wcMetaRef.current!.approval();
+        wcSession.current = session;
+        wcPairingTopic.current = session.pairingTopic;
 
         // Close modal in import window if we're creating a new session.
         if (wcMetaRef.current?.uri) {
@@ -326,7 +324,7 @@ export const WalletConnectProvider = ({
         }
 
         // Set received WalletConnect address state.
-        setFetchedAddresses(walletConnectSession.namespaces);
+        setFetchedAddresses(session.namespaces);
         window.myAPI.relayModeFlag('wc:session:restored', true);
       }
     } catch (error: AnyData) {
