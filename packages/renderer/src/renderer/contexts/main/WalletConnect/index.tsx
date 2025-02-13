@@ -10,7 +10,6 @@ import { createContext, useContext, useEffect, useRef } from 'react';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { useConnections } from '@app/contexts/common/Connections';
 import { getSdkError } from '@walletconnect/utils';
-import { getUnixTime } from 'date-fns';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { WalletConnectContextInterface } from './types';
@@ -177,9 +176,9 @@ export const WalletConnectProvider = ({
   });
 
   /**
-   * Create or restore a WalletConnect session.
+   * Try to cache a WalletConnect session or prepare a new one.
    */
-  const createSession = async () => {
+  const tryCacheSession = async () => {
     try {
       if (!wcInitializedRef.current) {
         return;
@@ -189,22 +188,19 @@ export const WalletConnectProvider = ({
       if (wcProvider.current?.session) {
         wcPairingTopic.current = wcProvider.current.session.pairingTopic;
         wcSession.current = wcProvider.current.session;
-      }
+        window.myAPI.relayModeFlag('wc:session:restored', true);
+      } else {
+        console.log('> Re-create session uri and approval.');
 
-      // If no session exists, get a new approval function.
-      if (!wcProvider.current?.session) {
-        console.log('> No existing session found, creating a new one.');
-
+        // Otherwise create a new uri and approval function.
         const { uri, approval } = await wcProvider.current!.client.connect(
           getConnectionParams()
         );
 
         wcMetaRef.current = { uri, approval };
-      } else {
-        window.myAPI.relayModeFlag('wc:session:restored', true);
       }
     } catch (error: AnyData) {
-      console.error('initWc: An unexpected error occurred:', error);
+      console.error(error);
     }
   };
 
@@ -212,51 +208,26 @@ export const WalletConnectProvider = ({
    * Restore an existing session. Called when `Connect` UI button clicked.
    * Note: Will prompt wallet to approve addresses.
    */
-  const restoreOrConnectSession = async () => {
-    // Create new session if there's no session to restore.
-    if (!wcSessionRestoredRef.current) {
-      // Re-connect to get a new uri and approval function
-      console.log('> Re-create session uri and approval.');
-      await createSession();
+  const cacheOrPrepareSession = async (
+    modalWindow: 'import' | 'extrinsics'
+  ) => {
+    // Get existing session or generate a new uri and approval.
+    await tryCacheSession();
 
-      // Send message to import window to open the modal.
-      if (wcMetaRef.current?.uri) {
-        ConfigRenderer.portToImport?.postMessage({
-          task: 'import:wc:modal:open',
-          data: { uri: wcMetaRef.current.uri },
-        });
-      }
-
-      return true;
-    } else {
-      // NOTE: This branch is currently not run based on the import UI.
-      const expiry = wcProvider.current!.session!.expiry;
-      const nowUnix = getUnixTime(new Date());
-
-      // Existing session not expired.
-      if (nowUnix <= expiry) {
-        console.log('> Restored session');
-
-        return false;
-      } else {
-        console.log('> Session expired. Creating a new one.');
-
-        // Existing session expired.
-        await disconnectWcSession();
-
-        // Create a new session.
-        await createSession();
-
-        // Open modal.
-        if (wcMetaRef.current?.uri) {
-          // Send message to import window to open the modal.
+    // If no existing session, open the modal in target window.
+    if (wcMetaRef.current?.uri) {
+      switch (modalWindow) {
+        case 'import': {
           ConfigRenderer.portToImport?.postMessage({
             task: 'import:wc:modal:open',
             data: { uri: wcMetaRef.current.uri },
           });
+          break;
         }
-
-        return true;
+        case 'extrinsics': {
+          // TODO: Open modal in extrinsics window.
+          break;
+        }
       }
     }
   };
@@ -304,10 +275,10 @@ export const WalletConnectProvider = ({
 
       // Restore existing session or create a new one.
       window.myAPI.relayModeFlag('wc:connecting', true);
-      const modalOpen = await restoreOrConnectSession();
+      await cacheOrPrepareSession('import');
       window.myAPI.relayModeFlag('wc:connecting', false);
 
-      if (!modalOpen) {
+      if (!wcMetaRef.current?.uri) {
         fetchAddressesFromExistingSession();
       } else {
         // Await approval and cache session and pairing topic.
@@ -328,7 +299,7 @@ export const WalletConnectProvider = ({
         window.myAPI.relayModeFlag('wc:session:restored', true);
       }
     } catch (error: AnyData) {
-      console.error('connectWc: An unexpected error occurred:', error);
+      console.error(error);
     }
   };
 
@@ -380,7 +351,7 @@ export const WalletConnectProvider = ({
 
     if (wcInitialized) {
       console.log('> Create session if one does not already exist.');
-      createSession();
+      tryCacheSession();
     }
   }, [wcInitialized]);
 
