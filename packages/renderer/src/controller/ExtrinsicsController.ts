@@ -354,7 +354,7 @@ export class ExtrinsicsController {
       }
 
       // Get cached tx and payload.
-      const { payload: txPayload, tx } = this.txPayloads.get(txId)!;
+      const { raw: txPayload, tx } = this.txPayloads.get(txId)!;
 
       // Add signature to transaction.
       const { txSignature } = info.dynamicInfo;
