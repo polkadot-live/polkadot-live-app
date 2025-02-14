@@ -4,6 +4,7 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import BigNumber from 'bignumber.js';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
@@ -22,6 +23,8 @@ export const useActionMessagePorts = () => {
     updateAccountName,
     updateTxStatus,
   } = useTxMeta();
+
+  const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
 
   /**
    * @name handleInitAction
@@ -140,6 +143,11 @@ export const useActionMessagePorts = () => {
             }
             case 'action:wc:modal:close': {
               handleOpenCloseWcModal(false);
+              break;
+            }
+            case 'action:wc:overlay:close': {
+              setDisableClose(false);
+              setOverlayStatus(0);
               break;
             }
             case 'action:toast:show': {

@@ -412,7 +412,14 @@ export const WalletConnectProvider = ({
       const txData = ExtrinsicsController.getTransactionPayload(txId);
 
       // Send error if data is insufficient.
-      if (!(wcSession.current && wcProvider.current && txData?.payload)) {
+      if (
+        !(
+          wcSession.current &&
+          wcProvider.current &&
+          txData?.payload &&
+          info.dynamicInfo
+        )
+      ) {
         const message = 'WalletConnect Error - Insufficient data';
         sendToastError('extrinsics', message);
         return;
@@ -449,19 +456,26 @@ export const WalletConnectProvider = ({
 
       // Retrieve the extrinsic's sign flag to determine if the transaction
       // has been canceled.
-      const signFlag = wcTxSignMap.current.has(txId)
+      const doSubmit = wcTxSignMap.current.has(txId)
         ? wcTxSignMap.current.get(txId)!
         : false;
 
-      if (signFlag) {
+      if (doSubmit) {
+        // Attach signature to info and submit transaction.
         wcTxSignMap.current.delete(txId);
-        console.log(`> Proceed with signature: ${result.signature}`);
-      } else {
-        wcTxSignMap.current.delete(txId);
-        console.log("> Signing cancelled, don't submit tx");
-      }
+        info.dynamicInfo.txSignature = result.signature;
+        ExtrinsicsController.submit(info);
 
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+        // Close overlay in extrinsics window.
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:wc:overlay:close',
+          data: null,
+        });
+      } else {
+        // Signing canceled, don't submit transaction.
+        wcTxSignMap.current.delete(txId);
+        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      }
     } catch (error: AnyData) {
       wcTxSignMap.current.delete(info.txId);
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
