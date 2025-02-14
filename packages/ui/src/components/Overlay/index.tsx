@@ -11,11 +11,21 @@ export const Overlay = () => {
     status,
     transparent,
     Overlay: OverlayInner,
+    disableClose,
   } = useOverlay();
 
   if (status === 0) {
     return null;
   }
+
+  /**
+   * Mechanism to close overlay only if a specific flag is set in the context.
+   */
+  const handleCloseOverlay = () => {
+    if (!disableClose && status !== 0) {
+      closeOverlay();
+    }
+  };
 
   return (
     <OverlayWrapper>
@@ -27,7 +37,11 @@ export const Overlay = () => {
             {OverlayInner}
           </ContentWrapper>
         </HeightWrapper>
-        <button type="button" className="close" onClick={() => closeOverlay()}>
+        <button
+          type="button"
+          className="close"
+          onClick={() => handleCloseOverlay()}
+        >
           &nbsp;
         </button>
       </div>

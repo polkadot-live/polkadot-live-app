@@ -6,10 +6,12 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
-import { ButtonPrimary } from '@polkadot-live/ui/kits/buttons';
+import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { WcOverlayWrapper } from './Wrappers';
 import { PuffLoader } from 'react-spinners';
+import { useOverlay } from '@polkadot-live/ui/contexts';
+import { FlexRow } from '@polkadot-live/ui/styles';
 
 interface WcSignOverlayProps {
   info: ExtrinsicInfo;
@@ -21,10 +23,15 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
     wcSyncFlags: { wcSessionRestored, wcAccountApproved, wcVerifyingAccount },
   } = useConnections();
 
+  const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
+
   /**
    * Check signing account is approved in the WalletConnect session.
    */
   useEffect(() => {
+    // Disable closing the overlay.
+    setDisableClose(true);
+
     if (wcSessionRestored) {
       const { chainId, from } = info.actionMeta;
 
@@ -77,14 +84,25 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
             your connected wallet.
           </p>
 
-          <ButtonPrimary
-            style={{ width: '100px' }}
-            text="Sign"
-            disabled={isBuildingExtrinsic}
-            onClick={() => handleSign()}
-            iconRight={faChevronRight}
-            iconTransform="shrink-3"
-          />
+          <FlexRow $gap={'1rem'} style={{ marginTop: '0.5rem' }}>
+            <ButtonSecondary
+              text="Cancel"
+              marginLeft
+              disabled={isBuildingExtrinsic}
+              onClick={() => {
+                setDisableClose(false);
+                setOverlayStatus(0);
+              }}
+            />
+            <ButtonPrimary
+              style={{ width: '100px' }}
+              text="Sign"
+              disabled={isBuildingExtrinsic}
+              onClick={() => handleSign()}
+              iconRight={faChevronRight}
+              iconTransform="shrink-3"
+            />
+          </FlexRow>
         </div>
       ) : (
         <div className="ContentColumn">
@@ -100,14 +118,25 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
                 Click the connect button and scan the QR code with your wallet
                 to establish a new WalletConnect session.
               </p>
-              <ButtonPrimary
-                style={{ width: '100px' }}
-                text="Connect"
-                disabled={isBuildingExtrinsic}
-                onClick={() => handleConnect()}
-                iconRight={faChevronRight}
-                iconTransform="shrink-3"
-              />
+              <FlexRow $gap={'1rem'} style={{ marginTop: '0.5rem' }}>
+                <ButtonSecondary
+                  text="Cancel"
+                  marginLeft
+                  disabled={isBuildingExtrinsic}
+                  onClick={() => {
+                    setDisableClose(false);
+                    setOverlayStatus(0);
+                  }}
+                />
+                <ButtonPrimary
+                  style={{ width: '100px' }}
+                  text="Connect"
+                  disabled={isBuildingExtrinsic}
+                  onClick={() => handleConnect()}
+                  iconRight={faChevronRight}
+                  iconTransform="shrink-3"
+                />
+              </FlexRow>
             </>
           )}
         </div>

@@ -9,8 +9,10 @@ export interface OverlayContextInterface {
   closeOverlay: () => void;
   setStatus: (s: number) => void;
   setOverlay: (d: string | null) => void;
+  setDisableClose: (d: boolean) => void;
   size: string;
   status: number;
   transparent: boolean;
   Overlay: React.ReactNode | null;
+  disableClose: boolean;
 }
