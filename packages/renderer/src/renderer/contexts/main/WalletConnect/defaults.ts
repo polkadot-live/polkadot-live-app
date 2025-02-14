@@ -11,5 +11,6 @@ export const defaultWalletConnectContext: WalletConnectContextInterface = {
   fetchAddressesFromExistingSession: () => {},
   wcEstablishSessionForExtrinsic: () => new Promise(() => {}),
   wcSignExtrinsic: () => new Promise(() => {}),
+  updateWcTxSignMap: () => {},
   verifySigningAccount: () => new Promise(() => {}),
 };

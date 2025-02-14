@@ -59,6 +59,24 @@ export const WalletConnectProvider = ({
   const wcNetworksRef = useRef<WcSelectNetwork[]>([]);
 
   /**
+   * Map to track a transaction's canceled signing status.
+   *
+   * If the overlay `Cancel` button is clicked whilst waiting for a WalletConnect
+   * signature, the transaction's flag is set to `false`. This will prevent the
+   * extrinsic from being submitted if the user decides to approve the signature.
+   *
+   * If the user cancels the signature approval within the wallet, the transaction
+   * entry is deleted, and the user will be able to attempt another signature.
+   */
+  const wcTxSignMap = useRef<Map<string, boolean>>(new Map());
+
+  const updateWcTxSignMap = (txId: string, flag: boolean) => {
+    if (wcTxSignMap.current.has(txId)) {
+      wcTxSignMap.current.set(txId, flag);
+    }
+  };
+
+  /**
    * Get namespaces of selected networks.
    */
   const getNamespaces = () => {
@@ -393,16 +411,31 @@ export const WalletConnectProvider = ({
       const { txId } = info;
       const txData = ExtrinsicsController.getTransactionPayload(txId);
 
+      // Send error if data is insufficient.
       if (!(wcSession.current && wcProvider.current && txData?.payload)) {
-        sendToastError('extrinsics', 'WalletConnect Error - Insufficient data');
+        const message = 'WalletConnect Error - Insufficient data';
+        sendToastError('extrinsics', message);
         return;
       }
+
+      // Send error if this transaction is waiting to be canceled in wallet.
+      if (wcTxSignMap.current.has(txId)) {
+        if (!wcTxSignMap.current.get(txId)!) {
+          const message = 'Error - Cancel pending signature before re-signing';
+          sendToastError('extrinsics', message);
+        }
+        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+        return;
+      }
+
+      // Add an entry into the sign map.
+      wcTxSignMap.current.set(txId, true);
 
       const { from, chainId } = info.actionMeta;
       const topic = wcSession.current.topic;
       const caip = wcConfig.getWalletConnectChainId(chainId);
 
-      const result = await wcProvider.current.client.request({
+      const result: AnyData = await wcProvider.current.client.request({
         chainId: `polkadot:${caip}`,
         topic,
         request: {
@@ -414,10 +447,25 @@ export const WalletConnectProvider = ({
         },
       });
 
-      console.log(result);
+      // Retrieve the extrinsic's sign flag to determine if the transaction
+      // has been canceled.
+      const signFlag = wcTxSignMap.current.has(txId)
+        ? wcTxSignMap.current.get(txId)!
+        : false;
+
+      if (signFlag) {
+        wcTxSignMap.current.delete(txId);
+        console.log(`> Proceed with signature: ${result.signature}`);
+      } else {
+        wcTxSignMap.current.delete(txId);
+        console.log("> Signing cancelled, don't submit tx");
+      }
+
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
     } catch (error: AnyData) {
+      wcTxSignMap.current.delete(info.txId);
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+
       console.log(error);
       error.code === -32000
         ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
@@ -509,6 +557,7 @@ export const WalletConnectProvider = ({
         fetchAddressesFromExistingSession,
         wcEstablishSessionForExtrinsic,
         wcSignExtrinsic,
+        updateWcTxSignMap,
         verifySigningAccount,
       }}
     >

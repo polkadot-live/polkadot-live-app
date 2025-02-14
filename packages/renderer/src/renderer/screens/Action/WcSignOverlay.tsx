@@ -73,6 +73,20 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
     });
   };
 
+  /**
+   * Cancel a transaction waiting for a signature.
+   */
+  const handleCancelSign = () => {
+    ConfigAction.portAction.postMessage({
+      task: 'renderer:wc:sign:cancel',
+      data: { txId: info.txId },
+    });
+
+    setDisableClose(false);
+    setOverlayStatus(0);
+    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+  };
+
   return (
     <WcOverlayWrapper>
       <WalletConnectSVG style={{ height: '3rem' }} />
@@ -88,11 +102,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
             <ButtonSecondary
               text="Cancel"
               marginLeft
-              disabled={isBuildingExtrinsic}
-              onClick={() => {
-                setDisableClose(false);
-                setOverlayStatus(0);
-              }}
+              onClick={() => handleCancelSign()}
             />
             <ButtonPrimary
               style={{ width: '100px' }}

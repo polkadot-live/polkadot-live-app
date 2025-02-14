@@ -66,6 +66,7 @@ export const useMainMessagePorts = () => {
     fetchAddressesFromExistingSession,
     wcEstablishSessionForExtrinsic,
     wcSignExtrinsic,
+    updateWcTxSignMap,
     verifySigningAccount,
   } = useWalletConnect();
 
@@ -754,6 +755,11 @@ export const useMainMessagePorts = () => {
               const { info: serialized } = ev.data.data;
               const info: ExtrinsicInfo = JSON.parse(serialized);
               await wcSignExtrinsic(info);
+              break;
+            }
+            case 'renderer:wc:sign:cancel': {
+              const { txId } = ev.data.data;
+              updateWcTxSignMap(txId, false);
               break;
             }
             case 'renderer:wc:verify:account': {

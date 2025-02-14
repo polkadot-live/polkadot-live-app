@@ -15,5 +15,6 @@ export interface WalletConnectContextInterface {
     chainId: ChainID
   ) => Promise<void>;
   wcSignExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
+  updateWcTxSignMap: (txId: string, flag: boolean) => void;
   verifySigningAccount: (target: string, chainId: ChainID) => Promise<void>;
 }
