@@ -742,12 +742,12 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:tx:delete': {
-              console.log('> handle renderer:tx:delete');
               handleTxDelete(ev);
               break;
             }
             case 'renderer:wc:connect:action': {
-              await wcEstablishSessionForExtrinsic();
+              const { target, chainId } = ev.data.data;
+              await wcEstablishSessionForExtrinsic(target, chainId);
               break;
             }
             case 'renderer:wc:sign': {
@@ -758,7 +758,7 @@ export const useMainMessagePorts = () => {
             }
             case 'renderer:wc:verify:account': {
               const { target, chainId } = ev.data.data;
-              verifySigningAccount(target, chainId);
+              await verifySigningAccount(target, chainId);
               break;
             }
             default: {

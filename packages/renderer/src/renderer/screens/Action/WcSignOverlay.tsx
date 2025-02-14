@@ -31,21 +31,20 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
     return () => {
       // Reset relay flags.
       window.myAPI.relayModeFlag('wc:account:approved', false);
-      window.myAPI.relayModeFlag('wc:account:verifying', true);
+      window.myAPI.relayModeFlag('wc:account:verifying', false);
     };
   }, []);
 
   /**
    * Establish a WalletConnect session before signing.
-   *
-   * @todo Handle the case where the signing account is not included in the new session.
    */
   const handleConnect = () => {
     window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    const { chainId, from } = info.actionMeta;
 
     ConfigAction.portAction.postMessage({
       task: 'renderer:wc:connect:action',
-      data: null,
+      data: { chainId, target: from },
     });
   };
 

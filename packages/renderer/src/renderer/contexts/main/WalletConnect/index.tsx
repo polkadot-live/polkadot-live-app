@@ -312,18 +312,25 @@ export const WalletConnectProvider = ({
   /**
    * Verify a signing account is approved in the WalletConnect session.
    */
-  const verifySigningAccount = (target: string, chainId: ChainID) => {
+  const verifySigningAccount = async (target: string, chainId: ChainID) => {
     window.myAPI.relayModeFlag('wc:account:verifying', true);
 
     if (!wcSession.current) {
-      // TODO: Error toast in extrinsics window.
+      // Error toast in extrinsics window.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:toast:show',
+        data: {
+          message: 'WalletConnect Error - Session not found',
+          toastId: `wc-error-${String(Date.now())}`,
+          toastType: 'error',
+        },
+      });
+
       window.myAPI.relayModeFlag('wc:account:verifying', false);
-      throw new Error('ERROR');
     }
 
-    const caip = wcConfig.getWalletConnectChainId(chainId);
-
     // Get the accounts from the session.
+    const caip = wcConfig.getWalletConnectChainId(chainId);
     const accounts: { address: string; caipId: string }[] = Object.values(
       wcSession.current.namespaces
     )
@@ -341,20 +348,31 @@ export const WalletConnectProvider = ({
       ({ address }) => encodeAddress(address, pref) === target
     );
 
-    // Update relay flag.
+    // Update relay flags.
     const approved = found ? true : false;
     window.myAPI.relayModeFlag('wc:account:verifying', false);
     window.myAPI.relayModeFlag('wc:account:approved', approved);
 
     if (!approved) {
-      // TODO: Toast error notification in extrinsics window.
+      // Toast error notification in extrinsics window.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:toast:show',
+        data: {
+          message: 'WalletConnect Error - Approve the signing account',
+          toastId: `wc-error-${String(Date.now())}`,
+          toastType: 'error',
+        },
+      });
     }
   };
 
   /**
-   * Ensure a session exists before signing an extrinsic.
+   * Ensure a session exists with the signing account approved before signing an extrinsic.
    */
-  const wcEstablishSessionForExtrinsic = async () => {
+  const wcEstablishSessionForExtrinsic = async (
+    signingAddress: string,
+    chainId: ChainID
+  ) => {
     try {
       window.myAPI.relayModeFlag('wc:connecting', true);
       await cacheOrPrepareSession('extrinsics');
@@ -366,6 +384,7 @@ export const WalletConnectProvider = ({
       const session = await wcMetaRef.current!.approval();
       wcSession.current = session;
       wcPairingTopic.current = session.pairingTopic;
+      window.myAPI.relayModeFlag('wc:session:restored', true);
 
       // Close modal in extrinsics window.
       if (wcMetaRef.current?.uri) {
@@ -375,9 +394,8 @@ export const WalletConnectProvider = ({
         });
       }
 
-      window.myAPI.relayModeFlag('wc:session:restored', true);
-
-      // TODO: Re-verify the session.
+      // Re-verify the session.
+      await verifySigningAccount(signingAddress, chainId);
     } catch (error: AnyData) {
       console.log(error);
     }
@@ -387,34 +405,40 @@ export const WalletConnectProvider = ({
    * Sign an extrinsic via WalletConnect.
    */
   const wcSignExtrinsic = async (info: ExtrinsicInfo) => {
-    const { txId } = info;
-    const txData = ExtrinsicsController.getTransactionPayload(txId);
+    try {
+      const { txId } = info;
+      const txData = ExtrinsicsController.getTransactionPayload(txId);
 
-    if (
-      !(wcSession.current && wcProvider.current && txData && txData.payload)
-    ) {
-      console.log('> TODO: Signing error');
-      return;
-    }
+      if (
+        !(wcSession.current && wcProvider.current && txData && txData.payload)
+      ) {
+        // TODO: Toast error in extrinsics window.
+        console.log('> TODO: Signing error');
+        return;
+      }
 
-    const { from, chainId } = info.actionMeta;
-    const topic = wcSession.current.topic;
-    const caip = wcConfig.getWalletConnectChainId(chainId);
+      const { from, chainId } = info.actionMeta;
+      const topic = wcSession.current.topic;
+      const caip = wcConfig.getWalletConnectChainId(chainId);
 
-    const result = await wcProvider.current.client.request({
-      chainId: `polkadot:${caip}`,
-      topic,
-      request: {
-        method: 'polkadot_signTransaction',
-        params: {
-          address: from,
-          transactionPayload: txData.payload,
+      const result = await wcProvider.current.client.request({
+        chainId: `polkadot:${caip}`,
+        topic,
+        request: {
+          method: 'polkadot_signTransaction',
+          params: {
+            address: from,
+            transactionPayload: txData.payload,
+          },
         },
-      },
-    });
+      });
 
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
-    console.log(result);
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      console.log(result);
+    } catch (error) {
+      // TODO: Toast error in extrinsics window.
+      console.log(error);
+    }
   };
 
   /**
