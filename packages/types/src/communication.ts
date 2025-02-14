@@ -10,11 +10,12 @@ export type SyncFlag =
   | 'isImporting'
   | 'isOnlineMode'
   // WalletConnect
-  | 'wc:account:approved'
   | 'wc:connecting'
   | 'wc:disconnecting'
   | 'wc:initialized'
-  | 'wc:session:restored';
+  | 'wc:session:restored'
+  | 'wc:account:approved'
+  | 'wc:account:verifying';
 
 export interface RelayPortTask {
   windowId: string;

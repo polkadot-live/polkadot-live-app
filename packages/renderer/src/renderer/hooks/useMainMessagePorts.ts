@@ -66,6 +66,7 @@ export const useMainMessagePorts = () => {
     fetchAddressesFromExistingSession,
     wcEstablishSessionForExtrinsic,
     wcSignExtrinsic,
+    verifySigningAccount,
   } = useWalletConnect();
 
   const {
@@ -756,7 +757,8 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:wc:verify:account': {
-              // TODO
+              const { target, chainId } = ev.data.data;
+              verifySigningAccount(target, chainId);
               break;
             }
             default: {

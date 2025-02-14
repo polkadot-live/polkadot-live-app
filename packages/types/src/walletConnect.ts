@@ -5,11 +5,13 @@ import type { AnyData } from './misc';
 import type { ChainID } from './chains';
 
 export interface WcSyncFlags {
-  wcAccountApproved: boolean;
   wcConnecting: boolean;
   wcDisconnecting: boolean;
   wcInitialized: boolean;
   wcSessionRestored: boolean;
+  // For extrinsics.
+  wcAccountApproved: boolean;
+  wcVerifyingAccount: boolean;
 }
 
 export interface WcSelectNetwork {

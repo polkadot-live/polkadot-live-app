@@ -3,6 +3,7 @@
 
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface WalletConnectContextInterface {
   wcSessionRestored: boolean;
@@ -11,4 +12,5 @@ export interface WalletConnectContextInterface {
   fetchAddressesFromExistingSession: () => void;
   wcEstablishSessionForExtrinsic: () => Promise<void>;
   wcSignExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
+  verifySigningAccount: (target: string, chainId: ChainID) => void;
 }

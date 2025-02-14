@@ -310,6 +310,48 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Verify a signing account is approved in the WalletConnect session.
+   */
+  const verifySigningAccount = (target: string, chainId: ChainID) => {
+    window.myAPI.relayModeFlag('wc:account:verifying', true);
+
+    if (!wcSession.current) {
+      // TODO: Error toast in extrinsics window.
+      window.myAPI.relayModeFlag('wc:account:verifying', false);
+      throw new Error('ERROR');
+    }
+
+    const caip = wcConfig.getWalletConnectChainId(chainId);
+
+    // Get the accounts from the session.
+    const accounts: { address: string; caipId: string }[] = Object.values(
+      wcSession.current.namespaces
+    )
+      .map((namespace: AnyData) => namespace.accounts)
+      .flat()
+      .map((wcAccount) => ({
+        address: wcAccount.split(':')[2],
+        caipId: wcAccount.split(':')[1],
+      }))
+      .filter(({ caipId }) => caipId === caip);
+
+    // Verify signing account exists in the session.
+    const pref = getAddressPrefix(chainId);
+    const found = accounts.find(
+      ({ address }) => encodeAddress(address, pref) === target
+    );
+
+    // Update relay flag.
+    const approved = found ? true : false;
+    window.myAPI.relayModeFlag('wc:account:verifying', false);
+    window.myAPI.relayModeFlag('wc:account:approved', approved);
+
+    if (!approved) {
+      // TODO: Toast error notification in extrinsics window.
+    }
+  };
+
+  /**
    * Ensure a session exists before signing an extrinsic.
    */
   const wcEstablishSessionForExtrinsic = async () => {
@@ -334,6 +376,8 @@ export const WalletConnectProvider = ({
       }
 
       window.myAPI.relayModeFlag('wc:session:restored', true);
+
+      // TODO: Re-verify the session.
     } catch (error: AnyData) {
       console.log(error);
     }
@@ -438,6 +482,7 @@ export const WalletConnectProvider = ({
         fetchAddressesFromExistingSession,
         wcEstablishSessionForExtrinsic,
         wcSignExtrinsic,
+        verifySigningAccount,
       }}
     >
       {children}

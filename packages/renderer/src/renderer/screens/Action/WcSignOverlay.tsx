@@ -12,28 +12,33 @@ interface WcSignOverlayProps {
 
 export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const {
-    wcSyncFlags: { wcSessionRestored },
+    wcSyncFlags: { wcSessionRestored, wcAccountApproved, wcVerifyingAccount },
   } = useConnections();
 
   /**
    * Check signing account is approved in the WalletConnect session.
    */
   useEffect(() => {
-    const { from } = info.actionMeta;
+    if (wcSessionRestored) {
+      const { chainId, from } = info.actionMeta;
 
-    ConfigAction.portAction.postMessage({
-      task: 'renderer:wc:verify:account',
-      data: { address: from },
-    });
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:wc:verify:account',
+        data: { chainId, target: from },
+      });
+    }
 
     return () => {
-      // Reset approved relay flag.
+      // Reset relay flags.
       window.myAPI.relayModeFlag('wc:account:approved', false);
+      window.myAPI.relayModeFlag('wc:account:verifying', true);
     };
   }, []);
 
   /**
    * Establish a WalletConnect session before signing.
+   *
+   * @todo Handle the case where the signing account is not included in the new session.
    */
   const handleConnect = () => {
     window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
@@ -72,7 +77,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
       }}
     >
       <h2>WalletConnect Signer</h2>
-      {wcSessionRestored ? (
+      {wcAccountApproved ? (
         <div>
           <h4>Session Found</h4>
           <button onClick={() => handleSign()}>Sign</button>
@@ -80,7 +85,11 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
       ) : (
         <div>
           <h4>Establish Session</h4>
-          <button onClick={() => handleConnect()}>Connect</button>
+          {wcVerifyingAccount ? (
+            <span>Loading...</span>
+          ) : (
+            <button onClick={() => handleConnect()}>Connect</button>
+          )}
         </div>
       )}
     </div>
