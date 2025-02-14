@@ -331,21 +331,23 @@ export const WalletConnectProvider = ({
     );
 
     // Update relay flags.
-    const approved = found ? true : false;
-    window.myAPI.relayModeFlag('wc:account:verifying', false);
-    window.myAPI.relayModeFlag('wc:account:approved', approved);
+    setTimeout(() => {
+      const approved = found ? true : false;
+      window.myAPI.relayModeFlag('wc:account:verifying', false);
+      window.myAPI.relayModeFlag('wc:account:approved', approved);
 
-    if (!approved) {
-      // Toast error notification in extrinsics window.
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:toast:show',
-        data: {
-          message: 'WalletConnect Error - Approve the signing account',
-          toastId: `wc-error-${String(Date.now())}`,
-          toastType: 'error',
-        },
-      });
-    }
+      if (!approved) {
+        // Toast error notification in extrinsics window.
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:toast:show',
+          data: {
+            message: 'WalletConnect Error - Approve the signing account',
+            toastId: `wc-error-${String(Date.now())}`,
+            toastType: 'error',
+          },
+        });
+      }
+    }, 2_500);
   };
 
   /**

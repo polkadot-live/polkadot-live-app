@@ -25,6 +25,8 @@ import { EmptyExtrinsicsWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import { useEffect } from 'react';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -43,6 +45,16 @@ export const Action = () => {
     removeExtrinsic,
     submitMockTx,
   } = useTxMeta();
+
+  /**
+   * TEMP: Enable UI when overlay is closed.
+   */
+  const { status } = useOverlay();
+  useEffect(() => {
+    if (status === 0) {
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    }
+  }, [status]);
 
   const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;

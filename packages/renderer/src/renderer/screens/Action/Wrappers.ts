@@ -145,3 +145,43 @@ export const SubmittedTxWrapper = styled.div`
     margin-top: 1.5rem;
   }
 `;
+
+/**
+ * WalletConnect Sign Overlay
+ */
+
+export const WcOverlayWrapper = styled.div`
+  // TODO: Fix
+  background-color: rgba(32, 32, 32, 0.65);
+
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  border-radius: 0.375rem;
+
+  .ContentColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
+    .VerifyingColumn {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    h4 {
+      font-size: 1.25rem;
+    }
+    p {
+      margin: 0;
+      line-height: 1.75rem;
+    }
+  }
+`;

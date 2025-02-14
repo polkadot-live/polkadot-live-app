@@ -4,8 +4,12 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
-import { FlexRow } from '@polkadot-live/ui/styles';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
+import { ButtonPrimary } from '@polkadot-live/ui/kits/buttons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { WcOverlayWrapper } from './Wrappers';
+import { PuffLoader } from 'react-spinners';
 
 interface WcSignOverlayProps {
   info: ExtrinsicInfo;
@@ -13,6 +17,7 @@ interface WcSignOverlayProps {
 
 export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const {
+    isBuildingExtrinsic,
     wcSyncFlags: { wcSessionRestored, wcAccountApproved, wcVerifyingAccount },
   } = useConnections();
 
@@ -62,38 +67,51 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   };
 
   return (
-    <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        gap: '2rem',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        padding: '2rem 1rem',
-        backgroundColor: 'rgba(32,32,32,0.4)',
-        textAlign: 'center',
-        borderRadius: '0.375rem',
-      }}
-    >
-      <h2>WalletConnect Signer</h2>
+    <WcOverlayWrapper>
+      <WalletConnectSVG style={{ height: '3rem' }} />
       {wcAccountApproved ? (
-        <div>
-          <h4>Session Found</h4>
-          <FlexRow $gap={'1.0rem'}>
-            <button onClick={() => handleSign()}>Sign</button>
-          </FlexRow>
+        <div className="ContentColumn">
+          <h4>WalletConnect Session Verified</h4>
+          <p>
+            Click the sign button below and approve the signature request in
+            your connected wallet.
+          </p>
+
+          <ButtonPrimary
+            style={{ width: '100px' }}
+            text="Sign"
+            disabled={isBuildingExtrinsic}
+            onClick={() => handleSign()}
+            iconRight={faChevronRight}
+            iconTransform="shrink-3"
+          />
         </div>
       ) : (
-        <div>
+        <div className="ContentColumn">
           <h4>Establish Session</h4>
           {wcVerifyingAccount ? (
-            <span>Loading...</span>
+            <div className="VerifyingColumn">
+              <p>Verifying WalletConnect sessions.</p>
+              <PuffLoader size={30} color={'var(--text-color-primary)'} />
+            </div>
           ) : (
-            <button onClick={() => handleConnect()}>Connect</button>
+            <>
+              <p>
+                Click the connect button and scan the QR code with your wallet
+                to establish a new WalletConnect session.
+              </p>
+              <ButtonPrimary
+                style={{ width: '100px' }}
+                text="Connect"
+                disabled={isBuildingExtrinsic}
+                onClick={() => handleConnect()}
+                iconRight={faChevronRight}
+                iconTransform="shrink-3"
+              />
+            </>
           )}
         </div>
       )}
-    </div>
+    </WcOverlayWrapper>
   );
 };
