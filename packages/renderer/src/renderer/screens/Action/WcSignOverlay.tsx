@@ -3,6 +3,7 @@
 
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useConnections } from '@app/contexts/common/Connections';
+import { useEffect } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 interface WcSignOverlayProps {
@@ -13,6 +14,23 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const {
     wcSyncFlags: { wcSessionRestored },
   } = useConnections();
+
+  /**
+   * Check signing account is approved in the WalletConnect session.
+   */
+  useEffect(() => {
+    const { from } = info.actionMeta;
+
+    ConfigAction.portAction.postMessage({
+      task: 'renderer:wc:verify:account',
+      data: { address: from },
+    });
+
+    return () => {
+      // Reset approved relay flag.
+      window.myAPI.relayModeFlag('wc:account:approved', false);
+    };
+  }, []);
 
   /**
    * Establish a WalletConnect session before signing.

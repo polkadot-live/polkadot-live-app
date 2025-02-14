@@ -5,6 +5,7 @@ import type { AnyData } from './misc';
 import type { ChainID } from './chains';
 
 export interface WcSyncFlags {
+  wcAccountApproved: boolean;
   wcConnecting: boolean;
   wcDisconnecting: boolean;
   wcInitialized: boolean;

@@ -10,6 +10,7 @@ export type SyncFlag =
   | 'isImporting'
   | 'isOnlineMode'
   // WalletConnect
+  | 'wc:account:approved'
   | 'wc:connecting'
   | 'wc:disconnecting'
   | 'wc:initialized'

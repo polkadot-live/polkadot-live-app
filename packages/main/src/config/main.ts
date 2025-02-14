@@ -43,6 +43,7 @@ export class Config {
   private static _onlineMode = false;
   private static _isBuildingExtrinsic = false;
   private static _wcSyncFlags: WcSyncFlags = {
+    wcAccountApproved: false,
     wcConnecting: false,
     wcDisconnecting: false,
     wcInitialized: false,

@@ -755,6 +755,10 @@ export const useMainMessagePorts = () => {
               await wcSignExtrinsic(info);
               break;
             }
+            case 'renderer:wc:verify:account': {
+              // TODO
+              break;
+            }
             default: {
               throw new Error(`Port task not recognized (${ev.data.task})`);
             }
