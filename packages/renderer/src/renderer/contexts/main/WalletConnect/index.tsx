@@ -250,16 +250,7 @@ export const WalletConnectProvider = ({
     const namespaces = wcSession.current ? wcSession.current.namespaces : null;
 
     if (!namespaces) {
-      // Render toast error notification in import window.
-      ConfigRenderer.portToImport?.postMessage({
-        task: 'import:toast:show',
-        data: {
-          message: 'Session Error - Establish a new session',
-          toastId: `wc-error-${String(Date.now())}`,
-          toastType: 'error',
-        },
-      });
-
+      sendToastError('import', 'Session Error - Establish a new session');
       return;
     }
 
@@ -316,16 +307,7 @@ export const WalletConnectProvider = ({
     window.myAPI.relayModeFlag('wc:account:verifying', true);
 
     if (!wcSession.current) {
-      // Error toast in extrinsics window.
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:toast:show',
-        data: {
-          message: 'WalletConnect Error - Session not found',
-          toastId: `wc-error-${String(Date.now())}`,
-          toastType: 'error',
-        },
-      });
-
+      sendToastError('extrinsics', 'WalletConnect Error - Session not found');
       window.myAPI.relayModeFlag('wc:account:verifying', false);
     }
 
@@ -409,11 +391,8 @@ export const WalletConnectProvider = ({
       const { txId } = info;
       const txData = ExtrinsicsController.getTransactionPayload(txId);
 
-      if (
-        !(wcSession.current && wcProvider.current && txData && txData.payload)
-      ) {
-        // TODO: Toast error in extrinsics window.
-        console.log('> TODO: Signing error');
+      if (!(wcSession.current && wcProvider.current && txData?.payload)) {
+        sendToastError('extrinsics', 'WalletConnect Error - Insufficient data');
         return;
       }
 
@@ -433,11 +412,14 @@ export const WalletConnectProvider = ({
         },
       });
 
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       console.log(result);
-    } catch (error) {
-      // TODO: Toast error in extrinsics window.
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    } catch (error: AnyData) {
+      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
       console.log(error);
+      error.code === -32000
+        ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
+        : sendToastError('extrinsics', 'WalletConnect Error');
     }
   };
 
@@ -465,6 +447,25 @@ export const WalletConnectProvider = ({
 
     window.myAPI.relayModeFlag('wc:session:restored', false);
     window.myAPI.relayModeFlag('wc:disconnecting', false);
+  };
+
+  /**
+   * Util to render a toast error in the target window.
+   */
+  const sendToastError = (target: 'import' | 'extrinsics', message: string) => {
+    const port =
+      target === 'import'
+        ? ConfigRenderer.portToImport
+        : ConfigRenderer.portToAction;
+
+    port?.postMessage({
+      task: 'action:toast:show',
+      data: {
+        message,
+        toastId: `wc-error-${String(Date.now())}`,
+        toastType: 'error',
+      },
+    });
   };
 
   /**

@@ -4,6 +4,7 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
+import { FlexRow } from '@polkadot-live/ui/styles';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 interface WcSignOverlayProps {
@@ -79,7 +80,9 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
       {wcAccountApproved ? (
         <div>
           <h4>Session Found</h4>
-          <button onClick={() => handleSign()}>Sign</button>
+          <FlexRow $gap={'1.0rem'}>
+            <button onClick={() => handleSign()}>Sign</button>
+          </FlexRow>
         </div>
       ) : (
         <div>
