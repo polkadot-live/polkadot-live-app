@@ -151,9 +151,7 @@ export const SubmittedTxWrapper = styled.div`
  */
 
 export const WcOverlayWrapper = styled.div`
-  // TODO: Fix
-  background-color: rgba(32, 32, 32, 0.65);
-
+  background-color: var(--background-overlay-surface);
   width: 100%;
   display: flex;
   gap: 2rem;
@@ -177,9 +175,11 @@ export const WcOverlayWrapper = styled.div`
       align-items: center;
     }
     h4 {
+      color: var(--text-color-primary);
       font-size: 1.25rem;
     }
     p {
+      color: var(--text-color-secondary);
       margin: 0;
       line-height: 1.75rem;
     }
