@@ -132,6 +132,10 @@ export const AccordionWrapper = styled.div`
     border-radius: 0.375rem;
   }
 
+  .AccordionContentTransparent {
+    margin-top: 1rem;
+  }
+
   @keyframes slideDown {
     from {
       height: 0;
