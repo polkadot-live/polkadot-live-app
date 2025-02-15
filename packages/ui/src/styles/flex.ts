@@ -8,3 +8,15 @@ export const FlexRow = styled.div<{ $gap: string }>`
   align-items: center;
   gap: ${(props) => props.$gap};
 `;
+
+export const FlexRowWrap = styled.div<{
+  $columnGap?: string;
+  $rowGap?: string;
+}>`
+  display: flex;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+  row-gap: ${(props) => (props.$rowGap ? props.$rowGap : '0.75rem')};
+  column-gap: ${(props) => (props.$columnGap ? props.$columnGap : '1rem')};
+`;

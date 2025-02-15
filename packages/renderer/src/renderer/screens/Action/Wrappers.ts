@@ -3,6 +3,21 @@
 
 import styled from 'styled-components';
 
+export const ExtrinsicItemContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0 0.5rem;
+
+  p {
+    margin: 0;
+  }
+  .WarningBox {
+    color: var(--accent-warning);
+    padding: 0.5rem 0;
+  }
+`;
+
 export const TriggerHeader = styled.h3`
   > span {
     color: var(--text-color-secondary);

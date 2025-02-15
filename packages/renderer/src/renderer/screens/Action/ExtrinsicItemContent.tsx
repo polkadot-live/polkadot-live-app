@@ -17,11 +17,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow, FlexRowWrap } from '@polkadot-live/ui/styles';
 import { EstimatedFeeBadge, SignerBadge } from './Helpers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ExtrinsicItemContentWrapper } from './Wrappers';
 
 /**
  * @name ExtrinsicItemContent
@@ -49,28 +50,22 @@ export const ExtrinsicItemContent = ({
       const fmtAmount = <b>{`${bnUnit.toString()} ${currency}`}</b>;
 
       return (
-        <>
-          <FlexRow
-            $gap={'0.75rem'}
-            style={{
-              marginBottom: '1rem',
-              padding: '0 0.5rem',
-              color: 'var(--accent-warning)',
-            }}
-          >
-            <FontAwesomeIcon icon={faExclamationTriangle} />
-            Make sure that you confirm the send amount and recipient on your
-            signing device before signing the transaction.
-          </FlexRow>
+        <ExtrinsicItemContentWrapper>
+          <div className="WarningBox">
+            <FlexRow $gap={'0.75rem'}>
+              <FontAwesomeIcon icon={faExclamationTriangle} />
+              <span>
+                Make sure that you confirm the send amount and recipient on your
+                signing device before signing the transaction.
+              </span>
+            </FlexRow>
+          </div>
           <p>
-            Transfer {fmtAmount} to account {recipientAccountName}.
+            Transfer {fmtAmount} to account <b>{recipientAccountName}</b>.
           </p>
 
           <FlexRow $gap={'1rem'}>
-            <FlexRow
-              $gap={'1rem'}
-              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
-            >
+            <FlexRowWrap>
               {/* Signing Account */}
               <SignerBadge info={info} theme={theme} />
               {/* Recipient */}
@@ -98,7 +93,7 @@ export const ExtrinsicItemContent = ({
               </TxInfoBadge>
               {/* Estimated Fee */}
               <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRow>
+            </FlexRowWrap>
 
             {/* Signer */}
             <Signer
@@ -106,7 +101,7 @@ export const ExtrinsicItemContent = ({
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
           </FlexRow>
-        </>
+        </ExtrinsicItemContentWrapper>
       );
     }
     case 'nominationPools_pendingRewards_bond': {
@@ -117,18 +112,13 @@ export const ExtrinsicItemContent = ({
       );
 
       return (
-        <>
+        <ExtrinsicItemContentWrapper>
           <p>Compound {fmtAmount}.</p>
           <FlexRow $gap={'1rem'}>
-            <FlexRow
-              $gap={'1rem'}
-              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
-            >
-              {/* Signing Account */}
+            <FlexRowWrap>
               <SignerBadge info={info} theme={theme} />
-              {/* Estimated Fee */}
               <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRow>
+            </FlexRowWrap>
 
             {/* Signer */}
             <Signer
@@ -136,7 +126,7 @@ export const ExtrinsicItemContent = ({
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
           </FlexRow>
-        </>
+        </ExtrinsicItemContentWrapper>
       );
     }
     case 'nominationPools_pendingRewards_withdraw': {
@@ -147,18 +137,13 @@ export const ExtrinsicItemContent = ({
       );
 
       return (
-        <>
+        <ExtrinsicItemContentWrapper>
           <p>Claim {fmtAmount}.</p>
           <FlexRow $gap={'1rem'}>
-            <FlexRow
-              $gap={'1rem'}
-              style={{ flex: 1, flexWrap: 'wrap', rowGap: '0.25rem' }}
-            >
-              {/* Signing Account */}
+            <FlexRowWrap>
               <SignerBadge info={info} theme={theme} />
-              {/* Estimated Fee */}
               <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRow>
+            </FlexRowWrap>
 
             {/* Signer */}
             <Signer
@@ -166,7 +151,7 @@ export const ExtrinsicItemContent = ({
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
           </FlexRow>
-        </>
+        </ExtrinsicItemContentWrapper>
       );
     }
   }
