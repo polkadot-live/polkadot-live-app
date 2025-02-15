@@ -200,6 +200,7 @@ export const Send: React.FC = () => {
     // Action meta.
     const actionMeta: ActionMeta = {
       accountName: senderObj.name,
+      source: senderObj.source,
       action: 'balances_transferKeepAlive',
       from: sender,
       pallet: 'balances',
@@ -368,7 +369,7 @@ export const Send: React.FC = () => {
    * Return all addresses capable of signing extrinsics.
    */
   const getSenderAccounts = () => {
-    const targetSources: AccountSource[] = ['vault'];
+    const targetSources: AccountSource[] = ['vault', 'wallet-connect'];
     let result: LocalAddress[] = [];
 
     for (const source of targetSources) {

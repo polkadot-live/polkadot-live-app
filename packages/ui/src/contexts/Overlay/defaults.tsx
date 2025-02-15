@@ -10,8 +10,10 @@ export const defaultOverlayContext: OverlayContextInterface = {
   closeOverlay: () => {},
   setStatus: (s) => {},
   setOverlay: (d) => {},
+  setDisableClose: (d) => {},
   size: 'small',
   status: 0,
   transparent: false,
   Overlay: null,
+  disableClose: false,
 };

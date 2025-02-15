@@ -33,9 +33,7 @@ export const Signer = ({
         text={getButtonText()}
         iconLeft={faSquarePen}
         iconTransform="grow-2"
-        onClick={async () => {
-          initTxDynamicInfo(info.txId);
-        }}
+        onClick={() => initTxDynamicInfo(info.txId)}
         disabled={!valid || info.txStatus !== 'pending' || !getOnlineMode()}
         pulse={enablePulse()}
       />

@@ -23,7 +23,16 @@ export const OverlayProvider = ({
     Overlay: null,
     transparent: false,
     onCloseOverlay: null,
+    disableClose: false,
   });
+
+  const setDisableClose = (disableClose: boolean) => {
+    const newState = {
+      ...state,
+      disableClose,
+    };
+    setState(newState);
+  };
 
   const setOverlay = (Overlay: React.ReactNode) => {
     const newState = {
@@ -36,6 +45,7 @@ export const OverlayProvider = ({
   const setStatus = (newStatus: number) => {
     const newState = {
       ...state,
+      disableClose: false,
       status: newStatus,
       dismissOpen: newStatus !== 0,
     };
@@ -84,10 +94,12 @@ export const OverlayProvider = ({
         closeOverlay,
         setStatus,
         setOverlay,
+        setDisableClose,
         size: state.size,
         status: state.status,
         transparent: state.transparent,
         Overlay: state.Overlay,
+        disableClose: state.disableClose,
       }}
     >
       {children}

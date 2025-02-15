@@ -21,8 +21,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { useOverlay } from '@polkadot-live/ui/contexts';
-import { SignOverlay } from './SignOverlay';
 import { EmptyExtrinsicsWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
@@ -40,11 +38,11 @@ export const Action = () => {
     selectedFilter,
     getCategoryTitle,
     getFilteredExtrinsics,
+    initTxDynamicInfo,
     onFilterChange,
     removeExtrinsic,
     submitMockTx,
   } = useTxMeta();
-  const { openOverlayWith } = useOverlay();
 
   const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -248,16 +246,7 @@ export const Action = () => {
                           isBuilt={info.estimatedFee !== undefined}
                           txStatus={info.txStatus}
                           onDelete={async () => await removeExtrinsic(info)}
-                          onSign={() =>
-                            openOverlayWith(
-                              <SignOverlay
-                                txId={info.txId}
-                                from={info.actionMeta.from}
-                              />,
-                              'small',
-                              true
-                            )
-                          }
+                          onSign={() => initTxDynamicInfo(info.txId)}
                           onMockSign={() => submitMockTx(info.txId)}
                         />
                       </div>

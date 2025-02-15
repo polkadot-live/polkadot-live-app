@@ -4,6 +4,7 @@
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
 import type BigNumber from 'bignumber.js';
+import type { AccountSource } from './accounts';
 
 export type TxStatus =
   | 'pending'
@@ -22,6 +23,8 @@ export type TxActionUid =
 export interface ActionMeta {
   // Name of account sending tx.
   accountName: string;
+  // Account source.
+  source: AccountSource;
   // Type of transaction.
   action: TxActionUid;
   // Address of tx sender.

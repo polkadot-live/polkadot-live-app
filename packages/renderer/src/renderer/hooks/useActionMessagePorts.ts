@@ -4,7 +4,9 @@
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import BigNumber from 'bignumber.js';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -13,6 +15,7 @@ export const useActionMessagePorts = () => {
    * Action window specific.
    */
   const {
+    handleOpenCloseWcModal,
     initTx,
     notifyInvalidExtrinsic,
     setEstimatedFee,
@@ -20,6 +23,8 @@ export const useActionMessagePorts = () => {
     updateAccountName,
     updateTxStatus,
   } = useTxMeta();
+
+  const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
 
   /**
    * @name handleInitAction
@@ -129,6 +134,25 @@ export const useActionMessagePorts = () => {
             }
             case 'action:tx:invalid': {
               handleInvalidExtrinsic(ev);
+              break;
+            }
+            case 'action:wc:modal:open': {
+              const { uri } = ev.data.data;
+              await handleOpenCloseWcModal(true, uri);
+              break;
+            }
+            case 'action:wc:modal:close': {
+              handleOpenCloseWcModal(false);
+              break;
+            }
+            case 'action:wc:overlay:close': {
+              setDisableClose(false);
+              setOverlayStatus(0);
+              break;
+            }
+            case 'action:toast:show': {
+              const { message, toastId, toastType } = ev.data.data;
+              renderToast(message, toastId, toastType);
               break;
             }
             default: {

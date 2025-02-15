@@ -24,7 +24,8 @@ import { SubscriptionsProvider } from '@app/contexts/main/Subscriptions';
 import { IntervalSubscriptionsProvider } from '@app/contexts/main/IntervalSubscriptions';
 import { IntervalTasksManagerProvider } from '@app/contexts/main/IntervalTasksManager';
 import { DataBackupProvider } from '@app/contexts/main/DataBackup';
-import { CogMenuProvider } from './contexts/main/CogMenu';
+import { CogMenuProvider } from '@app/contexts/main/CogMenu';
+import { WalletConnectProvider } from '@app/contexts/main/WalletConnect';
 
 // Import window contexts.
 import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@app/contexts/import/AccountStatuses';
@@ -34,7 +35,7 @@ import { AddHandlerProvider } from '@app/contexts/import/AddHandler';
 import { RemoveHandlerProvider } from '@app/contexts/import/RemoveHandler';
 import { DeleteHandlerProvider } from '@app/contexts/import/DeleteHandler';
 import { LedgerHardwareProvider } from '@app/contexts/import/LedgerHardware';
-import { WalletConnectProvider } from './contexts/import/WalletConnect';
+import { WalletConnectImportProvider } from '@app/contexts/import/WalletConnectImport';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from '@app/contexts/settings/SettingFlags';
@@ -84,7 +85,8 @@ const getProvidersForWindow = () => {
         // Requires setting state from other contexts.
         DataBackupProvider,
         // Requires useBootstrapping and useHelp.
-        CogMenuProvider
+        CogMenuProvider,
+        WalletConnectProvider
       )(Theme);
     }
     case 'import': {
@@ -106,7 +108,7 @@ const getProvidersForWindow = () => {
         // Requires useConnections
         LedgerHardwareProvider,
         // Requires useConnections
-        WalletConnectProvider
+        WalletConnectImportProvider
       )(Theme);
     }
     case 'settings': {

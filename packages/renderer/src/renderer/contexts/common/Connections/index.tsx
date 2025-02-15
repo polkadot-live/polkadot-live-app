@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncFlag } from '@polkadot-live/types/communication';
+import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -41,6 +42,16 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when an extrinsic is getting built.
   const [isBuildingExtrinsic, setIsBuildingExtrinsic] = useState(false);
 
+  // WalletConnect flags.
+  const [wcSyncFlags, setWcSyncFlags] = useState<WcSyncFlags>({
+    wcConnecting: false,
+    wcDisconnecting: false,
+    wcInitialized: false,
+    wcSessionRestored: false,
+    wcAccountApproved: false,
+    wcVerifyingAccount: false,
+  });
+
   useEffect(() => {
     // Synchronize flags in store.
     const syncModeFlagsOnMount = async () => {
@@ -48,9 +59,29 @@ export const ConnectionsProvider = ({
       setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
       setIsImporting(await window.myAPI.getModeFlag('isImporting'));
       setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+
       setIsBuildingExtrinsic(
         await window.myAPI.getModeFlag('isBuildingExtrinsic')
       );
+
+      // Get WalletConnect flags asynchronously.
+      const results = await Promise.all([
+        window.myAPI.getModeFlag('wc:connecting'),
+        window.myAPI.getModeFlag('wc:disconnecting'),
+        window.myAPI.getModeFlag('wc:initialized'),
+        window.myAPI.getModeFlag('wc:session:restored'),
+        window.myAPI.getModeFlag('wc:account:approved'),
+        window.myAPI.getModeFlag('wc:account:verifying'),
+      ]);
+
+      setWcSyncFlags({
+        wcConnecting: results[0],
+        wcDisconnecting: results[1],
+        wcInitialized: results[2],
+        wcSessionRestored: results[3],
+        wcAccountApproved: results[4],
+        wcVerifyingAccount: results[5],
+      });
     };
 
     // Listen for synching events.
@@ -80,6 +111,30 @@ export const ConnectionsProvider = ({
             setIsBuildingExtrinsic(flag);
             break;
           }
+          case 'wc:account:approved': {
+            setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved: flag }));
+            break;
+          }
+          case 'wc:connecting': {
+            setWcSyncFlags((pv) => ({ ...pv, wcConnecting: flag }));
+            break;
+          }
+          case 'wc:disconnecting': {
+            setWcSyncFlags((pv) => ({ ...pv, wcDisconnecting: flag }));
+            break;
+          }
+          case 'wc:initialized': {
+            setWcSyncFlags((pv) => ({ ...pv, wcInitialized: flag }));
+            break;
+          }
+          case 'wc:session:restored': {
+            setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored: flag }));
+            break;
+          }
+          case 'wc:account:verifying': {
+            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount: flag }));
+            break;
+          }
           default: {
             break;
           }
@@ -103,6 +158,7 @@ export const ConnectionsProvider = ({
         isImporting,
         isOnlineMode,
         isBuildingExtrinsic,
+        wcSyncFlags,
         getOnlineMode,
         setDarkMode,
         setIsConnected,

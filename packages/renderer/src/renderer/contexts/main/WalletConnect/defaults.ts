@@ -5,15 +5,12 @@
 import type { WalletConnectContextInterface } from './types';
 
 export const defaultWalletConnectContext: WalletConnectContextInterface = {
-  wcConnecting: false,
-  wcDisconnecting: false,
-  wcFetchedAddresses: [],
-  wcInitialized: false,
-  wcNetworks: [],
   wcSessionRestored: false,
   connectWc: () => new Promise(() => {}),
   disconnectWcSession: () => new Promise(() => {}),
   fetchAddressesFromExistingSession: () => {},
-  setWcFetchedAddresses: () => {},
-  setWcNetworks: () => {},
+  wcEstablishSessionForExtrinsic: () => new Promise(() => {}),
+  wcSignExtrinsic: () => new Promise(() => {}),
+  updateWcTxSignMap: () => {},
+  verifySigningAccount: () => new Promise(() => {}),
 };
