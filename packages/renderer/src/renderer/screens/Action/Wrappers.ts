@@ -11,6 +11,18 @@ export const TriggerHeader = styled.h3`
   }
 `;
 
+export const TriggerRightIconWrapper = styled.div`
+  svg {
+    opacity: 0.75;
+    transition: opacity 200ms ease-out;
+  }
+  &:hover {
+    svg {
+      opacity: 1;
+    }
+  }
+`;
+
 /** TODO: Remove */
 export const FooterWrapper = styled.div`
   position: fixed;
