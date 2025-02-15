@@ -3,11 +3,38 @@
 
 import styled from 'styled-components';
 
+export const ExtrinsicItemContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0 0.5rem;
+
+  p {
+    margin: 0;
+  }
+  .WarningBox {
+    color: var(--accent-warning);
+    padding: 0.5rem 0;
+  }
+`;
+
 export const TriggerHeader = styled.h3`
   > span {
     color: var(--text-color-secondary);
     margin-left: 1rem;
     font-size: 0.98rem;
+  }
+`;
+
+export const TriggerRightIconWrapper = styled.div`
+  svg {
+    opacity: 0.75;
+    transition: opacity 200ms ease-out;
+  }
+  &:hover {
+    svg {
+      opacity: 1;
+    }
   }
 `;
 

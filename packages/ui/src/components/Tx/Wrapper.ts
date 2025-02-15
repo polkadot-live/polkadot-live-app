@@ -7,7 +7,6 @@ export const TxInfoBadgeWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.25rem;
   font-size: 0.9rem;
 
   span {
