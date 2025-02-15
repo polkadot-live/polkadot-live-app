@@ -9,6 +9,9 @@ export interface WcSyncFlags {
   wcDisconnecting: boolean;
   wcInitialized: boolean;
   wcSessionRestored: boolean;
+  // For extrinsics.
+  wcAccountApproved: boolean;
+  wcVerifyingAccount: boolean;
 }
 
 export interface WcSelectNetwork {

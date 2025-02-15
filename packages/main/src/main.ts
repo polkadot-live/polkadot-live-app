@@ -387,6 +387,16 @@ app.whenReady().then(async () => {
         ConfigMain.isBuildingExtrinsic = flag;
         break;
       }
+      case 'wc:account:approved': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcAccountApproved: flag };
+        break;
+      }
+      case 'wc:account:verifying': {
+        const pv = { ...ConfigMain.wcSyncFlags };
+        ConfigMain.wcSyncFlags = { ...pv, wcVerifyingAccount: flag };
+        break;
+      }
       case 'wc:connecting': {
         const pv = { ...ConfigMain.wcSyncFlags };
         ConfigMain.wcSyncFlags = { ...pv, wcConnecting: flag };
@@ -429,6 +439,12 @@ app.whenReady().then(async () => {
       }
       case 'isBuildingExtrinsic': {
         return ConfigMain.isBuildingExtrinsic;
+      }
+      case 'wc:account:approved': {
+        return ConfigMain.wcSyncFlags.wcAccountApproved;
+      }
+      case 'wc:account:verifying': {
+        return ConfigMain.wcSyncFlags.wcVerifyingAccount;
       }
       case 'wc:connecting': {
         return ConfigMain.wcSyncFlags.wcConnecting;

@@ -48,6 +48,8 @@ export const ConnectionsProvider = ({
     wcDisconnecting: false,
     wcInitialized: false,
     wcSessionRestored: false,
+    wcAccountApproved: false,
+    wcVerifyingAccount: false,
   });
 
   useEffect(() => {
@@ -68,6 +70,8 @@ export const ConnectionsProvider = ({
         window.myAPI.getModeFlag('wc:disconnecting'),
         window.myAPI.getModeFlag('wc:initialized'),
         window.myAPI.getModeFlag('wc:session:restored'),
+        window.myAPI.getModeFlag('wc:account:approved'),
+        window.myAPI.getModeFlag('wc:account:verifying'),
       ]);
 
       setWcSyncFlags({
@@ -75,6 +79,8 @@ export const ConnectionsProvider = ({
         wcDisconnecting: results[1],
         wcInitialized: results[2],
         wcSessionRestored: results[3],
+        wcAccountApproved: results[4],
+        wcVerifyingAccount: results[5],
       });
     };
 
@@ -105,6 +111,10 @@ export const ConnectionsProvider = ({
             setIsBuildingExtrinsic(flag);
             break;
           }
+          case 'wc:account:approved': {
+            setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved: flag }));
+            break;
+          }
           case 'wc:connecting': {
             setWcSyncFlags((pv) => ({ ...pv, wcConnecting: flag }));
             break;
@@ -119,6 +129,10 @@ export const ConnectionsProvider = ({
           }
           case 'wc:session:restored': {
             setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored: flag }));
+            break;
+          }
+          case 'wc:account:verifying': {
+            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount: flag }));
             break;
           }
           default: {

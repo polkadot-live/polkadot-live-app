@@ -60,8 +60,15 @@ export const useMainMessagePorts = () => {
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
-  const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
-    useWalletConnect();
+  const {
+    connectWc,
+    disconnectWcSession,
+    fetchAddressesFromExistingSession,
+    wcEstablishSessionForExtrinsic,
+    wcSignExtrinsic,
+    updateWcTxSignMap,
+    verifySigningAccount,
+  } = useWalletConnect();
 
   const {
     updateRenderedSubscriptions,
@@ -736,8 +743,28 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:tx:delete': {
-              console.log('> handle renderer:tx:delete');
               handleTxDelete(ev);
+              break;
+            }
+            case 'renderer:wc:connect:action': {
+              const { target, chainId } = ev.data.data;
+              await wcEstablishSessionForExtrinsic(target, chainId);
+              break;
+            }
+            case 'renderer:wc:sign': {
+              const { info: serialized } = ev.data.data;
+              const info: ExtrinsicInfo = JSON.parse(serialized);
+              await wcSignExtrinsic(info);
+              break;
+            }
+            case 'renderer:wc:sign:cancel': {
+              const { txId } = ev.data.data;
+              updateWcTxSignMap(txId, false);
+              break;
+            }
+            case 'renderer:wc:verify:account': {
+              const { target, chainId } = ev.data.data;
+              await verifySigningAccount(target, chainId);
               break;
             }
             default: {
