@@ -13,7 +13,7 @@ import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
 import { useState } from 'react';
-import { SideTriggerButton, StatItem } from './Wrappers';
+import { SideTriggerButton, StatItem, StatItemRow } from './Wrappers';
 import type { SummaryAccordionValue } from './types';
 
 export const Summary: React.FC = () => {
@@ -155,30 +155,30 @@ export const Summary: React.FC = () => {
 
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
-                  <StatsGrid>
-                    <StatItem
-                      title="Total"
-                      total={true}
-                      helpKey={'help:summary:subscriptions'}
+                  <FlexColumn $rowGap={'2px'}>
+                    <StatItemRow
+                      kind="total"
+                      helpKey="help:summary:subscriptions"
                       meterValue={
                         getTotalSubscriptionCount() +
                         getTotalIntervalSubscriptionCount()
                       }
                     />
                     {getAllAccounts().map((flattened) => (
-                      <StatItem
+                      <StatItemRow
                         key={`${flattened.address}_subscriptions_count`}
-                        title={flattened.name}
+                        kind="account"
                         meterValue={getSubscriptionCountForAccount(flattened)}
+                        flattened={flattened}
                       />
                     ))}
                     {getTotalIntervalSubscriptionCount() > 0 && (
-                      <StatItem
-                        title="Referenda"
+                      <StatItemRow
+                        kind="referenda"
                         meterValue={getTotalIntervalSubscriptionCount()}
                       />
                     )}
-                  </StatsGrid>
+                  </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>
             </Accordion.Item>
