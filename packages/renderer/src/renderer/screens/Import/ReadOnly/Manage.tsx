@@ -175,7 +175,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
               value={accordionValue}
               onValueChange={(val) => setAccordionValue(val as ChainID[])}
             >
-              <FlexColumn $rowGap={'1rem'}>
+              <FlexColumn>
                 {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                   ([chainId, chainAddresses]) => (
                     <Accordion.Item
