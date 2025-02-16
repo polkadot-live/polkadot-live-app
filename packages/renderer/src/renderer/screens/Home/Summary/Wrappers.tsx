@@ -1,18 +1,22 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import {
   faCaretRight,
   faComments,
   faInfo,
 } from '@fortawesome/free-solid-svg-icons';
+import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import {
   Identicon,
   ShiftingMeter,
   StatItemWrapper,
+  TooltipRx,
 } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
 import type { HelpItemKey } from '@polkadot-live/types/help';
@@ -143,6 +147,9 @@ export const StatItemRow = ({
   helpKey?: HelpItemKey;
 }) => {
   const { openHelp } = useHelp();
+  const { darkMode } = useConnections();
+
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const meterColor =
     kind === 'total' ? 'var(--text-highlight)' : 'var(--text-color-primary)';
 
@@ -164,7 +171,11 @@ export const StatItemRow = ({
       {kind === 'account' && flattened && (
         <FlexRow>
           <div className="left">
-            <Identicon value={flattened.address} fontSize="1.8rem" />
+            <TooltipRx text={ellipsisFn(flattened.address, 12)} theme={theme}>
+              <span>
+                <Identicon value={flattened.address} fontSize="1.8rem" />
+              </span>
+            </TooltipRx>
           </div>
           <h3>{flattened.name}</h3>
           <div className="meter">
