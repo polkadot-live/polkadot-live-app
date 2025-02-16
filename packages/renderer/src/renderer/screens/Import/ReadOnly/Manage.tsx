@@ -29,6 +29,7 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { Scrollable, StatsFooter, FlexColumn } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 import { getAddressChainId } from '@ren/renderer/Utils';
+import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';
@@ -41,9 +42,11 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   const { handleImportAddress } = useImportHandler();
 
   /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID[]>([
-    ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
-  ]);
+  const [accordionValue, setAccordionValue] = useState<ChainID>(
+    getInitialChainAccordionValue([
+      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
+    ])
+  );
 
   /// Component state.
   const [editName, setEditName] = useState<string>('');
@@ -167,9 +170,9 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
           <UI.AccordionWrapper $onePart={true}>
             <Accordion.Root
               className="AccordionRoot"
-              type="multiple"
+              type="single"
               value={accordionValue}
-              onValueChange={(val) => setAccordionValue(val as ChainID[])}
+              onValueChange={(val) => setAccordionValue(val as ChainID)}
             >
               <FlexColumn>
                 {Array.from(getSortedLocalAddresses(addresses).entries()).map(

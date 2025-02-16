@@ -22,6 +22,7 @@ import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
+import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
 import type { ImportLedgerManageProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -32,9 +33,11 @@ export const Manage = ({
   const { ledgerAddresses: addresses } = useAddresses();
 
   /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID[]>([
-    ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
-  ]);
+  const [accordionValue, setAccordionValue] = useState<ChainID>(
+    getInitialChainAccordionValue([
+      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
+    ])
+  );
 
   return (
     <>
@@ -68,9 +71,9 @@ export const Manage = ({
             <UI.AccordionWrapper $onePart={true}>
               <Accordion.Root
                 className="AccordionRoot"
-                type="multiple"
+                type="single"
                 value={accordionValue}
-                onValueChange={(val) => setAccordionValue(val as ChainID[])}
+                onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
                 <FlexColumn>
                   {Array.from(

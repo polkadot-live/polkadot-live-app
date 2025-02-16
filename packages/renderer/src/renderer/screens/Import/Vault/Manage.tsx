@@ -25,6 +25,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
+import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
 import type { ManageVaultProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -33,9 +34,11 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
   const { vaultAddresses: addresses } = useAddresses();
 
   /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID[]>([
-    ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
-  ]);
+  const [accordionValue, setAccordionValue] = useState<ChainID>(
+    getInitialChainAccordionValue([
+      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
+    ])
+  );
 
   return (
     <>
@@ -74,9 +77,9 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
             <UI.AccordionWrapper $onePart={true}>
               <Accordion.Root
                 className="AccordionRoot"
-                type="multiple"
+                type="single"
                 value={accordionValue}
-                onValueChange={(val) => setAccordionValue(val as ChainID[])}
+                onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
                 <FlexColumn>
                   {Array.from(getSortedLocalAddresses(addresses).entries()).map(
