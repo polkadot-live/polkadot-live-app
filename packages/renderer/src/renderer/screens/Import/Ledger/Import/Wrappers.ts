@@ -10,6 +10,7 @@ export const ConnectButton = styled.button`
   border-radius: 0.375rem;
   transition: all 0.2s ease-out;
   user-select: none;
+  align-self: stretch;
 
   &:hover:not(:disabled) {
     filter: brightness(1.2);
