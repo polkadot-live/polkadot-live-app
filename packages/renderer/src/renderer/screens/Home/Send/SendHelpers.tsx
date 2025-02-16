@@ -61,16 +61,6 @@ export const ProgressBar = ({ value, max }: { value: number; max: number }) => {
 };
 
 /**
- * @name FlexColumn
- * @summary Simple flex column layout helper.
- */
-export const FlexColumn = ({ children }: { children: React.ReactNode }) => (
-  <section style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-    {children}
-  </section>
-);
-
-/**
  * @name InfoPanel
  * @summary Panel with left and right sections to display useful information to the user.
  */

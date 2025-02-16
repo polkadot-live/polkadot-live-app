@@ -51,7 +51,7 @@ export const StatsSectionWrapper = styled.div`
     h3,
     span {
       color: var(--text-highlight) !important;
-      font-size: 1.26rem !important;
+      //font-size: 1.26rem !important;
     }
   }
 
@@ -77,7 +77,7 @@ export const StatsSectionWrapper = styled.div`
   }
 `;
 
-export const StatItem = styled.div`
+export const StatItemWrapper = styled.div`
   background-color: var(--background-primary);
   display: flex;
   align-items: start;

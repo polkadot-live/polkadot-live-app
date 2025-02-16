@@ -26,14 +26,17 @@ export const AccordionTrigger = forwardRef(
 );
 
 export const AccordionContent = forwardRef(
-  ({ children, className, narrow, ...props }: AnyData, forwardedRef) => (
+  (
+    { children, className, narrow, transparent, ...props }: AnyData,
+    forwardedRef
+  ) => (
     <Accordion.Content
       className={`AccordionContent ${className}`}
       {...props}
       ref={forwardedRef}
     >
       <div
-        className={`${narrow ? 'AccordionContentInnerAlternate' : 'AccordionContentInner'}`}
+        className={`${transparent ? 'AccordionContentTransparent' : narrow ? 'AccordionContentInnerAlternate' : 'AccordionContentInner'}`}
       >
         {children}
       </div>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { FlexColumn, ItemsColumn } from './Wrappers';
+import { ItemsColumn } from './Wrappers';
 import {
   Accordion,
   AccordionItem,
@@ -12,6 +12,7 @@ import {
   SortControlLabel,
   Switch,
 } from '@polkadot-live/ui/components';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@app/callbacks/oneshots';

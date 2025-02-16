@@ -26,12 +26,6 @@ const buttonOverlay = css`
   }
 `;
 
-export const FlexColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 1rem;
-`;
-
 export const ItemsColumn = styled.div`
   width: 100%;
   display: flex;
