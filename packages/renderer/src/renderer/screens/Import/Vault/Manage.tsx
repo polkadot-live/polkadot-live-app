@@ -86,7 +86,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                   {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                     ([chainId, chainAddresses]) => (
                       <Accordion.Item
-                        key={`${chainId}_read_only_addresses`}
+                        key={`${chainId}_vault_addresses`}
                         className="AccordionItem"
                         value={chainId}
                       >
