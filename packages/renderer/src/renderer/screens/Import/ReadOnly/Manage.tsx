@@ -42,11 +42,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
   /// Accordion state.
   const [accordionValue, setAccordionValue] = useState<ChainID[]>([
-    ...new Set(
-      addresses
-        .map(({ address }) => getAddressChainId(address))
-        .filter((cid) => cid !== 'Westend')
-    ),
+    ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
   ]);
 
   /// Component state.
