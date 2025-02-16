@@ -4,31 +4,21 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useEvents } from '@app/contexts/main/Events';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { useHelp } from '@app/contexts/common/Help';
-import {
-  MainHeading,
-  StatsGrid,
-  StatItem,
-  ShiftingMeter,
-} from '@polkadot-live/ui/components';
+import { MainHeading, StatsGrid } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
 import { useState } from 'react';
+import { SideTriggerButton, StatItem } from './Wrappers';
 import type { SummaryAccordionValue } from './types';
-import { SideTriggerButton } from './Wrappers';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
-  const { openHelp } = useHelp();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
-
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
     useEvents();
 
@@ -90,38 +80,20 @@ export const Summary: React.FC = () => {
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
                   <StatsGrid>
-                    <StatItem className="total-item">
-                      <div>
-                        <h3>Total</h3>
-                        <div
-                          className="help"
-                          onClick={() =>
-                            openHelp('help:summary:activeAccounts')
-                          }
-                        >
-                          <FontAwesomeIcon icon={faInfo} />
-                        </div>
-                      </div>
-                      <span>
-                        <ShiftingMeter
-                          color={'var(--text-highlight)'}
-                          value={getAddressesCountByChain()}
-                          size={1.26}
-                        />
-                      </span>
-                    </StatItem>
+                    <StatItem
+                      title="Total"
+                      total={true}
+                      helpKey={'help:summary:activeAccounts'}
+                      meterValue={getAddressesCountByChain()}
+                    />
                     {getAllAccountSources().map((source) => {
                       if (getAddressesCountBySource(source) > 0) {
                         return (
-                          <StatItem key={`total_${source}_addresses`}>
-                            <h3>{getReadableAccountSource(source)}</h3>
-                            <span>
-                              <ShiftingMeter
-                                value={getAddressesCountBySource(source)}
-                                size={1.2}
-                              />
-                            </span>
-                          </StatItem>
+                          <StatItem
+                            key={`total_${source}_addresses`}
+                            title={getReadableAccountSource(source)}
+                            meterValue={getAddressesCountBySource(source)}
+                          />
                         );
                       }
                     })}
@@ -144,36 +116,20 @@ export const Summary: React.FC = () => {
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
                   <StatsGrid>
-                    <StatItem className="total-item">
-                      <div>
-                        <h3>Total</h3>
-                        <div
-                          className="help"
-                          onClick={() => openHelp('help:summary:events')}
-                        >
-                          <FontAwesomeIcon icon={faInfo} />
-                        </div>
-                      </div>
-                      <span>
-                        <ShiftingMeter
-                          color={'var(--text-highlight)'}
-                          value={getEventsCount()}
-                          size={1.26}
-                        />
-                      </span>
-                    </StatItem>
+                    <StatItem
+                      title="Total"
+                      total={true}
+                      helpKey={'help:summary:events'}
+                      meterValue={getEventsCount()}
+                    />
                     {getAllEventCategoryKeys().map((category) => {
                       if (getEventsCount(category) > 0) {
                         return (
-                          <StatItem key={`total_${category}_events`}>
-                            <h3>{getReadableEventCategory(category)}</h3>
-                            <span>
-                              <ShiftingMeter
-                                value={getEventsCount(category)}
-                                size={1.2}
-                              />
-                            </span>
-                          </StatItem>
+                          <StatItem
+                            key={`total_${category}_events`}
+                            title={getReadableEventCategory(category)}
+                            meterValue={getEventsCount(category)}
+                          />
                         );
                       }
                     })}
@@ -200,50 +156,27 @@ export const Summary: React.FC = () => {
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
                   <StatsGrid>
-                    <StatItem className="total-item">
-                      <div>
-                        <h3>Total</h3>
-                        <div
-                          className="help"
-                          onClick={() => openHelp('help:summary:subscriptions')}
-                        >
-                          <FontAwesomeIcon icon={faInfo} />
-                        </div>
-                      </div>
-                      <span>
-                        <ShiftingMeter
-                          color={'var(--text-highlight)'}
-                          value={
-                            getTotalSubscriptionCount() +
-                            getTotalIntervalSubscriptionCount()
-                          }
-                          size={1.26}
-                        />
-                      </span>
-                    </StatItem>
+                    <StatItem
+                      title="Total"
+                      total={true}
+                      helpKey={'help:summary:subscriptions'}
+                      meterValue={
+                        getTotalSubscriptionCount() +
+                        getTotalIntervalSubscriptionCount()
+                      }
+                    />
                     {getAllAccounts().map((flattened) => (
                       <StatItem
                         key={`${flattened.address}_subscriptions_count`}
-                      >
-                        <h3>{flattened.name}</h3>
-                        <span>
-                          <ShiftingMeter
-                            value={getSubscriptionCountForAccount(flattened)}
-                            size={1.2}
-                          />
-                        </span>
-                      </StatItem>
+                        title={flattened.name}
+                        meterValue={getSubscriptionCountForAccount(flattened)}
+                      />
                     ))}
                     {getTotalIntervalSubscriptionCount() > 0 && (
-                      <StatItem>
-                        <h3>Referenda</h3>
-                        <span>
-                          <ShiftingMeter
-                            value={getTotalIntervalSubscriptionCount()}
-                            size={1.2}
-                          />
-                        </span>
-                      </StatItem>
+                      <StatItem
+                        title="Referenda"
+                        meterValue={getTotalIntervalSubscriptionCount()}
+                      />
                     )}
                   </StatsGrid>
                 </UI.StatsSectionWrapper>
