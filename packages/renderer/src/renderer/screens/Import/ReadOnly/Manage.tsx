@@ -17,7 +17,6 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
-import { TriggerHeader } from '../../Action/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 /// Context imports.
@@ -187,7 +186,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                           className="AccordionChevron"
                           aria-hidden
                         />
-                        <TriggerHeader>{chainId}</TriggerHeader>
+                        <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
                       </UI.AccordionTrigger>
                       <UI.AccordionContent transparent={true}>
                         <ItemsColumn>

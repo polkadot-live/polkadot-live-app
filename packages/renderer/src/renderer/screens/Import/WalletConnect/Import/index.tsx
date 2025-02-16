@@ -35,7 +35,6 @@ import {
   ImportAddressRow,
 } from '../../Wrappers';
 import type { ImportProps } from './types';
-import { TriggerHeader } from '@app/screens/Action/Wrappers';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const {
@@ -171,7 +170,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               >
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Establish Session</TriggerHeader>
+                  <UI.TriggerHeader>Establish Session</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   {wcSessionRestored ? (
@@ -300,7 +299,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               >
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Import Accounts</TriggerHeader>
+                  <UI.TriggerHeader>Import Accounts</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   {wcFetchedAddresses.length === 0 ? (

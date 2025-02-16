@@ -13,9 +13,8 @@ import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
 import { FlexColumn, Scrollable } from '@polkadot-live/ui/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
-import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { TriggerHeader } from '../Action/Wrappers';
+import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 
 export const Settings: React.FC = () => {
   // Set up port communication for `settings` window.
@@ -117,7 +116,7 @@ export const Settings: React.FC = () => {
                         className="AccordionChevron"
                         aria-hidden
                       />
-                      <TriggerHeader>{category}</TriggerHeader>
+                      <UI.TriggerHeader>{category}</UI.TriggerHeader>
                     </UI.AccordionTrigger>
                     <UI.AccordionContent transparent={true}>
                       <ItemsColumn>

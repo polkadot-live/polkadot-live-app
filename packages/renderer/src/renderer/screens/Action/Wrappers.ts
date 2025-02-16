@@ -18,14 +18,6 @@ export const ExtrinsicItemContentWrapper = styled.div`
   }
 `;
 
-export const TriggerHeader = styled.h3`
-  > span {
-    color: var(--text-color-secondary);
-    margin-left: 1rem;
-    font-size: 0.98rem;
-  }
-`;
-
 export const TriggerRightIconWrapper = styled.div`
   svg {
     opacity: 0.75;

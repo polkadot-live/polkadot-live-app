@@ -14,7 +14,6 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 
-import { TriggerHeader } from '@app/screens/Action/Wrappers';
 import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
@@ -213,7 +212,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               >
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Connect Ledger</TriggerHeader>
+                  <UI.TriggerHeader>Connect Ledger</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   <FlexRow>
@@ -339,7 +338,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               >
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Import Accounts</TriggerHeader>
+                  <UI.TriggerHeader>Import Accounts</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   {!ledger.deviceConnected ? (

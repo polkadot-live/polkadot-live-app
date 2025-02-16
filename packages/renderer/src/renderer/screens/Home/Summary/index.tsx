@@ -11,7 +11,6 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { MainHeading, StatsGrid } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { TriggerHeader } from '../../Action/Wrappers';
 import { useState } from 'react';
 import { SideTriggerButton, StatItem, StatItemRow } from './Wrappers';
 import type { SummaryAccordionValue } from './types';
@@ -66,7 +65,7 @@ export const Summary: React.FC = () => {
               <FlexRow $gap={'2px'}>
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Active Accounts</TriggerHeader>
+                  <UI.TriggerHeader>Active Accounts</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton
@@ -107,7 +106,7 @@ export const Summary: React.FC = () => {
               <FlexRow $gap={'2px'}>
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Events</TriggerHeader>
+                  <UI.TriggerHeader>Events</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton onClick={() => setSelectedId(1)} />
@@ -146,7 +145,7 @@ export const Summary: React.FC = () => {
               <FlexRow $gap={'2px'}>
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <TriggerHeader>Subscriptions</TriggerHeader>
+                  <UI.TriggerHeader>Subscriptions</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton onClick={() => setSelectedId(2)} />

@@ -21,7 +21,6 @@ import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { TriggerHeader } from '../../Action/Wrappers';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -92,7 +91,7 @@ export const Manage = ({
                             className="AccordionChevron"
                             aria-hidden
                           />
-                          <TriggerHeader>{chainId}</TriggerHeader>
+                          <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
                         </UI.AccordionTrigger>
                         <UI.AccordionContent transparent={true}>
                           <ItemsColumn>
