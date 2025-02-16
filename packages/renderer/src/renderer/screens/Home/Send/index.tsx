@@ -456,14 +456,7 @@ export const Send: React.FC = () => {
   const emptyReceivers = getReceiverAccounts().length === 0;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: '1rem',
-        padding: '2rem 1rem',
-      }}
-    >
+    <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
 
       <UI.InfoCard icon={faCircleInfo}>
@@ -758,6 +751,6 @@ export const Send: React.FC = () => {
           </Accordion.Item>
         </Accordion.Root>
       </UI.AccordionWrapper>
-    </div>
+    </FlexColumn>
   );
 };
