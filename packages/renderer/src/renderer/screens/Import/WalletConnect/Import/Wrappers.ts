@@ -3,14 +3,6 @@
 
 import styled from 'styled-components';
 
-export const WcFlexRow = styled.div`
-  background-color: var(--background-window) !important;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
 export const WcSessionButton = styled.button`
   background-color: var(--button-pink-background);
   color: var(--text-bright);

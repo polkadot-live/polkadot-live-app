@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '../../../../theme/variables';
 
 import { BarLoader } from 'react-spinners';
-import { CheckIcon } from '@radix-ui/react-icons';
+import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { ContentWrapper } from '../../../Wrappers';
-import { Scrollable } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
 import { InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
@@ -26,15 +26,16 @@ import {
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useWalletConnectImport } from '@app/contexts/import/WalletConnectImport';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
-import { WcFlexRow, WcSessionButton } from './Wrappers';
+import { WcSessionButton } from './Wrappers';
 import {
   AddressListFooter,
   CheckboxRoot,
   ImportAddressRow,
 } from '../../Wrappers';
 import type { ImportProps } from './types';
+import { TriggerHeader } from '@app/screens/Action/Wrappers';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const {
@@ -64,9 +65,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     setWcNetworks,
   } = useWalletConnectImport();
 
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(Array.from({ length: 2 }, (_, index) => index));
+  /**
+   * Accordion state.
+   */
+  const [accordionValue, setAccordionValue] = useState<string[]>([
+    'establish-session',
+    'import-addresses',
+  ]);
 
   const getSelectedNetworkCount = () =>
     wcNetworks.filter(({ selected }) => selected).length;
@@ -116,19 +121,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     </InfoCard>
   );
 
-  /**
-   * Effects.
-   */
-  useEffect(() => {
-    if (wcFetchedAddresses.length > 0) {
-      setAccordionActiveIndices([1]);
-    }
-  }, [wcFetchedAddresses]);
-
   return (
     <Scrollable
       $footerHeight={4}
-      style={{ paddingTop: 0, paddingBottom: '2rem' }}
+      style={{ paddingTop: 0, paddingBottom: '1rem' }}
     >
       {(wcConnecting || wcDisconnecting) && (
         <BarLoader
@@ -160,213 +156,237 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         />
       </UI.ControlsWrapper>
 
-      {/** Content */}
-      <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
-        <UI.Accordion
-          multiple
-          defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
-          gap={'1rem'}
-          panelPadding={'0.75rem 0.25rem'}
-        >
-          {/** Establish Session */}
-          <UI.AccordionItem>
-            <UI.AccordionCaretHeader
-              title="Establish Session"
-              itemIndex={0}
-              wide={true}
-            />
-            <UI.AccordionPanel>
-              <ItemsColumn>
-                {wcSessionRestored ? (
-                  <>
-                    {!getOnlineMode() && renderOfflineWarning('0')}
-                    <WcFlexRow>
-                      <InfoCard
-                        icon={faCircleDot}
-                        iconTransform={'shrink-3'}
-                        style={{ margin: '0', flex: 1 }}
-                      >
-                        <span>An existing session has been detected.</span>
-                      </InfoCard>
-
-                      {/** Connect and Disconnect Buttons */}
-                      <WcSessionButton
-                        disabled={
-                          !getOnlineMode() ||
-                          !wcSessionRestored ||
-                          !wcInitialized ||
-                          wcConnecting ||
-                          wcDisconnecting
-                        }
-                        onClick={async () => await handleDisconnect()}
-                      >
-                        Disconnect
-                      </WcSessionButton>
-
-                      <WcSessionButton
-                        disabled={
-                          !wcSessionRestored ||
-                          !wcInitialized ||
-                          wcConnecting ||
-                          wcDisconnecting
-                        }
-                        onClick={() => {
-                          handleFetch();
-                          setAccordionActiveIndices([1]);
-                        }}
-                      >
-                        Fetch
-                      </WcSessionButton>
-                    </WcFlexRow>
-                  </>
-                ) : (
-                  <>
-                    {wcNetworks.map(({ chainId, selected, ChainIcon }, i) => (
-                      <ImportAddressRow key={i}>
-                        <ChainIcon
-                          width={'20'}
-                          fill={chainId === 'Polkadot' ? '#ac2461' : ''}
-                        />
-                        <div className="addressInfo">
-                          <h2>{chainId}</h2>
-                        </div>
-                        <CheckboxRoot
-                          $theme={theme}
-                          className="CheckboxRoot"
-                          id={`c${i}`}
-                          checked={selected}
-                          disabled={false}
-                          onCheckedChange={(checked) =>
-                            setWcNetworks((prev) => {
-                              const updated = prev.map((data) =>
-                                data.chainId === chainId
-                                  ? {
-                                      ...data,
-                                      selected:
-                                        typeof checked === 'string'
-                                          ? false
-                                          : Boolean(checked),
-                                    }
-                                  : data
-                              );
-                              return updated;
-                            })
-                          }
+      <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+        <UI.AccordionWrapper $onePart={true}>
+          <AccordionRx.Root
+            className="AccordionRoot"
+            type="multiple"
+            value={accordionValue}
+            onValueChange={(val) => setAccordionValue(val as string[])}
+          >
+            <FlexColumn>
+              <AccordionRx.Item
+                className="AccordionItem"
+                value={'establish-session'}
+              >
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <TriggerHeader>Establish Session</TriggerHeader>
+                </UI.AccordionTrigger>
+                <UI.AccordionContent transparent={true}>
+                  {wcSessionRestored ? (
+                    <FlexColumn>
+                      {!getOnlineMode() && renderOfflineWarning('0')}
+                      <FlexRow $gap={'0.5rem'}>
+                        <InfoCard
+                          icon={faCircleDot}
+                          iconTransform={'shrink-3'}
+                          style={{ margin: '0', flex: 1 }}
                         >
-                          <Checkbox.Indicator className="CheckboxIndicator">
-                            <CheckIcon />
-                          </Checkbox.Indicator>
-                        </CheckboxRoot>
-                      </ImportAddressRow>
-                    ))}
+                          <span>An existing session has been detected.</span>
+                        </InfoCard>
 
-                    {!getOnlineMode() && renderOfflineWarning()}
-                    <WcFlexRow>
-                      <InfoCard
-                        icon={faCircleDot}
-                        iconTransform={'shrink-3'}
-                        style={{ margin: '0', flex: 1 }}
-                      >
-                        <span style={{ flex: 1 }}>
-                          Select your target networks and click Connect to fetch
-                          addresses via WalletConnect.
-                        </span>
-                      </InfoCard>
+                        {/** Connect and Disconnect Buttons */}
+                        <WcSessionButton
+                          disabled={
+                            !getOnlineMode() ||
+                            !wcSessionRestored ||
+                            !wcInitialized ||
+                            wcConnecting ||
+                            wcDisconnecting
+                          }
+                          onClick={async () => await handleDisconnect()}
+                        >
+                          Disconnect
+                        </WcSessionButton>
 
-                      {/** Connect Button */}
-                      <WcSessionButton
-                        disabled={
-                          getSelectedNetworkCount() === 0 ||
-                          !getOnlineMode() ||
-                          !wcInitialized ||
-                          wcConnecting
-                        }
-                        onClick={async () => await handleConnect()}
-                      >
-                        Connect
-                      </WcSessionButton>
-                    </WcFlexRow>
-                  </>
-                )}
-              </ItemsColumn>
-            </UI.AccordionPanel>
-          </UI.AccordionItem>
+                        <WcSessionButton
+                          disabled={
+                            !wcSessionRestored ||
+                            !wcInitialized ||
+                            wcConnecting ||
+                            wcDisconnecting
+                          }
+                          onClick={() => {
+                            handleFetch();
+                            setAccordionValue(['import-addresses']);
+                          }}
+                        >
+                          Fetch
+                        </WcSessionButton>
+                      </FlexRow>
+                    </FlexColumn>
+                  ) : (
+                    <>
+                      <ItemsColumn>
+                        {wcNetworks.map(
+                          ({ chainId, selected, ChainIcon }, i) => (
+                            <ImportAddressRow key={i}>
+                              <ChainIcon
+                                width={'20'}
+                                fill={chainId === 'Polkadot' ? '#ac2461' : ''}
+                              />
+                              <div className="addressInfo">
+                                <h2>{chainId}</h2>
+                              </div>
+                              <CheckboxRoot
+                                $theme={theme}
+                                className="CheckboxRoot"
+                                id={`c${i}`}
+                                checked={selected}
+                                disabled={false}
+                                onCheckedChange={(checked) =>
+                                  setWcNetworks((prev) => {
+                                    const updated = prev.map((data) =>
+                                      data.chainId === chainId
+                                        ? {
+                                            ...data,
+                                            selected:
+                                              typeof checked === 'string'
+                                                ? false
+                                                : Boolean(checked),
+                                          }
+                                        : data
+                                    );
+                                    return updated;
+                                  })
+                                }
+                              >
+                                <Checkbox.Indicator className="CheckboxIndicator">
+                                  <CheckIcon />
+                                </Checkbox.Indicator>
+                              </CheckboxRoot>
+                            </ImportAddressRow>
+                          )
+                        )}
+                      </ItemsColumn>
+                      <FlexColumn style={{ marginTop: '0.5rem' }}>
+                        {!getOnlineMode() && renderOfflineWarning()}
+                        <FlexRow $gap={'0.5rem'}>
+                          <InfoCard
+                            icon={faCircleDot}
+                            iconTransform={'shrink-3'}
+                            style={{ margin: '0', flex: 1 }}
+                          >
+                            <span style={{ flex: 1 }}>
+                              Select your target networks and click Connect to
+                              fetch addresses via WalletConnect.
+                            </span>
+                          </InfoCard>
 
-          {/** Import Addresses */}
-          <UI.AccordionItem>
-            <UI.AccordionCaretHeader
-              title="Import Addresses"
-              itemIndex={1}
-              wide={true}
-            />
-            <UI.AccordionPanel>
-              {wcFetchedAddresses.length === 0 ? (
-                <InfoCard
-                  icon={faCircleDot}
-                  iconTransform={'shrink-3'}
-                  style={{ marginTop: '0', marginBottom: '0.75rem' }}
-                >
-                  <span>
-                    Establish a WalletConnect session to view addresses.
-                  </span>
-                </InfoCard>
-              ) : (
-                <>
-                  <ItemsColumn>
-                    {wcFetchedAddresses.map(
-                      ({ chainId, encoded, selected }, i) => (
-                        <ImportAddressRow key={encoded}>
-                          <UI.Identicon value={encoded} fontSize={'2.5rem'} />
-                          <div className="addressInfo">
-                            <h2>
-                              {i + 1}. {chainId} Account
-                            </h2>
-                            <span>{ellipsisFn(encoded, 12)}</span>
-                          </div>
-                          {isAlreadyImported(encoded) ? (
-                            <span className="imported">Imported</span>
-                          ) : (
-                            <CheckboxRoot
-                              $theme={theme}
-                              className="CheckboxRoot"
-                              id={`${i + 1}-${chainId}`}
-                              checked={selected}
-                              disabled={false}
-                              onCheckedChange={(checked) => {
-                                handleSelectAddress(encoded, checked);
-                              }}
-                            >
-                              <Checkbox.Indicator className="CheckboxIndicator">
-                                <CheckIcon />
-                              </Checkbox.Indicator>
-                            </CheckboxRoot>
-                          )}
-                        </ImportAddressRow>
-                      )
-                    )}
-                  </ItemsColumn>
+                          {/** Connect Button */}
+                          <WcSessionButton
+                            disabled={
+                              getSelectedNetworkCount() === 0 ||
+                              !getOnlineMode() ||
+                              !wcInitialized ||
+                              wcConnecting
+                            }
+                            onClick={async () => await handleConnect()}
+                          >
+                            Connect
+                          </WcSessionButton>
+                        </FlexRow>
+                      </FlexColumn>
+                    </>
+                  )}
+                </UI.AccordionContent>
+              </AccordionRx.Item>
 
-                  <AddressListFooter>
-                    <div className="importBtn">
-                      <button
-                        disabled={
-                          isImporting || getSelectedAddresses().length === 0
-                        }
-                        onClick={async () =>
-                          await handleImportProcess(setShowImportUi)
-                        }
-                      >
-                        {getImportLabel()}
-                      </button>
-                    </div>
-                  </AddressListFooter>
-                </>
-              )}
-            </UI.AccordionPanel>
-          </UI.AccordionItem>
-        </UI.Accordion>
-      </ContentWrapper>
+              {/** Import Addresses */}
+              <AccordionRx.Item
+                className="AccordionItem"
+                value={'import-addresses'}
+              >
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <TriggerHeader>Import Accounts</TriggerHeader>
+                </UI.AccordionTrigger>
+                <UI.AccordionContent transparent={true}>
+                  {wcFetchedAddresses.length === 0 ? (
+                    <InfoCard
+                      icon={faCircleDot}
+                      iconTransform={'shrink-3'}
+                      style={{ marginTop: '0', marginBottom: '0.75rem' }}
+                    >
+                      <span>
+                        Establish a WalletConnect session to view addresses.
+                      </span>
+                    </InfoCard>
+                  ) : (
+                    <>
+                      <ItemsColumn>
+                        {wcFetchedAddresses.map(
+                          ({ chainId, encoded, selected }, i) => (
+                            <ImportAddressRow key={encoded}>
+                              <UI.Identicon
+                                value={encoded}
+                                fontSize={'2.5rem'}
+                              />
+                              <div className="addressInfo">
+                                <h2>
+                                  {i + 1}. {chainId} Account
+                                </h2>
+                                <FlexRow $gap={'0.6rem'}>
+                                  <span>{ellipsisFn(encoded, 12)}</span>
+                                  <span>
+                                    <UI.CopyButton
+                                      iconFontSize="1rem"
+                                      theme={theme}
+                                      onCopyClick={async () =>
+                                        await window.myAPI.copyToClipboard(
+                                          encoded
+                                        )
+                                      }
+                                    />
+                                  </span>
+                                </FlexRow>
+                              </div>
+                              {isAlreadyImported(encoded) ? (
+                                <span className="imported">Imported</span>
+                              ) : (
+                                <CheckboxRoot
+                                  $theme={theme}
+                                  className="CheckboxRoot"
+                                  id={`${i + 1}-${chainId}`}
+                                  checked={selected}
+                                  disabled={false}
+                                  onCheckedChange={(checked) => {
+                                    handleSelectAddress(encoded, checked);
+                                  }}
+                                >
+                                  <Checkbox.Indicator className="CheckboxIndicator">
+                                    <CheckIcon />
+                                  </Checkbox.Indicator>
+                                </CheckboxRoot>
+                              )}
+                            </ImportAddressRow>
+                          )
+                        )}
+                      </ItemsColumn>
+
+                      <AddressListFooter>
+                        <div className="importBtn">
+                          <button
+                            disabled={
+                              isImporting || getSelectedAddresses().length === 0
+                            }
+                            onClick={async () =>
+                              await handleImportProcess(setShowImportUi)
+                            }
+                          >
+                            {getImportLabel()}
+                          </button>
+                        </div>
+                      </AddressListFooter>
+                    </>
+                  )}
+                </UI.AccordionContent>
+              </AccordionRx.Item>
+            </FlexColumn>
+          </AccordionRx.Root>
+        </UI.AccordionWrapper>
+      </div>
     </Scrollable>
   );
 };
