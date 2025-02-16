@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
@@ -26,7 +26,6 @@ import { getBalanceText } from '@ren/utils/TextUtils';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,
-  FlexColumn,
   InfoPanel,
   InfoPanelSingle,
   NextStepArrow,
@@ -493,7 +492,7 @@ export const Send: React.FC = () => {
               <TriggerContent label="Sender" complete={sender !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
-              <FlexColumn>
+              <FlexColumn $rowGap={'2px'}>
                 <SelectBox
                   disabled={emptySenders}
                   value={sender || ''}
@@ -560,7 +559,7 @@ export const Send: React.FC = () => {
               <TriggerContent label="Recipient" complete={receiver !== null} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
-              <FlexColumn>
+              <FlexColumn $rowGap={'2px'}>
                 <SelectBox
                   disabled={emptyReceivers}
                   value={receiver || ''}
@@ -640,7 +639,7 @@ export const Send: React.FC = () => {
               />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
-              <FlexColumn>
+              <FlexColumn $rowGap={'2px'}>
                 <InputWrapper
                   style={{
                     border: `solid 1px ${validAmount ? 'transparent' : '#6a2727'}`,
@@ -679,7 +678,7 @@ export const Send: React.FC = () => {
               <TriggerContent label="Summary" complete={summaryComplete} />
             </UI.AccordionTrigger>
             <UI.AccordionContent narrow={true}>
-              <FlexColumn>
+              <FlexColumn $rowGap={'2px'}>
                 <InfoPanel label={'Network:'}>{senderNetwork || '-'}</InfoPanel>
 
                 {/** Sender */}
