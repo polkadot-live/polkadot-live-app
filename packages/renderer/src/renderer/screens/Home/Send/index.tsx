@@ -472,283 +472,300 @@ export const Send: React.FC = () => {
       <UI.AccordionWrapper $onePart={true}>
         <Accordion.Root
           className="AccordionRoot"
-          style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
           type="multiple"
           value={accordionValue}
           onValueChange={(val) =>
             setAccordionValue(val as SendAccordionValue[])
           }
         >
-          {/** Sender Section */}
-          <Accordion.Item className="AccordionItem" value="section-sender">
-            <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Sender" complete={sender !== null} />
-            </UI.AccordionTrigger>
-            <UI.AccordionContent narrow={true}>
-              <FlexColumn $rowGap={'2px'}>
-                <SelectBox
-                  disabled={emptySenders}
-                  value={sender || ''}
-                  ariaLabel="Sender"
-                  placeholder="Select Sender"
-                  onValueChange={async (val) => await handleSenderChange(val)}
-                >
-                  {getSenderAccounts().map(({ name: accountName, address }) => (
-                    <UI.SelectItem key={`sender-${address}`} value={address}>
-                      <div className="innerRow">
-                        <div>
-                          <Identicon value={address} fontSize={'2.1rem'} />
-                        </div>
-                        <div>{accountName}</div>
-                      </div>
-                    </UI.SelectItem>
-                  ))}
-                </SelectBox>
-
-                {emptySenders ? (
-                  <InfoPanelSingle>
-                    <span style={{ color: 'var(--accent-warning)' }}>
-                      No managed accounts are capable of signing extrinsics
-                    </span>
-                  </InfoPanelSingle>
-                ) : (
-                  <InfoPanelSingle>
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '0.8rem',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {!sender ? (
-                        <span style={{ opacity: '0.5' }}>
-                          No account selected
-                        </span>
-                      ) : (
-                        <>
-                          <AddressWithTooltip theme={theme} address={sender} />
-                          <UI.CopyButton
-                            theme={theme}
-                            onCopyClick={async () =>
-                              await handleClipboardCopy(sender)
-                            }
-                          />
-                        </>
-                      )}
-                    </div>
-                  </InfoPanelSingle>
-                )}
-                <NextStepArrow
-                  complete={sender !== null}
-                  onClick={() => handleNextStep('section-sender')}
-                />
-              </FlexColumn>
-            </UI.AccordionContent>
-          </Accordion.Item>
-
-          {/** Recipient Section */}
-          <Accordion.Item className="AccordionItem" value="section-receiver">
-            <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Recipient" complete={receiver !== null} />
-            </UI.AccordionTrigger>
-            <UI.AccordionContent narrow={true}>
-              <FlexColumn $rowGap={'2px'}>
-                <SelectBox
-                  disabled={emptyReceivers}
-                  value={receiver || ''}
-                  ariaLabel="Recipient"
-                  placeholder="Select Recipient"
-                  onValueChange={(val) => setReceiver(val)}
-                >
-                  {getReceiverAccounts().map(
-                    ({ name: accountName, address }) => (
-                      <UI.SelectItem
-                        key={`receiver-${address}`}
-                        value={address}
-                      >
-                        <div className="innerRow">
-                          <div>
-                            <Identicon value={address} fontSize={'2.1rem'} />
+          <FlexColumn $rowGap={'1.25rem'}>
+            {/** Sender Section */}
+            <Accordion.Item className="AccordionItem" value="section-sender">
+              <UI.AccordionTrigger narrow={true}>
+                <TriggerContent label="Sender" complete={sender !== null} />
+              </UI.AccordionTrigger>
+              <UI.AccordionContent narrow={true}>
+                <FlexColumn $rowGap={'2px'}>
+                  <SelectBox
+                    disabled={emptySenders}
+                    value={sender || ''}
+                    ariaLabel="Sender"
+                    placeholder="Select Sender"
+                    onValueChange={async (val) => await handleSenderChange(val)}
+                  >
+                    {getSenderAccounts().map(
+                      ({ name: accountName, address }) => (
+                        <UI.SelectItem
+                          key={`sender-${address}`}
+                          value={address}
+                        >
+                          <div className="innerRow">
+                            <div>
+                              <Identicon value={address} fontSize={'2.1rem'} />
+                            </div>
+                            <div>{accountName}</div>
                           </div>
-                          <div>{accountName}</div>
-                        </div>
-                      </UI.SelectItem>
-                    )
-                  )}
-                </SelectBox>
-                {emptyReceivers ? (
-                  <InfoPanelSingle>
-                    <span style={{ color: 'var(--accent-warning)' }}>
-                      No managed accounts found on this network
-                    </span>
-                  </InfoPanelSingle>
-                ) : (
-                  <InfoPanelSingle>
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '0.8rem',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {!receiver ? (
-                        <span style={{ opacity: '0.5' }}>
-                          No account selected
-                        </span>
-                      ) : (
-                        <>
-                          <AddressWithTooltip
-                            theme={theme}
-                            address={receiver}
-                          />
-                          <UI.CopyButton
-                            theme={theme}
-                            onCopyClick={async () =>
-                              await handleClipboardCopy(receiver)
-                            }
-                          />
-                        </>
-                      )}
-                    </div>
-                  </InfoPanelSingle>
-                )}
-                <NextStepArrow
-                  complete={receiver !== null}
-                  onClick={() => handleNextStep('section-receiver')}
-                />
-              </FlexColumn>
-            </UI.AccordionContent>
-          </Accordion.Item>
+                        </UI.SelectItem>
+                      )
+                    )}
+                  </SelectBox>
 
-          {/** Send Amount Section */}
-          <Accordion.Item className="AccordionItem" value="section-send-amount">
-            <UI.AccordionTrigger narrow={true}>
-              <TriggerContent
-                label="Send Amount"
-                loading={fetchingSpendable}
-                complete={
-                  sendAmount !== '0' && sendAmount !== '' && validAmount
-                }
-              />
-            </UI.AccordionTrigger>
-            <UI.AccordionContent narrow={true}>
-              <FlexColumn $rowGap={'2px'}>
-                <InputWrapper
-                  style={{
-                    border: `solid 1px ${validAmount ? 'transparent' : '#6a2727'}`,
-                  }}
-                >
-                  <input
-                    type="number"
-                    disabled={!sender || !senderNetwork || fetchingSpendable}
-                    value={sendAmount}
-                    onChange={(e) => handleSendAmountChange(e)}
-                    onFocus={() => handleSendAmountFocus()}
-                    onBlur={() => handleSendAmountBlur()}
+                  {emptySenders ? (
+                    <InfoPanelSingle>
+                      <span style={{ color: 'var(--accent-warning)' }}>
+                        No managed accounts are capable of signing extrinsics
+                      </span>
+                    </InfoPanelSingle>
+                  ) : (
+                    <InfoPanelSingle>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '0.8rem',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {!sender ? (
+                          <span style={{ opacity: '0.5' }}>
+                            No account selected
+                          </span>
+                        ) : (
+                          <>
+                            <AddressWithTooltip
+                              theme={theme}
+                              address={sender}
+                            />
+                            <UI.CopyButton
+                              theme={theme}
+                              onCopyClick={async () =>
+                                await handleClipboardCopy(sender)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </InfoPanelSingle>
+                  )}
+                  <NextStepArrow
+                    complete={sender !== null}
+                    onClick={() => handleNextStep('section-sender')}
                   />
-                  <span>
-                    {senderNetwork ? chainCurrency(senderNetwork) : '-'}
-                  </span>
-                </InputWrapper>
-                <InfoPanel label={'Spendable Balance:'}>
-                  {spendable && senderNetwork
-                    ? getBalanceText(spendable, senderNetwork)
-                    : '-'}
-                </InfoPanel>
-                <NextStepArrow
-                  complete={
-                    !(sendAmount === '0' || sendAmount === '') && validAmount
-                  }
-                  onClick={() => handleNextStep('section-send-amount')}
+                </FlexColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
+
+            {/** Recipient Section */}
+            <Accordion.Item className="AccordionItem" value="section-receiver">
+              <UI.AccordionTrigger narrow={true}>
+                <TriggerContent
+                  label="Recipient"
+                  complete={receiver !== null}
                 />
-              </FlexColumn>
-            </UI.AccordionContent>
-          </Accordion.Item>
-
-          {/** Summary Section */}
-          <Accordion.Item className="AccordionItem" value="section-summary">
-            <UI.AccordionTrigger narrow={true}>
-              <TriggerContent label="Summary" complete={summaryComplete} />
-            </UI.AccordionTrigger>
-            <UI.AccordionContent narrow={true}>
-              <FlexColumn $rowGap={'2px'}>
-                <InfoPanel label={'Network:'}>{senderNetwork || '-'}</InfoPanel>
-
-                {/** Sender */}
-                <InfoPanel label={'Sender:'}>
-                  {!sender ? (
-                    '-'
-                  ) : (
-                    <FlexRow $gap={'0.75rem'}>
-                      <AccountNameWithTooltip
-                        theme={theme}
-                        address={sender}
-                        accountName={getSenderAccountName()}
-                      />
-                      <UI.CopyButton
-                        theme={theme}
-                        onCopyClick={async () =>
-                          await handleClipboardCopy(sender)
-                        }
-                      />
-                    </FlexRow>
-                  )}
-                </InfoPanel>
-
-                {/** Receiver */}
-                <InfoPanel label={'Recipient:'}>
-                  {!receiver ? (
-                    '-'
-                  ) : (
-                    <FlexRow $gap={'0.75rem'}>
-                      <AccountNameWithTooltip
-                        theme={theme}
-                        address={receiver}
-                        accountName={getRecipientAccountName()}
-                      />
-                      <UI.CopyButton
-                        theme={theme}
-                        onCopyClick={async () =>
-                          await handleClipboardCopy(receiver)
-                        }
-                      />
-                    </FlexRow>
-                  )}
-                </InfoPanel>
-
-                {/** Send Amount */}
-                <InfoPanel label={'Send Amount:'}>
-                  {sendAmount === '0' || sendAmount === '' || !validAmount
-                    ? '-'
-                    : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
-                </InfoPanel>
-
-                <FlexRow $gap={'0.5rem'}>
-                  <ActionButton
-                    style={{ flex: 1 }}
-                    $backgroundColor={'var(--button-background-secondary)'}
-                    onClick={() => handleResetClick()}
-                    disabled={false}
+              </UI.AccordionTrigger>
+              <UI.AccordionContent narrow={true}>
+                <FlexColumn $rowGap={'2px'}>
+                  <SelectBox
+                    disabled={emptyReceivers}
+                    value={receiver || ''}
+                    ariaLabel="Recipient"
+                    placeholder="Select Recipient"
+                    onValueChange={(val) => setReceiver(val)}
                   >
-                    <FontAwesomeIcon icon={faBurst} transform={'shrink-4'} />
-                    <span>Reset</span>
-                  </ActionButton>
-                  <ActionButton
-                    style={{ flex: 3 }}
-                    $backgroundColor={'var(--button-pink-background)'}
-                    onClick={async () => await handleProceedClick()}
-                    disabled={proceedDisabled()}
+                    {getReceiverAccounts().map(
+                      ({ name: accountName, address }) => (
+                        <UI.SelectItem
+                          key={`receiver-${address}`}
+                          value={address}
+                        >
+                          <div className="innerRow">
+                            <div>
+                              <Identicon value={address} fontSize={'2.1rem'} />
+                            </div>
+                            <div>{accountName}</div>
+                          </div>
+                        </UI.SelectItem>
+                      )
+                    )}
+                  </SelectBox>
+                  {emptyReceivers ? (
+                    <InfoPanelSingle>
+                      <span style={{ color: 'var(--accent-warning)' }}>
+                        No managed accounts found on this network
+                      </span>
+                    </InfoPanelSingle>
+                  ) : (
+                    <InfoPanelSingle>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '0.8rem',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {!receiver ? (
+                          <span style={{ opacity: '0.5' }}>
+                            No account selected
+                          </span>
+                        ) : (
+                          <>
+                            <AddressWithTooltip
+                              theme={theme}
+                              address={receiver}
+                            />
+                            <UI.CopyButton
+                              theme={theme}
+                              onCopyClick={async () =>
+                                await handleClipboardCopy(receiver)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </InfoPanelSingle>
+                  )}
+                  <NextStepArrow
+                    complete={receiver !== null}
+                    onClick={() => handleNextStep('section-receiver')}
+                  />
+                </FlexColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
+
+            {/** Send Amount Section */}
+            <Accordion.Item
+              className="AccordionItem"
+              value="section-send-amount"
+            >
+              <UI.AccordionTrigger narrow={true}>
+                <TriggerContent
+                  label="Send Amount"
+                  loading={fetchingSpendable}
+                  complete={
+                    sendAmount !== '0' && sendAmount !== '' && validAmount
+                  }
+                />
+              </UI.AccordionTrigger>
+              <UI.AccordionContent narrow={true}>
+                <FlexColumn $rowGap={'2px'}>
+                  <InputWrapper
+                    style={{
+                      border: `solid 1px ${validAmount ? 'transparent' : '#6a2727'}`,
+                    }}
                   >
-                    <FontAwesomeIcon
-                      icon={summaryComplete ? faCheck : faChevronRight}
-                      transform={'shrink-4'}
+                    <input
+                      type="number"
+                      disabled={!sender || !senderNetwork || fetchingSpendable}
+                      value={sendAmount}
+                      onChange={(e) => handleSendAmountChange(e)}
+                      onFocus={() => handleSendAmountFocus()}
+                      onBlur={() => handleSendAmountBlur()}
                     />
-                    <span>{summaryComplete ? 'Completed' : 'Proceed'}</span>
-                  </ActionButton>
-                </FlexRow>
-              </FlexColumn>
-            </UI.AccordionContent>
-          </Accordion.Item>
+                    <span>
+                      {senderNetwork ? chainCurrency(senderNetwork) : '-'}
+                    </span>
+                  </InputWrapper>
+                  <InfoPanel label={'Spendable Balance:'}>
+                    {spendable && senderNetwork
+                      ? getBalanceText(spendable, senderNetwork)
+                      : '-'}
+                  </InfoPanel>
+                  <NextStepArrow
+                    complete={
+                      !(sendAmount === '0' || sendAmount === '') && validAmount
+                    }
+                    onClick={() => handleNextStep('section-send-amount')}
+                  />
+                </FlexColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
+
+            {/** Summary Section */}
+            <Accordion.Item className="AccordionItem" value="section-summary">
+              <UI.AccordionTrigger narrow={true}>
+                <TriggerContent label="Summary" complete={summaryComplete} />
+              </UI.AccordionTrigger>
+              <UI.AccordionContent narrow={true}>
+                <FlexColumn $rowGap={'2px'}>
+                  <InfoPanel label={'Network:'}>
+                    {senderNetwork || '-'}
+                  </InfoPanel>
+
+                  {/** Sender */}
+                  <InfoPanel label={'Sender:'}>
+                    {!sender ? (
+                      '-'
+                    ) : (
+                      <FlexRow $gap={'0.75rem'}>
+                        <AccountNameWithTooltip
+                          theme={theme}
+                          address={sender}
+                          accountName={getSenderAccountName()}
+                        />
+                        <UI.CopyButton
+                          theme={theme}
+                          onCopyClick={async () =>
+                            await handleClipboardCopy(sender)
+                          }
+                        />
+                      </FlexRow>
+                    )}
+                  </InfoPanel>
+
+                  {/** Receiver */}
+                  <InfoPanel label={'Recipient:'}>
+                    {!receiver ? (
+                      '-'
+                    ) : (
+                      <FlexRow $gap={'0.75rem'}>
+                        <AccountNameWithTooltip
+                          theme={theme}
+                          address={receiver}
+                          accountName={getRecipientAccountName()}
+                        />
+                        <UI.CopyButton
+                          theme={theme}
+                          onCopyClick={async () =>
+                            await handleClipboardCopy(receiver)
+                          }
+                        />
+                      </FlexRow>
+                    )}
+                  </InfoPanel>
+
+                  {/** Send Amount */}
+                  <InfoPanel label={'Send Amount:'}>
+                    {sendAmount === '0' || sendAmount === '' || !validAmount
+                      ? '-'
+                      : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
+                  </InfoPanel>
+
+                  <FlexRow $gap={'0.5rem'}>
+                    <ActionButton
+                      style={{ flex: 1 }}
+                      $backgroundColor={'var(--button-background-secondary)'}
+                      onClick={() => handleResetClick()}
+                      disabled={false}
+                    >
+                      <FontAwesomeIcon icon={faBurst} transform={'shrink-4'} />
+                      <span>Reset</span>
+                    </ActionButton>
+                    <ActionButton
+                      style={{ flex: 3 }}
+                      $backgroundColor={'var(--button-pink-background)'}
+                      onClick={async () => await handleProceedClick()}
+                      disabled={proceedDisabled()}
+                    >
+                      <FontAwesomeIcon
+                        icon={summaryComplete ? faCheck : faChevronRight}
+                        transform={'shrink-4'}
+                      />
+                      <span>{summaryComplete ? 'Completed' : 'Proceed'}</span>
+                    </ActionButton>
+                  </FlexRow>
+                </FlexColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
+          </FlexColumn>
         </Accordion.Root>
       </UI.AccordionWrapper>
     </FlexColumn>

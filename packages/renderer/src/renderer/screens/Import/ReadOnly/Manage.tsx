@@ -1,11 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Accordion from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+
 import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
   ControlsWrapper,
   Identicon,
   HardwareAddressWrapper,
@@ -16,8 +15,10 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
+import { ItemsColumn } from '../../Home/Manage/Wrappers';
+import { TriggerHeader } from '../../Action/Wrappers';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 /// Context imports.
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
@@ -25,34 +26,31 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { Scrollable, StatsFooter, FlexColumn } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
+import { getAddressChainId } from '@ren/renderer/Utils';
 
 /// Type imports.
 import type { FormEvent } from 'react';
 import type { ManageReadOnlyProps } from '../types';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   const { readOnlyAddresses: addresses, isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
 
+  /// Accordion state.
+  const [accordionValue, setAccordionValue] = useState<ChainID[]>([
+    ...new Set(
+      addresses
+        .map(({ address }) => getAddressChainId(address))
+        .filter((cid) => cid !== 'Westend')
+    ),
+  ]);
+
   /// Component state.
   const [editName, setEditName] = useState<string>('');
-
-  /// Active accordion indices for account subscription tasks categories.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(
-    Array.from(
-      {
-        length:
-          Array.from(getSortedLocalAddresses(addresses).keys()).length + 1,
-      },
-      (_, index) => index
-    )
-  );
 
   /// Verify that the address is compatible with the supported networks.
   const validateAddress = (address: string) => {
@@ -169,48 +167,53 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
         </HardwareAddressWrapper>
 
         {/* Address List */}
-        <ContentWrapper
-          style={{ padding: '1.25rem 2rem 0', marginTop: '1rem' }}
-        >
-          <Accordion
-            multiple
-            defaultIndex={accordionActiveIndices}
-            setExternalIndices={setAccordionActiveIndices}
-            gap={'0.5rem'}
-            panelPadding={'0.5rem 0.25rem'}
-          >
-            {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-              ([chainId, chainAddresses], i) => (
-                <div key={`${chainId}_read_only_addresses`}>
-                  <AccordionItem>
-                    <AccordionCaretHeader
-                      title={`${chainId}`}
-                      itemIndex={i}
-                      wide={true}
-                    />
-                    <AccordionPanel>
-                      <ItemsColumn>
-                        {addresses.length ? (
-                          <>
-                            {chainAddresses.map((localAddress) => (
-                              <Address
-                                key={`address_${localAddress.name}`}
-                                localAddress={localAddress}
-                                setSection={setSection}
-                              />
-                            ))}
-                          </>
-                        ) : (
-                          <p>No read only addresses imported.</p>
-                        )}
-                      </ItemsColumn>
-                    </AccordionPanel>
-                  </AccordionItem>
-                </div>
-              )
-            )}
-          </Accordion>
-        </ContentWrapper>
+        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+          <UI.AccordionWrapper $onePart={true}>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="multiple"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as ChainID[])}
+            >
+              <FlexColumn $rowGap={'1rem'}>
+                {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                  ([chainId, chainAddresses]) => (
+                    <Accordion.Item
+                      key={`${chainId}_read_only_addresses`}
+                      className="AccordionItem"
+                      value={chainId}
+                    >
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <TriggerHeader>{chainId}</TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {addresses.length ? (
+                            <>
+                              {chainAddresses.map((localAddress) => (
+                                <Address
+                                  key={`address_${localAddress.name}`}
+                                  localAddress={localAddress}
+                                  setSection={setSection}
+                                />
+                              ))}
+                            </>
+                          ) : (
+                            <p>No read only addresses imported.</p>
+                          )}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  )
+                )}
+              </FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        </div>
       </Scrollable>
 
       <StatsFooter $chainId={'Polkadot'}>
