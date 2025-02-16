@@ -476,7 +476,7 @@ export const Send: React.FC = () => {
         <ProgressBar value={progress} max={100} />
       </div>
 
-      <UI.AccordionWrapper>
+      <UI.AccordionWrapper $onePart={true}>
         <Accordion.Root
           className="AccordionRoot"
           style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
