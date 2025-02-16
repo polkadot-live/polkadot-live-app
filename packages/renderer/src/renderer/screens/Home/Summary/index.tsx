@@ -13,12 +13,11 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { useHelp } from '@app/contexts/common/Help';
 import {
   MainHeading,
-  //StatsSection,
   StatsGrid,
   StatItem,
   ShiftingMeter,
 } from '@polkadot-live/ui/components';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
 import styled from 'styled-components';
@@ -97,13 +96,7 @@ export const Summary: React.FC = () => {
             setAccordionValue(val as SummaryAccordionValue[])
           }
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              rowGap: '1rem',
-            }}
-          >
+          <FlexColumn>
             {/** Active Accounts */}
             <Accordion.Item className="AccordionItem" value="summary-accounts">
               <FlexRow $gap={'2px'}>
@@ -282,7 +275,7 @@ export const Summary: React.FC = () => {
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>
             </Accordion.Item>
-          </div>
+          </FlexColumn>
         </Accordion.Root>
       </UI.AccordionWrapper>
     </div>

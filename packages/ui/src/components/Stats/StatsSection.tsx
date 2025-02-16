@@ -9,6 +9,10 @@ import { useState } from 'react';
 import { StatsSectionWrapper, SubHeading } from './Stats.styles';
 import type { StatsSectionProps } from './StatsSection.types';
 
+/**
+ * @name StatsSection
+ * @deprecated Replaced with radix-ui accordion.
+ */
 export const StatsSection = ({
   title,
   btnText,
