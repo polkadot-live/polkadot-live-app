@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
-import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useEvents } from '@app/contexts/main/Events';
@@ -20,35 +20,9 @@ import {
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { TriggerHeader } from '../../Action/Wrappers';
-import styled from 'styled-components';
 import { useState } from 'react';
-
-type SummaryAccordionValue =
-  | 'summary-accounts'
-  | 'summary-events'
-  | 'summary-subscriptions';
-
-const SideTriggerButtonWrapper = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  padding: 0 1.25rem;
-  opacity: 0.75;
-  border-top-right-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-color-primary);
-`;
-
-const SideTriggerButton = ({ onClick }: { onClick: () => void }) => (
-  <SideTriggerButtonWrapper onClick={() => onClick()}>
-    <FlexRow $gap={'0.65rem'}>
-      <FontAwesomeIcon icon={faCaretRight} transform={'grow-2'} />
-    </FlexRow>
-  </SideTriggerButtonWrapper>
-);
+import type { SummaryAccordionValue } from './types';
+import { SideTriggerButton } from './Wrappers';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
