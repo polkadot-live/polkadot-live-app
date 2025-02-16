@@ -3,7 +3,7 @@
 
 import styled from 'styled-components';
 
-export const AccordionWrapper = styled.div`
+export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
   .AccordionRoot {
     width: 100%;
     display: flex;
@@ -72,6 +72,11 @@ export const AccordionWrapper = styled.div`
       gap: 0.75rem;
       border-top-left-radius: 0.375rem;
       border-bottom-left-radius: 0.375rem;
+
+      border-top-right-radius: ${(props) =>
+        props.$onePart ? '0.375rem' : 'inherit'};
+      border-bottom-right-radius: ${(props) =>
+        props.$onePart ? '0.375rem' : 'inherit'};
 
       h3 {
         flex: 1;
