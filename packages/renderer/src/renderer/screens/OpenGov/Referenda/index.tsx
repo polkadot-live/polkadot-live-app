@@ -282,8 +282,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   return (
     <>
-      <Scrollable>
-        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+      <Scrollable style={{ paddingTop: '0.5rem' }}>
+        <div style={{ padding: '0rem 1.25rem 2rem' }}>
+          <UI.ActionItem
+            showIcon={false}
+            text={'Active Referenda'}
+            style={{ marginBottom: '1rem' }}
+          />
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={!groupingOn}>
             <ButtonPrimaryInvert
