@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as themeVariables from '../../../theme/variables';
 
 import { Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
@@ -10,11 +11,11 @@ import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@app/Utils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
@@ -33,13 +34,15 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
-  const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
+
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -191,34 +194,22 @@ export const Accounts = ({
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
                               key={`manage_account_${j}`}
+                              onClick={() => handleClickAccount(name, address)}
                             >
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleClickAccount(name, address)
-                                }
-                              ></button>
                               <div className="inner">
                                 <div>
-                                  <span
-                                    style={{
-                                      zIndex: 2,
-                                      cursor: 'default',
-                                    }}
-                                    className="icon tooltip tooltip-trigger-element"
-                                    data-tooltip-text={ellipsisFn(address, 16)}
-                                    onMouseMove={() =>
-                                      setTooltipTextAndOpen(
-                                        ellipsisFn(address, 16),
-                                        'right'
-                                      )
-                                    }
+                                  <UI.TooltipRx
+                                    text={ellipsisFn(address, 12)}
+                                    theme={theme}
+                                    side="right"
                                   >
-                                    <Identicon
-                                      value={address}
-                                      fontSize={'2.25rem'}
-                                    />
-                                  </span>
+                                    <span>
+                                      <Identicon
+                                        value={address}
+                                        fontSize={'2.25rem'}
+                                      />
+                                    </span>
+                                  </UI.TooltipRx>
                                   <div className="content">
                                     <h3>{name}</h3>
                                   </div>

@@ -3,7 +3,7 @@
 
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
 import { motion } from 'framer-motion';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -12,18 +12,6 @@ export const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   max-height: 100%;
-`;
-
-// Mixin to overlay a button over the element.
-const buttonOverlay = css`
-  > button {
-    z-index: 2;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
 `;
 
 export const ItemsColumn = styled.div`
@@ -46,10 +34,10 @@ export const ItemsColumn = styled.div`
 `;
 
 export const ItemEntryWrapper = styled(motion.div)`
-  ${buttonOverlay}
   width: 100%;
   position: relative;
   padding: 1.15rem 1rem;
+  cursor: pointer;
 
   > .inner {
     display: flex;
