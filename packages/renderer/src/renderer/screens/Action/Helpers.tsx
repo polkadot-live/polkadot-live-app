@@ -8,11 +8,11 @@ import {
   CopyButton,
   Identicon,
   TooltipRx,
+  TriggerHeader,
   TxInfoBadge,
 } from '@polkadot-live/ui/components';
 import { faCoins, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FlexRow } from '@polkadot-live/ui/styles';
-import { TriggerHeader } from './Wrappers';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,

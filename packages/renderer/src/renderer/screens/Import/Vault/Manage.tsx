@@ -1,11 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Accordion from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+
 import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
   ControlsWrapper,
   SortControlLabel,
 } from '@polkadot-live/ui/components';
@@ -19,28 +18,25 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { useState } from 'react';
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import type { ManageVaultProps } from '../types';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
+import { getAddressChainId } from '@ren/renderer/Utils';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import type { ManageVaultProps } from '../types';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
   const { openOverlayWith } = useOverlay();
   const { vaultAddresses: addresses } = useAddresses();
 
-  // Active accordion indices for account subscription tasks categories.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(
-    Array.from(
-      {
-        length:
-          Array.from(getSortedLocalAddresses(addresses).keys()).length + 1,
-      },
-      (_, index) => index
-    )
+  /// Accordion state.
+  const [accordionValue, setAccordionValue] = useState<ChainID>(
+    getInitialChainAccordionValue([
+      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
+    ])
   );
 
   return (
@@ -75,40 +71,49 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
         </ControlsWrapper>
 
         {/* Address List */}
-        <ContentWrapper style={{ padding: '1rem 2rem 0', marginTop: '1rem' }}>
+        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
           {addresses.length && (
-            <Accordion
-              multiple
-              defaultIndex={accordionActiveIndices}
-              setExternalIndices={setAccordionActiveIndices}
-              gap={'0.5rem'}
-              panelPadding={'0.5rem 0.25rem'}
-            >
-              {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                ([chainId, chainAddresses], i) => (
-                  <AccordionItem key={`${chainId}_vault_addresses`}>
-                    <AccordionCaretHeader
-                      title={`${chainId}`}
-                      itemIndex={i}
-                      wide={true}
-                    />
-                    <AccordionPanel>
-                      <ItemsColumn>
-                        {chainAddresses.map((localAddress) => (
-                          <Address
-                            key={`address_${localAddress.name}`}
-                            localAddress={localAddress}
-                            setSection={setSection}
+            <UI.AccordionWrapper $onePart={true}>
+              <Accordion.Root
+                className="AccordionRoot"
+                type="single"
+                value={accordionValue}
+                onValueChange={(val) => setAccordionValue(val as ChainID)}
+              >
+                <FlexColumn>
+                  {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                    ([chainId, chainAddresses]) => (
+                      <Accordion.Item
+                        key={`${chainId}_vault_addresses`}
+                        className="AccordionItem"
+                        value={chainId}
+                      >
+                        <UI.AccordionTrigger narrow={true}>
+                          <ChevronDownIcon
+                            className="AccordionChevron"
+                            aria-hidden
                           />
-                        ))}
-                      </ItemsColumn>
-                    </AccordionPanel>
-                  </AccordionItem>
-                )
-              )}
-            </Accordion>
+                          <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
+                        </UI.AccordionTrigger>
+                        <UI.AccordionContent transparent={true}>
+                          <ItemsColumn>
+                            {chainAddresses.map((localAddress) => (
+                              <Address
+                                key={`address_${localAddress.name}`}
+                                localAddress={localAddress}
+                                setSection={setSection}
+                              />
+                            ))}
+                          </ItemsColumn>
+                        </UI.AccordionContent>
+                      </Accordion.Item>
+                    )
+                  )}
+                </FlexColumn>
+              </Accordion.Root>
+            </UI.AccordionWrapper>
           )}
-        </ContentWrapper>
+        </div>
       </Scrollable>
 
       <StatsFooter $chainId={'Polkadot'}>

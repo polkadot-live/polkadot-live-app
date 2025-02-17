@@ -70,8 +70,11 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
       style={{ paddingTop: 0, paddingBottom: 20 }}
     >
       <ContentWrapper>
-        {/* Hardware */}
-        <ActionItem text={'Import Accounts'} style={{ marginTop: '1.75rem' }} />
+        <ActionItem
+          showIcon={false}
+          text={'Import Accounts'}
+          style={{ marginTop: '1.75rem' }}
+        />
         <div className="grid-wrapper">
           {/* Read-only */}
           <NavCard

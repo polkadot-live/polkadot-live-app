@@ -27,6 +27,17 @@ import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
 
 /**
+ * @name getInitialChainAccordionValue
+ * @summary Returns an initial chain ID in preferential order.
+ */
+export const getInitialChainAccordionValue = (chains: ChainID[]): ChainID =>
+  chains.includes('Polkadot')
+    ? 'Polkadot'
+    : chains.includes('Kusama')
+      ? 'Kusama'
+      : 'Westend';
+
+/**
  * @name generateUID
  * @summary Util for generating a UID in the browser.
  */

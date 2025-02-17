@@ -23,7 +23,7 @@ export const ImportAddressRow = styled.div`
       padding: 0;
       font-size: 1.1rem;
     }
-    > span {
+    span {
       color: var(--text-color-secondary);
     }
   }
