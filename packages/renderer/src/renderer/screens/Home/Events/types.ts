@@ -4,7 +4,6 @@
 import type { EventCallback } from '@polkadot-live/types/reporter';
 
 export interface EventCategoryProps {
-  accordionIndex: number;
   category: string;
   events: EventCallback[];
 }

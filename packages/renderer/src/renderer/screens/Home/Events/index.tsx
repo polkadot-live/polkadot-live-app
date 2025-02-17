@@ -94,10 +94,9 @@ export const Events = () => {
             >
               <FlexColumn>
                 {Array.from(sortedGroupedEvents.entries()).map(
-                  ([category, categoryEvents], i) => (
+                  ([category, categoryEvents]) => (
                     <Category
                       key={`${category}_events`}
-                      accordionIndex={i}
                       category={category}
                       events={categoryEvents}
                     />
