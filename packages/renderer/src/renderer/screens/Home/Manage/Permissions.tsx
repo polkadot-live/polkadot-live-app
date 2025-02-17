@@ -1,6 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as AccordionRx from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+import * as themeVariables from '../../../theme/variables';
+
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { ItemsColumn } from './Wrappers';
 import {
@@ -12,7 +16,7 @@ import {
   SortControlLabel,
   Switch,
 } from '@polkadot-live/ui/components';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ellipsisFn } from '@w3ux/utils';
 import { executeOneShot } from '@app/callbacks/oneshots';
@@ -20,10 +24,7 @@ import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { IntervalRow } from './IntervalRow';
-import {
-  getTooltipClassForGroup,
-  toolTipTextFor,
-} from '@app/utils/renderingUtils';
+import { showGroupTooltip, toolTipTextFor } from '@app/utils/renderingUtils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
@@ -39,13 +40,13 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 
 /// Type imports.
 import type { AnyFunction } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { PermissionsProps } from './types';
 import type {
   IntervalSubscription,
   SubscriptionTask,
   TaskCategory,
 } from '@polkadot-live/types/subscriptions';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 export const Permissions = ({
   breadcrumb,
@@ -55,8 +56,9 @@ export const Permissions = ({
 }: PermissionsProps) => {
   const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
-  const { getOnlineMode, isImporting } = useConnections();
   const { isConnecting } = useBootstrapping();
+  const { darkMode, getOnlineMode, isImporting } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
@@ -72,15 +74,6 @@ export const Permissions = ({
 
   const { updateIntervalSubscription } = useIntervalSubscriptions();
 
-  /// Active accordion indices for account subscription tasks categories.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >([0, 1, 2]);
-
-  /// Active accordion indices for chain subscription tasks categories.
-  const [accordionActiveChainIndices, setAccordionActiveChainIndices] =
-    useState<number[]>([0]);
-
   /// Active accordion indices for interval subscription task categories.
   const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
     useState<number[]>([]);
@@ -89,12 +82,6 @@ export const Permissions = ({
   const numIntervalCategoresRef = useRef(
     Array.from(getCategorizedDynamicIntervals().keys()).length
   );
-
-  useEffect(() => {
-    if (section === 1 && renderedSubscriptions.type == '') {
-      setSection(0);
-    }
-  }, [renderedSubscriptions]);
 
   /// Go to section zero if all interval subscriptions have been removed.
   useEffect(() => {
@@ -175,17 +162,6 @@ export const Permissions = ({
   const isIntervalTaskDisabled = () =>
     !getOnlineMode() || isConnecting || isImporting;
 
-  /// Get unique key for the task row component.
-  const getKey = (
-    type: string,
-    action: string,
-    chainId: ChainID,
-    address: string | undefined
-  ) =>
-    address
-      ? `${type}_${chainId}_${address}_${action}`
-      : `${type}_${chainId}_${action}`;
-
   /// Return subscription tasks mapped by category.
   const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
     const { tasks } = renderedSubscriptions;
@@ -209,8 +185,50 @@ export const Permissions = ({
     return map;
   };
 
-  /// Cache categorised tasks and account address (if account was clicked).
-  const categorisedTasks = getCategorised();
+  const [categorisedTasks, setCategorisedTasks] = useState(
+    new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
+  );
+
+  /// Accordion state for account tasks.
+  const [accordionValueAccounts, setAccordionValueAccounts] = useState<
+    string[]
+  >([
+    ...categorisedTasks
+      .values()
+      .filter((tasks) =>
+        tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
+      )
+      .map((tasks) => tasks[0].category),
+  ]);
+
+  /// Accordion state for chain tasks.
+  const [accordionValueChains, setAccordionValueChains] = useState<string[]>([
+    'Chain',
+  ]);
+
+  /// Update categorised tasks when loading account or chain subscriptions.
+  useEffect(() => {
+    setCategorisedTasks(getCategorised());
+    if (section === 1 && renderedSubscriptions.type == '') {
+      setSection(0);
+    }
+  }, [renderedSubscriptions]);
+
+  /// Close diasbled subscription groups when loading account or chain subscriptions.
+  useEffect(() => {
+    if (typeClicked === 'account') {
+      setAccordionValueAccounts([
+        ...categorisedTasks
+          .values()
+          .filter((tasks) =>
+            tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
+          )
+          .map((tasks) => tasks[0].category),
+      ]);
+    } else {
+      setAccordionValueChains(['Chain']);
+    }
+  }, [categorisedTasks]);
 
   const maybeAccountAddress =
     categorisedTasks.size > 0
@@ -389,72 +407,101 @@ export const Permissions = ({
     }
   };
 
-  /// Get dynamic accordion indices state for account categories or
-  /// static accordion indices for chain categories.
-  const getAccordionIndices = () =>
-    typeClicked === 'account'
-      ? accordionActiveIndices
-      : accordionActiveChainIndices;
-
-  /// Provide the external indices setter if we are about to render
-  /// account subscription tasks in the accordion.
-  const getAccordionIndicesSetter = () =>
-    typeClicked === 'account'
-      ? setAccordionActiveIndices
-      : setAccordionActiveChainIndices;
-
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
-    <Accordion
-      multiple
-      defaultIndex={getAccordionIndices()}
-      setExternalIndices={getAccordionIndicesSetter()}
-      gap={'0.5rem'}
-      panelPadding={'0.5rem'}
-    >
-      {Array.from(categorisedTasks.entries()).map(([category, tasks], j) => (
-        <AccordionItem key={`${category}_${j}`}>
-          <AccordionCaretSwitchHeader
-            title={category}
-            itemIndex={j}
-            SwitchComponent={
-              <div
-                className={getTooltipClassForGroup(tasks[0])}
-                data-tooltip={toolTipTextFor(category)}
-                onMouseMove={() =>
-                  setTooltipTextAndOpen(toolTipTextFor(category), 'left')
-                }
-              >
-                <Switch
-                  size="sm"
-                  type="primary"
-                  isOn={getCategoryToggles().get(category) || false}
-                  disabled={getDisabled(tasks[0])}
-                  handleToggle={async () => await handleGroupSwitch(category)}
-                />
-              </div>
-            }
-          />
-          <AccordionPanel>
-            <ItemsColumn>
-              {tasks
-                .sort((a, b) => a.label.localeCompare(b.label))
-                .map((task: SubscriptionTask, i: number) => (
-                  <PermissionRow
-                    key={`${i}_${getKey(category, task.action, task.chainId, task.account?.address)}`}
-                    task={task}
-                    handleToggle={handleToggle}
-                    handleOneShot={handleOneShot}
-                    handleNativeCheckbox={handleNativeCheckbox}
-                    getDisabled={getDisabled}
-                    getTaskType={getTaskType}
-                  />
-                ))}
-            </ItemsColumn>
-          </AccordionPanel>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+      <AccordionRx.Root
+        className="AccordionRoot"
+        type="multiple"
+        value={
+          typeClicked === 'account'
+            ? accordionValueAccounts
+            : accordionValueChains
+        }
+        onValueChange={(val) =>
+          typeClicked === 'account'
+            ? setAccordionValueAccounts(val as string[])
+            : setAccordionValueChains(val as string[])
+        }
+      >
+        <FlexColumn>
+          {Array.from(categorisedTasks.entries()).map(([category, tasks]) => (
+            <AccordionRx.Item
+              key={category}
+              className="AccordionItem"
+              value={category}
+            >
+              {/** Basic trigger for debugging. */}
+              {category === 'Chain' ? (
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                </UI.AccordionTrigger>
+              ) : (
+                <FlexRow $gap={'2px'}>
+                  {/** Trigger for grouped account subscriptions. */}
+                  <UI.AccordionTrigger narrow={true}>
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                  </UI.AccordionTrigger>
+                  <div
+                    className="HeaderContentDropdownWrapper"
+                    style={{ cursor: 'default' }}
+                  >
+                    {showGroupTooltip(tasks[0]) ? (
+                      <UI.TooltipRx
+                        text={toolTipTextFor(category)}
+                        theme={theme}
+                        side={'left'}
+                      >
+                        <span>
+                          <Switch
+                            size="sm"
+                            type="primary"
+                            isOn={getCategoryToggles().get(category) || false}
+                            disabled={getDisabled(tasks[0])}
+                            handleToggle={async () =>
+                              await handleGroupSwitch(category)
+                            }
+                          />
+                        </span>
+                      </UI.TooltipRx>
+                    ) : (
+                      <Switch
+                        size="sm"
+                        type="primary"
+                        isOn={getCategoryToggles().get(category) || false}
+                        disabled={getDisabled(tasks[0])}
+                        handleToggle={async () =>
+                          await handleGroupSwitch(category)
+                        }
+                      />
+                    )}
+                  </div>
+                </FlexRow>
+              )}
+              <UI.AccordionContent transparent={true}>
+                <ItemsColumn>
+                  {tasks
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .map((task: SubscriptionTask) => (
+                      <PermissionRow
+                        key={`${category}-${task.action}`}
+                        task={task}
+                        handleToggle={handleToggle}
+                        handleOneShot={handleOneShot}
+                        handleNativeCheckbox={handleNativeCheckbox}
+                        getDisabled={getDisabled}
+                        getTaskType={getTaskType}
+                      />
+                    ))}
+                </ItemsColumn>
+              </UI.AccordionContent>
+            </AccordionRx.Item>
+          ))}
+        </FlexColumn>
+      </AccordionRx.Root>
+    </UI.AccordionWrapper>
   );
 
   /// Render a list of interval subscription tasks that can be toggled.

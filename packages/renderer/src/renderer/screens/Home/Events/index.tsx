@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as AccordionRx from '@radix-ui/react-accordion';
+import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
 import { useEvents } from '@app/contexts/main/Events';
@@ -86,7 +86,7 @@ export const Events = () => {
           }
         >
           <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-            <AccordionRx.Root
+            <Accordion.Root
               className="AccordionRoot"
               type="multiple"
               value={accordionValue}
@@ -103,7 +103,7 @@ export const Events = () => {
                   )
                 )}
               </FlexColumn>
-            </AccordionRx.Root>
+            </Accordion.Root>
           </UI.AccordionWrapper>
         </div>
         <div

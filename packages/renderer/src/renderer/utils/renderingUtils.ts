@@ -15,6 +15,25 @@ import type {
  * @summary Utility to determine if a tooltip should be rendered over a subscription switch.
  * For subscription tasks associated with an account.
  */
+export const showGroupTooltip = (task: SubscriptionTask) => {
+  const { account, category } = task;
+  if (!account) {
+    return false;
+  }
+
+  switch (category) {
+    case 'Nomination Pools': {
+      return account.nominationPoolData ? false : true;
+    }
+    case 'Nominating': {
+      return account.nominatingData ? false : true;
+    }
+    default: {
+      return false;
+    }
+  }
+};
+
 export const getTooltipClassForGroup = (task: SubscriptionTask) => {
   const { account, category } = task;
   if (!account) {
