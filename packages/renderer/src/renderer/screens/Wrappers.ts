@@ -152,10 +152,6 @@ export const WindowWrapper = styled.div`
   width: 100%;
   position: relative;
   padding: 0 1.5rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
 `;
 
 export const GridTwoCol = styled.div`
