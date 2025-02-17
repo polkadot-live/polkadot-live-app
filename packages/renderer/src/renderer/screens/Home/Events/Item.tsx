@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
@@ -18,12 +19,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@ren/utils/EventUtils';
 import { renderTimeAgo } from '@ren/utils/TextUtils';
 import { ellipsisFn } from '@w3ux/utils';
-import { Identicon } from '@polkadot-live/ui/components';
+import { Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { useEffect, useState, memo } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { ActionMeta } from 'packages/types/src';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
@@ -39,10 +39,10 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
   const { isConnecting } = useBootstrapping();
-  const { getOnlineMode, isBuildingExtrinsic } = useConnections();
+  const { darkMode, getOnlineMode, isBuildingExtrinsic } = useConnections();
   const { dismissEvent } = useEvents();
-  const { setTooltipTextAndOpen } = useTooltip();
 
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
 
   // Extract address from event.
@@ -87,9 +87,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
       dismissEvent({ uid, who: event.who });
     }
   }, [display]);
-
-  const showIconTooltip = () =>
-    event.category !== 'openGov' && event.category !== 'debugging';
 
   // Flag to determine if primary actions exist for this event.
   const hasTxActions: boolean = txActions.length > 0 && source !== 'read-only';
@@ -183,15 +180,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
           }}
         >
           {/* Time ago */}
-          <div
-            className="time-ago-btn tooltip tooltip-trigger-element"
-            data-tooltip-text={renderTimeAgo(event.timestamp)}
-            onMouseMove={() =>
-              setTooltipTextAndOpen(renderTimeAgo(event.timestamp), 'left')
-            }
+          <TooltipRx
+            text={renderTimeAgo(event.timestamp)}
+            side="left"
+            theme={theme}
           >
-            <FontAwesomeIcon icon={faClock} />
-          </div>
+            <div className="time-ago-btn">
+              <FontAwesomeIcon icon={faClock} />
+            </div>
+          </TooltipRx>
 
           {/* Dismiss button */}
           <div
@@ -219,16 +216,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
             <section className="item-main">
               <div>
                 <div className="icon ">
-                  {showIconTooltip() && (
-                    <span
-                      className="tooltip tooltip-trigger-element"
-                      data-tooltip-text={ellipsisFn(address, 16)}
-                      onMouseMove={() =>
-                        setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
-                      }
-                    />
-                  )}
-
                   {event.category === 'openGov' ? (
                     <Governance
                       width="32px"
@@ -236,7 +223,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
                       style={{ opacity: '0.85' }}
                     />
                   ) : (
-                    <Identicon value={address} fontSize={'2.75rem'} />
+                    <TooltipRx
+                      text={ellipsisFn(address, 12)}
+                      side="right"
+                      theme={theme}
+                    >
+                      <span>
+                        <Identicon value={address} fontSize={'2.75rem'} />
+                      </span>
+                    </TooltipRx>
                   )}
                 </div>
               </div>
@@ -260,18 +255,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
                   {txActions.map(({ label, txMeta }, i) => {
                     if (source === 'ledger') {
                       return (
-                        <div
+                        <TooltipRx
                           key={`action_${uid}_${i}`}
-                          className="tooltip tooltip-trigger-element"
-                          data-tooltip-text={'Ledger Signing Unsupported'}
-                          onMouseMove={() =>
-                            setTooltipTextAndOpen(
-                              'Ledger Signing Not Supported'
-                            )
-                          }
+                          text={'Ledger Signing Coming Soon'}
+                          theme={theme}
                         >
-                          <ButtonMono disabled={true} text={label} />
-                        </div>
+                          <span>
+                            <ButtonMono disabled={true} text={label} />
+                          </span>
+                        </TooltipRx>
                       );
                     } else if (source !== 'read-only') {
                       return (

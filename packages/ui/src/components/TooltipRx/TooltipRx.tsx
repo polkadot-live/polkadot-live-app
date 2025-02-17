@@ -13,6 +13,7 @@ export const TooltipRx = ({
   theme,
   onOpenChange,
   children,
+  side,
 }: RadixTooltipProps) => (
   <Tooltip.Provider>
     <Tooltip.Root open={open} onOpenChange={onOpenChange} delayDuration={0}>
@@ -23,6 +24,7 @@ export const TooltipRx = ({
           className="TooltipContent"
           style={style}
           sideOffset={5}
+          side={side ? side : 'top'}
         >
           {text}
           <Tooltip.Arrow className="TooltipArrow" />
