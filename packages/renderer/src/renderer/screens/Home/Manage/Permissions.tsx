@@ -1,17 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as AccordionRx from '@radix-ui/react-accordion';
+import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { ItemsColumn } from './Wrappers';
 import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretSwitchHeader,
   ControlsWrapper,
   SortControlLabel,
   Switch,
@@ -32,7 +28,7 @@ import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useManage } from '@app/contexts/main/Manage';
@@ -42,7 +38,6 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { PermissionsProps } from './types';
 import type {
-  IntervalSubscription,
   SubscriptionTask,
   TaskCategory,
 } from '@polkadot-live/types/subscriptions';
@@ -69,36 +64,61 @@ export const Permissions = ({
     dynamicIntervalTasksState,
     updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
-    getCategorizedDynamicIntervals,
+    getCategorisedDynamicIntervals,
   } = useManage();
 
   const { updateIntervalSubscription } = useIntervalSubscriptions();
 
-  /// Active accordion indices for interval subscription task categories.
-  const [accordionActiveIntervalIndices, setAccordionActiveIntervalIndices] =
-    useState<number[]>([]);
+  /// Return subscription tasks mapped by category.
+  const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
+    const { tasks } = renderedSubscriptions;
+    const map = new Map<TaskCategory, SubscriptionTask[]>();
 
-  /// Ref to keep track of number of interval categories being rendered.
-  const numIntervalCategoresRef = useRef(
-    Array.from(getCategorizedDynamicIntervals().keys()).length
+    tasks.forEach((t) => {
+      const category = t.category;
+
+      if (map.has(category)) {
+        const cur = map.get(category);
+        if (cur !== undefined) {
+          map.set(category, [...cur, { ...t }]);
+        } else {
+          map.set(category, [{ ...t }]);
+        }
+      } else {
+        map.set(category, [{ ...t }]);
+      }
+    });
+
+    return map;
+  };
+
+  // Categorised tasks state.
+  const [categorisedTasks, setCategorisedTasks] = useState(
+    new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
+
+  /// Accordion state.
+  const [accordionValueAccounts, setAccordionValueAccounts] = useState<
+    string[]
+  >([
+    ...Array.from(categorisedTasks.values())
+      .filter((tasks) =>
+        tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
+      )
+      .map((tasks) => tasks[0].category),
+  ]);
+
+  const [accordionValueChains, setAccordionValueChains] = useState<string[]>([
+    'Chain',
+  ]);
+  const [accordionValueIntervals, setAccordionValueIntervals] = useState<
+    string[]
+  >([]);
 
   /// Go to section zero if all interval subscriptions have been removed.
   useEffect(() => {
     if (typeClicked === 'interval' && dynamicIntervalTasksState.length === 0) {
       setSection(0);
-    }
-
-    // Close all accordion panels if new category has been added.
-    if (typeClicked === 'interval') {
-      const newLength = Array.from(
-        getCategorizedDynamicIntervals().keys()
-      ).length;
-
-      if (newLength !== numIntervalCategoresRef.current) {
-        numIntervalCategoresRef.current = newLength;
-        setAccordionActiveIntervalIndices([]);
-      }
     }
   }, [dynamicIntervalTasksState]);
 
@@ -109,8 +129,31 @@ export const Permissions = ({
 
   /// Update accordion interval indices if active chain has changed.
   useEffect(() => {
-    setAccordionActiveIntervalIndices([]);
+    setAccordionValueIntervals([]);
   }, [activeChainId]);
+
+  /// Re-cache categorised tasks when subscription data changes.
+  useEffect(() => {
+    setCategorisedTasks(getCategorised());
+    if (section === 1 && renderedSubscriptions.type == '') {
+      setSection(0);
+    }
+  }, [renderedSubscriptions]);
+
+  /// Close diasbled subscription groups when loading account or chain subscriptions.
+  useEffect(() => {
+    if (typeClicked === 'account') {
+      setAccordionValueAccounts([
+        ...Array.from(categorisedTasks.values())
+          .filter((tasks) =>
+            tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
+          )
+          .map((tasks) => tasks[0].category),
+      ]);
+    } else {
+      setAccordionValueChains(['Chain']);
+    }
+  }, [categorisedTasks]);
 
   /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (task: SubscriptionTask) => {
@@ -162,74 +205,6 @@ export const Permissions = ({
   const isIntervalTaskDisabled = () =>
     !getOnlineMode() || isConnecting || isImporting;
 
-  /// Return subscription tasks mapped by category.
-  const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
-    const { tasks } = renderedSubscriptions;
-    const map = new Map<TaskCategory, SubscriptionTask[]>();
-
-    tasks.forEach((t) => {
-      const category = t.category;
-
-      if (map.has(category)) {
-        const cur = map.get(category);
-        if (cur !== undefined) {
-          map.set(category, [...cur, { ...t }]);
-        } else {
-          map.set(category, [{ ...t }]);
-        }
-      } else {
-        map.set(category, [{ ...t }]);
-      }
-    });
-
-    return map;
-  };
-
-  const [categorisedTasks, setCategorisedTasks] = useState(
-    new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
-  );
-
-  /// Accordion state for account tasks.
-  const [accordionValueAccounts, setAccordionValueAccounts] = useState<
-    string[]
-  >([
-    ...categorisedTasks
-      .values()
-      .filter((tasks) =>
-        tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
-      )
-      .map((tasks) => tasks[0].category),
-  ]);
-
-  /// Accordion state for chain tasks.
-  const [accordionValueChains, setAccordionValueChains] = useState<string[]>([
-    'Chain',
-  ]);
-
-  /// Update categorised tasks when loading account or chain subscriptions.
-  useEffect(() => {
-    setCategorisedTasks(getCategorised());
-    if (section === 1 && renderedSubscriptions.type == '') {
-      setSection(0);
-    }
-  }, [renderedSubscriptions]);
-
-  /// Close diasbled subscription groups when loading account or chain subscriptions.
-  useEffect(() => {
-    if (typeClicked === 'account') {
-      setAccordionValueAccounts([
-        ...categorisedTasks
-          .values()
-          .filter((tasks) =>
-            tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
-          )
-          .map((tasks) => tasks[0].category),
-      ]);
-    } else {
-      setAccordionValueChains(['Chain']);
-    }
-  }, [categorisedTasks]);
-
   const maybeAccountAddress =
     categorisedTasks.size > 0
       ? Array.from(categorisedTasks.values())[0][0].account?.address
@@ -260,7 +235,7 @@ export const Permissions = ({
     for (const [
       referendumId,
       intervalTasks,
-    ] of getCategorizedDynamicIntervals().entries()) {
+    ] of getCategorisedDynamicIntervals().entries()) {
       const allToggled = intervalTasks.reduce(
         (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
         true
@@ -410,7 +385,7 @@ export const Permissions = ({
   /// Renders a list of categorised subscription tasks that can be toggled.
   const renderSubscriptionTasks = () => (
     <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-      <AccordionRx.Root
+      <Accordion.Root
         className="AccordionRoot"
         type="multiple"
         value={
@@ -426,7 +401,7 @@ export const Permissions = ({
       >
         <FlexColumn>
           {Array.from(categorisedTasks.entries()).map(([category, tasks]) => (
-            <AccordionRx.Item
+            <Accordion.Item
               key={category}
               className="AccordionItem"
               value={category}
@@ -497,57 +472,73 @@ export const Permissions = ({
                     ))}
                 </ItemsColumn>
               </UI.AccordionContent>
-            </AccordionRx.Item>
+            </Accordion.Item>
           ))}
         </FlexColumn>
-      </AccordionRx.Root>
+      </Accordion.Root>
     </UI.AccordionWrapper>
   );
 
   /// Render a list of interval subscription tasks that can be toggled.
   const renderIntervalSubscriptionTasks = () => (
-    <Accordion
-      multiple
-      defaultIndex={accordionActiveIntervalIndices}
-      setExternalIndices={setAccordionActiveIntervalIndices}
-      gap={'0.5rem'}
-      panelPadding={'0.5rem'}
-    >
-      {Array.from(getCategorizedDynamicIntervals().entries()).map(
-        ([referendumId, intervalTasks], i) => (
-          <AccordionItem key={`${referendumId}_interval_subscriptions`}>
-            <AccordionCaretSwitchHeader
-              title={`Referendum ${referendumId}`}
-              itemIndex={i}
-              SwitchComponent={
-                <Switch
-                  disabled={isIntervalTaskDisabled()}
-                  size="sm"
-                  type="primary"
-                  isOn={getOpenGovGlobalToggles().get(referendumId) || false}
-                  handleToggle={async () =>
-                    await toggleGlobalSwitch(
-                      referendumId,
-                      getOpenGovGlobalToggles().get(referendumId) || false
-                    )
-                  }
-                />
-              }
-            />
-            <AccordionPanel>
-              <ItemsColumn>
-                {intervalTasks.map((task: IntervalSubscription, j: number) => (
-                  <IntervalRow
-                    key={`${j}_${task.referendumId}_${task.action}`}
-                    task={task}
-                  />
-                ))}
-              </ItemsColumn>
-            </AccordionPanel>
-          </AccordionItem>
-        )
-      )}
-    </Accordion>
+    <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+      <Accordion.Root
+        className="AccordionRoot"
+        type="multiple"
+        value={accordionValueIntervals}
+        onValueChange={(val) => setAccordionValueIntervals(val as string[])}
+      >
+        <FlexColumn>
+          {Array.from(getCategorisedDynamicIntervals().entries()).map(
+            ([referendumId, intervalTasks]) => (
+              <Accordion.Item
+                key={`${referendumId}_interval_subscriptions`}
+                className="AccordionItem"
+                value={String(referendumId)}
+              >
+                <FlexRow $gap={'2px'}>
+                  <UI.AccordionTrigger narrow={true}>
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <UI.TriggerHeader>
+                      Referendum {referendumId}
+                    </UI.TriggerHeader>
+                  </UI.AccordionTrigger>
+                  <div
+                    className="HeaderContentDropdownWrapper"
+                    style={{ cursor: 'default' }}
+                  >
+                    <Switch
+                      disabled={isIntervalTaskDisabled()}
+                      size="sm"
+                      type="primary"
+                      isOn={
+                        getOpenGovGlobalToggles().get(referendumId) || false
+                      }
+                      handleToggle={async () =>
+                        await toggleGlobalSwitch(
+                          referendumId,
+                          getOpenGovGlobalToggles().get(referendumId) || false
+                        )
+                      }
+                    />
+                  </div>
+                </FlexRow>
+                <UI.AccordionContent transparent={true}>
+                  <ItemsColumn>
+                    {intervalTasks.map((task) => (
+                      <IntervalRow
+                        key={`${task.referendumId}_${task.action}`}
+                        task={task}
+                      />
+                    ))}
+                  </ItemsColumn>
+                </UI.AccordionContent>
+              </Accordion.Item>
+            )
+          )}
+        </FlexColumn>
+      </Accordion.Root>
+    </UI.AccordionWrapper>
   );
 
   return (

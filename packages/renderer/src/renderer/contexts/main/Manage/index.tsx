@@ -95,7 +95,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /// Get dynamic interval subscriptions categorized by referendum ID.
-  const getCategorizedDynamicIntervals = (): Map<
+  const getCategorisedDynamicIntervals = (): Map<
     number,
     IntervalSubscription[]
   > => {
@@ -176,7 +176,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
         setActiveChainId,
-        getCategorizedDynamicIntervals,
+        getCategorisedDynamicIntervals,
       }}
     >
       {children}
