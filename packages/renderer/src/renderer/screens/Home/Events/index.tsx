@@ -1,6 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as AccordionRx from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+
 import { useEvents } from '@app/contexts/main/Events';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
@@ -10,11 +13,11 @@ import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
 import { getEventChainId } from '@ren/utils/EventUtils';
 import {
-  Accordion,
   MainHeading,
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 
 export const Events = () => {
   /// State for sorting controls.
@@ -34,15 +37,10 @@ export const Events = () => {
     [events, newestFirst]
   );
 
-  /// Active accordion indices for event categories.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(
-    Array.from(
-      { length: Array.from(sortedGroupedEvents.keys()).length },
-      (_, index) => index
-    )
-  );
+  /// Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>([
+    ...sortedGroupedEvents.keys(),
+  ]);
 
   return (
     <div
@@ -87,24 +85,27 @@ export const Events = () => {
               : { display: 'none', width: '100%' }
           }
         >
-          <Accordion
-            multiple
-            defaultIndex={accordionActiveIndices}
-            setExternalIndices={setAccordionActiveIndices}
-            panelPadding={'0.5rem 0.25rem'}
-            gap={'0.5rem'}
-          >
-            {Array.from(sortedGroupedEvents.entries()).map(
-              ([category, categoryEvents], i) => (
-                <Category
-                  key={`${category}_events`}
-                  accordionIndex={i}
-                  category={category}
-                  events={categoryEvents}
-                />
-              )
-            )}
-          </Accordion>
+          <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+            <AccordionRx.Root
+              className="AccordionRoot"
+              type="multiple"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as string[])}
+            >
+              <FlexColumn>
+                {Array.from(sortedGroupedEvents.entries()).map(
+                  ([category, categoryEvents], i) => (
+                    <Category
+                      key={`${category}_events`}
+                      accordionIndex={i}
+                      category={category}
+                      events={categoryEvents}
+                    />
+                  )
+                )}
+              </FlexColumn>
+            </AccordionRx.Root>
+          </UI.AccordionWrapper>
         </div>
         <div
           style={
