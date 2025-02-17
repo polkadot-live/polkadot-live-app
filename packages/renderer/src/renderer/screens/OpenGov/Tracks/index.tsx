@@ -17,6 +17,7 @@ import { StickyHeadings } from './Wrappers';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { TrackRow } from './TrackRow';
 import {
+  ActionItem,
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
@@ -69,7 +70,14 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingBottom: '2rem' }}>
+      <Scrollable style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
+        <div style={{ padding: '0rem 1.5rem 0rem' }}>
+          <ActionItem
+            showIcon={false}
+            text={`${chainId} Tracks`}
+            style={{ marginBottom: '1rem' }}
+          />
+        </div>
         <ContentWrapper>
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={true}>

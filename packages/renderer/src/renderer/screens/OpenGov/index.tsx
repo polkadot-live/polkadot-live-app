@@ -29,7 +29,7 @@ import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -211,46 +211,60 @@ export const OpenGov: React.FC = () => {
 
             <WindowWrapper>
               {/* Referenda */}
-              <ActionItem text={'Referenda'} />
-              <GridTwoCol>
-                <NavCardThin
-                  title={'Polkadot'}
-                  onClick={() => handleOpenReferenda('Polkadot')}
-                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
-                  childrenSubtitle={
-                    <span>Active referenda on the Polkadot network.</span>
-                  }
+              <FlexColumn $rowGap={'0.75rem'}>
+                <ActionItem
+                  showIcon={false}
+                  text={'Referenda'}
+                  style={{ marginTop: '0.75rem' }}
                 />
+                <GridTwoCol>
+                  <NavCardThin
+                    title={'Polkadot'}
+                    onClick={() => handleOpenReferenda('Polkadot')}
+                    childrenLogo={
+                      <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                    }
+                    childrenSubtitle={
+                      <span>Active referenda on the Polkadot network.</span>
+                    }
+                  />
+                  <NavCardThin
+                    title={'Kusama'}
+                    onClick={() => handleOpenReferenda('Kusama')}
+                    childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
+                    childrenSubtitle={
+                      <span>Active referenda on the Kusama network.</span>
+                    }
+                  />
+                </GridTwoCol>
 
-                <NavCardThin
-                  title={'Kusama'}
-                  onClick={() => handleOpenReferenda('Kusama')}
-                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
-                  childrenSubtitle={
-                    <span>Active referenda on the Kusama network.</span>
-                  }
+                {/* Origins and Tracks */}
+                <ActionItem
+                  showIcon={false}
+                  text={'Tracks'}
+                  style={{ marginTop: '0.75rem' }}
                 />
-              </GridTwoCol>
-
-              {/* Origins and Tracks */}
-              <ActionItem text={'Tracks'} />
-              <GridTwoCol>
-                <NavCardThin
-                  title={'Polkadot'}
-                  onClick={() => handleOpenTracks('Polkadot')}
-                  childrenLogo={<PolkadotSVG width={'1.5rem'} opacity={0.8} />}
-                  childrenSubtitle={
-                    <span>Tracks on the Polkadot network.</span>
-                  }
-                />
-
-                <NavCardThin
-                  title={'Kusama'}
-                  onClick={() => handleOpenTracks('Kusama')}
-                  childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
-                  childrenSubtitle={<span>Tracks on the Kusama network.</span>}
-                />
-              </GridTwoCol>
+                <GridTwoCol>
+                  <NavCardThin
+                    title={'Polkadot'}
+                    onClick={() => handleOpenTracks('Polkadot')}
+                    childrenLogo={
+                      <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                    }
+                    childrenSubtitle={
+                      <span>Tracks on the Polkadot network.</span>
+                    }
+                  />
+                  <NavCardThin
+                    title={'Kusama'}
+                    onClick={() => handleOpenTracks('Kusama')}
+                    childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
+                    childrenSubtitle={
+                      <span>Tracks on the Kusama network.</span>
+                    }
+                  />
+                </GridTwoCol>
+              </FlexColumn>
             </WindowWrapper>
           </Scrollable>
 

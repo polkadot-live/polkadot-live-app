@@ -135,8 +135,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         />
       )}
 
+      <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+        <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
+      </div>
       {/** Bredcrumb */}
-      <UI.ControlsWrapper $padWrapper={true} $padButton={false}>
+      <UI.ControlsWrapper
+        $padWrapper={true}
+        $padButton={false}
+        style={{ paddingTop: '1rem' }}
+      >
         <ButtonPrimaryInvert
           className="back-btn"
           text="Back"
