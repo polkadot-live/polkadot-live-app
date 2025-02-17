@@ -101,7 +101,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       length = Array.from(map.keys()).length;
     }
 
-    //return accordionActiveIndices.length === length;
     return accordionValue.length === length;
   };
 
