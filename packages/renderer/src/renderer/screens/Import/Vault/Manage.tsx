@@ -42,11 +42,14 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
   return (
     <>
       <Scrollable style={{ paddingTop: 0 }}>
+        <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+          <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
+        </div>
         {/* Top Controls */}
         <ControlsWrapper
           $padWrapper={true}
           $padBottom={false}
-          style={{ marginBottom: 0 }}
+          style={{ paddingTop: '1rem', marginBottom: 0 }}
         >
           <ButtonPrimaryInvert
             className="back-btn"
