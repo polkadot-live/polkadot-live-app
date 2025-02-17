@@ -105,11 +105,7 @@ export const Action = () => {
           <UI.ActionItem
             showIcon={false}
             text={'Account Filter'}
-            style={{
-              marginBottom: '1rem',
-              fontSize: '1.1rem',
-              color: 'var(--text-color-secondary)',
-            }}
+            style={{ marginBottom: '1rem' }}
           />
           <Select.Root
             value={selectedFilter}
@@ -178,11 +174,7 @@ export const Action = () => {
           <UI.ActionItem
             showIcon={false}
             text={'Manage Extrinsics'}
-            style={{
-              margin: '2.75rem 0 0.25rem',
-              fontSize: '1.1rem',
-              color: 'var(--text-color-secondary)',
-            }}
+            style={{ margin: '2rem 0 0.25rem' }}
           />
 
           {Array.from(extrinsics.keys()).length === 0 && (

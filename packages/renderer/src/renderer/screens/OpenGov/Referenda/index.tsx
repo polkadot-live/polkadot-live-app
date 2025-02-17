@@ -286,7 +286,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <div style={{ padding: '0rem 1.25rem 2rem' }}>
           <UI.ActionItem
             showIcon={false}
-            text={'Active Referenda'}
+            text={`${chainId} Referenda`}
             style={{ marginBottom: '1rem' }}
           />
           {/* Sorting controls */}
