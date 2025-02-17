@@ -30,7 +30,6 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useManage } from '@app/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 
@@ -49,7 +48,6 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
   const { isConnecting } = useBootstrapping();
   const { darkMode, getOnlineMode, isImporting } = useConnections();
@@ -551,19 +549,16 @@ export const Permissions = ({
             iconLeft={faCaretLeft}
             onClick={() => setSection(0)}
           />
-          {typeClicked === 'account' ? (
-            <div
-              className="tooltip-trigger-element"
-              data-tooltip-text={ellipsisFn(maybeAccountAddress || '', 16)}
-              onMouseMove={() =>
-                setTooltipTextAndOpen(
-                  ellipsisFn(maybeAccountAddress || '', 16),
-                  'bottom'
-                )
-              }
+          {typeClicked === 'account' && maybeAccountAddress ? (
+            <UI.TooltipRx
+              text={ellipsisFn(maybeAccountAddress, 12)}
+              theme={theme}
+              side="bottom"
             >
-              <SortControlLabel label={breadcrumb} />
-            </div>
+              <span>
+                <SortControlLabel label={breadcrumb} />
+              </span>
+            </UI.TooltipRx>
           ) : (
             <SortControlLabel label={breadcrumb} />
           )}
