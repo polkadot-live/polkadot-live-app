@@ -249,11 +249,8 @@ export const Accounts = ({
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           key={`manage_chain_${i}`}
+                          onClick={() => handleClickOpenGovChain(chainId)}
                         >
-                          <button
-                            type="button"
-                            onClick={() => handleClickOpenGovChain(chainId)}
-                          ></button>
                           <div className="inner">
                             <div>
                               <span>{getIcon(chainId, 'chain-icon')}</span>
@@ -291,11 +288,8 @@ export const Accounts = ({
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         key={`manage_chain_${i}`}
+                        onClick={() => handleClickChain(chain)}
                       >
-                        <button
-                          type="button"
-                          onClick={() => handleClickChain(chain)}
-                        ></button>
                         <div className="inner">
                           <div>
                             <span>{getIcon(chain, 'chain-icon')}</span>
