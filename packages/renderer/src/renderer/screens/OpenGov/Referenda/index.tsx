@@ -1,15 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as AccordionRx from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+
 import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { ContentWrapper } from '@app/screens/Wrappers';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
@@ -27,10 +25,11 @@ import { useTooltip } from '@polkadot-live/ui/contexts';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
@@ -56,15 +55,10 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const [expandAll, setExpandAll] = useState(false);
   const [onlySubscribed, setOnlySubscribed] = useState(false);
 
-  /// Calculate number of accordion panels needed.
-  const indicesLength = Array.from(
-    getCategorisedReferenda(newestFirst).keys()
-  ).length;
-
   /// Accordion state.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(Array.from({ length: indicesLength }, (_, index) => index));
+  const [accordionValue, setAccordionValue] = useState<string[]>([
+    ...getCategorisedReferenda(newestFirst).keys(),
+  ]);
 
   /// Get subscribed referenda only.
   const getSubscribedReferenda = () =>
@@ -72,15 +66,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   /// Open all accordion items when new referenda is loaded.
   useEffect(() => {
-    setAccordionActiveIndices(
-      Array.from(
-        {
-          length: Array.from(getCategorisedReferenda(newestFirst).keys())
-            .length,
-        },
-        (_, index) => index
-      )
-    );
+    setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
     setExpandAll(true);
   }, [referenda]);
 
@@ -115,7 +101,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       length = Array.from(map.keys()).length;
     }
 
-    return accordionActiveIndices.length === length;
+    //return accordionActiveIndices.length === length;
+    return accordionValue.length === length;
   };
 
   /// Render categorized referenda.
@@ -123,36 +110,44 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     <section
       style={{ display: groupingOn && !onlySubscribed ? 'block' : 'none' }}
     >
-      <Accordion
-        multiple
-        defaultIndex={accordionActiveIndices}
-        setExternalIndices={setAccordionActiveIndices}
-        gap={'0.5rem'}
-        panelPadding={'0.5rem 0.25rem'}
-      >
-        {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
-          ([origin, infos], i) => (
-            <AccordionItem key={`${origin}_referenda_group`}>
-              <AccordionCaretHeader
-                title={getSpacedOrigin(origin)}
-                itemIndex={i}
-                wide={true}
-              />
-              <AccordionPanel>
-                <ItemsColumn>
-                  {infos.map((referendum, j) => (
-                    <ReferendumRow
-                      key={`${j}_${referendum.referendaId}`}
-                      referendum={referendum}
-                      index={j}
-                    />
-                  ))}
-                </ItemsColumn>
-              </AccordionPanel>
-            </AccordionItem>
-          )
-        )}
-      </Accordion>
+      <UI.AccordionWrapper $onePart={true} style={{ marginTop: '1rem' }}>
+        <AccordionRx.Root
+          className="AccordionRoot"
+          type="multiple"
+          value={accordionValue}
+          onValueChange={(val) => setAccordionValue(val as string[])}
+        >
+          <FlexColumn>
+            {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
+              ([origin, infos]) => (
+                <AccordionRx.Item
+                  key={`${origin}_referenda_group`}
+                  className="AccordionItem"
+                  value={origin}
+                >
+                  <UI.AccordionTrigger narrow={true}>
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <UI.TriggerHeader>
+                      {getSpacedOrigin(origin)}
+                    </UI.TriggerHeader>
+                  </UI.AccordionTrigger>
+                  <UI.AccordionContent transparent={true}>
+                    <ItemsColumn>
+                      {infos.map((referendum, j) => (
+                        <ReferendumRow
+                          key={`${j}_${referendum.referendaId}`}
+                          referendum={referendum}
+                          index={j}
+                        />
+                      ))}
+                    </ItemsColumn>
+                  </UI.AccordionContent>
+                </AccordionRx.Item>
+              )
+            )}
+          </FlexColumn>
+        </AccordionRx.Root>
+      </UI.AccordionWrapper>
     </section>
   );
 
@@ -168,37 +163,47 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       </div>
     ) : (
       <section style={{ display }}>
-        <Accordion
-          multiple
-          defaultIndex={accordionActiveIndices}
-          setExternalIndices={setAccordionActiveIndices}
-        >
-          {Array.from(
-            getCategorisedReferenda(
-              newestFirst,
-              getSubscribedReferenda()
-            ).entries()
-          ).map(([origin, infos], i) => (
-            <AccordionItem key={`${origin}_subscribed_referenda_group`}>
-              <AccordionCaretHeader
-                title={getSpacedOrigin(origin)}
-                itemIndex={i}
-                wide={true}
-              />
-              <AccordionPanel>
-                <ItemsColumn>
-                  {infos.map((referendum, j) => (
-                    <ReferendumRow
-                      key={`${j}_${referendum.referendaId}`}
-                      referendum={referendum}
-                      index={j}
-                    />
-                  ))}
-                </ItemsColumn>
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <UI.AccordionWrapper $onePart={true} style={{ marginTop: '1rem' }}>
+          <AccordionRx.Root
+            className="AccordionRoot"
+            type="multiple"
+            value={accordionValue}
+            onValueChange={(val) => setAccordionValue(val as string[])}
+          >
+            <FlexColumn>
+              {Array.from(
+                getCategorisedReferenda(
+                  newestFirst,
+                  getSubscribedReferenda()
+                ).entries()
+              ).map(([origin, infos]) => (
+                <AccordionRx.Item
+                  key={`${origin}_subscribed_referenda_group`}
+                  className="AccordionItem"
+                  value={origin}
+                >
+                  <UI.AccordionTrigger narrow={true}>
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <UI.TriggerHeader>
+                      {getSpacedOrigin(origin)}
+                    </UI.TriggerHeader>
+                  </UI.AccordionTrigger>
+                  <UI.AccordionContent transparent={true} narrow={true}>
+                    <ItemsColumn>
+                      {infos.map((referendum, j) => (
+                        <ReferendumRow
+                          key={`${j}_${referendum.referendaId}`}
+                          referendum={referendum}
+                          index={j}
+                        />
+                      ))}
+                    </ItemsColumn>
+                  </UI.AccordionContent>
+                </AccordionRx.Item>
+              ))}
+            </FlexColumn>
+          </AccordionRx.Root>
+        </UI.AccordionWrapper>
       </section>
     );
   };
@@ -248,47 +253,37 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
 
     if (expandAll) {
-      setAccordionActiveIndices([]);
+      setAccordionValue([]);
       setExpandAll(false);
     } else {
       // Handle categorised all or subscribed referenda.
-      let length = 0;
       if (onlySubscribed) {
         const rs = getSubscribedReferenda();
-        const map = getCategorisedReferenda(newestFirst, rs);
-        length = Array.from(map.keys()).length;
+        setAccordionValue([...getCategorisedReferenda(newestFirst, rs).keys()]);
       } else {
-        const map = getCategorisedReferenda(newestFirst);
-        length = Array.from(map.keys()).length;
+        setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
       }
 
-      setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
       setExpandAll(true);
     }
   };
 
   /// Handle clicking only subscribed button.
   const handleToggleOnlySubscribed = () => {
-    const target = !onlySubscribed;
-
-    let length = 0;
-    if (target) {
+    if (!onlySubscribed) {
       const rs = getSubscribedReferenda();
-      const map = getCategorisedReferenda(newestFirst, rs);
-      length = Array.from(map.keys()).length;
+      setAccordionValue([...getCategorisedReferenda(newestFirst, rs).keys()]);
     } else {
-      const map = getCategorisedReferenda(newestFirst);
-      length = Array.from(map.keys()).length;
+      setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
     }
 
-    setAccordionActiveIndices(Array.from({ length }, (_, index) => index));
     setOnlySubscribed(!onlySubscribed);
   };
 
   return (
     <>
       <Scrollable>
-        <ContentWrapper style={{ padding: '1rem 2rem 0' }}>
+        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
           {/* Sorting controls */}
           <ControlsWrapper $padBottom={!groupingOn}>
             <ButtonPrimaryInvert
@@ -409,7 +404,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               </div>
             )}
           </section>
-        </ContentWrapper>
+        </div>
       </Scrollable>
       <StatsFooter $chainId={chainId}>
         <div>
