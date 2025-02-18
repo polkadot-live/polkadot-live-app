@@ -566,26 +566,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Transaction state.
-  //const [notEnoughFunds, setNotEnoughFunds] = useState(false);
-
-  //const freeBalance = new BigNumber(1000000000);
-
-  //useEffect(() => {
-  //  setNotEnoughFunds(freeBalance.minus(txFees).isLessThan(0));
-  //}, [txFees, sender]);
-
-  //const resetTxFees = () => {
-  //  setTxFees(new BigNumber(0));
-  //};
-
-  //const txFeesValid = (() => {
-  //  if (txFees.isZero() || notEnoughFunds) {
-  //    return false;
-  //  }
-  //  return true;
-  //})();
-
   return (
     <TxMetaContext.Provider
       value={{
@@ -610,10 +590,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         updateAccountName,
         updateTxStatus,
         removeExtrinsic,
-
-        //notEnoughFunds,
-        //resetTxFees,
-        //txFeesValid,
       }}
     >
       {children}
