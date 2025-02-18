@@ -34,25 +34,6 @@ export const showGroupTooltip = (task: SubscriptionTask) => {
   }
 };
 
-export const getTooltipClassForGroup = (task: SubscriptionTask) => {
-  const { account, category } = task;
-  if (!account) {
-    return '';
-  }
-
-  switch (category) {
-    case 'Nomination Pools': {
-      return account.nominationPoolData ? '' : 'tooltip-trigger-element';
-    }
-    case 'Nominating': {
-      return account.nominatingData ? '' : 'tooltip-trigger-element';
-    }
-    default: {
-      return '';
-    }
-  }
-};
-
 /**
  * @name toolTipTextFor
  * @summary Utility for fetching tooltip text for a subscription switch.
@@ -61,10 +42,10 @@ export const getTooltipClassForGroup = (task: SubscriptionTask) => {
 export const toolTipTextFor = (category: TaskCategory) => {
   switch (category) {
     case 'Nominating': {
-      return 'Not nominating';
+      return 'Not Nominating';
     }
     case 'Nomination Pools': {
-      return 'Not in nomination pool';
+      return 'Not In Nomination Pool';
     }
     default: {
       return '';
