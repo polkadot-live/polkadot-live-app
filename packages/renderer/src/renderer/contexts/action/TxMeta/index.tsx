@@ -189,6 +189,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       actionMeta,
       txId,
       txStatus: 'pending',
+      timestamp: Date.now(),
     };
     extrinsicsRef.current.set(txId, info);
 
@@ -486,22 +487,16 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Filter extrinsics base on signer's address and sort alphabetically.
    */
-  const getFilteredExtrinsics = () =>
-    selectedFilterRef.current === 'all'
-      ? Array.from(extrinsics.values()).sort((a, b) => {
-          const titleA = getHeaderTitle(a).toLowerCase();
-          const titleB = getHeaderTitle(b).toLowerCase();
-          return titleA.localeCompare(titleB);
-        })
-      : Array.from(extrinsics.values())
-          .filter(
-            ({ actionMeta: { from } }) => from === selectedFilterRef.current
-          )
-          .sort((a, b) => {
-            const titleA = getHeaderTitle(a).toLowerCase();
-            const titleB = getHeaderTitle(b).toLowerCase();
-            return titleA.localeCompare(titleB);
-          });
+  const getFilteredExtrinsics = () => {
+    let values = Array.from(extrinsics.values());
+    if (selectedFilterRef.current !== 'all') {
+      values = values.filter(
+        ({ actionMeta: { from } }) => from === selectedFilterRef.current
+      );
+    }
+
+    return values.sort((a, b) => b.timestamp - a.timestamp);
+  };
 
   /**
    * Update select filter and address info when filter changes.
@@ -560,23 +555,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Utility to get the accordion header title for an extrinsic.
-   */
-  const getHeaderTitle = (info: ExtrinsicInfo): string => {
-    switch (info.actionMeta.action) {
-      case 'nominationPools_pendingRewards_bond': {
-        return 'Compound Rewards';
-      }
-      case 'nominationPools_pendingRewards_withdraw': {
-        return 'Claim Rewards';
-      }
-      default: {
-        return 'Unknown';
-      }
-    }
-  };
-
-  /**
    * Utility to handle opening and closing WalletConnect modal.
    */
   const handleOpenCloseWcModal = async (open: boolean, uri?: string) => {
@@ -587,26 +565,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       wcModal.current.closeModal();
     }
   };
-
-  // Transaction state.
-  //const [notEnoughFunds, setNotEnoughFunds] = useState(false);
-
-  //const freeBalance = new BigNumber(1000000000);
-
-  //useEffect(() => {
-  //  setNotEnoughFunds(freeBalance.minus(txFees).isLessThan(0));
-  //}, [txFees, sender]);
-
-  //const resetTxFees = () => {
-  //  setTxFees(new BigNumber(0));
-  //};
-
-  //const txFeesValid = (() => {
-  //  if (txFees.isZero() || notEnoughFunds) {
-  //    return false;
-  //  }
-  //  return true;
-  //})();
 
   return (
     <TxMetaContext.Provider
@@ -632,10 +590,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         updateAccountName,
         updateTxStatus,
         removeExtrinsic,
-
-        //notEnoughFunds,
-        //resetTxFees,
-        //txFeesValid,
       }}
     >
       {children}

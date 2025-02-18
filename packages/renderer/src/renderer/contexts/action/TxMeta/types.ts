@@ -32,8 +32,4 @@ export interface TxMetaContextInterface {
   updateAccountName: (address: string, newName: string) => void;
   updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
   removeExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
-
-  //notEnoughFunds: boolean;
-  //resetTxFees: () => void;
-  //txFeesValid: boolean;
 }

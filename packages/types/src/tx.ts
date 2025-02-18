@@ -69,6 +69,8 @@ export interface ExtrinsicInfo {
   txId: string;
   // Status of transaction.
   txStatus: TxStatus;
+  // Creation timestamp.
+  timestamp: number;
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
 }

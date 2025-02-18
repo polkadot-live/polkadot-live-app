@@ -26,8 +26,4 @@ export const defaultTxMeta: TxMetaContextInterface = {
   updateAccountName: () => {},
   updateTxStatus: () => new Promise(() => {}),
   removeExtrinsic: () => new Promise(() => {}),
-
-  //notEnoughFunds: false,
-  //resetTxFees: () => {},
-  //txFeesValid: false,
 };
