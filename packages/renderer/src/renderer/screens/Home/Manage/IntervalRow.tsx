@@ -161,7 +161,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
             style={{ display: intervalClicked ? 'none' : 'block' }}
             className="remove-wrapper"
           >
-            <TooltipRx text={'Click Twice to Remove'} theme={theme}>
+            <TooltipRx text={'Click Twice To Remove'} theme={theme}>
               {!removeClicked ? (
                 <FontAwesomeIcon
                   className="enabled"
