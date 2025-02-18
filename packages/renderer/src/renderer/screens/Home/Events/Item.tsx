@@ -129,7 +129,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
     window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
 
     const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
-
     if (!extrinsicsViewOpen) {
       // Relay init task to extrinsics window after its DOM has loaded.
       window.myAPI.openWindow('action', {
