@@ -15,21 +15,21 @@ import type {
  * @summary Utility to determine if a tooltip should be rendered over a subscription switch.
  * For subscription tasks associated with an account.
  */
-export const getTooltipClassForGroup = (task: SubscriptionTask) => {
+export const showGroupTooltip = (task: SubscriptionTask) => {
   const { account, category } = task;
   if (!account) {
-    return '';
+    return false;
   }
 
   switch (category) {
     case 'Nomination Pools': {
-      return account.nominationPoolData ? '' : 'tooltip-trigger-element';
+      return account.nominationPoolData ? false : true;
     }
     case 'Nominating': {
-      return account.nominatingData ? '' : 'tooltip-trigger-element';
+      return account.nominatingData ? false : true;
     }
     default: {
-      return '';
+      return false;
     }
   }
 };
@@ -42,10 +42,10 @@ export const getTooltipClassForGroup = (task: SubscriptionTask) => {
 export const toolTipTextFor = (category: TaskCategory) => {
   switch (category) {
     case 'Nominating': {
-      return 'Not nominating';
+      return 'Not Nominating';
     }
     case 'Nomination Pools': {
-      return 'Not in nomination pool';
+      return 'Not In Nomination Pool';
     }
     default: {
       return '';

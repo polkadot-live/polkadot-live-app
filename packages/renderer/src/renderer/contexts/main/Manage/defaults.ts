@@ -16,5 +16,5 @@ export const defaultManageContext: ManageContextInterface = {
   tryUpdateDynamicIntervalTask: () => {},
   tryAddIntervalSubscription: (t) => {},
   tryRemoveIntervalSubscription: (t) => {},
-  getCategorizedDynamicIntervals: () => new Map(),
+  getCategorisedDynamicIntervals: () => new Map(),
 };

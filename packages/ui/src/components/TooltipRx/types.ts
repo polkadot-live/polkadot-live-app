@@ -10,4 +10,5 @@ export interface RadixTooltipProps {
   style?: React.CSSProperties;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  side?: 'top' | 'right' | 'bottom' | 'left';
 }

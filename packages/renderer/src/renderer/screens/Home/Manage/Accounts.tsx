@@ -1,23 +1,21 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
-  Identicon,
-} from '@polkadot-live/ui/components';
+import * as Accordion from '@radix-ui/react-accordion';
+import * as UI from '@polkadot-live/ui/components';
+import * as themeVariables from '../../../theme/variables';
+
+import { Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { getIcon } from '@app/Utils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useManage } from '@app/contexts/main/Manage';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
@@ -27,6 +25,8 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { ellipsisFn } from '@w3ux/utils';
+import { FlexColumn } from '@polkadot-live/ui/styles';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 export const Accounts = ({
   addresses,
@@ -34,13 +34,15 @@ export const Accounts = ({
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
-  const { setTooltipTextAndOpen } = useTooltip();
   const { showDebuggingSubscriptions } = useAppSettings();
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
+
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
@@ -88,33 +90,22 @@ export const Accounts = ({
     return sorted;
   };
 
-  /// Active accordion indices for subscription categories.
-  const [accordionActiveIndices, setAccordionActiveIndices] = useState<
-    number[]
-  >(
-    Array.from(
-      {
-        length:
-          Array.from(getSortedAddresses().keys()).length +
-          (showDebuggingSubscriptions ? 2 : 1),
-      },
-      (_, index) => index
-    )
+  /// Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>(
+    ([...getSortedAddresses().keys()] as string[])
+      .concat(showDebuggingSubscriptions ? ['Debug'] : [])
+      .concat(getSortedKeys().length > 0 ? ['OpenGov'] : [])
   );
-  const indicesRef = useRef(accordionActiveIndices);
 
   /// Use indices ref to maintain open accordion panels when toggling debugging setting.
   useEffect(() => {
-    const targetIndex = Array.from(getSortedAddresses().keys()).length + 1;
-
-    if (showDebuggingSubscriptions) {
-      setAccordionActiveIndices([...indicesRef.current, targetIndex]);
-    } else {
-      indicesRef.current = [...indicesRef.current].filter(
-        (i) => i !== targetIndex
-      );
-      setAccordionActiveIndices(indicesRef.current);
-    }
+    setAccordionValue((prev) =>
+      showDebuggingSubscriptions
+        ? !prev.includes('Debug')
+          ? [...prev, 'Debug']
+          : [...prev]
+        : [...prev.filter((v) => v !== 'Debug')]
+    );
   }, [showDebuggingSubscriptions]);
 
   /// Utility to copy tasks.
@@ -166,60 +157,105 @@ export const Accounts = ({
 
   return (
     <div style={{ width: '100%' }}>
-      <Accordion
-        multiple
-        defaultIndex={accordionActiveIndices}
-        indicesRef={indicesRef}
-        panelPadding={'0.5rem 0.25rem'}
-        gap={'0.5rem'}
-      >
-        {/* Manage Accounts */}
-        {Array.from(getSortedAddresses().entries()).map(
-          ([chainId, chainAddresses], k) => (
-            <AccordionItem key={`${chainId}_accounts`}>
-              <AccordionCaretHeader
-                title={chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`}
-                itemIndex={k}
-              />
-              <AccordionPanel>
-                {chainId === 'Empty' ? (
-                  <NoAccounts />
-                ) : (
-                  <ItemsColumn>
-                    {chainAddresses.map(
-                      ({ address, name }: FlattenedAccountData, j: number) => (
+      <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+        <Accordion.Root
+          className="AccordionRoot"
+          type="multiple"
+          value={accordionValue}
+          onValueChange={(val) => setAccordionValue(val as string[])}
+        >
+          <FlexColumn>
+            {/* Manage Accounts */}
+            {Array.from(getSortedAddresses().entries()).map(
+              ([chainId, chainAddresses]) => (
+                <Accordion.Item
+                  key={`${chainId}_accounts`}
+                  className="AccordionItem"
+                  value={chainId}
+                >
+                  <UI.AccordionTrigger narrow={true}>
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <UI.TriggerHeader>
+                      {chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`}
+                    </UI.TriggerHeader>
+                  </UI.AccordionTrigger>
+
+                  <UI.AccordionContent transparent={true}>
+                    {chainId === 'Empty' ? (
+                      <NoAccounts />
+                    ) : (
+                      <ItemsColumn>
+                        {chainAddresses.map(
+                          (
+                            { address, name }: FlattenedAccountData,
+                            j: number
+                          ) => (
+                            <ItemEntryWrapper
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              key={`manage_account_${j}`}
+                              onClick={() => handleClickAccount(name, address)}
+                            >
+                              <div className="inner">
+                                <div>
+                                  <UI.TooltipRx
+                                    text={ellipsisFn(address, 12)}
+                                    theme={theme}
+                                    side="right"
+                                  >
+                                    <span>
+                                      <Identicon
+                                        value={address}
+                                        fontSize={'2.25rem'}
+                                      />
+                                    </span>
+                                  </UI.TooltipRx>
+                                  <div className="content">
+                                    <h3>{name}</h3>
+                                  </div>
+                                </div>
+                                <div>
+                                  <ButtonText
+                                    text=""
+                                    iconRight={faChevronRight}
+                                    iconTransform="shrink-3"
+                                  />
+                                </div>
+                              </div>
+                            </ItemEntryWrapper>
+                          )
+                        )}
+                      </ItemsColumn>
+                    )}
+                  </UI.AccordionContent>
+                </Accordion.Item>
+              )
+            )}
+
+            {/* Manage OpenGov Subscriptions*/}
+            <Accordion.Item className="AccordionItem" value={'OpenGov'}>
+              <UI.AccordionTrigger narrow={true}>
+                <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                <UI.TriggerHeader>OpenGov</UI.TriggerHeader>
+              </UI.AccordionTrigger>
+              <UI.AccordionContent transparent={true}>
+                <ItemsColumn>
+                  {getSortedKeys().length === 0 ? (
+                    <NoOpenGov />
+                  ) : (
+                    <>
+                      {getSortedKeys().map((chainId, i) => (
                         <ItemEntryWrapper
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
-                          key={`manage_account_${j}`}
+                          key={`manage_chain_${i}`}
+                          onClick={() => handleClickOpenGovChain(chainId)}
                         >
-                          <button
-                            type="button"
-                            onClick={() => handleClickAccount(name, address)}
-                          ></button>
                           <div className="inner">
                             <div>
-                              <span
-                                style={{
-                                  zIndex: 2,
-                                  cursor: 'default',
-                                }}
-                                className="icon tooltip tooltip-trigger-element"
-                                data-tooltip-text={ellipsisFn(address, 16)}
-                                onMouseMove={() =>
-                                  setTooltipTextAndOpen(
-                                    ellipsisFn(address, 16),
-                                    'right'
-                                  )
-                                }
-                              >
-                                <Identicon
-                                  value={address}
-                                  fontSize={'2.25rem'}
-                                />
-                              </span>
+                              <span>{getIcon(chainId, 'chain-icon')}</span>
                               <div className="content">
-                                <h3>{name}</h3>
+                                <h3>{chainId}</h3>
                               </div>
                             </div>
                             <div>
@@ -231,101 +267,53 @@ export const Accounts = ({
                             </div>
                           </div>
                         </ItemEntryWrapper>
-                      )
-                    )}
-                  </ItemsColumn>
-                )}
-              </AccordionPanel>
-            </AccordionItem>
-          )
-        )}
+                      ))}
+                    </>
+                  )}
+                </ItemsColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
 
-        {/* Manage OpenGov Subscriptions*/}
-        <AccordionItem key={'openGov_accounts'}>
-          <AccordionCaretHeader
-            title={'OpenGov'}
-            itemIndex={Array.from(getSortedAddresses().keys()).length}
-          />
-          <AccordionPanel>
-            <ItemsColumn>
-              {getSortedKeys().length === 0 ? (
-                <NoOpenGov />
-              ) : (
-                <>
-                  {getSortedKeys().map((chainId, i) => (
-                    <ItemEntryWrapper
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      key={`manage_chain_${i}`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleClickOpenGovChain(chainId)}
-                      ></button>
-                      <div className="inner">
-                        <div>
-                          <span>{getIcon(chainId, 'chain-icon')}</span>
-                          <div className="content">
-                            <h3>{chainId}</h3>
+            {/* Manage Chains */}
+            {showDebuggingSubscriptions && (
+              <Accordion.Item className="AccordionItem" value={'Debug'}>
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <UI.TriggerHeader>Debugging</UI.TriggerHeader>
+                </UI.AccordionTrigger>
+                <UI.AccordionContent transparent={true}>
+                  <ItemsColumn>
+                    {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                      <ItemEntryWrapper
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        key={`manage_chain_${i}`}
+                        onClick={() => handleClickChain(chain)}
+                      >
+                        <div className="inner">
+                          <div>
+                            <span>{getIcon(chain, 'chain-icon')}</span>
+                            <div className="content">
+                              <h3>{chain}</h3>
+                            </div>
+                          </div>
+                          <div>
+                            <ButtonText
+                              text=""
+                              iconRight={faChevronRight}
+                              iconTransform="shrink-3"
+                            />
                           </div>
                         </div>
-                        <div>
-                          <ButtonText
-                            text=""
-                            iconRight={faChevronRight}
-                            iconTransform="shrink-3"
-                          />
-                        </div>
-                      </div>
-                    </ItemEntryWrapper>
-                  ))}
-                </>
-              )}
-            </ItemsColumn>
-          </AccordionPanel>
-        </AccordionItem>
-
-        {/* Manage Chains */}
-        {showDebuggingSubscriptions && (
-          <AccordionItem key={'debugging_accounts'}>
-            <AccordionCaretHeader
-              title={'Debugging'}
-              itemIndex={Array.from(getSortedAddresses().keys()).length + 1}
-            />
-            <AccordionPanel>
-              <ItemsColumn>
-                {Array.from(chainSubscriptions.keys()).map((chain, i) => (
-                  <ItemEntryWrapper
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    key={`manage_chain_${i}`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleClickChain(chain)}
-                    ></button>
-                    <div className="inner">
-                      <div>
-                        <span>{getIcon(chain, 'chain-icon')}</span>
-                        <div className="content">
-                          <h3>{chain}</h3>
-                        </div>
-                      </div>
-                      <div>
-                        <ButtonText
-                          text=""
-                          iconRight={faChevronRight}
-                          iconTransform="shrink-3"
-                        />
-                      </div>
-                    </div>
-                  </ItemEntryWrapper>
-                ))}
-              </ItemsColumn>
-            </AccordionPanel>
-          </AccordionItem>
-        )}
-      </Accordion>
+                      </ItemEntryWrapper>
+                    ))}
+                  </ItemsColumn>
+                </UI.AccordionContent>
+              </Accordion.Item>
+            )}
+          </FlexColumn>
+        </Accordion.Root>
+      </UI.AccordionWrapper>
     </div>
   );
 };

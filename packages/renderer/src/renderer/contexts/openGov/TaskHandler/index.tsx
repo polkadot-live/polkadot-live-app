@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
-import { Flip, toast } from 'react-toastify';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';
@@ -26,23 +26,6 @@ export const TaskHandlerProvider = ({
     removeReferendaSubscription,
     isSubscribedToTask,
   } = useReferendaSubscriptions();
-
-  /// Utility to render toastify notification.
-  const showToastSuccess = (text: string, toastId: string) => {
-    toast.success(text, {
-      position: 'top-center',
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      closeButton: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-      theme: 'dark',
-      transition: Flip,
-      toastId,
-    });
-  };
 
   /// Handles adding an interval subscription for a referendum.
   const addIntervalSubscription = (
@@ -69,7 +52,7 @@ export const TaskHandlerProvider = ({
 
     const text = `Subscription added for referendum ${referendumId}.`;
     const toastId = `add-${task.chainId}-${referendumId}-${task.action}`;
-    showToastSuccess(text, toastId);
+    renderToast(text, toastId, 'success');
 
     // Analytics.
     const { action } = task;
@@ -98,7 +81,7 @@ export const TaskHandlerProvider = ({
 
     const text = `Subscription removed for referendum ${referendumId}.`;
     const toastId = `remove-${task.chainId}-${referendumId}-${task.action}`;
-    showToastSuccess(text, toastId);
+    renderToast(text, toastId, 'success');
 
     // Analytics.
     const { action } = task;
@@ -135,7 +118,7 @@ export const TaskHandlerProvider = ({
 
     const text = `Subscriptions added for referendum ${referendumId}.`;
     const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
-    showToastSuccess(text, toastId);
+    renderToast(text, toastId, 'success');
 
     // Analytics.
     window.myAPI.umamiEvent('referenda-subscribe-all', null);
@@ -171,7 +154,7 @@ export const TaskHandlerProvider = ({
 
     const text = `Subscriptions removed for referendum ${referendumId}.`;
     const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
-    showToastSuccess(text, toastId);
+    renderToast(text, toastId, 'success');
 
     // Analytics.
     window.myAPI.umamiEvent('referenda-unsubscribe-all', null);

@@ -1,8 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import { TaskEntryWrapper } from './Wrappers';
-import { Switch } from '@polkadot-live/ui/components';
+import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -11,12 +12,9 @@ import {
   faList,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
-import { useTooltip } from '@polkadot-live/ui/contexts';
-import {
-  getTooltipClassForGroup,
-  toolTipTextFor,
-} from '@app/utils/renderingUtils';
+import { showGroupTooltip, toolTipTextFor } from '@app/utils/renderingUtils';
 import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({
@@ -28,7 +26,8 @@ export const PermissionRow = ({
   getTaskType,
 }: PermissionRowProps) => {
   const { openHelp } = useHelp();
-  const { setTooltipTextAndOpen } = useTooltip();
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
@@ -54,6 +53,93 @@ export const PermissionRow = ({
     await handleNativeCheckbox(!nativeChecked, task, setNativeChecked);
   };
 
+  /// Utility to render the one-shot component.
+  const renderOneShotSwitch = () => (
+    <div className="one-shot-wrapper">
+      {/* One-shot is enabled and not processing. */}
+      {!getDisabled(task) && !oneShotProcessing && (
+        <FontAwesomeIcon
+          className="enabled"
+          icon={faAnglesDown}
+          transform={'grow-4'}
+          onClick={async () =>
+            await handleOneShot(task, setOneShotProcessing, nativeChecked)
+          }
+        />
+      )}
+
+      {/* One-shot is enabled and processing. */}
+      {!getDisabled(task) && oneShotProcessing && (
+        <FontAwesomeIcon
+          className="processing"
+          fade
+          icon={faAnglesDown}
+          transform={'grow-4'}
+        />
+      )}
+
+      {/* One-shot disabled. */}
+      {getDisabled(task) && (
+        <FontAwesomeIcon
+          className="disabled"
+          icon={faAnglesDown}
+          transform={'grow-4'}
+        />
+      )}
+    </div>
+  );
+
+  /// Utility to render the OS notifications switch component.
+  const renderOsNotificationsSwitch = () => (
+    <div
+      className="native-content"
+      onClick={async () =>
+        !getDisabled(task) &&
+        task.status === 'enable' &&
+        handleOsNotificationClick()
+      }
+    >
+      {/* Main icon */}
+      <FontAwesomeIcon
+        className={
+          !getDisabled(task) && task.status === 'enable'
+            ? nativeChecked
+              ? 'checked'
+              : 'unchecked'
+            : 'disabled'
+        }
+        icon={faList}
+        transform={'grow-4'}
+      />
+
+      {/* Check overlay icon when clicked */}
+      {nativeChecked && (
+        <div className="checked-icon-wrapper">
+          <FontAwesomeIcon
+            className={task.status === 'disable' ? 'disable' : ''}
+            icon={faCircleCheck}
+            transform={'shrink-3'}
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  /// Utility to render the toggle switch component.
+  const renderToggleSwitch = () => (
+    <Switch
+      style={{ paddingRight: '10px' }}
+      size="sm"
+      type="primary"
+      isOn={isToggled}
+      disabled={getDisabled(task)}
+      handleToggle={async () => {
+        // Send an account or chain subscription task.
+        await handleToggle(task);
+      }}
+    />
+  );
+
   return (
     <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -73,110 +159,43 @@ export const PermissionRow = ({
         <div>
           {/* One Shot Button */}
           {getTaskType(task) === 'account' && (
-            <div
-              className={`one-shot-wrapper ${!getDisabled(task) && !oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
-              data-tooltip-text={'Get Notification'}
-              onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
-            >
+            <>
               {/* One-shot is enabled and not processing. */}
-              {!getDisabled(task) && !oneShotProcessing && (
-                <FontAwesomeIcon
-                  className="enabled"
-                  icon={faAnglesDown}
-                  transform={'grow-4'}
-                  onClick={async () =>
-                    await handleOneShot(
-                      task,
-                      setOneShotProcessing,
-                      nativeChecked
-                    )
-                  }
-                />
+              {!getDisabled(task) && !oneShotProcessing ? (
+                <TooltipRx text={'Get Notification'} theme={theme}>
+                  {renderOneShotSwitch()}
+                </TooltipRx>
+              ) : (
+                <span>{renderOneShotSwitch()}</span>
               )}
-
-              {/* One-shot is enabled and processing. */}
-              {!getDisabled(task) && oneShotProcessing && (
-                <FontAwesomeIcon
-                  className="processing"
-                  fade
-                  icon={faAnglesDown}
-                  transform={'grow-4'}
-                />
-              )}
-
-              {/* One-shot disabled. */}
-              {getDisabled(task) && (
-                <FontAwesomeIcon
-                  className="disabled"
-                  icon={faAnglesDown}
-                  transform={'grow-4'}
-                />
-              )}
-            </div>
+            </>
           )}
 
           {/* Native OS Notification Checkbox */}
           {task.account && (
-            <div
-              className={`native-wrapper ${!getDisabled(task) ? 'tooltip-trigger-element' : ''}`}
-              data-tooltip-text={'OS Notifications'}
-              onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
-            >
-              <div
-                className="native-content"
-                onClick={async () =>
-                  !getDisabled(task) &&
-                  task.status === 'enable' &&
-                  handleOsNotificationClick()
-                }
-              >
-                {/* Main icon */}
-                <FontAwesomeIcon
-                  className={
-                    !getDisabled(task) && task.status === 'enable'
-                      ? nativeChecked
-                        ? 'checked'
-                        : 'unchecked'
-                      : 'disabled'
-                  }
-                  icon={faList}
-                  transform={'grow-4'}
-                />
-
-                {/* Check overlay icon when clicked */}
-                {nativeChecked && (
-                  <div className="checked-icon-wrapper">
-                    <FontAwesomeIcon
-                      className={task.status === 'disable' ? 'disable' : ''}
-                      icon={faCircleCheck}
-                      transform={'shrink-3'}
-                    />
+            <div>
+              {!getDisabled(task) ? (
+                <TooltipRx text={'OS Notifications'} theme={theme}>
+                  <div className="native-wrapper">
+                    {renderOsNotificationsSwitch()}
                   </div>
-                )}
-              </div>
+                </TooltipRx>
+              ) : (
+                <div className="native-wrapper">
+                  {renderOsNotificationsSwitch()}
+                </div>
+              )}
             </div>
           )}
 
           {/* Toggle Switch */}
-          <div
-            className={getTooltipClassForGroup(task)}
-            data-tooltip={toolTipTextFor(task.category)}
-            onMouseMove={() =>
-              setTooltipTextAndOpen(toolTipTextFor(task.category), 'left')
-            }
-          >
-            <Switch
-              style={{ paddingRight: '10px' }}
-              size="sm"
-              type="primary"
-              isOn={isToggled}
-              disabled={getDisabled(task)}
-              handleToggle={async () => {
-                // Send an account or chain subscription task.
-                await handleToggle(task);
-              }}
-            />
-          </div>
+          {showGroupTooltip(task) ? (
+            <TooltipRx text={toolTipTextFor(task.category)} theme={theme}>
+              <span>{renderToggleSwitch()}</span>
+            </TooltipRx>
+          ) : (
+            <span>{renderToggleSwitch()}</span>
+          )}
         </div>
       </div>
     </TaskEntryWrapper>

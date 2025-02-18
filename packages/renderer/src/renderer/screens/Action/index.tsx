@@ -16,15 +16,30 @@ import { FlexRow, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
-  faObjectGroup,
+  faTag,
+  faUser,
   faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { EmptyExtrinsicsWrapper } from './Wrappers';
+import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import type { TriggerRightIconProps } from './types';
+
+const TriggerRightIcon = ({
+  text,
+  theme,
+  icon,
+  iconTransform,
+}: TriggerRightIconProps) => (
+  <TriggerRightIconWrapper>
+    <UI.TooltipRx text={text} theme={theme}>
+      <FontAwesomeIcon icon={icon} transform={iconTransform} />
+    </UI.TooltipRx>
+  </TriggerRightIconWrapper>
+);
 
 export const Action = () => {
   // Set up port communication for `action` window.
@@ -65,17 +80,6 @@ export const Action = () => {
     }
   };
 
-  const truncateString = (target: string, maxLength: number) => {
-    const targetLength = target.length;
-    if (targetLength <= maxLength) {
-      return target;
-    } else {
-      const truncated = target.slice(0, maxLength - 4);
-      const endSection = target.slice(targetLength - 4, targetLength);
-      return `${truncated}...${endSection}`;
-    }
-  };
-
   const fadeTxIcon = (txStatus: TxStatus) =>
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
@@ -101,11 +105,7 @@ export const Action = () => {
           <UI.ActionItem
             showIcon={false}
             text={'Account Filter'}
-            style={{
-              marginBottom: '1rem',
-              fontSize: '1.1rem',
-              color: 'var(--text-color-secondary)',
-            }}
+            style={{ marginBottom: '1rem' }}
           />
           <Select.Root
             value={selectedFilter}
@@ -174,11 +174,7 @@ export const Action = () => {
           <UI.ActionItem
             showIcon={false}
             text={'Manage Extrinsics'}
-            style={{
-              margin: '2.75rem 0 0.25rem',
-              fontSize: '1.1rem',
-              color: 'var(--text-color-secondary)',
-            }}
+            style={{ margin: '2rem 0 0.25rem' }}
           />
 
           {Array.from(extrinsics.keys()).length === 0 && (
@@ -210,6 +206,14 @@ export const Action = () => {
                         />
                         {getExtrinsicTitle(info)}
                         <span className="right">
+                          <div className="stat" style={{ minWidth: '80px' }}>
+                            <FontAwesomeIcon
+                              icon={faCircleDot}
+                              fade={fadeTxIcon(info.txStatus)}
+                              transform={'shrink-2'}
+                            />
+                            {getTxStatusTitle(info.txStatus)}
+                          </div>
                           <div className="stat">
                             <UI.TooltipRx
                               text={ellipsisFn(info.actionMeta.from, 12)}
@@ -218,26 +222,26 @@ export const Action = () => {
                               <span>
                                 <UI.Identicon
                                   value={info.actionMeta.from}
-                                  fontSize={'1.25rem'}
+                                  fontSize={'1.5rem'}
                                 />
                               </span>
                             </UI.TooltipRx>
-                            {truncateString(info.actionMeta.accountName, 8)}
                           </div>
                           <div className="stat">
-                            <FontAwesomeIcon
-                              icon={faObjectGroup}
-                              transform={'shrink-2'}
+                            <TriggerRightIcon
+                              text={info.actionMeta.accountName}
+                              theme={theme}
+                              icon={faUser}
+                              iconTransform={'grow-2'}
                             />
-                            {getCategoryTitle(info)}
                           </div>
                           <div className="stat">
-                            <FontAwesomeIcon
-                              icon={faCircleDot}
-                              fade={fadeTxIcon(info.txStatus)}
-                              transform={'shrink-2'}
+                            <TriggerRightIcon
+                              text={getCategoryTitle(info)}
+                              theme={theme}
+                              icon={faTag}
+                              iconTransform={'grow-2'}
                             />
-                            {getTxStatusTitle(info.txStatus)}
                           </div>
                         </span>
                       </UI.AccordionTrigger>

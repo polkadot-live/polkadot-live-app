@@ -3,7 +3,15 @@
 
 import styled from 'styled-components';
 
-export const AccordionWrapper = styled.div`
+export const TriggerHeader = styled.h3`
+  > span {
+    color: var(--text-color-secondary);
+    margin-left: 1rem;
+    font-size: 0.98rem;
+  }
+`;
+
+export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
   .AccordionRoot {
     width: 100%;
     display: flex;
@@ -73,6 +81,11 @@ export const AccordionWrapper = styled.div`
       border-top-left-radius: 0.375rem;
       border-bottom-left-radius: 0.375rem;
 
+      border-top-right-radius: ${(props) =>
+        props.$onePart ? '0.375rem' : 'inherit'};
+      border-bottom-right-radius: ${(props) =>
+        props.$onePart ? '0.375rem' : 'inherit'};
+
       h3 {
         flex: 1;
         font-size: 1.08rem !important;
@@ -123,12 +136,6 @@ export const AccordionWrapper = styled.div`
     padding: 1rem 1rem;
     margin-top: 1rem;
     border-radius: 0.375rem;
-    p {
-      padding: 0 0.5rem;
-      margin: 0;
-      margin-bottom: 1rem;
-      line-height: 1.75rem;
-    }
   }
 
   .AccordionContentInnerAlternate {
@@ -136,6 +143,10 @@ export const AccordionWrapper = styled.div`
     padding: 0;
     margin-top: 1rem;
     border-radius: 0.375rem;
+  }
+
+  .AccordionContentTransparent {
+    margin-top: 1rem;
   }
 
   @keyframes slideDown {
