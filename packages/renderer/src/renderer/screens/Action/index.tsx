@@ -7,6 +7,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../theme/variables';
 
 import { ellipsisFn } from '@w3ux/utils';
+import { formatDistanceToNow } from 'date-fns';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
@@ -16,6 +17,7 @@ import { FlexRow, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
+  faClock,
   faTag,
   faUser,
   faWarning,
@@ -241,6 +243,16 @@ export const Action = () => {
                               theme={theme}
                               icon={faTag}
                               iconTransform={'grow-2'}
+                            />
+                          </div>
+                          <div className="stat">
+                            <TriggerRightIcon
+                              text={formatDistanceToNow(
+                                new Date(info.timestamp),
+                                { addSuffix: true }
+                              )}
+                              theme={theme}
+                              icon={faClock}
                             />
                           </div>
                         </span>
