@@ -140,11 +140,13 @@ export const StatItemRow = ({
   meterValue,
   helpKey,
   flattened,
+  style,
 }: {
   kind: string;
   meterValue: number;
   flattened?: FlattenedAccountData;
   helpKey?: HelpItemKey;
+  style?: React.CSSProperties;
 }) => {
   const { openHelp } = useHelp();
   const { darkMode } = useConnections();
@@ -154,7 +156,7 @@ export const StatItemRow = ({
     kind === 'total' ? 'var(--text-highlight)' : 'var(--text-color-primary)';
 
   return (
-    <StatItemRowWrapper $total={kind === 'total'}>
+    <StatItemRowWrapper style={style} $total={kind === 'total'}>
       {kind === 'total' && (
         <FlexRow>
           {helpKey && (
