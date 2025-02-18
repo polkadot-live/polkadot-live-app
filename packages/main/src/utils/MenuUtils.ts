@@ -7,7 +7,7 @@ const isMac = process.platform === 'darwin';
 const appName = 'Polkadot Live';
 
 export const menuTemplate: AnyData = [
-  // { role: 'appMenu' }
+  //{ role: 'appMenu' }
   ...(isMac
     ? [
         {
@@ -16,12 +16,12 @@ export const menuTemplate: AnyData = [
         },
       ]
     : []),
-  // { role: 'fileMenu' }
-  {
-    label: 'File',
-    submenu: [isMac ? { role: 'close' } : { role: 'quit' }],
-  },
-  // { role: 'editMenu' }
+  //{ role: 'fileMenu' }
+  //{
+  //  label: 'File',
+  //  submenu: [isMac ? { role: 'close' } : { role: 'quit' }],
+  //},
+  //{ role: 'editMenu' }
   {
     label: 'Edit',
     submenu: [
