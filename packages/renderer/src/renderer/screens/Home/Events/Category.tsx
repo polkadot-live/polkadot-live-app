@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as AccordionRx from '@radix-ui/react-accordion';
+import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
 import { getEventChainId } from '@ren/utils/EventUtils';
@@ -20,7 +20,7 @@ export const Category = ({ category, events }: EventCategoryProps) => {
 
   return (
     <EventGroup>
-      <AccordionRx.Item className="AccordionItem" value={category}>
+      <Accordion.Item className="AccordionItem" value={category}>
         <UI.AccordionTrigger narrow={true}>
           <ChevronDownIcon className="AccordionChevron" aria-hidden />
           <UI.TriggerHeader>{getCategoryName(category)}</UI.TriggerHeader>
@@ -35,7 +35,7 @@ export const Category = ({ category, events }: EventCategoryProps) => {
             ))}
           </div>
         </UI.AccordionContent>
-      </AccordionRx.Item>
+      </Accordion.Item>
     </EventGroup>
   );
 };

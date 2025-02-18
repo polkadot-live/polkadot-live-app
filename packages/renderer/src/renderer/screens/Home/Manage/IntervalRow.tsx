@@ -1,12 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import { useIntervalTasksManager } from '@app/contexts/main/IntervalTasksManager';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,7 +18,7 @@ import {
   faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch } from '@polkadot-live/ui/components';
+import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { getShortIntervalLabel } from '@app/utils/renderingUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -26,9 +26,9 @@ import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
-  const { setTooltipTextAndOpen } = useTooltip();
   const { isConnecting } = useBootstrapping();
-  const { getOnlineMode, isImporting } = useConnections();
+  const { darkMode, getOnlineMode, isImporting } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
     handleIntervalToggle,
@@ -101,6 +101,44 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     await handleRemoveIntervalSubscription(task);
   };
 
+  const renderOneShotSwitch = () => (
+    <div
+      style={{ display: intervalClicked ? 'none' : 'block' }}
+      className="one-shot-wrapper"
+    >
+      {/* One-shot is enabled and not processing. */}
+      {!isDisabled && !oneShotProcessing && (
+        <FontAwesomeIcon
+          className="enabled"
+          icon={faAnglesDown}
+          transform={'grow-4'}
+          onClick={async () =>
+            await handleIntervalOneShot(task, setOneShotProcessing)
+          }
+        />
+      )}
+
+      {/* One-shot is enabled and processing */}
+      {!isDisabled && oneShotProcessing && (
+        <FontAwesomeIcon
+          className="processing"
+          fade
+          icon={faAnglesDown}
+          transform={'grow-4'}
+        />
+      )}
+
+      {/* One-shot disabled */}
+      {isDisabled && (
+        <FontAwesomeIcon
+          className="disabled"
+          icon={faAnglesDown}
+          transform={'grow-4'}
+        />
+      )}
+    </div>
+  );
+
   return (
     <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -121,98 +159,68 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           {/* Remove Button */}
           <div
             style={{ display: intervalClicked ? 'none' : 'block' }}
-            className="remove-wrapper tooltip-trigger-element"
-            data-tooltip-text={'Click Twice to Remove'}
-            onMouseMove={() => setTooltipTextAndOpen('Click Twice to Remove')}
+            className="remove-wrapper"
           >
-            {!removeClicked ? (
-              <FontAwesomeIcon
-                className="enabled"
-                icon={faXmark}
-                transform={'grow-6'}
-                onClick={() => {
-                  removeTimeoutRef.current = setTimeout(() => {
-                    removeTimeoutRef.current !== null &&
-                      setRemoveClicked(false);
-                  }, 5000);
-                  setRemoveClicked(true);
-                }}
-              />
-            ) : (
-              <FontAwesomeIcon
-                className="enabled"
-                icon={faTriangleExclamation}
-                transform={'grow-8'}
-                onClick={async () => await handleRemove()}
-              />
-            )}
+            <TooltipRx text={'Click Twice To Remove'} theme={theme}>
+              {!removeClicked ? (
+                <FontAwesomeIcon
+                  className="enabled"
+                  icon={faXmark}
+                  transform={'grow-6'}
+                  onClick={() => {
+                    removeTimeoutRef.current = setTimeout(() => {
+                      removeTimeoutRef.current !== null &&
+                        setRemoveClicked(false);
+                    }, 5000);
+                    setRemoveClicked(true);
+                  }}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  className="enabled"
+                  icon={faTriangleExclamation}
+                  transform={'grow-4'}
+                  onClick={async () => await handleRemove()}
+                />
+              )}
+            </TooltipRx>
           </div>
 
           {/* One Shot Button */}
-          <div
-            style={{ display: intervalClicked ? 'none' : 'block' }}
-            className={`one-shot-wrapper ${!oneShotProcessing ? 'tooltip-trigger-element' : ''}`}
-            data-tooltip-text={'Get Notification'}
-            onMouseMove={() => setTooltipTextAndOpen('Get Notification')}
-          >
-            {/* One-shot is enabled and not processing. */}
-            {!isDisabled && !oneShotProcessing && (
-              <FontAwesomeIcon
-                className="enabled"
-                icon={faAnglesDown}
-                transform={'grow-4'}
-                onClick={async () =>
-                  await handleIntervalOneShot(task, setOneShotProcessing)
-                }
-              />
-            )}
-
-            {/* One-shot is enabled and processing */}
-            {!isDisabled && oneShotProcessing && (
-              <FontAwesomeIcon
-                className="processing"
-                fade
-                icon={faAnglesDown}
-                transform={'grow-4'}
-              />
-            )}
-
-            {/* One-shot disabled */}
-            {isDisabled && (
-              <FontAwesomeIcon
-                className="disabled"
-                icon={faAnglesDown}
-                transform={'grow-4'}
-              />
-            )}
-          </div>
+          {!isDisabled && !oneShotProcessing ? (
+            <TooltipRx text={'Get Notification'} theme={theme}>
+              {renderOneShotSwitch()}
+            </TooltipRx>
+          ) : (
+            <span>{renderOneShotSwitch()}</span>
+          )}
 
           {/* Interval Selector */}
           <div className="interval-wrapper ">
             {!intervalClicked || isDisabled ? (
-              <div
-                className="badge-container tooltip-trigger-element"
-                data-tooltip-text={'Set Interval'}
-                onMouseMove={() => setTooltipTextAndOpen('Set Interval')}
-                onClick={() =>
-                  setIntervalClicked((prev) => (isDisabled ? prev : !prev))
-                }
-              >
-                <div className="interval-badge">
-                  {getShortIntervalLabel(intervalSetting)}
+              <TooltipRx text={'Set Interval'} theme={theme}>
+                <div
+                  className="badge-container"
+                  onClick={() =>
+                    setIntervalClicked((prev) => (isDisabled ? prev : !prev))
+                  }
+                >
+                  <div className="interval-badge">
+                    {getShortIntervalLabel(intervalSetting)}
+                  </div>
+                  <FontAwesomeIcon
+                    style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      left: '6px',
+                      opacity: isDisabled ? '0.3' : '1',
+                    }}
+                    className="enabled"
+                    icon={faClock}
+                    transform={'grow-0'}
+                  />
                 </div>
-                <FontAwesomeIcon
-                  style={{
-                    position: 'absolute',
-                    top: '-4px',
-                    left: '6px',
-                    opacity: isDisabled ? '0.3' : '1',
-                  }}
-                  className="enabled"
-                  icon={faClock}
-                  transform={'grow-0'}
-                />
-              </div>
+              </TooltipRx>
             ) : (
               <div className="select-wrapper">
                 <select
@@ -245,40 +253,38 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </div>
 
           {/* Native OS Notification Checkbox */}
-          <div
-            className={'native-wrapper tooltip-trigger-element'}
-            data-tooltip-text={'OS Notifications'}
-            onMouseMove={() => setTooltipTextAndOpen('OS Notifications')}
-          >
-            <div
-              className="native-content"
-              onClick={async () => await handleNativeCheckbox()}
-            >
-              {/* Main icon */}
-              <FontAwesomeIcon
-                className={
-                  !isDisabled && task.status === 'enable'
-                    ? nativeChecked
-                      ? 'checked'
-                      : 'unchecked'
-                    : 'disabled'
-                }
-                icon={faList}
-                transform={'grow-4'}
-              />
+          <TooltipRx text={'OS Notifications'} theme={theme}>
+            <div className="native-wrapper">
+              <div
+                className="native-content"
+                onClick={async () => await handleNativeCheckbox()}
+              >
+                {/* Main icon */}
+                <FontAwesomeIcon
+                  className={
+                    !isDisabled && task.status === 'enable'
+                      ? nativeChecked
+                        ? 'checked'
+                        : 'unchecked'
+                      : 'disabled'
+                  }
+                  icon={faList}
+                  transform={'grow-4'}
+                />
 
-              {/* Check overlay icon when clicked */}
-              {nativeChecked && (
-                <div className="checked-icon-wrapper">
-                  <FontAwesomeIcon
-                    className={task.status === 'disable' ? 'disable' : ''}
-                    icon={faCircleCheck}
-                    transform={'shrink-3'}
-                  />
-                </div>
-              )}
+                {/* Check overlay icon when clicked */}
+                {nativeChecked && (
+                  <div className="checked-icon-wrapper">
+                    <FontAwesomeIcon
+                      className={task.status === 'disable' ? 'disable' : ''}
+                      icon={faCircleCheck}
+                      transform={'shrink-3'}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </TooltipRx>
 
           {/* Toggle Switch */}
           <Switch

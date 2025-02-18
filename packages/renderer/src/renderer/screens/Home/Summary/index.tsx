@@ -156,6 +156,7 @@ export const Summary: React.FC = () => {
                 <UI.StatsSectionWrapper>
                   <FlexColumn $rowGap={'2px'}>
                     <StatItemRow
+                      style={{ backgroundColor: 'var(--background-primary)' }}
                       kind="total"
                       helpKey="help:summary:subscriptions"
                       meterValue={
