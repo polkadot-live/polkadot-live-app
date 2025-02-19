@@ -114,4 +114,11 @@ export class ExtrinsicsController {
       JSON.stringify(extrinsics)
     );
   };
+
+  /**
+   * Get all stored extrinsics in serialized form.
+   */
+  static getBackupDate(): string {
+    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
 }
