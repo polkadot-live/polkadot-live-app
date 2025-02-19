@@ -152,6 +152,14 @@ export const getFromBackupFile = (
 };
 
 /**
+ * @name postToExtrinsics
+ * @summary Utility to post a message to the extrinsics window.
+ * (main renderer)
+ */
+export const postToExtrinsics = (task: string, dataObj: AnyData) => {
+  ConfigRenderer.portToAction?.postMessage({ task, data: dataObj });
+};
+/**
  * @name postToImport
  * @summary Utility to post a message to the import window.
  * (main renderer)

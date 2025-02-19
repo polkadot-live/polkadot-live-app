@@ -116,6 +116,11 @@ export const useActionMessagePorts = () => {
               handleInitAction(ev);
               break;
             }
+            case 'action:tx:import': {
+              // TODO: Import from backup file data.
+              console.log('> Import from backup...');
+              break;
+            }
             case 'action:tx:report:data': {
               handleTxReportData(ev);
               break;

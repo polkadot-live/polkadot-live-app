@@ -17,6 +17,10 @@ export class ExtrinsicsController {
       case 'extrinsics:getAll': {
         return this.getAll();
       }
+      case 'extrinsics:import': {
+        this.import(task);
+        return;
+      }
       case 'extrinsics:persist': {
         this.persist(task);
         return;
@@ -51,6 +55,40 @@ export class ExtrinsicsController {
    */
   private static getAll(): string {
     return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
+
+  /**
+   * Persist new extrinsics received from backup file.
+   */
+  private static import(task: IpcTask) {
+    const { serialized }: { serialized: string } = task.data;
+    const received: ExtrinsicInfo[] = JSON.parse(serialized);
+
+    // Checks if two extrinsics are deemed the same.
+    const doImport = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
+      const { action: aAction, from: aFrom } = a.actionMeta;
+      const { action: bAction, from: bFrom } = b.actionMeta;
+      const whiteListed = 'balances_transferKeepAlive';
+
+      // Allow duplicate balance extrinsics.
+      return a.txId === b.txId
+        ? false
+        : aFrom === bFrom && aAction === bAction && aAction !== whiteListed
+          ? a.txStatus === 'finalized'
+            ? true
+            : false
+          : true;
+    };
+
+    let updated = [...this.getExtrinsicsFromStore()];
+    for (const info of received) {
+      const avoid = updated.find((b) => !doImport(info, b));
+      if (!avoid) {
+        updated = updated.concat([info]);
+      }
+    }
+
+    this.persistExtrinsicsToStore(updated);
   }
 
   /**
