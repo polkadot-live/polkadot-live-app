@@ -1,9 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as ImportUtils from '@/utils/ImportUtils';
 import { store } from '@/main';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type {
+  ExTransferKeepAliveData,
+  ExtrinsicInfo,
+} from '@polkadot-live/types/tx';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class ExtrinsicsController {
@@ -18,8 +22,7 @@ export class ExtrinsicsController {
         return this.getAll();
       }
       case 'extrinsics:import': {
-        this.import(task);
-        return;
+        return this.import(task);
       }
       case 'extrinsics:persist': {
         this.persist(task);
@@ -58,37 +61,50 @@ export class ExtrinsicsController {
   }
 
   /**
-   * Persist new extrinsics received from backup file.
+   * @name import
+   * @summary Persist new extrinsics received from backup file.
+   * @returns Up-to-date serialized extrinsics after import.
    */
   private static import(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const received: ExtrinsicInfo[] = JSON.parse(serialized);
+    const addressNameMap = ImportUtils.getAddressNameMap();
 
-    // Checks if two extrinsics are deemed the same.
-    const doImport = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
-      const { action: aAction, from: aFrom } = a.actionMeta;
-      const { action: bAction, from: bFrom } = b.actionMeta;
-      const whiteListed = 'balances_transferKeepAlive';
+    // Get stored extrinsics and sync account names with import data.
+    let stored = this.getExtrinsicsFromStore().map((info) => {
+      const { action, accountName, from } = info.actionMeta;
 
-      // Allow duplicate balance extrinsics.
-      return a.txId === b.txId
-        ? false
-        : aFrom === bFrom && aAction === bAction && aAction !== whiteListed
-          ? a.txStatus === 'finalized'
-            ? true
-            : false
-          : true;
-    };
+      // Update transfer extrinsic data if necessary.
+      if (action === 'balances_transferKeepAlive') {
+        const {
+          recipientAccountName,
+          recipientAddress,
+        }: ExTransferKeepAliveData = info.actionMeta.data;
 
-    let updated = [...this.getExtrinsicsFromStore()];
-    for (const info of received) {
-      const avoid = updated.find((b) => !doImport(info, b));
+        const latest = addressNameMap.get(recipientAddress);
+        if (latest !== undefined && latest !== recipientAccountName) {
+          info.actionMeta.data.recipientAccountName = latest;
+        }
+      }
+
+      // Update sender account name if necessary.
+      const latest = addressNameMap.get(from);
+      if (latest !== undefined && latest !== accountName) {
+        info.actionMeta.accountName = latest;
+      }
+
+      return info;
+    });
+
+    for (const a of received) {
+      const avoid = stored.find((b) => !ImportUtils.compareExtrinsics(a, b));
       if (!avoid) {
-        updated = updated.concat([info]);
+        stored = stored.concat([a]);
       }
     }
 
-    this.persistExtrinsicsToStore(updated);
+    this.persistExtrinsicsToStore(stored);
+    return JSON.stringify(stored);
   }
 
   /**

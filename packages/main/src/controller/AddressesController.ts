@@ -52,6 +52,28 @@ export class AddressesController {
   }
 
   /**
+   * @name getAll
+   * @summary Get all stored addresses and serialize as map.
+   */
+  static getAll(): string {
+    const sources: AccountSource[] = [
+      'vault',
+      'ledger',
+      'read-only',
+      'wallet-connect',
+    ];
+
+    const map = new Map<AccountSource, string>();
+    for (const source of sources) {
+      const key = ConfigMain.getStorageKey(source);
+      const addresses = store.has(key) ? this.getFromStore(key) : '[]';
+      map.set(source, addresses);
+    }
+
+    return JSON.stringify(Array.from(map.entries()));
+  }
+
+  /**
    * @name add
    * @summary Set the import flag of an address to `true`.
    */
@@ -157,28 +179,6 @@ export class AddressesController {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
     return store.has(key) ? this.getFromStore(key) : '[]';
-  }
-
-  /**
-   * @name getAll
-   * @summary Get all stored addresses and serialize as map.
-   */
-  private static getAll(): string {
-    const sources: AccountSource[] = [
-      'vault',
-      'ledger',
-      'read-only',
-      'wallet-connect',
-    ];
-
-    const map = new Map<AccountSource, string>();
-    for (const source of sources) {
-      const key = ConfigMain.getStorageKey(source);
-      const addresses = store.has(key) ? this.getFromStore(key) : '[]';
-      map.set(source, addresses);
-    }
-
-    return JSON.stringify(Array.from(map.entries()));
   }
 
   /**

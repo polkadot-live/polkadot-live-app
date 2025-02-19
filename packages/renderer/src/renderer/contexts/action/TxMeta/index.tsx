@@ -515,6 +515,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         continue;
       }
 
+      // TODO: Update transfer extrinsic data with new name.
       extrinsicsRef.current.set(txId, {
         ...info,
         actionMeta: { ...info.actionMeta, accountName: newName },
@@ -571,32 +572,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const importExtrinsics = (serialized: string) => {
     const parsed: ExtrinsicInfo[] = JSON.parse(serialized);
+    const map = new Map<string, ExtrinsicInfo>();
 
-    // Checks if two extrinsics are deemed the same.
-    const doImport = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
-      const { action: aAction, from: aFrom } = a.actionMeta;
-      const { action: bAction, from: bFrom } = b.actionMeta;
-      const whiteListed = 'balances_transferKeepAlive';
-
-      // Allow duplicate balance extrinsics.
-      return a.txId === b.txId
-        ? false
-        : aFrom === bFrom && aAction === bAction && aAction !== whiteListed
-          ? a.txStatus === 'finalized'
-            ? true
-            : false
-          : true;
-    };
-
-    let infoArr: ExtrinsicInfo[] = Array.from(extrinsicsRef.current.values());
     for (const info of parsed) {
-      const avoid = infoArr.find((b) => !doImport(info, b));
-      if (!avoid) {
-        infoArr = infoArr.concat([info]);
-        extrinsicsRef.current.set(info.txId, info);
-      }
+      map.set(info.txId, info);
     }
 
+    extrinsicsRef.current = map;
     setUpdateCache(true);
   };
 

@@ -125,10 +125,10 @@ export const DataBackupProvider = ({
           // Import serialized data.
           const { serialized: s } = response.data;
           await importAddressData(s, handleImportAddress, handleRemoveAddress);
-          await importExtrinsicsData(s);
           await importEventData(s);
           await importIntervalData(s);
           await importAccountTaskData(s);
+          await importExtrinsicsData(s);
 
           postToSettings('settings:render:toast', {
             success: response.result,
@@ -245,14 +245,14 @@ export const DataBackupProvider = ({
       return;
     }
 
-    // Persist new extrinsics to store in main process.
-    await window.myAPI.sendExtrinsicsTaskAsync({
+    const s_extrinsics_synced = (await window.myAPI.sendExtrinsicsTaskAsync({
       action: 'extrinsics:import',
       data: { serialized: s_extrinsics },
-    });
+    })) as string;
 
-    // Update extrinsics state in extrinsics window.
-    postToExtrinsics('action:tx:import', { serialized: s_extrinsics });
+    postToExtrinsics('action:tx:import', {
+      serialized: s_extrinsics_synced,
+    });
   };
 
   /// Extract event data from an imported text file and send to application.
