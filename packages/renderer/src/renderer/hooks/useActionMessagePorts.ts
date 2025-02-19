@@ -16,6 +16,7 @@ export const useActionMessagePorts = () => {
    */
   const {
     handleOpenCloseWcModal,
+    importExtrinsics,
     initTx,
     notifyInvalidExtrinsic,
     setEstimatedFee,
@@ -33,6 +34,15 @@ export const useActionMessagePorts = () => {
   const handleInitAction = (ev: MessageEvent) => {
     const data: ActionMeta = JSON.parse(ev.data.data);
     initTx(data);
+  };
+
+  /**
+   * @name handleTxImport
+   * @summary Import extrinsics data from a backup file.
+   */
+  const handleTxImport = (ev: MessageEvent) => {
+    const { serialized } = ev.data.data;
+    importExtrinsics(serialized);
   };
 
   /**
@@ -117,8 +127,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:tx:import': {
-              // TODO: Import from backup file data.
-              console.log('> Import from backup...');
+              handleTxImport(ev);
               break;
             }
             case 'action:tx:report:data': {

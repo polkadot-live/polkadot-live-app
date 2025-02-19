@@ -251,7 +251,7 @@ export const DataBackupProvider = ({
       data: { serialized: s_extrinsics },
     });
 
-    // TODO: Set extrinsics state in extrinsics window.
+    // Update extrinsics state in extrinsics window.
     postToExtrinsics('action:tx:import', { serialized: s_extrinsics });
   };
 

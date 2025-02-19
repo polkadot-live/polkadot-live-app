@@ -566,6 +566,40 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /**
+   * Import extrinsics data from backup file.
+   */
+  const importExtrinsics = (serialized: string) => {
+    const parsed: ExtrinsicInfo[] = JSON.parse(serialized);
+
+    // Checks if two extrinsics are deemed the same.
+    const doImport = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
+      const { action: aAction, from: aFrom } = a.actionMeta;
+      const { action: bAction, from: bFrom } = b.actionMeta;
+      const whiteListed = 'balances_transferKeepAlive';
+
+      // Allow duplicate balance extrinsics.
+      return a.txId === b.txId
+        ? false
+        : aFrom === bFrom && aAction === bAction && aAction !== whiteListed
+          ? a.txStatus === 'finalized'
+            ? true
+            : false
+          : true;
+    };
+
+    let infoArr: ExtrinsicInfo[] = Array.from(extrinsicsRef.current.values());
+    for (const info of parsed) {
+      const avoid = infoArr.find((b) => !doImport(info, b));
+      if (!avoid) {
+        infoArr = infoArr.concat([info]);
+        extrinsicsRef.current.set(info.txId, info);
+      }
+    }
+
+    setUpdateCache(true);
+  };
+
   return (
     <TxMetaContext.Provider
       value={{
@@ -578,6 +612,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         getGenesisHash,
         getTxPayload,
         handleOpenCloseWcModal,
+        importExtrinsics,
         initTx,
         initTxDynamicInfo,
         onFilterChange,

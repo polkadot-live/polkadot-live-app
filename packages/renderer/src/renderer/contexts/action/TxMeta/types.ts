@@ -20,6 +20,7 @@ export interface TxMetaContextInterface {
   getGenesisHash: (txUid: string) => AnyJson | null;
   getTxPayload: (txUid: string) => Uint8Array | null;
   handleOpenCloseWcModal: (open: boolean, uri?: string) => Promise<void>;
+  importExtrinsics: (serialized: string) => void;
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   onFilterChange: (val: string) => void;

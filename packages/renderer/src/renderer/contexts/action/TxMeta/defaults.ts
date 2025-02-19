@@ -14,6 +14,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   getGenesisHash: () => null,
   getTxPayload: () => null,
   handleOpenCloseWcModal: () => new Promise(() => {}),
+  importExtrinsics: () => {},
   initTx: () => {},
   initTxDynamicInfo: () => {},
   onFilterChange: () => {},
