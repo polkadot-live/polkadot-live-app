@@ -48,6 +48,7 @@ export class ExtrinsicsController {
   private static update(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
+    info.dynamicInfo = undefined;
     const stored = this.getExtrinsicsFromStore();
     const updated = stored.map((i) => (i.txId === info.txId ? { ...info } : i));
     this.persistExtrinsicsToStore(updated);

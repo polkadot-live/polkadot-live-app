@@ -24,7 +24,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   setTxSignature: () => {},
   submitTx: () => {},
   submitMockTx: () => {},
-  updateAccountName: () => {},
+  updateAccountName: () => new Promise(() => {}),
   updateTxStatus: () => new Promise(() => {}),
   removeExtrinsic: () => new Promise(() => {}),
 };

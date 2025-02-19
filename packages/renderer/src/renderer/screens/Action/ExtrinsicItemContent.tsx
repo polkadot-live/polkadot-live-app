@@ -33,7 +33,7 @@ export const ExtrinsicItemContent = ({
 }: ExtrinsicItemContentProps): React.ReactNode => {
   const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-  const { chainId, data: serData } = info.actionMeta;
+  const { chainId, data } = info.actionMeta;
 
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
@@ -41,7 +41,7 @@ export const ExtrinsicItemContent = ({
         sendAmount: planck,
         recipientAccountName,
         recipientAddress,
-      }: ExTransferKeepAliveData = JSON.parse(serData);
+      }: ExTransferKeepAliveData = data;
 
       const units = chainUnits(chainId);
       const bnPlanck = new BigNumber(planck);
@@ -105,7 +105,7 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_bond': {
-      const bnPendingRewardsPlanck = new BigNumber(serData.extra);
+      const bnPendingRewardsPlanck = new BigNumber(data.extra);
       const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
       const fmtAmount = (
         <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
@@ -130,7 +130,7 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_withdraw': {
-      const bnPendingRewardsPlanck = new BigNumber(serData.extra);
+      const bnPendingRewardsPlanck = new BigNumber(data.extra);
       const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
       const fmtAmount = (
         <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>

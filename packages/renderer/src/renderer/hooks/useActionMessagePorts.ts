@@ -49,7 +49,7 @@ export const useActionMessagePorts = () => {
    * @name handleAccountRename
    * @summary Update extrinsics and address state to reflect an updated account name.
    */
-  const handleAccountRename = (ev: MessageEvent) => {
+  const handleAccountRename = async (ev: MessageEvent) => {
     interface Target {
       address: string;
       chainId: ChainID;
@@ -57,7 +57,7 @@ export const useActionMessagePorts = () => {
     }
 
     const { address, newName }: Target = ev.data.data;
-    updateAccountName(address, newName);
+    await updateAccountName(address, newName);
   };
 
   /**
@@ -139,7 +139,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:account:rename': {
-              handleAccountRename(ev);
+              await handleAccountRename(ev);
               break;
             }
             case 'action:tx:setEstimatedFee': {
