@@ -10,6 +10,7 @@ import { SubscriptionsController } from '@ren/controller/SubscriptionsController
 import { getAddressChainId } from '@app/Utils';
 import {
   getFromBackupFile,
+  postToExtrinsics,
   postToImport,
   postToOpenGov,
   postToSettings,
@@ -127,6 +128,7 @@ export const DataBackupProvider = ({
           await importEventData(s);
           await importIntervalData(s);
           await importAccountTaskData(s);
+          await importExtrinsicsData(s);
 
           postToSettings('settings:render:toast', {
             success: response.result,
@@ -234,6 +236,23 @@ export const DataBackupProvider = ({
       // Update account list state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
     }
+  };
+
+  /// Extract extrinsics data from an imported text file and send to application.
+  const importExtrinsicsData = async (serialized: string): Promise<void> => {
+    const s_extrinsics = getFromBackupFile('extrinsics', serialized);
+    if (!s_extrinsics) {
+      return;
+    }
+
+    const s_extrinsics_synced = (await window.myAPI.sendExtrinsicsTaskAsync({
+      action: 'extrinsics:import',
+      data: { serialized: s_extrinsics },
+    })) as string;
+
+    postToExtrinsics('action:tx:import', {
+      serialized: s_extrinsics_synced,
+    });
   };
 
   /// Extract event data from an imported text file and send to application.

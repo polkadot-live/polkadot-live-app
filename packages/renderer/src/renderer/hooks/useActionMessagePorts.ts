@@ -16,6 +16,7 @@ export const useActionMessagePorts = () => {
    */
   const {
     handleOpenCloseWcModal,
+    importExtrinsics,
     initTx,
     notifyInvalidExtrinsic,
     setEstimatedFee,
@@ -36,10 +37,19 @@ export const useActionMessagePorts = () => {
   };
 
   /**
+   * @name handleTxImport
+   * @summary Import extrinsics data from a backup file.
+   */
+  const handleTxImport = (ev: MessageEvent) => {
+    const { serialized } = ev.data.data;
+    importExtrinsics(serialized);
+  };
+
+  /**
    * @name handleAccountRename
    * @summary Update extrinsics and address state to reflect an updated account name.
    */
-  const handleAccountRename = (ev: MessageEvent) => {
+  const handleAccountRename = async (ev: MessageEvent) => {
     interface Target {
       address: string;
       chainId: ChainID;
@@ -47,7 +57,7 @@ export const useActionMessagePorts = () => {
     }
 
     const { address, newName }: Target = ev.data.data;
-    updateAccountName(address, newName);
+    await updateAccountName(address, newName);
   };
 
   /**
@@ -116,6 +126,10 @@ export const useActionMessagePorts = () => {
               handleInitAction(ev);
               break;
             }
+            case 'action:tx:import': {
+              handleTxImport(ev);
+              break;
+            }
             case 'action:tx:report:data': {
               handleTxReportData(ev);
               break;
@@ -125,7 +139,7 @@ export const useActionMessagePorts = () => {
               break;
             }
             case 'action:account:rename': {
-              handleAccountRename(ev);
+              await handleAccountRename(ev);
               break;
             }
             case 'action:tx:setEstimatedFee': {

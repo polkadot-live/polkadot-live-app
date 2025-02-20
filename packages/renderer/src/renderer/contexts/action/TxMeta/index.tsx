@@ -17,6 +17,7 @@ import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
   AddressInfo,
+  ExTransferKeepAliveData,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
   TxStatus,
@@ -85,6 +86,26 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   /**
+   * Parse serialized extrinsic data to object.
+   * Must be called before caching a received extrinsic item.
+   */
+  const parseExtrinsicData = (meta: ActionMeta) => {
+    const { action, data } = meta;
+    switch (action) {
+      case 'balances_transferKeepAlive': {
+        if (typeof data === 'string') {
+          const p_data: ExTransferKeepAliveData = JSON.parse(data);
+          meta.data = p_data;
+        }
+        return;
+      }
+      default: {
+        return;
+      }
+    }
+  };
+
+  /**
    * Fetch stored extrinsics when window loads.
    */
   useEffect(() => {
@@ -94,19 +115,27 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         data: null,
       })) as string;
 
-      // Parse the array and set data in the extrinsics map ref.
-      const parsed: ExtrinsicInfo[] = JSON.parse(ser);
+      // Parse the array and dynamic data.
+      const parsedA: ExtrinsicInfo[] = JSON.parse(ser);
+      const parsedB = parsedA.map((info) => {
+        parseExtrinsicData(info.actionMeta);
+        return info;
+      });
 
-      for (const info of parsed) {
-        // Set status to `submitted-unknown` if app was closed before tx was finalized.
+      // Set status to `submitted-unknown` if app was closed before tx was finalized.
+      for (const info of parsedB) {
         if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
           info.txStatus = 'submitted-unkown';
 
           await window.myAPI.sendExtrinsicsTaskAsync({
-            action: 'extrinsics:persist',
-            data: { serialized: JSON.stringify(info) },
+            action: 'extrinsics:update',
+            data: {
+              serialized: JSON.stringify({ ...info, dynamicInfo: undefined }),
+            },
           });
         }
+
+        // Cache data in extrinsics ref.
         extrinsicsRef.current.set(info.txId, { ...info });
       }
 
@@ -155,6 +184,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       setStateWithRef(actionMeta.from, setSelectedFilter, selectedFilterRef);
     }
 
+    // Parse data property correctly before storing state.
+    parseExtrinsicData(actionMeta);
+
     // Check if this extrinsic has already been initialized.
     const alreadyExists = Array.from(extrinsicsRef.current.values())
       .map((obj) => ({
@@ -174,7 +206,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     if (alreadyExists !== undefined) {
       // Relay building extrinsic flag to app.
       window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
-
       renderToast(
         'Extrinsic already added.',
         `toast-already-exists-${String(Date.now())}`,
@@ -204,7 +235,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const initEstimatedFee = (txId: string) => {
     try {
-      const info = extrinsics.get(txId);
+      const info = extrinsicsRef.current.get(txId);
       if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
@@ -257,7 +288,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const initTxDynamicInfo = (txId: string) => {
     try {
-      const info = extrinsics.get(txId);
+      const info = extrinsicsRef.current.get(txId);
       if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
@@ -508,24 +539,48 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update an account name assocated with an address.
    */
-  const updateAccountName = (address: string, newName: string) => {
+  const updateAccountName = async (address: string, accountName: string) => {
     // Update extrinsics state in actionMeta.
     for (const [txId, info] of Array.from(extrinsicsRef.current.entries())) {
-      if (info.actionMeta.from !== address) {
-        continue;
+      let updateStore = false;
+
+      if (info.actionMeta.action === 'balances_transferKeepAlive') {
+        // Check signer and recipient account names.
+        const data: ExTransferKeepAliveData = info.actionMeta.data;
+        const updateSigner = info.actionMeta.from === address;
+        const updateRecipient = data.recipientAddress === address;
+
+        if (updateSigner) {
+          info.actionMeta.accountName = accountName;
+        }
+        if (updateRecipient) {
+          info.actionMeta.data.recipientAccountName = accountName;
+        }
+        if (updateSigner || updateRecipient) {
+          extrinsicsRef.current.set(txId, { ...info });
+          updateStore = true;
+        }
+      } else if (info.actionMeta.from === address) {
+        // Update signer account name.
+        info.actionMeta.accountName = accountName;
+        extrinsicsRef.current.set(txId, { ...info });
+        updateStore = true;
       }
 
-      extrinsicsRef.current.set(txId, {
-        ...info,
-        actionMeta: { ...info.actionMeta, accountName: newName },
-      });
+      // Update data in store.
+      if (updateStore) {
+        await window.myAPI.sendExtrinsicsTaskAsync({
+          action: 'extrinsics:update',
+          data: { serialized: JSON.stringify(info) },
+        });
+      }
     }
 
     // Update addresses info state.
     setAddressesInfo((prev) => {
       const updated = prev.map((i) => {
         if (i.address === address) {
-          return { ...i, accountName: newName };
+          return { ...i, accountName };
         } else {
           return { ...i };
         }
@@ -566,6 +621,23 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /**
+   * Import extrinsics data from backup file.
+   */
+  const importExtrinsics = (serialized: string) => {
+    const parsed: ExtrinsicInfo[] = JSON.parse(serialized);
+    const map = new Map<string, ExtrinsicInfo>();
+
+    for (const info of parsed) {
+      // Parse extrinsic dynamic data before caching state.
+      parseExtrinsicData(info.actionMeta);
+      map.set(info.txId, info);
+    }
+
+    extrinsicsRef.current = map;
+    setUpdateCache(true);
+  };
+
   return (
     <TxMetaContext.Provider
       value={{
@@ -578,6 +650,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         getGenesisHash,
         getTxPayload,
         handleOpenCloseWcModal,
+        importExtrinsics,
         initTx,
         initTxDynamicInfo,
         onFilterChange,

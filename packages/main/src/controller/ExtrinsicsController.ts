@@ -1,9 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as ImportUtils from '@/utils/ImportUtils';
 import { store } from '@/main';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type {
+  ExTransferKeepAliveData,
+  ExtrinsicInfo,
+} from '@polkadot-live/types/tx';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class ExtrinsicsController {
@@ -16,6 +20,9 @@ export class ExtrinsicsController {
     switch (task.action) {
       case 'extrinsics:getAll': {
         return this.getAll();
+      }
+      case 'extrinsics:import': {
+        return this.import(task);
       }
       case 'extrinsics:persist': {
         this.persist(task);
@@ -41,6 +48,7 @@ export class ExtrinsicsController {
   private static update(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
+    info.dynamicInfo = undefined;
     const stored = this.getExtrinsicsFromStore();
     const updated = stored.map((i) => (i.txId === info.txId ? { ...info } : i));
     this.persistExtrinsicsToStore(updated);
@@ -51,6 +59,51 @@ export class ExtrinsicsController {
    */
   private static getAll(): string {
     return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
+
+  /**
+   * @name import
+   * @summary Persist new extrinsics received from backup file.
+   * @returns Up-to-date serialized extrinsics after import.
+   */
+  private static import(task: IpcTask) {
+    const { serialized }: { serialized: string } = task.data;
+    const received: ExtrinsicInfo[] = JSON.parse(serialized);
+    const addressNameMap = ImportUtils.getAddressNameMap();
+
+    // Get stored extrinsics and sync account names with import data.
+    const stored = this.getExtrinsicsFromStore().map((info) => {
+      const { action, accountName, from } = info.actionMeta;
+
+      // Update transfer extrinsic data if necessary.
+      if (action === 'balances_transferKeepAlive') {
+        const {
+          recipientAccountName,
+          recipientAddress,
+        }: ExTransferKeepAliveData = info.actionMeta.data;
+
+        const latest = addressNameMap.get(recipientAddress);
+        if (latest !== undefined && latest !== recipientAccountName) {
+          info.actionMeta.data.recipientAccountName = latest;
+        }
+      }
+
+      // Update sender account name if necessary.
+      const latest = addressNameMap.get(from);
+      if (latest !== undefined && latest !== accountName) {
+        info.actionMeta.accountName = latest;
+      }
+
+      return info;
+    });
+
+    // Append unique imported extrinsics.
+    const append: ExtrinsicInfo[] = received.filter(
+      (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b))
+    );
+
+    this.persistExtrinsicsToStore([...stored, ...append]);
+    return JSON.stringify([...stored, ...append]);
   }
 
   /**
@@ -114,4 +167,11 @@ export class ExtrinsicsController {
       JSON.stringify(extrinsics)
     );
   };
+
+  /**
+   * Get all stored extrinsics in serialized form.
+   */
+  static getBackupDate(): string {
+    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
 }

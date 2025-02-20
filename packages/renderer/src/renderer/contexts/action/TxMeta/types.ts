@@ -20,6 +20,7 @@ export interface TxMetaContextInterface {
   getGenesisHash: (txUid: string) => AnyJson | null;
   getTxPayload: (txUid: string) => Uint8Array | null;
   handleOpenCloseWcModal: (open: boolean, uri?: string) => Promise<void>;
+  importExtrinsics: (serialized: string) => void;
   initTx: (actionMeta: ActionMeta) => void;
   initTxDynamicInfo: (txId: string) => void;
   onFilterChange: (val: string) => void;
@@ -29,7 +30,7 @@ export interface TxMetaContextInterface {
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   submitMockTx: (txId: string) => void;
-  updateAccountName: (address: string, newName: string) => void;
+  updateAccountName: (address: string, accountName: string) => Promise<void>;
   updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
   removeExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
 }

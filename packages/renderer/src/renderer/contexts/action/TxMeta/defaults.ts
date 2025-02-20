@@ -14,6 +14,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   getGenesisHash: () => null,
   getTxPayload: () => null,
   handleOpenCloseWcModal: () => new Promise(() => {}),
+  importExtrinsics: () => {},
   initTx: () => {},
   initTxDynamicInfo: () => {},
   onFilterChange: () => {},
@@ -23,7 +24,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   setTxSignature: () => {},
   submitTx: () => {},
   submitMockTx: () => {},
-  updateAccountName: () => {},
+  updateAccountName: () => new Promise(() => {}),
   updateTxStatus: () => new Promise(() => {}),
   removeExtrinsic: () => new Promise(() => {}),
 };

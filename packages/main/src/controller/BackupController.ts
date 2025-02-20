@@ -5,10 +5,11 @@ import { Config as ConfigMain } from '@/config/main';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/AddressesController';
-import { WindowsController } from './WindowsController';
 import { EventsController } from '@/controller/EventsController';
+import { ExtrinsicsController } from '@/controller/ExtrinsicsController';
 import { IntervalsController } from '@/controller/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
+import { WindowsController } from './WindowsController';
 import { version } from '../../package.json';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
@@ -146,12 +147,14 @@ export class BackupController {
     const map = new Map<string, string>();
     const addresses = AddressesController.getBackupData();
     const events = EventsController.getBackupData();
+    const extrinsics = ExtrinsicsController.getBackupDate();
     const intervals = IntervalsController.getBackupData();
     const accountTasks = SubscriptionsController.getBackupData();
 
     map.set('version', version);
     map.set('addresses', addresses);
     map.set('events', events);
+    map.set('extrinsics', extrinsics);
     map.set('intervals', intervals);
     map.set('accountTasks', accountTasks);
 

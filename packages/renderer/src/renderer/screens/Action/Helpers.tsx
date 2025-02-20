@@ -41,8 +41,8 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
 
   switch (action) {
     case 'balances_transferKeepAlive': {
-      const { chainId, data: serData } = info.actionMeta;
-      const { sendAmount }: ExTransferKeepAliveData = JSON.parse(serData);
+      const { chainId, data } = info.actionMeta;
+      const { sendAmount }: ExTransferKeepAliveData = data;
       const bnPlanck = new BigNumber(sendAmount);
       const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
 
