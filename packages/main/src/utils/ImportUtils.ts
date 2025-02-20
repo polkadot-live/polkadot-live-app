@@ -7,7 +7,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type { ExtrinsicInfo, TxActionUid } from '@polkadot-live/types/tx';
 
 /**
  * @name getAddressNameMap
@@ -46,20 +46,21 @@ export const getAddressNameMap = () => {
 };
 
 /**
- * @name doImportExtrinsic
+ * @name compareExtrinsics
  * @summary Checks if two extrinsics are deemed different when importing.
+ * @returns `true` if extrinsics are the same, `false` otherwise.
  */
 export const compareExtrinsics = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
   const { action: aAction, from: aFrom } = a.actionMeta;
   const { action: bAction, from: bFrom } = b.actionMeta;
-  const whiteListed = 'balances_transferKeepAlive';
+  const whiteListed: TxActionUid = 'balances_transferKeepAlive';
 
-  // Allow duplicate balance extrinsics.
   return a.txId === b.txId
-    ? false
-    : aFrom === bFrom && aAction === bAction && aAction !== whiteListed
-      ? a.txStatus === 'finalized'
-        ? true
-        : false
-      : true;
+    ? true
+    : aFrom === bFrom &&
+        aAction === bAction &&
+        aAction !== whiteListed &&
+        a.txStatus !== 'finalized'
+      ? true
+      : false;
 };

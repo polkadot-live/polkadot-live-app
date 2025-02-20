@@ -72,7 +72,7 @@ export class ExtrinsicsController {
     const addressNameMap = ImportUtils.getAddressNameMap();
 
     // Get stored extrinsics and sync account names with import data.
-    let stored = this.getExtrinsicsFromStore().map((info) => {
+    const stored = this.getExtrinsicsFromStore().map((info) => {
       const { action, accountName, from } = info.actionMeta;
 
       // Update transfer extrinsic data if necessary.
@@ -97,15 +97,13 @@ export class ExtrinsicsController {
       return info;
     });
 
-    for (const a of received) {
-      const avoid = stored.find((b) => !ImportUtils.compareExtrinsics(a, b));
-      if (!avoid) {
-        stored = stored.concat([a]);
-      }
-    }
+    // Append unique imported extrinsics.
+    const append: ExtrinsicInfo[] = received.filter(
+      (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b))
+    );
 
-    this.persistExtrinsicsToStore(stored);
-    return JSON.stringify(stored);
+    this.persistExtrinsicsToStore([...stored, ...append]);
+    return JSON.stringify([...stored, ...append]);
   }
 
   /**

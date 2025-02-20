@@ -235,7 +235,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const initEstimatedFee = (txId: string) => {
     try {
-      const info = extrinsics.get(txId);
+      const info = extrinsicsRef.current.get(txId);
       if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
@@ -288,7 +288,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const initTxDynamicInfo = (txId: string) => {
     try {
-      const info = extrinsics.get(txId);
+      const info = extrinsicsRef.current.get(txId);
       if (!info) {
         throw new Error('Error: Extrinsic not found.');
       }
