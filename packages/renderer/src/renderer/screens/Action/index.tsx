@@ -82,6 +82,10 @@ export const Action = () => {
     }
   };
 
+  // Utility to get address info in alphabetical order.
+  const getOrderedAddressInfo = () =>
+    addressesInfo.sort((a, b) => a.accountName.localeCompare(b.accountName));
+
   const fadeTxIcon = (txStatus: TxStatus) =>
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
@@ -144,7 +148,7 @@ export const Action = () => {
                         </div>
                       </div>
                     </UI.SelectItem>
-                    {addressesInfo.map(({ accountName, address }) => (
+                    {getOrderedAddressInfo().map(({ accountName, address }) => (
                       <UI.SelectItem key={address} value={address}>
                         <div className="innerRow">
                           <FlexRow $gap={'1rem'}>
