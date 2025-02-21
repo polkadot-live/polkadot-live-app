@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.6.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.5.0-alpha...v0.6.0-alpha) (2025-02-21)
+
+
+### Features
+
+* action meta account source property + dynamic signing overlay boilerplate ([8b00888](https://github.com/polkadot-live/polkadot-live-app/commit/8b0088868fdf08ca8b7b1a1db57c9112ba05ee4c))
+* backup extrinsics ([#880](https://github.com/polkadot-live/polkadot-live-app/issues/880)) ([dbe0136](https://github.com/polkadot-live/polkadot-live-app/commit/dbe013688fc1897cb1e9f70ca9cdbe7847572ea9))
+* copy address to clipboard ([#840](https://github.com/polkadot-live/polkadot-live-app/issues/840)) ([268e468](https://github.com/polkadot-live/polkadot-live-app/commit/268e468da2453cdc1374916ab7df3878b528436f))
+* dynamic send screen ([#839](https://github.com/polkadot-live/polkadot-live-app/issues/839)) ([bf66188](https://github.com/polkadot-live/polkadot-live-app/commit/bf661884ffbb65ed7f14850602829492e0408e53))
+* extrinsic item dropdown menu ([#803](https://github.com/polkadot-live/polkadot-live-app/issues/803)) ([8782c9b](https://github.com/polkadot-live/polkadot-live-app/commit/8782c9be5196ee0109c3f3477d52e8dd350e3c74))
+* extrinsics accordion ([#802](https://github.com/polkadot-live/polkadot-live-app/issues/802)) ([d88d306](https://github.com/polkadot-live/polkadot-live-app/commit/d88d306eed7a637e0dd216f193b2dbc9e66e890d))
+* extrinsics architecture enhancements ([#800](https://github.com/polkadot-live/polkadot-live-app/issues/800)) ([c0c4015](https://github.com/polkadot-live/polkadot-live-app/commit/c0c40150748f72e9fabf35b1eb212515bec563bf))
+* extrinsics cog menu item ([#804](https://github.com/polkadot-live/polkadot-live-app/issues/804)) ([e7ffea8](https://github.com/polkadot-live/polkadot-live-app/commit/e7ffea80641b785902c8678f610b2d2e94df5f70))
+* extrinsics order by timestamp ([#878](https://github.com/polkadot-live/polkadot-live-app/issues/878)) ([15df550](https://github.com/polkadot-live/polkadot-live-app/commit/15df550afde4e737e0a163b6c28e55bc3f1a6976))
+* extrinsics signer select filter ([#805](https://github.com/polkadot-live/polkadot-live-app/issues/805)) ([f777af9](https://github.com/polkadot-live/polkadot-live-app/commit/f777af9219d0263a74320c0c4e1e93fb58b79c33))
+* extrinsics window dynamic items ([#845](https://github.com/polkadot-live/polkadot-live-app/issues/845)) ([b1c17f6](https://github.com/polkadot-live/polkadot-live-app/commit/b1c17f6f981d38aab1366ea250e5c8606e3e64c7))
+* extrinsics window messaging ([#806](https://github.com/polkadot-live/polkadot-live-app/issues/806)) ([c4757a5](https://github.com/polkadot-live/polkadot-live-app/commit/c4757a548a15b733ad35ea8961342308b5bc286c))
+* fetch stored extrinsics ([#819](https://github.com/polkadot-live/polkadot-live-app/issues/819)) ([1860735](https://github.com/polkadot-live/polkadot-live-app/commit/18607351492088c276ac4fbe1821c9237485ef8c))
+* initial extrinsic collections architecture ([#801](https://github.com/polkadot-live/polkadot-live-app/issues/801)) ([ced73bc](https://github.com/polkadot-live/polkadot-live-app/commit/ced73bc4f9a4ff83e76d5e3c5bcfe4e65e55c7ef))
+* persist + remove extrinsics from store ([#817](https://github.com/polkadot-live/polkadot-live-app/issues/817)) ([4312cdc](https://github.com/polkadot-live/polkadot-live-app/commit/4312cdc7d5baab3db202b16eedba87f22f4d0a80))
+* persisted extrinsics ([#818](https://github.com/polkadot-live/polkadot-live-app/issues/818)) ([7567b46](https://github.com/polkadot-live/polkadot-live-app/commit/7567b467904486a74cfecbaccbde29381b278a80))
+* send screen ui foundation ([#826](https://github.com/polkadot-live/polkadot-live-app/issues/826)) ([4f8564f](https://github.com/polkadot-live/polkadot-live-app/commit/4f8564f494210e28167b6a392bf57c10305d14bf))
+* toggle extrinsics os notifications setting ([#821](https://github.com/polkadot-live/polkadot-live-app/issues/821)) ([7cecc1a](https://github.com/polkadot-live/polkadot-live-app/commit/7cecc1adda6f1e02ffb210ef806471970a83cb94))
+* transfer native tokens ([#824](https://github.com/polkadot-live/polkadot-live-app/issues/824)) ([367feed](https://github.com/polkadot-live/polkadot-live-app/commit/367feedded5ba1857a448b416fe0e119ec7ef592))
+* update extrinsics cached account names ([#808](https://github.com/polkadot-live/polkadot-live-app/issues/808)) ([b4f3bd1](https://github.com/polkadot-live/polkadot-live-app/commit/b4f3bd1a2f2fecd065a7d2acfa59d15126ec24f6))
+* update persisted extrinsics ([#820](https://github.com/polkadot-live/polkadot-live-app/issues/820)) ([1cd2585](https://github.com/polkadot-live/polkadot-live-app/commit/1cd25853ba2251c9660fcdf3ec0237bd8e2b61b7))
+* verify extrinsics before signing ([#846](https://github.com/polkadot-live/polkadot-live-app/issues/846)) ([c78b891](https://github.com/polkadot-live/polkadot-live-app/commit/c78b8911de561c2a3a40c8f19842c58ff77554e3))
+* wallet connect extrinsic signing ([#856](https://github.com/polkadot-live/polkadot-live-app/issues/856)) ([74cd0e8](https://github.com/polkadot-live/polkadot-live-app/commit/74cd0e88c67dac3aed76040177a2ef8da211e0d0))
+* wallet connect extrinsic signing core ([#861](https://github.com/polkadot-live/polkadot-live-app/issues/861)) ([2e11bd2](https://github.com/polkadot-live/polkadot-live-app/commit/2e11bd2588f4322a893841c9db99709300a5a49c))
+
+
+### Bug Fixes
+
+* add copyright comment ([484913d](https://github.com/polkadot-live/polkadot-live-app/commit/484913de0b16289995bcee2e22999ee8e970fd2a))
+* debugging ([#882](https://github.com/polkadot-live/polkadot-live-app/issues/882)) ([8389754](https://github.com/polkadot-live/polkadot-live-app/commit/83897546f85ae4e7556ee2c3c928f8213a675979))
+* electron menu ([#879](https://github.com/polkadot-live/polkadot-live-app/issues/879)) ([06347aa](https://github.com/polkadot-live/polkadot-live-app/commit/06347aa96bfbf5810d5fd1887cf5ead0bcf3ee3a))
+* extrinsics selected account filter ([#807](https://github.com/polkadot-live/polkadot-live-app/issues/807)) ([a95609c](https://github.com/polkadot-live/polkadot-live-app/commit/a95609c9be7db8567d180d0023370f88feb40010))
+* linux release action ([8cfbca6](https://github.com/polkadot-live/polkadot-live-app/commit/8cfbca6993e6559327fc5b6671a8425ab991ac10))
+* verify extrinsic on dropdown sign ([#859](https://github.com/polkadot-live/polkadot-live-app/issues/859)) ([9b89e46](https://github.com/polkadot-live/polkadot-live-app/commit/9b89e46db0fef75c9fc5b956770d771b85096d7b))
+
 ## [0.5.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.4.0-alpha...v0.5.0-alpha) (2025-01-07)
 
 
