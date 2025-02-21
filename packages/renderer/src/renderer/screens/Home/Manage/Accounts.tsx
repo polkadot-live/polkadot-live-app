@@ -144,7 +144,6 @@ export const Accounts = ({
     setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
-
     setSelectedAccount(address);
   };
 
