@@ -45,6 +45,7 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 export const Permissions = ({
   breadcrumb,
   section,
+  selectedAccount,
   typeClicked,
   setSection,
 }: PermissionsProps) => {
@@ -95,6 +96,9 @@ export const Permissions = ({
     new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
 
+  // Mechanism to trigger re-caculating the accordion value AFTER the account state is updated.
+  const [updateAccordionValue, setUpdateAccordionValue] = useState(false);
+
   /// Accordion state.
   const [accordionValueAccounts, setAccordionValueAccounts] = useState<
     string[]
@@ -135,23 +139,31 @@ export const Permissions = ({
     setCategorisedTasks(getCategorised());
     if (section === 1 && renderedSubscriptions.type == '') {
       setSection(0);
+    } else if (typeClicked === 'chain') {
+      setAccordionValueChains(['Chain']);
     }
   }, [renderedSubscriptions]);
 
-  /// Close diasbled subscription groups when loading account or chain subscriptions.
+  /// Trigger updating the accordion value when a new account is selected.
   useEffect(() => {
-    if (typeClicked === 'account') {
-      setAccordionValueAccounts([
-        ...Array.from(categorisedTasks.values())
-          .filter((tasks) =>
-            tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
-          )
-          .map((tasks) => tasks[0].category),
-      ]);
-    } else {
-      setAccordionValueChains(['Chain']);
+    setUpdateAccordionValue(true);
+  }, [selectedAccount]);
+
+  /// Close disabled subscription groups when loading account subscriptions.
+  useEffect(() => {
+    if (updateAccordionValue) {
+      if (typeClicked === 'account') {
+        setAccordionValueAccounts([
+          ...Array.from(categorisedTasks.values())
+            .filter((tasks) =>
+              tasks.length === 0 ? false : !showGroupTooltip(tasks[0])
+            )
+            .map((tasks) => tasks[0].category),
+        ]);
+      }
+      setUpdateAccordionValue(false);
     }
-  }, [categorisedTasks]);
+  }, [updateAccordionValue]);
 
   /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (task: SubscriptionTask) => {

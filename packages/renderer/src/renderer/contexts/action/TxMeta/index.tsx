@@ -110,10 +110,10 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   useEffect(() => {
     const fetchExtrinsics = async () => {
-      const ser = (await window.myAPI.sendExtrinsicsTaskAsync({
+      const ser = ((await window.myAPI.sendExtrinsicsTaskAsync({
         action: 'extrinsics:getAll',
         data: null,
-      })) as string;
+      })) || '[]') as string;
 
       // Parse the array and dynamic data.
       const parsedA: ExtrinsicInfo[] = JSON.parse(ser);
