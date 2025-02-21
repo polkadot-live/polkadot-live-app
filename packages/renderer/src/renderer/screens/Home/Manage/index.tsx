@@ -23,6 +23,8 @@ export const Manage = ({ addresses }: ManageProps) => {
   // Whether the user has clicked on an account or chain.
   const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
 
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+
   return (
     <div
       style={{
@@ -65,6 +67,7 @@ export const Manage = ({ addresses }: ManageProps) => {
               setBreadcrumb={setBreadcrumb}
               addresses={addresses}
               setTypeClicked={setTypeClicked}
+              setSelectedAccount={setSelectedAccount}
             />
           </Wrapper>
         </div>
@@ -73,6 +76,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           <Permissions
             setSection={setSection}
             section={section}
+            selectedAccount={selectedAccount}
             breadcrumb={breadcrumb}
             typeClicked={typeClicked}
           />

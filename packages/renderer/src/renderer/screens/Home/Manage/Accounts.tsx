@@ -33,6 +33,7 @@ export const Accounts = ({
   setBreadcrumb,
   setSection,
   setTypeClicked,
+  setSelectedAccount,
 }: AccountsProps) => {
   const { showDebuggingSubscriptions } = useAppSettings();
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
@@ -143,6 +144,8 @@ export const Accounts = ({
     setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
+
+    setSelectedAccount(address);
   };
 
   /// Set interval subscription tasks state when chain is clicked.

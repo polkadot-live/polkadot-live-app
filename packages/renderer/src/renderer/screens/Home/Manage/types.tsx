@@ -18,11 +18,13 @@ export interface AccountsProps {
   setBreadcrumb: (s: string) => void;
   setSection: (n: number) => void;
   setTypeClicked: (t: SubscriptionTaskType) => void;
+  setSelectedAccount: (a: string | null) => void;
 }
 
 export interface PermissionsProps {
   breadcrumb: string;
   section: number;
+  selectedAccount: string | null;
   typeClicked: SubscriptionTaskType;
   setSection: (n: number) => void;
 }
