@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.0-alpha...v0.6.1-alpha) (2025-02-22)
+
+
+### Features
+
+* transfer network amount limits ([#883](https://github.com/polkadot-live/polkadot-live-app/issues/883)) ([423cb1b](https://github.com/polkadot-live/polkadot-live-app/commit/423cb1bd33b2bb915ee29853adefc5e11262ac7b))
+
 ## [0.6.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.5.0-alpha...v0.6.0-alpha) (2025-02-21)
 
 
