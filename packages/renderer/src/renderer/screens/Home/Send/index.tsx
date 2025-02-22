@@ -48,6 +48,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SendAccordionValue } from './types';
 
+const TOKEN_TRANSFER_LIMIT = 100;
+
 export const Send: React.FC = () => {
   /**
    * Addresses fetched from main process.
@@ -335,6 +337,13 @@ export const Send: React.FC = () => {
         return;
       }
 
+      // NOTE: Limit send amount to 100 tokens in alpha releases.
+      if (Number(amount) > TOKEN_TRANSFER_LIMIT) {
+        setSendAmount(amount);
+        setValidAmount(false);
+        return;
+      }
+
       // Check if send amount is less than spendable amount.
       const units = chainUnits(senderNetwork);
       const bnAmountAsPlanck = unitToPlanck(amount, units);
@@ -425,6 +434,8 @@ export const Send: React.FC = () => {
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
+    // NOTE: Limit token transfers to 100 tokens in alpha releases.
+    (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
     // NOTE: Disable Polkadot transfers in alpha releases.
     senderNetwork === 'Polkadot' ||
     !validAmount ||
