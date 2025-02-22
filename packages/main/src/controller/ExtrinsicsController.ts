@@ -119,15 +119,24 @@ export class ExtrinsicsController {
 
     // Get stored extrinsics and remove any duplicate extrinsics.
     const stored = this.getExtrinsicsFromStore();
-
     const filtered = stored.filter((i) => {
-      if (
-        i.actionMeta.from === from &&
-        i.actionMeta.action === action &&
-        // Allow duplicate balance extrinsics.
-        action !== 'balances_transferKeepAlive'
-      ) {
-        return i.txStatus !== info.txStatus ? true : false;
+      if (action === i.actionMeta.action) {
+        switch (action) {
+          case 'balances_transferKeepAlive': {
+            // Allow duplicate transfer extrinsics.
+            return true;
+          }
+          case 'nominationPools_pendingRewards_bond':
+          case 'nominationPools_pendingRewards_withdraw': {
+            // Duplicate if signer and rewards are the same.
+            const { extra }: { extra: string } = info.actionMeta.data;
+            const found =
+              from === i.actionMeta.from &&
+              extra === i.actionMeta.data.extra &&
+              i.txStatus === 'pending';
+            return found ? false : true;
+          }
+        }
       } else {
         return true;
       }
