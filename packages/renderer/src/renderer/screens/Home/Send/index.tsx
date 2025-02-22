@@ -173,6 +173,11 @@ export const Send: React.FC = () => {
       return;
     }
 
+    // NOTE: Disable Polkadot transfers in alpha releases.
+    if (senderNetwork === 'Polkadot') {
+      return;
+    }
+
     setSummaryComplete(true);
 
     // Data for action meta.
@@ -376,7 +381,13 @@ export const Send: React.FC = () => {
       if (!addresses || addresses.length === 0) {
         continue;
       }
-      result = result.concat(addresses as LocalAddress[]);
+
+      // NOTE: Disable Polkadot transfers in alpha releases.
+      const filtered = (addresses as LocalAddress[]).filter(
+        ({ address }) => getAddressChainId(address) !== 'Polkadot'
+      );
+
+      result = result.concat(filtered);
     }
     return result.sort((a, b) => a.name.localeCompare(b.name));
   };
@@ -414,6 +425,8 @@ export const Send: React.FC = () => {
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
+    // NOTE: Disable Polkadot transfers in alpha releases.
+    senderNetwork === 'Polkadot' ||
     !validAmount ||
     summaryComplete;
 
