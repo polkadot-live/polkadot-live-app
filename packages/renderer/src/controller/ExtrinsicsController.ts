@@ -3,7 +3,9 @@
 
 import BigNumber from 'bignumber.js';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { chainUnits } from '@ren/config/chains';
 import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
+import { unitToPlanck } from '@w3ux/utils';
 import {
   getAddressNonce,
   getNominationPoolRewards,
@@ -17,6 +19,8 @@ import type {
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
+
+const TOKEN_TRANSFER_LIMIT = '100';
 
 interface CachedExtrinsicData {
   tx: AnyData;
@@ -117,11 +121,26 @@ export class ExtrinsicsController {
         const bnSendAmount = new BigNumber(args[1].toString());
         const bnSpendable = await getSpendableBalance(from, chainId);
         const bnFee = new BigNumber(estimatedFee);
-        const isValid = bnSpendable.gte(bnSendAmount.plus(bnFee));
+
+        // NOTE: Disable Polkadot network transfers in alpha releases.
+        if (chainId === 'Polkadot') {
+          return {
+            isValid: false,
+            reason: 'Polkadot token transfers coming soon',
+          };
+        }
+
+        // NOTE: Limit send amount to 100 tokens in alpha releases.
+        const bnLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
+        const checkA = bnSendAmount.lte(bnLimit);
+        const checkB = bnSpendable.gte(bnSendAmount.plus(bnFee));
+        const isValid = checkA && checkB;
 
         return isValid
           ? { isValid }
-          : { isValid, reason: 'Insufficient balance' };
+          : !checkA
+            ? { isValid, reason: 'Transfer limit of 100 tokens' }
+            : { isValid, reason: 'Insufficient balance' };
       }
       case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {

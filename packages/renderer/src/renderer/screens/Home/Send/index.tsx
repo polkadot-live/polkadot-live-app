@@ -19,7 +19,8 @@ import {
   faBurst,
   faCheck,
   faChevronRight,
-  faCircleInfo,
+  faInfoCircle,
+  faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
@@ -47,6 +48,8 @@ import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SendAccordionValue } from './types';
+
+const TOKEN_TRANSFER_LIMIT = 100;
 
 export const Send: React.FC = () => {
   /**
@@ -170,6 +173,11 @@ export const Send: React.FC = () => {
    */
   const handleProceedClick = async () => {
     if (!(senderNetwork && sender && receiver)) {
+      return;
+    }
+
+    // NOTE: Disable Polkadot transfers in alpha releases.
+    if (senderNetwork === 'Polkadot') {
       return;
     }
 
@@ -330,6 +338,13 @@ export const Send: React.FC = () => {
         return;
       }
 
+      // NOTE: Limit send amount to 100 tokens in alpha releases.
+      if (Number(amount) > TOKEN_TRANSFER_LIMIT) {
+        setSendAmount(amount);
+        setValidAmount(false);
+        return;
+      }
+
       // Check if send amount is less than spendable amount.
       const units = chainUnits(senderNetwork);
       const bnAmountAsPlanck = unitToPlanck(amount, units);
@@ -376,7 +391,13 @@ export const Send: React.FC = () => {
       if (!addresses || addresses.length === 0) {
         continue;
       }
-      result = result.concat(addresses as LocalAddress[]);
+
+      // NOTE: Disable Polkadot transfers in alpha releases.
+      const filtered = (addresses as LocalAddress[]).filter(
+        ({ address }) => getAddressChainId(address) !== 'Polkadot'
+      );
+
+      result = result.concat(filtered);
     }
     return result.sort((a, b) => a.name.localeCompare(b.name));
   };
@@ -414,6 +435,10 @@ export const Send: React.FC = () => {
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
+    // NOTE: Limit token transfers to 100 tokens in alpha releases.
+    (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
+    // NOTE: Disable Polkadot transfers in alpha releases.
+    senderNetwork === 'Polkadot' ||
     !validAmount ||
     summaryComplete;
 
@@ -459,15 +484,31 @@ export const Send: React.FC = () => {
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
 
-      <UI.InfoCard icon={faCircleInfo}>
-        <span style={{ lineHeight: '1.5rem' }}>
-          Send native tokens to a recipient on the same network.
-        </span>
-      </UI.InfoCard>
+      <FlexColumn $rowGap={'0.75rem'}>
+        <UI.InfoCard
+          icon={faWarning}
+          style={{ color: 'var(--accent-warning)' }}
+        >
+          <FlexColumn>
+            <div
+              style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
+            >
+              This alpha release supports native transfers of up to <b>100</b>{' '}
+              tokens on <b>Kusama</b> and <b>Westend</b> networks.
+            </div>
+          </FlexColumn>
+        </UI.InfoCard>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <ProgressBar value={progress} max={100} />
-      </div>
+        <UI.InfoCard icon={faInfoCircle} style={{ marginTop: '0' }}>
+          <FlexColumn>
+            <div>Send native tokens to a recipient on the same network.</div>
+          </FlexColumn>
+        </UI.InfoCard>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <ProgressBar value={progress} max={100} />
+        </div>
+      </FlexColumn>
 
       <UI.AccordionWrapper $onePart={true}>
         <Accordion.Root

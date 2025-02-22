@@ -188,20 +188,31 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     parseExtrinsicData(actionMeta);
 
     // Check if this extrinsic has already been initialized.
-    const alreadyExists = Array.from(extrinsicsRef.current.values())
-      .map((obj) => ({
-        action: obj.actionMeta.action,
-        from: obj.actionMeta.from,
-        txStatus: obj.txStatus,
-      }))
-      .find(
-        ({ action, from, txStatus }) =>
-          from === actionMeta.from &&
-          action === actionMeta.action &&
-          txStatus === 'pending' &&
-          // Allow duplicate balance extrinsics.
-          action !== 'balances_transferKeepAlive'
-      );
+    const { action, from } = actionMeta;
+    const alreadyExists = Array.from(extrinsicsRef.current.values()).find(
+      (info) => {
+        if (action === info.actionMeta.action) {
+          switch (action) {
+            case 'balances_transferKeepAlive': {
+              // Allow duplicate transfer extrinsics.
+              return false;
+            }
+            case 'nominationPools_pendingRewards_bond':
+            case 'nominationPools_pendingRewards_withdraw': {
+              // Duplicate if signer and rewards are the same.
+              const { extra }: { extra: string } = actionMeta.data;
+              const found =
+                from === info.actionMeta.from &&
+                extra === info.actionMeta.data.extra &&
+                info.txStatus === 'pending';
+              return found ? true : false;
+            }
+          }
+        } else {
+          return false;
+        }
+      }
+    );
 
     if (alreadyExists !== undefined) {
       // Relay building extrinsic flag to app.
