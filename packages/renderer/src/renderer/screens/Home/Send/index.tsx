@@ -19,7 +19,8 @@ import {
   faBurst,
   faCheck,
   faChevronRight,
-  faCircleInfo,
+  faInfoCircle,
+  faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
@@ -483,15 +484,31 @@ export const Send: React.FC = () => {
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
 
-      <UI.InfoCard icon={faCircleInfo}>
-        <span style={{ lineHeight: '1.5rem' }}>
-          Send native tokens to a recipient on the same network.
-        </span>
-      </UI.InfoCard>
+      <FlexColumn $rowGap={'0.75rem'}>
+        <UI.InfoCard
+          icon={faWarning}
+          style={{ color: 'var(--accent-warning)' }}
+        >
+          <FlexColumn>
+            <div
+              style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
+            >
+              This alpha release supports native transfers of up to <b>100</b>{' '}
+              tokens on <b>Kusama</b> and <b>Westend</b> networks.
+            </div>
+          </FlexColumn>
+        </UI.InfoCard>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <ProgressBar value={progress} max={100} />
-      </div>
+        <UI.InfoCard icon={faInfoCircle} style={{ marginTop: '0' }}>
+          <FlexColumn>
+            <div>Send native tokens to a recipient on the same network.</div>
+          </FlexColumn>
+        </UI.InfoCard>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <ProgressBar value={progress} max={100} />
+        </div>
+      </FlexColumn>
 
       <UI.AccordionWrapper $onePart={true}>
         <Accordion.Root
