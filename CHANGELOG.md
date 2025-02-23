@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.1-alpha...v0.6.2-alpha) (2025-02-23)
+
+
+### Miscellaneous Chores
+
+* show disclaimer on initial launch ([#885](https://github.com/polkadot-live/polkadot-live-app/issues/885)) ([c5ca453](https://github.com/polkadot-live/polkadot-live-app/commit/c5ca4538c524c2b952836a2700f98dfc53471cb3))
+
 ## [0.6.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.0-alpha...v0.6.1-alpha) (2025-02-22)
 
 
