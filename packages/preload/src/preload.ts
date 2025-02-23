@@ -105,6 +105,9 @@ export const API: PreloadAPI = {
 
   getOsPlatform: async () => await ipcRenderer.invoke('app:platform:get'),
 
+  getShowDisclaimer: async () =>
+    await ipcRenderer.invoke('main:disclaimer:show'),
+
   copyToClipboard: async (text: string) =>
     await ipcRenderer.invoke('main:clipboard:copy', text),
 

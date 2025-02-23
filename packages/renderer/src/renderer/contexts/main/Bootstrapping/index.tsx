@@ -41,7 +41,7 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [appLoading, setAppLoading] = useState(false);
+  const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 

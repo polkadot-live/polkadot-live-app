@@ -9,6 +9,7 @@ import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useCogMenu } from '@app/contexts/main/CogMenu';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEvents } from '@app/contexts/main/Events';
+import { useHelp } from '@app/contexts/common/Help';
 import { useInitIpcHandlers } from '@app/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@app/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
@@ -47,6 +48,7 @@ export const Home = () => {
   const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { darkMode } = useConnections();
+  const { openHelp } = useHelp();
 
   const {
     dockToggled,
@@ -127,13 +129,27 @@ export const Home = () => {
       }
     );
 
-    const initPlatform = async () => {
+    // Async tasks.
+    const initTasks = async () => {
+      // Get OS platform.
       const osPlatform = await window.myAPI.getOsPlatform();
       setPlatform(osPlatform);
     };
 
-    initPlatform();
+    initTasks();
   }, []);
+
+  useEffect(() => {
+    // Show disclaimer on initial launch.
+    const disclaimerTask = async () => {
+      const showDisclaimer = await window.myAPI.getShowDisclaimer();
+      showDisclaimer && openHelp('help:docs:disclaimer');
+    };
+
+    if (!appLoading) {
+      disclaimerTask();
+    }
+  }, [appLoading]);
 
   /// Handle header dock toggle.
   // TODO: Move to file.
