@@ -18,6 +18,7 @@ import type { PersistedSettings } from './settings';
 export interface PreloadAPI {
   getWindowId: () => string;
   getOsPlatform: () => Promise<string>;
+  getShowDisclaimer: () => Promise<boolean>;
   copyToClipboard: (text: string) => Promise<void>;
 
   rawAccountTask: (task: IpcTask) => Promise<string | void>;

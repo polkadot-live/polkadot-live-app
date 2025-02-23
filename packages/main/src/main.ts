@@ -181,6 +181,20 @@ app.whenReady().then(async () => {
   });
 
   /**
+   * Disclaimer
+   */
+  ipcMain.handle('main:disclaimer:show', async () => {
+    const key = ConfigMain.getShowDisclaimerStorageKey();
+
+    if (!store.get(key, false)) {
+      store.set(key, true);
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  /**
    * Addresses
    */
 

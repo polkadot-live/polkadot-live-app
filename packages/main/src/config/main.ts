@@ -10,6 +10,7 @@ import type { Rectangle, Tray } from 'electron';
 export class Config {
   // Storage keys.
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
+  private static _showDisclaimerKey = 'show_disclaimer';
   private static _settingsStorageKey = 'app_settings';
   private static _workspacesStorageKey = 'developer_console_workspaces';
 
@@ -96,6 +97,10 @@ export class Config {
   // Get local storage key for chain subscription tasks.
   static getChainSubscriptionsStorageKey(): string {
     return Config._chainSubscriptionsStorageKey;
+  }
+  // Get local storage key for the disclaimer flag.
+  static getShowDisclaimerStorageKey(): string {
+    return Config._showDisclaimerKey;
   }
 
   // Get local storage key for subscription tasks of a particular address.
