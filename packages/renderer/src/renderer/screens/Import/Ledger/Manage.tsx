@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
 
 import {
   ControlsWrapper,
@@ -18,7 +19,6 @@ import { getSortedLocalLedgerAddresses } from '@app/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -40,7 +40,7 @@ export const Manage = ({
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
         </div>
@@ -111,7 +111,7 @@ export const Manage = ({
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
       <StatsFooter $chainId={'Polkadot'}>
         <div>

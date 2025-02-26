@@ -13,12 +13,12 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Identicon } from '../../Identicon';
 import { EllipsisSpinner } from '../../Spinners';
-import { useTooltip } from '../../../contexts/Tooltip';
 import { ButtonMono } from '../../../kits/Buttons';
 import { validateAccountName } from '../../../utils';
 import { HardwareAddressWrapper } from './Wrapper';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
+import { TooltipRx } from '../../TooltipRx';
 
 export const HardwareAddress = ({
   address,
@@ -27,6 +27,7 @@ export const HardwareAddress = ({
   isConnected,
   isImported,
   processingStatus,
+  theme,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
@@ -34,8 +35,6 @@ export const HardwareAddress = ({
   onRenameError,
   onRenameSuccess,
 }: HardwareAddressProps) => {
-  const { setTooltipTextAndOpen } = useTooltip();
-
   // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -95,22 +94,15 @@ export const HardwareAddress = ({
     <HardwareAddressWrapper>
       <div className="content">
         <div className="inner">
-          <div
-            className="tooltip tooltip-trigger-element"
-            data-tooltip-text={ellipsisFn(address, 16)}
-            onMouseMove={() =>
-              setTooltipTextAndOpen(ellipsisFn(address, 16), 'right')
-            }
-          >
+          <TooltipRx text={ellipsisFn(address, 12)} side="right" theme={theme}>
             <div className="identicon">
               <Identicon value={address} />
             </div>
-          </div>
+          </TooltipRx>
           <div>
             <section>
               <div className="input-wrapper">
                 {renderChainIcon()}
-
                 <input
                   style={{
                     borderColor: editing
@@ -153,60 +145,61 @@ export const HardwareAddress = ({
       {/* Account buttons */}
       <div className="action">
         {isImported && !isProcessing() ? (
-          <div
-            style={{ position: 'relative' }}
-            className="tooltip-trigger-element"
-            data-tooltip-text={'Remove From Main Window'}
-            onMouseMove={() => setTooltipTextAndOpen('Remove From Main Window')}
-          >
-            <ButtonMono
-              className="account-action-btn white-hover"
-              iconLeft={faMinus}
-              iconTransform={'grow-0'}
-              text={''}
-              onClick={() => openRemoveHandler()}
-            />
-          </div>
+          <TooltipRx text={'Remove From Main Window'} theme={theme}>
+            <div style={{ position: 'relative' }}>
+              <ButtonMono
+                className="account-action-btn white-hover"
+                iconLeft={faMinus}
+                iconTransform={'grow-0'}
+                text={''}
+                onClick={() => openRemoveHandler()}
+              />
+            </div>
+          </TooltipRx>
         ) : (
-          <div
-            style={{ position: 'relative' }}
-            className="tooltip-trigger-element"
-            data-tooltip-text={isConnected ? 'Import' : 'Currently Offline'}
-            onMouseMove={() =>
-              isConnected
-                ? setTooltipTextAndOpen('Add To Main Window')
-                : setTooltipTextAndOpen('Currently Offline')
-            }
-          >
-            <ButtonMono
-              disabled={!isConnected}
-              iconLeft={faPlus}
-              iconTransform="grow-0"
-              text={''}
-              onClick={() => !isProcessing() && openConfirmHandler()}
-              className={
-                isProcessing()
-                  ? 'account-action-btn processing'
-                  : 'account-action-btn white-hover'
-              }
-            />
-            {isProcessing() && <EllipsisSpinner style={{ top: '8px' }} />}
+          <div>
+            {isProcessing() ? (
+              <div style={{ position: 'relative' }}>
+                <ButtonMono
+                  disabled={!isConnected}
+                  iconLeft={faPlus}
+                  iconTransform="grow-0"
+                  text={''}
+                  className={'account-action-btn processing'}
+                />
+                <EllipsisSpinner style={{ top: '8px' }} />
+              </div>
+            ) : (
+              <TooltipRx
+                text={isConnected ? 'Add To Main Window' : 'Currently Offline'}
+                theme={theme}
+              >
+                <div style={{ position: 'relative' }}>
+                  <ButtonMono
+                    disabled={!isConnected}
+                    iconLeft={faPlus}
+                    iconTransform="grow-0"
+                    text={''}
+                    onClick={() => openConfirmHandler()}
+                    className={'account-action-btn white-hover'}
+                  />
+                </div>
+              </TooltipRx>
+            )}
           </div>
         )}
-        <div
-          className="tooltip-trigger-element"
-          data-tooltip-text={'Delete'}
-          onMouseMove={() => setTooltipTextAndOpen('Delete')}
-        >
-          <ButtonMono
-            disabled={isProcessing()}
-            className="account-action-btn white-hover"
-            iconLeft={faTrash}
-            iconTransform="shrink-2"
-            text={''}
-            onClick={() => openDeleteHandler()}
-          />
-        </div>
+        <TooltipRx text={'Delete'} theme={theme}>
+          <div style={{ position: 'relative' }}>
+            <ButtonMono
+              disabled={isProcessing()}
+              className="account-action-btn white-hover"
+              iconLeft={faTrash}
+              iconTransform="shrink-2"
+              text={''}
+              onClick={() => openDeleteHandler()}
+            />
+          </div>
+        </TooltipRx>
       </div>
     </HardwareAddressWrapper>
   );

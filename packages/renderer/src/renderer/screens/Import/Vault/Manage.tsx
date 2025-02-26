@@ -19,7 +19,7 @@ import {
 } from '@polkadot-live/ui/kits/buttons';
 import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
 import { useState } from 'react';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { getAddressChainId } from '@ren/renderer/Utils';
@@ -41,7 +41,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
         </div>
@@ -117,7 +117,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
       <StatsFooter $chainId={'Polkadot'}>
         <div>

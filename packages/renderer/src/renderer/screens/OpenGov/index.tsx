@@ -4,7 +4,7 @@
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { GridFourCol, GridTwoCol, WindowWrapper } from '@app/screens/Wrappers';
+import { WindowWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import {
@@ -29,7 +29,13 @@ import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import {
+  FlexColumn,
+  GridFourCol,
+  GridTwoCol,
+  Scrollable,
+  StatsFooter,
+} from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 

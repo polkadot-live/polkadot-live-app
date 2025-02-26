@@ -15,7 +15,7 @@ import {
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
 import { useState } from 'react';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
@@ -44,7 +44,7 @@ export const Manage = ({
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
         </div>
@@ -115,7 +115,7 @@ export const Manage = ({
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
       <StatsFooter $chainId={'Polkadot'}>
         <div>

@@ -14,6 +14,12 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { InfoCard } from '@polkadot-live/ui/components';
+import {
+  ButtonPrimaryInvert,
+  ButtonText,
+} from '@polkadot-live/ui/kits/buttons';
 import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
@@ -22,12 +28,6 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
 } from '@radix-ui/react-icons';
-import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
-import { InfoCard } from '@polkadot-live/ui/components';
-import {
-  ButtonPrimaryInvert,
-  ButtonText,
-} from '@polkadot-live/ui/kits/buttons';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -157,8 +157,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   }, [ledger.statusCodes]);
 
   return (
-    <Scrollable
-      $footerHeight={4}
+    <UI.ScrollableMax
+      footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '1rem' }}
     >
       {(ledger.isFetching || ledger.isImporting) && (
@@ -446,6 +446,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           </Accordion.Root>
         </UI.AccordionWrapper>
       </div>
-    </Scrollable>
+    </UI.ScrollableMax>
   );
 };

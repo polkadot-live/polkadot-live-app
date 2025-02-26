@@ -13,7 +13,7 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
@@ -121,8 +121,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   );
 
   return (
-    <Scrollable
-      $footerHeight={4}
+    <UI.ScrollableMax
+      footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '1rem' }}
     >
       {(wcConnecting || wcDisconnecting) && (
@@ -393,6 +393,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           </AccordionRx.Root>
         </UI.AccordionWrapper>
       </div>
-    </Scrollable>
+    </UI.ScrollableMax>
   );
 };
