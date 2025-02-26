@@ -25,7 +25,7 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { StatsFooter, FlexColumn } from '@polkadot-live/ui/styles';
+import { StatsFooter, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -139,7 +139,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                 <Identicon value={editName} fontSize={'2.5rem'} />
               </div>
               <div>
-                <section className="row" style={{ paddingLeft: '1.25rem' }}>
+                <FlexRow $gap={'0.5rem'} style={{ paddingLeft: '1.25rem' }}>
                   <input
                     className="add-input"
                     type="text"
@@ -147,7 +147,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                     value={editName}
                     onChange={(e) => onChange(e)}
                   />
-                  <div className="flex-inner-row">
+                  <FlexRow $gap={'0.25rem'}>
                     <button
                       style={{ color: 'var(--background-primary)' }}
                       className="btn-mono lg"
@@ -161,8 +161,8 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                     >
                       Clear
                     </button>
-                  </div>
-                </section>
+                  </FlexRow>
+                </FlexRow>
               </div>
             </div>
           </div>

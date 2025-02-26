@@ -38,12 +38,6 @@ export const HardwareAddressWrapper = styled.div`
   cursor: default;
 
   // Utility Classes
-  .flex-inner-row {
-    display: flex;
-    align-items: center;
-    column-gap: 0.25rem;
-  }
-
   > .action {
     height: 100%;
     flex-basis: auto;
