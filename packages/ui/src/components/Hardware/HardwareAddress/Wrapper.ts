@@ -107,6 +107,7 @@ export const HardwareAddressWrapper = styled.div`
    */
   .edit {
     margin-left: 1rem;
+    margin-right: 0.25rem;
 
     button {
       font-size: 1.1rem;
