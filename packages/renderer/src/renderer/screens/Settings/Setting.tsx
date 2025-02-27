@@ -59,7 +59,7 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
         <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
           <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
         </div>
-        <span>{title}</span>
+        <span className="title">{title}</span>
       </div>
       <div className="right">
         {settingType === 'switch' ? (
