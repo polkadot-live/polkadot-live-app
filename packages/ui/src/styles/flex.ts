@@ -33,3 +33,15 @@ export const FlexRowWrap = styled.div<{
   column-gap: ${(props) => (props.$columnGap ? props.$columnGap : '1rem')};
   row-gap: ${(props) => (props.$rowGap ? props.$rowGap : '0.75rem')};
 `;
+
+export const ResponsiveRow = styled.div<{ $gap?: string; $smWidth?: string }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${(props) => (props.$gap ? props.$gap : '1rem')};
+
+  @media (max-width: ${({ $smWidth }) => ($smWidth ? $smWidth : '450px')}) {
+    flex-direction: column;
+    align-items: start;
+  }
+`;

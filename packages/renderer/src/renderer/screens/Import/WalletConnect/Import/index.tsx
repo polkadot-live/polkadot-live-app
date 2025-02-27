@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '../../../../theme/variables';
@@ -13,7 +14,6 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
@@ -144,22 +144,27 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         $padButton={false}
         style={{ paddingTop: '1rem' }}
       >
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => {
-            setSection(0);
-          }}
-        />
-        <UI.SortControlLabel label="Import WalletConnect Accounts" />
-
-        <ButtonText
-          iconLeft={faCaretRight}
-          text={'WalletConnect Accounts'}
-          disabled={wcAddresses.length === 0}
-          onClick={() => setShowImportUi(false)}
-        />
+        <Styles.ResponsiveRow $smWidth="500px">
+          <Styles.FlexRow>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => {
+                setSection(0);
+              }}
+            />
+            <UI.SortControlLabel label="Import WalletConnect Accounts" />
+          </Styles.FlexRow>
+          <Styles.FlexRow>
+            <ButtonText
+              iconLeft={faCaretRight}
+              text={'WalletConnect Accounts'}
+              disabled={wcAddresses.length === 0}
+              onClick={() => setShowImportUi(false)}
+            />
+          </Styles.FlexRow>
+        </Styles.ResponsiveRow>
       </UI.ControlsWrapper>
 
       <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
@@ -170,7 +175,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             value={accordionValue}
             onValueChange={(val) => setAccordionValue(val as string[])}
           >
-            <FlexColumn>
+            <Styles.FlexColumn>
               <AccordionRx.Item
                 className="AccordionItem"
                 value={'establish-session'}
@@ -181,9 +186,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   {wcSessionRestored ? (
-                    <FlexColumn>
+                    <Styles.FlexColumn>
                       {!getOnlineMode() && renderOfflineWarning('0')}
-                      <FlexRow $gap={'0.5rem'}>
+                      <Styles.FlexRow $gap={'0.5rem'}>
                         <InfoCard
                           icon={faCircleDot}
                           iconTransform={'shrink-3'}
@@ -220,8 +225,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         >
                           Fetch
                         </WcSessionButton>
-                      </FlexRow>
-                    </FlexColumn>
+                      </Styles.FlexRow>
+                    </Styles.FlexColumn>
                   ) : (
                     <>
                       <ItemsColumn>
@@ -266,9 +271,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           )
                         )}
                       </ItemsColumn>
-                      <FlexColumn style={{ marginTop: '0.5rem' }}>
+                      <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                         {!getOnlineMode() && renderOfflineWarning()}
-                        <FlexRow $gap={'0.5rem'}>
+                        <Styles.FlexRow $gap={'0.5rem'}>
                           <InfoCard
                             icon={faCircleDot}
                             iconTransform={'shrink-3'}
@@ -292,8 +297,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           >
                             Connect
                           </WcSessionButton>
-                        </FlexRow>
-                      </FlexColumn>
+                        </Styles.FlexRow>
+                      </Styles.FlexColumn>
                     </>
                   )}
                 </UI.AccordionContent>
@@ -333,7 +338,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 <h2>
                                   {i + 1}. {chainId} Account
                                 </h2>
-                                <FlexRow $gap={'0.6rem'}>
+                                <Styles.FlexRow $gap={'0.6rem'}>
                                   <span>{ellipsisFn(encoded, 12)}</span>
                                   <span>
                                     <UI.CopyButton
@@ -346,7 +351,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       }
                                     />
                                   </span>
-                                </FlexRow>
+                                </Styles.FlexRow>
                               </div>
                               {isAlreadyImported(encoded) ? (
                                 <span className="imported">Imported</span>
@@ -389,7 +394,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   )}
                 </UI.AccordionContent>
               </AccordionRx.Item>
-            </FlexColumn>
+            </Styles.FlexColumn>
           </AccordionRx.Root>
         </UI.AccordionWrapper>
       </div>
