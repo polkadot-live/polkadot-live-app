@@ -13,7 +13,7 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { FlexRow, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexRow, StatsFooter } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
@@ -91,7 +91,7 @@ export const Action = () => {
 
   return (
     <>
-      <Scrollable $headerHeight={0} style={{ padding: '0 0.25rem' }}>
+      <UI.ScrollableMax headerHeight={0} style={{ padding: '0 0.25rem' }}>
         {isBuildingExtrinsic && (
           <BarLoader
             color={darkMode ? '#642763' : '#a772a6'}
@@ -163,7 +163,7 @@ export const Action = () => {
                                 />
                               </span>
                             </UI.TooltipRx>
-                            <span>{accountName}</span>
+                            <span className="text-ellipsis">{accountName}</span>
                           </FlexRow>
                         </div>
                       </UI.SelectItem>
@@ -211,7 +211,10 @@ export const Action = () => {
                           aria-hidden
                         />
                         {getExtrinsicTitle(info)}
-                        <span className="right">
+                        <FlexRow
+                          $gap={'1.5rem'}
+                          className="right extrinsics-right"
+                        >
                           <div className="stat" style={{ minWidth: '80px' }}>
                             <FontAwesomeIcon
                               icon={faCircleDot}
@@ -259,7 +262,7 @@ export const Action = () => {
                               icon={faClock}
                             />
                           </div>
-                        </span>
+                        </FlexRow>
                       </UI.AccordionTrigger>
                       <div className="HeaderContentDropdownWrapper">
                         <ExtrinsicDropdownMenu
@@ -280,7 +283,7 @@ export const Action = () => {
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
       <StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
