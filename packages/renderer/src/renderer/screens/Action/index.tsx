@@ -206,64 +206,62 @@ export const Action = () => {
                   >
                     <FlexRow $gap={'2px'} style={{ marginTop: '10px' }}>
                       <UI.AccordionTrigger>
-                        <FlexRow style={{ width: '100%' }}>
-                          <ChevronDownIcon
-                            className="AccordionChevron"
-                            aria-hidden
-                          />
-                          {getExtrinsicTitle(info)}
-                          <FlexRow
-                            $gap={'1.6rem'}
-                            className="right extrinsics-right"
-                          >
-                            <div className="stat" style={{ minWidth: '80px' }}>
-                              <FontAwesomeIcon
-                                icon={faCircleDot}
-                                fade={fadeTxIcon(info.txStatus)}
-                                transform={'shrink-2'}
-                              />
-                              {getTxStatusTitle(info.txStatus)}
-                            </div>
-                            <div className="stat">
-                              <UI.TooltipRx
-                                text={ellipsisFn(info.actionMeta.from, 12)}
-                                theme={theme}
-                              >
-                                <span>
-                                  <UI.Identicon
-                                    value={info.actionMeta.from}
-                                    fontSize={'1.5rem'}
-                                  />
-                                </span>
-                              </UI.TooltipRx>
-                            </div>
-                            <div className="stat">
-                              <TriggerRightIcon
-                                text={info.actionMeta.accountName}
-                                theme={theme}
-                                icon={faUser}
-                                iconTransform={'grow-2'}
-                              />
-                            </div>
-                            <div className="stat">
-                              <TriggerRightIcon
-                                text={getCategoryTitle(info)}
-                                theme={theme}
-                                icon={faTag}
-                                iconTransform={'grow-2'}
-                              />
-                            </div>
-                            <div className="stat">
-                              <TriggerRightIcon
-                                text={formatDistanceToNow(
-                                  new Date(info.timestamp),
-                                  { addSuffix: true }
-                                )}
-                                theme={theme}
-                                icon={faClock}
-                              />
-                            </div>
-                          </FlexRow>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        {getExtrinsicTitle(info)}
+                        <FlexRow
+                          $gap={'1.5rem'}
+                          className="right extrinsics-right"
+                        >
+                          <div className="stat" style={{ minWidth: '80px' }}>
+                            <FontAwesomeIcon
+                              icon={faCircleDot}
+                              fade={fadeTxIcon(info.txStatus)}
+                              transform={'shrink-2'}
+                            />
+                            {getTxStatusTitle(info.txStatus)}
+                          </div>
+                          <div className="stat">
+                            <UI.TooltipRx
+                              text={ellipsisFn(info.actionMeta.from, 12)}
+                              theme={theme}
+                            >
+                              <span>
+                                <UI.Identicon
+                                  value={info.actionMeta.from}
+                                  fontSize={'1.5rem'}
+                                />
+                              </span>
+                            </UI.TooltipRx>
+                          </div>
+                          <div className="stat">
+                            <TriggerRightIcon
+                              text={info.actionMeta.accountName}
+                              theme={theme}
+                              icon={faUser}
+                              iconTransform={'grow-2'}
+                            />
+                          </div>
+                          <div className="stat">
+                            <TriggerRightIcon
+                              text={getCategoryTitle(info)}
+                              theme={theme}
+                              icon={faTag}
+                              iconTransform={'grow-2'}
+                            />
+                          </div>
+                          <div className="stat">
+                            <TriggerRightIcon
+                              text={formatDistanceToNow(
+                                new Date(info.timestamp),
+                                { addSuffix: true }
+                              )}
+                              theme={theme}
+                              icon={faClock}
+                            />
+                          </div>
                         </FlexRow>
                       </UI.AccordionTrigger>
                       <div className="HeaderContentDropdownWrapper">
