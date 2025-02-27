@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
@@ -14,6 +15,11 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 
+import { InfoCard } from '@polkadot-live/ui/components';
+import {
+  ButtonPrimaryInvert,
+  ButtonText,
+} from '@polkadot-live/ui/kits/buttons';
 import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
@@ -22,12 +28,6 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
 } from '@radix-ui/react-icons';
-import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
-import { InfoCard } from '@polkadot-live/ui/components';
-import {
-  ButtonPrimaryInvert,
-  ButtonText,
-} from '@polkadot-live/ui/kits/buttons';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -157,8 +157,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   }, [ledger.statusCodes]);
 
   return (
-    <Scrollable
-      $footerHeight={4}
+    <UI.ScrollableMax
+      footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '1rem' }}
     >
       {(ledger.isFetching || ledger.isImporting) && (
@@ -180,27 +180,32 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         $padButton={false}
         style={{ paddingTop: '1rem' }}
       >
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => {
-            ledger.clearCaches(false, false, true);
-            setShowImportUi(ledgerAddresses.length === 0);
-            setSection(0);
-          }}
-        />
-        <UI.SortControlLabel label="Import Ledger Accounts" />
-
-        <ButtonText
-          iconLeft={faCaretRight}
-          text={'Ledger Accounts'}
-          disabled={ledgerAddresses.length === 0}
-          onClick={() => {
-            ledger.clearCaches(false, false, true);
-            setShowImportUi(false);
-          }}
-        />
+        <Styles.ResponsiveRow $smWidth="450px">
+          <Styles.FlexRow>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => {
+                ledger.clearCaches(false, false, true);
+                setShowImportUi(ledgerAddresses.length === 0);
+                setSection(0);
+              }}
+            />
+            <UI.SortControlLabel label="Import Ledger Accounts" />
+          </Styles.FlexRow>
+          <Styles.FlexRow>
+            <ButtonText
+              iconLeft={faCaretRight}
+              text={'Ledger Accounts'}
+              disabled={ledgerAddresses.length === 0}
+              onClick={() => {
+                ledger.clearCaches(false, false, true);
+                setShowImportUi(false);
+              }}
+            />
+          </Styles.FlexRow>
+        </Styles.ResponsiveRow>
       </UI.ControlsWrapper>
 
       <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
@@ -211,7 +216,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             value={accordionValue}
             onValueChange={(val) => setAccordionValue(val as string[])}
           >
-            <FlexColumn>
+            <Styles.FlexColumn>
               {/** Choose Network */}
               <Accordion.Item
                 className="AccordionItem"
@@ -222,7 +227,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <UI.TriggerHeader>Connect Ledger</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
-                  <FlexRow>
+                  <Styles.FlexRow>
                     <Select.Root
                       value={ledger.selectedNetworkState}
                       onValueChange={(val) => ledger.setSelectedNetwork(val)}
@@ -297,7 +302,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     >
                       Connect
                     </ConnectButton>
-                  </FlexRow>
+                  </Styles.FlexRow>
 
                   {/** Error and Status Messages */}
                   {showConnectStatus && !ledger.deviceConnected && (
@@ -363,14 +368,21 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       <ItemsColumn>
                         {receivedAddresses.map(({ address, pubKey }, i) => (
                           <ImportAddressRow key={address}>
-                            <UI.Identicon value={address} fontSize={'2.5rem'} />
+                            <div className="identicon">
+                              <UI.Identicon
+                                value={address}
+                                fontSize={'2.5rem'}
+                              />
+                            </div>
                             <div className="addressInfo">
                               <h2>
                                 {connectedNetwork} Ledger Account{' '}
                                 {ledger.pageIndex * 5 + i + 1}
                               </h2>
-                              <FlexRow $gap={'0.6rem'}>
-                                <span>{ellipsisFn(address, 12)}</span>
+                              <Styles.FlexRow $gap={'0.6rem'}>
+                                <span className="address">
+                                  {ellipsisFn(address, 12)}
+                                </span>
                                 <span>
                                   <UI.CopyButton
                                     iconFontSize="1rem"
@@ -382,30 +394,32 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                     }
                                   />
                                 </span>
-                              </FlexRow>
+                              </Styles.FlexRow>
                             </div>
-                            {isAlreadyImported(address) ? (
-                              <span className="imported">Imported</span>
-                            ) : (
-                              <CheckboxRoot
-                                $theme={theme}
-                                className="CheckboxRoot"
-                                id={`c${i}`}
-                                checked={ledger.getChecked(pubKey)}
-                                disabled={ledger.isFetching}
-                                onCheckedChange={(checked) =>
-                                  handleCheckboxClick(
-                                    checked,
-                                    pubKey,
-                                    `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
-                                  )
-                                }
-                              >
-                                <Checkbox.Indicator className="CheckboxIndicator">
-                                  <CheckIcon />
-                                </Checkbox.Indicator>
-                              </CheckboxRoot>
-                            )}
+                            <div className="right">
+                              {isAlreadyImported(address) ? (
+                                <span className="imported">Imported</span>
+                              ) : (
+                                <CheckboxRoot
+                                  $theme={theme}
+                                  className="CheckboxRoot"
+                                  id={`c${i}`}
+                                  checked={ledger.getChecked(pubKey)}
+                                  disabled={ledger.isFetching}
+                                  onCheckedChange={(checked) =>
+                                    handleCheckboxClick(
+                                      checked,
+                                      pubKey,
+                                      `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
+                                    )
+                                  }
+                                >
+                                  <Checkbox.Indicator className="CheckboxIndicator">
+                                    <CheckIcon />
+                                  </Checkbox.Indicator>
+                                </CheckboxRoot>
+                              )}
+                            </div>
                           </ImportAddressRow>
                         ))}
                       </ItemsColumn>
@@ -442,10 +456,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   )}
                 </UI.AccordionContent>
               </Accordion.Item>
-            </FlexColumn>
+            </Styles.FlexColumn>
           </Accordion.Root>
         </UI.AccordionWrapper>
       </div>
-    </Scrollable>
+    </UI.ScrollableMax>
   );
 };

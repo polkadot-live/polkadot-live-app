@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '../../../../theme/variables';
@@ -13,7 +14,6 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
 import { InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
@@ -121,8 +121,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   );
 
   return (
-    <Scrollable
-      $footerHeight={4}
+    <UI.ScrollableMax
+      footerHeight={4}
       style={{ paddingTop: 0, paddingBottom: '1rem' }}
     >
       {(wcConnecting || wcDisconnecting) && (
@@ -138,28 +138,34 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
         <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
       </div>
+
       {/** Bredcrumb */}
       <UI.ControlsWrapper
         $padWrapper={true}
         $padButton={false}
         style={{ paddingTop: '1rem' }}
       >
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => {
-            setSection(0);
-          }}
-        />
-        <UI.SortControlLabel label="Import WalletConnect Accounts" />
-
-        <ButtonText
-          iconLeft={faCaretRight}
-          text={'WalletConnect Accounts'}
-          disabled={wcAddresses.length === 0}
-          onClick={() => setShowImportUi(false)}
-        />
+        <Styles.ResponsiveRow $smWidth="500px">
+          <Styles.FlexRow>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => {
+                setSection(0);
+              }}
+            />
+            <UI.SortControlLabel label="Import WalletConnect Accounts" />
+          </Styles.FlexRow>
+          <Styles.FlexRow>
+            <ButtonText
+              iconLeft={faCaretRight}
+              text={'WalletConnect Accounts'}
+              disabled={wcAddresses.length === 0}
+              onClick={() => setShowImportUi(false)}
+            />
+          </Styles.FlexRow>
+        </Styles.ResponsiveRow>
       </UI.ControlsWrapper>
 
       <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
@@ -170,7 +176,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             value={accordionValue}
             onValueChange={(val) => setAccordionValue(val as string[])}
           >
-            <FlexColumn>
+            <Styles.FlexColumn>
               <AccordionRx.Item
                 className="AccordionItem"
                 value={'establish-session'}
@@ -181,47 +187,57 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   {wcSessionRestored ? (
-                    <FlexColumn>
+                    <Styles.FlexColumn>
                       {!getOnlineMode() && renderOfflineWarning('0')}
-                      <FlexRow $gap={'0.5rem'}>
-                        <InfoCard
-                          icon={faCircleDot}
-                          iconTransform={'shrink-3'}
-                          style={{ margin: '0', flex: 1 }}
+                      <Styles.ResponsiveRow $smWidth="600px" $gap={'0.5rem'}>
+                        <Styles.FlexRow
+                          className="SmAlignStretch"
+                          $gap={'0.5rem'}
+                          style={{ flex: 1 }}
                         >
-                          <span>An existing session has been detected.</span>
-                        </InfoCard>
+                          <InfoCard
+                            icon={faCircleDot}
+                            iconTransform={'shrink-3'}
+                            style={{ margin: '0', flex: 1 }}
+                          >
+                            <span>An existing session has been detected.</span>
+                          </InfoCard>
+                        </Styles.FlexRow>
+                        <Styles.FlexRow
+                          className="SmAlignStart"
+                          $gap={'0.5rem'}
+                        >
+                          {/** Connect and Disconnect Buttons */}
+                          <WcSessionButton
+                            disabled={
+                              !getOnlineMode() ||
+                              !wcSessionRestored ||
+                              !wcInitialized ||
+                              wcConnecting ||
+                              wcDisconnecting
+                            }
+                            onClick={async () => await handleDisconnect()}
+                          >
+                            Disconnect
+                          </WcSessionButton>
 
-                        {/** Connect and Disconnect Buttons */}
-                        <WcSessionButton
-                          disabled={
-                            !getOnlineMode() ||
-                            !wcSessionRestored ||
-                            !wcInitialized ||
-                            wcConnecting ||
-                            wcDisconnecting
-                          }
-                          onClick={async () => await handleDisconnect()}
-                        >
-                          Disconnect
-                        </WcSessionButton>
-
-                        <WcSessionButton
-                          disabled={
-                            !wcSessionRestored ||
-                            !wcInitialized ||
-                            wcConnecting ||
-                            wcDisconnecting
-                          }
-                          onClick={() => {
-                            handleFetch();
-                            setAccordionValue(['import-addresses']);
-                          }}
-                        >
-                          Fetch
-                        </WcSessionButton>
-                      </FlexRow>
-                    </FlexColumn>
+                          <WcSessionButton
+                            disabled={
+                              !wcSessionRestored ||
+                              !wcInitialized ||
+                              wcConnecting ||
+                              wcDisconnecting
+                            }
+                            onClick={() => {
+                              handleFetch();
+                              setAccordionValue(['import-addresses']);
+                            }}
+                          >
+                            Fetch
+                          </WcSessionButton>
+                        </Styles.FlexRow>
+                      </Styles.ResponsiveRow>
+                    </Styles.FlexColumn>
                   ) : (
                     <>
                       <ItemsColumn>
@@ -266,9 +282,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           )
                         )}
                       </ItemsColumn>
-                      <FlexColumn style={{ marginTop: '0.5rem' }}>
+                      <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                         {!getOnlineMode() && renderOfflineWarning()}
-                        <FlexRow $gap={'0.5rem'}>
+                        <Styles.FlexRow $gap={'0.5rem'}>
                           <InfoCard
                             icon={faCircleDot}
                             iconTransform={'shrink-3'}
@@ -292,8 +308,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           >
                             Connect
                           </WcSessionButton>
-                        </FlexRow>
-                      </FlexColumn>
+                        </Styles.FlexRow>
+                      </Styles.FlexColumn>
                     </>
                   )}
                 </UI.AccordionContent>
@@ -325,16 +341,20 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         {wcFetchedAddresses.map(
                           ({ chainId, encoded, selected }, i) => (
                             <ImportAddressRow key={encoded}>
-                              <UI.Identicon
-                                value={encoded}
-                                fontSize={'2.5rem'}
-                              />
+                              <div className="identicon">
+                                <UI.Identicon
+                                  value={encoded}
+                                  fontSize={'2.5rem'}
+                                />
+                              </div>
                               <div className="addressInfo">
                                 <h2>
                                   {i + 1}. {chainId} Account
                                 </h2>
-                                <FlexRow $gap={'0.6rem'}>
-                                  <span>{ellipsisFn(encoded, 12)}</span>
+                                <Styles.FlexRow $gap={'0.6rem'}>
+                                  <span className="address">
+                                    {ellipsisFn(encoded, 12)}
+                                  </span>
                                   <span>
                                     <UI.CopyButton
                                       iconFontSize="1rem"
@@ -346,26 +366,28 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       }
                                     />
                                   </span>
-                                </FlexRow>
+                                </Styles.FlexRow>
                               </div>
-                              {isAlreadyImported(encoded) ? (
-                                <span className="imported">Imported</span>
-                              ) : (
-                                <CheckboxRoot
-                                  $theme={theme}
-                                  className="CheckboxRoot"
-                                  id={`${i + 1}-${chainId}`}
-                                  checked={selected}
-                                  disabled={false}
-                                  onCheckedChange={(checked) => {
-                                    handleSelectAddress(encoded, checked);
-                                  }}
-                                >
-                                  <Checkbox.Indicator className="CheckboxIndicator">
-                                    <CheckIcon />
-                                  </Checkbox.Indicator>
-                                </CheckboxRoot>
-                              )}
+                              <div className="right">
+                                {isAlreadyImported(encoded) ? (
+                                  <span className="imported">Imported</span>
+                                ) : (
+                                  <CheckboxRoot
+                                    $theme={theme}
+                                    className="CheckboxRoot"
+                                    id={`${i + 1}-${chainId}`}
+                                    checked={selected}
+                                    disabled={false}
+                                    onCheckedChange={(checked) => {
+                                      handleSelectAddress(encoded, checked);
+                                    }}
+                                  >
+                                    <Checkbox.Indicator className="CheckboxIndicator">
+                                      <CheckIcon />
+                                    </Checkbox.Indicator>
+                                  </CheckboxRoot>
+                                )}
+                              </div>
                             </ImportAddressRow>
                           )
                         )}
@@ -389,10 +411,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   )}
                 </UI.AccordionContent>
               </AccordionRx.Item>
-            </FlexColumn>
+            </Styles.FlexColumn>
           </AccordionRx.Root>
         </UI.AccordionWrapper>
       </div>
-    </Scrollable>
+    </UI.ScrollableMax>
   );
 };

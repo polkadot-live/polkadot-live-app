@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
 import {
   ControlsWrapper,
@@ -15,7 +16,6 @@ import {
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
 import { useState } from 'react';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
@@ -44,7 +44,7 @@ export const Manage = ({
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
         </div>
@@ -54,21 +54,26 @@ export const Manage = ({
           $padBottom={false}
           style={{ paddingTop: '1rem', marginBottom: 0 }}
         >
-          <ButtonPrimaryInvert
-            className="back-btn"
-            text="Back"
-            iconLeft={faCaretLeft}
-            onClick={() => {
-              setSection(0);
-            }}
-          />
-          <SortControlLabel label="WalletConnect Accounts" />
-
-          <ButtonText
-            iconLeft={faCaretRight}
-            text={'Import WalletConnect Accounts'}
-            onClick={() => setShowImportUi(true)}
-          />
+          <Styles.ResponsiveRow $smWidth="500px">
+            <Styles.FlexRow>
+              <ButtonPrimaryInvert
+                className="back-btn"
+                text="Back"
+                iconLeft={faCaretLeft}
+                onClick={() => {
+                  setSection(0);
+                }}
+              />
+              <SortControlLabel label="WalletConnect Accounts" />
+            </Styles.FlexRow>
+            <Styles.FlexRow>
+              <ButtonText
+                iconLeft={faCaretRight}
+                text={'Import WalletConnect Accounts'}
+                onClick={() => setShowImportUi(true)}
+              />
+            </Styles.FlexRow>
+          </Styles.ResponsiveRow>
         </ControlsWrapper>
 
         {/* Address List */}
@@ -81,7 +86,7 @@ export const Manage = ({
                 value={accordionValue}
                 onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
-                <FlexColumn>
+                <Styles.FlexColumn>
                   {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                     ([chainId, chainAddresses]) => (
                       <Accordion.Item
@@ -110,14 +115,14 @@ export const Manage = ({
                       </Accordion.Item>
                     )
                   )}
-                </FlexColumn>
+                </Styles.FlexColumn>
               </Accordion.Root>
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
-      <StatsFooter $chainId={'Polkadot'}>
+      <Styles.StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -126,7 +131,7 @@ export const Manage = ({
             </div>
           </section>
         </div>
-      </StatsFooter>
+      </Styles.StatsFooter>
     </>
   );
 };

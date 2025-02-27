@@ -81,7 +81,7 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          {renderImportPage()}
+          {section === 1 && renderImportPage()}
         </div>
       </ModalMotionTwoSection>
     </ModalSection>
