@@ -138,6 +138,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
         <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
       </div>
+
       {/** Bredcrumb */}
       <UI.ControlsWrapper
         $padWrapper={true}
@@ -188,44 +189,54 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   {wcSessionRestored ? (
                     <Styles.FlexColumn>
                       {!getOnlineMode() && renderOfflineWarning('0')}
-                      <Styles.FlexRow $gap={'0.5rem'}>
-                        <InfoCard
-                          icon={faCircleDot}
-                          iconTransform={'shrink-3'}
-                          style={{ margin: '0', flex: 1 }}
+                      <Styles.ResponsiveRow $smWidth="600px" $gap={'0.5rem'}>
+                        <Styles.FlexRow
+                          className="SmAlignStretch"
+                          $gap={'0.5rem'}
+                          style={{ flex: 1 }}
                         >
-                          <span>An existing session has been detected.</span>
-                        </InfoCard>
+                          <InfoCard
+                            icon={faCircleDot}
+                            iconTransform={'shrink-3'}
+                            style={{ margin: '0', flex: 1 }}
+                          >
+                            <span>An existing session has been detected.</span>
+                          </InfoCard>
+                        </Styles.FlexRow>
+                        <Styles.FlexRow
+                          className="SmAlignStart"
+                          $gap={'0.5rem'}
+                        >
+                          {/** Connect and Disconnect Buttons */}
+                          <WcSessionButton
+                            disabled={
+                              !getOnlineMode() ||
+                              !wcSessionRestored ||
+                              !wcInitialized ||
+                              wcConnecting ||
+                              wcDisconnecting
+                            }
+                            onClick={async () => await handleDisconnect()}
+                          >
+                            Disconnect
+                          </WcSessionButton>
 
-                        {/** Connect and Disconnect Buttons */}
-                        <WcSessionButton
-                          disabled={
-                            !getOnlineMode() ||
-                            !wcSessionRestored ||
-                            !wcInitialized ||
-                            wcConnecting ||
-                            wcDisconnecting
-                          }
-                          onClick={async () => await handleDisconnect()}
-                        >
-                          Disconnect
-                        </WcSessionButton>
-
-                        <WcSessionButton
-                          disabled={
-                            !wcSessionRestored ||
-                            !wcInitialized ||
-                            wcConnecting ||
-                            wcDisconnecting
-                          }
-                          onClick={() => {
-                            handleFetch();
-                            setAccordionValue(['import-addresses']);
-                          }}
-                        >
-                          Fetch
-                        </WcSessionButton>
-                      </Styles.FlexRow>
+                          <WcSessionButton
+                            disabled={
+                              !wcSessionRestored ||
+                              !wcInitialized ||
+                              wcConnecting ||
+                              wcDisconnecting
+                            }
+                            onClick={() => {
+                              handleFetch();
+                              setAccordionValue(['import-addresses']);
+                            }}
+                          >
+                            Fetch
+                          </WcSessionButton>
+                        </Styles.FlexRow>
+                      </Styles.ResponsiveRow>
                     </Styles.FlexColumn>
                   ) : (
                     <>

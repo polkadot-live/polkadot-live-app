@@ -43,5 +43,12 @@ export const ResponsiveRow = styled.div<{ $gap?: string; $smWidth?: string }>`
   @media (max-width: ${({ $smWidth }) => ($smWidth ? $smWidth : '450px')}) {
     flex-direction: column;
     align-items: start;
+
+    .SmAlignStretch {
+      align-self: stretch;
+    }
+    .SmAlignStart {
+      align-self: start;
+    }
   }
 `;
