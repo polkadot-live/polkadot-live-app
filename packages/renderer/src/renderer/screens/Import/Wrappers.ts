@@ -9,15 +9,28 @@ import type { AnyData } from '@polkadot-live/types/misc';
 export const ImportAddressRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.75rem;
-  padding: 1.15rem 1.5rem;
+  gap: 1.25rem;
+  padding: 1.25rem;
 
-  > .addressInfo {
+  .identicon {
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .addressInfo {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
+    min-width: 0; // Allows address overflow
 
+    .address {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     > h2 {
       margin: 0;
       padding: 0;
@@ -27,10 +40,15 @@ export const ImportAddressRow = styled.div`
       color: var(--text-color-secondary);
     }
   }
-
+  .right {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 64px;
+  }
   .imported {
     color: var(--text-color-secondary);
     font-size: 1rem;
+    text-align: right;
   }
 `;
 

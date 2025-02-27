@@ -341,16 +341,20 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         {wcFetchedAddresses.map(
                           ({ chainId, encoded, selected }, i) => (
                             <ImportAddressRow key={encoded}>
-                              <UI.Identicon
-                                value={encoded}
-                                fontSize={'2.5rem'}
-                              />
+                              <div className="identicon">
+                                <UI.Identicon
+                                  value={encoded}
+                                  fontSize={'2.5rem'}
+                                />
+                              </div>
                               <div className="addressInfo">
                                 <h2>
                                   {i + 1}. {chainId} Account
                                 </h2>
                                 <Styles.FlexRow $gap={'0.6rem'}>
-                                  <span>{ellipsisFn(encoded, 12)}</span>
+                                  <span className="address">
+                                    {ellipsisFn(encoded, 12)}
+                                  </span>
                                   <span>
                                     <UI.CopyButton
                                       iconFontSize="1rem"
@@ -364,24 +368,26 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   </span>
                                 </Styles.FlexRow>
                               </div>
-                              {isAlreadyImported(encoded) ? (
-                                <span className="imported">Imported</span>
-                              ) : (
-                                <CheckboxRoot
-                                  $theme={theme}
-                                  className="CheckboxRoot"
-                                  id={`${i + 1}-${chainId}`}
-                                  checked={selected}
-                                  disabled={false}
-                                  onCheckedChange={(checked) => {
-                                    handleSelectAddress(encoded, checked);
-                                  }}
-                                >
-                                  <Checkbox.Indicator className="CheckboxIndicator">
-                                    <CheckIcon />
-                                  </Checkbox.Indicator>
-                                </CheckboxRoot>
-                              )}
+                              <div className="right">
+                                {isAlreadyImported(encoded) ? (
+                                  <span className="imported">Imported</span>
+                                ) : (
+                                  <CheckboxRoot
+                                    $theme={theme}
+                                    className="CheckboxRoot"
+                                    id={`${i + 1}-${chainId}`}
+                                    checked={selected}
+                                    disabled={false}
+                                    onCheckedChange={(checked) => {
+                                      handleSelectAddress(encoded, checked);
+                                    }}
+                                  >
+                                    <Checkbox.Indicator className="CheckboxIndicator">
+                                      <CheckIcon />
+                                    </Checkbox.Indicator>
+                                  </CheckboxRoot>
+                                )}
+                              </div>
                             </ImportAddressRow>
                           )
                         )}

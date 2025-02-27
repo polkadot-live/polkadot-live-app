@@ -368,14 +368,21 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       <ItemsColumn>
                         {receivedAddresses.map(({ address, pubKey }, i) => (
                           <ImportAddressRow key={address}>
-                            <UI.Identicon value={address} fontSize={'2.5rem'} />
+                            <div className="identicon">
+                              <UI.Identicon
+                                value={address}
+                                fontSize={'2.5rem'}
+                              />
+                            </div>
                             <div className="addressInfo">
                               <h2>
                                 {connectedNetwork} Ledger Account{' '}
                                 {ledger.pageIndex * 5 + i + 1}
                               </h2>
                               <Styles.FlexRow $gap={'0.6rem'}>
-                                <span>{ellipsisFn(address, 12)}</span>
+                                <span className="address">
+                                  {ellipsisFn(address, 12)}
+                                </span>
                                 <span>
                                   <UI.CopyButton
                                     iconFontSize="1rem"
@@ -389,28 +396,30 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 </span>
                               </Styles.FlexRow>
                             </div>
-                            {isAlreadyImported(address) ? (
-                              <span className="imported">Imported</span>
-                            ) : (
-                              <CheckboxRoot
-                                $theme={theme}
-                                className="CheckboxRoot"
-                                id={`c${i}`}
-                                checked={ledger.getChecked(pubKey)}
-                                disabled={ledger.isFetching}
-                                onCheckedChange={(checked) =>
-                                  handleCheckboxClick(
-                                    checked,
-                                    pubKey,
-                                    `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
-                                  )
-                                }
-                              >
-                                <Checkbox.Indicator className="CheckboxIndicator">
-                                  <CheckIcon />
-                                </Checkbox.Indicator>
-                              </CheckboxRoot>
-                            )}
+                            <div className="right">
+                              {isAlreadyImported(address) ? (
+                                <span className="imported">Imported</span>
+                              ) : (
+                                <CheckboxRoot
+                                  $theme={theme}
+                                  className="CheckboxRoot"
+                                  id={`c${i}`}
+                                  checked={ledger.getChecked(pubKey)}
+                                  disabled={ledger.isFetching}
+                                  onCheckedChange={(checked) =>
+                                    handleCheckboxClick(
+                                      checked,
+                                      pubKey,
+                                      `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
+                                    )
+                                  }
+                                >
+                                  <Checkbox.Indicator className="CheckboxIndicator">
+                                    <CheckIcon />
+                                  </Checkbox.Indicator>
+                                </CheckboxRoot>
+                              )}
+                            </div>
                           </ImportAddressRow>
                         ))}
                       </ItemsColumn>
