@@ -31,11 +31,18 @@ export const SettingWrapper = styled(motion.div)`
     display: flex;
     align-items: center;
     column-gap: 0.5rem;
+    min-width: 0; // Allow title overflow.
   }
   .right {
     display: flex;
     align-items: center;
     justify-content: end;
+  }
+  .title {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .icon-wrapper {
     ${mixinHelpIcon}
