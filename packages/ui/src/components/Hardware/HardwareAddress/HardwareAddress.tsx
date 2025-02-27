@@ -16,9 +16,10 @@ import { EllipsisSpinner } from '../../Spinners';
 import { ButtonMono } from '../../../kits/Buttons';
 import { validateAccountName } from '../../../utils';
 import { HardwareAddressWrapper } from './Wrapper';
+import { TooltipRx } from '../../TooltipRx';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
-import { TooltipRx } from '../../TooltipRx';
+import { FlexRow } from '../../../styles';
 
 export const HardwareAddress = ({
   address,
@@ -82,125 +83,116 @@ export const HardwareAddress = ({
     setEditName(val);
   };
 
-  // Function to render a chain icon.
-  const renderChainIcon = () => (
-    <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />
-  );
-
   // Utility to get processing status.
   const isProcessing = () => processingStatus || false;
 
   return (
     <HardwareAddressWrapper>
-      <div className="content">
-        <div className="inner">
-          <TooltipRx text={ellipsisFn(address, 12)} side="right" theme={theme}>
-            <div className="identicon">
-              <Identicon value={address} />
-            </div>
-          </TooltipRx>
-          <div>
-            <section>
-              <div className="input-wrapper">
-                {renderChainIcon()}
-                <input
-                  style={{
-                    borderColor: editing
-                      ? 'var(--border-mid-color)'
-                      : 'var(--background-primary)',
-                  }}
-                  type="text"
-                  disabled={isProcessing()}
-                  value={editing ? editName : accountName}
-                  onChange={(e) => handleChange(e)}
-                  onFocus={() => setEditing(true)}
-                  onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                      commitEdit();
-                      e.currentTarget.blur();
-                    }
-                  }}
-                />
-
-                {editing && !isProcessing() && (
-                  <div className="edit">
-                    <button
-                      id="commit-btn"
-                      type="button"
-                      onPointerDown={() => commitEdit()}
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button>
-                    <button type="button" onPointerDown={() => cancelEditing()}>
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </section>
+      <FlexRow $gap={'0.75rem'} style={{ width: '100%' }}>
+        <TooltipRx text={ellipsisFn(address, 12)} side="right" theme={theme}>
+          <div className="identicon">
+            <Identicon value={address} />
           </div>
-        </div>
-      </div>
+        </TooltipRx>
+        <div className="input-wrapper">
+          <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />
+          <input
+            style={{
+              borderColor: editing
+                ? 'var(--border-mid-color)'
+                : 'var(--background-primary)',
+            }}
+            type="text"
+            disabled={isProcessing()}
+            value={editing ? editName : accountName}
+            onChange={(e) => handleChange(e)}
+            onFocus={() => setEditing(true)}
+            onKeyUp={(e) => {
+              if (e.key === 'Enter') {
+                commitEdit();
+                e.currentTarget.blur();
+              }
+            }}
+          />
 
-      {/* Account buttons */}
-      <div className="action">
-        {isImported && !isProcessing() ? (
-          <TooltipRx text={'Remove From Main Window'} theme={theme}>
-            <div style={{ position: 'relative' }}>
-              <ButtonMono
-                className="account-action-btn white-hover"
-                iconLeft={faMinus}
-                iconTransform={'grow-0'}
-                text={''}
-                onClick={() => openRemoveHandler()}
-              />
-            </div>
-          </TooltipRx>
-        ) : (
-          <div>
-            {isProcessing() ? (
+          {editing && !isProcessing() && (
+            <FlexRow className="edit">
+              <button
+                id="commit-btn"
+                type="button"
+                onPointerDown={() => commitEdit()}
+              >
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <button type="button" onPointerDown={() => cancelEditing()}>
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
+            </FlexRow>
+          )}
+        </div>
+
+        {/* Account buttons */}
+        <FlexRow $gap={'0.75rem'}>
+          {isImported && !isProcessing() ? (
+            <TooltipRx text={'Remove From Main Window'} theme={theme}>
               <div style={{ position: 'relative' }}>
                 <ButtonMono
-                  disabled={!isConnected}
-                  iconLeft={faPlus}
-                  iconTransform="grow-0"
+                  className="action-btn white-hover"
+                  iconLeft={faMinus}
+                  iconTransform={'grow-0'}
                   text={''}
-                  className={'account-action-btn processing'}
+                  onClick={() => openRemoveHandler()}
                 />
-                <EllipsisSpinner style={{ top: '8px' }} />
               </div>
-            ) : (
-              <TooltipRx
-                text={isConnected ? 'Add To Main Window' : 'Currently Offline'}
-                theme={theme}
-              >
+            </TooltipRx>
+          ) : (
+            <div>
+              {isProcessing() ? (
                 <div style={{ position: 'relative' }}>
                   <ButtonMono
                     disabled={!isConnected}
                     iconLeft={faPlus}
                     iconTransform="grow-0"
                     text={''}
-                    onClick={() => openConfirmHandler()}
-                    className={'account-action-btn white-hover'}
+                    className={'action-btn processing'}
                   />
+                  <EllipsisSpinner style={{ top: '8px' }} />
                 </div>
-              </TooltipRx>
-            )}
-          </div>
-        )}
-        <TooltipRx text={'Delete'} theme={theme}>
-          <div style={{ position: 'relative' }}>
-            <ButtonMono
-              disabled={isProcessing()}
-              className="account-action-btn white-hover"
-              iconLeft={faTrash}
-              iconTransform="shrink-2"
-              text={''}
-              onClick={() => openDeleteHandler()}
-            />
-          </div>
-        </TooltipRx>
-      </div>
+              ) : (
+                <TooltipRx
+                  text={
+                    isConnected ? 'Add To Main Window' : 'Currently Offline'
+                  }
+                  theme={theme}
+                >
+                  <div style={{ position: 'relative' }}>
+                    <ButtonMono
+                      disabled={!isConnected}
+                      iconLeft={faPlus}
+                      iconTransform="grow-0"
+                      text={''}
+                      onClick={() => openConfirmHandler()}
+                      className={'action-btn white-hover'}
+                    />
+                  </div>
+                </TooltipRx>
+              )}
+            </div>
+          )}
+          <TooltipRx text={'Delete'} theme={theme}>
+            <div style={{ position: 'relative' }}>
+              <ButtonMono
+                disabled={isProcessing()}
+                className="action-btn white-hover"
+                iconLeft={faTrash}
+                iconTransform="shrink-2"
+                text={''}
+                onClick={() => openDeleteHandler()}
+              />
+            </div>
+          </TooltipRx>
+        </FlexRow>
+      </FlexRow>
     </HardwareAddressWrapper>
   );
 };

@@ -16,7 +16,7 @@ export const FlexColumn = styled.div<{ $columnGap?: string; $rowGap?: string }>`
   row-gap: ${(props) => (props.$rowGap ? props.$rowGap : '1rem')};
 `;
 
-export const FlexRow = styled.div<{ $gap: string }>`
+export const FlexRow = styled.div<{ $gap?: string }>`
   display: flex;
   align-items: center;
   gap: ${(props) => (props.$gap ? props.$gap : '1rem')};

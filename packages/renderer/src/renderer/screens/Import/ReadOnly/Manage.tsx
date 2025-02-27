@@ -133,39 +133,37 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
             padding: '1.5rem 1.5rem 0rem',
           }}
         >
-          <div className="content">
-            <div className="inner">
-              <div className="identicon">
-                <Identicon value={editName} fontSize={'2.5rem'} />
-              </div>
-              <div>
-                <FlexRow $gap={'0.5rem'} style={{ paddingLeft: '1.25rem' }}>
-                  <input
-                    className="add-input"
-                    type="text"
-                    placeholder="Input Address"
-                    value={editName}
-                    onChange={(e) => onChange(e)}
-                  />
-                  <FlexRow $gap={'0.25rem'}>
-                    <button
-                      style={{ color: 'var(--background-primary)' }}
-                      className="btn-mono lg"
-                      onPointerDown={async () => await onImport()}
-                    >
-                      Add
-                    </button>
-                    <button
-                      className="btn-mono-invert lg"
-                      onPointerDown={() => onCancel()}
-                    >
-                      Clear
-                    </button>
-                  </FlexRow>
-                </FlexRow>
-              </div>
+          <FlexRow style={{ width: '100%' }}>
+            <div className="identicon">
+              <Identicon value={editName} fontSize={'2.5rem'} />
             </div>
-          </div>
+            <FlexRow style={{ flex: 1 }}>
+              <input
+                className="add-input"
+                type="text"
+                placeholder="Input Address"
+                value={editName}
+                onChange={(e) => onChange(e)}
+              />
+              <button
+                style={{
+                  color: 'var(--background-primary)',
+                  fontSize: '0.95rem',
+                }}
+                className="btn-mono lg"
+                onPointerDown={async () => await onImport()}
+              >
+                Add
+              </button>
+              <button
+                style={{ fontSize: '0.95rem' }}
+                className="btn-mono-invert lg"
+                onPointerDown={() => onCancel()}
+              >
+                Clear
+              </button>
+            </FlexRow>
+          </FlexRow>
         </HardwareAddressWrapper>
 
         {/* Address List */}
