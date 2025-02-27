@@ -11,6 +11,6 @@ export const TxInfoBadge = ({ children, icon, label }: TxInfoBadgeProps) => (
       <FontAwesomeIcon icon={icon} className="icon" transform={'shrink-3'} />
       {label}
     </span>
-    {children}
+    <span className="content">{children}</span>
   </TxInfoBadgeWrapper>
 );

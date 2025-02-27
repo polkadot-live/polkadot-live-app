@@ -16,6 +16,7 @@ export const TxInfoBadgeWrapper = styled.div`
     border: 1px solid var(--border-secondary-color);
     border-radius: 0.45rem;
     padding: 0.5rem 0.75rem;
+    width: fit-content;
 
     > svg {
       margin-right: 0.5rem;
@@ -23,6 +24,13 @@ export const TxInfoBadgeWrapper = styled.div`
   }
   > .icon {
     margin-right: 0.3rem;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    .content {
+      flex: 1;
+    }
   }
 `;
 

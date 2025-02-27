@@ -34,7 +34,11 @@ export const FlexRowWrap = styled.div<{
   row-gap: ${(props) => (props.$rowGap ? props.$rowGap : '0.75rem')};
 `;
 
-export const ResponsiveRow = styled.div<{ $gap?: string; $smWidth?: string }>`
+export const ResponsiveRow = styled.div<{
+  $gap?: string;
+  $smGap?: string;
+  $smWidth?: string;
+}>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -43,6 +47,8 @@ export const ResponsiveRow = styled.div<{ $gap?: string; $smWidth?: string }>`
   @media (max-width: ${({ $smWidth }) => ($smWidth ? $smWidth : '450px')}) {
     flex-direction: column;
     align-items: start;
+    gap: ${(props) =>
+      props.$smGap ? props.$smGap : props.$gap ? props.$gap : '1rem'};
 
     .SmAlignStretch {
       align-self: stretch;
