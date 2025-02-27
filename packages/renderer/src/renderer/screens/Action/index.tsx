@@ -163,7 +163,7 @@ export const Action = () => {
                                 />
                               </span>
                             </UI.TooltipRx>
-                            <span>{accountName}</span>
+                            <span className="text-ellipsis">{accountName}</span>
                           </FlexRow>
                         </div>
                       </UI.SelectItem>

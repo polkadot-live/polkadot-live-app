@@ -21,3 +21,9 @@ SPDX-License-Identifier: GPL-3.0-only */
   border: 1px solid var(--border-primary-color);
   border-radius: 1.25rem;
 }
+.text-ellipsis {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

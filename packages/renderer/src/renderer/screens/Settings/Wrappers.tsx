@@ -38,12 +38,6 @@ export const SettingWrapper = styled(motion.div)`
     align-items: center;
     justify-content: end;
   }
-  .title {
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
   .icon-wrapper {
     ${mixinHelpIcon}
     color: var(--text-dimmed);
