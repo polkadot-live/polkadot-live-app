@@ -25,7 +25,7 @@ import { useTooltip } from '@polkadot-live/ui/contexts';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -281,7 +281,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: '0.5rem' }}>
+      <UI.ScrollableMax style={{ paddingTop: '0.5rem' }}>
         <div style={{ padding: '0rem 1.25rem 2rem' }}>
           <UI.ActionItem
             showIcon={false}
@@ -289,7 +289,10 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
             style={{ marginBottom: '1rem' }}
           />
           {/* Sorting controls */}
-          <ControlsWrapper $padBottom={!groupingOn}>
+          <ControlsWrapper
+            className="ReferendaControls"
+            $padBottom={!groupingOn}
+          >
             <ButtonPrimaryInvert
               className="back-btn"
               text="Back"
@@ -313,6 +316,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
               onClick={() => setNewestFirst(!newestFirst)}
               onLabel="Newest First"
               offLabel="Oldest First"
+              respClass="ReferendaControls"
             />
             <SortControlButton
               isActive={groupingOn}
@@ -322,6 +326,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
               onLabel="Grouping"
               offLabel="Grouping"
               fixedWidth={false}
+              respClass="ReferendaControls"
             />
             <SortControlButton
               isActive={isExpandActive()}
@@ -331,6 +336,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
               onLabel="Expanded"
               offLabel="Collapsed"
               fixedWidth={false}
+              respClass="ReferendaControls"
             />
             <div
               className="tooltip-trigger-element"
@@ -350,6 +356,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
                 onClick={() => handleRefetchReferenda()}
                 faIcon={faArrowsRotate}
                 fixedWidth={false}
+                respClass="ReferendaControls"
               />
             </div>
             <div
@@ -370,6 +377,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
                 faIcon={faEllipsisVertical}
                 onClick={() => handleToggleOnlySubscribed()}
                 fixedWidth={false}
+                respClass="ReferendaControls"
               />
             </div>
           </ControlsWrapper>
@@ -409,7 +417,7 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
             )}
           </section>
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
       {section === 1 && (
         <StatsFooter $chainId={chainId}>
           <div>
