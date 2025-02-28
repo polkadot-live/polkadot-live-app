@@ -1,6 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
+
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
@@ -12,13 +15,6 @@ import {
   ModalMotionTwoSection,
 } from '@polkadot-live/ui/kits/overlay';
 import { Tracks } from './Tracks';
-import {
-  ActionItem,
-  ControlsWrapper,
-  NavCardThin,
-  SortControlButton,
-  TreasuryStatCard,
-} from '@polkadot-live/ui/components';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
@@ -29,13 +25,6 @@ import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
-import {
-  FlexColumn,
-  GridFourCol,
-  GridTwoCol,
-  Scrollable,
-  StatsFooter,
-} from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -167,8 +156,8 @@ export const OpenGov: React.FC = () => {
       >
         {/* Section 1 */}
         <section className="carousel-section-wrapper">
-          <Scrollable
-            $headerHeight={0}
+          <UI.ScrollableMax
+            headerHeight={0}
             style={{ paddingTop: 0, paddingBottom: 20 }}
           >
             <TreasuryStats $chainId={treasuryChainId}>
@@ -179,36 +168,36 @@ export const OpenGov: React.FC = () => {
               ) : (
                 <>
                   {wrapWithOfflineTooltip(
-                    <GridFourCol>
-                      <TreasuryStatCard
+                    <Styles.GridFourCol id="OpenGovStats">
+                      <UI.TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'Treasury Balance'}
                         statText={getFormattedFreeBalance()}
                         helpKey={'help:openGov:treasuryBalance'}
                         openHelp={openHelp}
                       />
-                      <TreasuryStatCard
+                      <UI.TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'Next Burn'}
                         statText={getFormattedNextBurn()}
                         helpKey={'help:openGov:nextBurn'}
                         openHelp={openHelp}
                       />
-                      <TreasuryStatCard
+                      <UI.TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'To Be Awarded'}
                         statText={getFormattedToBeAwarded()}
                         helpKey={'help:openGov:toBeAwarded'}
                         openHelp={openHelp}
                       />
-                      <TreasuryStatCard
+                      <UI.TreasuryStatCard
                         chainId={treasuryChainId}
                         title={'Spend Period'}
                         statText={getSpendPeriodProgress()}
                         helpKey={'help:openGov:spendPeriod'}
                         openHelp={openHelp}
                       />
-                    </GridFourCol>,
+                    </Styles.GridFourCol>,
                     getOnlineMode()
                   )}
                 </>
@@ -217,14 +206,14 @@ export const OpenGov: React.FC = () => {
 
             <WindowWrapper>
               {/* Referenda */}
-              <FlexColumn $rowGap={'0.75rem'}>
-                <ActionItem
+              <Styles.FlexColumn $rowGap={'0.75rem'}>
+                <UI.ActionItem
                   showIcon={false}
                   text={'Referenda'}
                   style={{ marginTop: '0.75rem' }}
                 />
-                <GridTwoCol>
-                  <NavCardThin
+                <Styles.GridTwoCol>
+                  <UI.NavCardThin
                     title={'Polkadot'}
                     onClick={() => handleOpenReferenda('Polkadot')}
                     childrenLogo={
@@ -234,7 +223,7 @@ export const OpenGov: React.FC = () => {
                       <span>Active referenda on the Polkadot network.</span>
                     }
                   />
-                  <NavCardThin
+                  <UI.NavCardThin
                     title={'Kusama'}
                     onClick={() => handleOpenReferenda('Kusama')}
                     childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
@@ -242,16 +231,16 @@ export const OpenGov: React.FC = () => {
                       <span>Active referenda on the Kusama network.</span>
                     }
                   />
-                </GridTwoCol>
+                </Styles.GridTwoCol>
 
                 {/* Origins and Tracks */}
-                <ActionItem
+                <UI.ActionItem
                   showIcon={false}
                   text={'Tracks'}
                   style={{ marginTop: '0.75rem' }}
                 />
-                <GridTwoCol>
-                  <NavCardThin
+                <Styles.GridTwoCol>
+                  <UI.NavCardThin
                     title={'Polkadot'}
                     onClick={() => handleOpenTracks('Polkadot')}
                     childrenLogo={
@@ -261,7 +250,7 @@ export const OpenGov: React.FC = () => {
                       <span>Tracks on the Polkadot network.</span>
                     }
                   />
-                  <NavCardThin
+                  <UI.NavCardThin
                     title={'Kusama'}
                     onClick={() => handleOpenTracks('Kusama')}
                     childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
@@ -269,18 +258,18 @@ export const OpenGov: React.FC = () => {
                       <span>Tracks on the Kusama network.</span>
                     }
                   />
-                </GridTwoCol>
-              </FlexColumn>
+                </Styles.GridTwoCol>
+              </Styles.FlexColumn>
             </WindowWrapper>
-          </Scrollable>
+          </UI.ScrollableMax>
 
-          <StatsFooter $chainId={'Polkadot'}>
+          <Styles.StatsFooter $chainId={'Polkadot'}>
             <div>
               <section className="left">
                 <div className="footer-stat" style={{ columnGap: '0' }}>
                   <h2>Treasury Stats:</h2>
                   <span style={{ marginLeft: '1rem' }}>
-                    <ControlsWrapper style={{ marginBottom: '0' }}>
+                    <UI.ControlsWrapper style={{ marginBottom: '0' }}>
                       {/* Select Box */}
                       {wrapWithOfflineTooltip(
                         <div className="select-wrapper">
@@ -313,7 +302,7 @@ export const OpenGov: React.FC = () => {
                           )
                         }
                       >
-                        <SortControlButton
+                        <UI.SortControlButton
                           isActive={true}
                           isDisabled={fetchingTreasuryData || !getOnlineMode()}
                           onClick={() => refetchTreasuryStats()}
@@ -321,12 +310,12 @@ export const OpenGov: React.FC = () => {
                           fixedWidth={false}
                         />
                       </div>
-                    </ControlsWrapper>
+                    </UI.ControlsWrapper>
                   </span>
                 </div>
               </section>
             </div>
-          </StatsFooter>
+          </Styles.StatsFooter>
         </section>
 
         {/* Section 2 */}

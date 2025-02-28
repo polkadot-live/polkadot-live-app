@@ -26,4 +26,11 @@ export const GridFourCol = styled.div`
     border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
   }
+
+  // Responsive class for OpenGov stats grid.
+  &#OpenGovStats {
+    @media (max-width: 760px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
 `;
