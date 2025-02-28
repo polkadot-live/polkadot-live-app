@@ -25,7 +25,7 @@ export const StickyHeadingsRow = () => (
     style={{
       position: 'sticky',
       top: '0',
-      zIndex: 99,
+      zIndex: 10,
       backgroundColor: 'var(--background-window)',
     }}
   >
