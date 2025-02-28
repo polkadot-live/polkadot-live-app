@@ -263,66 +263,72 @@ export const OpenGov: React.FC = () => {
             </WindowWrapper>
           </UI.ScrollableMax>
 
-          <Styles.StatsFooter $chainId={'Polkadot'}>
-            <div>
-              <section className="left">
-                <div className="footer-stat" style={{ columnGap: '0' }}>
-                  <h2>Treasury Stats:</h2>
-                  <span style={{ marginLeft: '1rem' }}>
-                    <UI.ControlsWrapper style={{ marginBottom: '0' }}>
-                      {/* Select Box */}
-                      {wrapWithOfflineTooltip(
-                        <div className="select-wrapper">
-                          <select
-                            disabled={!getOnlineMode()}
-                            id="select-treasury-chain"
-                            value={treasuryChainId}
-                            onChange={(e) => handleChangeStats(e)}
-                          >
-                            <option value="Polkadot">Polkadot</option>
-                            <option value="Kusama">Kusama</option>
-                          </select>
-                        </div>,
-                        getOnlineMode()
-                      )}
-
-                      {/* Re-fetch Stats */}
-                      <div
-                        className="tooltip-trigger-element"
-                        data-tooltip-text={
+          {section === 0 && (
+            <Styles.StatsFooter $chainId={'Polkadot'}>
+              <div>
+                <section className="left">
+                  <div className="footer-stat" style={{ columnGap: '0' }}>
+                    <h2>Treasury Stats:</h2>
+                    <span style={{ marginLeft: '1rem' }}>
+                      <UI.ControlsWrapper style={{ marginBottom: '0' }}>
+                        {/* Select Box */}
+                        {wrapWithOfflineTooltip(
+                          <div className="select-wrapper">
+                            <select
+                              disabled={!getOnlineMode()}
+                              id="select-treasury-chain"
+                              value={treasuryChainId}
+                              onChange={(e) => handleChangeStats(e)}
+                            >
+                              <option value="Polkadot">Polkadot</option>
+                              <option value="Kusama">Kusama</option>
+                            </select>
+                          </div>,
                           getOnlineMode()
-                            ? 'Refresh Stats'
-                            : 'Currently Offline'
-                        }
-                        onMouseMove={() =>
-                          setTooltipTextAndOpen(
+                        )}
+
+                        {/* Re-fetch Stats */}
+                        <div
+                          className="tooltip-trigger-element"
+                          data-tooltip-text={
                             getOnlineMode()
                               ? 'Refresh Stats'
                               : 'Currently Offline'
-                          )
-                        }
-                      >
-                        <UI.SortControlButton
-                          isActive={true}
-                          isDisabled={fetchingTreasuryData || !getOnlineMode()}
-                          onClick={() => refetchTreasuryStats()}
-                          faIcon={faArrowsRotate}
-                          fixedWidth={false}
-                        />
-                      </div>
-                    </UI.ControlsWrapper>
-                  </span>
-                </div>
-              </section>
-            </div>
-          </Styles.StatsFooter>
+                          }
+                          onMouseMove={() =>
+                            setTooltipTextAndOpen(
+                              getOnlineMode()
+                                ? 'Refresh Stats'
+                                : 'Currently Offline'
+                            )
+                          }
+                        >
+                          <UI.SortControlButton
+                            isActive={true}
+                            isDisabled={
+                              fetchingTreasuryData || !getOnlineMode()
+                            }
+                            onClick={() => refetchTreasuryStats()}
+                            faIcon={faArrowsRotate}
+                            fixedWidth={false}
+                          />
+                        </div>
+                      </UI.ControlsWrapper>
+                    </span>
+                  </div>
+                </section>
+              </div>
+            </Styles.StatsFooter>
+          )}
         </section>
 
         {/* Section 2 */}
         <section className="carousel-section-wrapper">
-          {sectionContent === 'tracks' && <Tracks setSection={setSection} />}
+          {sectionContent === 'tracks' && (
+            <Tracks section={section} setSection={setSection} />
+          )}
           {sectionContent === 'referenda' && (
-            <Referenda setSection={setSection} />
+            <Referenda section={section} setSection={setSection} />
           )}
         </section>
       </ModalMotionTwoSection>

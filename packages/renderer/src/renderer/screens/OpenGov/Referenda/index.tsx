@@ -32,7 +32,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
 
-export const Referenda = ({ setSection }: ReferendaProps) => {
+export const Referenda = ({ section, setSection }: ReferendaProps) => {
   const { getOnlineMode } = useConnections();
   const { setTooltipTextAndOpen } = useTooltip();
 
@@ -410,18 +410,20 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           </section>
         </div>
       </Scrollable>
-      <StatsFooter $chainId={chainId}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Active Referenda:</h2>
-              <span style={{ minWidth: '14px' }}>
-                {fetchingReferenda ? '-' : referenda.length}
-              </span>
-            </div>
-          </section>
-        </div>
-      </StatsFooter>
+      {section === 1 && (
+        <StatsFooter $chainId={chainId}>
+          <div>
+            <section className="left">
+              <div className="footer-stat">
+                <h2>Active Referenda:</h2>
+                <span style={{ minWidth: '14px' }}>
+                  {fetchingReferenda ? '-' : referenda.length}
+                </span>
+              </div>
+            </section>
+          </div>
+        </StatsFooter>
+      )}
     </>
   );
 };

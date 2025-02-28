@@ -23,7 +23,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TracksProps } from '../types';
 
-export const Tracks = ({ setSection }: TracksProps) => {
+export const Tracks = ({ section, setSection }: TracksProps) => {
   const { openHelp } = useHelp();
   const { getOnlineMode } = useConnections();
 
@@ -133,23 +133,25 @@ export const Tracks = ({ setSection }: TracksProps) => {
           )}
         </ContentWrapper>
       </UI.ScrollableMax>
-      <Styles.StatsFooter $chainId={chainId}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Total Tracks:</h2>
-              <span>{tracks.length}</span>
-            </div>
-          </section>
-          <section className="right">
-            <div className="footer-stat">
-              <h2>Help:</h2>
-            </div>
-            {renderHelpBadge('Track', 'help:openGov:track')}
-            {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
-          </section>
-        </div>
-      </Styles.StatsFooter>
+      {section === 1 && (
+        <Styles.StatsFooter $chainId={chainId}>
+          <div>
+            <section className="left">
+              <div className="footer-stat">
+                <h2>Total Tracks:</h2>
+                <span>{tracks.length}</span>
+              </div>
+            </section>
+            <section className="right">
+              <div className="footer-stat">
+                <h2>Help:</h2>
+              </div>
+              {renderHelpBadge('Track', 'help:openGov:track')}
+              {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
+            </section>
+          </div>
+        </Styles.StatsFooter>
+      )}
     </>
   );
 };
