@@ -1,14 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
 import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@app/utils/openGovUtils';
 import { ellipsisFn } from '@w3ux/utils';
+import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
-import { useTooltip, useOverlay } from '@polkadot-live/ui/contexts';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useHelp } from '@app/contexts/common/Help';
 import { useState } from 'react';
 import { useTaskHandler } from '@app/contexts/openGov/TaskHandler';
@@ -27,6 +29,7 @@ import {
 import {
   ControlsWrapper,
   SortControlButton,
+  TooltipRx,
 } from '@polkadot-live/ui/components';
 import { InfoOverlay } from './InfoOverlay';
 import type { ReferendumRowProps } from '../types';
@@ -34,10 +37,10 @@ import type { PolkassemblyProposal } from '@app/contexts/openGov/Polkassembly/ty
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;
-
-  const { setTooltipTextAndOpen } = useTooltip();
   const { openHelp } = useHelp();
   const { openOverlayWith } = useOverlay();
+  const { darkMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
@@ -100,81 +103,75 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         <div className="right">
           <div className="links-wrapper">
             {/* More */}
-            <button
-              className="btn-more tooltip-trigger-element"
-              onClick={() => handleMoreClick()}
-              data-tooltip-text="View Description"
-              onMouseMove={() => setTooltipTextAndOpen('View Description')}
-            >
-              <FontAwesomeIcon icon={faPenToSquare} />
-            </button>
-
+            <TooltipRx theme={theme} text="View Description">
+              <button className="btn-more" onClick={() => handleMoreClick()}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </button>
+            </TooltipRx>
             {/* Polkassembly */}
-            <button
-              className="btn-polkassembly tooltip-trigger-element"
-              data-tooltip-text="Polkassembly"
-              onMouseMove={() => setTooltipTextAndOpen('Polkassembly')}
-              onClick={() => {
-                window.myAPI.openBrowserURL(uriPolkassembly);
-                window.myAPI.umamiEvent('link-open', { dest: 'polkassembly' });
-              }}
-            >
-              <FontAwesomeIcon icon={faUpRightFromSquare} />
-            </button>
+            <TooltipRx theme={theme} text="Polkassembly">
+              <button
+                className="btn-polkassembly"
+                onClick={() => {
+                  window.myAPI.openBrowserURL(uriPolkassembly);
+                  window.myAPI.umamiEvent('link-open', {
+                    dest: 'polkassembly',
+                  });
+                }}
+              >
+                <FontAwesomeIcon icon={faUpRightFromSquare} />
+              </button>
+            </TooltipRx>
             {/* Subsquare */}
-            <button
-              className="btn-subsquare tooltip-trigger-element"
-              data-tooltip-text="Subsquare"
-              onMouseMove={() => setTooltipTextAndOpen('Subsquare')}
-              onClick={() => {
-                window.myAPI.openBrowserURL(uriSubsquare);
-                window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
-              }}
-            >
-              <FontAwesomeIcon icon={faUpRightFromSquare} />
-            </button>
+            <TooltipRx theme={theme} text="Subsquare">
+              <button
+                className="btn-subsquare"
+                onClick={() => {
+                  window.myAPI.openBrowserURL(uriSubsquare);
+                  window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
+                }}
+              >
+                <FontAwesomeIcon icon={faUpRightFromSquare} />
+              </button>
+            </TooltipRx>
           </div>
           {/* Add + Remove Subscriptions */}
           <div className="menu-btn-wrapper">
             <ControlsWrapper style={{ marginBottom: '0' }}>
               {!allSubscriptionsAdded(chainId, referendum) ? (
-                <div
-                  className="tooltip-trigger-element"
-                  data-tooltip-text="Subscribe All"
-                  onMouseMove={() => setTooltipTextAndOpen('Subscribe All')}
-                >
-                  <SortControlButton
-                    isActive={true}
-                    isDisabled={false}
-                    faIcon={faPlus}
-                    onClick={() =>
-                      addAllIntervalSubscriptions(
-                        getIntervalSubscriptions(),
-                        referendum
-                      )
-                    }
-                    fixedWidth={false}
-                  />
-                </div>
+                <TooltipRx theme={theme} text="Subscribe All">
+                  <span>
+                    <SortControlButton
+                      isActive={true}
+                      isDisabled={false}
+                      faIcon={faPlus}
+                      onClick={() =>
+                        addAllIntervalSubscriptions(
+                          getIntervalSubscriptions(),
+                          referendum
+                        )
+                      }
+                      fixedWidth={false}
+                    />
+                  </span>
+                </TooltipRx>
               ) : (
-                <div
-                  className="tooltip-trigger-element"
-                  data-tooltip-text="Unsubscribe All"
-                  onMouseMove={() => setTooltipTextAndOpen('Unsubscribe All')}
-                >
-                  <SortControlButton
-                    isActive={true}
-                    isDisabled={false}
-                    faIcon={faMinus}
-                    onClick={() =>
-                      removeAllIntervalSubscriptions(
-                        getIntervalSubscriptions(),
-                        referendum
-                      )
-                    }
-                    fixedWidth={false}
-                  />
-                </div>
+                <TooltipRx theme={theme} text="Unsubscribe All">
+                  <span>
+                    <SortControlButton
+                      isActive={true}
+                      isDisabled={false}
+                      faIcon={faMinus}
+                      onClick={() =>
+                        removeAllIntervalSubscriptions(
+                          getIntervalSubscriptions(),
+                          referendum
+                        )
+                      }
+                      fixedWidth={false}
+                    />
+                  </span>
+                </TooltipRx>
               )}
               {/* Expand Button */}
               <SortControlButton
