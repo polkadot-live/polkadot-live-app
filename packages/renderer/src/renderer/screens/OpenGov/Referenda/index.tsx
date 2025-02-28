@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
@@ -21,7 +22,6 @@ import {
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
@@ -33,8 +33,8 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ section, setSection }: ReferendaProps) => {
-  const { getOnlineMode } = useConnections();
-  const { setTooltipTextAndOpen } = useTooltip();
+  const { darkMode, getOnlineMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
     referenda,
@@ -338,48 +338,36 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
               fixedWidth={false}
               respClass="ReferendaControls"
             />
-            <div
-              className="tooltip-trigger-element"
-              data-tooltip-text={
-                getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'
-              }
-              onMouseMove={() =>
-                setTooltipTextAndOpen(
-                  getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline',
-                  'bottom'
-                )
-              }
+            <UI.TooltipRx
+              theme={theme}
+              text={getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'}
             >
-              <SortControlButton
-                isActive={true}
-                isDisabled={fetchingReferenda || !getOnlineMode()}
-                onClick={() => handleRefetchReferenda()}
-                faIcon={faArrowsRotate}
-                fixedWidth={false}
-                respClass="ReferendaControls"
-              />
-            </div>
-            <div
-              className="tooltip-trigger-element"
-              data-tooltip-text={
-                getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'
-              }
-              onMouseMove={() =>
-                setTooltipTextAndOpen(
-                  getOnlineMode() ? 'Show Subscribed' : 'Currently Offline',
-                  'bottom'
-                )
-              }
+              <span>
+                <SortControlButton
+                  isActive={true}
+                  isDisabled={fetchingReferenda || !getOnlineMode()}
+                  onClick={() => handleRefetchReferenda()}
+                  faIcon={faArrowsRotate}
+                  fixedWidth={false}
+                  respClass="ReferendaControls"
+                />
+              </span>
+            </UI.TooltipRx>
+            <UI.TooltipRx
+              theme={theme}
+              text={getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'}
             >
-              <SortControlButton
-                isActive={onlySubscribed}
-                isDisabled={!getOnlineMode() || fetchingReferenda}
-                faIcon={faEllipsisVertical}
-                onClick={() => handleToggleOnlySubscribed()}
-                fixedWidth={false}
-                respClass="ReferendaControls"
-              />
-            </div>
+              <span>
+                <SortControlButton
+                  isActive={onlySubscribed}
+                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  faIcon={faEllipsisVertical}
+                  onClick={() => handleToggleOnlySubscribed()}
+                  fixedWidth={false}
+                  respClass="ReferendaControls"
+                />
+              </span>
+            </UI.TooltipRx>
           </ControlsWrapper>
 
           {/* Only Subscribed Notice */}
