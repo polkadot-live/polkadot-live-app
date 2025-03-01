@@ -6,6 +6,8 @@ import styled from 'styled-components';
 
 // Tabs container.
 export const TabsWrapper = styled.div`
+  display: flex;
+  align-items: center;
   background-color: var(--background-surface);
   border-bottom: 1px solid var(--border-primary-color);
 
@@ -14,7 +16,28 @@ export const TabsWrapper = styled.div`
   width: 100%;
   height: 49px;
 
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  overflow-y: hidden;
+  overflow-x: auto;
+  position: relative;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: var(--scrollbar-track-background-color);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-background-color);
+    &:hover {
+      background-color: var(--scrollbar-thumb-background-color-hover);
+    }
+  }
+
   .inner {
+    flex: 1;
     display: flex;
     align-items: center;
     column-gap: 0.75rem;
