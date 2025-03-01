@@ -190,19 +190,23 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 className="SubscriptionRow"
               >
                 {isSubscribedToTask(referendum, t) ? (
-                  <button
-                    className="BtnAdd"
-                    onClick={() => removeIntervalSubscription(t, referendum)}
-                  >
-                    <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
-                  </button>
+                  <TooltipRx text="Unsubscribe" theme={theme}>
+                    <button
+                      className="BtnAdd"
+                      onClick={() => removeIntervalSubscription(t, referendum)}
+                    >
+                      <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
+                    </button>
+                  </TooltipRx>
                 ) : (
-                  <button
-                    className="BtnAdd"
-                    onClick={() => addIntervalSubscription(t, referendum)}
-                  >
-                    <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
-                  </button>
+                  <TooltipRx text="Subscribe" theme={theme}>
+                    <button
+                      className="BtnAdd"
+                      onClick={() => addIntervalSubscription(t, referendum)}
+                    >
+                      <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
+                    </button>
+                  </TooltipRx>
                 )}
                 <p>{t.label}</p>
                 <span onClick={() => openHelp(t.helpKey)}>
