@@ -5,7 +5,6 @@ import * as themeVariables from '../../../theme/variables';
 import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
 import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
 import { renderOrigin } from '@app/utils/openGovUtils';
-import { ellipsisFn } from '@w3ux/utils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
@@ -34,6 +33,7 @@ import {
 import { InfoOverlay } from './InfoOverlay';
 import type { ReferendumRowProps } from '../types';
 import type { PolkassemblyProposal } from '@app/contexts/openGov/Polkassembly/types';
+import { FlexRow } from '@polkadot-live/ui/styles';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { referendaId } = referendum;
@@ -66,13 +66,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
-    return title === '' ? (
-      <p style={{ margin: 0, opacity: 0.75 }}>No Title</p>
-    ) : title.length < 28 ? (
-      title
-    ) : (
-      ellipsisFn(title, 28, 'end')
-    );
+    return title === '' ? 'No Title' : title;
   };
 
   const handleMoreClick = () => {
@@ -81,110 +75,102 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
   return (
     <ReferendumRowWrapper>
-      <div className="content-wrapper">
-        <div className="left">
-          <div className="stat-wrapper">
-            <span>
-              <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
-              {referendum.referendaId}
-            </span>
-            {usePolkassemblyApi ? (
-              <TitleWithOrigin>
-                <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
-                <div>
-                  <p>{renderOrigin(referendum)}</p>
-                </div>
-              </TitleWithOrigin>
+      <FlexRow>
+        <div className="RefID">
+          <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
+          {referendum.referendaId}
+        </div>
+        {usePolkassemblyApi ? (
+          <TitleWithOrigin>
+            <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
+            <h5>{renderOrigin(referendum)}</h5>
+          </TitleWithOrigin>
+        ) : (
+          <h4 style={{ flex: 1 }}>{renderOrigin(referendum)}</h4>
+        )}
+        <div className="LinksWrapper">
+          {/* More */}
+          <TooltipRx theme={theme} text="View Description">
+            <button className="BtnMore" onClick={() => handleMoreClick()}>
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
+          </TooltipRx>
+          {/* Polkassembly */}
+          <TooltipRx theme={theme} text="Polkassembly">
+            <button
+              className="BtnPolkassembly"
+              onClick={() => {
+                window.myAPI.openBrowserURL(uriPolkassembly);
+                window.myAPI.umamiEvent('link-open', {
+                  dest: 'polkassembly',
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
+            </button>
+          </TooltipRx>
+          {/* Subsquare */}
+          <TooltipRx theme={theme} text="Subsquare">
+            <button
+              className="BtnSubsquare"
+              onClick={() => {
+                window.myAPI.openBrowserURL(uriSubsquare);
+                window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
+              }}
+            >
+              <FontAwesomeIcon icon={faUpRightFromSquare} />
+            </button>
+          </TooltipRx>
+        </div>
+        {/* Add + Remove Subscriptions */}
+        <div className="ControlsWrapper">
+          <ControlsWrapper style={{ marginBottom: '0' }}>
+            {!allSubscriptionsAdded(chainId, referendum) ? (
+              <TooltipRx theme={theme} text="Subscribe All">
+                <span>
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faPlus}
+                    onClick={() =>
+                      addAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
+                    fixedWidth={false}
+                  />
+                </span>
+              </TooltipRx>
             ) : (
-              <h4 className="mw-20">{renderOrigin(referendum)}</h4>
+              <TooltipRx theme={theme} text="Unsubscribe All">
+                <span>
+                  <SortControlButton
+                    isActive={true}
+                    isDisabled={false}
+                    faIcon={faMinus}
+                    onClick={() =>
+                      removeAllIntervalSubscriptions(
+                        getIntervalSubscriptions(),
+                        referendum
+                      )
+                    }
+                    fixedWidth={false}
+                  />
+                </span>
+              </TooltipRx>
             )}
-          </div>
+            {/* Expand Button */}
+            <SortControlButton
+              isActive={true}
+              isDisabled={false}
+              faIcon={expanded ? faChevronUp : faChevronDown}
+              onClick={() => setExpanded(!expanded)}
+              fixedWidth={false}
+            />
+          </ControlsWrapper>
         </div>
-        <div className="right">
-          <div className="links-wrapper">
-            {/* More */}
-            <TooltipRx theme={theme} text="View Description">
-              <button className="btn-more" onClick={() => handleMoreClick()}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </button>
-            </TooltipRx>
-            {/* Polkassembly */}
-            <TooltipRx theme={theme} text="Polkassembly">
-              <button
-                className="btn-polkassembly"
-                onClick={() => {
-                  window.myAPI.openBrowserURL(uriPolkassembly);
-                  window.myAPI.umamiEvent('link-open', {
-                    dest: 'polkassembly',
-                  });
-                }}
-              >
-                <FontAwesomeIcon icon={faUpRightFromSquare} />
-              </button>
-            </TooltipRx>
-            {/* Subsquare */}
-            <TooltipRx theme={theme} text="Subsquare">
-              <button
-                className="btn-subsquare"
-                onClick={() => {
-                  window.myAPI.openBrowserURL(uriSubsquare);
-                  window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
-                }}
-              >
-                <FontAwesomeIcon icon={faUpRightFromSquare} />
-              </button>
-            </TooltipRx>
-          </div>
-          {/* Add + Remove Subscriptions */}
-          <div className="menu-btn-wrapper">
-            <ControlsWrapper style={{ marginBottom: '0' }}>
-              {!allSubscriptionsAdded(chainId, referendum) ? (
-                <TooltipRx theme={theme} text="Subscribe All">
-                  <span>
-                    <SortControlButton
-                      isActive={true}
-                      isDisabled={false}
-                      faIcon={faPlus}
-                      onClick={() =>
-                        addAllIntervalSubscriptions(
-                          getIntervalSubscriptions(),
-                          referendum
-                        )
-                      }
-                      fixedWidth={false}
-                    />
-                  </span>
-                </TooltipRx>
-              ) : (
-                <TooltipRx theme={theme} text="Unsubscribe All">
-                  <span>
-                    <SortControlButton
-                      isActive={true}
-                      isDisabled={false}
-                      faIcon={faMinus}
-                      onClick={() =>
-                        removeAllIntervalSubscriptions(
-                          getIntervalSubscriptions(),
-                          referendum
-                        )
-                      }
-                      fixedWidth={false}
-                    />
-                  </span>
-                </TooltipRx>
-              )}
-              {/* Expand Button */}
-              <SortControlButton
-                isActive={true}
-                isDisabled={false}
-                faIcon={expanded ? faChevronUp : faChevronDown}
-                onClick={() => setExpanded(!expanded)}
-                fixedWidth={false}
-              />
-            </ControlsWrapper>
-          </div>
-        </div>
-      </div>
+      </FlexRow>
       <motion.section
         className="collapse"
         initial={{ height: 0 }}
@@ -195,24 +181,24 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         }}
         transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
       >
-        <div className="content-wrapper">
-          <div className="subscription-grid">
+        <div className="ContentWrapper">
+          <div className="SubscriptionGrid">
             {/* Render interval tasks from config */}
             {getIntervalSubscriptions().map((t) => (
               <div
                 key={`${index}_${referendaId}_${t.action}`}
-                className="subscription-row"
+                className="SubscriptionRow"
               >
                 {isSubscribedToTask(referendum, t) ? (
                   <button
-                    className="add-btn"
+                    className="BtnAdd"
                     onClick={() => removeIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
                   </button>
                 ) : (
                   <button
-                    className="add-btn"
+                    className="BtnAdd"
                     onClick={() => addIntervalSubscription(t, referendum)}
                   >
                     <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
