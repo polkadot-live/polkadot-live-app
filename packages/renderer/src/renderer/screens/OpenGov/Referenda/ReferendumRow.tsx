@@ -161,13 +161,20 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               </TooltipRx>
             )}
             {/* Expand Button */}
-            <SortControlButton
-              isActive={true}
-              isDisabled={false}
-              faIcon={expanded ? faChevronUp : faChevronDown}
-              onClick={() => setExpanded(!expanded)}
-              fixedWidth={false}
-            />
+            <TooltipRx
+              theme={theme}
+              text={expanded ? 'Hide Subscriptions' : 'Show Subscriptions'}
+            >
+              <span>
+                <SortControlButton
+                  isActive={true}
+                  isDisabled={false}
+                  faIcon={expanded ? faChevronUp : faChevronDown}
+                  onClick={() => setExpanded(!expanded)}
+                  fixedWidth={false}
+                />
+              </span>
+            </TooltipRx>
           </ControlsWrapper>
         </div>
       </FlexRow>
