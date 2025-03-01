@@ -1,6 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
+
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { useHelp } from '@app/contexts/common/Help';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -13,21 +16,14 @@ import {
   faInfo,
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
-import { StickyHeadings } from './Wrappers';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
-import { TrackRow } from './TrackRow';
-import {
-  ActionItem,
-  ControlsWrapper,
-  SortControlButton,
-} from '@polkadot-live/ui/components';
-import { Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { StickyHeadingsRow, TrackRow } from './TrackRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TracksProps } from '../types';
 
-export const Tracks = ({ setSection }: TracksProps) => {
+export const Tracks = ({ section, setSection }: TracksProps) => {
   const { openHelp } = useHelp();
   const { getOnlineMode } = useConnections();
 
@@ -70,9 +66,9 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: '0.5rem', paddingBottom: '2rem' }}>
-        <div style={{ padding: '0rem 1.5rem 0rem' }}>
-          <ActionItem
+      <UI.ScrollableMax style={{ paddingTop: '0', paddingBottom: '2rem' }}>
+        <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+          <UI.ActionItem
             showIcon={false}
             text={`${chainId} Tracks`}
             style={{ marginBottom: '1rem' }}
@@ -80,7 +76,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
         </div>
         <ContentWrapper>
           {/* Sorting controls */}
-          <ControlsWrapper $padBottom={true}>
+          <UI.ControlsWrapper $padBottom={true}>
             <ButtonPrimaryInvert
               className="back-btn"
               text="Back"
@@ -97,7 +93,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                     : 'rgb(133, 113, 177)',
               }}
             />
-            <SortControlButton
+            <UI.SortControlButton
               isActive={sortIdAscending}
               isDisabled={!getOnlineMode() || fetchingTracks}
               faIcon={faArrowDownShortWide}
@@ -105,7 +101,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
               onLabel="ID Ascend"
               offLabel="ID Descend"
             />
-          </ControlsWrapper>
+          </UI.ControlsWrapper>
 
           {!getOnlineMode() ? (
             <div style={{ padding: '0.5rem' }}>
@@ -118,21 +114,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                 <div style={{ marginTop: '2rem' }}>{renderPlaceholders(4)}</div>
               ) : (
                 <>
-                  {/* Sticky Headings */}
-                  <StickyHeadings>
-                    <div className="content-wrapper">
-                      <div className="left">
-                        <div className="heading">ID</div>
-                        <div className="heading">Track</div>
-                      </div>
-                      <div className="right">
-                        <div className="heading">Decision Deposit</div>
-                        <div className="heading">Max Deciding</div>
-                        <div className="heading">Timeline</div>
-                      </div>
-                    </div>
-                  </StickyHeadings>
-
+                  <StickyHeadingsRow />
                   {/* Track Listing */}
                   <ItemsColumn>
                     {tracks
@@ -150,24 +132,26 @@ export const Tracks = ({ setSection }: TracksProps) => {
             </div>
           )}
         </ContentWrapper>
-      </Scrollable>
-      <StatsFooter $chainId={chainId}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Total Tracks:</h2>
-              <span>{tracks.length}</span>
-            </div>
-          </section>
-          <section className="right">
-            <div className="footer-stat">
-              <h2>Help:</h2>
-            </div>
-            {renderHelpBadge('Track', 'help:openGov:track')}
-            {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
-          </section>
-        </div>
-      </StatsFooter>
+      </UI.ScrollableMax>
+      {section === 1 && (
+        <Styles.StatsFooter $chainId={chainId}>
+          <div>
+            <section className="left">
+              <div className="footer-stat">
+                <h2>Total Tracks:</h2>
+                <span>{tracks.length}</span>
+              </div>
+            </section>
+            <section className="right">
+              <div className="footer-stat">
+                <h2>Help:</h2>
+              </div>
+              {renderHelpBadge('Track', 'help:openGov:track')}
+              {renderHelpBadge('Max Deciding', 'help:openGov:maxDeciding')}
+            </section>
+          </div>
+        </Styles.StatsFooter>
+      )}
     </>
   );
 };
