@@ -93,9 +93,6 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
 
       .right {
         color: var(--text-color-secondary);
-        display: flex;
-        gap: 1.6rem;
-        align-items: center;
         font-size: 1rem;
 
         .stat {
@@ -108,6 +105,13 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
 
       &:hover {
         background-color: var(--accordion-background-hover);
+      }
+
+      @media (max-width: 600px) {
+        // For extrinsics accordion.
+        .extrinsics-right {
+          display: none;
+        }
       }
     }
   }

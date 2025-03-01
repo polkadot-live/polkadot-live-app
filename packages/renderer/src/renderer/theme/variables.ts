@@ -33,6 +33,7 @@ export const darkTheme = {
   /* General: Scrollbar */
   scrollbarTrackBackgroundColor: '#101010',
   scrollbarThumbBackgroundColor: '#212121',
+  scrollbarThumbBackgroundColorHover: '#2e2e2e',
 
   /* General: Switch */
   switchDisableBackground: '#101010',
@@ -135,6 +136,7 @@ export const lightThene = {
   /* General: Scrollbar */
   scrollbarTrackBackgroundColor: '#d8d8d8',
   scrollbarThumbBackgroundColor: '#afafaf',
+  scrollbarThumbBackgroundColorHover: '#9b9b9b',
 
   /* General: Switch */
   switchDisableBackground: '#efefef',

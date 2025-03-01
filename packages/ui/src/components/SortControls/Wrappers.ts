@@ -141,6 +141,27 @@ export const ControlsWrapper = styled.div<{
     }
   }
 
+  @media (max-width: 585px) {
+    &.ReferendaControls {
+      column-gap: 0.9rem;
+    }
+    .ReferendaControls {
+      justify-content: center;
+      span {
+        display: none;
+      }
+      .icon {
+        margin-left: 0;
+        column-gap: 0.5rem;
+      }
+      &.fixed,
+      &.icon-and-text,
+      &.icon-only {
+        min-width: 4rem !important;
+      }
+    }
+  }
+
   /* Select */
   .select-wrapper {
     border: 1px solid var(--border-secondary-color);

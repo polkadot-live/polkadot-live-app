@@ -8,14 +8,18 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ActionItem, NavCard } from '@polkadot-live/ui/components';
+import {
+  ActionItem,
+  NavCard,
+  ScrollableMax,
+} from '@polkadot-live/ui/components';
+import { GridTwoCol } from '@polkadot-live/ui/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { useHelp } from '@app/contexts/common/Help';
 import { useEffect } from 'react';
-import { Scrollable } from '@polkadot-live/ui/styles';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 
@@ -64,9 +68,9 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   }, []);
 
   return (
-    <Scrollable
-      $footerHeight={0}
-      $headerHeight={0}
+    <ScrollableMax
+      footerHeight={0}
+      headerHeight={0}
       style={{ paddingTop: 0, paddingBottom: 20 }}
     >
       <ContentWrapper>
@@ -75,7 +79,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           text={'Import Accounts'}
           style={{ marginTop: '1.75rem' }}
         />
-        <div className="grid-wrapper">
+        <GridTwoCol>
           {/* Read-only */}
           <NavCard
             title={'Read Only'}
@@ -190,8 +194,8 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
               </a>
             }
           />
-        </div>
+        </GridTwoCol>
       </ContentWrapper>
-    </Scrollable>
+    </ScrollableMax>
   );
 };

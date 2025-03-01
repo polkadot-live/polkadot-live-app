@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
 import {
   ControlsWrapper,
@@ -19,7 +20,6 @@ import {
 } from '@polkadot-live/ui/kits/buttons';
 import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
 import { useState } from 'react';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { getAddressChainId } from '@ren/renderer/Utils';
@@ -41,7 +41,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
         </div>
@@ -51,26 +51,34 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
           $padBottom={false}
           style={{ paddingTop: '1rem', marginBottom: 0 }}
         >
-          <ButtonPrimaryInvert
-            className="back-btn"
-            text="Back"
-            iconLeft={faCaretLeft}
-            onClick={() => setSection(0)}
-          />
-          <SortControlLabel label="Vault Accounts" />
-          <ButtonText
-            iconLeft={faQrcode}
-            text={'Import Another Account'}
-            onClick={() => {
-              openOverlayWith(
-                <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
-                  <Reader />
-                </ErrorBoundary>,
-                'small',
-                true
-              );
-            }}
-          />
+          <Styles.ResponsiveRow $smWidth="450px">
+            <Styles.FlexRow>
+              <ButtonPrimaryInvert
+                className="back-btn"
+                text="Back"
+                iconLeft={faCaretLeft}
+                onClick={() => setSection(0)}
+              />
+              <SortControlLabel label="Vault Accounts" />
+            </Styles.FlexRow>
+            <Styles.FlexRow>
+              <ButtonText
+                iconLeft={faQrcode}
+                text={'Import Another Account'}
+                onClick={() => {
+                  openOverlayWith(
+                    <ErrorBoundary
+                      fallback={<h2>Could not load QR Scanner</h2>}
+                    >
+                      <Reader />
+                    </ErrorBoundary>,
+                    'small',
+                    true
+                  );
+                }}
+              />
+            </Styles.FlexRow>
+          </Styles.ResponsiveRow>
         </ControlsWrapper>
 
         {/* Address List */}
@@ -83,7 +91,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                 value={accordionValue}
                 onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
-                <FlexColumn>
+                <Styles.FlexColumn>
                   {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                     ([chainId, chainAddresses]) => (
                       <Accordion.Item
@@ -112,14 +120,14 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                       </Accordion.Item>
                     )
                   )}
-                </FlexColumn>
+                </Styles.FlexColumn>
               </Accordion.Root>
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
-      <StatsFooter $chainId={'Polkadot'}>
+      <Styles.StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -128,7 +136,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
             </div>
           </section>
         </div>
-      </StatsFooter>
+      </Styles.StatsFooter>
     </>
   );
 };

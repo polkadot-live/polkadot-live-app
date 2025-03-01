@@ -13,8 +13,9 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
   border-top: 1px solid var(--border-primary-color);
   position: fixed;
   bottom: 0;
+  right: 0;
+  left: 0;
   padding: 0.75rem 1.5rem;
-  width: 100%;
 
   > div:first-of-type {
     display: flex;

@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as themeVariables from '../../../theme/variables';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
@@ -21,20 +22,19 @@ import {
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
 
-export const Referenda = ({ setSection }: ReferendaProps) => {
-  const { getOnlineMode } = useConnections();
-  const { setTooltipTextAndOpen } = useTooltip();
+export const Referenda = ({ section, setSection }: ReferendaProps) => {
+  const { darkMode, getOnlineMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
     referenda,
@@ -281,7 +281,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: '0.5rem' }}>
+      <UI.ScrollableMax style={{ paddingTop: '0.5rem' }}>
         <div style={{ padding: '0rem 1.25rem 2rem' }}>
           <UI.ActionItem
             showIcon={false}
@@ -289,7 +289,10 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             style={{ marginBottom: '1rem' }}
           />
           {/* Sorting controls */}
-          <ControlsWrapper $padBottom={!groupingOn}>
+          <ControlsWrapper
+            className="ReferendaControls"
+            $padBottom={!groupingOn}
+          >
             <ButtonPrimaryInvert
               className="back-btn"
               text="Back"
@@ -313,6 +316,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               onClick={() => setNewestFirst(!newestFirst)}
               onLabel="Newest First"
               offLabel="Oldest First"
+              respClass="ReferendaControls"
             />
             <SortControlButton
               isActive={groupingOn}
@@ -322,6 +326,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               onLabel="Grouping"
               offLabel="Grouping"
               fixedWidth={false}
+              respClass="ReferendaControls"
             />
             <SortControlButton
               isActive={isExpandActive()}
@@ -331,47 +336,38 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               onLabel="Expanded"
               offLabel="Collapsed"
               fixedWidth={false}
+              respClass="ReferendaControls"
             />
-            <div
-              className="tooltip-trigger-element"
-              data-tooltip-text={
-                getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'
-              }
-              onMouseMove={() =>
-                setTooltipTextAndOpen(
-                  getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline',
-                  'bottom'
-                )
-              }
+            <UI.TooltipRx
+              theme={theme}
+              text={getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'}
             >
-              <SortControlButton
-                isActive={true}
-                isDisabled={fetchingReferenda || !getOnlineMode()}
-                onClick={() => handleRefetchReferenda()}
-                faIcon={faArrowsRotate}
-                fixedWidth={false}
-              />
-            </div>
-            <div
-              className="tooltip-trigger-element"
-              data-tooltip-text={
-                getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'
-              }
-              onMouseMove={() =>
-                setTooltipTextAndOpen(
-                  getOnlineMode() ? 'Show Subscribed' : 'Currently Offline',
-                  'bottom'
-                )
-              }
+              <span>
+                <SortControlButton
+                  isActive={true}
+                  isDisabled={fetchingReferenda || !getOnlineMode()}
+                  onClick={() => handleRefetchReferenda()}
+                  faIcon={faArrowsRotate}
+                  fixedWidth={false}
+                  respClass="ReferendaControls"
+                />
+              </span>
+            </UI.TooltipRx>
+            <UI.TooltipRx
+              theme={theme}
+              text={getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'}
             >
-              <SortControlButton
-                isActive={onlySubscribed}
-                isDisabled={!getOnlineMode() || fetchingReferenda}
-                faIcon={faEllipsisVertical}
-                onClick={() => handleToggleOnlySubscribed()}
-                fixedWidth={false}
-              />
-            </div>
+              <span>
+                <SortControlButton
+                  isActive={onlySubscribed}
+                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  faIcon={faEllipsisVertical}
+                  onClick={() => handleToggleOnlySubscribed()}
+                  fixedWidth={false}
+                  respClass="ReferendaControls"
+                />
+              </span>
+            </UI.TooltipRx>
           </ControlsWrapper>
 
           {/* Only Subscribed Notice */}
@@ -409,19 +405,21 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             )}
           </section>
         </div>
-      </Scrollable>
-      <StatsFooter $chainId={chainId}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Active Referenda:</h2>
-              <span style={{ minWidth: '14px' }}>
-                {fetchingReferenda ? '-' : referenda.length}
-              </span>
-            </div>
-          </section>
-        </div>
-      </StatsFooter>
+      </UI.ScrollableMax>
+      {section === 1 && (
+        <StatsFooter $chainId={chainId}>
+          <div>
+            <section className="left">
+              <div className="footer-stat">
+                <h2>Active Referenda:</h2>
+                <span style={{ minWidth: '14px' }}>
+                  {fetchingReferenda ? '-' : referenda.length}
+                </span>
+              </div>
+            </section>
+          </div>
+        </StatsFooter>
+      )}
     </>
   );
 };

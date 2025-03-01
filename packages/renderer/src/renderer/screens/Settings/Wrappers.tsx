@@ -31,6 +31,7 @@ export const SettingWrapper = styled(motion.div)`
     display: flex;
     align-items: center;
     column-gap: 0.5rem;
+    min-width: 0; // Allow title overflow.
   }
   .right {
     display: flex;

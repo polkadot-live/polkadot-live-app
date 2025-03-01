@@ -25,7 +25,7 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter, FlexColumn } from '@polkadot-live/ui/styles';
+import { StatsFooter, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -106,7 +106,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'Read-Only Accounts'} />
         </div>
@@ -133,39 +133,37 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
             padding: '1.5rem 1.5rem 0rem',
           }}
         >
-          <div className="content">
-            <div className="inner">
-              <div className="identicon">
-                <Identicon value={editName} fontSize={'2.5rem'} />
-              </div>
-              <div>
-                <section className="row" style={{ paddingLeft: '1.25rem' }}>
-                  <input
-                    className="add-input"
-                    type="text"
-                    placeholder="Input Address"
-                    value={editName}
-                    onChange={(e) => onChange(e)}
-                  />
-                  <div className="flex-inner-row">
-                    <button
-                      style={{ color: 'var(--background-primary)' }}
-                      className="btn-mono lg"
-                      onPointerDown={async () => await onImport()}
-                    >
-                      Add
-                    </button>
-                    <button
-                      className="btn-mono-invert lg"
-                      onPointerDown={() => onCancel()}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </section>
-              </div>
+          <FlexRow style={{ width: '100%' }}>
+            <div className="identicon">
+              <Identicon value={editName} fontSize={'2.5rem'} />
             </div>
-          </div>
+            <FlexRow style={{ flex: 1 }}>
+              <input
+                className="add-input"
+                type="text"
+                placeholder="Input Address"
+                value={editName}
+                onChange={(e) => onChange(e)}
+              />
+              <button
+                style={{
+                  color: 'var(--background-primary)',
+                  fontSize: '0.95rem',
+                }}
+                className="btn-mono lg"
+                onPointerDown={async () => await onImport()}
+              >
+                Add
+              </button>
+              <button
+                style={{ fontSize: '0.95rem' }}
+                className="btn-mono-invert lg"
+                onPointerDown={() => onCancel()}
+              >
+                Clear
+              </button>
+            </FlexRow>
+          </FlexRow>
         </HardwareAddressWrapper>
 
         {/* Address List */}
@@ -216,7 +214,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
             </Accordion.Root>
           </UI.AccordionWrapper>
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
       <StatsFooter $chainId={'Polkadot'}>
         <div>

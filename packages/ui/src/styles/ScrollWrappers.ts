@@ -21,7 +21,6 @@ export const ScrollWrapper = styled.div`
   }
   &::-webkit-scrollbar-track {
     background-color: var(--scrollbar-track-background-color);
-    background-color: var(--scrollbar-track-background-color);
   }
   &::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb-background-color);

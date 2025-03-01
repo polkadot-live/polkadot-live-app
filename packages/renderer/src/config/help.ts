@@ -9,8 +9,7 @@ export const HelpConfig: HelpItems = [
     title: 'Polkadot Vault',
     definition: [
       'Polkadot Vault (formerly Parity Signer) is a cold storage solution that allows you to use a phone in airplane mode as an air-gapped wallet.',
-      'The Vault app is not technically a wallet, as it does not allow the transfer of funds.',
-      'It is more of a key-chain tool that will enable you the create, manage, and restore accounts.',
+      'The Vault app is not technically a wallet, as it does not allow the transfer of funds. It is more of a key-chain tool that will enable you the create, manage, and restore accounts.',
     ],
   },
   {

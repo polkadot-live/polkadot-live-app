@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@ren/config/processes/settings';
 import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
-import { FlexColumn, Scrollable } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
@@ -94,7 +94,10 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <Scrollable $footerHeight={4} style={{ paddingTop: 0, paddingBottom: 0 }}>
+    <UI.ScrollableMax
+      footerHeight={4}
+      style={{ paddingTop: 0, paddingBottom: 0 }}
+    >
       <ContentWrapper>
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root
@@ -139,6 +142,6 @@ export const Settings: React.FC = () => {
         {/* Workspaces Accordion Item */}
         {/* <Workspaces /> */}
       </ContentWrapper>
-    </Scrollable>
+    </UI.ScrollableMax>
   );
 };

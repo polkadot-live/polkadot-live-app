@@ -14,20 +14,22 @@ const mixinRowButton = css`
 export const TitleWithOrigin = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0; // Allows address overflow
 
-  h4 {
-    min-width: 18px;
+  > h4 {
+    color: var(--text-color-primary);
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 1.1rem !important;
   }
-  div:nth-of-type(1) {
-    display: flex;
-    column-gap: 0.5rem;
-    align-items: center;
-
-    p {
-      margin: 0;
-      font-size: 1rem !important;
-    }
+  > h5 {
+    color: var(--text-color-secondary);
+    margin: 0;
+    font-size: 1rem !important;
   }
 `;
 
@@ -109,66 +111,30 @@ export const ReferendumRowWrapper = styled.div`
   padding: 1rem 1.25rem;
   background-color: var(--background-primary);
 
-  /* Content */
-  .content-wrapper {
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-    }
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-    }
-  }
-
   /* Stats */
-  .stat-wrapper {
+  .RefID {
+    font-size: 0.9rem;
     display: flex;
-    column-gap: 1rem;
-    min-width: 90px;
     align-items: center;
-
-    h4 {
-      display: flex;
-      flex: 1;
-      font-size: 1.05rem;
-    }
-    span {
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      column-gap: 0.4rem;
-      border-radius: 0.375rem;
-      margin-right: 1.5rem;
-    }
+    column-gap: 0.4rem;
+    border-radius: 0.375rem;
+    margin-right: 1.5rem;
   }
 
   /* Buttons */
-  .links-wrapper {
-    display: flex;
-    align-items: center;
-    column-gap: 0.5rem;
-    overflow-x: hidden;
-    justify-content: end;
+  .LinksWrapper {
+    min-width: fit-content;
     opacity: 0.5;
     transition: opacity 0.2s ease-out;
 
-    .btn-more {
+    .BtnMore {
       ${mixinRowButton}
       color: var(--text-color-secondary);
       &:hover {
         color: var(--text-highlight);
       }
     }
-    .btn-polkassembly {
+    .BtnPolkassembly {
       ${mixinRowButton}
       opacity: 0.8;
       color: rgb(172 80 122);
@@ -177,7 +143,7 @@ export const ReferendumRowWrapper = styled.div`
         opacity: 1;
       }
     }
-    .btn-subsquare {
+    .BtnSubsquare {
       ${mixinRowButton}
       opacity: 0.8;
       color: rgb(92 129 177);
@@ -186,14 +152,16 @@ export const ReferendumRowWrapper = styled.div`
         opacity: 1;
       }
     }
+    @media (max-width: 550px) {
+      display: none;
+    }
   }
-  .menu-btn-wrapper {
-    display: flex;
-    justify-content: center;
+  .ControlsWrapper {
     position: relative;
     padding: 0.25rem 0.5rem;
-    min-width: 80px;
+    min-width: fit-content;
 
+    // TODO: Remove when augmenting control button components.
     .icon-wrapper {
       background-color: var(--button-background-secondary);
       border-color: var(--button-background-secondary);
@@ -213,18 +181,18 @@ export const ReferendumRowWrapper = styled.div`
     overflow: hidden;
     width: 100%;
 
-    .content-wrapper {
+    .ContentWrapper {
       width: 100%;
       margin-top: 1.25rem;
       display: flex;
       flex-direction: column;
       row-gap: 0.25rem;
 
-      .subscription-grid {
+      .SubscriptionGrid {
         width: 100%;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.5rem;
+        gap: 1rem;
 
         div {
           justify-content: center;
@@ -237,7 +205,7 @@ export const ReferendumRowWrapper = styled.div`
           justify-content: center;
         }
 
-        .subscription-row {
+        .SubscriptionRow {
           width: 100%;
           display: flex;
           align-items: center;
@@ -248,6 +216,7 @@ export const ReferendumRowWrapper = styled.div`
             color: var(--text-color-primary);
             font-size: 1.05rem;
             font-weight: 600;
+            margin: 0;
           }
           span {
             ${mixinHelpIcon}
@@ -263,6 +232,14 @@ export const ReferendumRowWrapper = styled.div`
         }
       }
     }
+
+    @media (max-width: 550px) {
+      .ContentWrapper {
+        .SubscriptionGrid {
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+      }
+    }
   }
 
   .icon-wrapper {
@@ -272,7 +249,7 @@ export const ReferendumRowWrapper = styled.div`
   }
 
   /* Add Subscription Button */
-  .add-btn {
+  .BtnAdd {
     color: var(--text-dimmed);
     display: flex;
     align-items: center;
@@ -287,6 +264,10 @@ export const ReferendumRowWrapper = styled.div`
     }
     &:hover {
       color: var(--text-highlight);
+    }
+
+    @media (max-width: 550px) {
+      padding: 0.25rem 0.75rem !important;
     }
   }
 `;

@@ -12,6 +12,7 @@ export interface SortControlsButtonProps {
   fixedWidth?: boolean;
   onClick?: AnyFunction;
   faIcon?: IconDefinition;
+  respClass?: string;
 }
 
 export interface SortControlLabelProps {

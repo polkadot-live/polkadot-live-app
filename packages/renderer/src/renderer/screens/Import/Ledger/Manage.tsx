@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
 import {
   ControlsWrapper,
@@ -18,7 +19,6 @@ import { getSortedLocalLedgerAddresses } from '@app/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { FlexColumn, Scrollable, StatsFooter } from '@polkadot-live/ui/styles';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -40,7 +40,7 @@ export const Manage = ({
 
   return (
     <>
-      <Scrollable style={{ paddingTop: 0 }}>
+      <UI.ScrollableMax style={{ paddingTop: 0 }}>
         <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
           <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
         </div>
@@ -50,21 +50,26 @@ export const Manage = ({
           $padBottom={false}
           style={{ paddingTop: '1rem', marginBottom: 0 }}
         >
-          <ButtonPrimaryInvert
-            className="back-btn"
-            text="Back"
-            iconLeft={faCaretLeft}
-            onClick={() => {
-              setSection(0);
-            }}
-          />
-          <SortControlLabel label="Ledger Accounts" />
-
-          <ButtonText
-            iconLeft={faCaretRight}
-            text={'Import Ledger Accounts'}
-            onClick={() => setShowImportUi(true)}
-          />
+          <Styles.ResponsiveRow $smWidth="450px">
+            <Styles.FlexRow>
+              <ButtonPrimaryInvert
+                className="back-btn"
+                text="Back"
+                iconLeft={faCaretLeft}
+                onClick={() => {
+                  setSection(0);
+                }}
+              />
+              <SortControlLabel label="Ledger Accounts" />
+            </Styles.FlexRow>
+            <Styles.FlexRow>
+              <ButtonText
+                iconLeft={faCaretRight}
+                text={'Import Ledger Accounts'}
+                onClick={() => setShowImportUi(true)}
+              />
+            </Styles.FlexRow>
+          </Styles.ResponsiveRow>
         </ControlsWrapper>
 
         {/* Address List */}
@@ -77,7 +82,7 @@ export const Manage = ({
                 value={accordionValue}
                 onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
-                <FlexColumn>
+                <Styles.FlexColumn>
                   {Array.from(
                     getSortedLocalLedgerAddresses(addresses).entries()
                   ).map(([chainId, chainAddresses]) => (
@@ -106,14 +111,14 @@ export const Manage = ({
                       </UI.AccordionContent>
                     </Accordion.Item>
                   ))}
-                </FlexColumn>
+                </Styles.FlexColumn>
               </Accordion.Root>
             </UI.AccordionWrapper>
           )}
         </div>
-      </Scrollable>
+      </UI.ScrollableMax>
 
-      <StatsFooter $chainId={'Polkadot'}>
+      <Styles.StatsFooter $chainId={'Polkadot'}>
         <div>
           <section className="left">
             <div className="footer-stat">
@@ -122,7 +127,7 @@ export const Manage = ({
             </div>
           </section>
         </div>
-      </StatsFooter>
+      </Styles.StatsFooter>
     </>
   );
 };

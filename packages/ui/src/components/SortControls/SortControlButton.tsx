@@ -16,6 +16,7 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   onLabel = '',
   offLabel = '',
   fixedWidth = true,
+  respClass = '',
 }: SortControlsButtonProps) => {
   /// Utility to calculate button classes.
   const getButtonClass = () => {
@@ -23,7 +24,10 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
     fixedWidth && classes.push('fixed');
     isActive && classes.push('active');
     isDisabled && classes.push('disable');
-    onLabel === '' && offLabel === '' && classes.push('icon-only');
+    respClass && classes.push(respClass);
+    onLabel === '' && offLabel === ''
+      ? classes.push('icon-only')
+      : classes.push('icon-and-text');
     return classes.join(' ');
   };
 
