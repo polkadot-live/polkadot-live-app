@@ -1,12 +1,25 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ChainList } from '@ren/config/chains';
+import { useHelp } from '@app/contexts/common/Help';
 import type { ChainID } from '@polkadot-live/types/chains';
+
+// Render shared footer in views.
+export const LinksFooter = () => {
+  const { openHelp } = useHelp();
+  return (
+    <UI.LinksFooter
+      handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
+      handlePrivacyClick={() => openHelp('help:docs:privacy')}
+    />
+  );
+};
 
 // Return an address' chain ID.
 export const getAddressChainId = (address: string): ChainID => {

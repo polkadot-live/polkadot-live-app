@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import { LinksFooter } from '@app/Utils';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
@@ -15,18 +16,6 @@ import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@app/hooks/useImportMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import { useHelp } from '@app/contexts/common/Help';
-
-const LinksFooter = () => {
-  const { openHelp } = useHelp();
-
-  return (
-    <UI.LinksFooter
-      handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
-      handlePrivacyClick={() => openHelp('help:docs:privacy')}
-    />
-  );
-};
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.
