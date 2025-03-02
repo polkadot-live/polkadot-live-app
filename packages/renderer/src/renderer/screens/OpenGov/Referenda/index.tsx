@@ -4,6 +4,7 @@
 import * as themeVariables from '../../../theme/variables';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import { LinksFooter } from '@app/Utils';
 
 import {
   ControlsWrapper,
@@ -25,14 +26,14 @@ import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
 import { NoteWrapper } from './Wrappers';
-import { FlexColumn, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
 
-export const Referenda = ({ section, setSection }: ReferendaProps) => {
+export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
@@ -280,146 +281,130 @@ export const Referenda = ({ section, setSection }: ReferendaProps) => {
   };
 
   return (
-    <>
-      <UI.ScrollableMax style={{ paddingTop: '0.5rem' }}>
-        <div style={{ padding: '0rem 1.25rem 2rem' }}>
-          <UI.ActionItem
-            showIcon={false}
-            text={`${chainId} Referenda`}
-            style={{ marginBottom: '1rem' }}
+    <UI.ScrollableMax
+      headerHeight={0}
+      footerHeight={0}
+      style={{ padding: '0' }}
+    >
+      <div style={{ padding: '1rem 1.5rem' }}>
+        <UI.ActionItem
+          showIcon={false}
+          text={`${chainId} Referenda`}
+          style={{ marginBottom: '1rem' }}
+        />
+        {/* Sorting controls */}
+        <ControlsWrapper className="ReferendaControls" $padBottom={!groupingOn}>
+          <ButtonPrimaryInvert
+            className="back-btn"
+            text="Back"
+            iconLeft={faCaretLeft}
+            onClick={() => setSection(0)}
+            style={{
+              color:
+                chainId === 'Polkadot'
+                  ? 'rgb(169, 74, 117)'
+                  : 'rgb(133, 113, 177)',
+              borderColor:
+                chainId === 'Polkadot'
+                  ? 'rgb(169, 74, 117)'
+                  : 'rgb(133, 113, 177)',
+            }}
           />
-          {/* Sorting controls */}
-          <ControlsWrapper
-            className="ReferendaControls"
-            $padBottom={!groupingOn}
+          <SortControlButton
+            isActive={newestFirst}
+            isDisabled={!getOnlineMode() || fetchingReferenda}
+            faIcon={faSort}
+            onClick={() => setNewestFirst(!newestFirst)}
+            onLabel="Newest First"
+            offLabel="Oldest First"
+            respClass="ReferendaControls"
+          />
+          <SortControlButton
+            isActive={groupingOn}
+            isDisabled={!getOnlineMode() || fetchingReferenda}
+            faIcon={faLayerGroup}
+            onClick={() => setGroupingOn(!groupingOn)}
+            onLabel="Grouping"
+            offLabel="Grouping"
+            fixedWidth={false}
+            respClass="ReferendaControls"
+          />
+          <SortControlButton
+            isActive={isExpandActive()}
+            isDisabled={!getOnlineMode() || fetchingReferenda || !groupingOn}
+            faIcon={faUpDown}
+            onClick={() => handleExpandAll()}
+            onLabel="Expanded"
+            offLabel="Collapsed"
+            fixedWidth={false}
+            respClass="ReferendaControls"
+          />
+          <UI.TooltipRx
+            theme={theme}
+            text={getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'}
           >
-            <ButtonPrimaryInvert
-              className="back-btn"
-              text="Back"
-              iconLeft={faCaretLeft}
-              onClick={() => setSection(0)}
-              style={{
-                color:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-                borderColor:
-                  chainId === 'Polkadot'
-                    ? 'rgb(169, 74, 117)'
-                    : 'rgb(133, 113, 177)',
-              }}
-            />
-            <SortControlButton
-              isActive={newestFirst}
-              isDisabled={!getOnlineMode() || fetchingReferenda}
-              faIcon={faSort}
-              onClick={() => setNewestFirst(!newestFirst)}
-              onLabel="Newest First"
-              offLabel="Oldest First"
-              respClass="ReferendaControls"
-            />
-            <SortControlButton
-              isActive={groupingOn}
-              isDisabled={!getOnlineMode() || fetchingReferenda}
-              faIcon={faLayerGroup}
-              onClick={() => setGroupingOn(!groupingOn)}
-              onLabel="Grouping"
-              offLabel="Grouping"
-              fixedWidth={false}
-              respClass="ReferendaControls"
-            />
-            <SortControlButton
-              isActive={isExpandActive()}
-              isDisabled={!getOnlineMode() || fetchingReferenda || !groupingOn}
-              faIcon={faUpDown}
-              onClick={() => handleExpandAll()}
-              onLabel="Expanded"
-              offLabel="Collapsed"
-              fixedWidth={false}
-              respClass="ReferendaControls"
-            />
-            <UI.TooltipRx
-              theme={theme}
-              text={getOnlineMode() ? 'Refresh Referenda' : 'Currently Offline'}
-            >
-              <span>
-                <SortControlButton
-                  isActive={true}
-                  isDisabled={fetchingReferenda || !getOnlineMode()}
-                  onClick={() => handleRefetchReferenda()}
-                  faIcon={faArrowsRotate}
-                  fixedWidth={false}
-                  respClass="ReferendaControls"
-                />
-              </span>
-            </UI.TooltipRx>
-            <UI.TooltipRx
-              theme={theme}
-              text={getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'}
-            >
-              <span>
-                <SortControlButton
-                  isActive={onlySubscribed}
-                  isDisabled={!getOnlineMode() || fetchingReferenda}
-                  faIcon={faEllipsisVertical}
-                  onClick={() => handleToggleOnlySubscribed()}
-                  fixedWidth={false}
-                  respClass="ReferendaControls"
-                />
-              </span>
-            </UI.TooltipRx>
-          </ControlsWrapper>
+            <span>
+              <SortControlButton
+                isActive={true}
+                isDisabled={fetchingReferenda || !getOnlineMode()}
+                onClick={() => handleRefetchReferenda()}
+                faIcon={faArrowsRotate}
+                fixedWidth={false}
+                respClass="ReferendaControls"
+              />
+            </span>
+          </UI.TooltipRx>
+          <UI.TooltipRx
+            theme={theme}
+            text={getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'}
+          >
+            <span>
+              <SortControlButton
+                isActive={onlySubscribed}
+                isDisabled={!getOnlineMode() || fetchingReferenda}
+                faIcon={faEllipsisVertical}
+                onClick={() => handleToggleOnlySubscribed()}
+                fixedWidth={false}
+                respClass="ReferendaControls"
+              />
+            </span>
+          </UI.TooltipRx>
+        </ControlsWrapper>
 
-          {/* Only Subscribed Notice */}
-          {onlySubscribed && (
-            <NoteWrapper>
-              <div className="note-wrapper">
-                <span>Note:</span>
-                <p>
-                  You are viewing only referenda that you are subscribed to.
-                </p>
-              </div>
-            </NoteWrapper>
+        {/* Only Subscribed Notice */}
+        {onlySubscribed && (
+          <NoteWrapper>
+            <div className="note-wrapper">
+              <span>Note:</span>
+              <p>You are viewing only referenda that you are subscribed to.</p>
+            </div>
+          </NoteWrapper>
+        )}
+
+        {/* List referenda */}
+        <section>
+          {!getOnlineMode() ? (
+            <div style={{ padding: '0.5rem' }}>
+              <p>Currently offline.</p>
+              <p>Please reconnect to load OpenGov referenda.</p>
+            </div>
+          ) : (
+            <div style={{ marginTop: '2rem' }}>
+              {fetchingReferenda ? (
+                <>{renderPlaceholders(4)}</>
+              ) : (
+                <>
+                  {renderCategorised()}
+                  {renderListed()}
+                  {renderSubscribedCategorised()}
+                  {renderSubscribedListed()}
+                </>
+              )}
+            </div>
           )}
-
-          {/* List referenda */}
-          <section>
-            {!getOnlineMode() ? (
-              <div style={{ padding: '0.5rem' }}>
-                <p>Currently offline.</p>
-                <p>Please reconnect to load OpenGov referenda.</p>
-              </div>
-            ) : (
-              <div style={{ marginTop: '2rem' }}>
-                {fetchingReferenda ? (
-                  <>{renderPlaceholders(4)}</>
-                ) : (
-                  <>
-                    {renderCategorised()}
-                    {renderListed()}
-                    {renderSubscribedCategorised()}
-                    {renderSubscribedListed()}
-                  </>
-                )}
-              </div>
-            )}
-          </section>
-        </div>
-      </UI.ScrollableMax>
-      {section === 1 && (
-        <StatsFooter $chainId={chainId}>
-          <div>
-            <section className="left">
-              <div className="footer-stat">
-                <h2>Active Referenda:</h2>
-                <span style={{ minWidth: '14px' }}>
-                  {fetchingReferenda ? '-' : referenda.length}
-                </span>
-              </div>
-            </section>
-          </div>
-        </StatsFooter>
-      )}
-    </>
+        </section>
+      </div>
+      <LinksFooter />
+    </UI.ScrollableMax>
   );
 };

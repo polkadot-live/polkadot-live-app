@@ -138,8 +138,9 @@ export const OpenGov: React.FC = () => {
   };
 
   return (
-    <ModalSection type="carousel">
+    <ModalSection type="carousel" style={{ height: '100%' }}>
       <ModalMotionTwoSection
+        style={{ height: '100%' }}
         animate={section === 0 ? 'home' : 'next'}
         transition={{
           duration: 0.5,
@@ -156,8 +157,15 @@ export const OpenGov: React.FC = () => {
         }}
       >
         {/* Section 1 */}
-        <section className="carousel-section-wrapper">
-          <UI.ScrollableMax headerHeight={0} style={{ padding: 0 }}>
+        <section
+          className="carousel-section-wrapper"
+          style={{ height: '100%' }}
+        >
+          <UI.ScrollableMax
+            headerHeight={0}
+            footerHeight={0}
+            style={{ padding: 0 }}
+          >
             <WindowWrapper style={{ paddingTop: '1rem' }}>
               <Styles.FlexColumn>
                 <UI.ActionItem
@@ -319,12 +327,13 @@ export const OpenGov: React.FC = () => {
         </section>
 
         {/* Section 2 */}
-        <section className="carousel-section-wrapper">
-          {sectionContent === 'tracks' && (
-            <Tracks section={section} setSection={setSection} />
-          )}
+        <section
+          className="carousel-section-wrapper"
+          style={{ height: '100%' }}
+        >
+          {sectionContent === 'tracks' && <Tracks setSection={setSection} />}
           {sectionContent === 'referenda' && (
-            <Referenda section={section} setSection={setSection} />
+            <Referenda setSection={setSection} />
           )}
         </section>
       </ModalMotionTwoSection>

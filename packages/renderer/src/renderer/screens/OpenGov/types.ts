@@ -5,7 +5,6 @@ import type { Track } from '@ren/model/Track';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface TracksProps {
-  section: number;
   setSection: (section: number) => void;
 }
 
@@ -14,7 +13,6 @@ export interface TrackRowProps {
 }
 
 export interface ReferendaProps {
-  section: number;
   setSection: (section: number) => void;
 }
 
