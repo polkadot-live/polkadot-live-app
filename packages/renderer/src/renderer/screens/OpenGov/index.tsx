@@ -27,6 +27,7 @@ import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { LinksFooter } from '@app/Utils';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -156,53 +157,105 @@ export const OpenGov: React.FC = () => {
       >
         {/* Section 1 */}
         <section className="carousel-section-wrapper">
-          <UI.ScrollableMax
-            headerHeight={0}
-            style={{ paddingTop: 0, paddingBottom: 20 }}
-          >
-            <TreasuryStats $chainId={treasuryChainId}>
-              {fetchingTreasuryData && getOnlineMode() ? (
-                <div className="loading-wrapper">
-                  {renderPlaceholders(0, '68.47px', '0.5rem')}
-                </div>
-              ) : (
-                <>
-                  {wrapWithOfflineTooltip(
-                    <Styles.GridFourCol id="OpenGovStats">
-                      <UI.TreasuryStatCard
-                        chainId={treasuryChainId}
-                        title={'Treasury Balance'}
-                        statText={getFormattedFreeBalance()}
-                        helpKey={'help:openGov:treasuryBalance'}
-                        openHelp={openHelp}
-                      />
-                      <UI.TreasuryStatCard
-                        chainId={treasuryChainId}
-                        title={'Next Burn'}
-                        statText={getFormattedNextBurn()}
-                        helpKey={'help:openGov:nextBurn'}
-                        openHelp={openHelp}
-                      />
-                      <UI.TreasuryStatCard
-                        chainId={treasuryChainId}
-                        title={'To Be Awarded'}
-                        statText={getFormattedToBeAwarded()}
-                        helpKey={'help:openGov:toBeAwarded'}
-                        openHelp={openHelp}
-                      />
-                      <UI.TreasuryStatCard
-                        chainId={treasuryChainId}
-                        title={'Spend Period'}
-                        statText={getSpendPeriodProgress()}
-                        helpKey={'help:openGov:spendPeriod'}
-                        openHelp={openHelp}
-                      />
-                    </Styles.GridFourCol>,
-                    getOnlineMode()
+          <UI.ScrollableMax headerHeight={0} style={{ padding: 0 }}>
+            <WindowWrapper style={{ paddingTop: '1rem' }}>
+              <Styles.FlexColumn>
+                <UI.ActionItem
+                  showIcon={false}
+                  text={'Treasury'}
+                  style={{ marginTop: '0.75rem' }}
+                />
+
+                <TreasuryStats $chainId={treasuryChainId}>
+                  {fetchingTreasuryData && getOnlineMode() ? (
+                    <div className="loading-wrapper">
+                      {renderPlaceholders(0, '68.47px', '0.5rem')}
+                    </div>
+                  ) : (
+                    <Styles.FlexColumn>
+                      <UI.ControlsWrapper style={{ marginBottom: '0' }}>
+                        {/* Re-fetch Stats */}
+                        <div
+                          className="tooltip-trigger-element"
+                          data-tooltip-text={
+                            getOnlineMode()
+                              ? 'Refresh Stats'
+                              : 'Currently Offline'
+                          }
+                          onMouseMove={() =>
+                            setTooltipTextAndOpen(
+                              getOnlineMode()
+                                ? 'Refresh Stats'
+                                : 'Currently Offline'
+                            )
+                          }
+                        >
+                          <UI.SortControlButton
+                            isActive={true}
+                            isDisabled={
+                              fetchingTreasuryData || !getOnlineMode()
+                            }
+                            onClick={() => refetchTreasuryStats()}
+                            faIcon={faArrowsRotate}
+                            fixedWidth={false}
+                          />
+                        </div>
+
+                        {/* Select Box */}
+                        {wrapWithOfflineTooltip(
+                          <div className="select-wrapper">
+                            <select
+                              disabled={!getOnlineMode()}
+                              id="select-treasury-chain"
+                              value={treasuryChainId}
+                              onChange={(e) => handleChangeStats(e)}
+                            >
+                              <option value="Polkadot">Polkadot</option>
+                              <option value="Kusama">Kusama</option>
+                            </select>
+                          </div>,
+                          getOnlineMode()
+                        )}
+                      </UI.ControlsWrapper>
+
+                      {wrapWithOfflineTooltip(
+                        <Styles.GridFourCol id="OpenGovStats">
+                          <UI.TreasuryStatCard
+                            chainId={treasuryChainId}
+                            title={'Treasury Balance'}
+                            statText={getFormattedFreeBalance()}
+                            helpKey={'help:openGov:treasuryBalance'}
+                            openHelp={openHelp}
+                          />
+                          <UI.TreasuryStatCard
+                            chainId={treasuryChainId}
+                            title={'Next Burn'}
+                            statText={getFormattedNextBurn()}
+                            helpKey={'help:openGov:nextBurn'}
+                            openHelp={openHelp}
+                          />
+                          <UI.TreasuryStatCard
+                            chainId={treasuryChainId}
+                            title={'To Be Awarded'}
+                            statText={getFormattedToBeAwarded()}
+                            helpKey={'help:openGov:toBeAwarded'}
+                            openHelp={openHelp}
+                          />
+                          <UI.TreasuryStatCard
+                            chainId={treasuryChainId}
+                            title={'Spend Period'}
+                            statText={getSpendPeriodProgress()}
+                            helpKey={'help:openGov:spendPeriod'}
+                            openHelp={openHelp}
+                          />
+                        </Styles.GridFourCol>,
+                        getOnlineMode()
+                      )}
+                    </Styles.FlexColumn>
                   )}
-                </>
-              )}
-            </TreasuryStats>
+                </TreasuryStats>
+              </Styles.FlexColumn>
+            </WindowWrapper>
 
             <WindowWrapper>
               {/* Referenda */}
@@ -261,65 +314,8 @@ export const OpenGov: React.FC = () => {
                 </Styles.GridTwoCol>
               </Styles.FlexColumn>
             </WindowWrapper>
+            <LinksFooter />
           </UI.ScrollableMax>
-
-          {section === 0 && (
-            <Styles.StatsFooter $chainId={'Polkadot'}>
-              <div>
-                <section className="left">
-                  <div className="footer-stat" style={{ columnGap: '0' }}>
-                    <h2>Treasury Stats:</h2>
-                    <span style={{ marginLeft: '1rem' }}>
-                      <UI.ControlsWrapper style={{ marginBottom: '0' }}>
-                        {/* Select Box */}
-                        {wrapWithOfflineTooltip(
-                          <div className="select-wrapper">
-                            <select
-                              disabled={!getOnlineMode()}
-                              id="select-treasury-chain"
-                              value={treasuryChainId}
-                              onChange={(e) => handleChangeStats(e)}
-                            >
-                              <option value="Polkadot">Polkadot</option>
-                              <option value="Kusama">Kusama</option>
-                            </select>
-                          </div>,
-                          getOnlineMode()
-                        )}
-
-                        {/* Re-fetch Stats */}
-                        <div
-                          className="tooltip-trigger-element"
-                          data-tooltip-text={
-                            getOnlineMode()
-                              ? 'Refresh Stats'
-                              : 'Currently Offline'
-                          }
-                          onMouseMove={() =>
-                            setTooltipTextAndOpen(
-                              getOnlineMode()
-                                ? 'Refresh Stats'
-                                : 'Currently Offline'
-                            )
-                          }
-                        >
-                          <UI.SortControlButton
-                            isActive={true}
-                            isDisabled={
-                              fetchingTreasuryData || !getOnlineMode()
-                            }
-                            onClick={() => refetchTreasuryStats()}
-                            faIcon={faArrowsRotate}
-                            fixedWidth={false}
-                          />
-                        </div>
-                      </UI.ControlsWrapper>
-                    </span>
-                  </div>
-                </section>
-              </div>
-            </Styles.StatsFooter>
-          )}
         </section>
 
         {/* Section 2 */}

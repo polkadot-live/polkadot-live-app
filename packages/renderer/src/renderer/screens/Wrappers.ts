@@ -145,5 +145,5 @@ export const WindowWrapper = styled.div`
   background-color: var(--background-window);
   width: 100%;
   position: relative;
-  padding: 0 1.5rem;
+  padding: 0.5rem 1.5rem;
 `;

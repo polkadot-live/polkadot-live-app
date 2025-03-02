@@ -27,7 +27,6 @@ export const IconWrapper = styled.div<{ $chainId: ChainID }>`
 export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
   width: 100%;
   position: relative;
-  padding: 1.25rem 1.5rem 0.5rem;
 
   .loading-wrapper {
     display: flex;
