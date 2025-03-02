@@ -19,8 +19,12 @@ export const ScrollableMax = ({
   <Scrollable
     $footerHeight={footerHeight}
     $headerHeight={headerHeight}
-    style={{ ...style, alignSelf: 'stretch' }}
+    style={{ ...style }}
   >
-    <MaxContainer>{children}</MaxContainer>
+    <MaxContainer
+      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+    >
+      {children}
+    </MaxContainer>
   </Scrollable>
 );

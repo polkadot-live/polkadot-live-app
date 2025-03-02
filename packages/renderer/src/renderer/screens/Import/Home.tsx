@@ -64,139 +64,122 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   }, []);
 
   return (
-    <UI.ScrollableMax
-      footerHeight={0}
-      headerHeight={0}
-      style={{ paddingTop: 0, paddingBottom: 20 }}
-    >
-      <ContentWrapper>
-        <UI.ActionItem
-          showIcon={false}
-          text={'Import Accounts'}
-          style={{ marginTop: '1.75rem' }}
+    <ContentWrapper>
+      <UI.ActionItem
+        showIcon={false}
+        text={'Import Accounts'}
+        style={{ marginTop: '1.75rem' }}
+      />
+      <GridTwoCol>
+        {/* Read-only */}
+        <UI.NavCard
+          title={'Read Only'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'read-only')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:readOnly'}
+          childrenLogo={
+            <FontAwesomeIcon
+              icon={faCircleDot}
+              className="logo mono"
+              style={{ width: 'fit-content', fontSize: '1.8rem' }}
+            />
+          }
+          childrenSubtitle={
+            <span style={{ color: 'var(--text-color-secondary)' }}>
+              Track any address.
+            </span>
+          }
         />
-        <GridTwoCol>
-          {/* Read-only */}
-          <UI.NavCard
-            title={'Read Only'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'read-only')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:readOnly'}
-            childrenLogo={
-              <FontAwesomeIcon
-                icon={faCircleDot}
-                className="logo mono"
-                style={{ width: 'fit-content', fontSize: '1.8rem' }}
-              />
-            }
-            childrenSubtitle={
-              <span style={{ color: 'var(--text-color-secondary)' }}>
-                Track any address.
-              </span>
-            }
-          />
 
-          {/* Ledger */}
-          <UI.NavCard
-            title={'Ledger'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'ledger')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:ledger'}
-            childrenLogo={
-              <LedgerLogoSVG
-                className="logo mono"
-                style={{ height: '2rem', width: 'fit-content' }}
+        {/* Ledger */}
+        <UI.NavCard
+          title={'Ledger'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'ledger')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:ledger'}
+          childrenLogo={
+            <LedgerLogoSVG
+              className="logo mono"
+              style={{ height: '2rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <>
+              <ButtonText
+                text="BETA"
+                disabled
+                marginRight
+                style={{ opacity: 0.5, padding: 0 }}
               />
-            }
-            childrenSubtitle={
-              <>
-                <ButtonText
-                  text="BETA"
-                  disabled
-                  marginRight
-                  style={{ opacity: 0.5, padding: 0 }}
-                />
-                <ButtonText
-                  text="Chrome / Brave"
-                  disabled
-                  iconLeft={faChrome}
-                  style={{ opacity: 0.5, padding: 0 }}
-                />
-              </>
-            }
-            styleLogoCont={{ paddingTop: '0.2rem' }}
-          />
-
-          {/* Vault */}
-          <UI.NavCard
-            title={'Polkadot Vault'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'vault')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:vault'}
-            childrenLogo={
-              <PolkadotVaultSVG
-                className="logo vault"
-                style={{ height: '2rem', width: 'fit-content' }}
+              <ButtonText
+                text="Chrome / Brave"
+                disabled
+                iconLeft={faChrome}
+                style={{ opacity: 0.5, padding: 0 }}
               />
-            }
-            childrenSubtitle={
-              <a
-                className="link stay"
-                href={`https://vault.novasama.io/`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                vault.novasama.io
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
-            }
-          />
-
-          {/* Wallet Connect */}
-          <UI.NavCard
-            title={'Wallet Connect'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'wallet-connect')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:walletConnect'}
-            childrenLogo={
-              <WalletConnectSVG
-                className="logo"
-                style={{ height: '2.1rem', width: 'fit-content' }}
-              />
-            }
-            childrenSubtitle={
-              <a
-                className="link stay"
-                href={`https://walletconnect.network//`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                walletconnect.network
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
-            }
-          />
-        </GridTwoCol>
-
-        <UI.LinksFooter
-          handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
-          handlePrivacyClick={() => openHelp('help:docs:privacy')}
+            </>
+          }
+          styleLogoCont={{ paddingTop: '0.2rem' }}
         />
-      </ContentWrapper>
-    </UI.ScrollableMax>
+
+        {/* Vault */}
+        <UI.NavCard
+          title={'Polkadot Vault'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'vault')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:vault'}
+          childrenLogo={
+            <PolkadotVaultSVG
+              className="logo vault"
+              style={{ height: '2rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <a
+              className="link stay"
+              href={`https://vault.novasama.io/`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              vault.novasama.io
+              <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-6" />
+            </a>
+          }
+        />
+
+        {/* Wallet Connect */}
+        <UI.NavCard
+          title={'Wallet Connect'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'wallet-connect')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:walletConnect'}
+          childrenLogo={
+            <WalletConnectSVG
+              className="logo"
+              style={{ height: '2.1rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <a
+              className="link stay"
+              href={`https://walletconnect.network//`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              walletconnect.network
+              <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-6" />
+            </a>
+          }
+        />
+      </GridTwoCol>
+    </ContentWrapper>
   );
 };

@@ -121,10 +121,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   );
 
   return (
-    <UI.ScrollableMax
-      footerHeight={4}
-      style={{ paddingTop: 0, paddingBottom: '1rem' }}
-    >
+    <>
       {(wcConnecting || wcDisconnecting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
@@ -415,6 +412,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           </AccordionRx.Root>
         </UI.AccordionWrapper>
       </div>
-    </UI.ScrollableMax>
+    </>
   );
 };

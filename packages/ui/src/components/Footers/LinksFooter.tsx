@@ -30,19 +30,21 @@ export const LinksFooter = ({
   handleDisclaimerClick,
   handlePrivacyClick,
 }: LinksFooterProps) => (
-  <FlexRow style={{ justifyContent: 'center', padding: '1rem' }}>
-    <p
-      style={{
-        margin: 0,
-        color: 'var(--text-color-secondary)',
-        opacity: '0.6',
-      }}
-    >
-      Polkadot Live
-    </p>
-    <VertBar />
-    <LinkItem onClick={() => handleDisclaimerClick()}>Disclaimer</LinkItem>
-    <VertBar />
-    <LinkItem onClick={() => handlePrivacyClick()}>Privacy</LinkItem>
-  </FlexRow>
+  <div style={{ marginTop: 'auto' }}>
+    <FlexRow style={{ justifyContent: 'center', padding: '1rem' }}>
+      <p
+        style={{
+          margin: 0,
+          color: 'var(--text-color-secondary)',
+          opacity: '0.6',
+        }}
+      >
+        Polkadot Live
+      </p>
+      <VertBar />
+      <LinkItem onClick={() => handleDisclaimerClick()}>Disclaimer</LinkItem>
+      <VertBar />
+      <LinkItem onClick={() => handlePrivacyClick()}>Privacy</LinkItem>
+    </FlexRow>
+  </div>
 );

@@ -41,102 +41,87 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
 
   return (
     <>
-      <UI.ScrollableMax style={{ paddingTop: 0 }}>
-        <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
-          <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
-        </div>
-        {/* Top Controls */}
-        <ControlsWrapper
-          $padWrapper={true}
-          $padBottom={false}
-          style={{ paddingTop: '1rem', marginBottom: 0 }}
-        >
-          <Styles.ResponsiveRow $smWidth="450px">
-            <Styles.FlexRow>
-              <ButtonPrimaryInvert
-                className="back-btn"
-                text="Back"
-                iconLeft={faCaretLeft}
-                onClick={() => setSection(0)}
-              />
-              <SortControlLabel label="Vault Accounts" />
-            </Styles.FlexRow>
-            <Styles.FlexRow>
-              <ButtonText
-                iconLeft={faQrcode}
-                text={'Import Another Account'}
-                onClick={() => {
-                  openOverlayWith(
-                    <ErrorBoundary
-                      fallback={<h2>Could not load QR Scanner</h2>}
+      <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+        <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
+      </div>
+      {/* Top Controls */}
+      <ControlsWrapper
+        $padWrapper={true}
+        $padBottom={false}
+        style={{ paddingTop: '1rem', marginBottom: 0 }}
+      >
+        <Styles.ResponsiveRow $smWidth="450px">
+          <Styles.FlexRow>
+            <ButtonPrimaryInvert
+              className="back-btn"
+              text="Back"
+              iconLeft={faCaretLeft}
+              onClick={() => setSection(0)}
+            />
+            <SortControlLabel label="Vault Accounts" />
+          </Styles.FlexRow>
+          <Styles.FlexRow>
+            <ButtonText
+              iconLeft={faQrcode}
+              text={'Import Another Account'}
+              onClick={() => {
+                openOverlayWith(
+                  <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
+                    <Reader />
+                  </ErrorBoundary>,
+                  'small',
+                  true
+                );
+              }}
+            />
+          </Styles.FlexRow>
+        </Styles.ResponsiveRow>
+      </ControlsWrapper>
+
+      {/* Address List */}
+      <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+        {addresses.length && (
+          <UI.AccordionWrapper $onePart={true}>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="single"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as ChainID)}
+            >
+              <Styles.FlexColumn>
+                {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                  ([chainId, chainAddresses]) => (
+                    <Accordion.Item
+                      key={`${chainId}_vault_addresses`}
+                      className="AccordionItem"
+                      value={chainId}
                     >
-                      <Reader />
-                    </ErrorBoundary>,
-                    'small',
-                    true
-                  );
-                }}
-              />
-            </Styles.FlexRow>
-          </Styles.ResponsiveRow>
-        </ControlsWrapper>
-
-        {/* Address List */}
-        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
-          {addresses.length && (
-            <UI.AccordionWrapper $onePart={true}>
-              <Accordion.Root
-                className="AccordionRoot"
-                type="single"
-                value={accordionValue}
-                onValueChange={(val) => setAccordionValue(val as ChainID)}
-              >
-                <Styles.FlexColumn>
-                  {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                    ([chainId, chainAddresses]) => (
-                      <Accordion.Item
-                        key={`${chainId}_vault_addresses`}
-                        className="AccordionItem"
-                        value={chainId}
-                      >
-                        <UI.AccordionTrigger narrow={true}>
-                          <ChevronDownIcon
-                            className="AccordionChevron"
-                            aria-hidden
-                          />
-                          <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
-                        </UI.AccordionTrigger>
-                        <UI.AccordionContent transparent={true}>
-                          <ItemsColumn>
-                            {chainAddresses.map((localAddress) => (
-                              <Address
-                                key={`address_${localAddress.name}`}
-                                localAddress={localAddress}
-                                setSection={setSection}
-                              />
-                            ))}
-                          </ItemsColumn>
-                        </UI.AccordionContent>
-                      </Accordion.Item>
-                    )
-                  )}
-                </Styles.FlexColumn>
-              </Accordion.Root>
-            </UI.AccordionWrapper>
-          )}
-        </div>
-      </UI.ScrollableMax>
-
-      <Styles.StatsFooter $chainId={'Polkadot'}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Imported Vault Accounts:</h2>
-              <span>{addresses.length}</span>
-            </div>
-          </section>
-        </div>
-      </Styles.StatsFooter>
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {chainAddresses.map((localAddress) => (
+                            <Address
+                              key={`address_${localAddress.name}`}
+                              localAddress={localAddress}
+                              setSection={setSection}
+                            />
+                          ))}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  )
+                )}
+              </Styles.FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        )}
+      </div>
     </>
   );
 };

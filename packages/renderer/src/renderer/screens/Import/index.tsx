@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
@@ -14,6 +15,18 @@ import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@app/hooks/useImportMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import { useHelp } from '@app/contexts/common/Help';
+
+const LinksFooter = () => {
+  const { openHelp } = useHelp();
+
+  return (
+    <UI.LinksFooter
+      handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
+      handlePrivacyClick={() => openHelp('help:docs:privacy')}
+    />
+  );
+};
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.
@@ -30,7 +43,7 @@ export const Import: React.FC = () => {
     }
   }, [section]);
 
-  const renderImportPage = () => {
+  const renderImportScreen = () => {
     switch (source) {
       case 'ledger':
         return <ImportLedger setSection={setSection} />;
@@ -46,8 +59,9 @@ export const Import: React.FC = () => {
   };
 
   return (
-    <ModalSection type="carousel">
+    <ModalSection type="carousel" style={{ height: '100%' }}>
       <ModalMotionTwoSection
+        style={{ height: '100%' }}
         animate={section === 0 ? 'home' : 'next'}
         transition={{
           duration: 0.5,
@@ -65,23 +79,41 @@ export const Import: React.FC = () => {
       >
         <div
           style={{
+            display: 'flex',
             flexBasis: '50%',
             minWidth: '50%',
-            height: 'auto',
+            height: '100%',
             flexGrow: 1,
           }}
         >
-          <Home setSection={setSection} setSource={setSource} />
+          <UI.ScrollableMax
+            footerHeight={0}
+            headerHeight={0}
+            style={{ padding: 0 }}
+          >
+            <Home setSection={setSection} setSource={setSource} />
+            <LinksFooter />
+          </UI.ScrollableMax>
         </div>
         <div
           style={{
+            display: 'flex',
             flexBasis: '50%',
             minWidth: '50%',
-            height: 'auto',
+            height: '100%',
             flexGrow: 1,
           }}
         >
-          {section === 1 && renderImportPage()}
+          {section === 1 && (
+            <UI.ScrollableMax
+              footerHeight={0}
+              headerHeight={0}
+              style={{ padding: 0 }}
+            >
+              {renderImportScreen()}
+              <LinksFooter />
+            </UI.ScrollableMax>
+          )}
         </div>
       </ModalMotionTwoSection>
     </ModalSection>
