@@ -13,14 +13,13 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { FlexRow, StatsFooter } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
   faClock,
   faTag,
   faUser,
-  faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
@@ -29,6 +28,7 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
 import type { TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
+import { LinksFooter } from '@ren/renderer/Utils';
 
 const TriggerRightIcon = ({
   text,
@@ -61,7 +61,7 @@ export const Action = () => {
     submitMockTx,
   } = useTxMeta();
 
-  const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
+  const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   // Utility to get title based on tx status.
@@ -90,8 +90,8 @@ export const Action = () => {
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
   return (
-    <>
-      <UI.ScrollableMax headerHeight={0} style={{ padding: '0 0.25rem' }}>
+    <UI.ScrollableMax headerHeight={0} style={{ padding: 0 }}>
+      <div style={{ padding: '0 0.25rem' }}>
         {isBuildingExtrinsic && (
           <BarLoader
             color={darkMode ? '#642763' : '#a772a6'}
@@ -283,36 +283,8 @@ export const Action = () => {
             </UI.AccordionWrapper>
           )}
         </div>
-      </UI.ScrollableMax>
-      <StatsFooter $chainId={'Polkadot'}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Total Extrinsics:</h2>
-              <span>{Array.from(extrinsics.keys()).length}</span>
-            </div>
-          </section>
-          <section className="right">
-            <div className="footer-stat">
-              {!getOnlineMode() && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--accent-warning)',
-                  }}
-                >
-                  <FontAwesomeIcon icon={faWarning} transform={'shrink-2'} />
-                  <span style={{ color: 'var(--accent-warning)' }}>
-                    Switch to online mode to sign extrinsics
-                  </span>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      </StatsFooter>
-    </>
+      </div>
+      <LinksFooter />
+    </UI.ScrollableMax>
   );
 };
