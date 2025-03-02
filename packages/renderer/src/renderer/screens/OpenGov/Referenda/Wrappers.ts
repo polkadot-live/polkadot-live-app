@@ -85,24 +85,16 @@ export const NoteWrapper = styled.div`
   background-color: var(--background-primary);
   border: 1px solid var(--border-mid-color);
   border-color: #4a4a29;
-
-  padding: 0.75rem 1.5rem;
-  margin: 2rem 0 1rem;
+  padding: 1rem 1.5rem;
   border-radius: 0.375rem;
 
-  .note-wrapper {
-    display: flex;
-    column-gap: 0.75rem;
-    align-items: center;
-
-    span {
-      font-weight: 600;
-      color: #9e9e3e;
-    }
-    p {
-      margin: 0;
-      color: var(--text-color-secondary);
-    }
+  span {
+    font-weight: 600;
+    color: #9e9e3e;
+  }
+  p {
+    margin: 0;
+    color: var(--text-color-secondary);
   }
 `;
 

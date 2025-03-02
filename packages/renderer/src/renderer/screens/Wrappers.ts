@@ -140,10 +140,3 @@ export const ContentWrapper = styled.div`
     }
   }
 `;
-
-export const WindowWrapper = styled.div`
-  background-color: var(--background-window);
-  width: 100%;
-  position: relative;
-  padding: 0.5rem 1.5rem;
-`;

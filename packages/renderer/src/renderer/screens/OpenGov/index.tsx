@@ -8,7 +8,6 @@ import * as themeVariables from '../../theme/variables';
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { WindowWrapper } from '@app/screens/Wrappers';
 import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import {
@@ -160,159 +159,169 @@ export const OpenGov: React.FC = () => {
           style={{ height: '100%' }}
         >
           <UI.ScrollableMax>
-            <WindowWrapper style={{ paddingTop: '1rem' }}>
+            <Styles.PadWrapper>
               <Styles.FlexColumn>
-                <UI.ActionItem
-                  showIcon={false}
-                  text={'Treasury'}
-                  style={{ marginTop: '0.75rem' }}
-                />
+                <section>
+                  <Styles.FlexColumn>
+                    <UI.ActionItem
+                      showIcon={false}
+                      text={'Treasury'}
+                      style={{ marginTop: '0.75rem' }}
+                    />
 
-                <TreasuryStats $chainId={treasuryChainId}>
-                  {fetchingTreasuryData && getOnlineMode() ? (
-                    <div className="loading-wrapper">
-                      {renderPlaceholders(0, '68.47px', '0.5rem')}
-                    </div>
-                  ) : (
-                    <Styles.FlexColumn>
-                      <UI.ControlsWrapper style={{ marginBottom: '0' }}>
-                        {/* Re-fetch Stats */}
-                        <UI.TooltipRx
-                          theme={theme}
-                          text={getOnlineMode() ? 'Refresh Stats' : 'Offline'}
-                        >
-                          <span>
-                            <UI.SortControlButton
-                              isActive={true}
-                              isDisabled={
-                                fetchingTreasuryData || !getOnlineMode()
+                    <TreasuryStats $chainId={treasuryChainId}>
+                      {fetchingTreasuryData && getOnlineMode() ? (
+                        <div className="loading-wrapper">
+                          {renderPlaceholders(0, '68.47px', '0.5rem')}
+                        </div>
+                      ) : (
+                        <Styles.FlexColumn>
+                          <UI.ControlsWrapper style={{ marginBottom: '0' }}>
+                            {/* Re-fetch Stats */}
+                            <UI.TooltipRx
+                              theme={theme}
+                              text={
+                                getOnlineMode() ? 'Refresh Stats' : 'Offline'
                               }
-                              onClick={() => refetchTreasuryStats()}
-                              faIcon={faArrowsRotate}
-                              fixedWidth={false}
-                            />
-                          </span>
-                        </UI.TooltipRx>
-
-                        {/* Select Box */}
-                        <TooltipWrapper
-                          theme={theme}
-                          wrap={!getOnlineMode()}
-                          tooltipText={'Offline'}
-                        >
-                          <div className="select-wrapper">
-                            <select
-                              disabled={!getOnlineMode()}
-                              id="select-treasury-chain"
-                              value={treasuryChainId}
-                              onChange={(e) => handleChangeStats(e)}
                             >
-                              <option value="Polkadot">Polkadot</option>
-                              <option value="Kusama">Kusama</option>
-                            </select>
-                          </div>
-                        </TooltipWrapper>
-                      </UI.ControlsWrapper>
+                              <span>
+                                <UI.SortControlButton
+                                  isActive={true}
+                                  isDisabled={
+                                    fetchingTreasuryData || !getOnlineMode()
+                                  }
+                                  onClick={() => refetchTreasuryStats()}
+                                  faIcon={faArrowsRotate}
+                                  fixedWidth={false}
+                                />
+                              </span>
+                            </UI.TooltipRx>
 
-                      <TooltipWrapper
-                        theme={theme}
-                        wrap={!getOnlineMode()}
-                        tooltipText={'Offline'}
-                      >
-                        <Styles.GridFourCol id="OpenGovStats">
-                          <UI.TreasuryStatCard
-                            chainId={treasuryChainId}
-                            title={'Treasury Balance'}
-                            statText={getFormattedFreeBalance()}
-                            helpKey={'help:openGov:treasuryBalance'}
-                            openHelp={openHelp}
-                          />
-                          <UI.TreasuryStatCard
-                            chainId={treasuryChainId}
-                            title={'Next Burn'}
-                            statText={getFormattedNextBurn()}
-                            helpKey={'help:openGov:nextBurn'}
-                            openHelp={openHelp}
-                          />
-                          <UI.TreasuryStatCard
-                            chainId={treasuryChainId}
-                            title={'To Be Awarded'}
-                            statText={getFormattedToBeAwarded()}
-                            helpKey={'help:openGov:toBeAwarded'}
-                            openHelp={openHelp}
-                          />
-                          <UI.TreasuryStatCard
-                            chainId={treasuryChainId}
-                            title={'Spend Period'}
-                            statText={getSpendPeriodProgress()}
-                            helpKey={'help:openGov:spendPeriod'}
-                            openHelp={openHelp}
-                          />
-                        </Styles.GridFourCol>
-                      </TooltipWrapper>
-                    </Styles.FlexColumn>
-                  )}
-                </TreasuryStats>
+                            {/* Select Box */}
+                            <TooltipWrapper
+                              theme={theme}
+                              wrap={!getOnlineMode()}
+                              tooltipText={'Offline'}
+                            >
+                              <div className="select-wrapper">
+                                <select
+                                  disabled={!getOnlineMode()}
+                                  id="select-treasury-chain"
+                                  value={treasuryChainId}
+                                  onChange={(e) => handleChangeStats(e)}
+                                >
+                                  <option value="Polkadot">Polkadot</option>
+                                  <option value="Kusama">Kusama</option>
+                                </select>
+                              </div>
+                            </TooltipWrapper>
+                          </UI.ControlsWrapper>
+
+                          <TooltipWrapper
+                            theme={theme}
+                            wrap={!getOnlineMode()}
+                            tooltipText={'Offline'}
+                          >
+                            <Styles.GridFourCol id="OpenGovStats">
+                              <UI.TreasuryStatCard
+                                chainId={treasuryChainId}
+                                title={'Treasury Balance'}
+                                statText={getFormattedFreeBalance()}
+                                helpKey={'help:openGov:treasuryBalance'}
+                                openHelp={openHelp}
+                              />
+                              <UI.TreasuryStatCard
+                                chainId={treasuryChainId}
+                                title={'Next Burn'}
+                                statText={getFormattedNextBurn()}
+                                helpKey={'help:openGov:nextBurn'}
+                                openHelp={openHelp}
+                              />
+                              <UI.TreasuryStatCard
+                                chainId={treasuryChainId}
+                                title={'To Be Awarded'}
+                                statText={getFormattedToBeAwarded()}
+                                helpKey={'help:openGov:toBeAwarded'}
+                                openHelp={openHelp}
+                              />
+                              <UI.TreasuryStatCard
+                                chainId={treasuryChainId}
+                                title={'Spend Period'}
+                                statText={getSpendPeriodProgress()}
+                                helpKey={'help:openGov:spendPeriod'}
+                                openHelp={openHelp}
+                              />
+                            </Styles.GridFourCol>
+                          </TooltipWrapper>
+                        </Styles.FlexColumn>
+                      )}
+                    </TreasuryStats>
+                  </Styles.FlexColumn>
+                </section>
+
+                <section>
+                  {/* Referenda */}
+                  <Styles.FlexColumn $rowGap={'0.75rem'}>
+                    <UI.ActionItem
+                      showIcon={false}
+                      text={'Referenda'}
+                      style={{ marginTop: '0.75rem' }}
+                    />
+                    <Styles.GridTwoCol>
+                      <UI.NavCardThin
+                        title={'Polkadot'}
+                        onClick={() => handleOpenReferenda('Polkadot')}
+                        childrenLogo={
+                          <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                        }
+                        childrenSubtitle={
+                          <span>Active referenda on the Polkadot network.</span>
+                        }
+                      />
+                      <UI.NavCardThin
+                        title={'Kusama'}
+                        onClick={() => handleOpenReferenda('Kusama')}
+                        childrenLogo={
+                          <KusamaSVG width={'2.2rem'} opacity={0.8} />
+                        }
+                        childrenSubtitle={
+                          <span>Active referenda on the Kusama network.</span>
+                        }
+                      />
+                    </Styles.GridTwoCol>
+
+                    {/* Origins and Tracks */}
+                    <UI.ActionItem
+                      showIcon={false}
+                      text={'Tracks'}
+                      style={{ marginTop: '0.75rem' }}
+                    />
+                    <Styles.GridTwoCol>
+                      <UI.NavCardThin
+                        title={'Polkadot'}
+                        onClick={() => handleOpenTracks('Polkadot')}
+                        childrenLogo={
+                          <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                        }
+                        childrenSubtitle={
+                          <span>Tracks on the Polkadot network.</span>
+                        }
+                      />
+                      <UI.NavCardThin
+                        title={'Kusama'}
+                        onClick={() => handleOpenTracks('Kusama')}
+                        childrenLogo={
+                          <KusamaSVG width={'2.2rem'} opacity={0.8} />
+                        }
+                        childrenSubtitle={
+                          <span>Tracks on the Kusama network.</span>
+                        }
+                      />
+                    </Styles.GridTwoCol>
+                  </Styles.FlexColumn>
+                </section>
               </Styles.FlexColumn>
-            </WindowWrapper>
-
-            <WindowWrapper>
-              {/* Referenda */}
-              <Styles.FlexColumn $rowGap={'0.75rem'}>
-                <UI.ActionItem
-                  showIcon={false}
-                  text={'Referenda'}
-                  style={{ marginTop: '0.75rem' }}
-                />
-                <Styles.GridTwoCol>
-                  <UI.NavCardThin
-                    title={'Polkadot'}
-                    onClick={() => handleOpenReferenda('Polkadot')}
-                    childrenLogo={
-                      <PolkadotSVG width={'1.5rem'} opacity={0.8} />
-                    }
-                    childrenSubtitle={
-                      <span>Active referenda on the Polkadot network.</span>
-                    }
-                  />
-                  <UI.NavCardThin
-                    title={'Kusama'}
-                    onClick={() => handleOpenReferenda('Kusama')}
-                    childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
-                    childrenSubtitle={
-                      <span>Active referenda on the Kusama network.</span>
-                    }
-                  />
-                </Styles.GridTwoCol>
-
-                {/* Origins and Tracks */}
-                <UI.ActionItem
-                  showIcon={false}
-                  text={'Tracks'}
-                  style={{ marginTop: '0.75rem' }}
-                />
-                <Styles.GridTwoCol>
-                  <UI.NavCardThin
-                    title={'Polkadot'}
-                    onClick={() => handleOpenTracks('Polkadot')}
-                    childrenLogo={
-                      <PolkadotSVG width={'1.5rem'} opacity={0.8} />
-                    }
-                    childrenSubtitle={
-                      <span>Tracks on the Polkadot network.</span>
-                    }
-                  />
-                  <UI.NavCardThin
-                    title={'Kusama'}
-                    onClick={() => handleOpenTracks('Kusama')}
-                    childrenLogo={<KusamaSVG width={'2.2rem'} opacity={0.8} />}
-                    childrenSubtitle={
-                      <span>Tracks on the Kusama network.</span>
-                    }
-                  />
-                </Styles.GridTwoCol>
-              </Styles.FlexColumn>
-            </WindowWrapper>
+            </Styles.PadWrapper>
             <LinksFooter />
           </UI.ScrollableMax>
         </section>
