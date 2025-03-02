@@ -8,6 +8,7 @@ export * from './Cards';
 export * from './CopyButton';
 export * from './Common';
 export * from './DragClose';
+export * from './Footers';
 export * from './Hardware';
 export * from './Header';
 export * from './Help';

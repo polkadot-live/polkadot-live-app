@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
 import { faChrome } from '@fortawesome/free-brands-svg-icons';
 import {
   faExternalLinkAlt,
@@ -8,11 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  ActionItem,
-  NavCard,
-  ScrollableMax,
-} from '@polkadot-live/ui/components';
 import { GridTwoCol } from '@polkadot-live/ui/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
@@ -68,20 +64,20 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   }, []);
 
   return (
-    <ScrollableMax
+    <UI.ScrollableMax
       footerHeight={0}
       headerHeight={0}
       style={{ paddingTop: 0, paddingBottom: 20 }}
     >
       <ContentWrapper>
-        <ActionItem
+        <UI.ActionItem
           showIcon={false}
           text={'Import Accounts'}
           style={{ marginTop: '1.75rem' }}
         />
         <GridTwoCol>
           {/* Read-only */}
-          <NavCard
+          <UI.NavCard
             title={'Read Only'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'read-only')
@@ -103,7 +99,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           />
 
           {/* Ledger */}
-          <NavCard
+          <UI.NavCard
             title={'Ledger'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'ledger')
@@ -136,7 +132,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           />
 
           {/* Vault */}
-          <NavCard
+          <UI.NavCard
             title={'Polkadot Vault'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'vault')
@@ -166,7 +162,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
           />
 
           {/* Wallet Connect */}
-          <NavCard
+          <UI.NavCard
             title={'Wallet Connect'}
             onClick={(e: React.MouseEvent<HTMLElement>) =>
               handleClick(e, 'wallet-connect')
@@ -195,7 +191,12 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             }
           />
         </GridTwoCol>
+
+        <UI.LinksFooter
+          handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
+          handlePrivacyClick={() => openHelp('help:docs:privacy')}
+        />
       </ContentWrapper>
-    </ScrollableMax>
+    </UI.ScrollableMax>
   );
 };
