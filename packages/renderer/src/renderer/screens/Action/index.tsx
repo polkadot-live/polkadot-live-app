@@ -90,7 +90,7 @@ export const Action = () => {
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
   return (
-    <UI.ScrollableMax headerHeight={0} style={{ padding: 0 }}>
+    <UI.ScrollableMax>
       <div style={{ padding: '0 0.25rem' }}>
         {isBuildingExtrinsic && (
           <BarLoader

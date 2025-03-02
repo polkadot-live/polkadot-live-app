@@ -47,7 +47,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
   }, [getOnlineMode()]);
 
   return (
-    <UI.ScrollableMax style={{ padding: 0 }}>
+    <UI.ScrollableMax>
       <ContentWrapper style={{ padding: '1rem 1.5rem' }}>
         <UI.ActionItem
           showIcon={false}

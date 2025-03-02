@@ -159,11 +159,7 @@ export const OpenGov: React.FC = () => {
           className="carousel-section-wrapper"
           style={{ height: '100%' }}
         >
-          <UI.ScrollableMax
-            headerHeight={0}
-            footerHeight={0}
-            style={{ padding: 0 }}
-          >
+          <UI.ScrollableMax>
             <WindowWrapper style={{ paddingTop: '1rem' }}>
               <Styles.FlexColumn>
                 <UI.ActionItem

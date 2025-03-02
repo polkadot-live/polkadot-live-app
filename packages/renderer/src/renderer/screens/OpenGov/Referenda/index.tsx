@@ -281,11 +281,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   return (
-    <UI.ScrollableMax
-      headerHeight={0}
-      footerHeight={0}
-      style={{ padding: '0' }}
-    >
+    <UI.ScrollableMax>
       <div style={{ padding: '1rem 1.5rem' }}>
         <UI.ActionItem
           showIcon={false}

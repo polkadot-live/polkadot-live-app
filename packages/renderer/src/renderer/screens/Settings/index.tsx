@@ -95,7 +95,7 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <UI.ScrollableMax style={{ paddingTop: 0, paddingBottom: 0 }}>
+    <UI.ScrollableMax>
       <ContentWrapper>
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root

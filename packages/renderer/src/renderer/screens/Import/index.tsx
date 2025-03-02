@@ -75,11 +75,7 @@ export const Import: React.FC = () => {
             flexGrow: 1,
           }}
         >
-          <UI.ScrollableMax
-            footerHeight={0}
-            headerHeight={0}
-            style={{ padding: 0 }}
-          >
+          <UI.ScrollableMax>
             <Home setSection={setSection} setSource={setSource} />
             <LinksFooter />
           </UI.ScrollableMax>
@@ -94,11 +90,7 @@ export const Import: React.FC = () => {
           }}
         >
           {section === 1 && (
-            <UI.ScrollableMax
-              footerHeight={0}
-              headerHeight={0}
-              style={{ padding: 0 }}
-            >
+            <UI.ScrollableMax>
               {renderImportScreen()}
               <LinksFooter />
             </UI.ScrollableMax>

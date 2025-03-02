@@ -157,10 +157,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   }, [ledger.statusCodes]);
 
   return (
-    <UI.ScrollableMax
-      footerHeight={4}
-      style={{ paddingTop: 0, paddingBottom: '1rem' }}
-    >
+    <UI.ScrollableMax>
       {(ledger.isFetching || ledger.isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
