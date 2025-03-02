@@ -13,7 +13,7 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleDot,
@@ -91,7 +91,7 @@ export const Action = () => {
 
   return (
     <UI.ScrollableMax>
-      <div style={{ padding: '0 0.25rem' }}>
+      <PadWrapper>
         {isBuildingExtrinsic && (
           <BarLoader
             color={darkMode ? '#642763' : '#a772a6'}
@@ -101,189 +101,178 @@ export const Action = () => {
             speedMultiplier={0.75}
           />
         )}
-        <div
-          style={{
-            padding: '0.5rem 1rem 2rem',
-            height:
-              Array.from(extrinsics.keys()).length === 0 ? '100%' : 'auto',
-          }}
+        <UI.ActionItem
+          showIcon={false}
+          text={'Account Filter'}
+          style={{ marginBottom: '1rem' }}
+        />
+        <Select.Root
+          value={selectedFilter}
+          defaultValue="all"
+          onValueChange={onFilterChange}
         >
-          <UI.ActionItem
-            showIcon={false}
-            text={'Account Filter'}
-            style={{ marginBottom: '1rem' }}
-          />
-          <Select.Root
+          <UI.SelectTrigger
+            aria-label="Address Filter"
+            $theme={theme}
             value={selectedFilter}
-            defaultValue="all"
-            onValueChange={onFilterChange}
           >
-            <UI.SelectTrigger
-              aria-label="Address Filter"
-              $theme={theme}
-              value={selectedFilter}
-            >
-              <Select.Value placeholder="All Accounts" />
-              <Select.Icon className="SelectIcon">
-                <ChevronDownIcon />
-              </Select.Icon>
-            </UI.SelectTrigger>
-            <Select.Portal>
-              <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
-                <Select.ScrollUpButton className="SelectScrollButton">
-                  <ChevronUpIcon />
-                </Select.ScrollUpButton>
-                <Select.Viewport className="SelectViewport">
-                  <Select.Group>
-                    <UI.SelectItem key={'all-extrinsics'} value={'all'}>
+            <Select.Value placeholder="All Accounts" />
+            <Select.Icon className="SelectIcon">
+              <ChevronDownIcon />
+            </Select.Icon>
+          </UI.SelectTrigger>
+          <Select.Portal>
+            <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
+              <Select.ScrollUpButton className="SelectScrollButton">
+                <ChevronUpIcon />
+              </Select.ScrollUpButton>
+              <Select.Viewport className="SelectViewport">
+                <Select.Group>
+                  <UI.SelectItem key={'all-extrinsics'} value={'all'}>
+                    <div className="innerRow">
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          height: '2.25rem',
+                        }}
+                      >
+                        All Accounts
+                      </div>
+                    </div>
+                  </UI.SelectItem>
+                  {getOrderedAddressInfo().map(({ accountName, address }) => (
+                    <UI.SelectItem key={address} value={address}>
                       <div className="innerRow">
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            height: '2.25rem',
-                          }}
-                        >
-                          All Accounts
-                        </div>
+                        <FlexRow $gap={'1rem'}>
+                          <UI.TooltipRx
+                            theme={theme}
+                            text={ellipsisFn(address, 12)}
+                          >
+                            <span style={{ marginLeft: '1rem' }}>
+                              <UI.Identicon value={address} fontSize={'2rem'} />
+                            </span>
+                          </UI.TooltipRx>
+                          <span className="text-ellipsis">{accountName}</span>
+                        </FlexRow>
                       </div>
                     </UI.SelectItem>
-                    {getOrderedAddressInfo().map(({ accountName, address }) => (
-                      <UI.SelectItem key={address} value={address}>
-                        <div className="innerRow">
-                          <FlexRow $gap={'1rem'}>
-                            <UI.TooltipRx
-                              theme={theme}
-                              text={ellipsisFn(address, 12)}
-                            >
-                              <span style={{ marginLeft: '1rem' }}>
-                                <UI.Identicon
-                                  value={address}
-                                  fontSize={'2rem'}
-                                />
-                              </span>
-                            </UI.TooltipRx>
-                            <span className="text-ellipsis">{accountName}</span>
-                          </FlexRow>
+                  ))}
+                </Select.Group>
+              </Select.Viewport>
+              <Select.ScrollDownButton className="SelectScrollButton">
+                <ChevronDownIcon />
+              </Select.ScrollDownButton>
+            </UI.SelectContent>
+          </Select.Portal>
+        </Select.Root>
+
+        <UI.ActionItem
+          showIcon={false}
+          text={'Manage Extrinsics'}
+          style={{ margin: '2rem 0 0.25rem' }}
+        />
+
+        {Array.from(extrinsics.keys()).length === 0 && (
+          <EmptyExtrinsicsWrapper>
+            <div>
+              <p>No extrinsics have been added yet.</p>
+            </div>
+          </EmptyExtrinsicsWrapper>
+        )}
+
+        {Array.from(extrinsics.keys()).length > 0 && (
+          <UI.AccordionWrapper>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="multiple"
+              defaultValue={[]}
+            >
+              {getFilteredExtrinsics().map((info) => (
+                <Accordion.Item
+                  key={info.txId}
+                  className="AccordionItem"
+                  value={info.txId}
+                >
+                  <FlexRow $gap={'2px'} style={{ marginTop: '10px' }}>
+                    <UI.AccordionTrigger>
+                      <ChevronDownIcon
+                        className="AccordionChevron"
+                        aria-hidden
+                      />
+                      {getExtrinsicTitle(info)}
+                      <FlexRow
+                        $gap={'1.5rem'}
+                        className="right extrinsics-right"
+                      >
+                        <div className="stat" style={{ minWidth: '80px' }}>
+                          <FontAwesomeIcon
+                            icon={faCircleDot}
+                            fade={fadeTxIcon(info.txStatus)}
+                            transform={'shrink-2'}
+                          />
+                          {getTxStatusTitle(info.txStatus)}
                         </div>
-                      </UI.SelectItem>
-                    ))}
-                  </Select.Group>
-                </Select.Viewport>
-                <Select.ScrollDownButton className="SelectScrollButton">
-                  <ChevronDownIcon />
-                </Select.ScrollDownButton>
-              </UI.SelectContent>
-            </Select.Portal>
-          </Select.Root>
-
-          <UI.ActionItem
-            showIcon={false}
-            text={'Manage Extrinsics'}
-            style={{ margin: '2rem 0 0.25rem' }}
-          />
-
-          {Array.from(extrinsics.keys()).length === 0 && (
-            <EmptyExtrinsicsWrapper>
-              <div>
-                <p>No extrinsics have been added yet.</p>
-              </div>
-            </EmptyExtrinsicsWrapper>
-          )}
-
-          {Array.from(extrinsics.keys()).length > 0 && (
-            <UI.AccordionWrapper>
-              <Accordion.Root
-                className="AccordionRoot"
-                type="multiple"
-                defaultValue={[]}
-              >
-                {getFilteredExtrinsics().map((info) => (
-                  <Accordion.Item
-                    key={info.txId}
-                    className="AccordionItem"
-                    value={info.txId}
-                  >
-                    <FlexRow $gap={'2px'} style={{ marginTop: '10px' }}>
-                      <UI.AccordionTrigger>
-                        <ChevronDownIcon
-                          className="AccordionChevron"
-                          aria-hidden
-                        />
-                        {getExtrinsicTitle(info)}
-                        <FlexRow
-                          $gap={'1.5rem'}
-                          className="right extrinsics-right"
-                        >
-                          <div className="stat" style={{ minWidth: '80px' }}>
-                            <FontAwesomeIcon
-                              icon={faCircleDot}
-                              fade={fadeTxIcon(info.txStatus)}
-                              transform={'shrink-2'}
-                            />
-                            {getTxStatusTitle(info.txStatus)}
-                          </div>
-                          <div className="stat">
-                            <UI.TooltipRx
-                              text={ellipsisFn(info.actionMeta.from, 12)}
-                              theme={theme}
-                            >
-                              <span>
-                                <UI.Identicon
-                                  value={info.actionMeta.from}
-                                  fontSize={'1.5rem'}
-                                />
-                              </span>
-                            </UI.TooltipRx>
-                          </div>
-                          <div className="stat">
-                            <TriggerRightIcon
-                              text={info.actionMeta.accountName}
-                              theme={theme}
-                              icon={faUser}
-                              iconTransform={'grow-2'}
-                            />
-                          </div>
-                          <div className="stat">
-                            <TriggerRightIcon
-                              text={getCategoryTitle(info)}
-                              theme={theme}
-                              icon={faTag}
-                              iconTransform={'grow-2'}
-                            />
-                          </div>
-                          <div className="stat">
-                            <TriggerRightIcon
-                              text={formatDistanceToNow(
-                                new Date(info.timestamp),
-                                { addSuffix: true }
-                              )}
-                              theme={theme}
-                              icon={faClock}
-                            />
-                          </div>
-                        </FlexRow>
-                      </UI.AccordionTrigger>
-                      <div className="HeaderContentDropdownWrapper">
-                        <ExtrinsicDropdownMenu
-                          isBuilt={info.estimatedFee !== undefined}
-                          txStatus={info.txStatus}
-                          onDelete={async () => await removeExtrinsic(info)}
-                          onSign={() => initTxDynamicInfo(info.txId)}
-                          onMockSign={() => submitMockTx(info.txId)}
-                        />
-                      </div>
-                    </FlexRow>
-                    <UI.AccordionContent>
-                      <ExtrinsicItemContent info={info} />
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                ))}
-              </Accordion.Root>
-            </UI.AccordionWrapper>
-          )}
-        </div>
-      </div>
+                        <div className="stat">
+                          <UI.TooltipRx
+                            text={ellipsisFn(info.actionMeta.from, 12)}
+                            theme={theme}
+                          >
+                            <span>
+                              <UI.Identicon
+                                value={info.actionMeta.from}
+                                fontSize={'1.5rem'}
+                              />
+                            </span>
+                          </UI.TooltipRx>
+                        </div>
+                        <div className="stat">
+                          <TriggerRightIcon
+                            text={info.actionMeta.accountName}
+                            theme={theme}
+                            icon={faUser}
+                            iconTransform={'grow-2'}
+                          />
+                        </div>
+                        <div className="stat">
+                          <TriggerRightIcon
+                            text={getCategoryTitle(info)}
+                            theme={theme}
+                            icon={faTag}
+                            iconTransform={'grow-2'}
+                          />
+                        </div>
+                        <div className="stat">
+                          <TriggerRightIcon
+                            text={formatDistanceToNow(
+                              new Date(info.timestamp),
+                              { addSuffix: true }
+                            )}
+                            theme={theme}
+                            icon={faClock}
+                          />
+                        </div>
+                      </FlexRow>
+                    </UI.AccordionTrigger>
+                    <div className="HeaderContentDropdownWrapper">
+                      <ExtrinsicDropdownMenu
+                        isBuilt={info.estimatedFee !== undefined}
+                        txStatus={info.txStatus}
+                        onDelete={async () => await removeExtrinsic(info)}
+                        onSign={() => initTxDynamicInfo(info.txId)}
+                        onMockSign={() => submitMockTx(info.txId)}
+                      />
+                    </div>
+                  </FlexRow>
+                  <UI.AccordionContent>
+                    <ExtrinsicItemContent info={info} />
+                  </UI.AccordionContent>
+                </Accordion.Item>
+              ))}
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        )}
+      </PadWrapper>
       <LinksFooter />
     </UI.ScrollableMax>
   );

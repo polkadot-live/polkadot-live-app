@@ -3,16 +3,15 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
 import { LinksFooter } from '@app/Utils';
-import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@ren/config/settings';
 import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@ren/config/processes/settings';
 import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
-import { FlexColumn } from '@polkadot-live/ui/styles';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
@@ -96,7 +95,7 @@ export const Settings: React.FC = () => {
 
   return (
     <UI.ScrollableMax>
-      <ContentWrapper>
+      <Styles.PadWrapper>
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root
             className="AccordionRoot"
@@ -104,7 +103,7 @@ export const Settings: React.FC = () => {
             value={accordionValue}
             onValueChange={(val) => setAccordionValue(val)}
           >
-            <FlexColumn>
+            <Styles.FlexColumn>
               {Array.from(getSortedSettings().entries()).map(
                 ([category, settings]) => (
                   <Accordion.Item
@@ -133,13 +132,13 @@ export const Settings: React.FC = () => {
                   </Accordion.Item>
                 )
               )}
-            </FlexColumn>
+            </Styles.FlexColumn>
           </Accordion.Root>
         </UI.AccordionWrapper>
 
         {/* Workspaces Accordion Item */}
         {/* <Workspaces /> */}
-      </ContentWrapper>
+      </Styles.PadWrapper>
       <LinksFooter />
     </UI.ScrollableMax>
   );

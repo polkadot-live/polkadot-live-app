@@ -3,13 +3,8 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
-import {
-  ControlsWrapper,
-  Identicon,
-  HardwareAddressWrapper,
-  SortControlLabel,
-} from '@polkadot-live/ui/components';
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { checkAddress } from '@polkadot/util-crypto';
@@ -25,7 +20,6 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -105,114 +99,117 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   };
 
   return (
-    <>
-      <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
-        <UI.ActionItem showIcon={false} text={'Read-Only Accounts'} />
-      </div>
+    <Styles.PadWrapper>
+      <Styles.FlexColumn $rowGap={'2.5rem'}>
+        <section>
+          <UI.ActionItem showIcon={false} text={'Read-Only Accounts'} />
+          <Styles.FlexColumn>
+            {/* Top Controls */}
+            <UI.ControlsWrapper
+              $padWrapper={true}
+              $padBottom={false}
+              style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
+            >
+              <ButtonPrimaryInvert
+                className="back-btn"
+                text="Back"
+                iconLeft={faCaretLeft}
+                onClick={() => setSection(0)}
+              />
+              <UI.SortControlLabel label="Read Only Accounts" />
+            </UI.ControlsWrapper>
 
-      {/* Top Controls */}
-      <ControlsWrapper
-        $padWrapper={true}
-        $padBottom={false}
-        style={{ paddingTop: '1rem', marginBottom: 0 }}
-      >
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => setSection(0)}
-        />
-        <SortControlLabel label="Read Only Accounts" />
-      </ControlsWrapper>
-
-      {/* Add Read Only Address */}
-      <HardwareAddressWrapper
-        style={{
-          backgroundColor: 'inherit',
-          padding: '1.5rem 1.5rem 0rem',
-        }}
-      >
-        <FlexRow style={{ width: '100%' }}>
-          <div className="identicon">
-            <Identicon value={editName} fontSize={'2.5rem'} />
-          </div>
-          <FlexRow style={{ flex: 1 }}>
-            <input
-              className="add-input"
-              type="text"
-              placeholder="Input Address"
-              value={editName}
-              onChange={(e) => onChange(e)}
-            />
-            <button
+            {/* Add Read Only Address */}
+            <UI.HardwareAddressWrapper
               style={{
-                color: 'var(--background-primary)',
-                fontSize: '0.95rem',
+                backgroundColor: 'inherit',
+                padding: '0 0.25rem',
               }}
-              className="btn-mono lg"
-              onPointerDown={async () => await onImport()}
             >
-              Add
-            </button>
-            <button
-              style={{ fontSize: '0.95rem' }}
-              className="btn-mono-invert lg"
-              onPointerDown={() => onCancel()}
-            >
-              Clear
-            </button>
-          </FlexRow>
-        </FlexRow>
-      </HardwareAddressWrapper>
-
-      {/* Address List */}
-      <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
-        <UI.AccordionWrapper $onePart={true}>
-          <Accordion.Root
-            className="AccordionRoot"
-            type="single"
-            value={accordionValue}
-            onValueChange={(val) => setAccordionValue(val as ChainID)}
-          >
-            <FlexColumn>
-              {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                ([chainId, chainAddresses]) => (
-                  <Accordion.Item
-                    key={`${chainId}_read_only_addresses`}
-                    className="AccordionItem"
-                    value={chainId}
+              <Styles.FlexRow>
+                <div className="identicon">
+                  <UI.Identicon value={editName} fontSize={'2.5rem'} />
+                </div>
+                <Styles.FlexRow style={{ flex: 1 }}>
+                  <input
+                    className="add-input"
+                    type="text"
+                    placeholder="Input Address"
+                    value={editName}
+                    onChange={(e) => onChange(e)}
+                  />
+                  <button
+                    style={{
+                      color: 'var(--background-primary)',
+                      fontSize: '0.95rem',
+                    }}
+                    className="btn-mono lg"
+                    onPointerDown={async () => await onImport()}
                   >
-                    <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
-                        className="AccordionChevron"
-                        aria-hidden
-                      />
-                      <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
-                    </UI.AccordionTrigger>
-                    <UI.AccordionContent transparent={true}>
-                      <ItemsColumn>
-                        {addresses.length ? (
-                          <>
-                            {chainAddresses.map((localAddress) => (
-                              <Address
-                                key={`address_${localAddress.name}`}
-                                localAddress={localAddress}
-                                setSection={setSection}
-                              />
-                            ))}
-                          </>
-                        ) : (
-                          <p>No read only addresses imported.</p>
-                        )}
-                      </ItemsColumn>
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                )
-              )}
-            </FlexColumn>
-          </Accordion.Root>
-        </UI.AccordionWrapper>
-      </div>
-    </>
+                    Add
+                  </button>
+                  <button
+                    style={{ fontSize: '0.95rem' }}
+                    className="btn-mono-invert lg"
+                    onPointerDown={() => onCancel()}
+                  >
+                    Clear
+                  </button>
+                </Styles.FlexRow>
+              </Styles.FlexRow>
+            </UI.HardwareAddressWrapper>
+          </Styles.FlexColumn>
+        </section>
+
+        {/* Address List */}
+        <section>
+          <UI.AccordionWrapper $onePart={true}>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="single"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as ChainID)}
+            >
+              <Styles.FlexColumn>
+                {Array.from(getSortedLocalAddresses(addresses).entries()).map(
+                  ([chainId, chainAddresses]) => (
+                    <Accordion.Item
+                      key={`${chainId}_read_only_addresses`}
+                      className="AccordionItem"
+                      value={chainId}
+                    >
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {addresses.length ? (
+                            <>
+                              {chainAddresses.map((localAddress) => (
+                                <Address
+                                  key={`address_${localAddress.name}`}
+                                  localAddress={localAddress}
+                                  setSection={setSection}
+                                />
+                              ))}
+                            </>
+                          ) : (
+                            <p>No read only addresses imported.</p>
+                          )}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  )
+                )}
+              </Styles.FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        </section>
+      </Styles.FlexColumn>
+    </Styles.PadWrapper>
   );
 };

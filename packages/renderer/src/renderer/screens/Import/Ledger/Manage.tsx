@@ -39,82 +39,84 @@ export const Manage = ({
   );
 
   return (
-    <>
-      <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
-        <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
-      </div>
-      {/* Top Controls */}
-      <ControlsWrapper
-        $padWrapper={true}
-        $padBottom={false}
-        style={{ paddingTop: '1rem', marginBottom: 0 }}
-      >
-        <Styles.ResponsiveRow $smWidth="450px">
-          <Styles.FlexRow>
-            <ButtonPrimaryInvert
-              className="back-btn"
-              text="Back"
-              iconLeft={faCaretLeft}
-              onClick={() => {
-                setSection(0);
-              }}
-            />
-            <SortControlLabel label="Ledger Accounts" />
-          </Styles.FlexRow>
-          <Styles.FlexRow>
-            <ButtonText
-              iconLeft={faCaretRight}
-              text={'Import Ledger Accounts'}
-              onClick={() => setShowImportUi(true)}
-            />
-          </Styles.FlexRow>
-        </Styles.ResponsiveRow>
-      </ControlsWrapper>
+    <Styles.PadWrapper>
+      <Styles.FlexColumn $rowGap={'2.5rem'}>
+        <section>
+          <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
+          {/* Top Controls */}
+          <ControlsWrapper
+            $padWrapper={true}
+            $padBottom={false}
+            style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
+          >
+            <Styles.ResponsiveRow $smWidth="450px">
+              <Styles.FlexRow>
+                <ButtonPrimaryInvert
+                  className="back-btn"
+                  text="Back"
+                  iconLeft={faCaretLeft}
+                  onClick={() => {
+                    setSection(0);
+                  }}
+                />
+                <SortControlLabel label="Ledger Accounts" />
+              </Styles.FlexRow>
+              <Styles.FlexRow>
+                <ButtonText
+                  iconLeft={faCaretRight}
+                  text={'Import Ledger Accounts'}
+                  onClick={() => setShowImportUi(true)}
+                />
+              </Styles.FlexRow>
+            </Styles.ResponsiveRow>
+          </ControlsWrapper>
+        </section>
 
-      {/* Address List */}
-      <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
-        {addresses.length && (
-          <UI.AccordionWrapper $onePart={true}>
-            <Accordion.Root
-              className="AccordionRoot"
-              type="single"
-              value={accordionValue}
-              onValueChange={(val) => setAccordionValue(val as ChainID)}
-            >
-              <Styles.FlexColumn>
-                {Array.from(
-                  getSortedLocalLedgerAddresses(addresses).entries()
-                ).map(([chainId, chainAddresses]) => (
-                  <Accordion.Item
-                    key={`${chainId}_ledger_addresses`}
-                    className="AccordionItem"
-                    value={chainId}
-                  >
-                    <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
-                        className="AccordionChevron"
-                        aria-hidden
-                      />
-                      <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
-                    </UI.AccordionTrigger>
-                    <UI.AccordionContent transparent={true}>
-                      <ItemsColumn>
-                        {chainAddresses.map((localAddress) => (
-                          <Address
-                            key={`address_${localAddress.name}`}
-                            localAddress={localAddress}
-                            setSection={setSection}
-                          />
-                        ))}
-                      </ItemsColumn>
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                ))}
-              </Styles.FlexColumn>
-            </Accordion.Root>
-          </UI.AccordionWrapper>
-        )}
-      </div>
-    </>
+        {/* Address List */}
+        <section>
+          {addresses.length && (
+            <UI.AccordionWrapper $onePart={true}>
+              <Accordion.Root
+                className="AccordionRoot"
+                type="single"
+                value={accordionValue}
+                onValueChange={(val) => setAccordionValue(val as ChainID)}
+              >
+                <Styles.FlexColumn>
+                  {Array.from(
+                    getSortedLocalLedgerAddresses(addresses).entries()
+                  ).map(([chainId, chainAddresses]) => (
+                    <Accordion.Item
+                      key={`${chainId}_ledger_addresses`}
+                      className="AccordionItem"
+                      value={chainId}
+                    >
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {chainAddresses.map((localAddress) => (
+                            <Address
+                              key={`address_${localAddress.name}`}
+                              localAddress={localAddress}
+                              setSection={setSection}
+                            />
+                          ))}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  ))}
+                </Styles.FlexColumn>
+              </Accordion.Root>
+            </UI.AccordionWrapper>
+          )}
+        </section>
+      </Styles.FlexColumn>
+    </Styles.PadWrapper>
   );
 };
