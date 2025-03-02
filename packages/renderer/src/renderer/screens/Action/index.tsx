@@ -104,7 +104,7 @@ export const Action = () => {
         <UI.ActionItem
           showIcon={false}
           text={'Account Filter'}
-          style={{ marginBottom: '1rem' }}
+          style={{ margin: '0.85rem 0 1rem 0' }}
         />
         <Select.Root
           value={selectedFilter}
