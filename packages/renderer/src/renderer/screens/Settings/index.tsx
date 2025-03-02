@@ -4,6 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
+import { LinksFooter } from '@app/Utils';
 import { ContentWrapper } from './Wrappers';
 import { Setting } from './Setting';
 import { SettingsList } from '@ren/config/settings';
@@ -94,10 +95,7 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <UI.ScrollableMax
-      footerHeight={4}
-      style={{ paddingTop: 0, paddingBottom: 0 }}
-    >
+    <UI.ScrollableMax style={{ paddingTop: 0, paddingBottom: 0 }}>
       <ContentWrapper>
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root
@@ -142,6 +140,7 @@ export const Settings: React.FC = () => {
         {/* Workspaces Accordion Item */}
         {/* <Workspaces /> */}
       </ContentWrapper>
+      <LinksFooter />
     </UI.ScrollableMax>
   );
 };
