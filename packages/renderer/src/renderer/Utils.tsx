@@ -9,6 +9,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { ChainList } from '@ren/config/chains';
 import { useHelp } from '@app/contexts/common/Help';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 // Render shared footer in views.
 export const LinksFooter = () => {
@@ -19,6 +20,29 @@ export const LinksFooter = () => {
       handlePrivacyClick={() => openHelp('help:docs:privacy')}
     />
   );
+};
+
+/// Utility to render a tooltip over some generic JSX.
+export const TooltipWrapper = ({
+  theme,
+  wrap,
+  tooltipText = 'Currently Offline',
+  children,
+}: {
+  theme: AnyData;
+  wrap: boolean;
+  tooltipText: string;
+  children: React.ReactNode;
+}) => {
+  if (wrap) {
+    return (
+      <UI.TooltipRx theme={theme} text={tooltipText}>
+        {children}
+      </UI.TooltipRx>
+    );
+  } else {
+    return children;
+  }
 };
 
 // Return an address' chain ID.

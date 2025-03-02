@@ -3,6 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
+import * as themeVariables from '../../theme/variables';
 
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
@@ -20,14 +21,13 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
-import { useTooltip } from '@polkadot-live/ui/contexts';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
+import { LinksFooter, TooltipWrapper } from '@app/Utils';
 import type { ChainID } from '@polkadot-live/types/chains';
-import { LinksFooter } from '@app/Utils';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -35,7 +35,8 @@ export const OpenGov: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
 
   /// Connection status.
-  const { getOnlineMode } = useConnections();
+  const { darkMode, getOnlineMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   /// Open help function.
   const { openHelp } = useHelp();
@@ -51,9 +52,6 @@ export const OpenGov: React.FC = () => {
     getSpendPeriodProgress,
     refetchStats,
   } = useTreasury();
-
-  /// Help overlay and tooltip.
-  const { setTooltipTextAndOpen, wrapWithOfflineTooltip } = useTooltip();
 
   /// Tracks and referenda contexts.
   const { fetchTracksData } = useTracks();
@@ -183,34 +181,29 @@ export const OpenGov: React.FC = () => {
                     <Styles.FlexColumn>
                       <UI.ControlsWrapper style={{ marginBottom: '0' }}>
                         {/* Re-fetch Stats */}
-                        <div
-                          className="tooltip-trigger-element"
-                          data-tooltip-text={
-                            getOnlineMode()
-                              ? 'Refresh Stats'
-                              : 'Currently Offline'
-                          }
-                          onMouseMove={() =>
-                            setTooltipTextAndOpen(
-                              getOnlineMode()
-                                ? 'Refresh Stats'
-                                : 'Currently Offline'
-                            )
-                          }
+                        <UI.TooltipRx
+                          theme={theme}
+                          text={getOnlineMode() ? 'Refresh Stats' : 'Offline'}
                         >
-                          <UI.SortControlButton
-                            isActive={true}
-                            isDisabled={
-                              fetchingTreasuryData || !getOnlineMode()
-                            }
-                            onClick={() => refetchTreasuryStats()}
-                            faIcon={faArrowsRotate}
-                            fixedWidth={false}
-                          />
-                        </div>
+                          <span>
+                            <UI.SortControlButton
+                              isActive={true}
+                              isDisabled={
+                                fetchingTreasuryData || !getOnlineMode()
+                              }
+                              onClick={() => refetchTreasuryStats()}
+                              faIcon={faArrowsRotate}
+                              fixedWidth={false}
+                            />
+                          </span>
+                        </UI.TooltipRx>
 
                         {/* Select Box */}
-                        {wrapWithOfflineTooltip(
+                        <TooltipWrapper
+                          theme={theme}
+                          wrap={!getOnlineMode()}
+                          tooltipText={'Offline'}
+                        >
                           <div className="select-wrapper">
                             <select
                               disabled={!getOnlineMode()}
@@ -221,12 +214,15 @@ export const OpenGov: React.FC = () => {
                               <option value="Polkadot">Polkadot</option>
                               <option value="Kusama">Kusama</option>
                             </select>
-                          </div>,
-                          getOnlineMode()
-                        )}
+                          </div>
+                        </TooltipWrapper>
                       </UI.ControlsWrapper>
 
-                      {wrapWithOfflineTooltip(
+                      <TooltipWrapper
+                        theme={theme}
+                        wrap={!getOnlineMode()}
+                        tooltipText={'Offline'}
+                      >
                         <Styles.GridFourCol id="OpenGovStats">
                           <UI.TreasuryStatCard
                             chainId={treasuryChainId}
@@ -256,9 +252,8 @@ export const OpenGov: React.FC = () => {
                             helpKey={'help:openGov:spendPeriod'}
                             openHelp={openHelp}
                           />
-                        </Styles.GridFourCol>,
-                        getOnlineMode()
-                      )}
+                        </Styles.GridFourCol>
+                      </TooltipWrapper>
                     </Styles.FlexColumn>
                   )}
                 </TreasuryStats>
