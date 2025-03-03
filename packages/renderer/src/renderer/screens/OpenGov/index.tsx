@@ -24,13 +24,11 @@ export const OpenGov: React.FC = () => {
   useOpenGovMessagePorts();
   useDebug(window.myAPI.getWindowId());
 
-  /// Connection status.
+  /// Contexts.
   const { getOnlineMode } = useConnections();
-
-  /// Treasury context.
   const { treasuryChainId, initTreasury } = useTreasury();
 
-  /// Section state.
+  /// State.
   const [section, setSection] = useState<number>(0);
   const [sectionContent, setSectionContent] = useState('');
 

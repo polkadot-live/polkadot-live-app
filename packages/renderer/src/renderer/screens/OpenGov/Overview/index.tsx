@@ -3,25 +3,16 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import * as themeVariables from '../../../theme/variables';
 import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
 import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
 
-import { renderPlaceholders } from '@polkadot-live/ui/utils';
-import { TooltipWrapper } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowsRotate,
-  faFilePen,
-  faList,
-} from '@fortawesome/free-solid-svg-icons';
-import { NetworkHeader, TreasuryStats } from '../Wrappers';
-import { useConnections } from '@app/contexts/common/Connections';
+import { faFilePen, faList } from '@fortawesome/free-solid-svg-icons';
+import { NetworkHeader } from '../Wrappers';
 import { useEffect } from 'react';
-import { useHelp } from '@app/contexts/common/Help';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import { useTreasury } from '@app/contexts/openGov/Treasury';
+import { OverviewTreasury } from './OverviewTreasury';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { OverviewProps } from './types';
 
@@ -29,72 +20,25 @@ export const Overview: React.FC<OverviewProps> = ({
   setSection,
   setSectionContent,
 }: OverviewProps) => {
-  const { openHelp } = useHelp();
-
-  /**
-   * Theme object.
-   */
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  /**
-   * Treasury context.
-   */
-  const {
-    fetchingTreasuryData,
-    treasuryChainId,
-    getFormattedFreeBalance,
-    getFormattedNextBurn,
-    getFormattedToBeAwarded,
-    getSpendPeriodProgress,
-    initTreasury,
-    refetchStats,
-  } = useTreasury();
-
-  /**
-   * Tracks and referenda contexts.
-   */
+  // Tracks and referenda contexts.
   const { fetchTracksData } = useTracks();
   const { fetchReferendaData } = useReferenda();
 
-  /**
-   * Open origins and tracks information.
-   */
+  // Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
     fetchTracksData(chainId);
     setSection(1);
   };
 
-  /**
-   * Re-fetch treasury stats when user clicks refresh button.
-   */
-  const refetchTreasuryStats = () => {
-    refetchStats();
-  };
-
-  /**
-   * Open referenda.
-   */
+  // Open referenda.
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
     fetchReferendaData(chainId);
     setSection(1);
   };
 
-  /**
-   * Handle changing treasury stats.
-   */
-  const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const target = event.target.value as ChainID;
-    if (target !== treasuryChainId) {
-      initTreasury(target);
-    }
-  };
-
-  /**
-   * Apply border radius to navigation cards.
-   */
+  // Apply border radius to navigation cards.
   useEffect(() => {
     const applyBorders = () => {
       const cards = document.querySelectorAll(
@@ -115,99 +59,7 @@ export const Overview: React.FC<OverviewProps> = ({
 
   return (
     <Styles.FlexColumn $rowGap={'2rem'}>
-      <section>
-        <Styles.FlexColumn>
-          <UI.ActionItem
-            showIcon={false}
-            text={'Treasury'}
-            style={{ marginTop: '0.75rem' }}
-          />
-          <TreasuryStats $chainId={treasuryChainId}>
-            {fetchingTreasuryData && getOnlineMode() ? (
-              <div className="loading-wrapper">
-                {renderPlaceholders(0, '68.47px', '0.5rem')}
-              </div>
-            ) : (
-              <Styles.FlexColumn>
-                <UI.ControlsWrapper style={{ marginBottom: '0' }}>
-                  {/* Re-fetch Stats */}
-                  <UI.TooltipRx
-                    theme={theme}
-                    text={getOnlineMode() ? 'Refresh Stats' : 'Offline'}
-                  >
-                    <span>
-                      <UI.SortControlButton
-                        isActive={true}
-                        isDisabled={fetchingTreasuryData || !getOnlineMode()}
-                        onClick={() => refetchTreasuryStats()}
-                        faIcon={faArrowsRotate}
-                        fixedWidth={false}
-                      />
-                    </span>
-                  </UI.TooltipRx>
-
-                  {/* Select Box */}
-                  <TooltipWrapper
-                    theme={theme}
-                    wrap={!getOnlineMode()}
-                    tooltipText={'Offline'}
-                  >
-                    <div className="select-wrapper">
-                      <select
-                        disabled={!getOnlineMode()}
-                        id="select-treasury-chain"
-                        value={treasuryChainId}
-                        onChange={(e) => handleChangeStats(e)}
-                      >
-                        <option value="Polkadot">Polkadot</option>
-                        <option value="Kusama">Kusama</option>
-                      </select>
-                    </div>
-                  </TooltipWrapper>
-                </UI.ControlsWrapper>
-
-                <TooltipWrapper
-                  theme={theme}
-                  wrap={!getOnlineMode()}
-                  tooltipText={'Offline'}
-                >
-                  <Styles.GridFourCol id="OpenGovStats">
-                    <UI.TreasuryStatCard
-                      chainId={treasuryChainId}
-                      title={'Treasury Balance'}
-                      statText={getFormattedFreeBalance()}
-                      helpKey={'help:openGov:treasuryBalance'}
-                      openHelp={openHelp}
-                    />
-                    <UI.TreasuryStatCard
-                      chainId={treasuryChainId}
-                      title={'Next Burn'}
-                      statText={getFormattedNextBurn()}
-                      helpKey={'help:openGov:nextBurn'}
-                      openHelp={openHelp}
-                    />
-                    <UI.TreasuryStatCard
-                      chainId={treasuryChainId}
-                      title={'To Be Awarded'}
-                      statText={getFormattedToBeAwarded()}
-                      helpKey={'help:openGov:toBeAwarded'}
-                      openHelp={openHelp}
-                    />
-                    <UI.TreasuryStatCard
-                      chainId={treasuryChainId}
-                      title={'Spend Period'}
-                      statText={getSpendPeriodProgress()}
-                      helpKey={'help:openGov:spendPeriod'}
-                      openHelp={openHelp}
-                    />
-                  </Styles.GridFourCol>
-                </TooltipWrapper>
-              </Styles.FlexColumn>
-            )}
-          </TreasuryStats>
-        </Styles.FlexColumn>
-      </section>
-
+      <OverviewTreasury />
       <section>
         {/* Referenda */}
         <UI.ActionItem showIcon={false} text={'Explore OpenGov'} />
