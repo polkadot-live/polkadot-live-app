@@ -4,6 +4,7 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { DimensionsIcon } from '@radix-ui/react-icons';
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 
 export const ToggleGroupRoot = styled(ToggleGroup.Root)`
   --border-radius: 0.375rem;
@@ -46,33 +47,46 @@ export const ToggleGroupRoot = styled(ToggleGroup.Root)`
   }
 `;
 
+type ToggleValue = 'small' | 'medium' | 'large' | '';
+
 export const ResizeToggles = () => {
-  console.log('todo');
+  const [toggleValue, setToggleValue] = useState<ToggleValue>('');
+
+  /**
+   * Reset the toggle value when base window is manually resized.
+   */
+  useEffect(() => {
+    window.myAPI.onBaseWindowResized(() => {
+      setToggleValue('');
+    });
+  }, []);
 
   return (
     <ToggleGroupRoot
       className="ToggleGroup"
       type="single"
+      value={toggleValue}
+      onValueChange={(val) => setToggleValue(val as ToggleValue)}
       defaultValue="center"
       aria-label="Window Size"
     >
       <ToggleGroup.Item
         className="ToggleGroupItem"
-        value="left"
+        value="small"
         aria-label="Small window size"
       >
         <DimensionsIcon width={'10px'} />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         className="ToggleGroupItem"
-        value="center"
+        value="medium"
         aria-label="Medium window size"
       >
         <DimensionsIcon width={'12px'} />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         className="ToggleGroupItem"
-        value="right"
+        value="large"
         aria-label="Large window size"
       >
         <DimensionsIcon width={'14px'} />

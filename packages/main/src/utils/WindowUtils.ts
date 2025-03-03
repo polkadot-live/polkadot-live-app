@@ -224,6 +224,10 @@ export const createBaseWindow = () => {
   baseWindow.on('resize', () => {
     WindowsController.resizeViews();
   });
+  // Send message to tabs view after window is resized.
+  baseWindow.on('resized', () => {
+    WindowsController.tabsView?.webContents?.send('renderer:base:resized');
+  });
   // Event handlers.
   baseWindow.on('focus', () => {
     WindowsController.focus('base');
