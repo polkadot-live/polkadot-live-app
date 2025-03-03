@@ -196,8 +196,6 @@ export const createBaseWindow = () => {
     height: baseHeight,
     minHeight: 300,
     minWidth: 400,
-    //maxHeight: 900,
-    //maxWidth: ConfigMain.childWidth,
     minimizable: false,
     maximizable: false,
     closable: true,

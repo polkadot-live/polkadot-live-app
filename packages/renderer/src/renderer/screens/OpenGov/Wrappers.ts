@@ -4,11 +4,6 @@
 import styled from 'styled-components';
 import type { ChainID } from '@polkadot-live/types/chains';
 
-/**
- * Provides the following styled components:
- *   OpenGovCard
- *   TreasuryStats
- */
 export const IconWrapper = styled.div<{ $chainId: ChainID }>`
   position: relative;
   width: 100%;
