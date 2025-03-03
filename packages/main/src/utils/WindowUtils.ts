@@ -182,7 +182,6 @@ export const createBaseWindow = () => {
 
   const baseWidth = ConfigMain.childWidth;
   const baseHeight = 500;
-
   const defaultX = screenWidth / 2 - baseWidth / 2;
   const defaultY = screenHeight / 2 - baseHeight / 2;
 
@@ -197,8 +196,6 @@ export const createBaseWindow = () => {
     height: baseHeight,
     minHeight: 300,
     minWidth: 400,
-    //maxHeight: 900,
-    //maxWidth: ConfigMain.childWidth,
     minimizable: false,
     maximizable: false,
     closable: true,

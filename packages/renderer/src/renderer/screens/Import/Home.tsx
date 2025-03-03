@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
 import { faChrome } from '@fortawesome/free-brands-svg-icons';
 import {
   faExternalLinkAlt,
@@ -8,11 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@app/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  ActionItem,
-  NavCard,
-  ScrollableMax,
-} from '@polkadot-live/ui/components';
 import { GridTwoCol } from '@polkadot-live/ui/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
@@ -68,134 +64,118 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   }, []);
 
   return (
-    <ScrollableMax
-      footerHeight={0}
-      headerHeight={0}
-      style={{ paddingTop: 0, paddingBottom: 20 }}
-    >
-      <ContentWrapper>
-        <ActionItem
-          showIcon={false}
-          text={'Import Accounts'}
-          style={{ marginTop: '1.75rem' }}
+    <ContentWrapper style={{ padding: '1.5rem 1.75rem' }}>
+      <UI.ActionItem showIcon={false} text={'Import Accounts'} />
+      <GridTwoCol>
+        {/* Read-only */}
+        <UI.NavCard
+          title={'Read Only'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'read-only')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:readOnly'}
+          childrenLogo={
+            <FontAwesomeIcon
+              icon={faCircleDot}
+              className="logo mono"
+              style={{ width: 'fit-content', fontSize: '1.8rem' }}
+            />
+          }
+          childrenSubtitle={
+            <span style={{ color: 'var(--text-color-secondary)' }}>
+              Track any address.
+            </span>
+          }
         />
-        <GridTwoCol>
-          {/* Read-only */}
-          <NavCard
-            title={'Read Only'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'read-only')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:readOnly'}
-            childrenLogo={
-              <FontAwesomeIcon
-                icon={faCircleDot}
-                className="logo mono"
-                style={{ width: 'fit-content', fontSize: '1.8rem' }}
-              />
-            }
-            childrenSubtitle={
-              <span style={{ color: 'var(--text-color-secondary)' }}>
-                Track any address.
-              </span>
-            }
-          />
 
-          {/* Ledger */}
-          <NavCard
-            title={'Ledger'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'ledger')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:ledger'}
-            childrenLogo={
-              <LedgerLogoSVG
-                className="logo mono"
-                style={{ height: '2rem', width: 'fit-content' }}
+        {/* Ledger */}
+        <UI.NavCard
+          title={'Ledger'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'ledger')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:ledger'}
+          childrenLogo={
+            <LedgerLogoSVG
+              className="logo mono"
+              style={{ height: '2rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <>
+              <ButtonText
+                text="BETA"
+                disabled
+                marginRight
+                style={{ opacity: 0.5, padding: 0 }}
               />
-            }
-            childrenSubtitle={
-              <>
-                <ButtonText
-                  text="BETA"
-                  disabled
-                  marginRight
-                  style={{ opacity: 0.5, padding: 0 }}
-                />
-                <ButtonText
-                  text="Chrome / Brave"
-                  disabled
-                  iconLeft={faChrome}
-                  style={{ opacity: 0.5, padding: 0 }}
-                />
-              </>
-            }
-            styleLogoCont={{ paddingTop: '0.2rem' }}
-          />
+              <ButtonText
+                text="Chrome / Brave"
+                disabled
+                iconLeft={faChrome}
+                style={{ opacity: 0.5, padding: 0 }}
+              />
+            </>
+          }
+          styleLogoCont={{ paddingTop: '0.2rem' }}
+        />
 
-          {/* Vault */}
-          <NavCard
-            title={'Polkadot Vault'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'vault')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:vault'}
-            childrenLogo={
-              <PolkadotVaultSVG
-                className="logo vault"
-                style={{ height: '2rem', width: 'fit-content' }}
-              />
-            }
-            childrenSubtitle={
-              <a
-                className="link stay"
-                href={`https://vault.novasama.io/`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                vault.novasama.io
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
-            }
-          />
+        {/* Vault */}
+        <UI.NavCard
+          title={'Polkadot Vault'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'vault')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:vault'}
+          childrenLogo={
+            <PolkadotVaultSVG
+              className="logo vault"
+              style={{ height: '2rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <a
+              className="link stay"
+              href={`https://vault.novasama.io/`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              vault.novasama.io
+              <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-6" />
+            </a>
+          }
+        />
 
-          {/* Wallet Connect */}
-          <NavCard
-            title={'Wallet Connect'}
-            onClick={(e: React.MouseEvent<HTMLElement>) =>
-              handleClick(e, 'wallet-connect')
-            }
-            openHelp={openHelp}
-            helpKey={'help:import:walletConnect'}
-            childrenLogo={
-              <WalletConnectSVG
-                className="logo"
-                style={{ height: '2.1rem', width: 'fit-content' }}
-              />
-            }
-            childrenSubtitle={
-              <a
-                className="link stay"
-                href={`https://walletconnect.network//`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                walletconnect.network
-                <FontAwesomeIcon
-                  icon={faExternalLinkAlt}
-                  transform="shrink-6"
-                />
-              </a>
-            }
-          />
-        </GridTwoCol>
-      </ContentWrapper>
-    </ScrollableMax>
+        {/* Wallet Connect */}
+        <UI.NavCard
+          title={'Wallet Connect'}
+          onClick={(e: React.MouseEvent<HTMLElement>) =>
+            handleClick(e, 'wallet-connect')
+          }
+          openHelp={openHelp}
+          helpKey={'help:import:walletConnect'}
+          childrenLogo={
+            <WalletConnectSVG
+              className="logo"
+              style={{ height: '2.1rem', width: 'fit-content' }}
+            />
+          }
+          childrenSubtitle={
+            <a
+              className="link stay"
+              href={`https://walletconnect.network//`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              walletconnect.network
+              <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-6" />
+            </a>
+          }
+        />
+      </GridTwoCol>
+    </ContentWrapper>
   );
 };

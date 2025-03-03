@@ -20,42 +20,64 @@ import type { TrackRowProps } from '../types';
 import { FlexRow } from '@polkadot-live/ui/styles';
 
 // Re-use track item component for header alignment.
-export const StickyHeadingsRow = () => (
-  <TrackItem
-    style={{
-      position: 'sticky',
-      top: '0',
-      zIndex: 10,
-      backgroundColor: 'var(--background-window)',
-    }}
-  >
-    <FlexRow className="TrackRow">
-      <FlexRow $gap={'1.5rem'} style={{ flex: 1 }}>
-        <div className="RowItem">
-          <StickyHeading style={{ marginLeft: '8px' }}>ID</StickyHeading>
-        </div>
-        <div className="RowItem">
-          <StickyHeading>Track</StickyHeading>
-        </div>
-        <div className="RowItem SmxHide">
-          <StickyHeading style={{ marginLeft: '-10px' }}>
-            Decision Deposit
-          </StickyHeading>
-        </div>
-        <div className="RowItem SmHide SmxHide">
-          <StickyHeading style={{ marginLeft: '-20px' }}>
-            Max Desciding
-          </StickyHeading>
-        </div>
+export const StickyHeadingsRow = () => {
+  const { openHelp } = useHelp();
+
+  return (
+    <TrackItem
+      style={{
+        position: 'sticky',
+        top: '0',
+        zIndex: 10,
+        backgroundColor: 'var(--background-window)',
+      }}
+    >
+      <FlexRow className="TrackRow">
+        <FlexRow $gap={'1.5rem'} style={{ flex: 1 }}>
+          <div className="RowItem">
+            <StickyHeading style={{ marginLeft: '8px' }}>ID</StickyHeading>
+          </div>
+          <div className="RowItem">
+            <StickyHeading style={{ marginLeft: '-2px' }}>
+              <FlexRow $gap={'0.2rem'}>
+                Track
+                <div
+                  className="IconWrapper"
+                  onClick={() => openHelp('help:openGov:track')}
+                >
+                  <FontAwesomeIcon className="Icon" icon={faInfo} />
+                </div>
+              </FlexRow>
+            </StickyHeading>
+          </div>
+          <div className="RowItem SmxHide">
+            <StickyHeading style={{ marginLeft: '-10px' }}>
+              Decision Deposit
+            </StickyHeading>
+          </div>
+          <div className="RowItem SmHide SmxHide">
+            <StickyHeading style={{ marginLeft: '-20px' }}>
+              <FlexRow $gap={'0.2rem'}>
+                Max Desciding
+                <div
+                  className="IconWrapper"
+                  onClick={() => openHelp('help:openGov:maxDeciding')}
+                >
+                  <FontAwesomeIcon className="Icon" icon={faInfo} />
+                </div>
+              </FlexRow>
+            </StickyHeading>
+          </div>
+        </FlexRow>
+        <FlexRow style={{ justifyContent: 'start', marginRight: '16px' }}>
+          <div className="RowItem">
+            <StickyHeading>Timeline</StickyHeading>
+          </div>
+        </FlexRow>
       </FlexRow>
-      <FlexRow style={{ justifyContent: 'start', marginRight: '16px' }}>
-        <div className="RowItem">
-          <StickyHeading>Timeline</StickyHeading>
-        </div>
-      </FlexRow>
-    </FlexRow>
-  </TrackItem>
-);
+    </TrackItem>
+  );
+};
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);

@@ -40,49 +40,50 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
   );
 
   return (
-    <>
-      <UI.ScrollableMax style={{ paddingTop: 0 }}>
-        <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+    <Styles.PadWrapper>
+      <Styles.FlexColumn $rowGap={'2.5rem'}>
+        <section>
           <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
-        </div>
-        {/* Top Controls */}
-        <ControlsWrapper
-          $padWrapper={true}
-          $padBottom={false}
-          style={{ paddingTop: '1rem', marginBottom: 0 }}
-        >
-          <Styles.ResponsiveRow $smWidth="450px">
-            <Styles.FlexRow>
-              <ButtonPrimaryInvert
-                className="back-btn"
-                text="Back"
-                iconLeft={faCaretLeft}
-                onClick={() => setSection(0)}
-              />
-              <SortControlLabel label="Vault Accounts" />
-            </Styles.FlexRow>
-            <Styles.FlexRow>
-              <ButtonText
-                iconLeft={faQrcode}
-                text={'Import Another Account'}
-                onClick={() => {
-                  openOverlayWith(
-                    <ErrorBoundary
-                      fallback={<h2>Could not load QR Scanner</h2>}
-                    >
-                      <Reader />
-                    </ErrorBoundary>,
-                    'small',
-                    true
-                  );
-                }}
-              />
-            </Styles.FlexRow>
-          </Styles.ResponsiveRow>
-        </ControlsWrapper>
+
+          {/* Top Controls */}
+          <ControlsWrapper
+            $padWrapper={true}
+            $padBottom={false}
+            style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
+          >
+            <Styles.ResponsiveRow $smWidth="450px">
+              <Styles.FlexRow>
+                <ButtonPrimaryInvert
+                  className="back-btn"
+                  text="Back"
+                  iconLeft={faCaretLeft}
+                  onClick={() => setSection(0)}
+                />
+                <SortControlLabel label="Vault Accounts" />
+              </Styles.FlexRow>
+              <Styles.FlexRow>
+                <ButtonText
+                  iconLeft={faQrcode}
+                  text={'Import Another Account'}
+                  onClick={() => {
+                    openOverlayWith(
+                      <ErrorBoundary
+                        fallback={<h2>Could not load QR Scanner</h2>}
+                      >
+                        <Reader />
+                      </ErrorBoundary>,
+                      'small',
+                      true
+                    );
+                  }}
+                />
+              </Styles.FlexRow>
+            </Styles.ResponsiveRow>
+          </ControlsWrapper>
+        </section>
 
         {/* Address List */}
-        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+        <section>
           {addresses.length && (
             <UI.AccordionWrapper $onePart={true}>
               <Accordion.Root
@@ -124,19 +125,8 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
               </Accordion.Root>
             </UI.AccordionWrapper>
           )}
-        </div>
-      </UI.ScrollableMax>
-
-      <Styles.StatsFooter $chainId={'Polkadot'}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Imported Vault Accounts:</h2>
-              <span>{addresses.length}</span>
-            </div>
-          </section>
-        </div>
-      </Styles.StatsFooter>
-    </>
+        </section>
+      </Styles.FlexColumn>
+    </Styles.PadWrapper>
   );
 };

@@ -5,22 +5,15 @@ import { MaxContainer, Scrollable } from '../../styles';
 
 export interface ScrollableMaxProps {
   children: React.ReactNode;
-  footerHeight?: number;
-  headerHeight?: number;
   style?: React.CSSProperties;
 }
 
-export const ScrollableMax = ({
-  children,
-  footerHeight,
-  headerHeight,
-  style,
-}: ScrollableMaxProps) => (
-  <Scrollable
-    $footerHeight={footerHeight}
-    $headerHeight={headerHeight}
-    style={{ ...style, alignSelf: 'stretch' }}
-  >
-    <MaxContainer>{children}</MaxContainer>
+export const ScrollableMax = ({ children, style }: ScrollableMaxProps) => (
+  <Scrollable style={{ ...style }}>
+    <MaxContainer
+      style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+    >
+      {children}
+    </MaxContainer>
   </Scrollable>
 );

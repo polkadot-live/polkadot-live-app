@@ -19,6 +19,19 @@ export const StickyHeading = styled.h5<{ $padLeft?: string }>`
   &:hover {
     opacity: 0.8;
   }
+  .IconWrapper {
+    padding: 0.2rem 0.5rem;
+    margin-top: -1px;
+    transition: color 0.2s ease-out;
+    cursor: pointer;
+
+    .Icon {
+      font-size: 0.8rem;
+    }
+    &:hover {
+      color: var(--text-bright);
+    }
+  }
 
   @media (min-width: 570px) and (max-width: 700px) {
     &.SmHide {

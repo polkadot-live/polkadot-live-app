@@ -34,6 +34,10 @@ export const FlexRowWrap = styled.div<{
   row-gap: ${(props) => (props.$rowGap ? props.$rowGap : '0.75rem')};
 `;
 
+export const PadWrapper = styled.div<{ $pad: string }>`
+  padding: ${(props) => (props.$pad ? props.$pad : '1.5rem 1.75rem')};
+`;
+
 export const ResponsiveRow = styled.div<{
   $gap?: string;
   $smGap?: string;
