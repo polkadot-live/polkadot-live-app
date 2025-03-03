@@ -65,6 +65,8 @@ export interface PreloadAPI {
   ) => Electron.IpcRenderer;
 
   openWindow: (id: string, relayData?: RelayPortTask) => Promise<void>;
+
+  resizeBaseWindow: (size: 'small' | 'medium' | 'large' | '') => void;
   onBaseWindowResized: (
     callback: (_: IpcRendererEvent) => void
   ) => Electron.IpcRenderer;

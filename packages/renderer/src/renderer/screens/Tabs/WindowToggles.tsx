@@ -61,13 +61,22 @@ export const ResizeToggles = () => {
     });
   }, []);
 
+  /**
+   * Handle toggle value change.
+   */
+  const handleValueChanged = (val: ToggleValue) => {
+    setToggleValue((pv) => (val === '' ? pv : val));
+    if (val !== '') {
+      window.myAPI.resizeBaseWindow(val);
+    }
+  };
+
   return (
     <ToggleGroupRoot
       className="ToggleGroup"
       type="single"
       value={toggleValue}
-      onValueChange={(val) => setToggleValue(val as ToggleValue)}
-      defaultValue="center"
+      onValueChange={(val) => handleValueChanged(val as ToggleValue)}
       aria-label="Window Size"
     >
       <ToggleGroup.Item
