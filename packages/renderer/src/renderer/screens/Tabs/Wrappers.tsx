@@ -42,7 +42,7 @@ export const TabsWrapper = styled.div`
     align-items: center;
     column-gap: 0.75rem;
     height: 100%;
-    padding: 0 1.15rem;
+    padding: 0 1rem 0 0.75rem;
   }
 `;
 

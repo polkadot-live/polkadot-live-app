@@ -175,6 +175,12 @@ export const API: PreloadAPI = {
    * Window lifecycle
    */
 
+  resizeBaseWindow: (size: 'small' | 'medium' | 'large' | '') =>
+    ipcRenderer.send('app:base:resize', size),
+
+  onBaseWindowResized: (callback) =>
+    ipcRenderer.on('renderer:base:resized', callback),
+
   relayTask: (callback) => ipcRenderer.on('renderer:relay:task', callback),
 
   quitApp: async (): Promise<void> => {

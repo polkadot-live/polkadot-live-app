@@ -241,6 +241,26 @@ export class WindowsController {
     });
   };
 
+  // Resize base window.
+  static resizeBaseWindow = (size: 'small' | 'medium' | 'large' | '') => {
+    const getBounds = () => {
+      switch (size) {
+        case 'small':
+          return { width: 400, height: 750 };
+        case 'medium':
+          return { width: 900, height: 550 };
+        case 'large':
+          return { width: 1200, height: 700 };
+        default:
+          return { width: 400, height: 300 };
+      }
+    };
+
+    const { width, height } = getBounds();
+    this.base?.window.setSize(width, height);
+    this.resizeViews();
+  };
+
   // Resize views when base window resized.
   static resizeViews = () => {
     const { width, height } = this.base!.window.getContentBounds()!;
