@@ -3,36 +3,31 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
+import * as Kits from '@polkadot-live/ui/kits/overlay';
 
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
-import {
-  ModalSection,
-  ModalMotionTwoSection,
-} from '@polkadot-live/ui/kits/overlay';
-import { Tracks } from './Tracks';
-import { Referenda } from './Referenda';
 import { useConnections } from '@app/contexts/common/Connections';
-import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { useDebug } from '@app/hooks/useDebug';
+import { useTreasury } from '@app/contexts/openGov/Treasury';
 import { LinksFooter } from '@app/Utils';
 import { Overview } from './Overview';
+import { Referenda } from './Referenda';
+import { Tracks } from './Tracks';
 
 export const OpenGov: React.FC = () => {
-  /// Set up port communication for `openGov` window.
+  // Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
   useDebug(window.myAPI.getWindowId());
 
-  /// Contexts.
   const { getOnlineMode } = useConnections();
   const { treasuryChainId, initTreasury } = useTreasury();
 
-  /// State.
   const [section, setSection] = useState<number>(0);
   const [sectionContent, setSectionContent] = useState('');
 
-  /// Initialize treasury data when window opens.
+  // Initialize treasury data when window opens.
   useEffect(() => {
     // Wait until the port has been initialized before attempting
     // to send the initialization message to the main renderer.
@@ -48,7 +43,7 @@ export const OpenGov: React.FC = () => {
     }
   }, []);
 
-  /// Reload treasury data if app goes online from offline mode.
+  // Reload treasury data if app goes online from offline mode.
   useEffect(() => {
     if (getOnlineMode()) {
       initTreasury(treasuryChainId);
@@ -56,8 +51,8 @@ export const OpenGov: React.FC = () => {
   }, [getOnlineMode()]);
 
   return (
-    <ModalSection type="carousel" style={{ height: '100%' }}>
-      <ModalMotionTwoSection
+    <Kits.ModalSection type="carousel" style={{ height: '100%' }}>
+      <Kits.ModalMotionTwoSection
         style={{ height: '100%' }}
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -66,12 +61,8 @@ export const OpenGov: React.FC = () => {
           bounce: 0.1,
         }}
         variants={{
-          home: {
-            left: 0,
-          },
-          next: {
-            left: '-100%',
-          },
+          home: { left: 0 },
+          next: { left: '-100%' },
         }}
       >
         {/* Section 1 */}
@@ -100,7 +91,7 @@ export const OpenGov: React.FC = () => {
             <Referenda setSection={setSection} />
           )}
         </section>
-      </ModalMotionTwoSection>
-    </ModalSection>
+      </Kits.ModalMotionTwoSection>
+    </Kits.ModalSection>
   );
 };
