@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { TrackItem } from './Wrappers';
+import { StickyHeading, TrackItem } from './Wrappers';
 import { motion } from 'framer-motion';
 import {
   faAngleDown,
@@ -17,6 +17,67 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { formatChainUnits } from '@app/utils/renderingUtils';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
+import { FlexRow } from '@polkadot-live/ui/styles';
+
+// Re-use track item component for header alignment.
+export const StickyHeadingsRow = () => {
+  const { openHelp } = useHelp();
+
+  return (
+    <TrackItem
+      style={{
+        position: 'sticky',
+        top: '0',
+        zIndex: 10,
+        backgroundColor: 'var(--background-window)',
+      }}
+    >
+      <FlexRow className="TrackRow">
+        <FlexRow $gap={'1.5rem'} style={{ flex: 1 }}>
+          <div className="RowItem">
+            <StickyHeading style={{ marginLeft: '8px' }}>ID</StickyHeading>
+          </div>
+          <div className="RowItem">
+            <StickyHeading style={{ marginLeft: '-2px' }}>
+              <FlexRow $gap={'0.2rem'}>
+                Track
+                <div
+                  className="IconWrapper"
+                  onClick={() => openHelp('help:openGov:track')}
+                >
+                  <FontAwesomeIcon className="Icon" icon={faInfo} />
+                </div>
+              </FlexRow>
+            </StickyHeading>
+          </div>
+          <div className="RowItem SmxHide">
+            <StickyHeading style={{ marginLeft: '-10px' }}>
+              Decision Deposit
+            </StickyHeading>
+          </div>
+          <div className="RowItem SmHide SmxHide">
+            <StickyHeading style={{ marginLeft: '-20px' }}>
+              <FlexRow $gap={'0.2rem'}>
+                Max Desciding
+                <div
+                  className="IconWrapper"
+                  onClick={() => openHelp('help:openGov:maxDeciding')}
+                >
+                  <FontAwesomeIcon className="Icon" icon={faInfo} />
+                </div>
+              </FlexRow>
+            </StickyHeading>
+          </div>
+        </FlexRow>
+        <FlexRow style={{ justifyContent: 'start', marginRight: '16px' }}>
+          <div className="RowItem">
+            <StickyHeading>Timeline</StickyHeading>
+          </div>
+        </FlexRow>
+      </FlexRow>
+    </TrackItem>
+  );
+};
 
 export const TrackRow = ({ track }: TrackRowProps) => {
   const [expanded, setExpanded] = useState(false);
@@ -37,28 +98,28 @@ export const TrackRow = ({ track }: TrackRowProps) => {
 
   return (
     <TrackItem>
-      <div className="content-wrapper">
-        <div className="left">
-          <div className="stat-wrapper">
-            <span>
+      <FlexRow className="TrackRow">
+        <FlexRow $gap={'1.5rem'} style={{ flex: 1 }}>
+          <div className="RowItem">
+            <span style={{ gap: '0.25rem' }}>
               <FontAwesomeIcon icon={faHashtag} transform={'shrink-2'} />
               {track.trackId}
             </span>
-            <div className="titleWrapper">
+          </div>
+          <div className="RowItem">
+            <FlexRow $gap={'0.5rem'}>
               <h4>{track.label}</h4>
               {renderHelpIcon(track.helpKey)}
-            </div>
+            </FlexRow>
           </div>
-        </div>
-        <div className="right">
-          <div className="stat-wrapper">
-            <h4 style={{ minWidth: '160px' }}>
-              {formatChainUnits(track.decisionDeposit, chainId)}
-            </h4>
+          <div className="RowItem SmxHide">
+            <h4>{formatChainUnits(track.decisionDeposit, chainId)}</h4>
           </div>
-          <div className="stat-wrapper">
-            <h4 style={{ minWidth: '130px' }}>{track.maxDeciding}</h4>
+          <div className="RowItem SmHide SmxHide">
+            <h4>{track.maxDeciding}</h4>
           </div>
+        </FlexRow>
+        <FlexRow>
           <div
             className={`expand-btn-wrapper ${chainId === 'Polkadot' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
@@ -71,8 +132,8 @@ export const TrackRow = ({ track }: TrackRowProps) => {
               />
             </div>
           </div>
-        </div>
-      </div>
+        </FlexRow>
+      </FlexRow>
       <motion.section
         className="collapse"
         initial={{ height: 0 }}

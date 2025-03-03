@@ -16,6 +16,7 @@ import { useDebug } from '@app/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';
 import { Tab } from './Tab';
 import { version } from '../../../../package.json';
+import { ResizeToggles } from './ResizeToggles';
 
 export const Tabs: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
@@ -34,6 +35,7 @@ export const Tabs: React.FC = () => {
       />
 
       <TabsWrapper>
+        <ResizeToggles />
         <div className="inner">
           <DndContext
             sensors={sensors}

@@ -21,7 +21,6 @@ export const ScrollWrapper = styled.div`
   }
   &::-webkit-scrollbar-track {
     background-color: var(--scrollbar-track-background-color);
-    background-color: var(--scrollbar-track-background-color);
   }
   &::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb-background-color);
@@ -32,24 +31,9 @@ export const ScrollWrapper = styled.div`
  * @name Scrollable
  * @summary A scrollable container with which takes into account header and footer heights.
  */
-export const Scrollable = styled.div<{
-  $footerHeight?: number;
-  $headerHeight?: number;
-}>`
-  --footer-height: ${(props) => {
-    const height = props.$footerHeight;
-    return height !== undefined ? `${height}px` : '40px';
-  }};
-
-  --header-height: ${(props) => {
-    const height = props.$headerHeight;
-    return height !== undefined ? `${height}px` : '38.6px';
-  }};
-
-  // height = window height - (header height + footer height)
-  height: calc(100vh - var(--footer-height));
+export const Scrollable = styled.div`
+  height: 100%;
   width: 100%;
-  padding: 1.5rem 0 1rem;
   overflow-y: auto;
   -ms-overflow-style: none;
 

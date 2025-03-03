@@ -17,6 +17,8 @@ export type HardwareAddressProps = ComponentBase & {
   isImported: boolean;
   // Current name of the account.
   accountName: string;
+  // Theme object.
+  theme: AnyData;
   // Handle rename.
   renameHandler: (address: string, newName: string) => Promise<void>;
   // Handle remove UI.

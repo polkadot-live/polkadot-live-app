@@ -3,13 +3,8 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 
-import {
-  ControlsWrapper,
-  Identicon,
-  HardwareAddressWrapper,
-  SortControlLabel,
-} from '@polkadot-live/ui/components';
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { checkAddress } from '@polkadot/util-crypto';
@@ -25,7 +20,6 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { Scrollable, StatsFooter, FlexColumn } from '@polkadot-live/ui/styles';
 import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
 import { getAddressChainId } from '@ren/renderer/Utils';
 import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
@@ -105,41 +99,38 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   };
 
   return (
-    <>
-      <Scrollable style={{ paddingTop: 0 }}>
-        <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
+    <Styles.PadWrapper>
+      <Styles.FlexColumn $rowGap={'2.5rem'}>
+        <section>
           <UI.ActionItem showIcon={false} text={'Read-Only Accounts'} />
-        </div>
+          <Styles.FlexColumn>
+            {/* Top Controls */}
+            <UI.ControlsWrapper
+              $padWrapper={true}
+              $padBottom={false}
+              style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
+            >
+              <ButtonPrimaryInvert
+                className="back-btn"
+                text="Back"
+                iconLeft={faCaretLeft}
+                onClick={() => setSection(0)}
+              />
+              <UI.SortControlLabel label="Read Only Accounts" />
+            </UI.ControlsWrapper>
 
-        {/* Top Controls */}
-        <ControlsWrapper
-          $padWrapper={true}
-          $padBottom={false}
-          style={{ paddingTop: '1rem', marginBottom: 0 }}
-        >
-          <ButtonPrimaryInvert
-            className="back-btn"
-            text="Back"
-            iconLeft={faCaretLeft}
-            onClick={() => setSection(0)}
-          />
-          <SortControlLabel label="Read Only Accounts" />
-        </ControlsWrapper>
-
-        {/* Add Read Only Address */}
-        <HardwareAddressWrapper
-          style={{
-            backgroundColor: 'inherit',
-            padding: '1.5rem 1.5rem 0rem',
-          }}
-        >
-          <div className="content">
-            <div className="inner">
-              <div className="identicon">
-                <Identicon value={editName} fontSize={'2.5rem'} />
-              </div>
-              <div>
-                <section className="row" style={{ paddingLeft: '1.25rem' }}>
+            {/* Add Read Only Address */}
+            <UI.HardwareAddressWrapper
+              style={{
+                backgroundColor: 'inherit',
+                padding: '0 0.25rem',
+              }}
+            >
+              <Styles.FlexRow>
+                <div className="identicon">
+                  <UI.Identicon value={editName} fontSize={'2.5rem'} />
+                </div>
+                <Styles.FlexRow style={{ flex: 1 }}>
                   <input
                     className="add-input"
                     type="text"
@@ -147,29 +138,31 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                     value={editName}
                     onChange={(e) => onChange(e)}
                   />
-                  <div className="flex-inner-row">
-                    <button
-                      style={{ color: 'var(--background-primary)' }}
-                      className="btn-mono lg"
-                      onPointerDown={async () => await onImport()}
-                    >
-                      Add
-                    </button>
-                    <button
-                      className="btn-mono-invert lg"
-                      onPointerDown={() => onCancel()}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </section>
-              </div>
-            </div>
-          </div>
-        </HardwareAddressWrapper>
+                  <button
+                    style={{
+                      color: 'var(--background-primary)',
+                      fontSize: '0.95rem',
+                    }}
+                    className="btn-mono lg"
+                    onPointerDown={async () => await onImport()}
+                  >
+                    Add
+                  </button>
+                  <button
+                    style={{ fontSize: '0.95rem' }}
+                    className="btn-mono-invert lg"
+                    onPointerDown={() => onCancel()}
+                  >
+                    Clear
+                  </button>
+                </Styles.FlexRow>
+              </Styles.FlexRow>
+            </UI.HardwareAddressWrapper>
+          </Styles.FlexColumn>
+        </section>
 
         {/* Address List */}
-        <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
+        <section>
           <UI.AccordionWrapper $onePart={true}>
             <Accordion.Root
               className="AccordionRoot"
@@ -177,7 +170,7 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
               value={accordionValue}
               onValueChange={(val) => setAccordionValue(val as ChainID)}
             >
-              <FlexColumn>
+              <Styles.FlexColumn>
                 {Array.from(getSortedLocalAddresses(addresses).entries()).map(
                   ([chainId, chainAddresses]) => (
                     <Accordion.Item
@@ -212,22 +205,11 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
                     </Accordion.Item>
                   )
                 )}
-              </FlexColumn>
+              </Styles.FlexColumn>
             </Accordion.Root>
           </UI.AccordionWrapper>
-        </div>
-      </Scrollable>
-
-      <StatsFooter $chainId={'Polkadot'}>
-        <div>
-          <section className="left">
-            <div className="footer-stat">
-              <h2>Imported Read Only Accounts:</h2>
-              <span>{addresses.length}</span>
-            </div>
-          </section>
-        </div>
-      </StatsFooter>
-    </>
+        </section>
+      </Styles.FlexColumn>
+    </Styles.PadWrapper>
   );
 };

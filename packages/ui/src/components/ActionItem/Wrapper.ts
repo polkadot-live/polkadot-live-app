@@ -11,7 +11,7 @@ export const Wrapper = styled.h3`
   font-size: 1.15rem;
   display: flex;
   align-items: center;
-  margin: 1.25rem 0 0;
+  //margin: 1.25rem 0 0;
   padding-bottom: 0.6rem;
   width: 100%;
 

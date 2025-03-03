@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BodyInterfaceWrapper } from '@app/Wrappers';
 import {
   ButtonMonoInvert,
   ButtonPrimary,
@@ -12,13 +11,14 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { Reader } from './Reader';
 import { SplashWrapper } from '../Wrappers';
+import { FlexRow } from '@polkadot-live/ui/styles';
 import type { VaultSplashProps } from '../types';
 
 export const Splash = ({ setSection }: VaultSplashProps) => {
   const { openOverlayWith } = useOverlay();
 
   return (
-    <BodyInterfaceWrapper $maxHeight>
+    <FlexRow style={{ height: '100%' }}>
       <SplashWrapper>
         <div className="icon">
           <PolkadotVaultSVG
@@ -55,6 +55,6 @@ export const Splash = ({ setSection }: VaultSplashProps) => {
           </div>
         </div>
       </SplashWrapper>
-    </BodyInterfaceWrapper>
+    </FlexRow>
   );
 };

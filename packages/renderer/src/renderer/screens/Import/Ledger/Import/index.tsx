@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
@@ -14,6 +15,11 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 
+import { InfoCard } from '@polkadot-live/ui/components';
+import {
+  ButtonPrimaryInvert,
+  ButtonText,
+} from '@polkadot-live/ui/kits/buttons';
 import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
@@ -22,12 +28,6 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
 } from '@radix-ui/react-icons';
-import { FlexColumn, FlexRow, Scrollable } from '@polkadot-live/ui/styles';
-import { InfoCard } from '@polkadot-live/ui/components';
-import {
-  ButtonPrimaryInvert,
-  ButtonText,
-} from '@polkadot-live/ui/kits/buttons';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -157,10 +157,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   }, [ledger.statusCodes]);
 
   return (
-    <Scrollable
-      $footerHeight={4}
-      style={{ paddingTop: 0, paddingBottom: '1rem' }}
-    >
+    <UI.ScrollableMax>
       {(ledger.isFetching || ledger.isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
@@ -171,281 +168,318 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         />
       )}
 
-      <div style={{ padding: '0.5rem 1.5rem 0rem' }}>
-        <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
-      </div>
-      {/** Breadcrump */}
-      <UI.ControlsWrapper
-        $padWrapper={true}
-        $padButton={false}
-        style={{ paddingTop: '1rem' }}
-      >
-        <ButtonPrimaryInvert
-          className="back-btn"
-          text="Back"
-          iconLeft={faCaretLeft}
-          onClick={() => {
-            ledger.clearCaches(false, false, true);
-            setShowImportUi(ledgerAddresses.length === 0);
-            setSection(0);
-          }}
-        />
-        <UI.SortControlLabel label="Import Ledger Accounts" />
+      <Styles.PadWrapper>
+        <Styles.FlexColumn $rowGap={'1.75rem'}>
+          <section>
+            <UI.ActionItem showIcon={false} text={'Ledger Accounts'} />
+            {/** Breadcrump */}
+            <UI.ControlsWrapper
+              $padWrapper={true}
+              $padButton={false}
+              style={{ padding: '1rem 0 0 0' }}
+            >
+              <Styles.ResponsiveRow $smWidth="450px">
+                <Styles.FlexRow>
+                  <ButtonPrimaryInvert
+                    className="back-btn"
+                    text="Back"
+                    iconLeft={faCaretLeft}
+                    onClick={() => {
+                      ledger.clearCaches(false, false, true);
+                      setShowImportUi(ledgerAddresses.length === 0);
+                      setSection(0);
+                    }}
+                  />
+                  <UI.SortControlLabel label="Import Ledger Accounts" />
+                </Styles.FlexRow>
+                <Styles.FlexRow>
+                  <ButtonText
+                    iconLeft={faCaretRight}
+                    text={'Ledger Accounts'}
+                    disabled={ledgerAddresses.length === 0}
+                    onClick={() => {
+                      ledger.clearCaches(false, false, true);
+                      setShowImportUi(false);
+                    }}
+                  />
+                </Styles.FlexRow>
+              </Styles.ResponsiveRow>
+            </UI.ControlsWrapper>
+          </section>
 
-        <ButtonText
-          iconLeft={faCaretRight}
-          text={'Ledger Accounts'}
-          disabled={ledgerAddresses.length === 0}
-          onClick={() => {
-            ledger.clearCaches(false, false, true);
-            setShowImportUi(false);
-          }}
-        />
-      </UI.ControlsWrapper>
-
-      <div style={{ padding: '1.5rem 1.25rem 2rem', marginTop: '1rem' }}>
-        <UI.AccordionWrapper $onePart={true}>
-          <Accordion.Root
-            className="AccordionRoot"
-            type="multiple"
-            value={accordionValue}
-            onValueChange={(val) => setAccordionValue(val as string[])}
-          >
-            <FlexColumn>
-              {/** Choose Network */}
-              <Accordion.Item
-                className="AccordionItem"
-                value={'connect-ledger'}
+          <section>
+            <UI.AccordionWrapper $onePart={true}>
+              <Accordion.Root
+                className="AccordionRoot"
+                type="multiple"
+                value={accordionValue}
+                onValueChange={(val) => setAccordionValue(val as string[])}
               >
-                <UI.AccordionTrigger narrow={true}>
-                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <UI.TriggerHeader>Connect Ledger</UI.TriggerHeader>
-                </UI.AccordionTrigger>
-                <UI.AccordionContent transparent={true}>
-                  <FlexRow>
-                    <Select.Root
-                      value={ledger.selectedNetworkState}
-                      onValueChange={(val) => ledger.setSelectedNetwork(val)}
-                    >
-                      <UI.SelectTrigger $theme={theme} aria-label="Network">
-                        <Select.Value placeholder="Select Network" />
-                        <Select.Icon className="SelectIcon">
-                          <ChevronDownIcon />
-                        </Select.Icon>
-                      </UI.SelectTrigger>
-                      <Select.Portal>
-                        <UI.SelectContent
-                          $theme={theme}
-                          position="popper"
-                          sideOffset={3}
+                <Styles.FlexColumn>
+                  {/** Choose Network */}
+                  <Accordion.Item
+                    className="AccordionItem"
+                    value={'connect-ledger'}
+                  >
+                    <UI.AccordionTrigger narrow={true}>
+                      <ChevronDownIcon
+                        className="AccordionChevron"
+                        aria-hidden
+                      />
+                      <UI.TriggerHeader>Connect Ledger</UI.TriggerHeader>
+                    </UI.AccordionTrigger>
+                    <UI.AccordionContent transparent={true}>
+                      <Styles.FlexRow>
+                        <Select.Root
+                          value={ledger.selectedNetworkState}
+                          onValueChange={(val) =>
+                            ledger.setSelectedNetwork(val)
+                          }
                         >
-                          <Select.ScrollUpButton className="SelectScrollButton">
-                            <ChevronUpIcon />
-                          </Select.ScrollUpButton>
-                          <Select.Viewport className="SelectViewport">
-                            <Select.Group>
-                              {getSelectNetworkData(darkMode)
-                                .filter(({ network }) =>
-                                  ['Polkadot', 'Kusama'].includes(network)
-                                )
-                                .map(
-                                  ({
-                                    network,
-                                    ledgerId,
-                                    ChainIcon,
-                                    iconWidth,
-                                    iconFill,
-                                  }) => (
-                                    <UI.SelectItem
-                                      key={ledgerId}
-                                      value={network}
-                                    >
-                                      <div className="innerRow">
-                                        <div>
-                                          <ChainIcon
-                                            width={iconWidth}
-                                            fill={iconFill}
-                                            style={{
-                                              marginLeft:
-                                                network === 'Polkadot'
-                                                  ? '2px'
-                                                  : '0',
-                                            }}
-                                          />
-                                        </div>
-                                        <div>{network}</div>
-                                      </div>
-                                    </UI.SelectItem>
-                                  )
-                                )}
-                            </Select.Group>
-                          </Select.Viewport>
-                          <Select.ScrollDownButton className="SelectScrollButton">
-                            <ChevronDownIcon />
-                          </Select.ScrollDownButton>
-                        </UI.SelectContent>
-                      </Select.Portal>
-                    </Select.Root>
-
-                    {/** Connect Button */}
-                    <ConnectButton
-                      onClick={() => {
-                        ledger.setPageIndex(0);
-                        handleGetLedgerAddresses(false);
-                      }}
-                      disabled={ledger.disableConnect()}
-                    >
-                      Connect
-                    </ConnectButton>
-                  </FlexRow>
-
-                  {/** Error and Status Messages */}
-                  {showConnectStatus && !ledger.deviceConnected && (
-                    <InfoCard kind={'warning'} icon={faExclamationTriangle}>
-                      <span>
-                        {
-                          determineStatusFromCodes(ledger.statusCodes, false)
-                            .title
-                        }
-                      </span>
-                      <button
-                        className="dismiss"
-                        onClick={() => setShowConnectStatus(false)}
-                      >
-                        <FontAwesomeIcon icon={faX} />
-                      </button>
-                    </InfoCard>
-                  )}
-
-                  {showConnectStatus && ledger.selectedNetworkState === '' && (
-                    <InfoCard kind={'warning'} icon={faExclamationTriangle}>
-                      <span>Select a network.</span>
-                    </InfoCard>
-                  )}
-
-                  <InfoCardSteps style={{ marginTop: '0.75rem' }}>
-                    <span>
-                      Connect a Ledger device to this computer with a USB cable.
-                    </span>
-                    <span>
-                      Unlock the Ledger device and open the Polkadot app.
-                    </span>
-                    <span>
-                      Select a network above and click on the <b>Connect</b>{' '}
-                      button.
-                    </span>
-                  </InfoCardSteps>
-                </UI.AccordionContent>
-              </Accordion.Item>
-
-              {/** Import Addresses */}
-              <Accordion.Item
-                className="AccordionItem"
-                value={'import-accounts'}
-              >
-                <UI.AccordionTrigger narrow={true}>
-                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <UI.TriggerHeader>Import Accounts</UI.TriggerHeader>
-                </UI.AccordionTrigger>
-                <UI.AccordionContent transparent={true}>
-                  {!ledger.deviceConnected ? (
-                    <InfoCard
-                      icon={faCircleDot}
-                      iconTransform={'shrink-3'}
-                      style={{ marginTop: '0', marginBottom: '0.75rem' }}
-                    >
-                      <span>
-                        Connect a Ledger device to view its addresses.
-                      </span>
-                    </InfoCard>
-                  ) : (
-                    <>
-                      <ItemsColumn>
-                        {receivedAddresses.map(({ address, pubKey }, i) => (
-                          <ImportAddressRow key={address}>
-                            <UI.Identicon value={address} fontSize={'2.5rem'} />
-                            <div className="addressInfo">
-                              <h2>
-                                {connectedNetwork} Ledger Account{' '}
-                                {ledger.pageIndex * 5 + i + 1}
-                              </h2>
-                              <FlexRow $gap={'0.6rem'}>
-                                <span>{ellipsisFn(address, 12)}</span>
-                                <span>
-                                  <UI.CopyButton
-                                    iconFontSize="1rem"
-                                    theme={theme}
-                                    onCopyClick={async () =>
-                                      await window.myAPI.copyToClipboard(
-                                        address
+                          <UI.SelectTrigger $theme={theme} aria-label="Network">
+                            <Select.Value placeholder="Select Network" />
+                            <Select.Icon className="SelectIcon">
+                              <ChevronDownIcon />
+                            </Select.Icon>
+                          </UI.SelectTrigger>
+                          <Select.Portal>
+                            <UI.SelectContent
+                              $theme={theme}
+                              position="popper"
+                              sideOffset={3}
+                            >
+                              <Select.ScrollUpButton className="SelectScrollButton">
+                                <ChevronUpIcon />
+                              </Select.ScrollUpButton>
+                              <Select.Viewport className="SelectViewport">
+                                <Select.Group>
+                                  {getSelectNetworkData(darkMode)
+                                    .filter(({ network }) =>
+                                      ['Polkadot', 'Kusama'].includes(network)
+                                    )
+                                    .map(
+                                      ({
+                                        network,
+                                        ledgerId,
+                                        ChainIcon,
+                                        iconWidth,
+                                        iconFill,
+                                      }) => (
+                                        <UI.SelectItem
+                                          key={ledgerId}
+                                          value={network}
+                                        >
+                                          <div className="innerRow">
+                                            <div>
+                                              <ChainIcon
+                                                width={iconWidth}
+                                                fill={iconFill}
+                                                style={{
+                                                  marginLeft:
+                                                    network === 'Polkadot'
+                                                      ? '2px'
+                                                      : '0',
+                                                }}
+                                              />
+                                            </div>
+                                            <div>{network}</div>
+                                          </div>
+                                        </UI.SelectItem>
                                       )
-                                    }
+                                    )}
+                                </Select.Group>
+                              </Select.Viewport>
+                              <Select.ScrollDownButton className="SelectScrollButton">
+                                <ChevronDownIcon />
+                              </Select.ScrollDownButton>
+                            </UI.SelectContent>
+                          </Select.Portal>
+                        </Select.Root>
+
+                        {/** Connect Button */}
+                        <ConnectButton
+                          onClick={() => {
+                            ledger.setPageIndex(0);
+                            handleGetLedgerAddresses(false);
+                          }}
+                          disabled={ledger.disableConnect()}
+                        >
+                          Connect
+                        </ConnectButton>
+                      </Styles.FlexRow>
+
+                      {/** Error and Status Messages */}
+                      {showConnectStatus && !ledger.deviceConnected && (
+                        <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                          <span>
+                            {
+                              determineStatusFromCodes(
+                                ledger.statusCodes,
+                                false
+                              ).title
+                            }
+                          </span>
+                          <button
+                            className="dismiss"
+                            onClick={() => setShowConnectStatus(false)}
+                          >
+                            <FontAwesomeIcon icon={faX} />
+                          </button>
+                        </InfoCard>
+                      )}
+
+                      {showConnectStatus &&
+                        ledger.selectedNetworkState === '' && (
+                          <InfoCard
+                            kind={'warning'}
+                            icon={faExclamationTriangle}
+                          >
+                            <span>Select a network.</span>
+                          </InfoCard>
+                        )}
+
+                      <InfoCardSteps style={{ marginTop: '0.75rem' }}>
+                        <span>
+                          Connect a Ledger device to this computer with a USB
+                          cable.
+                        </span>
+                        <span>
+                          Unlock the Ledger device and open the Polkadot app.
+                        </span>
+                        <span>
+                          Select a network above and click on the <b>Connect</b>{' '}
+                          button.
+                        </span>
+                      </InfoCardSteps>
+                    </UI.AccordionContent>
+                  </Accordion.Item>
+
+                  {/** Import Addresses */}
+                  <Accordion.Item
+                    className="AccordionItem"
+                    value={'import-accounts'}
+                  >
+                    <UI.AccordionTrigger narrow={true}>
+                      <ChevronDownIcon
+                        className="AccordionChevron"
+                        aria-hidden
+                      />
+                      <UI.TriggerHeader>Import Accounts</UI.TriggerHeader>
+                    </UI.AccordionTrigger>
+                    <UI.AccordionContent transparent={true}>
+                      {!ledger.deviceConnected ? (
+                        <InfoCard
+                          icon={faCircleDot}
+                          iconTransform={'shrink-3'}
+                          style={{ marginTop: '0', marginBottom: '0.75rem' }}
+                        >
+                          <span>
+                            Connect a Ledger device to view its addresses.
+                          </span>
+                        </InfoCard>
+                      ) : (
+                        <>
+                          <ItemsColumn>
+                            {receivedAddresses.map(({ address, pubKey }, i) => (
+                              <ImportAddressRow key={address}>
+                                <div className="identicon">
+                                  <UI.Identicon
+                                    value={address}
+                                    fontSize={'2.5rem'}
                                   />
-                                </span>
-                              </FlexRow>
-                            </div>
-                            {isAlreadyImported(address) ? (
-                              <span className="imported">Imported</span>
-                            ) : (
-                              <CheckboxRoot
-                                $theme={theme}
-                                className="CheckboxRoot"
-                                id={`c${i}`}
-                                checked={ledger.getChecked(pubKey)}
-                                disabled={ledger.isFetching}
-                                onCheckedChange={(checked) =>
-                                  handleCheckboxClick(
-                                    checked,
-                                    pubKey,
-                                    `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
-                                  )
+                                </div>
+                                <div className="addressInfo">
+                                  <h2>
+                                    {connectedNetwork} Ledger Account{' '}
+                                    {ledger.pageIndex * 5 + i + 1}
+                                  </h2>
+                                  <Styles.FlexRow $gap={'0.6rem'}>
+                                    <span className="address">
+                                      {ellipsisFn(address, 12)}
+                                    </span>
+                                    <span>
+                                      <UI.CopyButton
+                                        iconFontSize="1rem"
+                                        theme={theme}
+                                        onCopyClick={async () =>
+                                          await window.myAPI.copyToClipboard(
+                                            address
+                                          )
+                                        }
+                                      />
+                                    </span>
+                                  </Styles.FlexRow>
+                                </div>
+                                <div className="right">
+                                  {isAlreadyImported(address) ? (
+                                    <span className="imported">Imported</span>
+                                  ) : (
+                                    <CheckboxRoot
+                                      $theme={theme}
+                                      className="CheckboxRoot"
+                                      id={`c${i}`}
+                                      checked={ledger.getChecked(pubKey)}
+                                      disabled={ledger.isFetching}
+                                      onCheckedChange={(checked) =>
+                                        handleCheckboxClick(
+                                          checked,
+                                          pubKey,
+                                          `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
+                                        )
+                                      }
+                                    >
+                                      <Checkbox.Indicator className="CheckboxIndicator">
+                                        <CheckIcon />
+                                      </Checkbox.Indicator>
+                                    </CheckboxRoot>
+                                  )}
+                                </div>
+                              </ImportAddressRow>
+                            ))}
+                          </ItemsColumn>
+
+                          <AddressListFooter>
+                            <button
+                              className="pageBtn"
+                              disabled={
+                                ledger.pageIndex === 0 || ledger.isFetching
+                              }
+                              onClick={() => handlePaginationClick('prev')}
+                            >
+                              <CaretLeftIcon />
+                            </button>
+                            <button
+                              className="pageBtn"
+                              disabled={ledger.isFetching}
+                              onClick={() => handlePaginationClick('next')}
+                            >
+                              <CaretRightIcon />
+                            </button>
+                            <div className="importBtn">
+                              <button
+                                disabled={
+                                  selectedAddresses.length === 0 ||
+                                  ledger.isFetching ||
+                                  ledger.isImporting
+                                }
+                                onClick={async () =>
+                                  await handleImportProcess()
                                 }
                               >
-                                <Checkbox.Indicator className="CheckboxIndicator">
-                                  <CheckIcon />
-                                </Checkbox.Indicator>
-                              </CheckboxRoot>
-                            )}
-                          </ImportAddressRow>
-                        ))}
-                      </ItemsColumn>
-
-                      <AddressListFooter>
-                        <button
-                          className="pageBtn"
-                          disabled={ledger.pageIndex === 0 || ledger.isFetching}
-                          onClick={() => handlePaginationClick('prev')}
-                        >
-                          <CaretLeftIcon />
-                        </button>
-                        <button
-                          className="pageBtn"
-                          disabled={ledger.isFetching}
-                          onClick={() => handlePaginationClick('next')}
-                        >
-                          <CaretRightIcon />
-                        </button>
-                        <div className="importBtn">
-                          <button
-                            disabled={
-                              selectedAddresses.length === 0 ||
-                              ledger.isFetching ||
-                              ledger.isImporting
-                            }
-                            onClick={async () => await handleImportProcess()}
-                          >
-                            {ledger.getImportLabel()}
-                          </button>
-                        </div>
-                      </AddressListFooter>
-                    </>
-                  )}
-                </UI.AccordionContent>
-              </Accordion.Item>
-            </FlexColumn>
-          </Accordion.Root>
-        </UI.AccordionWrapper>
-      </div>
-    </Scrollable>
+                                {ledger.getImportLabel()}
+                              </button>
+                            </div>
+                          </AddressListFooter>
+                        </>
+                      )}
+                    </UI.AccordionContent>
+                  </Accordion.Item>
+                </Styles.FlexColumn>
+              </Accordion.Root>
+            </UI.AccordionWrapper>
+          </section>
+        </Styles.FlexColumn>
+      </Styles.PadWrapper>
+    </UI.ScrollableMax>
   );
 };

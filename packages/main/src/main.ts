@@ -304,6 +304,11 @@ app.whenReady().then(async () => {
    * Window Management
    */
 
+  // Reize base window.
+  ipcMain.on('app:base:resize', (_, size) =>
+    WindowsController.resizeBaseWindow(size)
+  );
+
   // Hides a window by its key.
   ipcMain.on('app:window:hide', (_, id) => {
     WindowsController.hideAndBlur(id);

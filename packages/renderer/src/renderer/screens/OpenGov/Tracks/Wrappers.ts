@@ -5,63 +5,42 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
 
-export const StickyHeadings = styled.div`
-  background-color: var(--background-window);
-  position: sticky;
-  top: -1.5rem;
-  z-index: 15;
+export const StickyHeading = styled.h5<{ $padLeft?: string }>`
+  color: var(--text-color-secondary);
+  padding-left: ${(props) => (props.$padLeft ? props.$padLeft : '0px')};
 
-  .content-wrapper {
-    display: flex;
-    column-gap: 1rem;
-    align-items: center;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.6;
+  transition: opacity 0.2s ease-out;
+  cursor: default;
 
-    div {
-      padding: 0.4rem 0 0.4rem;
+  &:hover {
+    opacity: 0.8;
+  }
+  .IconWrapper {
+    padding: 0.2rem 0.5rem;
+    margin-top: -1px;
+    transition: color 0.2s ease-out;
+    cursor: pointer;
+
+    .Icon {
+      font-size: 0.8rem;
     }
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 58px;
-        padding-left: 22px;
-      }
-      div:nth-child(2) {
-        min-width: 40px;
-      }
-    }
-
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
-
-      div:nth-child(1) {
-        min-width: 154px;
-      }
-      div:nth-child(2) {
-        min-width: 140px;
-      }
-      div:nth-child(3) {
-        min-width: 90px;
-      }
+    &:hover {
+      color: var(--text-bright);
     }
   }
 
-  .heading {
-    color: var(--text-color-secondary);
-    font-size: 1rem;
-    font-weight: 500;
-    opacity: 0.6;
-    transition: opacity 0.2s ease-out;
-    cursor: default;
-
-    &:hover {
-      opacity: 0.8;
+  @media (min-width: 570px) and (max-width: 700px) {
+    &.SmHide {
+      display: none;
+    }
+  }
+  @media (max-width: 569px) {
+    &.SmxHide {
+      display: none;
     }
   }
 `;
@@ -72,42 +51,47 @@ export const TrackItem = styled(motion.div)`
   padding: 1rem 1.25rem;
   transition: background-color 0.2s ease-out;
 
-  // Utility.
-  .mw-84 {
-    min-width: 84px;
-  }
-  .mw-45 {
-    min-width: 45px;
-  }
-  .mw-20 {
-    min-width: 18px;
-  }
-
-  /* Content */
-  .content-wrapper {
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-
-    .left {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
+  .TrackRow {
+    // Track
+    .RowItem:nth-of-type(1) {
+      width: 34px;
     }
-    .right {
-      justify-content: start;
-      display: flex;
-      align-items: center;
-      column-gap: 1rem;
+    .RowItem:nth-of-type(2) {
+      flex: 4;
+    }
+    // Decision Deposit
+    .RowItem:nth-of-type(3) {
+      flex: 4;
+    }
+    // Max Deciding
+    .RowItem:nth-of-type(4) {
+      flex: 3;
+    }
+    // Timeline
+    .RowItem:nth-of-type(5) {
+      flex: 2;
+    }
+  }
+
+  @media (min-width: 570px) and (max-width: 700px) {
+    .RowItem {
+      &.SmHide {
+        display: none;
+      }
+    }
+  }
+  @media (max-width: 569px) {
+    .RowItem {
+      &.SmxHide {
+        display: none;
+      }
     }
   }
 
   /* Stats */
-  .stat-wrapper {
+  .RowItem {
     display: flex;
     column-gap: 1.5rem;
-    min-width: 90px;
     display: flex;
     align-items: center;
 
@@ -121,12 +105,6 @@ export const TrackItem = styled(motion.div)`
       &:hover {
         color: var(--text-highlight) !important;
       }
-    }
-
-    .titleWrapper {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
     }
 
     // Stat text.
@@ -155,6 +133,10 @@ export const TrackItem = styled(motion.div)`
       width: 100%;
       margin-top: 1rem;
       padding: 1.25rem 0 1.25rem;
+
+      @media (max-width: 675px) {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
     }
 
     /* Period stat */

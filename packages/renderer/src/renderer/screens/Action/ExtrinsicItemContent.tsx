@@ -17,7 +17,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
-import { FlexRow, FlexRowWrap } from '@polkadot-live/ui/styles';
+import { FlexRow, FlexRowWrap, ResponsiveRow } from '@polkadot-live/ui/styles';
 import { EstimatedFeeBadge, SignerBadge } from './Helpers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
@@ -64,7 +64,7 @@ export const ExtrinsicItemContent = ({
             Transfer {fmtAmount} to account <b>{recipientAccountName}</b>.
           </p>
 
-          <FlexRow $gap={'1rem'}>
+          <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <FlexRowWrap>
               {/* Signing Account */}
               <SignerBadge info={info} theme={theme} />
@@ -100,7 +100,7 @@ export const ExtrinsicItemContent = ({
               info={info}
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
-          </FlexRow>
+          </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );
     }
@@ -114,7 +114,7 @@ export const ExtrinsicItemContent = ({
       return (
         <ExtrinsicItemContentWrapper>
           <p>Compound {fmtAmount}.</p>
-          <FlexRow $gap={'1rem'}>
+          <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <FlexRowWrap>
               <SignerBadge info={info} theme={theme} />
               <EstimatedFeeBadge info={info} theme={theme} />
@@ -125,7 +125,7 @@ export const ExtrinsicItemContent = ({
               info={info}
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
-          </FlexRow>
+          </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );
     }
@@ -139,7 +139,7 @@ export const ExtrinsicItemContent = ({
       return (
         <ExtrinsicItemContentWrapper>
           <p>Claim {fmtAmount}.</p>
-          <FlexRow $gap={'1rem'}>
+          <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <FlexRowWrap>
               <SignerBadge info={info} theme={theme} />
               <EstimatedFeeBadge info={info} theme={theme} />
@@ -150,7 +150,7 @@ export const ExtrinsicItemContent = ({
               info={info}
               valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
             />
-          </FlexRow>
+          </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );
     }

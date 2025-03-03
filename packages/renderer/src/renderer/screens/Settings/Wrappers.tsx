@@ -5,19 +5,6 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
 
-export const ContentWrapper = styled.div`
-  background-color: var(--background-window);
-  width: 100%;
-  position: relative;
-  padding: 1.5rem;
-
-  .flex-column {
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-  }
-`;
-
 export const SettingWrapper = styled(motion.div)`
   position: relative;
   display: flex;
@@ -31,6 +18,7 @@ export const SettingWrapper = styled(motion.div)`
     display: flex;
     align-items: center;
     column-gap: 0.5rem;
+    min-width: 0; // Allow title overflow.
   }
   .right {
     display: flex;

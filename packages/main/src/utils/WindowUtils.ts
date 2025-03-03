@@ -182,7 +182,6 @@ export const createBaseWindow = () => {
 
   const baseWidth = ConfigMain.childWidth;
   const baseHeight = 500;
-
   const defaultX = screenWidth / 2 - baseWidth / 2;
   const defaultY = screenHeight / 2 - baseHeight / 2;
 
@@ -193,12 +192,10 @@ export const createBaseWindow = () => {
     frame: false,
     show: false,
     resizable: true,
-    height: baseHeight,
-    minHeight: 475,
-    maxHeight: 900,
     width: baseWidth,
-    minWidth: ConfigMain.childWidth,
-    maxWidth: ConfigMain.childWidth,
+    height: baseHeight,
+    minHeight: 300,
+    minWidth: 400,
     minimizable: false,
     maximizable: false,
     closable: true,
@@ -226,6 +223,10 @@ export const createBaseWindow = () => {
   // Resize views when base window is resized.
   baseWindow.on('resize', () => {
     WindowsController.resizeViews();
+  });
+  // Send message to tabs view after window is resized.
+  baseWindow.on('resized', () => {
+    WindowsController.tabsView?.webContents?.send('renderer:base:resized');
   });
   // Event handlers.
   baseWindow.on('focus', () => {
