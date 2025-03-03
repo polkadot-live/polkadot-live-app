@@ -7,6 +7,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import { LinksFooter } from '@app/Utils';
 
+import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import {
   ControlsWrapper,
   SortControlButton,
@@ -44,6 +45,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     refetchReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    setFetchingReferenda,
   } = useReferenda();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
@@ -69,6 +71,20 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
     setExpandAll(true);
   }, [referenda]);
+
+  /// Re-fetch referenda if app goes online from offline mode.
+  useEffect(() => {
+    if (getOnlineMode() && !hasFetched) {
+      setFetchingReferenda(true);
+
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:referenda:get',
+        data: {
+          chainId,
+        },
+      });
+    }
+  }, [getOnlineMode()]);
 
   /// Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {

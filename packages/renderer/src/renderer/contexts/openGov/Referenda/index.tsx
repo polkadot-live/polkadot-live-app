@@ -147,6 +147,14 @@ export const ReferendaProvider = ({
     return map;
   };
 
+  /// Update the fetched flag state and ref.
+  const updateHasFetchedReferenda = (chainId: ChainID) => {
+    if (chainId !== activeReferendaChainId) {
+      setStateWithRef(false, setHasFetched, hasFetchedRef);
+      setActiveReferendaChainId(chainId);
+    }
+  };
+
   return (
     <ReferendaContext.Provider
       value={{
@@ -161,6 +169,7 @@ export const ReferendaProvider = ({
         setFetchingReferenda,
         getSortedActiveReferenda,
         getCategorisedReferenda,
+        updateHasFetchedReferenda,
       }}
     >
       {children}

@@ -22,4 +22,5 @@ export interface ReferendaContextInterface {
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => Map<string, ActiveReferendaInfo[]>;
+  updateHasFetchedReferenda: (chainId: ChainID) => void;
 }

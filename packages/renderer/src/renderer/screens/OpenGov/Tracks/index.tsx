@@ -24,6 +24,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
   const {
     activeChainId: chainId,
     fetchingTracks,
+    hasFetched,
     tracks,
     setFetchingTracks,
   } = useTracks();
@@ -33,7 +34,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   /// Re-fetch tracks if app goes online from offline mode.
   useEffect(() => {
-    if (getOnlineMode()) {
+    if (getOnlineMode() && !hasFetched) {
       setFetchingTracks(true);
 
       // Request tracks data from main renderer.
@@ -76,7 +77,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
               />
               <UI.SortControlButton
                 isActive={sortIdAscending}
-                isDisabled={!getOnlineMode() || fetchingTracks}
+                isDisabled={fetchingTracks}
                 faIcon={faArrowDownShortWide}
                 onClick={() => setSortIdAscending(!sortIdAscending)}
                 onLabel="ID Ascend"
@@ -86,7 +87,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
           </section>
 
           <section>
-            {!getOnlineMode() ? (
+            {!getOnlineMode() && !hasFetched ? (
               <div style={{ padding: '0.5rem' }}>
                 <p>Currently offline.</p>
                 <p>Please reconnect to load OpenGov tracks.</p>
