@@ -12,7 +12,7 @@ const VertBar = () => (
 
 const LinkItem = styled.p`
   color: var(--text-color-secondary);
-  opacity: 0.8;
+  opacity: 0.5;
   margin: 0;
   cursor: pointer;
   &:hover {
@@ -36,7 +36,7 @@ export const LinksFooter = ({
         style={{
           margin: 0,
           color: 'var(--text-color-secondary)',
-          opacity: '0.6',
+          opacity: '0.4',
         }}
       >
         Polkadot Live
