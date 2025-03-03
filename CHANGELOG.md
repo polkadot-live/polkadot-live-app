@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.2-alpha...v0.7.0-alpha) (2025-03-03)
+
+
+### Features
+
+* base window resize toggles ([#905](https://github.com/polkadot-live/polkadot-live-app/issues/905)) ([b238a78](https://github.com/polkadot-live/polkadot-live-app/commit/b238a78138f047473aedae3e32bf3036e0603b15))
+* responsive accounts view ([#887](https://github.com/polkadot-live/polkadot-live-app/issues/887)) ([288d894](https://github.com/polkadot-live/polkadot-live-app/commit/288d89498869833915df7ae133fbfaba49a9eb82))
+* responsive extrinsics view ([#890](https://github.com/polkadot-live/polkadot-live-app/issues/890)) ([998e214](https://github.com/polkadot-live/polkadot-live-app/commit/998e214601e5bc80fca55d6ed9c2a16159b939fc))
+* responsive open gov view ([#891](https://github.com/polkadot-live/polkadot-live-app/issues/891)) ([7b0db02](https://github.com/polkadot-live/polkadot-live-app/commit/7b0db0263861178341df9ccfd249658f320c5bd7))
+* responsive settings view ([#889](https://github.com/polkadot-live/polkadot-live-app/issues/889)) ([3aea493](https://github.com/polkadot-live/polkadot-live-app/commit/3aea4935e09075c80a04d57ccdd38d889c3e0dcc))
+* responsive tabs view ([#892](https://github.com/polkadot-live/polkadot-live-app/issues/892)) ([f32e78a](https://github.com/polkadot-live/polkadot-live-app/commit/f32e78a882682efc0fc40a8f6c3e3a25cc56941e))
+* responsive views ([#888](https://github.com/polkadot-live/polkadot-live-app/issues/888)) ([8d2e8d6](https://github.com/polkadot-live/polkadot-live-app/commit/8d2e8d600ca676bdd5a4aad598cf0a434af43697))
+* view footer ([#904](https://github.com/polkadot-live/polkadot-live-app/issues/904)) ([f99d55c](https://github.com/polkadot-live/polkadot-live-app/commit/f99d55cc97dc82b5b588e0b2375e05777ae30e4b))
+
 ## [0.6.2-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.1-alpha...v0.6.2-alpha) (2025-02-23)
 
 
