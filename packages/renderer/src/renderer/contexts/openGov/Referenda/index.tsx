@@ -7,6 +7,7 @@ import { createContext, useContext, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
+import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
@@ -25,13 +26,14 @@ export const ReferendaProvider = ({
   const { getOnlineMode } = useConnections();
   const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
-  /// Ref to indiciate if referenda data has been fetched.
-  const dataCachedRef = useRef(false);
+  /// Flag to indiciate if referenda data has been fetched.
+  const [hasFetched, setHasFetched] = useState<boolean>(false);
+  const hasFetchedRef = useRef(false);
 
   /// Referenda data received from API.
   const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
 
-  /// Flag to indicate that referenda is being fetched.
+  /// Flag to indicate that referenda are being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
 
   /// Chain ID for currently rendered referenda.
@@ -44,7 +46,7 @@ export const ReferendaProvider = ({
     // Return early if offline or data is already fetched for the chain.
     if (
       !getOnlineMode() ||
-      (dataCachedRef.current === true && chainId === activeReferendaChainId)
+      (hasFetchedRef.current === true && chainId === activeReferendaChainId)
     ) {
       return;
     }
@@ -81,7 +83,7 @@ export const ReferendaProvider = ({
       await fetchProposals(activeReferendaChainRef.current, info);
     }
 
-    dataCachedRef.current = true;
+    setStateWithRef(true, setHasFetched, hasFetchedRef);
     setFetchingReferenda(false);
   };
 
@@ -148,9 +150,10 @@ export const ReferendaProvider = ({
   return (
     <ReferendaContext.Provider
       value={{
-        referenda,
-        fetchingReferenda,
         activeReferendaChainId,
+        fetchingReferenda,
+        hasFetched,
+        referenda,
         fetchReferendaData,
         refetchReferenda,
         receiveReferendaData,

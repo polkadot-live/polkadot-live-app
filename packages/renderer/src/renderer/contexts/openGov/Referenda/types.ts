@@ -5,9 +5,10 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface ReferendaContextInterface {
-  referenda: ActiveReferendaInfo[];
-  fetchingReferenda: boolean;
   activeReferendaChainId: ChainID;
+  fetchingReferenda: boolean;
+  hasFetched: boolean;
+  referenda: ActiveReferendaInfo[];
   fetchReferendaData: (chainId: ChainID) => void;
   refetchReferenda: () => void;
   receiveReferendaData: (info: ActiveReferendaInfo[]) => Promise<void>;

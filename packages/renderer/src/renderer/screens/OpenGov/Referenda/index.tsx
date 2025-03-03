@@ -11,7 +11,6 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
@@ -40,9 +39,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const {
     referenda,
     fetchingReferenda,
+    hasFetched,
     activeReferendaChainId: chainId,
     refetchReferenda,
-    setFetchingReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
   } = useReferenda();
@@ -70,20 +69,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
     setExpandAll(true);
   }, [referenda]);
-
-  /// Re-fetch referenda if app goes online from offline mode.
-  useEffect(() => {
-    if (getOnlineMode()) {
-      setFetchingReferenda(true);
-
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-  }, [getOnlineMode()]);
 
   /// Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
@@ -308,7 +293,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={newestFirst}
-                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  isDisabled={fetchingReferenda}
                   faIcon={faSort}
                   onClick={() => setNewestFirst(!newestFirst)}
                   onLabel="Newest First"
@@ -317,7 +302,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={groupingOn}
-                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  isDisabled={fetchingReferenda}
                   faIcon={faLayerGroup}
                   onClick={() => setGroupingOn(!groupingOn)}
                   onLabel="Grouping"
@@ -327,9 +312,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={isExpandActive()}
-                  isDisabled={
-                    !getOnlineMode() || fetchingReferenda || !groupingOn
-                  }
+                  isDisabled={fetchingReferenda || !groupingOn}
                   faIcon={faUpDown}
                   onClick={() => handleExpandAll()}
                   onLabel="Expanded"
@@ -354,16 +337,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-                <UI.TooltipRx
-                  theme={theme}
-                  text={
-                    getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'
-                  }
-                >
+                <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
                   <span>
                     <SortControlButton
                       isActive={onlySubscribed}
-                      isDisabled={!getOnlineMode() || fetchingReferenda}
+                      isDisabled={fetchingReferenda}
                       faIcon={faEllipsisVertical}
                       onClick={() => handleToggleOnlySubscribed()}
                       fixedWidth={false}
@@ -390,7 +368,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               )}
 
               {/* List referenda */}
-              {!getOnlineMode() ? (
+              {!getOnlineMode() && !hasFetched ? (
                 <div style={{ padding: '0.5rem' }}>
                   <p>Currently offline.</p>
                   <p>Please reconnect to load OpenGov referenda.</p>

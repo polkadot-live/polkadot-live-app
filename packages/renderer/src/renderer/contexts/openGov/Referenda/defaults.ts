@@ -5,9 +5,10 @@
 import type { ReferendaContextInterface } from './types';
 
 export const defaultReferendaContext: ReferendaContextInterface = {
-  referenda: [],
-  fetchingReferenda: false,
   activeReferendaChainId: 'Polkadot',
+  fetchingReferenda: false,
+  hasFetched: false,
+  referenda: [],
   receiveReferendaData: (i) => new Promise(() => {}),
   fetchReferendaData: (c) => {},
   refetchReferenda: () => {},

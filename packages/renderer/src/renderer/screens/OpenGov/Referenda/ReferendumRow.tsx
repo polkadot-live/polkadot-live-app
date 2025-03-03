@@ -36,12 +36,14 @@ import type { PolkassemblyProposal } from '@app/contexts/openGov/Polkassembly/ty
 import { FlexRow } from '@polkadot-live/ui/styles';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
-  const { referendaId } = referendum;
   const { openHelp } = useHelp();
   const { openOverlayWith } = useOverlay();
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const { darkMode, getOnlineMode } = useConnections();
+  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const isOnline = getOnlineMode();
+
+  const { referendaId } = referendum;
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
     useReferendaSubscriptions();
@@ -95,6 +97,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               <FontAwesomeIcon icon={faPenToSquare} />
             </button>
           </TooltipRx>
+
           {/* Polkassembly */}
           <TooltipRx theme={theme} text="Polkassembly">
             <button
@@ -109,6 +112,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               <FontAwesomeIcon icon={faUpRightFromSquare} />
             </button>
           </TooltipRx>
+
           {/* Subsquare */}
           <TooltipRx theme={theme} text="Subsquare">
             <button
@@ -122,15 +126,19 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </button>
           </TooltipRx>
         </div>
+
         {/* Add + Remove Subscriptions */}
         <div className="ControlsWrapper">
           <ControlsWrapper style={{ marginBottom: '0' }}>
             {!allSubscriptionsAdded(chainId, referendum) ? (
-              <TooltipRx theme={theme} text="Subscribe All">
+              <TooltipRx
+                theme={theme}
+                text={isOnline ? 'Subscribe All' : 'Currently Offline'}
+              >
                 <span>
                   <SortControlButton
                     isActive={true}
-                    isDisabled={false}
+                    isDisabled={!isOnline}
                     faIcon={faPlus}
                     onClick={() =>
                       addAllIntervalSubscriptions(
@@ -143,7 +151,10 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 </span>
               </TooltipRx>
             ) : (
-              <TooltipRx theme={theme} text="Unsubscribe All">
+              <TooltipRx
+                theme={theme}
+                text={isOnline ? 'Unsubscribe All' : 'Currently Offline'}
+              >
                 <span>
                   <SortControlButton
                     isActive={true}
@@ -197,18 +208,26 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 className="SubscriptionRow"
               >
                 {isSubscribedToTask(referendum, t) ? (
-                  <TooltipRx text="Unsubscribe" theme={theme}>
+                  <TooltipRx
+                    text={isOnline ? 'Unsubscribe' : 'Currently Offline'}
+                    theme={theme}
+                  >
                     <button
-                      className="BtnAdd"
+                      className={`${!isOnline && 'Disable'} BtnAdd`}
+                      disabled={!isOnline}
                       onClick={() => removeIntervalSubscription(t, referendum)}
                     >
                       <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
                     </button>
                   </TooltipRx>
                 ) : (
-                  <TooltipRx text="Subscribe" theme={theme}>
+                  <TooltipRx
+                    text={isOnline ? 'Subscribe' : 'Currently Offline'}
+                    theme={theme}
+                  >
                     <button
-                      className="BtnAdd"
+                      className={`${!isOnline && 'Disable'} BtnAdd`}
+                      disabled={!isOnline}
                       onClick={() => addIntervalSubscription(t, referendum)}
                     >
                       <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
