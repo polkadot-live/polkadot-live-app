@@ -4,6 +4,16 @@
 import styled from 'styled-components';
 import type { ChainID } from '@polkadot-live/types/chains';
 
+export const NetworkHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--background-surface);
+  flex: 1;
+  justify-content: center;
+  height: 36px;
+`;
+
 export const IconWrapper = styled.div<{ $chainId: ChainID }>`
   position: relative;
   width: 100%;

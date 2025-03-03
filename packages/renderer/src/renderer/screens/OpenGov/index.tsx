@@ -15,18 +15,23 @@ import {
   ModalMotionTwoSection,
 } from '@polkadot-live/ui/kits/overlay';
 import { Tracks } from './Tracks';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowsRotate,
+  faFilePen,
+  faList,
+} from '@fortawesome/free-solid-svg-icons';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { Referenda } from './Referenda';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
-import { TreasuryStats } from './Wrappers';
+import { NetworkHeader, TreasuryStats } from './Wrappers';
 import { useDebug } from '@app/hooks/useDebug';
 import { useHelp } from '@app/contexts/common/Help';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { LinksFooter, TooltipWrapper } from '@app/Utils';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const OpenGov: React.FC = () => {
   /// Set up port communication for `openGov` window.
@@ -81,17 +86,9 @@ export const OpenGov: React.FC = () => {
       ) as NodeListOf<HTMLElement>;
 
       cards.forEach((card, i) => {
-        if (i === 0) {
-          card.style.borderTopLeftRadius = '0.375rem';
-          card.style.borderBottomLeftRadius = '0.375rem';
-        } else if (i === 1) {
-          card.style.borderTopRightRadius = '0.375rem';
-          card.style.borderBottomRightRadius = '0.375rem';
-        } else if (i === 2) {
-          card.style.borderTopLeftRadius = '0.375rem';
+        if (i === 2) {
           card.style.borderBottomLeftRadius = '0.375rem';
         } else if (i === 3) {
-          card.style.borderTopRightRadius = '0.375rem';
           card.style.borderBottomRightRadius = '0.375rem';
         }
       });
@@ -160,7 +157,7 @@ export const OpenGov: React.FC = () => {
         >
           <UI.ScrollableMax>
             <Styles.PadWrapper>
-              <Styles.FlexColumn>
+              <Styles.FlexColumn $rowGap={'2rem'}>
                 <section>
                   <Styles.FlexColumn>
                     <UI.ActionItem
@@ -168,7 +165,6 @@ export const OpenGov: React.FC = () => {
                       text={'Treasury'}
                       style={{ marginTop: '0.75rem' }}
                     />
-
                     <TreasuryStats $chainId={treasuryChainId}>
                       {fetchingTreasuryData && getOnlineMode() ? (
                         <div className="loading-wrapper">
@@ -261,57 +257,69 @@ export const OpenGov: React.FC = () => {
 
                 <section>
                   {/* Referenda */}
-                  <Styles.FlexColumn $rowGap={'0.75rem'}>
-                    <UI.ActionItem
-                      showIcon={false}
-                      text={'Referenda'}
-                      style={{ marginTop: '0.75rem' }}
-                    />
+                  <UI.ActionItem showIcon={false} text={'Explore OpenGov'} />
+                  <Styles.FlexColumn $rowGap={'0.25rem'}>
+                    <Styles.FlexRow
+                      $gap={'0.25rem'}
+                      style={{ marginTop: '1rem' }}
+                    >
+                      <NetworkHeader
+                        style={{ borderTopLeftRadius: '0.375rem' }}
+                      >
+                        <PolkadotSVG width={'1.25rem'} opacity={0.8} />
+                        <h4>Polkadot</h4>
+                      </NetworkHeader>
+                      <NetworkHeader
+                        style={{ borderTopRightRadius: '0.375rem' }}
+                      >
+                        <KusamaSVG width={'2.2rem'} opacity={0.8} />
+                        <h4>Kusama</h4>
+                      </NetworkHeader>
+                    </Styles.FlexRow>
                     <Styles.GridTwoCol>
                       <UI.NavCardThin
-                        title={'Polkadot'}
+                        title={'Referenda'}
+                        styleLogoCont={{ opacity: '0.8' }}
                         onClick={() => handleOpenReferenda('Polkadot')}
                         childrenLogo={
-                          <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                          <FontAwesomeIcon
+                            icon={faFilePen}
+                            transform={'grow-3'}
+                          />
                         }
                         childrenSubtitle={
                           <span>Active referenda on the Polkadot network.</span>
                         }
                       />
                       <UI.NavCardThin
-                        title={'Kusama'}
+                        title={'Referenda'}
+                        styleLogoCont={{ opacity: '0.8' }}
                         onClick={() => handleOpenReferenda('Kusama')}
                         childrenLogo={
-                          <KusamaSVG width={'2.2rem'} opacity={0.8} />
+                          <FontAwesomeIcon
+                            icon={faFilePen}
+                            transform={'grow-3'}
+                          />
                         }
                         childrenSubtitle={
                           <span>Active referenda on the Kusama network.</span>
                         }
                       />
-                    </Styles.GridTwoCol>
-
-                    {/* Origins and Tracks */}
-                    <UI.ActionItem
-                      showIcon={false}
-                      text={'Tracks'}
-                      style={{ marginTop: '0.75rem' }}
-                    />
-                    <Styles.GridTwoCol>
                       <UI.NavCardThin
-                        title={'Polkadot'}
+                        title={'Tracks'}
                         onClick={() => handleOpenTracks('Polkadot')}
                         childrenLogo={
-                          <PolkadotSVG width={'1.5rem'} opacity={0.8} />
+                          <FontAwesomeIcon icon={faList} transform={'grow-2'} />
                         }
                         childrenSubtitle={
                           <span>Tracks on the Polkadot network.</span>
                         }
                       />
                       <UI.NavCardThin
-                        title={'Kusama'}
+                        title={'Tracks'}
                         onClick={() => handleOpenTracks('Kusama')}
                         childrenLogo={
-                          <KusamaSVG width={'2.2rem'} opacity={0.8} />
+                          <FontAwesomeIcon icon={faList} transform={'grow-2'} />
                         }
                         childrenSubtitle={
                           <span>Tracks on the Kusama network.</span>

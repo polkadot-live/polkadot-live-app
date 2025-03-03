@@ -18,7 +18,6 @@ export interface NavCardBaseProps {
   helpKey?: HelpItemKey;
   // Styles to apply to the logo container.
   styleLogoCont?: React.CSSProperties;
-  // Function to open help overlay.
 }
 
 export interface NavCardProps extends NavCardBaseProps {
