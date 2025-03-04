@@ -31,4 +31,5 @@ export interface TreasuryStatCardProps {
   statText: string;
   helpKey: HelpItemKey;
   openHelp: (key: HelpItemKey) => void;
+  disable?: boolean;
 }
