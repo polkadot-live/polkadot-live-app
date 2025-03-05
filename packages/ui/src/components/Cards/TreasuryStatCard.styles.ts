@@ -29,6 +29,9 @@ export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
   h4 {
     color: ${({ $chainId }) => getChainIdColor($chainId)};
     font-size: 1.15rem;
+    &.disable {
+      animation: fadeInOut 3s infinite;
+    }
   }
   > div:first-of-type {
     display: flex;
@@ -46,6 +49,17 @@ export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
       &:hover {
         color: var(--text-highlight);
       }
+    }
+  }
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0.4;
     }
   }
 `;

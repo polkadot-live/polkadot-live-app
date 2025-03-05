@@ -11,6 +11,7 @@ export const TreasuryStatCard = ({
   title,
   statText,
   helpKey,
+  disable = false,
   openHelp,
 }: TreasuryStatCardProps) => (
   <TreasuryStatCardWrapper $chainId={chainId}>
@@ -20,6 +21,6 @@ export const TreasuryStatCard = ({
         <FontAwesomeIcon icon={faInfo} />
       </div>
     </div>
-    <h4>{statText}</h4>
+    <h4 className={disable ? 'disable' : ''}>{statText}</h4>
   </TreasuryStatCardWrapper>
 );

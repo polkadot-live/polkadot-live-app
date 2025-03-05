@@ -2,23 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
-
-export interface PolkassemblyProposal {
-  title: string;
-  postId: number;
-  content: string;
-  status: string;
-}
+import type {
+  ActiveReferendaInfo,
+  PolkassemblyProposal,
+} from '@polkadot-live/types/openGov';
 
 export interface PolkassemblyContextInterface {
-  proposals: PolkassemblyProposal[];
-  fetchingProposals: boolean;
-  getProposal: (referendumId: number) => PolkassemblyProposal | null;
+  usePolkassemblyApi: boolean;
+  getProposal: (
+    chainId: ChainID,
+    referendumId: number
+  ) => PolkassemblyProposal | null;
   fetchProposals: (
     chainId: ChainID,
     referenda: ActiveReferendaInfo[]
   ) => Promise<void>;
-  usePolkassemblyApi: boolean;
   setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

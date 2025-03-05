@@ -170,7 +170,7 @@ export const DropdownMenuContent = styled(DropdownMenu.Content).attrs<{
   $theme: props.$theme,
 }))`
   --accent-primary: ${(props) => props.$theme.accentPrimary};
-  --background-primary: ${(props) => props.$theme.backgroundPrimary};
+  --background-primary: ${(props) => props.$theme.backgroundDropDown};
   --button-primary: ${(props) => props.$theme.buttonBackgroundPrimary};
   --button-primary-hover: ${(props) =>
     props.$theme.buttonBackgroundPrimaryHover};

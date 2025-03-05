@@ -41,6 +41,13 @@ export interface ActiveReferendaInfo {
   };
 }
 
+export interface PolkassemblyProposal {
+  title: string;
+  postId: number;
+  content: string;
+  status: string;
+}
+
 export interface LinearDecreasing {
   length: string;
   floor: string;
