@@ -22,15 +22,12 @@ import {
   faPlus,
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  ControlsWrapper,
-  SortControlButton,
-  TooltipRx,
-} from '@polkadot-live/ui/components';
+import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../DropdownMenu';
 import type { PolkassemblyProposal } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
+import { RoundLeftButton, RoundRightButton } from '../DropdownMenu/Wrappers';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { openHelp } = useHelp();
@@ -81,35 +78,25 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
           <h4 style={{ flex: 1 }}>{renderOrigin(referendum)}</h4>
         )}
 
-        <div className="LinksWrapper">
-          <ReferendumDropdownMenu
-            chainId={chainId}
-            proposalData={proposalData}
-            referendum={referendum}
-          />
-        </div>
-
-        {/* Add + Remove Subscriptions */}
-        <div className="ControlsWrapper">
-          <ControlsWrapper style={{ marginBottom: '0' }}>
+        <FlexRow $gap={'0.75rem'}>
+          <FlexRow $gap={'2px'}>
             {!allSubscriptionsAdded(chainId, referendum) ? (
               <TooltipRx
                 theme={theme}
                 text={isOnline ? 'Subscribe All' : 'Currently Offline'}
               >
                 <span>
-                  <SortControlButton
-                    isActive={true}
-                    isDisabled={!isOnline}
-                    faIcon={faPlus}
+                  <RoundLeftButton
+                    disabled={!isOnline}
                     onClick={() =>
                       addAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
                         referendum
                       )
                     }
-                    fixedWidth={false}
-                  />
+                  >
+                    <FontAwesomeIcon className="icon" icon={faPlus} />
+                  </RoundLeftButton>
                 </span>
               </TooltipRx>
             ) : (
@@ -118,18 +105,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 text={isOnline ? 'Unsubscribe All' : 'Currently Offline'}
               >
                 <span>
-                  <SortControlButton
-                    isActive={true}
-                    isDisabled={false}
-                    faIcon={faMinus}
+                  <RoundLeftButton
                     onClick={() =>
                       removeAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
                         referendum
                       )
                     }
-                    fixedWidth={false}
-                  />
+                  >
+                    <FontAwesomeIcon className="icon" icon={faMinus} />
+                  </RoundLeftButton>
                 </span>
               </TooltipRx>
             )}
@@ -139,17 +124,22 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               text={expanded ? 'Hide Subscriptions' : 'Show Subscriptions'}
             >
               <span>
-                <SortControlButton
-                  isActive={true}
-                  isDisabled={false}
-                  faIcon={expanded ? faChevronUp : faChevronDown}
-                  onClick={() => setExpanded(!expanded)}
-                  fixedWidth={false}
-                />
+                <RoundRightButton onClick={() => setExpanded(!expanded)}>
+                  <FontAwesomeIcon
+                    className="icon"
+                    icon={expanded ? faChevronUp : faChevronDown}
+                  />
+                </RoundRightButton>
               </span>
             </TooltipRx>
-          </ControlsWrapper>
-        </div>
+          </FlexRow>
+
+          <ReferendumDropdownMenu
+            chainId={chainId}
+            proposalData={proposalData}
+            referendum={referendum}
+          />
+        </FlexRow>
       </FlexRow>
       <motion.section
         className="collapse"

@@ -106,36 +106,6 @@ export const ReferendumRowWrapper = styled.div`
     margin-right: 1.5rem;
   }
 
-  /* Buttons */
-  .LinksWrapper {
-    min-width: fit-content;
-    opacity: 0.5;
-    transition: opacity 0.2s ease-out;
-
-    @media (max-width: 550px) {
-      display: none;
-    }
-  }
-  .ControlsWrapper {
-    position: relative;
-    padding: 0.25rem 0.5rem;
-    min-width: fit-content;
-
-    // TODO: Remove when augmenting control button components.
-    .icon-wrapper {
-      background-color: var(--button-background-secondary);
-      border-color: var(--button-background-secondary);
-      padding: 0.4rem 0.6rem;
-      border: none;
-      font-size: 0.85rem;
-      transition: all 150ms ease-out;
-
-      &:hover {
-        filter: brightness(90%);
-      }
-    }
-  }
-
   /* Collapsable Section */
   .collapse {
     overflow: hidden;

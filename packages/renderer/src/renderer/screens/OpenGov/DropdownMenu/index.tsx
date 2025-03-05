@@ -113,6 +113,9 @@ export const ReferendumDropdownMenu = ({
               </DropdownMenu.Item>
             </>
           )}
+
+          {/** Arrow */}
+          <DropdownMenu.Arrow className="DropdownMenuArrow" />
         </DropdownMenuContent>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
