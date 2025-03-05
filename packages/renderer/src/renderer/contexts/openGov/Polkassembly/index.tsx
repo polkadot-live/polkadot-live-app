@@ -5,11 +5,11 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 import type {
-  PolkassemblyContextInterface,
+  ActiveReferendaInfo,
   PolkassemblyProposal,
-} from './types';
+} from '@polkadot-live/types/openGov';
+import type { PolkassemblyContextInterface } from './types';
 
 export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
   defaults.defaultPolkassemblyContext

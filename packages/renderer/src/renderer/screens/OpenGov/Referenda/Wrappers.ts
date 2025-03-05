@@ -1,15 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
-
-const mixinRowButton = css`
-  font-size: 1.3rem;
-  padding: 0.4rem 1rem;
-  transition: color 150ms ease-out;
-  cursor: pointer;
-`;
 
 export const TitleWithOrigin = styled.div`
   display: flex;
@@ -111,61 +104,6 @@ export const ReferendumRowWrapper = styled.div`
     column-gap: 0.4rem;
     border-radius: 0.375rem;
     margin-right: 1.5rem;
-  }
-
-  /* Buttons */
-  .LinksWrapper {
-    min-width: fit-content;
-    opacity: 0.5;
-    transition: opacity 0.2s ease-out;
-
-    .BtnMore {
-      ${mixinRowButton}
-      color: var(--text-color-secondary);
-      &:hover {
-        color: var(--text-highlight);
-      }
-    }
-    .BtnPolkassembly {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(172 80 122);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    .BtnSubsquare {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(92 129 177);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    @media (max-width: 550px) {
-      display: none;
-    }
-  }
-  .ControlsWrapper {
-    position: relative;
-    padding: 0.25rem 0.5rem;
-    min-width: fit-content;
-
-    // TODO: Remove when augmenting control button components.
-    .icon-wrapper {
-      background-color: var(--button-background-secondary);
-      border-color: var(--button-background-secondary);
-      padding: 0.4rem 0.6rem;
-      border: none;
-      font-size: 0.85rem;
-      transition: all 150ms ease-out;
-
-      &:hover {
-        filter: brightness(90%);
-      }
-    }
   }
 
   /* Collapsable Section */
