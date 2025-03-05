@@ -7,7 +7,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import { LinksFooter } from '@app/Utils';
 
-import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import {
   ControlsWrapper,
   SortControlButton,
@@ -38,60 +37,48 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
-    referenda,
+    referendaMap,
     fetchingReferenda,
-    hasFetched,
     activeReferendaChainId: chainId,
     refetchReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
-    setFetchingReferenda,
   } = useReferenda();
 
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
-  /// Sorting controls state.
+  // Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
   const [onlySubscribed, setOnlySubscribed] = useState(false);
 
-  /// Accordion state.
+  // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>([
     ...getCategorisedReferenda(newestFirst).keys(),
   ]);
 
-  /// Get subscribed referenda only.
+  // Get subscribed referenda only.
   const getSubscribedReferenda = () =>
-    referenda.filter((r) => isSubscribedToReferendum(chainId, r));
+    referendaMap.has(chainId)
+      ? referendaMap
+          .get(chainId)!
+          .filter((r) => isSubscribedToReferendum(chainId, r))
+      : [];
 
-  /// Open all accordion items when new referenda is loaded.
+  // Open all accordion items when new referenda is loaded.
   useEffect(() => {
     setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
     setExpandAll(true);
-  }, [referenda]);
+  }, [referendaMap]);
 
-  /// Re-fetch referenda if app goes online from offline mode.
-  useEffect(() => {
-    if (getOnlineMode() && !hasFetched) {
-      setFetchingReferenda(true);
-
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: {
-          chainId,
-        },
-      });
-    }
-  }, [getOnlineMode()]);
-
-  /// Re-fetch referenda when user clicks refresh button.
+  // Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
     refetchReferenda();
   };
 
-  /// Utility for making expand button dynamic.
+  // Utility for making expand button dynamic.
   const isExpandActive = () => {
     let length = 0;
     if (onlySubscribed) {
@@ -106,7 +93,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     return accordionValue.length === length;
   };
 
-  /// Render categorized referenda.
+  // Render categorized referenda.
   const renderCategorised = () => (
     <section
       style={{ display: groupingOn && !onlySubscribed ? 'block' : 'none' }}
@@ -152,7 +139,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     </section>
   );
 
-  /// Render categorised subscribed referenda.
+  // Render categorised subscribed referenda.
   const renderSubscribedCategorised = () => {
     const display = groupingOn && onlySubscribed ? 'block' : 'none';
 
@@ -207,7 +194,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     );
   };
 
-  /// Render referenda as single list.
+  // Render referenda as single list.
   const renderListed = () => (
     <ItemsColumn
       style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
@@ -222,7 +209,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     </ItemsColumn>
   );
 
-  /// Render subscribed referenda as a single list.
+  // Render subscribed referenda as a single list.
   const renderSubscribedListed = () => {
     const display = groupingOn || !onlySubscribed ? 'none' : 'flex';
 
@@ -245,7 +232,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     );
   };
 
-  /// Handle expanding or collapsing all accordion panels.
+  // Handle expanding or collapsing all accordion panels.
   const handleExpandAll = () => {
     if (!groupingOn) {
       return;
@@ -267,7 +254,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
   };
 
-  /// Handle clicking only subscribed button.
+  // Handle clicking only subscribed button.
   const handleToggleOnlySubscribed = () => {
     if (!onlySubscribed) {
       const rs = getSubscribedReferenda();
@@ -292,6 +279,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 $padBottom={!groupingOn}
               >
                 <ButtonPrimaryInvert
+                  disabled={fetchingReferenda}
                   className="back-btn"
                   text="Back"
                   iconLeft={faCaretLeft}
@@ -384,7 +372,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               )}
 
               {/* List referenda */}
-              {!getOnlineMode() && !hasFetched ? (
+              {!getOnlineMode() && !referendaMap.has(chainId) ? (
                 <div style={{ padding: '0.5rem' }}>
                   <p>Currently offline.</p>
                   <p>Please reconnect to load OpenGov referenda.</p>

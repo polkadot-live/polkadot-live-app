@@ -56,9 +56,9 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   } = useTaskHandler();
 
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
-  const proposalData = getProposal(referendaId);
+  const proposalData = getProposal(chainId, referendaId);
 
-  /// Whether subscriptions are showing.
+  // Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
   const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
   const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;

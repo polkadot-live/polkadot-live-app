@@ -60,6 +60,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
             {/* Sorting controls */}
             <UI.ControlsWrapper $padBottom={true}>
               <ButtonPrimaryInvert
+                disabled={fetchingTracks}
                 className="back-btn"
                 text="Back"
                 iconLeft={faCaretLeft}

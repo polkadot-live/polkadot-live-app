@@ -12,13 +12,14 @@ export interface PolkassemblyProposal {
 }
 
 export interface PolkassemblyContextInterface {
-  proposals: PolkassemblyProposal[];
-  fetchingProposals: boolean;
-  getProposal: (referendumId: number) => PolkassemblyProposal | null;
+  usePolkassemblyApi: boolean;
+  getProposal: (
+    chainId: ChainID,
+    referendumId: number
+  ) => PolkassemblyProposal | null;
   fetchProposals: (
     chainId: ChainID,
     referenda: ActiveReferendaInfo[]
   ) => Promise<void>;
-  usePolkassemblyApi: boolean;
   setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

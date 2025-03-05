@@ -33,17 +33,16 @@ export const PolkassemblyProvider = ({
     fetchSetting();
   }, []);
 
-  const [proposals, setProposals] = useState<PolkassemblyProposal[]>([]);
-  const [fetchingProposals, setFetchingProposals] = useState(false);
   const proposalsRef = useRef<PolkassemblyProposal[]>([]);
+  const [proposalsMap, setProposalsMap] = useState(
+    new Map<ChainID, PolkassemblyProposal[]>()
+  );
 
-  /// Fetch proposal data after referenda have been loaded in referenda context.
+  // Fetch proposal data after referenda have been loaded in referenda context.
   const fetchProposals = async (
     chainId: ChainID,
     referenda: ActiveReferendaInfo[]
   ) => {
-    setFetchingProposals(true);
-
     // Create Axios instance with base URL to Polkassembly API.
     const axiosApi = axios.create({
       baseURL: `https://api.polkassembly.io/api/v1/`,
@@ -67,30 +66,33 @@ export const PolkassemblyProvider = ({
 
     // Store fetched proposals in state and render in OpenGov window.
     const collection: PolkassemblyProposal[] = [];
-
     for (const response of results) {
       const { content, post_id, status, title } = response.data;
       collection.push({ title, postId: post_id, content, status });
     }
 
     // Set context state.
-    setProposals([...collection]);
-    setFetchingProposals(false);
+    setProposalsMap((pv) => pv.set(chainId, [...collection]));
     proposalsRef.current = [...collection];
   };
 
-  /// Get polkassembly proposal via referendum id.
-  const getProposal = (referendumId: number): PolkassemblyProposal | null =>
-    proposals.find(({ postId }) => postId === referendumId) || null;
+  // Get polkassembly proposal via referendum id.
+  const getProposal = (
+    chainId: ChainID,
+    referendumId: number
+  ): PolkassemblyProposal | null =>
+    proposalsMap.has(chainId)
+      ? proposalsMap
+          .get(chainId)!
+          .find(({ postId }) => postId === referendumId) || null
+      : null;
 
   return (
     <PolkassemblyContext.Provider
       value={{
-        proposals,
+        usePolkassemblyApi,
         getProposal,
         fetchProposals,
-        fetchingProposals,
-        usePolkassemblyApi,
         setUsePolkassemblyApi,
       }}
     >

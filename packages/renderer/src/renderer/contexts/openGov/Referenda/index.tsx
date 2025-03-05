@@ -26,42 +26,38 @@ export const ReferendaProvider = ({
   const { getOnlineMode } = useConnections();
   const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
-  /// Flag to indiciate if referenda data has been fetched.
-  const [hasFetched, setHasFetched] = useState<boolean>(false);
-  const hasFetchedRef = useRef(false);
+  // Referenda data received from API.
+  const [referendaMap, setReferendaMap] = useState(
+    new Map<ChainID, ActiveReferendaInfo[]>()
+  );
 
-  /// Referenda data received from API.
-  const [referenda, setReferenda] = useState<ActiveReferendaInfo[]>([]);
-
-  /// Flag to indicate that referenda are being fetched.
+  // Flag to indicate that referenda are being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
 
-  /// Chain ID for currently rendered referenda.
+  // Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
     useState<ChainID>('Polkadot');
   const activeReferendaChainRef = useRef(activeReferendaChainId);
 
-  /// Initiate feching referenda data.
+  // Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
-    // Return early if offline or data is already fetched for the chain.
-    if (
-      !getOnlineMode() ||
-      (hasFetchedRef.current === true && chainId === activeReferendaChainId)
-    ) {
-      return;
+    setStateWithRef(
+      chainId,
+      setActiveReferendaChainId,
+      activeReferendaChainRef
+    );
+
+    // Fetch referenda if cached data doesn't exist for the chain.
+    if (getOnlineMode() && !referendaMap.has(chainId)) {
+      setFetchingReferenda(true);
+      ConfigOpenGov.portOpenGov.postMessage({
+        task: 'openGov:referenda:get',
+        data: { chainId },
+      });
     }
-
-    setActiveReferendaChainId(chainId);
-    activeReferendaChainRef.current = chainId;
-    setFetchingReferenda(true);
-
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:referenda:get',
-      data: { chainId },
-    });
   };
 
-  /// Re-fetch referenda, called when user clicks refresh button.
+  // Re-fetch referenda, called when user clicks refresh button.
   const refetchReferenda = () => {
     setFetchingReferenda(true);
     ConfigOpenGov.portOpenGov.postMessage({
@@ -70,9 +66,9 @@ export const ReferendaProvider = ({
     });
   };
 
-  /// Set state after receiving referenda data from main renderer.
+  // Set state after receiving referenda data from main renderer.
   const receiveReferendaData = async (info: ActiveReferendaInfo[]) => {
-    setReferenda(info);
+    setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, info));
 
     // Get Polkassembly enabled setting.
     const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
@@ -83,11 +79,10 @@ export const ReferendaProvider = ({
       await fetchProposals(activeReferendaChainRef.current, info);
     }
 
-    setStateWithRef(true, setHasFetched, hasFetchedRef);
     setFetchingReferenda(false);
   };
 
-  /// Get all referenda sorted by desc or asc.
+  // Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
@@ -97,7 +92,12 @@ export const ReferendaProvider = ({
         desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
       );
 
-    return otherReferenda ? sortFn(otherReferenda) : sortFn(referenda);
+    const referenda = referendaMap.get(activeReferendaChainRef.current);
+    return otherReferenda
+      ? sortFn(otherReferenda)
+      : referenda
+        ? sortFn(referenda)
+        : [];
   };
 
   /// Get categorized referenda, sorted desc or asc in each category.
@@ -113,7 +113,8 @@ export const ReferendaProvider = ({
     }
 
     // Populate map with referenda data.
-    const dataSet = otherReferenda || referenda;
+    const referenda = referendaMap.get(activeReferendaChainRef.current);
+    const dataSet = otherReferenda || referenda || [];
 
     for (const info of dataSet) {
       const originData = info.Ongoing.origin;
@@ -150,7 +151,6 @@ export const ReferendaProvider = ({
   /// Update the fetched flag state and ref.
   const updateHasFetchedReferenda = (chainId: ChainID) => {
     if (chainId !== activeReferendaChainId) {
-      setStateWithRef(false, setHasFetched, hasFetchedRef);
       setActiveReferendaChainId(chainId);
     }
   };
@@ -160,12 +160,11 @@ export const ReferendaProvider = ({
       value={{
         activeReferendaChainId,
         fetchingReferenda,
-        hasFetched,
-        referenda,
+        referendaMap,
         fetchReferendaData,
         refetchReferenda,
         receiveReferendaData,
-        setReferenda,
+        setReferendaMap,
         setFetchingReferenda,
         getSortedActiveReferenda,
         getCategorisedReferenda,
