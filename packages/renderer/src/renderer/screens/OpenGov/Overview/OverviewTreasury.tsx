@@ -5,13 +5,16 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
-import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { TooltipWrapper } from '@app/Utils';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowsRotate,
+  faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OverviewTreasury: React.FC = () => {
@@ -22,6 +25,7 @@ export const OverviewTreasury: React.FC = () => {
   // Treasury context.
   const {
     fetchingTreasuryData,
+    hasFetched,
     treasuryChainId,
     initTreasury,
     refetchStats,
@@ -30,6 +34,10 @@ export const OverviewTreasury: React.FC = () => {
     getFormattedToBeAwarded,
     getSpendPeriodProgress,
   } = useTreasury();
+
+  // Flag to control disabled stat styling.
+  const statDisabled =
+    (!getOnlineMode() && !hasFetched) || fetchingTreasuryData;
 
   // Handle changing treasury stats.
   const handleChangeStats = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,6 +52,14 @@ export const OverviewTreasury: React.FC = () => {
     refetchStats();
   };
 
+  // Offline warning markup.
+  const renderOfflineWarning = (): React.ReactNode => (
+    <Styles.FlexRow $gap={'0.5rem'} style={{ color: 'var(--accent-warning)' }}>
+      <FontAwesomeIcon icon={faTriangleExclamation} transform={'shrink-2'} />
+      <p style={{ margin: 0, color: 'inherit' }}>Currently offline</p>
+    </Styles.FlexRow>
+  );
+
   return (
     <section>
       <Styles.FlexColumn>
@@ -53,13 +69,9 @@ export const OverviewTreasury: React.FC = () => {
           style={{ marginTop: '0.75rem' }}
         />
         <TreasuryStats $chainId={treasuryChainId}>
-          {fetchingTreasuryData && getOnlineMode() ? (
-            <div className="loading-wrapper">
-              {renderPlaceholders(0, '68.47px', '0.5rem')}
-            </div>
-          ) : (
-            <Styles.FlexColumn>
-              <UI.ControlsWrapper style={{ marginBottom: '0' }}>
+          <Styles.FlexColumn>
+            <UI.ControlsWrapper style={{ marginBottom: '0' }}>
+              <Styles.FlexRow>
                 {/* Re-fetch Stats */}
                 <UI.TooltipRx
                   theme={theme}
@@ -84,7 +96,7 @@ export const OverviewTreasury: React.FC = () => {
                 >
                   <div className="select-wrapper">
                     <select
-                      disabled={!getOnlineMode()}
+                      disabled={!getOnlineMode() || fetchingTreasuryData}
                       id="select-treasury-chain"
                       value={treasuryChainId}
                       onChange={(e) => handleChangeStats(e)}
@@ -94,46 +106,46 @@ export const OverviewTreasury: React.FC = () => {
                     </select>
                   </div>
                 </TooltipWrapper>
-              </UI.ControlsWrapper>
 
-              <TooltipWrapper
-                theme={theme}
-                wrap={!getOnlineMode()}
-                tooltipText={'Offline'}
-              >
-                <Styles.GridFourCol id="OpenGovStats">
-                  <UI.TreasuryStatCard
-                    chainId={treasuryChainId}
-                    title={'Treasury Balance'}
-                    statText={getFormattedFreeBalance()}
-                    helpKey={'help:openGov:treasuryBalance'}
-                    openHelp={openHelp}
-                  />
-                  <UI.TreasuryStatCard
-                    chainId={treasuryChainId}
-                    title={'Next Burn'}
-                    statText={getFormattedNextBurn()}
-                    helpKey={'help:openGov:nextBurn'}
-                    openHelp={openHelp}
-                  />
-                  <UI.TreasuryStatCard
-                    chainId={treasuryChainId}
-                    title={'To Be Awarded'}
-                    statText={getFormattedToBeAwarded()}
-                    helpKey={'help:openGov:toBeAwarded'}
-                    openHelp={openHelp}
-                  />
-                  <UI.TreasuryStatCard
-                    chainId={treasuryChainId}
-                    title={'Spend Period'}
-                    statText={getSpendPeriodProgress()}
-                    helpKey={'help:openGov:spendPeriod'}
-                    openHelp={openHelp}
-                  />
-                </Styles.GridFourCol>
-              </TooltipWrapper>
-            </Styles.FlexColumn>
-          )}
+                {!getOnlineMode() && renderOfflineWarning()}
+              </Styles.FlexRow>
+            </UI.ControlsWrapper>
+
+            <Styles.GridFourCol id="OpenGovStats">
+              <UI.TreasuryStatCard
+                chainId={treasuryChainId}
+                title={'Treasury Balance'}
+                statText={getFormattedFreeBalance()}
+                helpKey={'help:openGov:treasuryBalance'}
+                openHelp={openHelp}
+                disable={statDisabled}
+              />
+              <UI.TreasuryStatCard
+                chainId={treasuryChainId}
+                title={'Next Burn'}
+                statText={getFormattedNextBurn()}
+                helpKey={'help:openGov:nextBurn'}
+                openHelp={openHelp}
+                disable={statDisabled}
+              />
+              <UI.TreasuryStatCard
+                chainId={treasuryChainId}
+                title={'To Be Awarded'}
+                statText={getFormattedToBeAwarded()}
+                helpKey={'help:openGov:toBeAwarded'}
+                openHelp={openHelp}
+                disable={statDisabled}
+              />
+              <UI.TreasuryStatCard
+                chainId={treasuryChainId}
+                title={'Spend Period'}
+                statText={getSpendPeriodProgress()}
+                helpKey={'help:openGov:spendPeriod'}
+                openHelp={openHelp}
+                disable={statDisabled}
+              />
+            </Styles.GridFourCol>
+          </Styles.FlexColumn>
         </TreasuryStats>
       </Styles.FlexColumn>
     </section>

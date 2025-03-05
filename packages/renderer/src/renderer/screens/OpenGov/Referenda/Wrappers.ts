@@ -257,6 +257,13 @@ export const ReferendumRowWrapper = styled.div`
     &:hover {
       color: var(--text-highlight);
     }
+    &.Disable {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    &.Disable:hover {
+      color: var(--text-dimmed);
+    }
 
     @media (max-width: 550px) {
       padding: 0.25rem 0.75rem !important;
