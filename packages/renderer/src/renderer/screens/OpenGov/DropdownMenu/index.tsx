@@ -81,7 +81,7 @@ export const ReferendumDropdownMenu = ({
                 transform={'shrink-3'}
               />
             </div>
-            <span>Subsquare</span>
+            <span>SubSquare</span>
           </DropdownMenu.Item>
 
           {/** Polkassembly */}
