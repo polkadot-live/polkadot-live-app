@@ -24,13 +24,13 @@ export const Tracks = ({ setSection }: TracksProps) => {
   const {
     activeChainId: chainId,
     fetchingTracks,
-    hasFetched,
-    tracks,
+    tracksMap,
     setFetchingTracks,
   } = useTracks();
 
-  /// Controls state.
+  // Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);
+  const hasFetched = tracksMap.has(chainId);
 
   /// Re-fetch tracks if app goes online from offline mode.
   useEffect(() => {
@@ -94,7 +94,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
               </div>
             ) : (
               <div>
-                {fetchingTracks ? (
+                {fetchingTracks || !tracksMap.has(chainId) ? (
                   <div style={{ marginTop: '2rem' }}>
                     {renderPlaceholders(4)}
                   </div>
@@ -103,7 +103,8 @@ export const Tracks = ({ setSection }: TracksProps) => {
                     <StickyHeadingsRow />
                     {/* Track Listing */}
                     <ItemsColumn>
-                      {tracks
+                      {tracksMap
+                        .get(chainId)!
                         .sort((a, b) =>
                           sortIdAscending
                             ? a.trackId - b.trackId

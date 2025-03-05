@@ -14,8 +14,8 @@ import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
-import type { ChainID } from '@polkadot-live/types/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OverviewTreasury: React.FC = () => {
   const { openHelp } = useHelp();
