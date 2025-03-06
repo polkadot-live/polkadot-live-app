@@ -43,6 +43,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     activeReferendaChainId: chainId,
     getTrackFilter,
     refetchReferenda,
+    getReferendaCount,
     getSortedActiveReferenda,
     getCategorisedReferenda,
     updateTrackFilter,
@@ -420,7 +421,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                 updateTrackFilter(null);
                               }}
                               className="container"
-                              $gap={'0.6rem'}
+                              $gap={'0.75rem'}
                             >
                               <p
                                 className={
@@ -430,7 +431,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                               >
                                 All
                               </p>
-                              <span>1</span>
+                              <span>{getReferendaCount(null)}</span>
                             </Styles.FlexRow>
                             {getOrderedTracks(chainId).map((t) => (
                               <Styles.FlexRow
@@ -454,7 +455,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                 >
                                   {t.label}
                                 </p>
-                                <span>1</span>
+                                <span>
+                                  {getReferendaCount(String(t.trackId))}
+                                </span>
                               </Styles.FlexRow>
                             ))}
                           </TracksFilterList>

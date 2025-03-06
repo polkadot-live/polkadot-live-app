@@ -236,6 +236,7 @@ export const TracksFilterList = styled.div`
     }
     > span {
       color: var(--text-dimmed);
+      font-size: 1rem;
     }
 
     &:hover {

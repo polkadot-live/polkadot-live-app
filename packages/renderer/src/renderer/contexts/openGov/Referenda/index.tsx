@@ -201,12 +201,25 @@ export const ReferendaProvider = ({
   const getTrackFilter = (): null | string =>
     trackFilter.get(activeReferendaChainRef.current) || null;
 
+  // Get referenda count based on a target track.
+  const getReferendaCount = (trackId: string | null) => {
+    const referenda = referendaMap.get(activeReferendaChainRef.current);
+    if (!referenda) {
+      return 0;
+    } else if (trackId === null) {
+      return referenda.length;
+    } else {
+      return referenda.filter((r) => r.Ongoing.track === trackId).length;
+    }
+  };
+
   return (
     <ReferendaContext.Provider
       value={{
         activeReferendaChainId,
         fetchingReferenda,
         referendaMap,
+        getReferendaCount,
         getTrackFilter,
         fetchReferendaData,
         refetchReferenda,

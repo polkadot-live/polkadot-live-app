@@ -10,6 +10,7 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   referendaMap: new Map(),
   receiveReferendaData: (i) => new Promise(() => {}),
   fetchReferendaData: (c) => {},
+  getReferendaCount: () => 0,
   refetchReferenda: () => {},
   setReferendaMap: () => {},
   setFetchingReferenda: (f) => {},
