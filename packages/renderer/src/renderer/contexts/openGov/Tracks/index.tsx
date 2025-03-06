@@ -36,9 +36,9 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Receive tracks from main renderer.
-  const receiveTracksData = (data: Track[]) => {
+  const receiveTracksData = (data: Track[], chainId: ChainID) => {
+    setTracksMap((pv) => pv.set(chainId, data));
     setFetchingTracks(false);
-    setTracksMap((pv) => pv.set(activeChainIdRef.current, data));
   };
 
   // Update active chain id.

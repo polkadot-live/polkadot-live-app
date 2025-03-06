@@ -41,9 +41,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     referendaMap,
     fetchingReferenda,
     activeReferendaChainId: chainId,
+    getTrackFilter,
     refetchReferenda,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    updateTrackFilter,
   } = useReferenda();
 
   const { fetchingTracks, getOrderedTracks } = useTracks();
@@ -69,11 +71,34 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           .filter((r) => isSubscribedToReferendum(chainId, r))
       : [];
 
-  // Open all accordion items when new referenda is loaded.
+  /**
+   * Expand grouped accordion when a track filter selected.
+   */
   useEffect(() => {
-    setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
-    setExpandAll(true);
-  }, [referendaMap]);
+    if (getTrackFilter() !== null) {
+      handleExpandAll(false);
+    } else {
+      handleExpandAll(true);
+    }
+  }, [getTrackFilter()]);
+
+  /**
+   * Collapse accordion panels when active chainId changes.
+   */
+  useEffect(() => {
+    updateTrackFilter(null);
+
+    // Collapse accordion panels if any are open.
+    if (accordionValue.length > 0) {
+      handleExpandAll(true);
+    }
+
+    // Reset tracks container scroll value.
+    const container = document.getElementById('TracksContainer');
+    if (container) {
+      container.scrollLeft = 0;
+    }
+  }, [chainId]);
 
   // Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
@@ -235,12 +260,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   // Handle expanding or collapsing all accordion panels.
-  const handleExpandAll = () => {
+  const handleExpandAll = (override?: boolean) => {
     if (!groupingOn) {
       return;
     }
 
-    if (expandAll) {
+    const target = override !== undefined ? override : expandAll;
+    if (target) {
       setAccordionValue([]);
       setExpandAll(false);
     } else {
@@ -360,29 +386,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           </section>
 
           <section>
-            <Styles.FlexRow>
-              <TracksFilterList>
-                <Styles.FlexRow className="container" $gap={'0.6rem'}>
-                  <p className="selected" role="button">
-                    All
-                  </p>
-                  <span>1</span>
-                </Styles.FlexRow>
-                {getOrderedTracks(chainId).map((t) => (
-                  <Styles.FlexRow
-                    className="container"
-                    $gap={'0.6rem'}
-                    key={t.trackName}
-                  >
-                    <p role="button">{t.label}</p>
-                    <span>1</span>
-                  </Styles.FlexRow>
-                ))}
-              </TracksFilterList>
-            </Styles.FlexRow>
-          </section>
-
-          <section>
             <Styles.FlexColumn>
               {/* Only Subscribed Notice */}
               {onlySubscribed && (
@@ -407,12 +410,62 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   {fetchingReferenda || fetchingTracks ? (
                     <>{renderPlaceholders(4)}</>
                   ) : (
-                    <>
+                    <Styles.FlexColumn>
+                      <section>
+                        <Styles.FlexRow>
+                          <TracksFilterList id="TracksContainer">
+                            <Styles.FlexRow
+                              role="button"
+                              onClick={() => {
+                                updateTrackFilter(null);
+                              }}
+                              className="container"
+                              $gap={'0.6rem'}
+                            >
+                              <p
+                                className={
+                                  getTrackFilter() === null ? 'selected' : ''
+                                }
+                                role="button"
+                              >
+                                All
+                              </p>
+                              <span>1</span>
+                            </Styles.FlexRow>
+                            {getOrderedTracks(chainId).map((t) => (
+                              <Styles.FlexRow
+                                $gap={'0.6rem'}
+                                role="button"
+                                onClick={() =>
+                                  updateTrackFilter(String(t.trackId))
+                                }
+                                className="container"
+                                key={t.trackName}
+                              >
+                                <p
+                                  className={
+                                    !getTrackFilter()
+                                      ? ''
+                                      : (getTrackFilter() as string) ===
+                                          t.trackId.toString()
+                                        ? 'selected'
+                                        : ''
+                                  }
+                                >
+                                  {t.label}
+                                </p>
+                                <span>1</span>
+                              </Styles.FlexRow>
+                            ))}
+                          </TracksFilterList>
+                        </Styles.FlexRow>
+                      </section>
+
                       {renderCategorised()}
                       {renderListed()}
                       {renderSubscribedCategorised()}
                       {renderSubscribedListed()}
-                    </>
+                    </Styles.FlexColumn>
                   )}
                 </div>
               )}

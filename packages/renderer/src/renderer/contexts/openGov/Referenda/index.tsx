@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getOrderedOrigins } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
@@ -33,6 +33,30 @@ export const ReferendaProvider = ({
 
   // Flag to indicate that referenda are being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
+
+  // Selected track filter.
+  const [trackFilter, setTrackFilter] = useState(
+    new Map<ChainID, string | null>([
+      ['Polkadot', null],
+      ['Kusama', null],
+    ])
+  );
+
+  const [trackFilterTrigger, setTrackFilterTrigger] = useState<{
+    trigger: boolean;
+    val: string | null;
+  }>({ trigger: false, val: null });
+
+  // Mechanism to update listed referenda after track filter state set.
+  useEffect(() => {
+    const { trigger, val } = trackFilterTrigger;
+    if (trigger) {
+      setTrackFilter((pv) =>
+        pv.set(activeReferendaChainRef.current, val === undefined ? null : val)
+      );
+      setTrackFilterTrigger({ trigger: false, val: null });
+    }
+  }, [trackFilterTrigger]);
 
   // Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
@@ -87,17 +111,20 @@ export const ReferendaProvider = ({
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => {
-    const sortFn = (info: ActiveReferendaInfo[]) =>
-      info.sort((a, b) =>
-        desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
-      );
+    const sortFn = (a: ActiveReferendaInfo, b: ActiveReferendaInfo) =>
+      desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId;
 
-    const referenda = referendaMap.get(activeReferendaChainRef.current);
-    return otherReferenda
-      ? sortFn(otherReferenda)
-      : referenda
-        ? sortFn(referenda)
-        : [];
+    const filterFn = (info: ActiveReferendaInfo) => {
+      const cur = trackFilter.get(activeReferendaChainRef.current) || null;
+      return cur === null ? true : info.Ongoing.track === cur;
+    };
+
+    if (otherReferenda) {
+      return otherReferenda.filter(filterFn).sort(sortFn);
+    } else {
+      const referenda = referendaMap.get(activeReferendaChainRef.current);
+      return referenda?.filter(filterFn).sort(sortFn) || [];
+    }
   };
 
   /// Get categorized referenda, sorted desc or asc in each category.
@@ -128,6 +155,23 @@ export const ReferendaProvider = ({
       map.set(origin, state);
     }
 
+    // Sort referenda in each origin according to `desc` argument.
+    for (const [origin, infos] of map.entries()) {
+      const filterFn = (t: ActiveReferendaInfo) => {
+        const cur = trackFilter.get(activeReferendaChainRef.current) || null;
+        return cur === null ? true : t.Ongoing.track === cur;
+      };
+
+      map.set(
+        origin,
+        infos
+          .filter(filterFn)
+          .sort((a, b) =>
+            desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
+          )
+      );
+    }
+
     // Remove keys with no referenda.
     for (const [origin, infos] of map.entries()) {
       if (!infos.length) {
@@ -135,25 +179,27 @@ export const ReferendaProvider = ({
       }
     }
 
-    // Sort referenda in each origin according to `desc` argument.
-    for (const [origin, infos] of map.entries()) {
-      map.set(
-        origin,
-        infos.sort((a, b) =>
-          desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
-        )
-      );
-    }
-
     return map;
   };
 
-  /// Update the fetched flag state and ref.
+  // Update the fetched flag state and ref.
   const updateHasFetchedReferenda = (chainId: ChainID) => {
     if (chainId !== activeReferendaChainId) {
       setActiveReferendaChainId(chainId);
     }
   };
+
+  // Update track filter ref and state.
+  const updateTrackFilter = (val: string | null) => {
+    setTrackFilterTrigger({
+      trigger: true,
+      val,
+    });
+  };
+
+  // Get track filter value for the active chain.
+  const getTrackFilter = (): null | string =>
+    trackFilter.get(activeReferendaChainRef.current) || null;
 
   return (
     <ReferendaContext.Provider
@@ -161,6 +207,7 @@ export const ReferendaProvider = ({
         activeReferendaChainId,
         fetchingReferenda,
         referendaMap,
+        getTrackFilter,
         fetchReferendaData,
         refetchReferenda,
         receiveReferendaData,
@@ -169,6 +216,7 @@ export const ReferendaProvider = ({
         getSortedActiveReferenda,
         getCategorisedReferenda,
         updateHasFetchedReferenda,
+        updateTrackFilter,
       }}
     >
       {children}

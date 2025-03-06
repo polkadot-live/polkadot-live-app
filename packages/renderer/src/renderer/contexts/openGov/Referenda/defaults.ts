@@ -14,6 +14,8 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   setReferendaMap: () => {},
   setFetchingReferenda: (f) => {},
   getSortedActiveReferenda: (d) => [],
+  getTrackFilter: () => null,
   getCategorisedReferenda: (d) => new Map(),
   updateHasFetchedReferenda: () => {},
+  updateTrackFilter: () => {},
 };
