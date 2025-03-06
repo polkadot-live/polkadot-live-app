@@ -136,8 +136,12 @@ export const ControlsWrapper = styled.div<{
         background-color: var(--sort-button-background-hover);
       }
     }
-    &.disable {
-      opacity: 0.4;
+    &.disable,
+    &.disable:hover {
+      background-color: var(--sort-button-background) !important;
+      color: var(--text-color-secondary);
+      opacity: 0.2;
+      cursor: not-allowed;
     }
   }
 

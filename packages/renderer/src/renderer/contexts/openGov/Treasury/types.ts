@@ -9,6 +9,7 @@ export interface TreasuryContextInterface {
   treasuryChainId: ChainID;
   treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryData: boolean;
+  hasFetched: boolean;
   getFormattedNextBurn: () => string;
   setFetchingTreasuryData: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;

@@ -11,7 +11,6 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
@@ -24,9 +23,10 @@ import {
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useTracks } from '@app/contexts/openGov/Tracks';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper } from './Wrappers';
+import { NoteWrapper, TracksFilterList } from './Wrappers';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -38,59 +38,75 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
-    referenda,
+    referendaMap,
     fetchingReferenda,
     activeReferendaChainId: chainId,
+    getTrackFilter,
     refetchReferenda,
-    setFetchingReferenda,
+    getReferendaCount,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    updateTrackFilter,
   } = useReferenda();
 
+  const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
-  /// Sorting controls state.
+  // Sorting controls state.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
   const [onlySubscribed, setOnlySubscribed] = useState(false);
 
-  /// Accordion state.
+  // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>([
     ...getCategorisedReferenda(newestFirst).keys(),
   ]);
 
-  /// Get subscribed referenda only.
+  // Get subscribed referenda only.
   const getSubscribedReferenda = () =>
-    referenda.filter((r) => isSubscribedToReferendum(chainId, r));
+    referendaMap.has(chainId)
+      ? referendaMap
+          .get(chainId)!
+          .filter((r) => isSubscribedToReferendum(chainId, r))
+      : [];
 
-  /// Open all accordion items when new referenda is loaded.
+  /**
+   * Expand grouped accordion when a track filter selected.
+   */
   useEffect(() => {
-    setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
-    setExpandAll(true);
-  }, [referenda]);
-
-  /// Re-fetch referenda if app goes online from offline mode.
-  useEffect(() => {
-    if (getOnlineMode()) {
-      setFetchingReferenda(true);
-
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: {
-          chainId,
-        },
-      });
+    if (getTrackFilter() !== null) {
+      handleExpandAll(false);
+    } else {
+      handleExpandAll(true);
     }
-  }, [getOnlineMode()]);
+  }, [getTrackFilter()]);
 
-  /// Re-fetch referenda when user clicks refresh button.
+  /**
+   * Collapse accordion panels when active chainId changes.
+   */
+  useEffect(() => {
+    updateTrackFilter(null);
+
+    // Collapse accordion panels if any are open.
+    if (accordionValue.length > 0) {
+      handleExpandAll(true);
+    }
+
+    // Reset tracks container scroll value.
+    const container = document.getElementById('TracksContainer');
+    if (container) {
+      container.scrollLeft = 0;
+    }
+  }, [chainId]);
+
+  // Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
     refetchReferenda();
   };
 
-  /// Utility for making expand button dynamic.
+  // Utility for making expand button dynamic.
   const isExpandActive = () => {
     let length = 0;
     if (onlySubscribed) {
@@ -105,7 +121,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     return accordionValue.length === length;
   };
 
-  /// Render categorized referenda.
+  // Render categorized referenda.
   const renderCategorised = () => (
     <section
       style={{ display: groupingOn && !onlySubscribed ? 'block' : 'none' }}
@@ -151,7 +167,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     </section>
   );
 
-  /// Render categorised subscribed referenda.
+  // Render categorised subscribed referenda.
   const renderSubscribedCategorised = () => {
     const display = groupingOn && onlySubscribed ? 'block' : 'none';
 
@@ -206,7 +222,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     );
   };
 
-  /// Render referenda as single list.
+  // Render referenda as single list.
   const renderListed = () => (
     <ItemsColumn
       style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
@@ -221,7 +237,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     </ItemsColumn>
   );
 
-  /// Render subscribed referenda as a single list.
+  // Render subscribed referenda as a single list.
   const renderSubscribedListed = () => {
     const display = groupingOn || !onlySubscribed ? 'none' : 'flex';
 
@@ -244,13 +260,14 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     );
   };
 
-  /// Handle expanding or collapsing all accordion panels.
-  const handleExpandAll = () => {
+  // Handle expanding or collapsing all accordion panels.
+  const handleExpandAll = (override?: boolean) => {
     if (!groupingOn) {
       return;
     }
 
-    if (expandAll) {
+    const target = override !== undefined ? override : expandAll;
+    if (target) {
       setAccordionValue([]);
       setExpandAll(false);
     } else {
@@ -266,7 +283,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
   };
 
-  /// Handle clicking only subscribed button.
+  // Handle clicking only subscribed button.
   const handleToggleOnlySubscribed = () => {
     if (!onlySubscribed) {
       const rs = getSubscribedReferenda();
@@ -276,6 +293,29 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
 
     setOnlySubscribed(!onlySubscribed);
+  };
+
+  // Handle track click.
+  const onTrackClick = (trackId: string | null) => {
+    if (trackId === null) {
+      updateTrackFilter(trackId);
+    } else if (getReferendaCount(trackId) > 0) {
+      updateTrackFilter(trackId);
+    }
+  };
+
+  // Calculate track filter class.
+  const getTrackClass = (trackId: string | null) => {
+    const cur = getTrackFilter();
+    if (trackId === null) {
+      return cur === trackId ? 'selected' : '';
+    } else {
+      return getReferendaCount(trackId) === 0
+        ? 'disable'
+        : cur === trackId
+          ? 'selected'
+          : '';
+    }
   };
 
   return (
@@ -291,6 +331,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 $padBottom={!groupingOn}
               >
                 <ButtonPrimaryInvert
+                  disabled={fetchingReferenda}
                   className="back-btn"
                   text="Back"
                   iconLeft={faCaretLeft}
@@ -308,7 +349,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={newestFirst}
-                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  isDisabled={fetchingReferenda}
                   faIcon={faSort}
                   onClick={() => setNewestFirst(!newestFirst)}
                   onLabel="Newest First"
@@ -317,7 +358,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={groupingOn}
-                  isDisabled={!getOnlineMode() || fetchingReferenda}
+                  isDisabled={fetchingReferenda}
                   faIcon={faLayerGroup}
                   onClick={() => setGroupingOn(!groupingOn)}
                   onLabel="Grouping"
@@ -327,9 +368,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 />
                 <SortControlButton
                   isActive={isExpandActive()}
-                  isDisabled={
-                    !getOnlineMode() || fetchingReferenda || !groupingOn
-                  }
+                  isDisabled={fetchingReferenda || !groupingOn}
                   faIcon={faUpDown}
                   onClick={() => handleExpandAll()}
                   onLabel="Expanded"
@@ -354,16 +393,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-                <UI.TooltipRx
-                  theme={theme}
-                  text={
-                    getOnlineMode() ? 'Show Subscribed' : 'Currently Offline'
-                  }
-                >
+                <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
                   <span>
                     <SortControlButton
                       isActive={onlySubscribed}
-                      isDisabled={!getOnlineMode() || fetchingReferenda}
+                      isDisabled={fetchingReferenda}
                       faIcon={faEllipsisVertical}
                       onClick={() => handleToggleOnlySubscribed()}
                       fixedWidth={false}
@@ -390,22 +424,56 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               )}
 
               {/* List referenda */}
-              {!getOnlineMode() ? (
+              {!getOnlineMode() && !referendaMap.has(chainId) ? (
                 <div style={{ padding: '0.5rem' }}>
                   <p>Currently offline.</p>
                   <p>Please reconnect to load OpenGov referenda.</p>
                 </div>
               ) : (
                 <div>
-                  {fetchingReferenda ? (
+                  {fetchingReferenda || fetchingTracks ? (
                     <>{renderPlaceholders(4)}</>
                   ) : (
-                    <>
+                    <Styles.FlexColumn>
+                      <section>
+                        <Styles.FlexRow>
+                          <TracksFilterList id="TracksContainer">
+                            <Styles.FlexRow
+                              role="button"
+                              onClick={() => onTrackClick(null)}
+                              className="container"
+                              $gap={'0.75rem'}
+                            >
+                              <p className={getTrackClass(null)} role="button">
+                                All
+                              </p>
+                              <span>{getReferendaCount(null)}</span>
+                            </Styles.FlexRow>
+                            {getOrderedTracks(chainId).map((t) => (
+                              <Styles.FlexRow
+                                $gap={'0.6rem'}
+                                role="button"
+                                onClick={() => onTrackClick(String(t.trackId))}
+                                className="container"
+                                key={t.trackName}
+                              >
+                                <p className={getTrackClass(String(t.trackId))}>
+                                  {t.label}
+                                </p>
+                                <span>
+                                  {getReferendaCount(String(t.trackId))}
+                                </span>
+                              </Styles.FlexRow>
+                            ))}
+                          </TracksFilterList>
+                        </Styles.FlexRow>
+                      </section>
+
                       {renderCategorised()}
                       {renderListed()}
                       {renderSubscribedCategorised()}
                       {renderSubscribedListed()}
-                    </>
+                    </Styles.FlexColumn>
                   )}
                 </div>
               )}

@@ -5,7 +5,7 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { MoreOverlay } from './Wrappers';
 import { Scrollable } from '@polkadot-live/ui/styles';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import type { PolkassemblyProposal } from '@app/contexts/openGov/Polkassembly/types';
+import type { PolkassemblyProposal } from '@polkadot-live/types/openGov';
 
 interface InfoOverlayProps {
   proposalData: PolkassemblyProposal;

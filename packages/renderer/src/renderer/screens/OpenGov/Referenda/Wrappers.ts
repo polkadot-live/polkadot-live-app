@@ -1,15 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
-
-const mixinRowButton = css`
-  font-size: 1.3rem;
-  padding: 0.4rem 1rem;
-  transition: color 150ms ease-out;
-  cursor: pointer;
-`;
 
 export const TitleWithOrigin = styled.div`
   display: flex;
@@ -113,61 +106,6 @@ export const ReferendumRowWrapper = styled.div`
     margin-right: 1.5rem;
   }
 
-  /* Buttons */
-  .LinksWrapper {
-    min-width: fit-content;
-    opacity: 0.5;
-    transition: opacity 0.2s ease-out;
-
-    .BtnMore {
-      ${mixinRowButton}
-      color: var(--text-color-secondary);
-      &:hover {
-        color: var(--text-highlight);
-      }
-    }
-    .BtnPolkassembly {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(172 80 122);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    .BtnSubsquare {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(92 129 177);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    @media (max-width: 550px) {
-      display: none;
-    }
-  }
-  .ControlsWrapper {
-    position: relative;
-    padding: 0.25rem 0.5rem;
-    min-width: fit-content;
-
-    // TODO: Remove when augmenting control button components.
-    .icon-wrapper {
-      background-color: var(--button-background-secondary);
-      border-color: var(--button-background-secondary);
-      padding: 0.4rem 0.6rem;
-      border: none;
-      font-size: 0.85rem;
-      transition: all 150ms ease-out;
-
-      &:hover {
-        filter: brightness(90%);
-      }
-    }
-  }
-
   /* Collapsable Section */
   .collapse {
     overflow: hidden;
@@ -257,9 +195,76 @@ export const ReferendumRowWrapper = styled.div`
     &:hover {
       color: var(--text-highlight);
     }
+    &.Disable {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    &.Disable:hover {
+      color: var(--text-dimmed);
+    }
 
     @media (max-width: 550px) {
       padding: 0.25rem 0.75rem !important;
+    }
+  }
+`;
+
+export const TracksFilterList = styled.div`
+  background-color: var(--background-surface);
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  .container {
+    user-select: none;
+    > p {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--text-color-secondary);
+      font-weight: bolder;
+      transition: color 0.2s ease-out;
+      cursor: pointer;
+
+      &.selected {
+        color: var(--accent-secondary);
+        font-weight: 600;
+      }
+
+      &.disable {
+        cursor: not-allowed;
+      }
+    }
+    > span {
+      color: var(--text-dimmed);
+      font-size: 1rem;
+    }
+
+    &:hover {
+      > p:not(.selected):not(.disable) {
+        color: var(--text-color-primary);
+      }
+    }
+  }
+
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: var(--background-surface);
+    border-radius: 0.375rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-background-color);
+    &:hover {
+      background-color: var(--scrollbar-thumb-background-color-hover);
     }
   }
 `;

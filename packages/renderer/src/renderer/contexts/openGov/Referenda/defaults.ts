@@ -5,14 +5,18 @@
 import type { ReferendaContextInterface } from './types';
 
 export const defaultReferendaContext: ReferendaContextInterface = {
-  referenda: [],
-  fetchingReferenda: false,
   activeReferendaChainId: 'Polkadot',
+  fetchingReferenda: false,
+  referendaMap: new Map(),
   receiveReferendaData: (i) => new Promise(() => {}),
   fetchReferendaData: (c) => {},
+  getReferendaCount: () => 0,
   refetchReferenda: () => {},
-  setReferenda: (r) => {},
+  setReferendaMap: () => {},
   setFetchingReferenda: (f) => {},
   getSortedActiveReferenda: (d) => [],
+  getTrackFilter: () => null,
   getCategorisedReferenda: (d) => new Map(),
+  updateHasFetchedReferenda: () => {},
+  updateTrackFilter: () => {},
 };

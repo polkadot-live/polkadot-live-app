@@ -5,20 +5,26 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface ReferendaContextInterface {
-  referenda: ActiveReferendaInfo[];
-  fetchingReferenda: boolean;
   activeReferendaChainId: ChainID;
+  fetchingReferenda: boolean;
+  referendaMap: Map<ChainID, ActiveReferendaInfo[]>;
   fetchReferendaData: (chainId: ChainID) => void;
   refetchReferenda: () => void;
   receiveReferendaData: (info: ActiveReferendaInfo[]) => Promise<void>;
-  setReferenda: (referenda: ActiveReferendaInfo[]) => void;
+  setReferendaMap: React.Dispatch<
+    React.SetStateAction<Map<ChainID, ActiveReferendaInfo[]>>
+  >;
   setFetchingReferenda: (flag: boolean) => void;
   getSortedActiveReferenda: (
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => ActiveReferendaInfo[];
+  getReferendaCount: (trackId: string | null) => number;
+  getTrackFilter: () => string | null;
   getCategorisedReferenda: (
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => Map<string, ActiveReferendaInfo[]>;
+  updateHasFetchedReferenda: (chainId: ChainID) => void;
+  updateTrackFilter: (val: string | null) => void;
 }

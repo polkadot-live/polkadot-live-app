@@ -9,6 +9,8 @@ export const darkTheme = {
   backgroundPrimaryHover: '#212121',
   backgroundOverlay: 'rgb(22 18 22 / 70%)',
   backgroundOverlaySurface: 'rgba(32, 32, 32, 0.7)',
+  backgroundDropDown: '#272727',
+
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#dd9b22',
@@ -113,6 +115,8 @@ export const lightThene = {
   backgroundPrimaryHover: '#dedede',
   backgroundOverlay: 'rgba(120, 120, 120, 0.5)',
   backgroundSurfaceOverlay: 'rgba(245, 245, 245, 0.7)',
+  backgroundDropDown: '#eee',
+
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#c3590e',

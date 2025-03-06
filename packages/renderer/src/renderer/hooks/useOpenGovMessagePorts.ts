@@ -37,7 +37,8 @@ export const useOpenGovMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
-              receiveTracksData(getTracks(ev.data.data.result));
+              const { result, chainId } = ev.data.data;
+              receiveTracksData(getTracks(result), chainId);
               break;
             }
             case 'openGov:referenda:receive': {
