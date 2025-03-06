@@ -10,7 +10,6 @@ export interface TracksContextInterface {
   fetchingTracks: boolean;
   fetchTracksData: (chainId: ChainID) => void;
   receiveTracksData: (data: Track[]) => void;
-  setActiveChainId: (chainId: ChainID) => void;
   setFetchingTracks: (fetching: boolean) => void;
-  setTracksMap: React.Dispatch<React.SetStateAction<Map<ChainID, Track[]>>>;
+  updateActiveTracksChain: (chainId: ChainID) => void;
 }

@@ -26,15 +26,11 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Initiate fetching tracks.
   const fetchTracksData = (chainId: ChainID) => {
-    setStateWithRef(chainId, setActiveChainId, activeChainIdRef);
-
     if (getOnlineMode() && !tracksMap.has(chainId)) {
       setFetchingTracks(true);
       ConfigOpenGov.portOpenGov.postMessage({
         task: 'openGov:tracks:get',
-        data: {
-          chainId,
-        },
+        data: { chainId },
       });
     }
   };
@@ -45,6 +41,10 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
     setTracksMap((pv) => pv.set(activeChainIdRef.current, data));
   };
 
+  // Update active chain id.
+  const updateActiveTracksChain = (chainId: ChainID) =>
+    setStateWithRef(chainId, setActiveChainId, activeChainIdRef);
+
   return (
     <TracksContext.Provider
       value={{
@@ -53,9 +53,8 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
         fetchingTracks,
         fetchTracksData,
         receiveTracksData,
-        setTracksMap,
         setFetchingTracks,
-        setActiveChainId,
+        updateActiveTracksChain,
       }}
     >
       {children}

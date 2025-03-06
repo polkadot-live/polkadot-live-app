@@ -11,6 +11,5 @@ export const defaultTracksContext: TracksContextInterface = {
   fetchTracksData: (c) => {},
   receiveTracksData: (d) => {},
   setFetchingTracks: (f) => {},
-  setActiveChainId: (c) => {},
-  setTracksMap: () => {},
+  updateActiveTracksChain: () => {},
 };
