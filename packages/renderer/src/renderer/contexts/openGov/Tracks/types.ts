@@ -9,6 +9,7 @@ export interface TracksContextInterface {
   activeChainId: ChainID;
   fetchingTracks: boolean;
   fetchTracksData: (chainId: ChainID) => void;
+  getOrderedTracks: (chainId: ChainID) => Track[];
   receiveTracksData: (data: Track[]) => void;
   setFetchingTracks: (fetching: boolean) => void;
   updateActiveTracksChain: (chainId: ChainID) => void;

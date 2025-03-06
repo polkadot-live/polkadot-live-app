@@ -35,6 +35,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
     fetchReferendaData(chainId);
+    fetchTracksData(chainId);
     setSection(1);
   };
 

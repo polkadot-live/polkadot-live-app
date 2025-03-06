@@ -23,9 +23,10 @@ import {
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useTracks } from '@app/contexts/openGov/Tracks';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper } from './Wrappers';
+import { NoteWrapper, TracksFilterList } from './Wrappers';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -45,6 +46,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getCategorisedReferenda,
   } = useReferenda();
 
+  const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
@@ -358,6 +360,29 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           </section>
 
           <section>
+            <Styles.FlexRow>
+              <TracksFilterList>
+                <Styles.FlexRow className="container" $gap={'0.6rem'}>
+                  <p className="selected" role="button">
+                    All
+                  </p>
+                  <span>1</span>
+                </Styles.FlexRow>
+                {getOrderedTracks(chainId).map((t) => (
+                  <Styles.FlexRow
+                    className="container"
+                    $gap={'0.6rem'}
+                    key={t.trackName}
+                  >
+                    <p role="button">{t.label}</p>
+                    <span>1</span>
+                  </Styles.FlexRow>
+                ))}
+              </TracksFilterList>
+            </Styles.FlexRow>
+          </section>
+
+          <section>
             <Styles.FlexColumn>
               {/* Only Subscribed Notice */}
               {onlySubscribed && (
@@ -379,7 +404,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 </div>
               ) : (
                 <div>
-                  {fetchingReferenda ? (
+                  {fetchingReferenda || fetchingTracks ? (
                     <>{renderPlaceholders(4)}</>
                   ) : (
                     <>

@@ -45,6 +45,14 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   const updateActiveTracksChain = (chainId: ChainID) =>
     setStateWithRef(chainId, setActiveChainId, activeChainIdRef);
 
+  // Get tracks in order for a specific chain.
+  const getOrderedTracks = (chainId: ChainID) => {
+    if (!tracksMap.has(chainId)) {
+      return [];
+    }
+    return tracksMap.get(chainId)!.sort((a, b) => a.trackId - b.trackId);
+  };
+
   return (
     <TracksContext.Provider
       value={{
@@ -52,6 +60,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
         activeChainId,
         fetchingTracks,
         fetchTracksData,
+        getOrderedTracks,
         receiveTracksData,
         setFetchingTracks,
         updateActiveTracksChain,
