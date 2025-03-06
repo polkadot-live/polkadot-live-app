@@ -9,8 +9,8 @@ export const defaultTracksContext: TracksContextInterface = {
   fetchingTracks: false,
   tracksMap: new Map(),
   fetchTracksData: (c) => {},
+  getOrderedTracks: () => [],
   receiveTracksData: (d) => {},
   setFetchingTracks: (f) => {},
-  setActiveChainId: (c) => {},
-  setTracksMap: () => {},
+  updateActiveTracksChain: () => {},
 };

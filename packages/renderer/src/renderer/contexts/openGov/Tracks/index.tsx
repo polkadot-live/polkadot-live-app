@@ -26,23 +26,31 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Initiate fetching tracks.
   const fetchTracksData = (chainId: ChainID) => {
-    setStateWithRef(chainId, setActiveChainId, activeChainIdRef);
-
     if (getOnlineMode() && !tracksMap.has(chainId)) {
       setFetchingTracks(true);
       ConfigOpenGov.portOpenGov.postMessage({
         task: 'openGov:tracks:get',
-        data: {
-          chainId,
-        },
+        data: { chainId },
       });
     }
   };
 
   // Receive tracks from main renderer.
-  const receiveTracksData = (data: Track[]) => {
+  const receiveTracksData = (data: Track[], chainId: ChainID) => {
+    setTracksMap((pv) => pv.set(chainId, data));
     setFetchingTracks(false);
-    setTracksMap((pv) => pv.set(activeChainIdRef.current, data));
+  };
+
+  // Update active chain id.
+  const updateActiveTracksChain = (chainId: ChainID) =>
+    setStateWithRef(chainId, setActiveChainId, activeChainIdRef);
+
+  // Get tracks in order for a specific chain.
+  const getOrderedTracks = (chainId: ChainID) => {
+    if (!tracksMap.has(chainId)) {
+      return [];
+    }
+    return tracksMap.get(chainId)!.sort((a, b) => a.trackId - b.trackId);
   };
 
   return (
@@ -52,10 +60,10 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
         activeChainId,
         fetchingTracks,
         fetchTracksData,
+        getOrderedTracks,
         receiveTracksData,
-        setTracksMap,
         setFetchingTracks,
-        setActiveChainId,
+        updateActiveTracksChain,
       }}
     >
       {children}

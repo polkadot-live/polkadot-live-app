@@ -20,12 +20,13 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
   setSectionContent,
 }: OverviewExploreProps) => {
   // Tracks and referenda contexts.
-  const { fetchTracksData } = useTracks();
+  const { fetchTracksData, updateActiveTracksChain } = useTracks();
   const { fetchReferendaData } = useReferenda();
 
   // Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
     setSectionContent('tracks');
+    updateActiveTracksChain(chainId);
     fetchTracksData(chainId);
     setSection(1);
   };
@@ -34,6 +35,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
   const handleOpenReferenda = (chainId: ChainID) => {
     setSectionContent('referenda');
     fetchReferendaData(chainId);
+    fetchTracksData(chainId);
     setSection(1);
   };
 

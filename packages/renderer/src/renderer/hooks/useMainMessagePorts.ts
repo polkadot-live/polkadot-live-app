@@ -383,7 +383,7 @@ export const useMainMessagePorts = () => {
 
     ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:tracks:receive',
-      data: { result },
+      data: { result, chainId },
     });
   };
 

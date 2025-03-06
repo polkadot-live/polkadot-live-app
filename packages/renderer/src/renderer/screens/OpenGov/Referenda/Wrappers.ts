@@ -208,3 +208,63 @@ export const ReferendumRowWrapper = styled.div`
     }
   }
 `;
+
+export const TracksFilterList = styled.div`
+  background-color: var(--background-surface);
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  .container {
+    user-select: none;
+    > p {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--text-color-secondary);
+      font-weight: bolder;
+      transition: color 0.2s ease-out;
+      cursor: pointer;
+
+      &.selected {
+        color: var(--accent-secondary);
+        font-weight: 600;
+      }
+
+      &.disable {
+        cursor: not-allowed;
+      }
+    }
+    > span {
+      color: var(--text-dimmed);
+      font-size: 1rem;
+    }
+
+    &:hover {
+      > p:not(.selected):not(.disable) {
+        color: var(--text-color-primary);
+      }
+    }
+  }
+
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: var(--background-surface);
+    border-radius: 0.375rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-background-color);
+    &:hover {
+      background-color: var(--scrollbar-thumb-background-color-hover);
+    }
+  }
+`;

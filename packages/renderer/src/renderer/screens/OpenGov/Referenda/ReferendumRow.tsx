@@ -87,6 +87,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               >
                 <span>
                   <RoundLeftButton
+                    $dark={darkMode}
                     disabled={!isOnline}
                     onClick={() =>
                       addAllIntervalSubscriptions(
@@ -106,6 +107,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               >
                 <span>
                   <RoundLeftButton
+                    $dark={darkMode}
                     onClick={() =>
                       removeAllIntervalSubscriptions(
                         getIntervalSubscriptions(),
@@ -124,7 +126,10 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
               text={expanded ? 'Hide Subscriptions' : 'Show Subscriptions'}
             >
               <span>
-                <RoundRightButton onClick={() => setExpanded(!expanded)}>
+                <RoundRightButton
+                  $dark={darkMode}
+                  onClick={() => setExpanded(!expanded)}
+                >
                   <FontAwesomeIcon
                     className="icon"
                     icon={expanded ? faChevronUp : faChevronDown}

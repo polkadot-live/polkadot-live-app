@@ -19,9 +19,12 @@ export interface ReferendaContextInterface {
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => ActiveReferendaInfo[];
+  getReferendaCount: (trackId: string | null) => number;
+  getTrackFilter: () => string | null;
   getCategorisedReferenda: (
     desc: boolean,
     otherReferenda?: ActiveReferendaInfo[]
   ) => Map<string, ActiveReferendaInfo[]>;
   updateHasFetchedReferenda: (chainId: ChainID) => void;
+  updateTrackFilter: (val: string | null) => void;
 }

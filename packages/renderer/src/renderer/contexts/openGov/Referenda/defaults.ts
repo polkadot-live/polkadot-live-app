@@ -10,10 +10,13 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   referendaMap: new Map(),
   receiveReferendaData: (i) => new Promise(() => {}),
   fetchReferendaData: (c) => {},
+  getReferendaCount: () => 0,
   refetchReferenda: () => {},
   setReferendaMap: () => {},
   setFetchingReferenda: (f) => {},
   getSortedActiveReferenda: (d) => [],
+  getTrackFilter: () => null,
   getCategorisedReferenda: (d) => new Map(),
   updateHasFetchedReferenda: () => {},
+  updateTrackFilter: () => {},
 };

@@ -23,9 +23,10 @@ import {
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useTracks } from '@app/contexts/openGov/Tracks';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper } from './Wrappers';
+import { NoteWrapper, TracksFilterList } from './Wrappers';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -40,11 +41,15 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     referendaMap,
     fetchingReferenda,
     activeReferendaChainId: chainId,
+    getTrackFilter,
     refetchReferenda,
+    getReferendaCount,
     getSortedActiveReferenda,
     getCategorisedReferenda,
+    updateTrackFilter,
   } = useReferenda();
 
+  const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
@@ -67,11 +72,34 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           .filter((r) => isSubscribedToReferendum(chainId, r))
       : [];
 
-  // Open all accordion items when new referenda is loaded.
+  /**
+   * Expand grouped accordion when a track filter selected.
+   */
   useEffect(() => {
-    setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
-    setExpandAll(true);
-  }, [referendaMap]);
+    if (getTrackFilter() !== null) {
+      handleExpandAll(false);
+    } else {
+      handleExpandAll(true);
+    }
+  }, [getTrackFilter()]);
+
+  /**
+   * Collapse accordion panels when active chainId changes.
+   */
+  useEffect(() => {
+    updateTrackFilter(null);
+
+    // Collapse accordion panels if any are open.
+    if (accordionValue.length > 0) {
+      handleExpandAll(true);
+    }
+
+    // Reset tracks container scroll value.
+    const container = document.getElementById('TracksContainer');
+    if (container) {
+      container.scrollLeft = 0;
+    }
+  }, [chainId]);
 
   // Re-fetch referenda when user clicks refresh button.
   const handleRefetchReferenda = () => {
@@ -233,12 +261,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   // Handle expanding or collapsing all accordion panels.
-  const handleExpandAll = () => {
+  const handleExpandAll = (override?: boolean) => {
     if (!groupingOn) {
       return;
     }
 
-    if (expandAll) {
+    const target = override !== undefined ? override : expandAll;
+    if (target) {
       setAccordionValue([]);
       setExpandAll(false);
     } else {
@@ -264,6 +293,29 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     }
 
     setOnlySubscribed(!onlySubscribed);
+  };
+
+  // Handle track click.
+  const onTrackClick = (trackId: string | null) => {
+    if (trackId === null) {
+      updateTrackFilter(trackId);
+    } else if (getReferendaCount(trackId) > 0) {
+      updateTrackFilter(trackId);
+    }
+  };
+
+  // Calculate track filter class.
+  const getTrackClass = (trackId: string | null) => {
+    const cur = getTrackFilter();
+    if (trackId === null) {
+      return cur === trackId ? 'selected' : '';
+    } else {
+      return getReferendaCount(trackId) === 0
+        ? 'disable'
+        : cur === trackId
+          ? 'selected'
+          : '';
+    }
   };
 
   return (
@@ -379,15 +431,49 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 </div>
               ) : (
                 <div>
-                  {fetchingReferenda ? (
+                  {fetchingReferenda || fetchingTracks ? (
                     <>{renderPlaceholders(4)}</>
                   ) : (
-                    <>
+                    <Styles.FlexColumn>
+                      <section>
+                        <Styles.FlexRow>
+                          <TracksFilterList id="TracksContainer">
+                            <Styles.FlexRow
+                              role="button"
+                              onClick={() => onTrackClick(null)}
+                              className="container"
+                              $gap={'0.75rem'}
+                            >
+                              <p className={getTrackClass(null)} role="button">
+                                All
+                              </p>
+                              <span>{getReferendaCount(null)}</span>
+                            </Styles.FlexRow>
+                            {getOrderedTracks(chainId).map((t) => (
+                              <Styles.FlexRow
+                                $gap={'0.6rem'}
+                                role="button"
+                                onClick={() => onTrackClick(String(t.trackId))}
+                                className="container"
+                                key={t.trackName}
+                              >
+                                <p className={getTrackClass(String(t.trackId))}>
+                                  {t.label}
+                                </p>
+                                <span>
+                                  {getReferendaCount(String(t.trackId))}
+                                </span>
+                              </Styles.FlexRow>
+                            ))}
+                          </TracksFilterList>
+                        </Styles.FlexRow>
+                      </section>
+
                       {renderCategorised()}
                       {renderListed()}
                       {renderSubscribedCategorised()}
                       {renderSubscribedListed()}
-                    </>
+                    </Styles.FlexColumn>
                   )}
                 </div>
               )}
