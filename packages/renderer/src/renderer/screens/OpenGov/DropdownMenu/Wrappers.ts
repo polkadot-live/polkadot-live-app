@@ -8,40 +8,59 @@ const mixinButton = css`
   font-size: 0.85rem;
   height: 24px;
   transition: all 0.2s ease-out;
-  filter: brightness(70%);
 
   .icon {
     color: var(--text-color-primary);
     transition: all 0.15s ease-out;
   }
+`;
+
+export const MenuButton = styled.button<{ $dark?: boolean }>`
+  ${mixinButton};
+
+  filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
+  border-radius: 0.95rem;
+  width: 46px;
 
   &:hover {
-    filter: brightness(90%);
+    filter: ${(props) =>
+      props.$dark ? 'brightness(90%)' : 'brightness(110%)'};
     .icon {
       color: var(--text-bright);
-      filter: brightness(100%);
     }
   }
 `;
 
-export const MenuButton = styled.button`
-  ${mixinButton};
-  border-radius: 0.95rem;
-  width: 46px;
-`;
-
-export const RoundRightButton = styled.button`
+export const RoundRightButton = styled.button<{ $dark?: boolean }>`
   ${mixinButton};
 
+  filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
   border-top-right-radius: 0.95rem;
   border-bottom-right-radius: 0.95rem;
   width: 37px;
+
+  &:hover {
+    filter: ${(props) =>
+      props.$dark ? 'brightness(90%)' : 'brightness(110%)'};
+    .icon {
+      color: var(--text-bright);
+    }
+  }
 `;
 
-export const RoundLeftButton = styled.button`
+export const RoundLeftButton = styled.button<{ $dark?: boolean }>`
   ${mixinButton};
 
+  filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
   border-top-left-radius: 0.95rem;
   border-bottom-left-radius: 0.95rem;
   width: 37px;
+
+  &:hover {
+    filter: ${(props) =>
+      props.$dark ? 'brightness(90%)' : 'brightness(110%)'};
+    .icon {
+      color: var(--text-bright);
+    }
+  }
 `;

@@ -51,7 +51,7 @@ export const ReferendumDropdownMenu = ({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <MenuButton aria-label="Referendum Actions">
+        <MenuButton $dark={darkMode} aria-label="Referendum Actions">
           <div>
             <FontAwesomeIcon
               className="icon"
