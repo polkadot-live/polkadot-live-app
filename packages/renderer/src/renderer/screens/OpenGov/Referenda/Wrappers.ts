@@ -233,6 +233,10 @@ export const TracksFilterList = styled.div`
         color: var(--accent-secondary);
         font-weight: 600;
       }
+
+      &.disable {
+        cursor: not-allowed;
+      }
     }
     > span {
       color: var(--text-dimmed);
@@ -240,7 +244,7 @@ export const TracksFilterList = styled.div`
     }
 
     &:hover {
-      > p:not(.selected) {
+      > p:not(.selected):not(.disable) {
         color: var(--text-color-primary);
       }
     }

@@ -295,6 +295,29 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setOnlySubscribed(!onlySubscribed);
   };
 
+  // Handle track click.
+  const onTrackClick = (trackId: string | null) => {
+    if (trackId === null) {
+      updateTrackFilter(trackId);
+    } else if (getReferendaCount(trackId) > 0) {
+      updateTrackFilter(trackId);
+    }
+  };
+
+  // Calculate track filter class.
+  const getTrackClass = (trackId: string | null) => {
+    const cur = getTrackFilter();
+    if (trackId === null) {
+      return cur === trackId ? 'selected' : '';
+    } else {
+      return getReferendaCount(trackId) === 0
+        ? 'disable'
+        : cur === trackId
+          ? 'selected'
+          : '';
+    }
+  };
+
   return (
     <UI.ScrollableMax>
       <Styles.PadWrapper>
@@ -417,18 +440,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                           <TracksFilterList id="TracksContainer">
                             <Styles.FlexRow
                               role="button"
-                              onClick={() => {
-                                updateTrackFilter(null);
-                              }}
+                              onClick={() => onTrackClick(null)}
                               className="container"
                               $gap={'0.75rem'}
                             >
-                              <p
-                                className={
-                                  getTrackFilter() === null ? 'selected' : ''
-                                }
-                                role="button"
-                              >
+                              <p className={getTrackClass(null)} role="button">
                                 All
                               </p>
                               <span>{getReferendaCount(null)}</span>
@@ -437,22 +453,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                               <Styles.FlexRow
                                 $gap={'0.6rem'}
                                 role="button"
-                                onClick={() =>
-                                  updateTrackFilter(String(t.trackId))
-                                }
+                                onClick={() => onTrackClick(String(t.trackId))}
                                 className="container"
                                 key={t.trackName}
                               >
-                                <p
-                                  className={
-                                    !getTrackFilter()
-                                      ? ''
-                                      : (getTrackFilter() as string) ===
-                                          t.trackId.toString()
-                                        ? 'selected'
-                                        : ''
-                                  }
-                                >
+                                <p className={getTrackClass(String(t.trackId))}>
                                   {t.label}
                                 </p>
                                 <span>
