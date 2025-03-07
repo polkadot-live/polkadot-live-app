@@ -39,7 +39,7 @@ import { useDataBackup } from '@app/contexts/main/DataBackup';
 import { useWalletConnect } from '@app/contexts/main/WalletConnect';
 
 /// Types.
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type * as OG from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
@@ -398,35 +398,76 @@ export const useMainMessagePorts = () => {
     const results = await api.query.referenda.referendumInfoFor.entries();
 
     // Populate referenda map.
-    const activeReferenda: ActiveReferendaInfo[] = [];
+    const allReferenda: OG.ReferendaInfo[] = [];
 
     for (const [storageKey, storage] of results) {
-      const info: AnyData = storage.toHuman();
+      const human: AnyData = storage.toHuman();
+      const refId = Number(rmCommas(String(storageKey.toHuman())));
 
-      if (isObject(info) && 'Ongoing' in info) {
-        // Instantiate and push next referenda to state.
-        const next: ActiveReferendaInfo = {
-          referendaId: parseInt(
-            rmCommas((storageKey.toHuman() as string[])[0])
-          ),
-          Ongoing: {
-            ...info.Ongoing,
-          },
-        };
+      if (isObject(human)) {
+        if ('Approved' in human) {
+          const isNull = human.Approved[1] === null;
+          const block = human.Approved[0];
+          const who = isNull ? null : human.Approved[1].who;
+          const amount = isNull ? null : human.Approved[1].amount;
+          const info: OG.RefApproved = { block, who, amount };
 
-        // If `deciding` is null, the referendum is in the Prepare period.
-        if (next.Ongoing.deciding) {
-          activeReferenda.push(next);
+          allReferenda.push({ refId, refStatus: 'Approved', info });
+        } else if ('Cancelled' in human) {
+          const isNull = human.Cancelled[1] === null;
+          const block = human.Cancelled[0];
+          const who = isNull ? null : human.Cancelled[1].who;
+          const amount = isNull ? null : human.Cancelled[1].amount;
+          const info: OG.RefCancelled = { block, who, amount };
+
+          allReferenda.push({ refId, refStatus: 'Cancelled', info });
+        } else if ('Rejected' in human) {
+          const block = human.Rejected[0];
+          const who = human.Rejected[1].who;
+          const amount = human.Rejected[1].amount;
+          const info: OG.RefRejected = { block, who, amount };
+
+          allReferenda.push({ refId, refStatus: 'Rejected', info });
+        } else if ('TimedOut' in human) {
+          const block = human.TimedOut[0];
+          const who = human.TimedOut[1].who;
+          const amount = human.TimedOut[1].amount;
+          const info: OG.RefTimedOut = { block, who, amount };
+
+          allReferenda.push({ refId, refStatus: 'TimedOut', info });
+        } else if ('Ongoing' in human) {
+          // In Queue
+          if (human.Ongoing.inQueue === true) {
+            const info: OG.RefOngoing = { ...human.Ongoing };
+            allReferenda.push({ refId, refStatus: 'InQueue', info });
+          }
+          // Preparing
+          else if (human.Ongoing.deciding === null) {
+            const info: OG.RefPreparing = { ...human.Ongoing };
+            allReferenda.push({ refId, refStatus: 'Preparing', info });
+          }
+          // Deciding
+          else if (human.Ongoing.deciding.confirming === null) {
+            const info: OG.RefDeciding = { ...human.Ongoing };
+            allReferenda.push({ refId, refStatus: 'Deciding', info });
+          }
+          // Confirming
+          else if (human.Ongoing.deciding.confirming !== null) {
+            const info: OG.RefConfirming = { ...human.Ongoing };
+            allReferenda.push({ refId, refStatus: 'Confirming', info });
+          }
+        } else if ('Killed' in human) {
+          const block = human.Killed;
+          const info: OG.RefKilled = { block };
+          allReferenda.push({ refId, refStatus: 'Killed', info });
         }
       }
     }
 
     // Serialize data before sending to open gov window.
-    const json = JSON.stringify(activeReferenda);
-
     ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:referenda:receive',
-      data: { json },
+      data: { json: JSON.stringify(allReferenda) },
     });
   };
 

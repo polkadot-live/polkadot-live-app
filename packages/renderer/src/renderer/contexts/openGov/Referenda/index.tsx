@@ -10,7 +10,7 @@ import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { RefDeciding, ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
@@ -28,7 +28,7 @@ export const ReferendaProvider = ({
 
   // Referenda data received from API.
   const [referendaMap, setReferendaMap] = useState(
-    new Map<ChainID, ActiveReferendaInfo[]>()
+    new Map<ChainID, ReferendaInfo[]>()
   );
 
   // Flag to indicate that referenda are being fetched.
@@ -91,16 +91,24 @@ export const ReferendaProvider = ({
   };
 
   // Set state after receiving referenda data from main renderer.
-  const receiveReferendaData = async (info: ActiveReferendaInfo[]) => {
-    setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, info));
+  const receiveReferendaData = async (info: ReferendaInfo[]) => {
+    /**
+     * TODO: Fix
+     */
+    const filtered = info.filter((r) => r.refStatus === 'Deciding');
+    setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
 
+    /**
+     * TODO: Fix
+     * Impose limit for fetch data to avoid overhelming Polkassembly API.
+     */
     // Get Polkassembly enabled setting.
     const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
     setUsePolkassemblyApi(appEnablePolkassemblyApi);
 
     // Fetch proposal metadata if Polkassembly enabled.
     if (appEnablePolkassemblyApi) {
-      await fetchProposals(activeReferendaChainRef.current, info);
+      await fetchProposals(activeReferendaChainRef.current, filtered);
     }
 
     setFetchingReferenda(false);
@@ -109,14 +117,22 @@ export const ReferendaProvider = ({
   // Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (
     desc: boolean,
-    otherReferenda?: ActiveReferendaInfo[]
+    otherReferenda?: ReferendaInfo[]
   ) => {
-    const sortFn = (a: ActiveReferendaInfo, b: ActiveReferendaInfo) =>
-      desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId;
+    /**
+     * TODO: Take into account pagination.
+     */
+    const sortFn = (a: ReferendaInfo, b: ReferendaInfo) =>
+      desc ? b.refId - a.refId : a.refId - b.refId;
 
-    const filterFn = (info: ActiveReferendaInfo) => {
+    const filterFn = (ref: ReferendaInfo) => {
+      if (ref.refStatus !== 'Deciding') {
+        return false;
+      }
+
+      const { track } = ref.info as RefDeciding;
       const cur = trackFilter.get(activeReferendaChainRef.current) || null;
-      return cur === null ? true : info.Ongoing.track === cur;
+      return cur === null ? true : track === cur;
     };
 
     if (otherReferenda) {
@@ -130,9 +146,9 @@ export const ReferendaProvider = ({
   /// Get categorized referenda, sorted desc or asc in each category.
   const getCategorisedReferenda = (
     desc: boolean,
-    otherReferenda?: ActiveReferendaInfo[]
+    otherReferenda?: ReferendaInfo[]
   ) => {
-    const map = new Map<string, ActiveReferendaInfo[]>();
+    const map = new Map<string, ReferendaInfo[]>();
 
     // Insert keys into map in the desired order.
     for (const origin of getOrderedOrigins()) {
@@ -143,32 +159,36 @@ export const ReferendaProvider = ({
     const referenda = referendaMap.get(activeReferendaChainRef.current);
     const dataSet = otherReferenda || referenda || [];
 
-    for (const info of dataSet) {
-      const originData = info.Ongoing.origin;
+    for (const ref of dataSet) {
+      if (ref.refStatus !== 'Deciding') {
+        continue;
+      }
+
+      const info = ref.info as RefDeciding;
+      const originData = info.origin;
       const origin =
         'system' in originData
           ? String(originData.system)
           : String(originData.Origins);
 
       const state = map.get(origin) || [];
-      state.push(info);
+      state.push(ref);
       map.set(origin, state);
     }
 
     // Sort referenda in each origin according to `desc` argument.
-    for (const [origin, infos] of map.entries()) {
-      const filterFn = (t: ActiveReferendaInfo) => {
+    for (const [origin, refs] of map.entries()) {
+      const filterFn = (t: ReferendaInfo) => {
+        const info = t.info as RefDeciding;
         const cur = trackFilter.get(activeReferendaChainRef.current) || null;
-        return cur === null ? true : t.Ongoing.track === cur;
+        return cur === null ? true : info.track === cur;
       };
 
       map.set(
         origin,
-        infos
+        refs
           .filter(filterFn)
-          .sort((a, b) =>
-            desc ? b.referendaId - a.referendaId : a.referendaId - b.referendaId
-          )
+          .sort((a, b) => (desc ? b.refId - a.refId : a.refId - b.refId))
       );
     }
 
@@ -209,7 +229,9 @@ export const ReferendaProvider = ({
     } else if (trackId === null) {
       return referenda.length;
     } else {
-      return referenda.filter((r) => r.Ongoing.track === trackId).length;
+      return referenda
+        .filter((r) => r.refStatus === 'Deciding')
+        .filter((r) => (r.info as RefDeciding).track === trackId).length;
     }
   };
 

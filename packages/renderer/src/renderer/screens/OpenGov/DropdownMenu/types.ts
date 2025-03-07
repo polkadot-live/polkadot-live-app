@@ -3,12 +3,12 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  ActiveReferendaInfo,
   PolkassemblyProposal,
+  ReferendaInfo,
 } from '@polkadot-live/types/openGov';
 
 export interface ReferendumDropdownMenuProps {
   chainId: ChainID;
   proposalData: PolkassemblyProposal | null;
-  referendum: ActiveReferendaInfo;
+  referendum: ReferendaInfo;
 }

@@ -3,7 +3,7 @@
 
 import BigNumber from 'bignumber.js';
 import { Track } from '@ren/model/Track';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { RefDeciding, ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -101,10 +101,20 @@ export function makeLinearCurve(length: string, floor: string, ceil: string) {
  */
 export const getMinApprovalSupport = async (
   api: ApiPromise,
-  referendumInfo: ActiveReferendaInfo,
+  referendumInfo: ReferendaInfo,
   track: Track
 ) => {
-  if (!referendumInfo.Ongoing.deciding) {
+  /**
+   * TODO:
+   * Confirm this function is only needed for Ongoing referenda
+   * Allow all Ongoing status's if it makes sense
+   */
+  if (referendumInfo.refStatus !== 'Deciding') {
+    return null;
+  }
+
+  const info = referendumInfo.info as RefDeciding;
+  if (!info.deciding) {
     return null;
   }
 
@@ -114,7 +124,7 @@ export const getMinApprovalSupport = async (
   const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());
   const bnDecisionPeriod = new BigNumber(rmChars(String(track.decisionPeriod)));
 
-  const { since } = referendumInfo.Ongoing.deciding;
+  const { since } = info.deciding;
   const bnSince = new BigNumber(rmChars(String(since)));
   const bnElapsed = bnCurrentBlock.minus(bnSince);
 
@@ -156,8 +166,17 @@ export const getMinApprovalSupport = async (
  * @name renderOrigin
  * @summary Get referendum origin as string.
  */
-export const renderOrigin = (referendum: ActiveReferendaInfo) => {
-  const originData = referendum.Ongoing.origin;
+export const renderOrigin = (referendum: ReferendaInfo) => {
+  /**
+   * TODO:
+   * Confirm this function is only needed for Ongoing referenda
+   * Allow all Ongoing status's if it makes sense
+   */
+  if (referendum.refStatus !== 'Deciding') {
+    return 'Unknown';
+  }
+
+  const originData = (referendum.info as RefDeciding).origin;
 
   const origin =
     'system' in originData

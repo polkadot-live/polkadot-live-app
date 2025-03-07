@@ -16,10 +16,7 @@ import {
   rmChars,
 } from '../utils/openGovUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type {
-  ActiveReferendaInfo,
-  OneShotReturn,
-} from '@polkadot-live/types/openGov';
+import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
   IntervalSubscription,
@@ -88,20 +85,15 @@ const oneShot_openGov_referendumVotes = async (
 
   const { api } = instance;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const info: AnyData = result.toHuman();
+  const human: AnyData = result.toHuman();
 
-  if (!isObject(info) && 'Ongoing' in info) {
+  if (!isObject(human) || !('Ongoing' in human)) {
     return { success: false, message: 'Referendum not ongoing.' };
   }
 
-  const referendumInfo: ActiveReferendaInfo = {
-    referendaId: referendumId,
-    Ongoing: {
-      ...info.Ongoing,
-    },
-  };
+  const info: RefDeciding = { ...human.Ongoing };
+  const { ayes, nays } = info.tally;
 
-  const { ayes, nays } = referendumInfo.Ongoing.tally;
   const ayesBn = new BigNumber(rmCommas(String(ayes)));
   const naysBn = new BigNumber(rmCommas(String(nays)));
   const totalBn = ayesBn.plus(naysBn);
@@ -159,9 +151,9 @@ const oneShot_openGov_decisionPeriod = async (
 
   const { api } = instance;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const info: AnyData = result.toHuman();
+  const human: AnyData = result.toHuman();
 
-  if (!isObject(info) && 'Ongoing' in info) {
+  if (!isObject(human) || !('Ongoing' in human)) {
     return { success: false, message: 'Referendum not being decided.' };
   }
 
@@ -173,20 +165,14 @@ const oneShot_openGov_decisionPeriod = async (
     subtitle: 'Decision Period',
   };
 
-  const referendumInfo: ActiveReferendaInfo = {
-    referendaId: referendumId,
-    Ongoing: {
-      ...info.Ongoing,
-    },
-  };
-
-  if (!referendumInfo.Ongoing.deciding) {
+  const info: RefDeciding = { ...human.Ongoing };
+  if (!info.deciding) {
     return { success: false, message: 'Referendum not in decision period.' };
   }
 
   const lastHeader = await api.rpc.chain.getHeader();
   const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
-  const { confirming } = referendumInfo.Ongoing.deciding;
+  const { confirming } = info.deciding;
 
   if (confirming) {
     const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
@@ -194,10 +180,10 @@ const oneShot_openGov_decisionPeriod = async (
     formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
     notificationData.body = `Confirmaing. Ends in ${formattedTime}.`;
   } else {
-    const { since } = referendumInfo.Ongoing.deciding;
+    const { since } = info.deciding;
 
     // Get origin and its decision period in number of blocks.
-    const originData = referendumInfo.Ongoing.origin;
+    const originData = info.origin;
     const originName =
       'system' in originData
         ? String(originData.system)
@@ -261,27 +247,21 @@ const oneShot_openGov_thresholds = async (
 
   const { api } = instance;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const info: AnyData = result.toHuman();
+  const human: AnyData = result.toHuman();
 
   // Confirm result is a referendum that is ongoing.
-  if (!(isObject(info) && 'Ongoing' in info)) {
+  if (!(isObject(human) || !('Ongoing' in human))) {
     return { success: false, message: 'Referendum not ongoing.' };
   }
 
   // Guarentee that the referendum is still in its deciding phase.
-  const referendumInfo: ActiveReferendaInfo = {
-    referendaId: referendumId,
-    Ongoing: {
-      ...info.Ongoing,
-    },
-  };
-
-  if (!referendumInfo.Ongoing.deciding) {
+  const info: RefDeciding = { ...human.Ongoing };
+  if (!info.deciding) {
     return { success: false, message: 'Referendum not being decided.' };
   }
 
   // Get track data for decision period.
-  const originData = referendumInfo.Ongoing.origin;
+  const originData = info.origin;
   const originName =
     'system' in originData
       ? String(originData.system)
@@ -296,7 +276,12 @@ const oneShot_openGov_thresholds = async (
   }
 
   // Get current approval and support thresholds.
-  const thresholds = await getMinApprovalSupport(api, referendumInfo, track);
+  const thresholds = await getMinApprovalSupport(
+    api,
+    { refId: referendumId, refStatus: 'Deciding', info },
+    track
+  );
+
   if (!thresholds) {
     return { success: false, message: 'Threshold data error.' };
   }

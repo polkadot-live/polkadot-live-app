@@ -6,8 +6,8 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  ActiveReferendaInfo,
   PolkassemblyProposal,
+  ReferendaInfo,
 } from '@polkadot-live/types/openGov';
 import type { PolkassemblyContextInterface } from './types';
 
@@ -41,7 +41,7 @@ export const PolkassemblyProvider = ({
   // Fetch proposal data after referenda have been loaded in referenda context.
   const fetchProposals = async (
     chainId: ChainID,
-    referenda: ActiveReferendaInfo[]
+    referenda: ReferendaInfo[]
   ) => {
     // Create Axios instance with base URL to Polkassembly API.
     const axiosApi = axios.create({
@@ -53,9 +53,9 @@ export const PolkassemblyProvider = ({
 
     // Make asynchronous requests to Polkassembly API for each referenda.
     const results = await Promise.all(
-      referenda.map(({ referendaId }) =>
+      referenda.map(({ refId }) =>
         axiosApi.get(
-          `/posts/on-chain-post?postId=${referendaId}&proposalType=referendums_v2`,
+          `/posts/on-chain-post?postId=${refId}&proposalType=referendums_v2`,
           {
             maxBodyLength: Infinity,
             headers: { 'x-network': network },

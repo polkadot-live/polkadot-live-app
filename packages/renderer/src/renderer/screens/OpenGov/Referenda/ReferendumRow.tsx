@@ -36,7 +36,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const isOnline = getOnlineMode();
 
-  const { referendaId } = referendum;
+  const { refId } = referendum;
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
     useReferendaSubscriptions();
@@ -49,7 +49,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   } = useTaskHandler();
 
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
-  const proposalData = getProposal(chainId, referendaId);
+  const proposalData = getProposal(chainId, refId);
 
   // Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -67,7 +67,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
       <FlexRow>
         <div className="RefID">
           <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
-          {referendum.referendaId}
+          {referendum.refId}
         </div>
         {usePolkassemblyApi ? (
           <TitleWithOrigin>
@@ -161,7 +161,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             {/* Render interval tasks from config */}
             {getIntervalSubscriptions().map((t) => (
               <div
-                key={`${index}_${referendaId}_${t.action}`}
+                key={`${index}_${refId}_${t.action}`}
                 className="SubscriptionRow"
               >
                 {isSubscribedToTask(referendum, t) ? (

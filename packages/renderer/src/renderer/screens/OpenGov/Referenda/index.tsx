@@ -151,7 +151,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     <ItemsColumn>
                       {infos.map((referendum, j) => (
                         <ReferendumRow
-                          key={`${j}_${referendum.referendaId}`}
+                          key={`${j}_${referendum.refId}`}
                           referendum={referendum}
                           index={j}
                         />
@@ -206,7 +206,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     <ItemsColumn>
                       {infos.map((referendum, j) => (
                         <ReferendumRow
-                          key={`${j}_${referendum.referendaId}`}
+                          key={`${j}_${referendum.refId}`}
                           referendum={referendum}
                           index={j}
                         />
@@ -229,7 +229,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     >
       {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
         <ReferendumRow
-          key={`${i}_${referendum.referendaId}`}
+          key={`${i}_${referendum.refId}`}
           referendum={referendum}
           index={i}
         />
@@ -250,7 +250,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         {getSortedActiveReferenda(newestFirst, getSubscribedReferenda()).map(
           (referendum, i) => (
             <ReferendumRow
-              key={`${i}_${referendum.referendaId}_subscribed`}
+              key={`${i}_${referendum.refId}_subscribed`}
               referendum={referendum}
               index={i}
             />

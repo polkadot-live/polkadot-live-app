@@ -3,7 +3,7 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  ActiveReferendaInfo,
+  ReferendaInfo,
   PolkassemblyProposal,
 } from '@polkadot-live/types/openGov';
 
@@ -15,7 +15,7 @@ export interface PolkassemblyContextInterface {
   ) => PolkassemblyProposal | null;
   fetchProposals: (
     chainId: ChainID,
-    referenda: ActiveReferendaInfo[]
+    referenda: ReferendaInfo[]
   ) => Promise<void>;
   setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

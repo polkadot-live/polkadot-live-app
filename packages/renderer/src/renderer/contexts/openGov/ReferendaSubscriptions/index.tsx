@@ -7,7 +7,7 @@ import { createContext, useContext, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext =
   createContext<ReferendaSubscriptionsContextInterface>(
@@ -125,17 +125,17 @@ export const ReferendaSubscriptionsProvider = ({
 
   /// Check if a task has been added for a referendum.
   const isSubscribedToTask = (
-    referendum: ActiveReferendaInfo,
+    referendum: ReferendaInfo,
     task: IntervalSubscription
   ) => {
-    const { referendaId } = referendum;
+    const { refId } = referendum;
     const { chainId, action } = task;
 
     if (activeTasksMap.has(chainId)) {
       const chainItems = activeTasksMap.get(chainId)!;
 
-      if (chainItems.has(referendaId)) {
-        const items = chainItems.get(referendaId)!;
+      if (chainItems.has(refId)) {
+        const items = chainItems.get(refId)!;
         if (items.includes(action)) {
           return true;
         }
@@ -148,29 +148,29 @@ export const ReferendaSubscriptionsProvider = ({
   /// Check if a referendum has added subscription tasks.
   const isSubscribedToReferendum = (
     chainId: ChainID,
-    referendum: ActiveReferendaInfo
+    referendum: ReferendaInfo
   ) =>
     activeTasksMap.has(chainId)
-      ? activeTasksMap.get(chainId)!.has(referendum.referendaId)
+      ? activeTasksMap.get(chainId)!.has(referendum.refId)
       : false;
 
   /// Check if referendum has all its subscriptions added.
   const allSubscriptionsAdded = (
     chainId: ChainID,
-    referendum: ActiveReferendaInfo
+    referendum: ReferendaInfo
   ) => {
     if (!activeTasksMap.has(chainId)) {
       return false;
     }
 
     const chainItems = activeTasksMap.get(chainId)!;
-    const { referendaId } = referendum;
+    const { refId } = referendum;
 
-    if (!chainItems.has(referendaId)) {
+    if (!chainItems.has(Number(refId))) {
       return false;
     }
 
-    return chainItems.get(referendaId)!.length === NUM_REFERENDUM_SUBSCRIPTIONS
+    return chainItems.get(refId)!.length === NUM_REFERENDUM_SUBSCRIPTIONS
       ? true
       : false;
   };
