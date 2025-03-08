@@ -1,13 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { NUM_REFERENDUM_SUBSCRIPTIONS } from '@ren/config/subscriptions/interval';
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
-import type { ReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext =
   createContext<ReferendaSubscriptionsContextInterface>(
@@ -165,14 +164,17 @@ export const ReferendaSubscriptionsProvider = ({
 
     const chainItems = activeTasksMap.get(chainId)!;
     const { refId } = referendum;
-
     if (!chainItems.has(Number(refId))) {
       return false;
     }
 
-    return chainItems.get(refId)!.length === NUM_REFERENDUM_SUBSCRIPTIONS
-      ? true
-      : false;
+    const MAX_SUBSCRIPTIONS: number = (
+      ['Preparing', 'Queueing'] as RefStatus[]
+    ).includes(referendum.refStatus)
+      ? 1
+      : 3;
+
+    return chainItems.get(refId)!.length === MAX_SUBSCRIPTIONS ? true : false;
   };
 
   /// Check if any subscriptions have been added for a given chain.

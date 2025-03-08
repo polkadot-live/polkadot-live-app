@@ -29,9 +29,12 @@ import {
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../DropdownMenu';
-import type { PolkassemblyProposal } from '@polkadot-live/types/openGov';
-import type { ReferendumRowProps } from '../types';
 import { RoundLeftButton, RoundRightButton } from '../DropdownMenu/Wrappers';
+import type {
+  PolkassemblyProposal,
+  RefStatus,
+} from '@polkadot-live/types/openGov';
+import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { openHelp } = useHelp();
@@ -59,7 +62,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const getIntervalSubscriptions = () =>
-    allIntervalTasks.filter((t) => t.chainId === chainId);
+    allIntervalTasks
+      .filter((t) => t.chainId === chainId)
+      .filter((t) => {
+        if ((['Preparing', 'Queueing'] as RefStatus[]).includes(refStatus)) {
+          const actions = ['subscribe:interval:openGov:referendumVotes'];
+          return actions.includes(t.action);
+        } else {
+          return true;
+        }
+      });
 
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
@@ -166,7 +178,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
       >
         <div className="ContentWrapper">
-          <div className="SubscriptionGrid">
+          <FlexRow className="SubscriptionGrid">
             {/* Render interval tasks from config */}
             {getIntervalSubscriptions().map((t) => (
               <div
@@ -206,7 +218,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 </span>
               </div>
             ))}
-          </div>
+          </FlexRow>
         </div>
       </motion.section>
     </ReferendumRowWrapper>

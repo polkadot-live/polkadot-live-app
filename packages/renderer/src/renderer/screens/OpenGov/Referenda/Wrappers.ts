@@ -147,11 +147,9 @@ export const ReferendumRowWrapper = styled.div`
 
       .SubscriptionGrid {
         width: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
 
         div {
+          flex: 1;
           justify-content: center;
         }
         // Keep for tweaking later.
