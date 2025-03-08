@@ -439,7 +439,7 @@ export const useMainMessagePorts = () => {
           // In Queue
           if (human.Ongoing.inQueue === true) {
             const info: OG.RefOngoing = { ...human.Ongoing };
-            allReferenda.push({ refId, refStatus: 'InQueue', info });
+            allReferenda.push({ refId, refStatus: 'Queueing', info });
           }
           // Preparing
           else if (human.Ongoing.deciding === null) {

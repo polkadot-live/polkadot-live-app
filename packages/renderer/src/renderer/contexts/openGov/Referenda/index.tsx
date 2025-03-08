@@ -10,7 +10,11 @@ import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
-import type { RefDeciding, ReferendaInfo } from '@polkadot-live/types/openGov';
+import type {
+  RefDeciding,
+  ReferendaInfo,
+  RefStatus,
+} from '@polkadot-live/types/openGov';
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
@@ -33,6 +37,13 @@ export const ReferendaProvider = ({
 
   // Flag to indicate that referenda are being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
+
+  const ongoingStatuses: RefStatus[] = [
+    'Queueing',
+    'Preparing',
+    'Confirming',
+    'Deciding',
+  ];
 
   // Selected track filter.
   const [trackFilter, setTrackFilter] = useState(
@@ -92,10 +103,7 @@ export const ReferendaProvider = ({
 
   // Set state after receiving referenda data from main renderer.
   const receiveReferendaData = async (info: ReferendaInfo[]) => {
-    /**
-     * TODO: Fix
-     */
-    const filtered = info.filter((r) => r.refStatus === 'Deciding');
+    const filtered = info.filter((r) => ongoingStatuses.includes(r.refStatus));
     setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
 
     /**
@@ -126,7 +134,7 @@ export const ReferendaProvider = ({
       desc ? b.refId - a.refId : a.refId - b.refId;
 
     const filterFn = (ref: ReferendaInfo) => {
-      if (ref.refStatus !== 'Deciding') {
+      if (!ongoingStatuses.includes(ref.refStatus)) {
         return false;
       }
 
@@ -160,7 +168,7 @@ export const ReferendaProvider = ({
     const dataSet = otherReferenda || referenda || [];
 
     for (const ref of dataSet) {
-      if (ref.refStatus !== 'Deciding') {
+      if (!ongoingStatuses.includes(ref.refStatus)) {
         continue;
       }
 
@@ -230,7 +238,7 @@ export const ReferendaProvider = ({
       return referenda.length;
     } else {
       return referenda
-        .filter((r) => r.refStatus === 'Deciding')
+        .filter((r) => ongoingStatuses.includes(r.refStatus))
         .filter((r) => (r.info as RefDeciding).track === trackId).length;
     }
   };

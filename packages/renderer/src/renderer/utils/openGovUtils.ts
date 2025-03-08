@@ -3,7 +3,11 @@
 
 import BigNumber from 'bignumber.js';
 import { Track } from '@ren/model/Track';
-import type { RefDeciding, ReferendaInfo } from '@polkadot-live/types/openGov';
+import type {
+  RefDeciding,
+  ReferendaInfo,
+  RefStatus,
+} from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -167,12 +171,11 @@ export const getMinApprovalSupport = async (
  * @summary Get referendum origin as string.
  */
 export const renderOrigin = (referendum: ReferendaInfo) => {
-  /**
-   * TODO:
-   * Confirm this function is only needed for Ongoing referenda
-   * Allow all Ongoing status's if it makes sense
-   */
-  if (referendum.refStatus !== 'Deciding') {
+  if (
+    !(
+      ['Queueing', 'Preparing', 'Confirming', 'Deciding'] as RefStatus[]
+    ).includes(referendum.refStatus)
+  ) {
     return 'Unknown';
   }
 

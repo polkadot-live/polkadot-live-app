@@ -3,7 +3,11 @@
 
 import * as themeVariables from '../../../theme/variables';
 import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
-import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
+import {
+  ReferendumRowWrapper,
+  RefStatusBadge,
+  TitleWithOrigin,
+} from './Wrappers';
 import { renderOrigin } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,7 +40,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const isOnline = getOnlineMode();
 
-  const { refId } = referendum;
+  const { refId, refStatus } = referendum;
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
     useReferendaSubscriptions();
@@ -67,12 +71,15 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
       <FlexRow>
         <div className="RefID">
           <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
-          {referendum.refId}
+          {refId}
         </div>
         {usePolkassemblyApi ? (
           <TitleWithOrigin>
             <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
-            <h5>{renderOrigin(referendum)}</h5>
+            <FlexRow>
+              <RefStatusBadge $status={refStatus}>{refStatus}</RefStatusBadge>
+              <h5 className="origin">{renderOrigin(referendum)}</h5>
+            </FlexRow>
           </TitleWithOrigin>
         ) : (
           <h4 style={{ flex: 1 }}>{renderOrigin(referendum)}</h4>

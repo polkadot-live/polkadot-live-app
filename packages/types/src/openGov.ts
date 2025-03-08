@@ -11,7 +11,7 @@ export type RefStatus =
   | 'Cancelled'
   | 'Confirming'
   | 'Deciding'
-  | 'InQueue'
+  | 'Queueing'
   | 'Killed'
   | 'Preparing'
   | 'Rejected'

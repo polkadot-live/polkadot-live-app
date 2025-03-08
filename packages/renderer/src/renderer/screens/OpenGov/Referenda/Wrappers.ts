@@ -3,6 +3,33 @@
 
 import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
+import type { RefStatus } from '@polkadot-live/types/openGov';
+
+export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
+  color: var(--text-color-primary);
+  font-size: 0.92rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  background-color: ${(props) => {
+    switch (props.$status) {
+      case 'Deciding':
+      case 'Queueing':
+      case 'Preparing':
+        return '#053e94';
+      case 'Approved':
+      case 'Confirming':
+        return '#125715';
+      case 'Cancelled':
+      case 'Killed':
+      case 'Rejected':
+        return '#7f1515';
+      case 'TimedOut':
+        return '#3b3b3b';
+      default:
+        return '#3b3b3b';
+    }
+  }};
+`;
 
 export const TitleWithOrigin = styled.div`
   display: flex;
@@ -19,10 +46,9 @@ export const TitleWithOrigin = styled.div`
     text-overflow: ellipsis;
     font-size: 1.1rem !important;
   }
-  > h5 {
+  .origin {
     color: var(--text-color-secondary);
     margin: 0;
-    font-size: 1rem !important;
   }
 `;
 
