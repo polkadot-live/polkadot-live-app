@@ -116,24 +116,39 @@ export const ReferendaProvider = ({
 
   // Fetch referenda for new page.
   useEffect(() => {
-    setActivePagedReferenda(getActiveReferendaPage(activePage));
+    const execute = async () => {
+      const page = getActiveReferendaPage(activePage);
+      await fetchFromPolkassembly(page);
+      setActivePagedReferenda(page);
+    };
+    execute();
   }, [activePage]);
 
   // Triggered when a track filter is selected and when referenda are received.
   useEffect(() => {
-    if (refTrigger) {
-      setActivePageCount(getActivePageCount());
-      setActivePagedReferenda(getActiveReferendaPage(activePage));
-      setRefTrigger(false);
-    }
+    const execute = async () => {
+      if (refTrigger) {
+        const page = getActiveReferendaPage(activePage);
+        await fetchFromPolkassembly(page);
+        setActivePagedReferenda(page);
+        setActivePageCount(getActivePageCount());
+        setRefTrigger(false);
+      }
+    };
+    execute();
   }, [refTrigger]);
 
   // Update paged referenda when new chain selected.
   useEffect(() => {
-    if (referendaMap.has(activeReferendaChainRef.current)) {
-      setActivePageCount(getActivePageCount());
-      setActivePagedReferenda(getActiveReferendaPage(activePage));
-    }
+    const execute = async () => {
+      if (referendaMap.has(activeReferendaChainRef.current)) {
+        const page = getActiveReferendaPage(activePage);
+        await fetchFromPolkassembly(page);
+        setActivePagedReferenda(page);
+        setActivePageCount(getActivePageCount());
+      }
+    };
+    execute();
   }, [activeReferendaChainId]);
 
   // Initiate feching referenda data.
@@ -167,22 +182,19 @@ export const ReferendaProvider = ({
   const receiveReferendaData = async (info: ReferendaInfo[]) => {
     const filtered = info.filter((r) => ongoingStatuses.includes(r.refStatus));
     setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
+    setFetchingReferenda(false);
+    setRefTrigger(true);
+  };
 
-    /**
-     * TODO: Fix
-     * Impose limit for fetch data to avoid overhelming Polkassembly API.
-     */
-    // Get Polkassembly enabled setting.
+  // Fetch paged referenda metadata if necessary.
+  const fetchFromPolkassembly = async (referenda: ReferendaInfo[]) => {
     const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
     setUsePolkassemblyApi(appEnablePolkassemblyApi);
 
     // Fetch proposal metadata if Polkassembly enabled.
     if (appEnablePolkassemblyApi) {
-      await fetchProposals(activeReferendaChainRef.current, filtered);
+      await fetchProposals(activeReferendaChainRef.current, referenda);
     }
-
-    setFetchingReferenda(false);
-    setRefTrigger(true);
   };
 
   // Get all referenda sorted by desc or asc.

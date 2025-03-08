@@ -43,6 +43,17 @@ export const PolkassemblyProvider = ({
     chainId: ChainID,
     referenda: ReferendaInfo[]
   ) => {
+    const cached = proposalsMap.get(chainId) || [];
+    const cachedIds = cached.map(({ postId }) => postId);
+    const filtered = referenda.filter(
+      ({ refId }) => !cachedIds.includes(refId)
+    );
+
+    // Exit early if there's no data to fetch.
+    if (filtered.length === 0) {
+      return;
+    }
+
     // Create Axios instance with base URL to Polkassembly API.
     const axiosApi = axios.create({
       baseURL: `https://api.polkassembly.io/api/v1/`,
@@ -53,7 +64,7 @@ export const PolkassemblyProvider = ({
 
     // Make asynchronous requests to Polkassembly API for each referenda.
     const results = await Promise.all(
-      referenda.map(({ refId }) =>
+      filtered.map(({ refId }) =>
         axiosApi.get(
           `/posts/on-chain-post?postId=${refId}&proposalType=referendums_v2`,
           {
@@ -65,15 +76,15 @@ export const PolkassemblyProvider = ({
     );
 
     // Store fetched proposals in state and render in OpenGov window.
-    const collection: PolkassemblyProposal[] = [];
+    const fetched: PolkassemblyProposal[] = [];
     for (const response of results) {
       const { content, post_id, status, title } = response.data;
-      collection.push({ title, postId: post_id, content, status });
+      fetched.push({ title, postId: post_id, content, status });
     }
 
-    // Set context state.
-    setProposalsMap((pv) => pv.set(chainId, [...collection]));
-    proposalsRef.current = [...collection];
+    // Append fetched proposals to existing cached data.
+    setProposalsMap((pv) => pv.set(chainId, [...cached, ...fetched]));
+    proposalsRef.current = [...cached, ...fetched];
   };
 
   // Get polkassembly proposal via referendum id.

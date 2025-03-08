@@ -55,7 +55,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
-  // Sorting controls state.
+  // Flag to display referenda with active subscriptions.
   const [onlySubscribed, setOnlySubscribed] = useState(false);
 
   // Pagination.
