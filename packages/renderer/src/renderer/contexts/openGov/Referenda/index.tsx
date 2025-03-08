@@ -29,7 +29,8 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   const { getOnlineMode } = useConnections();
-  const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
+  const { fetchProposals, setUsePolkassemblyApi, setFetchingMetadata } =
+    usePolkassembly();
 
   // Referenda data received from API.
   const [refTrigger, setRefTrigger] = useState(false);
@@ -120,6 +121,7 @@ export const ReferendaProvider = ({
       const page = getActiveReferendaPage(activePage);
       await fetchFromPolkassembly(page);
       setActivePagedReferenda(page);
+      setFetchingMetadata(false);
     };
     execute();
   }, [activePage]);
@@ -133,6 +135,11 @@ export const ReferendaProvider = ({
         setActivePagedReferenda(page);
         setActivePageCount(getActivePageCount());
         setRefTrigger(false);
+        setFetchingMetadata(false);
+
+        if (fetchingReferenda) {
+          setFetchingReferenda(false);
+        }
       }
     };
     execute();
@@ -146,6 +153,7 @@ export const ReferendaProvider = ({
         await fetchFromPolkassembly(page);
         setActivePagedReferenda(page);
         setActivePageCount(getActivePageCount());
+        setFetchingMetadata(false);
       }
     };
     execute();
@@ -182,8 +190,8 @@ export const ReferendaProvider = ({
   const receiveReferendaData = async (info: ReferendaInfo[]) => {
     const filtered = info.filter((r) => ongoingStatuses.includes(r.refStatus));
     setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
-    setFetchingReferenda(false);
     setRefTrigger(true);
+    //setFetchingReferenda(false);
   };
 
   // Fetch paged referenda metadata if necessary.

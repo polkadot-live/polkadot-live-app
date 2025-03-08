@@ -120,7 +120,7 @@ export const NoteWrapper = styled.div`
 
 export const PaginationRow = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   align-items: center;
   user-select: none;
 

@@ -9,6 +9,7 @@ import type {
 
 export interface PolkassemblyContextInterface {
   usePolkassemblyApi: boolean;
+  fetchingMetadata: boolean;
   getProposal: (
     chainId: ChainID,
     referendumId: number
@@ -17,5 +18,6 @@ export interface PolkassemblyContextInterface {
     chainId: ChainID,
     referenda: ReferendaInfo[]
   ) => Promise<void>;
+  setFetchingMetadata: React.Dispatch<React.SetStateAction<boolean>>;
   setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -19,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
+import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { ReferendumRow } from './ReferendumRow';
@@ -27,6 +28,7 @@ import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PuffLoader } from 'react-spinners';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
@@ -51,6 +53,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setRefTrigger,
   } = useReferenda();
 
+  const { fetchingMetadata } = usePolkassembly();
   const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
@@ -64,11 +67,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       setActivePage(val);
     }
   };
-  const onPrevActivePageClick = () => {
-    setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
-  };
-  const onNextActivePageClick = () => {
-    setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
+  const onPageArrowClick = (dir: 'prev' | 'next') => {
+    if (dir === 'prev') {
+      setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
+    } else {
+      setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
+    }
   };
 
   // Get subscribed referenda only.
@@ -102,7 +106,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <button
           className={`btn ${activePage === 1 && 'disable'}`}
           disabled={activePage === 1}
-          onClick={() => onPrevActivePageClick()}
+          onClick={() => onPageArrowClick('prev')}
         >
           <FontAwesomeIcon icon={faCaretLeft} />
         </button>
@@ -118,10 +122,14 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <button
           className={`btn ${activePage === activePageCount && 'disable'}`}
           disabled={activePage === activePageCount}
-          onClick={() => onNextActivePageClick()}
+          onClick={() => onPageArrowClick('next')}
         >
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
+
+        {fetchingMetadata && (
+          <PuffLoader size={20} color={'var(--text-color-primary)'} />
+        )}
       </PaginationRow>
 
       <ItemsColumn>

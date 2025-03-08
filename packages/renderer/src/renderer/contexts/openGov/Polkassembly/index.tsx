@@ -23,6 +23,7 @@ export const PolkassemblyProvider = ({
   children: React.ReactNode;
 }) => {
   const [usePolkassemblyApi, setUsePolkassemblyApi] = useState<boolean>(false);
+  const [fetchingMetadata, setFetchingMetadata] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSetting = async () => {
@@ -53,6 +54,8 @@ export const PolkassemblyProvider = ({
     if (filtered.length === 0) {
       return;
     }
+
+    setFetchingMetadata(true);
 
     // Create Axios instance with base URL to Polkassembly API.
     const axiosApi = axios.create({
@@ -102,8 +105,10 @@ export const PolkassemblyProvider = ({
     <PolkassemblyContext.Provider
       value={{
         usePolkassemblyApi,
+        fetchingMetadata,
         getProposal,
         fetchProposals,
+        setFetchingMetadata,
         setUsePolkassemblyApi,
       }}
     >
