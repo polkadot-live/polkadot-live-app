@@ -29,8 +29,12 @@ export const ReferendaProvider = ({
   children: React.ReactNode;
 }) => {
   const { getOnlineMode } = useConnections();
-  const { fetchProposals, setUsePolkassemblyApi, setFetchingMetadata } =
-    usePolkassembly();
+  const {
+    clearProposals,
+    fetchProposals,
+    setUsePolkassemblyApi,
+    setFetchingMetadata,
+  } = usePolkassembly();
 
   // Referenda data received from API.
   const [refTrigger, setRefTrigger] = useState(false);
@@ -180,6 +184,7 @@ export const ReferendaProvider = ({
   // Re-fetch referenda, called when user clicks refresh button.
   const refetchReferenda = () => {
     setFetchingReferenda(true);
+    clearProposals(activeReferendaChainId);
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:referenda:get',
       data: { chainId: activeReferendaChainId },
@@ -191,7 +196,6 @@ export const ReferendaProvider = ({
     const filtered = info.filter((r) => ongoingStatuses.includes(r.refStatus));
     setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
     setRefTrigger(true);
-    //setFetchingReferenda(false);
   };
 
   // Fetch paged referenda metadata if necessary.

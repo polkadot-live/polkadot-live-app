@@ -10,6 +10,7 @@ import type {
 export interface PolkassemblyContextInterface {
   usePolkassemblyApi: boolean;
   fetchingMetadata: boolean;
+  clearProposals: (chainId: ChainID) => void;
   getProposal: (
     chainId: ChainID,
     referendumId: number

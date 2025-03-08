@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -34,7 +34,6 @@ export const PolkassemblyProvider = ({
     fetchSetting();
   }, []);
 
-  const proposalsRef = useRef<PolkassemblyProposal[]>([]);
   const [proposalsMap, setProposalsMap] = useState(
     new Map<ChainID, PolkassemblyProposal[]>()
   );
@@ -87,7 +86,6 @@ export const PolkassemblyProvider = ({
 
     // Append fetched proposals to existing cached data.
     setProposalsMap((pv) => pv.set(chainId, [...cached, ...fetched]));
-    proposalsRef.current = [...cached, ...fetched];
   };
 
   // Get polkassembly proposal via referendum id.
@@ -101,11 +99,17 @@ export const PolkassemblyProvider = ({
           .find(({ postId }) => postId === referendumId) || null
       : null;
 
+  // Clear proposal data for a particular chain.
+  const clearProposals = (chainId: ChainID) => {
+    proposalsMap.set(chainId, []);
+  };
+
   return (
     <PolkassemblyContext.Provider
       value={{
         usePolkassemblyApi,
         fetchingMetadata,
+        clearProposals,
         getProposal,
         fetchProposals,
         setFetchingMetadata,
