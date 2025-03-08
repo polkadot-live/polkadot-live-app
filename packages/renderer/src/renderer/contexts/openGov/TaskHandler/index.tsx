@@ -6,7 +6,7 @@ import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { renderToast } from '@polkadot-live/ui/utils';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';
 
@@ -30,10 +30,10 @@ export const TaskHandlerProvider = ({
   /// Handles adding an interval subscription for a referendum.
   const addIntervalSubscription = (
     task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
+    referendumInfo: ReferendaInfo
   ) => {
     // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
+    const { refId: referendumId } = referendumInfo;
     task.referendumId = referendumId;
 
     // Enable the task by default.
@@ -62,10 +62,10 @@ export const TaskHandlerProvider = ({
   /// Handles removing an interval subscription for a referendum.
   const removeIntervalSubscription = (
     task: IntervalSubscription,
-    referendumInfo: ActiveReferendaInfo
+    referendumInfo: ReferendaInfo
   ) => {
     // Set referendum ID on task.
-    const { referendaId: referendumId } = referendumInfo;
+    const { refId: referendumId } = referendumInfo;
     task.referendumId = referendumId;
 
     // Remove subscription in referenda subscriptions context.
@@ -91,9 +91,9 @@ export const TaskHandlerProvider = ({
   /// Handles adding all available subscriptions for a referendum.
   const addAllIntervalSubscriptions = (
     tasks: IntervalSubscription[],
-    referendumInfo: ActiveReferendaInfo
+    referendumInfo: ReferendaInfo
   ) => {
-    const { referendaId: referendumId } = referendumInfo;
+    const { refId: referendumId } = referendumInfo;
 
     // Throw away task if it's already added and set required fields.
     const updated = tasks
@@ -127,9 +127,9 @@ export const TaskHandlerProvider = ({
   /// Handles removing all addde subscriptions for a referendum.
   const removeAllIntervalSubscriptions = (
     tasks: IntervalSubscription[],
-    referendumInfo: ActiveReferendaInfo
+    referendumInfo: ReferendaInfo
   ) => {
-    const { referendaId: referendumId } = referendumInfo;
+    const { refId: referendumId } = referendumInfo;
 
     // Throw away task if it is not added.
     const updated = tasks

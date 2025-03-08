@@ -6,7 +6,10 @@ import type { PolkassemblyContextInterface } from './types';
 
 export const defaultPolkassemblyContext: PolkassemblyContextInterface = {
   usePolkassemblyApi: true,
+  fetchingMetadata: false,
+  clearProposals: () => {},
   getProposal: () => null,
   fetchProposals: () => new Promise(() => {}),
+  setFetchingMetadata: () => {},
   setUsePolkassemblyApi: () => {},
 };
