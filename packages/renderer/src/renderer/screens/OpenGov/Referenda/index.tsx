@@ -60,6 +60,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   // Flag to display referenda with active subscriptions.
   const [onlySubscribed, setOnlySubscribed] = useState(false);
+  const [showSubscribedButton] = useState(false);
 
   // Pagination.
   const onActivePageClick = (val: number) => {
@@ -237,18 +238,20 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-                <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
-                  <span>
-                    <SortControlButton
-                      isActive={onlySubscribed}
-                      isDisabled={fetchingReferenda}
-                      faIcon={faEllipsisVertical}
-                      onClick={() => handleToggleOnlySubscribed()}
-                      fixedWidth={false}
-                      respClass="ReferendaControls"
-                    />
-                  </span>
-                </UI.TooltipRx>
+                {showSubscribedButton && (
+                  <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
+                    <span>
+                      <SortControlButton
+                        isActive={onlySubscribed}
+                        isDisabled={fetchingReferenda}
+                        faIcon={faEllipsisVertical}
+                        onClick={() => handleToggleOnlySubscribed()}
+                        fixedWidth={false}
+                        respClass="ReferendaControls"
+                      />
+                    </span>
+                  </UI.TooltipRx>
+                )}
               </ControlsWrapper>
             </Styles.FlexColumn>
           </section>
