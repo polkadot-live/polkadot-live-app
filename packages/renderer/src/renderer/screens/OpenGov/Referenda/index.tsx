@@ -63,12 +63,14 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   // Pagination.
   const onActivePageClick = (val: number) => {
-    if (activePage !== val) {
+    if (activePage !== val && !fetchingMetadata) {
       setActivePage(val);
     }
   };
   const onPageArrowClick = (dir: 'prev' | 'next') => {
-    if (dir === 'prev') {
+    if (fetchingMetadata) {
+      return;
+    } else if (dir === 'prev') {
       setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
     } else {
       setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
@@ -104,7 +106,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     <>
       <PaginationRow>
         <button
-          className={`btn ${activePage === 1 && 'disable'}`}
+          className={`btn ${activePage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
           disabled={activePage === 1}
           onClick={() => onPageArrowClick('prev')}
         >
@@ -114,13 +116,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           <button
             key={i}
             onClick={() => onActivePageClick(i)}
-            className={`btn ${activePage === i && 'selected'}`}
+            className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}`}
           >
             {i}
           </button>
         ))}
         <button
-          className={`btn ${activePage === activePageCount && 'disable'}`}
+          className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
           disabled={activePage === activePageCount}
           onClick={() => onPageArrowClick('next')}
         >

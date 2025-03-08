@@ -130,7 +130,7 @@ export const PaginationRow = styled.div`
     transition: background-color 0.2s ease-out;
     cursor: pointer;
 
-    &:hover:not(.disable):not(.selected) {
+    &:hover:not(.disable):not(.selected):not(.fetching) {
       background-color: var(--background-primary-hover);
     }
     &.selected {
@@ -139,6 +139,9 @@ export const PaginationRow = styled.div`
     }
     &.disable {
       color: var(--text-dimmed);
+      cursor: not-allowed;
+    }
+    &.fetching {
       cursor: not-allowed;
     }
   }
