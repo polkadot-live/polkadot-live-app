@@ -78,7 +78,9 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
             <FlexRow>
               <RefStatusBadge $status={refStatus}>{refStatus}</RefStatusBadge>
-              <h5 className="origin">{renderOrigin(referendum)}</h5>
+              <h5 className="origin text-ellipsis">
+                {renderOrigin(referendum)}
+              </h5>
             </FlexRow>
           </TitleWithOrigin>
         ) : (

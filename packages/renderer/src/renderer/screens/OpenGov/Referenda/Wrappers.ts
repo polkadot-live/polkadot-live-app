@@ -14,8 +14,9 @@ export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
     switch (props.$status) {
       case 'Deciding':
       case 'Queueing':
-      case 'Preparing':
         return '#053e94';
+      case 'Preparing':
+        return '#294a7c';
       case 'Approved':
       case 'Confirming':
         return '#125715';
