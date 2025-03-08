@@ -4,7 +4,6 @@
 import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { getOrderedOrigins } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
@@ -214,65 +213,6 @@ export const ReferendaProvider = ({
     }
   };
 
-  /// Get categorized referenda, sorted desc or asc in each category.
-  const getCategorisedReferenda = (
-    desc: boolean,
-    otherReferenda?: ReferendaInfo[]
-  ) => {
-    const map = new Map<string, ReferendaInfo[]>();
-
-    // Insert keys into map in the desired order.
-    for (const origin of getOrderedOrigins()) {
-      map.set(origin, []);
-    }
-
-    // Populate map with referenda data.
-    const referenda = referendaMap.get(activeReferendaChainRef.current);
-    const dataSet = otherReferenda || referenda || [];
-
-    for (const ref of dataSet) {
-      if (!ongoingStatuses.includes(ref.refStatus)) {
-        continue;
-      }
-
-      const info = ref.info as RefDeciding;
-      const originData = info.origin;
-      const origin =
-        'system' in originData
-          ? String(originData.system)
-          : String(originData.Origins);
-
-      const state = map.get(origin) || [];
-      state.push(ref);
-      map.set(origin, state);
-    }
-
-    // Sort referenda in each origin according to `desc` argument.
-    for (const [origin, refs] of map.entries()) {
-      const filterFn = (t: ReferendaInfo) => {
-        const info = t.info as RefDeciding;
-        const cur = trackFilter.get(activeReferendaChainRef.current) || null;
-        return cur === null ? true : info.track === cur;
-      };
-
-      map.set(
-        origin,
-        refs
-          .filter(filterFn)
-          .sort((a, b) => (desc ? b.refId - a.refId : a.refId - b.refId))
-      );
-    }
-
-    // Remove keys with no referenda.
-    for (const [origin, infos] of map.entries()) {
-      if (!infos.length) {
-        map.delete(origin);
-      }
-    }
-
-    return map;
-  };
-
   // Update the fetched flag state and ref.
   const updateHasFetchedReferenda = (chainId: ChainID) => {
     if (chainId !== activeReferendaChainId) {
@@ -320,7 +260,6 @@ export const ReferendaProvider = ({
         setReferendaMap,
         setFetchingReferenda,
         getSortedActiveReferenda,
-        getCategorisedReferenda,
         updateHasFetchedReferenda,
         updateTrackFilter,
         // new

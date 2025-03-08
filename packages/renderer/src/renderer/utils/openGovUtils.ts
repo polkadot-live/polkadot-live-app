@@ -235,6 +235,7 @@ export const getSpacedOrigin = (origin: string) => {
 /**
  * @name getOrderedOrigins
  * @summary Get referedum origins in the desired order.
+ * @deprecated
  */
 export const getOrderedOrigins = () => [
   'Root',
