@@ -16,6 +16,8 @@ import type {
   RefStatus,
 } from '@polkadot-live/types/openGov';
 
+const PAGINATION_ITEMS_PER_PAGE = 10;
+
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
 );
@@ -31,9 +33,15 @@ export const ReferendaProvider = ({
   const { fetchProposals, setUsePolkassemblyApi } = usePolkassembly();
 
   // Referenda data received from API.
+  const [refTrigger, setRefTrigger] = useState(false);
   const [referendaMap, setReferendaMap] = useState(
     new Map<ChainID, ReferendaInfo[]>()
   );
+
+  // Chain ID for currently rendered referenda.
+  const [activeReferendaChainId, setActiveReferendaChainId] =
+    useState<ChainID>('Polkadot');
+  const activeReferendaChainRef = useRef(activeReferendaChainId);
 
   // Flag to indicate that referenda are being fetched.
   const [fetchingReferenda, setFetchingReferenda] = useState(false);
@@ -52,27 +60,82 @@ export const ReferendaProvider = ({
       ['Kusama', null],
     ])
   );
+  const trackFilterRef = useRef(trackFilter);
 
   const [trackFilterTrigger, setTrackFilterTrigger] = useState<{
     trigger: boolean;
     val: string | null;
   }>({ trigger: false, val: null });
 
+  /**
+   * Pagination state for active referenda.
+   */
+  const getActivePageCount = () => {
+    const items = getSortedActiveReferenda();
+    const len = items ? items.length : 1;
+    return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
+  };
+
+  const [activePage, setActivePage] = useState(1);
+  const [activePageCount, setActivePageCount] = useState(1);
+  const [activePagedReferenda, setActivePagedReferenda] = useState<
+    ReferendaInfo[]
+  >([]);
+
+  const getActiveReferendaPage = (page: number) => {
+    const items = getSortedActiveReferenda();
+    const start = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
+    const end = start + PAGINATION_ITEMS_PER_PAGE;
+    return items.slice(start, end);
+  };
+
+  // 1, 2 ... n-1, n
+  const getCurPages = (): number[] => {
+    const totalPages = activePageCount;
+
+    if (totalPages <= 4) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    } else {
+      const start = [activePage, activePage + 1];
+      const end = [totalPages - 1, totalPages];
+      return [...start, ...end];
+    }
+  };
+
   // Mechanism to update listed referenda after track filter state set.
   useEffect(() => {
     const { trigger, val } = trackFilterTrigger;
     if (trigger) {
-      setTrackFilter((pv) =>
-        pv.set(activeReferendaChainRef.current, val === undefined ? null : val)
+      const newVal = trackFilter.set(
+        activeReferendaChainRef.current,
+        val === undefined ? null : val
       );
+      setStateWithRef(newVal, setTrackFilter, trackFilterRef);
       setTrackFilterTrigger({ trigger: false, val: null });
     }
   }, [trackFilterTrigger]);
 
-  // Chain ID for currently rendered referenda.
-  const [activeReferendaChainId, setActiveReferendaChainId] =
-    useState<ChainID>('Polkadot');
-  const activeReferendaChainRef = useRef(activeReferendaChainId);
+  // Fetch referenda for new page.
+  useEffect(() => {
+    setActivePagedReferenda(getActiveReferendaPage(activePage));
+  }, [activePage]);
+
+  // Triggered when a track filter is selected and when referenda are received.
+  useEffect(() => {
+    if (refTrigger) {
+      setActivePageCount(getActivePageCount());
+      setActivePagedReferenda(getActiveReferendaPage(activePage));
+      setRefTrigger(false);
+    }
+  }, [refTrigger]);
+
+  // Update paged referenda when new chain selected.
+  useEffect(() => {
+    if (referendaMap.has(activeReferendaChainRef.current)) {
+      setActivePageCount(getActivePageCount());
+      setActivePagedReferenda(getActiveReferendaPage(activePage));
+    }
+  }, [activeReferendaChainId]);
 
   // Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
@@ -120,26 +183,26 @@ export const ReferendaProvider = ({
     }
 
     setFetchingReferenda(false);
+    setRefTrigger(true);
   };
 
   // Get all referenda sorted by desc or asc.
   const getSortedActiveReferenda = (
-    desc: boolean,
+    desc = false,
     otherReferenda?: ReferendaInfo[]
   ) => {
-    /**
-     * TODO: Take into account pagination.
-     */
     const sortFn = (a: ReferendaInfo, b: ReferendaInfo) =>
       desc ? b.refId - a.refId : a.refId - b.refId;
 
+    // Filter on status and selected track.
     const filterFn = (ref: ReferendaInfo) => {
       if (!ongoingStatuses.includes(ref.refStatus)) {
         return false;
       }
 
       const { track } = ref.info as RefDeciding;
-      const cur = trackFilter.get(activeReferendaChainRef.current) || null;
+      const cur =
+        trackFilterRef.current.get(activeReferendaChainRef.current) || null;
       return cur === null ? true : track === cur;
     };
 
@@ -260,6 +323,13 @@ export const ReferendaProvider = ({
         getCategorisedReferenda,
         updateHasFetchedReferenda,
         updateTrackFilter,
+        // new
+        activePage,
+        activePageCount,
+        activePagedReferenda,
+        getCurPages,
+        setActivePage,
+        setRefTrigger,
       }}
     >
       {children}

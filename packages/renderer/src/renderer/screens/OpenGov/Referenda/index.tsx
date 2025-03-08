@@ -19,6 +19,7 @@ import {
   faSort,
   faArrowsRotate,
   faEllipsisVertical,
+  faCaretRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
@@ -26,12 +27,13 @@ import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper, TracksFilterList } from './Wrappers';
+import { NoteWrapper, PaginationRow, TracksFilterList } from './Wrappers';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReferendaProps } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
@@ -47,6 +49,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getSortedActiveReferenda,
     getCategorisedReferenda,
     updateTrackFilter,
+
+    activePage,
+    activePageCount,
+    activePagedReferenda,
+    getCurPages,
+    setActivePage,
+    setRefTrigger,
   } = useReferenda();
 
   const { fetchingTracks, getOrderedTracks } = useTracks();
@@ -58,6 +67,19 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const [groupingOn, setGroupingOn] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
   const [onlySubscribed, setOnlySubscribed] = useState(false);
+
+  // Pagination.
+  const onActivePageClick = (val: number) => {
+    if (activePage !== val) {
+      setActivePage(val);
+    }
+  };
+  const onPrevActivePageClick = () => {
+    setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
+  };
+  const onNextActivePageClick = () => {
+    setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
+  };
 
   // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>([
@@ -224,17 +246,45 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   // Render referenda as single list.
   const renderListed = () => (
-    <ItemsColumn
-      style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
-    >
-      {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
-        <ReferendumRow
-          key={`${i}_${referendum.refId}`}
-          referendum={referendum}
-          index={i}
-        />
-      ))}
-    </ItemsColumn>
+    <>
+      <PaginationRow>
+        <button
+          className={`btn ${activePage === 1 && 'disable'}`}
+          disabled={activePage === 1}
+          onClick={() => onPrevActivePageClick()}
+        >
+          <FontAwesomeIcon icon={faCaretLeft} />
+        </button>
+        {getCurPages().map((i) => (
+          <button
+            key={i}
+            onClick={() => onActivePageClick(i)}
+            className={`btn ${activePage === i && 'selected'}`}
+          >
+            {i}
+          </button>
+        ))}
+        <button
+          className={`btn ${activePage === activePageCount && 'disable'}`}
+          disabled={activePage === activePageCount}
+          onClick={() => onNextActivePageClick()}
+        >
+          <FontAwesomeIcon icon={faCaretRight} />
+        </button>
+      </PaginationRow>
+
+      <ItemsColumn
+        style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
+      >
+        {activePagedReferenda.map((referendum, i) => (
+          <ReferendumRow
+            key={`${i}_${referendum.refId}`}
+            referendum={referendum}
+            index={i}
+          />
+        ))}
+      </ItemsColumn>
+    </>
   );
 
   // Render subscribed referenda as a single list.
@@ -297,9 +347,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   // Handle track click.
   const onTrackClick = (trackId: string | null) => {
-    if (trackId === null) {
-      updateTrackFilter(trackId);
-    } else if (getReferendaCount(trackId) > 0) {
+    if (trackId === null || getReferendaCount(trackId) > 0) {
+      setActivePage(1);
+      setRefTrigger(true);
       updateTrackFilter(trackId);
     }
   };

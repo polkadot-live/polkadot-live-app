@@ -27,4 +27,12 @@ export interface ReferendaContextInterface {
   ) => Map<string, ReferendaInfo[]>;
   updateHasFetchedReferenda: (chainId: ChainID) => void;
   updateTrackFilter: (val: string | null) => void;
+
+  // new
+  activePage: number;
+  activePageCount: number;
+  activePagedReferenda: ReferendaInfo[];
+  getCurPages: () => number[];
+  setActivePage: React.Dispatch<React.SetStateAction<number>>;
+  setRefTrigger: React.Dispatch<React.SetStateAction<boolean>>;
 }

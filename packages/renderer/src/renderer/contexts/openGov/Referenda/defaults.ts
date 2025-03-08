@@ -19,4 +19,12 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   getCategorisedReferenda: (d) => new Map(),
   updateHasFetchedReferenda: () => {},
   updateTrackFilter: () => {},
+
+  // new
+  activePage: 1,
+  activePageCount: 1,
+  activePagedReferenda: [],
+  getCurPages: () => [],
+  setActivePage: () => {},
+  setRefTrigger: () => {},
 };

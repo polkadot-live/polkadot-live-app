@@ -118,6 +118,32 @@ export const NoteWrapper = styled.div`
   }
 `;
 
+export const PaginationRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  user-select: none;
+
+  .btn {
+    background-color: var(--background-surface);
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease-out;
+    cursor: pointer;
+
+    &:hover:not(.disable):not(.selected) {
+      background-color: var(--background-primary-hover);
+    }
+    &.selected {
+      background-color: var(--background-primary-hover);
+      color: var(--text-bright);
+    }
+    &.disable {
+      color: var(--text-dimmed);
+      cursor: not-allowed;
+    }
+  }
+`;
+
 export const ReferendumRowWrapper = styled.div`
   position: relative;
   padding: 1rem 1.25rem;
