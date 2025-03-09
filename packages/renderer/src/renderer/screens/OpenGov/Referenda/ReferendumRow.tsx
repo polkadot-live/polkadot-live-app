@@ -3,7 +3,11 @@
 
 import * as themeVariables from '../../../theme/variables';
 import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
-import { ReferendumRowWrapper, TitleWithOrigin } from './Wrappers';
+import {
+  ReferendumRowWrapper,
+  RefStatusBadge,
+  TitleWithOrigin,
+} from './Wrappers';
 import { renderOrigin } from '@app/utils/openGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,9 +29,12 @@ import {
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../DropdownMenu';
-import type { PolkassemblyProposal } from '@polkadot-live/types/openGov';
-import type { ReferendumRowProps } from '../types';
 import { RoundLeftButton, RoundRightButton } from '../DropdownMenu/Wrappers';
+import type {
+  PolkassemblyProposal,
+  RefStatus,
+} from '@polkadot-live/types/openGov';
+import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { openHelp } = useHelp();
@@ -36,7 +43,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const isOnline = getOnlineMode();
 
-  const { referendaId } = referendum;
+  const { refId, refStatus } = referendum;
   const { activeReferendaChainId: chainId } = useReferenda();
   const { isSubscribedToTask, allSubscriptionsAdded } =
     useReferendaSubscriptions();
@@ -49,13 +56,22 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   } = useTaskHandler();
 
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
-  const proposalData = getProposal(chainId, referendaId);
+  const proposalData = getProposal(chainId, refId);
 
   // Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
 
   const getIntervalSubscriptions = () =>
-    allIntervalTasks.filter((t) => t.chainId === chainId);
+    allIntervalTasks
+      .filter((t) => t.chainId === chainId)
+      .filter((t) => {
+        if ((['Preparing', 'Queueing'] as RefStatus[]).includes(refStatus)) {
+          const actions = ['subscribe:interval:openGov:referendumVotes'];
+          return actions.includes(t.action);
+        } else {
+          return true;
+        }
+      });
 
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
@@ -67,12 +83,17 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
       <FlexRow>
         <div className="RefID">
           <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
-          {referendum.referendaId}
+          {refId}
         </div>
         {usePolkassemblyApi ? (
           <TitleWithOrigin>
             <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
-            <h5>{renderOrigin(referendum)}</h5>
+            <FlexRow>
+              <RefStatusBadge $status={refStatus}>{refStatus}</RefStatusBadge>
+              <h5 className="origin text-ellipsis">
+                {renderOrigin(referendum)}
+              </h5>
+            </FlexRow>
           </TitleWithOrigin>
         ) : (
           <h4 style={{ flex: 1 }}>{renderOrigin(referendum)}</h4>
@@ -157,11 +178,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
       >
         <div className="ContentWrapper">
-          <div className="SubscriptionGrid">
+          <FlexRow className="SubscriptionGrid">
             {/* Render interval tasks from config */}
             {getIntervalSubscriptions().map((t) => (
               <div
-                key={`${index}_${referendaId}_${t.action}`}
+                key={`${index}_${refId}_${t.action}`}
                 className="SubscriptionRow"
               >
                 {isSubscribedToTask(referendum, t) ? (
@@ -197,7 +218,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 </span>
               </div>
             ))}
-          </div>
+          </FlexRow>
         </div>
       </motion.section>
     </ReferendumRowWrapper>

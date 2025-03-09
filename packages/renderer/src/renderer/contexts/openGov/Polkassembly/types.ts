@@ -3,19 +3,22 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  ActiveReferendaInfo,
+  ReferendaInfo,
   PolkassemblyProposal,
 } from '@polkadot-live/types/openGov';
 
 export interface PolkassemblyContextInterface {
   usePolkassemblyApi: boolean;
+  fetchingMetadata: boolean;
+  clearProposals: (chainId: ChainID) => void;
   getProposal: (
     chainId: ChainID,
     referendumId: number
   ) => PolkassemblyProposal | null;
   fetchProposals: (
     chainId: ChainID,
-    referenda: ActiveReferendaInfo[]
+    referenda: ReferendaInfo[]
   ) => Promise<void>;
+  setFetchingMetadata: React.Dispatch<React.SetStateAction<boolean>>;
   setUsePolkassemblyApi: React.Dispatch<React.SetStateAction<boolean>>;
 }

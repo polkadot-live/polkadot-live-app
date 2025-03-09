@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '../../../theme/variables';
-import * as AccordionRx from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import { LinksFooter } from '@app/Utils';
@@ -14,23 +13,23 @@ import {
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
-  faLayerGroup,
-  faUpDown,
-  faSort,
   faArrowsRotate,
   faEllipsisVertical,
+  faCaretRight,
+  faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
+import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import { getSpacedOrigin } from '@app/utils/openGovUtils';
 import { ReferendumRow } from './ReferendumRow';
-import { NoteWrapper, TracksFilterList } from './Wrappers';
+import { NoteWrapper, PaginationRow, TracksFilterList } from './Wrappers';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PuffLoader } from 'react-spinners';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
@@ -45,24 +44,41 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     refetchReferenda,
     getReferendaCount,
     getSortedActiveReferenda,
-    getCategorisedReferenda,
     updateTrackFilter,
+
+    activePage,
+    activePageCount,
+    activePagedReferenda,
+    showPageEllipsis,
+    getCurPages,
+    setActivePage,
+    setRefTrigger,
   } = useReferenda();
 
+  const { fetchingMetadata } = usePolkassembly();
   const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
-  // Sorting controls state.
-  const [newestFirst, setNewestFirst] = useState(true);
-  const [groupingOn, setGroupingOn] = useState(false);
-  const [expandAll, setExpandAll] = useState(false);
+  // Flag to display referenda with active subscriptions.
   const [onlySubscribed, setOnlySubscribed] = useState(false);
+  const [showSubscribedButton] = useState(false);
 
-  // Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>([
-    ...getCategorisedReferenda(newestFirst).keys(),
-  ]);
+  // Pagination.
+  const onActivePageClick = (val: number) => {
+    if (activePage !== val && !fetchingMetadata) {
+      setActivePage(val);
+    }
+  };
+  const onPageArrowClick = (dir: 'prev' | 'next') => {
+    if (fetchingMetadata) {
+      return;
+    } else if (dir === 'prev') {
+      setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
+    } else {
+      setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
+    }
+  };
 
   // Get subscribed referenda only.
   const getSubscribedReferenda = () =>
@@ -72,27 +88,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           .filter((r) => isSubscribedToReferendum(chainId, r))
       : [];
 
-  /**
-   * Expand grouped accordion when a track filter selected.
-   */
-  useEffect(() => {
-    if (getTrackFilter() !== null) {
-      handleExpandAll(false);
-    } else {
-      handleExpandAll(true);
-    }
-  }, [getTrackFilter()]);
-
-  /**
-   * Collapse accordion panels when active chainId changes.
-   */
+  // Reset filter and tracks container when another chain is selected.
   useEffect(() => {
     updateTrackFilter(null);
-
-    // Collapse accordion panels if any are open.
-    if (accordionValue.length > 0) {
-      handleExpandAll(true);
-    }
 
     // Reset tracks container scroll value.
     const container = document.getElementById('TracksContainer');
@@ -106,151 +104,70 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     refetchReferenda();
   };
 
-  // Utility for making expand button dynamic.
-  const isExpandActive = () => {
-    let length = 0;
-    if (onlySubscribed) {
-      const rs = getSubscribedReferenda();
-      const map = getCategorisedReferenda(newestFirst, rs);
-      length = Array.from(map.keys()).length;
-    } else {
-      const map = getCategorisedReferenda(newestFirst);
-      length = Array.from(map.keys()).length;
-    }
-
-    return accordionValue.length === length;
-  };
-
-  // Render categorized referenda.
-  const renderCategorised = () => (
-    <section
-      style={{ display: groupingOn && !onlySubscribed ? 'block' : 'none' }}
-    >
-      <UI.AccordionWrapper $onePart={true}>
-        <AccordionRx.Root
-          className="AccordionRoot"
-          type="multiple"
-          value={accordionValue}
-          onValueChange={(val) => setAccordionValue(val as string[])}
-        >
-          <Styles.FlexColumn>
-            {Array.from(getCategorisedReferenda(newestFirst).entries()).map(
-              ([origin, infos]) => (
-                <AccordionRx.Item
-                  key={`${origin}_referenda_group`}
-                  className="AccordionItem"
-                  value={origin}
-                >
-                  <UI.AccordionTrigger narrow={true}>
-                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                    <UI.TriggerHeader>
-                      {getSpacedOrigin(origin)}
-                    </UI.TriggerHeader>
-                  </UI.AccordionTrigger>
-                  <UI.AccordionContent transparent={true}>
-                    <ItemsColumn>
-                      {infos.map((referendum, j) => (
-                        <ReferendumRow
-                          key={`${j}_${referendum.referendaId}`}
-                          referendum={referendum}
-                          index={j}
-                        />
-                      ))}
-                    </ItemsColumn>
-                  </UI.AccordionContent>
-                </AccordionRx.Item>
-              )
-            )}
-          </Styles.FlexColumn>
-        </AccordionRx.Root>
-      </UI.AccordionWrapper>
-    </section>
-  );
-
-  // Render categorised subscribed referenda.
-  const renderSubscribedCategorised = () => {
-    const display = groupingOn && onlySubscribed ? 'block' : 'none';
-
-    return isNotSubscribedToAny(chainId) ? (
-      <div style={{ display }}>
-        <p>You have not subscribed to any referenda.</p>
-      </div>
-    ) : (
-      <section style={{ display }}>
-        <UI.AccordionWrapper $onePart={true}>
-          <AccordionRx.Root
-            className="AccordionRoot"
-            type="multiple"
-            value={accordionValue}
-            onValueChange={(val) => setAccordionValue(val as string[])}
-          >
-            <Styles.FlexColumn>
-              {Array.from(
-                getCategorisedReferenda(
-                  newestFirst,
-                  getSubscribedReferenda()
-                ).entries()
-              ).map(([origin, infos]) => (
-                <AccordionRx.Item
-                  key={`${origin}_subscribed_referenda_group`}
-                  className="AccordionItem"
-                  value={origin}
-                >
-                  <UI.AccordionTrigger narrow={true}>
-                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                    <UI.TriggerHeader>
-                      {getSpacedOrigin(origin)}
-                    </UI.TriggerHeader>
-                  </UI.AccordionTrigger>
-                  <UI.AccordionContent transparent={true} narrow={true}>
-                    <ItemsColumn>
-                      {infos.map((referendum, j) => (
-                        <ReferendumRow
-                          key={`${j}_${referendum.referendaId}`}
-                          referendum={referendum}
-                          index={j}
-                        />
-                      ))}
-                    </ItemsColumn>
-                  </UI.AccordionContent>
-                </AccordionRx.Item>
-              ))}
-            </Styles.FlexColumn>
-          </AccordionRx.Root>
-        </UI.AccordionWrapper>
-      </section>
-    );
-  };
-
   // Render referenda as single list.
   const renderListed = () => (
-    <ItemsColumn
-      style={{ display: groupingOn || onlySubscribed ? 'none' : 'flex' }}
-    >
-      {getSortedActiveReferenda(newestFirst).map((referendum, i) => (
-        <ReferendumRow
-          key={`${i}_${referendum.referendaId}`}
-          referendum={referendum}
-          index={i}
-        />
-      ))}
-    </ItemsColumn>
+    <>
+      <PaginationRow>
+        <button
+          className={`btn ${activePage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
+          disabled={activePage === 1}
+          onClick={() => onPageArrowClick('prev')}
+        >
+          <FontAwesomeIcon icon={faCaretLeft} />
+        </button>
+        {getCurPages().map((i, j) => (
+          <Styles.FlexRow key={i} $row={'0.75rem'}>
+            {j === 2 && !showPageEllipsis() && activePageCount > 4 && (
+              <button className={`btn placeholder`}>
+                <FontAwesomeIcon className="icon" icon={faEllipsis} />
+              </button>
+            )}
+            <button
+              onClick={() => onActivePageClick(i)}
+              className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+              ${j === 2 && getCurPages().length === 5 && 'middle'}`}
+            >
+              {i}
+            </button>
+          </Styles.FlexRow>
+        ))}
+        <button
+          className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
+          disabled={activePage === activePageCount}
+          onClick={() => onPageArrowClick('next')}
+        >
+          <FontAwesomeIcon icon={faCaretRight} />
+        </button>
+
+        {fetchingMetadata && (
+          <PuffLoader size={20} color={'var(--text-color-primary)'} />
+        )}
+      </PaginationRow>
+
+      <ItemsColumn>
+        {activePagedReferenda.map((referendum, i) => (
+          <ReferendumRow
+            key={`${i}_${referendum.refId}`}
+            referendum={referendum}
+            index={i}
+          />
+        ))}
+      </ItemsColumn>
+    </>
   );
 
   // Render subscribed referenda as a single list.
-  const renderSubscribedListed = () => {
-    const display = groupingOn || !onlySubscribed ? 'none' : 'flex';
-
-    return isNotSubscribedToAny(chainId) ? (
-      <div style={{ display }}>
+  const renderSubscribedListed = () =>
+    isNotSubscribedToAny(chainId) ? (
+      <div>
         <p>You have not subscribed to any referenda.</p>
       </div>
     ) : (
-      <ItemsColumn style={{ display }}>
-        {getSortedActiveReferenda(newestFirst, getSubscribedReferenda()).map(
+      <ItemsColumn>
+        {getSortedActiveReferenda(true, getSubscribedReferenda()).map(
           (referendum, i) => (
             <ReferendumRow
-              key={`${i}_${referendum.referendaId}_subscribed`}
+              key={`${i}_${referendum.refId}_subscribed`}
               referendum={referendum}
               index={i}
             />
@@ -258,48 +175,17 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         )}
       </ItemsColumn>
     );
-  };
-
-  // Handle expanding or collapsing all accordion panels.
-  const handleExpandAll = (override?: boolean) => {
-    if (!groupingOn) {
-      return;
-    }
-
-    const target = override !== undefined ? override : expandAll;
-    if (target) {
-      setAccordionValue([]);
-      setExpandAll(false);
-    } else {
-      // Handle categorised all or subscribed referenda.
-      if (onlySubscribed) {
-        const rs = getSubscribedReferenda();
-        setAccordionValue([...getCategorisedReferenda(newestFirst, rs).keys()]);
-      } else {
-        setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
-      }
-
-      setExpandAll(true);
-    }
-  };
 
   // Handle clicking only subscribed button.
   const handleToggleOnlySubscribed = () => {
-    if (!onlySubscribed) {
-      const rs = getSubscribedReferenda();
-      setAccordionValue([...getCategorisedReferenda(newestFirst, rs).keys()]);
-    } else {
-      setAccordionValue([...getCategorisedReferenda(newestFirst).keys()]);
-    }
-
     setOnlySubscribed(!onlySubscribed);
   };
 
   // Handle track click.
   const onTrackClick = (trackId: string | null) => {
-    if (trackId === null) {
-      updateTrackFilter(trackId);
-    } else if (getReferendaCount(trackId) > 0) {
+    if (trackId === null || getReferendaCount(trackId) > 0) {
+      setActivePage(1);
+      setRefTrigger(true);
       updateTrackFilter(trackId);
     }
   };
@@ -326,10 +212,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <Styles.FlexColumn>
               <UI.ActionItem showIcon={false} text={`${chainId} Referenda`} />
               {/* Sorting controls */}
-              <ControlsWrapper
-                className="ReferendaControls"
-                $padBottom={!groupingOn}
-              >
+              <ControlsWrapper className="ReferendaControls" $padBottom={true}>
                 <ButtonPrimaryInvert
                   disabled={fetchingReferenda}
                   className="back-btn"
@@ -346,35 +229,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                         ? 'rgb(169, 74, 117)'
                         : 'rgb(133, 113, 177)',
                   }}
-                />
-                <SortControlButton
-                  isActive={newestFirst}
-                  isDisabled={fetchingReferenda}
-                  faIcon={faSort}
-                  onClick={() => setNewestFirst(!newestFirst)}
-                  onLabel="Newest First"
-                  offLabel="Oldest First"
-                  respClass="ReferendaControls"
-                />
-                <SortControlButton
-                  isActive={groupingOn}
-                  isDisabled={fetchingReferenda}
-                  faIcon={faLayerGroup}
-                  onClick={() => setGroupingOn(!groupingOn)}
-                  onLabel="Grouping"
-                  offLabel="Grouping"
-                  fixedWidth={false}
-                  respClass="ReferendaControls"
-                />
-                <SortControlButton
-                  isActive={isExpandActive()}
-                  isDisabled={fetchingReferenda || !groupingOn}
-                  faIcon={faUpDown}
-                  onClick={() => handleExpandAll()}
-                  onLabel="Expanded"
-                  offLabel="Collapsed"
-                  fixedWidth={false}
-                  respClass="ReferendaControls"
                 />
                 <UI.TooltipRx
                   theme={theme}
@@ -393,18 +247,20 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-                <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
-                  <span>
-                    <SortControlButton
-                      isActive={onlySubscribed}
-                      isDisabled={fetchingReferenda}
-                      faIcon={faEllipsisVertical}
-                      onClick={() => handleToggleOnlySubscribed()}
-                      fixedWidth={false}
-                      respClass="ReferendaControls"
-                    />
-                  </span>
-                </UI.TooltipRx>
+                {showSubscribedButton && (
+                  <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
+                    <span>
+                      <SortControlButton
+                        isActive={onlySubscribed}
+                        isDisabled={fetchingReferenda}
+                        faIcon={faEllipsisVertical}
+                        onClick={() => handleToggleOnlySubscribed()}
+                        fixedWidth={false}
+                        respClass="ReferendaControls"
+                      />
+                    </span>
+                  </UI.TooltipRx>
+                )}
               </ControlsWrapper>
             </Styles.FlexColumn>
           </section>
@@ -469,10 +325,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                         </Styles.FlexRow>
                       </section>
 
-                      {renderCategorised()}
-                      {renderListed()}
-                      {renderSubscribedCategorised()}
-                      {renderSubscribedListed()}
+                      {!onlySubscribed && renderListed()}
+                      {onlySubscribed && renderSubscribedListed()}
                     </Styles.FlexColumn>
                   )}
                 </div>

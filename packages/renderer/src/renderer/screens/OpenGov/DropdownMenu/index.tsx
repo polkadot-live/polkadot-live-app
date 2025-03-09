@@ -29,8 +29,8 @@ export const ReferendumDropdownMenu = ({
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const onPolkassemblyClick = () => {
-    const { referendaId } = referendum;
-    const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${referendaId}`;
+    const { refId } = referendum;
+    const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${refId}`;
     window.myAPI.openBrowserURL(uriPolkassembly);
     window.myAPI.umamiEvent('link-open', {
       dest: 'polkassembly',
@@ -38,8 +38,8 @@ export const ReferendumDropdownMenu = ({
   };
 
   const onSubsquareClick = () => {
-    const { referendaId } = referendum;
-    const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${referendaId}`;
+    const { refId } = referendum;
+    const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${refId}`;
     window.myAPI.openBrowserURL(uriSubsquare);
     window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
   };
