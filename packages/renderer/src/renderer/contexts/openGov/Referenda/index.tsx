@@ -3,7 +3,14 @@
 
 import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
@@ -93,18 +100,22 @@ export const ReferendaProvider = ({
     return items.slice(start, end);
   };
 
-  // 1, 2 ... n-1, n
-  const getCurPages = (): number[] => {
-    const totalPages = activePageCount;
+  // Get array of current pagination numbers.
+  const getCurPages = useCallback((): number[] => {
+    const count = activePageCount;
+    const cur = activePage;
 
-    if (totalPages <= 4) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (count <= 4) {
+      return Array.from({ length: count }, (_, i) => i + 1);
     } else {
-      const start = [activePage, activePage + 1];
-      const end = [totalPages - 1, totalPages];
-      return [...start, ...end];
+      const start = [1, 2];
+      const end = [count - 1, count];
+      const insert = !start.includes(cur) && !end.includes(cur);
+      return insert ? [...start, cur, ...end] : [...start, ...end];
     }
-  };
+  }, [activePage, activePageCount]);
+
+  const showPageEllipsis = () => getCurPages().length === 5;
 
   // Mechanism to update listed referenda after track filter state set.
   useEffect(() => {
@@ -290,6 +301,7 @@ export const ReferendaProvider = ({
         activePage,
         activePageCount,
         activePagedReferenda,
+        showPageEllipsis,
         getCurPages,
         setActivePage,
         setRefTrigger,

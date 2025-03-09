@@ -124,10 +124,16 @@ export const PaginationRow = styled.div`
   align-items: center;
   user-select: none;
 
+  .ellipsis {
+    color: var(--text-dimmed);
+    margin: 0 0.5rem;
+  }
   .btn {
     background-color: var(--background-surface);
+    border: 1px solid var(--background-surface);
     padding: 0.5rem 1rem;
     transition: background-color 0.2s ease-out;
+    width: 34px;
     cursor: pointer;
 
     &:hover:not(.disable):not(.selected):not(.fetching) {
@@ -137,9 +143,24 @@ export const PaginationRow = styled.div`
       background-color: var(--background-primary-hover);
       color: var(--text-bright);
     }
+    &.middle {
+      border: 1px solid var(--border-subtle);
+    }
     &.disable {
       color: var(--text-dimmed);
       cursor: not-allowed;
+    }
+    &.placeholder {
+      color: var(--text-dimmed);
+      width: 31.75px;
+      align-self: stretch;
+      position: relative;
+      cursor: not-allowed;
+      .icon {
+        position: absolute;
+        bottom: 2px;
+        left: 10px;
+      }
     }
     &.fetching {
       cursor: not-allowed;

@@ -16,6 +16,7 @@ import {
   faArrowsRotate,
   faEllipsisVertical,
   faCaretRight,
+  faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
@@ -48,6 +49,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     activePage,
     activePageCount,
     activePagedReferenda,
+    showPageEllipsis,
     getCurPages,
     setActivePage,
     setRefTrigger,
@@ -113,14 +115,21 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         >
           <FontAwesomeIcon icon={faCaretLeft} />
         </button>
-        {getCurPages().map((i) => (
-          <button
-            key={i}
-            onClick={() => onActivePageClick(i)}
-            className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}`}
-          >
-            {i}
-          </button>
+        {getCurPages().map((i, j) => (
+          <Styles.FlexRow key={i} $row={'0.75rem'}>
+            {j === 2 && !showPageEllipsis() && activePageCount > 4 && (
+              <button className={`btn placeholder`}>
+                <FontAwesomeIcon className="icon" icon={faEllipsis} />
+              </button>
+            )}
+            <button
+              onClick={() => onActivePageClick(i)}
+              className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+              ${j === 2 && getCurPages().length === 5 && 'middle'}`}
+            >
+              {i}
+            </button>
+          </Styles.FlexRow>
         ))}
         <button
           className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}

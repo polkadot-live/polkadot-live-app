@@ -23,6 +23,7 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   activePage: 1,
   activePageCount: 1,
   activePagedReferenda: [],
+  showPageEllipsis: () => false,
   getCurPages: () => [],
   setActivePage: () => {},
   setRefTrigger: () => {},

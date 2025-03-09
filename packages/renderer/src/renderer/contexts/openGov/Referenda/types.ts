@@ -28,6 +28,7 @@ export interface ReferendaContextInterface {
   activePage: number;
   activePageCount: number;
   activePagedReferenda: ReferendaInfo[];
+  showPageEllipsis: () => boolean;
   getCurPages: () => number[];
   setActivePage: React.Dispatch<React.SetStateAction<number>>;
   setRefTrigger: React.Dispatch<React.SetStateAction<boolean>>;
