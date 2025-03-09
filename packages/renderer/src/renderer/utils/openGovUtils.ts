@@ -108,12 +108,12 @@ export const getMinApprovalSupport = async (
   referendumInfo: ReferendaInfo,
   track: Track
 ) => {
-  /**
-   * TODO:
-   * Confirm this function is only needed for Ongoing referenda
-   * Allow all Ongoing status's if it makes sense
-   */
-  if (referendumInfo.refStatus !== 'Deciding') {
+  // Confirm referendum status is valid.
+  if (
+    !(['Deciding', 'Confirming'] as RefStatus[]).includes(
+      referendumInfo.refStatus
+    )
+  ) {
     return null;
   }
 
