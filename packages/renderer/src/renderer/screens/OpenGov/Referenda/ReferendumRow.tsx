@@ -27,7 +27,7 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { TooltipRx } from '@polkadot-live/ui/components';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow, ResponsiveRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../DropdownMenu';
 import { RoundLeftButton, RoundRightButton } from '../DropdownMenu/Wrappers';
 import type {
@@ -96,7 +96,20 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </FlexRow>
           </TitleWithOrigin>
         ) : (
-          <h4 style={{ flex: 1 }}>{renderOrigin(referendum)}</h4>
+          <ResponsiveRow
+            $smWidth={'500px'}
+            $gap={'1.25rem'}
+            $smGap={'0.5rem'}
+            style={{ flex: 1 }}
+          >
+            <h4 className="text-ellipsis">{renderOrigin(referendum)}</h4>
+            <RefStatusBadge
+              style={{ width: 'fit-content' }}
+              $status={refStatus}
+            >
+              {refStatus}
+            </RefStatusBadge>
+          </ResponsiveRow>
         )}
 
         <FlexRow $gap={'0.75rem'}>
