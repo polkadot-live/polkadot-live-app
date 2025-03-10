@@ -15,21 +15,24 @@ export interface ReferendaContextInterface {
     React.SetStateAction<Map<ChainID, ReferendaInfo[]>>
   >;
   setFetchingReferenda: (flag: boolean) => void;
-  getSortedActiveReferenda: (
-    desc: boolean,
-    otherReferenda?: ReferendaInfo[]
-  ) => ReferendaInfo[];
+  getSortedActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
   getReferendaCount: (trackId: string | null) => number;
   getTrackFilter: () => string | null;
   updateHasFetchedReferenda: (chainId: ChainID) => void;
   updateTrackFilter: (val: string | null) => void;
 
   // new
+  showPageEllipsis: (directory: 'active' | 'history') => boolean;
+  getPageNumbers: (directory: 'active' | 'history') => number[];
   activePage: number;
   activePageCount: number;
   activePagedReferenda: ReferendaInfo[];
-  showPageEllipsis: () => boolean;
-  getCurPages: () => number[];
   setActivePage: React.Dispatch<React.SetStateAction<number>>;
   setRefTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  historyPage: number;
+  historyPageCount: number;
+  historyPagedReferenda: ReferendaInfo[];
+  setHistoryPage: React.Dispatch<React.SetStateAction<number>>;
+  tabVal: 'active' | 'history';
+  setTabVal: React.Dispatch<React.SetStateAction<'active' | 'history'>>;
 }

@@ -73,6 +73,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         }
       });
 
+  // TODO: Make util.
   const getProposalTitle = (data: PolkassemblyProposal) => {
     const { title } = data;
     return title === '' ? 'No Title' : title;

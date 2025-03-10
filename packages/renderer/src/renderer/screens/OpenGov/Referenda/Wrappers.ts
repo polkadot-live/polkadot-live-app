@@ -1,12 +1,59 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Tabs from '@radix-ui/react-tabs';
 import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
 import type { RefStatus } from '@polkadot-live/types/openGov';
 
+export const TabsRoot = styled(Tabs.Root)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .TabsList {
+    flex-shrink: 0;
+    display: flex;
+    margin-bottom: 2px;
+  }
+  .TabsTrigger {
+    font-size: 1.1rem;
+    background-color: var(--background-surface);
+    color: var(--text-color-primary);
+    padding: 1.35rem 1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer;
+  }
+  .TabsTrigger:first-child {
+    border-top-left-radius: 0.375rem;
+    margin-right: 1px;
+  }
+  .TabsTrigger:last-child {
+    margin-left: 1px;
+    border-top-right-radius: 0.375rem;
+  }
+  .TabsTrigger:hover {
+    color: var(--text-bright);
+  }
+  .TabsTrigger[data-state='active'] {
+    background-color: var(--background-primary);
+    color: var(--text-bright);
+  }
+  .TabsTrigger:focus {
+    position: relative;
+  }
+  .TabsContent {
+  }
+  .TabsContent:focus {
+  }
+`;
+
 export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
-  color: var(--text-color-primary);
+  color: #cfcfcf;
   font-size: 0.92rem;
   padding: 0.25rem 0.6rem;
   border-radius: 0.375rem;
@@ -32,9 +79,10 @@ export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
   }};
 `;
 
-export const TitleWithOrigin = styled.div`
+export const TitleWithOrigin = styled.div<{ $direction?: 'row' | 'column' }>`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) =>
+    props.$direction ? props.$direction : 'column'};
   flex: 1;
   gap: 0.5rem;
   min-width: 0; // Allows address overflow
@@ -133,7 +181,7 @@ export const PaginationRow = styled.div`
     border: 1px solid var(--background-surface);
     padding: 0.5rem 1rem;
     transition: background-color 0.2s ease-out;
-    width: 34px;
+    min-width: 34px;
     cursor: pointer;
 
     &:hover:not(.disable):not(.selected):not(.fetching) {
@@ -287,7 +335,8 @@ export const ReferendumRowWrapper = styled.div`
 export const TracksFilterList = styled.div`
   background-color: var(--background-surface);
   padding: 1.75rem 1.5rem 1.25rem;
-  border-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
   display: flex;
   align-items: center;
   gap: 2.25rem;

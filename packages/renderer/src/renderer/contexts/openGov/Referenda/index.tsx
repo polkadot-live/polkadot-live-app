@@ -19,6 +19,7 @@ import type { ReferendaContextInterface } from './types';
 import type {
   RefDeciding,
   ReferendaInfo,
+  RefOngoing,
   RefStatus,
 } from '@polkadot-live/types/openGov';
 
@@ -48,6 +49,8 @@ export const ReferendaProvider = ({
   const [referendaMap, setReferendaMap] = useState(
     new Map<ChainID, ReferendaInfo[]>()
   );
+
+  const [tabVal, setTabVal] = useState<'active' | 'history'>('active');
 
   // Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
@@ -81,98 +84,64 @@ export const ReferendaProvider = ({
   /**
    * Pagination state for active referenda.
    */
-  const getActivePageCount = () => {
-    const items = getSortedActiveReferenda();
+  const getPageCount = (directory: 'active' | 'history') => {
+    const items =
+      directory === 'active'
+        ? getSortedActiveReferenda()
+        : getHistoryReferenda();
+
     const len = items ? items.length : 1;
     return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
   };
 
+  // Active referenda directory.
   const [activePage, setActivePage] = useState(1);
   const [activePageCount, setActivePageCount] = useState(1);
   const [activePagedReferenda, setActivePagedReferenda] = useState<
     ReferendaInfo[]
   >([]);
 
-  const getActiveReferendaPage = (page: number) => {
-    const items = getSortedActiveReferenda();
+  // History referenda directory.
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyPageCount, setHistoryPageCount] = useState(1);
+  const [historyPagedReferenda, setHistoryPagedReferenda] = useState<
+    ReferendaInfo[]
+  >([]);
+
+  // Get referenda data for a specific page.
+  const getReferendaPage = (page: number, directory: 'active' | 'history') => {
+    let items = [];
+    if (directory === 'active') {
+      items = getSortedActiveReferenda();
+    } else {
+      items = getHistoryReferenda();
+    }
+
     const start = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
     const end = start + PAGINATION_ITEMS_PER_PAGE;
     return items.slice(start, end);
   };
 
   // Get array of current pagination numbers.
-  const getCurPages = useCallback((): number[] => {
-    const count = activePageCount;
-    const cur = activePage;
+  const getPageNumbers = useCallback(
+    (directory: 'active' | 'history'): number[] => {
+      const cur = directory === 'active' ? activePage : historyPage;
+      const count = directory === 'active' ? activePageCount : historyPageCount;
 
-    if (count <= 4) {
-      return Array.from({ length: count }, (_, i) => i + 1);
-    } else {
-      const start = [1, 2];
-      const end = [count - 1, count];
-      const insert = !start.includes(cur) && !end.includes(cur);
-      return insert ? [...start, cur, ...end] : [...start, ...end];
-    }
-  }, [activePage, activePageCount]);
-
-  const showPageEllipsis = () => getCurPages().length === 5;
-
-  // Mechanism to update listed referenda after track filter state set.
-  useEffect(() => {
-    const { trigger, val } = trackFilterTrigger;
-    if (trigger) {
-      const newVal = trackFilter.set(
-        activeReferendaChainRef.current,
-        val === undefined ? null : val
-      );
-      setStateWithRef(newVal, setTrackFilter, trackFilterRef);
-      setTrackFilterTrigger({ trigger: false, val: null });
-    }
-  }, [trackFilterTrigger]);
-
-  // Fetch referenda for new page.
-  useEffect(() => {
-    const execute = async () => {
-      const page = getActiveReferendaPage(activePage);
-      await fetchFromPolkassembly(page);
-      setActivePagedReferenda(page);
-      setFetchingMetadata(false);
-    };
-    execute();
-  }, [activePage]);
-
-  // Triggered when a track filter is selected and when referenda are received.
-  useEffect(() => {
-    const execute = async () => {
-      if (refTrigger) {
-        const page = getActiveReferendaPage(activePage);
-        await fetchFromPolkassembly(page);
-        setActivePagedReferenda(page);
-        setActivePageCount(getActivePageCount());
-        setRefTrigger(false);
-        setFetchingMetadata(false);
-
-        if (fetchingReferenda) {
-          setFetchingReferenda(false);
-        }
+      if (count <= 4) {
+        return Array.from({ length: count }, (_, i) => i + 1);
+      } else {
+        const start = [1, 2];
+        const end = [count - 1, count];
+        const insert = !start.includes(cur) && !end.includes(cur);
+        return insert ? [...start, cur, ...end] : [...start, ...end];
       }
-    };
-    execute();
-  }, [refTrigger]);
+    },
+    [activePage, historyPage, activePageCount, historyPageCount]
+  );
 
-  // Update paged referenda when new chain selected.
-  useEffect(() => {
-    const execute = async () => {
-      if (referendaMap.has(activeReferendaChainRef.current)) {
-        const page = getActiveReferendaPage(activePage);
-        await fetchFromPolkassembly(page);
-        setActivePagedReferenda(page);
-        setActivePageCount(getActivePageCount());
-        setFetchingMetadata(false);
-      }
-    };
-    execute();
-  }, [activeReferendaChainId]);
+  const showPageEllipsis = (directory: 'active' | 'history') =>
+    getPageNumbers(directory).length === 5;
 
   // Initiate feching referenda data.
   const fetchReferendaData = (chainId: ChainID) => {
@@ -204,8 +173,7 @@ export const ReferendaProvider = ({
 
   // Set state after receiving referenda data from main renderer.
   const receiveReferendaData = async (info: ReferendaInfo[]) => {
-    const filtered = info.filter((r) => ongoingStatuses.includes(r.refStatus));
-    setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, filtered));
+    setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, info));
     setRefTrigger(true);
   };
 
@@ -220,32 +188,30 @@ export const ReferendaProvider = ({
     }
   };
 
-  // Get all referenda sorted by desc or asc.
-  const getSortedActiveReferenda = (
-    desc = false,
-    otherReferenda?: ReferendaInfo[]
-  ) => {
-    const sortFn = (a: ReferendaInfo, b: ReferendaInfo) =>
-      desc ? b.refId - a.refId : a.refId - b.refId;
+  // Get active referenda sorted from most-recent first.
+  const getSortedActiveReferenda = (other?: ReferendaInfo[]) => {
+    const sortFn = (a: ReferendaInfo, b: ReferendaInfo) => b.refId - a.refId;
+    const chainId = activeReferendaChainRef.current;
 
-    // Filter on status and selected track.
+    // Filter active referenda on status and selected track.
     const filterFn = (ref: ReferendaInfo) => {
       if (!ongoingStatuses.includes(ref.refStatus)) {
         return false;
       }
-
-      const { track } = ref.info as RefDeciding;
-      const cur =
-        trackFilterRef.current.get(activeReferendaChainRef.current) || null;
-      return cur === null ? true : track === cur;
+      const curTrack = trackFilterRef.current.get(chainId) || null;
+      const { track } = ref.info as RefOngoing;
+      return curTrack === null ? true : track === curTrack;
     };
 
-    if (otherReferenda) {
-      return otherReferenda.filter(filterFn).sort(sortFn);
-    } else {
-      const referenda = referendaMap.get(activeReferendaChainRef.current);
-      return referenda?.filter(filterFn).sort(sortFn) || [];
-    }
+    return other
+      ? other.filter(filterFn).sort(sortFn)
+      : referendaMap.get(chainId)?.filter(filterFn).sort(sortFn) || [];
+  };
+
+  // Get fully sorted historical referenda.
+  const getHistoryReferenda = () => {
+    const chainId = activeReferendaChainRef.current;
+    return referendaMap.get(chainId)?.sort((a, b) => b.refId - a.refId) || [];
   };
 
   // Update the fetched flag state and ref.
@@ -273,13 +239,85 @@ export const ReferendaProvider = ({
     if (!referenda) {
       return 0;
     } else if (trackId === null) {
-      return referenda.length;
+      return referenda.filter((r) => ongoingStatuses.includes(r.refStatus))
+        .length;
     } else {
       return referenda
         .filter((r) => ongoingStatuses.includes(r.refStatus))
         .filter((r) => (r.info as RefDeciding).track === trackId).length;
     }
   };
+
+  // Mechanism to update active referenda after track filter state set.
+  useEffect(() => {
+    const { trigger, val } = trackFilterTrigger;
+    if (trigger) {
+      const newVal = trackFilter.set(
+        activeReferendaChainRef.current,
+        val === undefined ? null : val
+      );
+      setStateWithRef(newVal, setTrackFilter, trackFilterRef);
+      setTrackFilterTrigger({ trigger: false, val: null });
+    }
+  }, [trackFilterTrigger]);
+
+  // Triggered when a track filter is selected and when referenda are received.
+  useEffect(() => {
+    const execute = async () => {
+      if (refTrigger) {
+        // Active directory.
+        const pActive = getReferendaPage(activePage, 'active');
+        await fetchFromPolkassembly(pActive);
+        setActivePagedReferenda(pActive);
+        setActivePageCount(getPageCount('active'));
+
+        // History directory.
+        const pHistory = getReferendaPage(historyPage, 'history');
+        await fetchFromPolkassembly(pHistory);
+        setHistoryPagedReferenda(pHistory);
+        setHistoryPageCount(getPageCount('history'));
+
+        if (fetchingReferenda) {
+          setFetchingReferenda(false);
+        }
+
+        setFetchingMetadata(false);
+        setRefTrigger(false);
+      }
+    };
+    execute();
+  }, [refTrigger]);
+
+  // Fetch referenda for new page.
+  useEffect(() => {
+    const execute = async () => {
+      const page = getReferendaPage(activePage, 'active');
+      await fetchFromPolkassembly(page);
+      setActivePagedReferenda(page);
+      setFetchingMetadata(false);
+    };
+    execute();
+  }, [activePage]);
+
+  useEffect(() => {
+    const execute = async () => {
+      const page = getReferendaPage(historyPage, 'history');
+      await fetchFromPolkassembly(page);
+      setHistoryPagedReferenda(page);
+      setFetchingMetadata(false);
+    };
+    execute();
+  }, [historyPage]);
+
+  // Update paged referenda when new chain selected.
+  useEffect(() => {
+    const execute = async () => {
+      setActivePage(1);
+      setHistoryPage(1);
+      setRefTrigger(true);
+    };
+    execute();
+  }, [activeReferendaChainId]);
 
   return (
     <ReferendaContext.Provider
@@ -302,9 +340,15 @@ export const ReferendaProvider = ({
         activePageCount,
         activePagedReferenda,
         showPageEllipsis,
-        getCurPages,
+        getPageNumbers,
         setActivePage,
         setRefTrigger,
+        historyPage,
+        historyPageCount,
+        historyPagedReferenda,
+        setHistoryPage,
+        tabVal,
+        setTabVal,
       }}
     >
       {children}
