@@ -60,19 +60,25 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
             </FlexRow>
           </Wrappers.TitleWithOrigin>
         ) : (
-          <FlexRow
-            $smWidth={'500px'}
-            $gap={'1.25rem'}
-            $smGap={'0.5rem'}
-            style={{ flex: 1 }}
-          >
-            <h4 className="text-ellipsis">{renderOrigin(info)}</h4>
-            <Wrappers.RefStatusBadge
-              style={{ width: 'fit-content' }}
-              $status={info.refStatus}
-            >
-              {info.refStatus}
-            </Wrappers.RefStatusBadge>
+          <FlexRow style={{ width: '100%', minWidth: 0 }}>
+            <div style={{ width: '76px', minWidth: '76px' }}>
+              <Wrappers.RefStatusBadge
+                style={{ width: 'fit-content' }}
+                $status={info.refStatus}
+              >
+                {info.refStatus}
+              </Wrappers.RefStatusBadge>
+            </div>
+            <h4 style={{ width: '100%' }} className="text-ellipsis">
+              {renderOrigin(info)}
+            </h4>
+            <div>
+              <ReferendumDropdownMenu
+                chainId={chainId}
+                proposalData={null}
+                referendum={info}
+              />
+            </div>
           </FlexRow>
         )}
       </FlexRow>

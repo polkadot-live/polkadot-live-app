@@ -223,12 +223,12 @@ export const ReferendumRowWrapper = styled.div`
 
   /* Stats */
   .RefID {
+    min-width: 50px;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
     column-gap: 0.4rem;
     border-radius: 0.375rem;
-    margin-right: 1.5rem;
   }
 
   /* Collapsable Section */
