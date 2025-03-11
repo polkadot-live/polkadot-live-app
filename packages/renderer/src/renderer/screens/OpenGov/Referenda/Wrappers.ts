@@ -4,6 +4,7 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { RefStatus } from '@polkadot-live/types/openGov';
 
 export const TabsRoot = styled(Tabs.Root)`
@@ -37,11 +38,11 @@ export const TabsRoot = styled(Tabs.Root)`
     border-top-right-radius: 0.375rem;
   }
   .TabsTrigger:hover {
-    color: var(--text-bright);
+    color: var(--text-active);
   }
   .TabsTrigger[data-state='active'] {
     background-color: var(--background-primary);
-    color: var(--text-bright);
+    color: var(--text-active);
   }
   .TabsTrigger:focus {
     position: relative;
@@ -189,7 +190,7 @@ export const PaginationRow = styled.div`
     }
     &.selected {
       background-color: var(--background-primary-hover);
-      color: var(--text-bright);
+      color: var(--text-active);
     }
     &.middle {
       border: 1px solid var(--border-subtle);
@@ -332,7 +333,7 @@ export const ReferendumRowWrapper = styled.div`
   }
 `;
 
-export const TracksFilterList = styled.div`
+export const TracksFilterList = styled.div<{ $chainId?: ChainID }>`
   background-color: var(--background-surface);
   padding: 1.75rem 1.5rem 1.25rem;
   border-bottom-left-radius: 0.375rem;
@@ -354,10 +355,10 @@ export const TracksFilterList = styled.div`
       cursor: pointer;
 
       &.selected {
-        color: var(--accent-secondary);
+        color: ${(props) =>
+          props.$chainId === 'Kusama' ? '#8571b1' : 'var(--accent-secondary)'};
         font-weight: 600;
       }
-
       &.disable {
         cursor: not-allowed;
       }
@@ -366,7 +367,6 @@ export const TracksFilterList = styled.div`
       color: var(--text-dimmed);
       font-size: 1rem;
     }
-
     &:hover {
       > p:not(.selected):not(.disable) {
         color: var(--text-color-primary);

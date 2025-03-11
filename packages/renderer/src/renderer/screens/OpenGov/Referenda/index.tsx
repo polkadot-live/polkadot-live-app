@@ -89,6 +89,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       }
     }
   };
+
   const onPageArrowClick = (
     tab: 'active' | 'history',
     dir: 'prev' | 'next'
@@ -384,7 +385,10 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                         <Styles.FlexColumn>
                           <section>
                             <Styles.FlexRow>
-                              <Wrappers.TracksFilterList id="TracksContainer">
+                              <Wrappers.TracksFilterList
+                                $chainId={chainId}
+                                id="TracksContainer"
+                              >
                                 <Styles.FlexRow
                                   role="button"
                                   onClick={() => onTrackClick(null)}
