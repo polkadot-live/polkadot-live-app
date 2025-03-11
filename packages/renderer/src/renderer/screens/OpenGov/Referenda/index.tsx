@@ -45,7 +45,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     getTrackFilter,
     refetchReferenda,
     getReferendaCount,
-    getSortedActiveReferenda,
+    getActiveReferenda,
     updateTrackFilter,
 
     activePage,
@@ -238,15 +238,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       </div>
     ) : (
       <ItemsColumn>
-        {getSortedActiveReferenda(getSubscribedReferenda()).map(
-          (referendum, i) => (
-            <ReferendumRow
-              key={`${i}_${referendum.refId}_subscribed`}
-              referendum={referendum}
-              index={i}
-            />
-          )
-        )}
+        {getActiveReferenda(getSubscribedReferenda()).map((referendum, i) => (
+          <ReferendumRow
+            key={`${i}_${referendum.refId}_subscribed`}
+            referendum={referendum}
+            index={i}
+          />
+        ))}
       </ItemsColumn>
     );
 

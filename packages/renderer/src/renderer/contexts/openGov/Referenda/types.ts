@@ -15,7 +15,7 @@ export interface ReferendaContextInterface {
     React.SetStateAction<Map<ChainID, ReferendaInfo[]>>
   >;
   setFetchingReferenda: (flag: boolean) => void;
-  getSortedActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
+  getActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
   getReferendaCount: (trackId: string | null) => number;
   getTrackFilter: () => string | null;
   updateHasFetchedReferenda: (chainId: ChainID) => void;

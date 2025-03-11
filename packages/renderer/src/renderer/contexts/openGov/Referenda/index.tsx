@@ -84,15 +84,16 @@ export const ReferendaProvider = ({
   /**
    * Pagination state for active referenda.
    */
-  const getPageCount = (directory: 'active' | 'history') => {
-    const items =
-      directory === 'active'
-        ? getSortedActiveReferenda()
-        : getHistoryReferenda();
+  const getPageCount = useCallback(
+    (directory: 'active' | 'history') => {
+      const items =
+        directory === 'active' ? getActiveReferenda() : getHistoryReferenda();
 
-    const len = items ? items.length : 1;
-    return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
-  };
+      const len = items ? items.length : 1;
+      return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
+    },
+    [referendaMap, trackFilter]
+  );
 
   // Active referenda directory.
   const [activePage, setActivePage] = useState(1);
@@ -110,16 +111,11 @@ export const ReferendaProvider = ({
 
   // Get referenda data for a specific page.
   const getReferendaPage = (page: number, directory: 'active' | 'history') => {
-    let items = [];
-    if (directory === 'active') {
-      items = getSortedActiveReferenda();
-    } else {
-      items = getHistoryReferenda();
-    }
-
     const start = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
     const end = start + PAGINATION_ITEMS_PER_PAGE;
-    return items.slice(start, end);
+    return (
+      directory === 'active' ? getActiveReferenda() : getHistoryReferenda()
+    ).slice(start, end);
   };
 
   // Get array of current pagination numbers.
@@ -189,7 +185,7 @@ export const ReferendaProvider = ({
   };
 
   // Get active referenda sorted from most-recent first.
-  const getSortedActiveReferenda = (other?: ReferendaInfo[]) => {
+  const getActiveReferenda = (other?: ReferendaInfo[]) => {
     const sortFn = (a: ReferendaInfo, b: ReferendaInfo) => b.refId - a.refId;
     const chainId = activeReferendaChainRef.current;
 
@@ -332,7 +328,7 @@ export const ReferendaProvider = ({
         receiveReferendaData,
         setReferendaMap,
         setFetchingReferenda,
-        getSortedActiveReferenda,
+        getActiveReferenda,
         updateHasFetchedReferenda,
         updateTrackFilter,
         // new
