@@ -23,7 +23,8 @@ import type {
   RefStatus,
 } from '@polkadot-live/types/openGov';
 
-const PAGINATION_ITEMS_PER_PAGE = 10;
+const PAGINATION_ACTIVE_ITEMS_PER_PAGE = 10;
+const PAGINATION_HISTORY_ITEMS_PER_PAGE = 15;
 
 export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
@@ -84,16 +85,6 @@ export const ReferendaProvider = ({
   /**
    * Pagination state for active referenda.
    */
-  const getPageCount = useCallback(
-    (directory: 'active' | 'history') => {
-      const items =
-        directory === 'active' ? getActiveReferenda() : getHistoryReferenda();
-
-      const len = items ? items.length : 1;
-      return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
-    },
-    [referendaMap, trackFilter]
-  );
 
   // Active referenda directory.
   const [activePage, setActivePage] = useState(1);
@@ -109,10 +100,31 @@ export const ReferendaProvider = ({
     ReferendaInfo[]
   >([]);
 
+  const getPageCount = useCallback(
+    (directory: 'active' | 'history') => {
+      const itemsPerPage =
+        directory === 'active'
+          ? PAGINATION_ACTIVE_ITEMS_PER_PAGE
+          : PAGINATION_HISTORY_ITEMS_PER_PAGE;
+
+      const items =
+        directory === 'active' ? getActiveReferenda() : getHistoryReferenda();
+
+      const len = items ? items.length : 1;
+      return Math.ceil(len / itemsPerPage);
+    },
+    [referendaMap, trackFilter]
+  );
+
   // Get referenda data for a specific page.
   const getReferendaPage = (page: number, directory: 'active' | 'history') => {
-    const start = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
-    const end = start + PAGINATION_ITEMS_PER_PAGE;
+    const itemsPerPage =
+      directory === 'active'
+        ? PAGINATION_ACTIVE_ITEMS_PER_PAGE
+        : PAGINATION_HISTORY_ITEMS_PER_PAGE;
+
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
     return (
       directory === 'active' ? getActiveReferenda() : getHistoryReferenda()
     ).slice(start, end);

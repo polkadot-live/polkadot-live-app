@@ -7,6 +7,7 @@ import * as Styles from '@polkadot-live/ui/styles';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
 import { LinksFooter } from '@app/Utils';
+import { HistoryRow } from './HistoryRow';
 
 import {
   ControlsWrapper,
@@ -32,7 +33,6 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { ReferendaProps } from '../types';
-import { HistoryRow } from './HistoryRow';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
