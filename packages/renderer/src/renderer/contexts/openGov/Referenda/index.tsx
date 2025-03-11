@@ -100,29 +100,25 @@ export const ReferendaProvider = ({
     ReferendaInfo[]
   >([]);
 
+  const getItemsPerPage = (directory: 'active' | 'history') =>
+    directory === 'active'
+      ? PAGINATION_ACTIVE_ITEMS_PER_PAGE
+      : PAGINATION_HISTORY_ITEMS_PER_PAGE;
+
   const getPageCount = useCallback(
     (directory: 'active' | 'history') => {
-      const itemsPerPage =
-        directory === 'active'
-          ? PAGINATION_ACTIVE_ITEMS_PER_PAGE
-          : PAGINATION_HISTORY_ITEMS_PER_PAGE;
-
       const items =
         directory === 'active' ? getActiveReferenda() : getHistoryReferenda();
 
       const len = items ? items.length : 1;
-      return Math.ceil(len / itemsPerPage);
+      return Math.ceil(len / getItemsPerPage(directory));
     },
     [referendaMap, trackFilter]
   );
 
   // Get referenda data for a specific page.
   const getReferendaPage = (page: number, directory: 'active' | 'history') => {
-    const itemsPerPage =
-      directory === 'active'
-        ? PAGINATION_ACTIVE_ITEMS_PER_PAGE
-        : PAGINATION_HISTORY_ITEMS_PER_PAGE;
-
+    const itemsPerPage = getItemsPerPage(directory);
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return (
@@ -148,6 +144,7 @@ export const ReferendaProvider = ({
     [activePage, historyPage, activePageCount, historyPageCount]
   );
 
+  // Controls the ellipsis box display.
   const showPageEllipsis = (directory: 'active' | 'history') =>
     getPageNumbers(directory).length === 5;
 
