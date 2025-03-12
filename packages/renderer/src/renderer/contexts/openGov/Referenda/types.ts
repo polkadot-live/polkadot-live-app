@@ -2,34 +2,33 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ReferendaInfo } from '@polkadot-live/types/openGov';
+import type {
+  PagedReferenda,
+  ReferendaInfo,
+} from '@polkadot-live/types/openGov';
 
 export interface ReferendaContextInterface {
+  activePagedReferenda: PagedReferenda;
   activeReferendaChainId: ChainID;
   fetchingReferenda: boolean;
+  historyPagedReferenda: PagedReferenda;
   referendaMap: Map<ChainID, ReferendaInfo[]>;
+  tabVal: 'active' | 'history';
   fetchReferendaData: (chainId: ChainID) => void;
-  refetchReferenda: () => void;
+  getActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
+  getPageNumbers: (directory: 'active' | 'history') => number[];
+  getReferendaCount: (trackId: string | null) => number;
+  getTrackFilter: () => string | null;
   receiveReferendaData: (info: ReferendaInfo[]) => Promise<void>;
+  refetchReferenda: () => void;
+  setFetchingReferenda: (flag: boolean) => void;
+  setPage: (page: number, directory: 'active' | 'history') => void;
   setReferendaMap: React.Dispatch<
     React.SetStateAction<Map<ChainID, ReferendaInfo[]>>
   >;
-  setFetchingReferenda: (flag: boolean) => void;
-  getSortedActiveReferenda: (
-    desc: boolean,
-    otherReferenda?: ReferendaInfo[]
-  ) => ReferendaInfo[];
-  getReferendaCount: (trackId: string | null) => number;
-  getTrackFilter: () => string | null;
+  setRefTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  setTabVal: React.Dispatch<React.SetStateAction<'active' | 'history'>>;
+  showPageEllipsis: (directory: 'active' | 'history') => boolean;
   updateHasFetchedReferenda: (chainId: ChainID) => void;
   updateTrackFilter: (val: string | null) => void;
-
-  // new
-  activePage: number;
-  activePageCount: number;
-  activePagedReferenda: ReferendaInfo[];
-  showPageEllipsis: () => boolean;
-  getCurPages: () => number[];
-  setActivePage: React.Dispatch<React.SetStateAction<number>>;
-  setRefTrigger: React.Dispatch<React.SetStateAction<boolean>>;
 }

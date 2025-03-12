@@ -45,7 +45,9 @@ export const ReferendumDropdownMenu = ({
   };
 
   const onMoreClick = () => {
-    openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
+    if (proposalData !== null) {
+      openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
+    }
   };
 
   return (
