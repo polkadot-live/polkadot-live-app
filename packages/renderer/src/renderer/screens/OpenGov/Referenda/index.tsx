@@ -39,28 +39,22 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
-    referendaMap,
-    fetchingReferenda,
+    activePagedReferenda,
     activeReferendaChainId: chainId,
+    fetchingReferenda,
+    historyPagedReferenda,
+    referendaMap,
+    tabVal,
+    getActiveReferenda,
+    getPageNumbers,
+    getReferendaCount,
     getTrackFilter,
     refetchReferenda,
-    getReferendaCount,
-    getActiveReferenda,
-    updateTrackFilter,
-
-    activePage,
-    activePageCount,
-    activePagedReferenda,
-    showPageEllipsis,
-    getPageNumbers,
-    setActivePage,
+    setPage,
     setRefTrigger,
-    historyPage,
-    historyPageCount,
-    historyPagedReferenda,
-    setHistoryPage,
-    tabVal,
     setTabVal,
+    showPageEllipsis,
+    updateTrackFilter,
   } = useReferenda();
 
   const { fetchingMetadata } = usePolkassembly();
@@ -72,39 +66,43 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const [onlySubscribed, setOnlySubscribed] = useState(false);
   const [showSubscribedButton] = useState(false);
 
+  const { page: activePage, pageCount: activePageCount } = activePagedReferenda;
+  const { page: historyPage, pageCount: historyPageCount } =
+    historyPagedReferenda;
+
   // Pagination.
   const onPageClick = (tab: 'active' | 'history', val: number) => {
     switch (tab) {
       case 'active': {
-        if (activePage !== val && !fetchingMetadata) {
-          setActivePage(val);
+        if (activePagedReferenda.page !== val && !fetchingMetadata) {
+          setPage(val, tab);
         }
         break;
       }
       case 'history': {
-        if (historyPage !== val && !fetchingMetadata) {
-          setHistoryPage(val);
+        if (historyPagedReferenda.page !== val && !fetchingMetadata) {
+          setPage(val, tab);
         }
         break;
       }
     }
   };
 
+  // Update page state when a pagination arrow is clicked.
   const onPageArrowClick = (
     tab: 'active' | 'history',
     dir: 'prev' | 'next'
   ) => {
     if (fetchingMetadata) {
       return;
-    } else if (dir === 'prev' && tab === 'active') {
-      setActivePage((pv) => (pv > 1 ? pv - 1 : pv));
-    } else if (dir === 'prev' && tab === 'history') {
-      setHistoryPage((pv) => (pv > 1 ? pv - 1 : pv));
-    } else if (dir === 'next' && tab === 'active') {
-      setActivePage((pv) => (pv < activePageCount ? pv + 1 : pv));
-    } else if (dir === 'next' && tab === 'history') {
-      setHistoryPage((pv) => (pv < historyPageCount ? pv + 1 : pv));
     }
+
+    const { page, pageCount } =
+      tab === 'active' ? activePagedReferenda : historyPagedReferenda;
+
+    dir === 'prev'
+      ? setPage(page > 1 ? page - 1 : page, tab)
+      : setPage(page < pageCount ? page + 1 : page, tab);
   };
 
   // Get subscribed referenda only.
@@ -172,7 +170,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       </Wrappers.PaginationRow>
 
       <ItemsColumn>
-        {activePagedReferenda.map((referendum, i) => (
+        {activePagedReferenda.referenda.map((referendum, i) => (
           <ReferendumRow
             key={`${i}_${referendum.refId}`}
             referendum={referendum}
@@ -224,7 +222,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         )}
       </Wrappers.PaginationRow>
       <ItemsColumn>
-        {historyPagedReferenda.map((referendum, i) => (
+        {historyPagedReferenda.referenda.map((referendum, i) => (
           <HistoryRow key={`${i}_${referendum.refId}`} info={referendum} />
         ))}
       </ItemsColumn>
@@ -257,7 +255,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   // Handle track click.
   const onTrackClick = (trackId: string | null) => {
     if (trackId === null || getReferendaCount(trackId) > 0) {
-      setActivePage(1);
+      setPage(1, 'active');
       setRefTrigger(true);
       updateTrackFilter(trackId);
     }

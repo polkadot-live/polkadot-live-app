@@ -6,6 +6,12 @@ export type RefPreparing = RefOngoing; // deciding: null
 export type RefConfirming = RefOngoing; // deciding.confirming = <string>
 export type RefDeciding = RefOngoing; // deciding.confirming = null;
 
+export interface PagedReferenda {
+  page: number;
+  pageCount: number;
+  referenda: ReferendaInfo[];
+}
+
 export type RefStatus =
   | 'Approved'
   | 'Cancelled'

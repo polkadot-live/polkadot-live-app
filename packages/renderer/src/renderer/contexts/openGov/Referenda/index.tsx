@@ -17,6 +17,7 @@ import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
 import type {
+  PagedReferenda,
   RefDeciding,
   ReferendaInfo,
   RefOngoing,
@@ -85,20 +86,28 @@ export const ReferendaProvider = ({
   /**
    * Pagination state for active referenda.
    */
+  const initPagedReferenda = (): PagedReferenda => ({
+    page: 1,
+    pageCount: 1,
+    referenda: [],
+  });
 
-  // Active referenda directory.
-  const [activePage, setActivePage] = useState(1);
-  const [activePageCount, setActivePageCount] = useState(1);
-  const [activePagedReferenda, setActivePagedReferenda] = useState<
-    ReferendaInfo[]
-  >([]);
+  const [activePagedReferenda, setActivePagedReferenda] =
+    useState<PagedReferenda>(initPagedReferenda);
 
-  // History referenda directory.
-  const [historyPage, setHistoryPage] = useState(1);
-  const [historyPageCount, setHistoryPageCount] = useState(1);
-  const [historyPagedReferenda, setHistoryPagedReferenda] = useState<
-    ReferendaInfo[]
-  >([]);
+  const [historyPagedReferenda, setHistoryPagedReferenda] =
+    useState<PagedReferenda>(initPagedReferenda);
+
+  const setPage = (page: number, directory: 'active' | 'history') => {
+    switch (directory) {
+      case 'active':
+        setActivePagedReferenda((pv) => ({ ...pv, page }));
+        break;
+      case 'history':
+        setHistoryPagedReferenda((pv) => ({ ...pv, page }));
+        break;
+    }
+  };
 
   const getItemsPerPage = (directory: 'active' | 'history') =>
     directory === 'active'
@@ -129,19 +138,24 @@ export const ReferendaProvider = ({
   // Get array of current pagination numbers.
   const getPageNumbers = useCallback(
     (directory: 'active' | 'history'): number[] => {
-      const cur = directory === 'active' ? activePage : historyPage;
-      const count = directory === 'active' ? activePageCount : historyPageCount;
+      const { page, pageCount } =
+        directory === 'active' ? activePagedReferenda : historyPagedReferenda;
 
-      if (count <= 4) {
-        return Array.from({ length: count }, (_, i) => i + 1);
+      if (pageCount <= 4) {
+        return Array.from({ length: pageCount }, (_, i) => i + 1);
       } else {
         const start = [1, 2];
-        const end = [count - 1, count];
-        const insert = !start.includes(cur) && !end.includes(cur);
-        return insert ? [...start, cur, ...end] : [...start, ...end];
+        const end = [pageCount - 1, pageCount];
+        const insert = !start.includes(page) && !end.includes(page);
+        return insert ? [...start, page, ...end] : [...start, ...end];
       }
     },
-    [activePage, historyPage, activePageCount, historyPageCount]
+    [
+      activePagedReferenda.page,
+      activePagedReferenda.pageCount,
+      historyPagedReferenda.page,
+      historyPagedReferenda.pageCount,
+    ]
   );
 
   // Controls the ellipsis box display.
@@ -271,17 +285,28 @@ export const ReferendaProvider = ({
     const execute = async () => {
       if (refTrigger) {
         // Active directory.
-        const pActive = getReferendaPage(activePage, 'active');
+        const pActive = getReferendaPage(activePagedReferenda.page, 'active');
         await fetchFromPolkassembly(pActive);
-        setActivePagedReferenda(pActive);
-        setActivePageCount(getPageCount('active'));
+        setActivePagedReferenda((pv) => ({
+          ...pv,
+          pageCount: getPageCount('active'),
+          referenda: pActive,
+        }));
 
         // History directory.
-        const pHistory = getReferendaPage(historyPage, 'history');
-        await fetchFromPolkassembly(pHistory);
-        setHistoryPagedReferenda(pHistory);
-        setHistoryPageCount(getPageCount('history'));
+        const pHistory = getReferendaPage(
+          historyPagedReferenda.page,
+          'history'
+        );
 
+        await fetchFromPolkassembly(pHistory);
+        setHistoryPagedReferenda((pv) => ({
+          ...pv,
+          pageCount: getPageCount('history'),
+          referenda: pHistory,
+        }));
+
+        // Cleanup.
         if (fetchingReferenda) {
           setFetchingReferenda(false);
         }
@@ -296,29 +321,29 @@ export const ReferendaProvider = ({
   // Fetch referenda for new page.
   useEffect(() => {
     const execute = async () => {
-      const page = getReferendaPage(activePage, 'active');
-      await fetchFromPolkassembly(page);
-      setActivePagedReferenda(page);
+      const referenda = getReferendaPage(activePagedReferenda.page, 'active');
+      await fetchFromPolkassembly(referenda);
+      setActivePagedReferenda((pv) => ({ ...pv, referenda }));
       setFetchingMetadata(false);
     };
     execute();
-  }, [activePage]);
+  }, [activePagedReferenda.page]);
 
   useEffect(() => {
     const execute = async () => {
-      const page = getReferendaPage(historyPage, 'history');
-      await fetchFromPolkassembly(page);
-      setHistoryPagedReferenda(page);
+      const referenda = getReferendaPage(historyPagedReferenda.page, 'history');
+      await fetchFromPolkassembly(referenda);
+      setHistoryPagedReferenda((pv) => ({ ...pv, referenda }));
       setFetchingMetadata(false);
     };
     execute();
-  }, [historyPage]);
+  }, [historyPagedReferenda.page]);
 
   // Update paged referenda when new chain selected.
   useEffect(() => {
     const execute = async () => {
-      setActivePage(1);
-      setHistoryPage(1);
+      setActivePagedReferenda((pv) => ({ ...pv, page: 1 }));
+      setHistoryPagedReferenda((pv) => ({ ...pv, page: 1 }));
       setRefTrigger(true);
     };
     execute();
@@ -327,33 +352,27 @@ export const ReferendaProvider = ({
   return (
     <ReferendaContext.Provider
       value={{
+        activePagedReferenda,
         activeReferendaChainId,
         fetchingReferenda,
+        historyPagedReferenda,
         referendaMap,
+        tabVal,
+        fetchReferendaData,
+        getActiveReferenda,
+        getPageNumbers,
         getReferendaCount,
         getTrackFilter,
-        fetchReferendaData,
-        refetchReferenda,
         receiveReferendaData,
-        setReferendaMap,
+        refetchReferenda,
         setFetchingReferenda,
-        getActiveReferenda,
+        setPage,
+        setReferendaMap,
+        setRefTrigger,
+        setTabVal,
+        showPageEllipsis,
         updateHasFetchedReferenda,
         updateTrackFilter,
-        // new
-        activePage,
-        activePageCount,
-        activePagedReferenda,
-        showPageEllipsis,
-        getPageNumbers,
-        setActivePage,
-        setRefTrigger,
-        historyPage,
-        historyPageCount,
-        historyPagedReferenda,
-        setHistoryPage,
-        tabVal,
-        setTabVal,
       }}
     >
       {children}
