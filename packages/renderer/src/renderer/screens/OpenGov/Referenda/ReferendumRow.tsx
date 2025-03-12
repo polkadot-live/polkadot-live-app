@@ -30,10 +30,7 @@ import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../DropdownMenu';
 import { RoundLeftButton, RoundRightButton } from '../DropdownMenu/Wrappers';
-import type {
-  PolkassemblyProposal,
-  RefStatus,
-} from '@polkadot-live/types/openGov';
+import type { RefStatus } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
@@ -57,6 +54,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
   const proposalData = getProposal(chainId, refId);
+  const { title } = proposalData || { title: '' };
 
   // Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -73,12 +71,6 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         }
       });
 
-  // TODO: Make util.
-  const getProposalTitle = (data: PolkassemblyProposal) => {
-    const { title } = data;
-    return title === '' ? 'No Title' : title;
-  };
-
   return (
     <ReferendumRowWrapper>
       <FlexRow>
@@ -88,7 +80,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         </div>
         {usePolkassemblyApi ? (
           <TitleWithOrigin>
-            <h4>{proposalData ? getProposalTitle(proposalData) : ''}</h4>
+            <h4>{title !== '' ? title : 'No Title'}</h4>
             <FlexRow>
               <RefStatusBadge $status={refStatus}>{refStatus}</RefStatusBadge>
               <h5 className="origin text-ellipsis">

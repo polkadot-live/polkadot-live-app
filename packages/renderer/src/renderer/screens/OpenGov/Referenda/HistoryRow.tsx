@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-//import * as themeVariables from '../../../theme/variables';
 import * as Wrappers from './Wrappers';
 import type * as OG from '@polkadot-live/types/openGov';
 
@@ -21,12 +20,7 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
   const { usePolkassemblyApi, getProposal } = usePolkassembly();
   const { activeReferendaChainId: chainId } = useReferenda();
   const proposalData = getProposal(chainId, info.refId);
-
-  // TODO: Make util.
-  const getProposalTitle = (data: OG.PolkassemblyProposal) => {
-    const { title } = data;
-    return title === '' ? 'No Title' : title;
-  };
+  const { title } = proposalData || { title: '' };
 
   return (
     <Wrappers.ReferendumRowWrapper>
@@ -48,7 +42,7 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
                 </Wrappers.RefStatusBadge>
               </div>
               <h4 style={{ width: '100%' }} className="text-ellipsis">
-                {proposalData ? getProposalTitle(proposalData) : ''}
+                {title !== '' ? title : 'No Title'}
               </h4>
               <div>
                 <ReferendumDropdownMenu
