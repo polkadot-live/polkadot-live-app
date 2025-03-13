@@ -59,6 +59,7 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   .Dialog__Description {
     color: ${({ $theme }) => $theme.textColorSecondary};
     font-size: 1.1rem;
+    line-height: 1.75rem;
   }
   .Dialog__Button {
     color: ${({ $theme }) => $theme.textColorPrimary};

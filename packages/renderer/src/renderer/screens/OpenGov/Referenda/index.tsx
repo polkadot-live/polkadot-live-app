@@ -166,7 +166,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         </button>
 
         {/* Find Active Referendum */}
-        <DialogFindReferendum title="Find Active Referendum" tab={'active'} />
+        <DialogFindReferendum
+          title="Find Active Referendum"
+          tab={'active'}
+          description={
+            'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
+          }
+        />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />
@@ -222,7 +228,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         </button>
 
         {/* Find Active Referendum */}
-        <DialogFindReferendum title="Find Referendum" tab={'history'} />
+        <DialogFindReferendum
+          title="Find Referendum"
+          tab={'history'}
+          description={
+            'Jump to a referendum by entering its ID and clicking the search button.'
+          }
+        />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />

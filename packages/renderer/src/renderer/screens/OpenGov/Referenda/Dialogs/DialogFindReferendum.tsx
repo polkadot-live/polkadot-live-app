@@ -19,6 +19,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
 export const DialogFindReferendum = ({
+  description,
   title,
   tab,
 }: DialogFindReferendumProps) => {
@@ -105,7 +106,7 @@ export const DialogFindReferendum = ({
             <FlexColumn $rowGap={'0.25rem'}>
               <Dialog.Title className="Dialog__Title">{title}</Dialog.Title>
               <Dialog.Description className="Dialog__Description">
-                Enter a referendum ID and click the search button.
+                {description}
               </Dialog.Description>
             </FlexColumn>
 
