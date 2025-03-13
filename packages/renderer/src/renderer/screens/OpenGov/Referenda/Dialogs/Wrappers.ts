@@ -52,6 +52,7 @@ export const DialogContent = styled(Dialog.Content).attrs<{
 
   .Dialog__Title {
     color: ${({ $theme }) => $theme.textColorPrimary};
+    font-size: 1.3rem;
     margin: 0;
   }
   .Dialog__Description {
@@ -69,15 +70,19 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     font-size: 1.1rem;
     font-weight: bolder;
     user-select: none;
-  }
-  .Dialog__Button:focus:not(:focus-visible) {
-    outline: 0;
-  }
-  .Dialog__Button:focus-visible {
-    // Focus visible
-  }
-  .Dialog__Button:hover {
-    filter: brightness(110%);
+
+    &:disabled {
+      color: ${({ $theme }) => $theme.textDimmed};
+      cursor: not-allowed;
+    }
+    &:focus:not(:focus-visible) {
+      outline: 0;
+    }
+    &:focus-visible {
+    }
+    &:hover:not([disabled]) {
+      filter: brightness(110%);
+    }
   }
   .Dialog__IconButton {
     color: ${({ $theme }) => $theme.textColorPrimary} !important;
@@ -122,6 +127,12 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     justify-content: center;
     border-radius: 0.375rem;
     font-size: 1.1rem;
+
+    &[type='number']::-webkit-inner-spin-button,
+    &[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
   .Dialog__Input::placeholder {
     color: ${({ $theme }) => $theme.textDimmed};

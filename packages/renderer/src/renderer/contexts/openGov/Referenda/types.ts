@@ -16,6 +16,7 @@ export interface ReferendaContextInterface {
   tabVal: 'active' | 'history';
   fetchReferendaData: (chainId: ChainID) => void;
   getActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
+  getItemsPerPage: (directory: 'active' | 'history') => number;
   getPageNumbers: (directory: 'active' | 'history') => number[];
   getReferendaCount: (trackId: string | null) => number;
   getTrackFilter: () => string | null;

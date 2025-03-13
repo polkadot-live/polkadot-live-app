@@ -360,6 +360,7 @@ export const ReferendaProvider = ({
         tabVal,
         fetchReferendaData,
         getActiveReferenda,
+        getItemsPerPage,
         getPageNumbers,
         getReferendaCount,
         getTrackFilter,
