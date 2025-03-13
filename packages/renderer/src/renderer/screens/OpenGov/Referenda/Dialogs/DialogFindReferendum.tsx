@@ -7,21 +7,26 @@ import * as themeVariables from '../../../../theme/variables';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
+import { useState } from 'react';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import { DialogContent, DialogTrigger } from './Wrappers';
-import { useState } from 'react';
-import type { AnyData } from '@polkadot-live/types/misc';
 import { renderToast } from '@polkadot-live/ui/utils';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { DialogFindReferendumProps } from './types';
 
-export const DialogFindReferendum = () => {
+export const DialogFindReferendum = ({
+  title,
+  tab,
+}: DialogFindReferendumProps) => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  const { getActiveReferenda, getItemsPerPage, setPage } = useReferenda();
+  const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
+    useReferenda();
   const { fetchingMetadata } = usePolkassembly();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -41,7 +46,7 @@ export const DialogFindReferendum = () => {
    */
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
-    if (isStrictPositiveInteger(val) || val === '') {
+    if (isStrictPositiveInteger(val) || val === '' || val === '0') {
       setInputVal(val === '' ? null : Number(val));
     }
   };
@@ -65,7 +70,8 @@ export const DialogFindReferendum = () => {
     }
 
     // Check if referendum exists and update page.
-    const referenda = getActiveReferenda();
+    const referenda =
+      tab === 'active' ? getActiveReferenda() : getHistoryReferenda();
     const index = referenda.findIndex(({ refId }) => refId === inputVal);
 
     if (index === -1) {
@@ -73,9 +79,8 @@ export const DialogFindReferendum = () => {
       return;
     }
 
-    const directory: 'active' | 'history' = 'active';
-    const pageNumber = Math.floor(index / getItemsPerPage(directory)) + 1;
-    setPage(pageNumber, directory);
+    const pageNumber = Math.floor(index / getItemsPerPage(tab)) + 1;
+    setPage(pageNumber, tab);
     setInputVal(null);
     setDialogOpen(false);
   };
@@ -98,9 +103,7 @@ export const DialogFindReferendum = () => {
           </Dialog.Close>
           <FlexColumn $rowGap={'1.5rem'}>
             <FlexColumn $rowGap={'0.25rem'}>
-              <Dialog.Title className="Dialog__Title">
-                Find Active Referendum
-              </Dialog.Title>
+              <Dialog.Title className="Dialog__Title">{title}</Dialog.Title>
               <Dialog.Description className="Dialog__Description">
                 Enter a referendum ID and click the search button.
               </Dialog.Description>

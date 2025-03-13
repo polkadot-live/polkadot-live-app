@@ -17,6 +17,7 @@ export const DialogTrigger = styled(Dialog.Trigger).attrs<{
     background-color: ${(props) => props.$theme.backgroundSurface};
     height: 100%;
     min-width: 35px;
+    min-height: 29.69px;
     display: flex;
     align-items: center;
     justify-content: center;

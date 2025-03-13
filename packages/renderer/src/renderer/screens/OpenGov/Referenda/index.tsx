@@ -165,8 +165,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
 
-        {/* Find Referendum */}
-        <DialogFindReferendum />
+        {/* Find Active Referendum */}
+        <DialogFindReferendum title="Find Active Referendum" tab={'active'} />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />
@@ -220,6 +220,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         >
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
+
+        {/* Find Active Referendum */}
+        <DialogFindReferendum title="Find Referendum" tab={'history'} />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />

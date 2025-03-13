@@ -175,6 +175,7 @@ export const PaginationRow = styled.div`
   gap: 0.75rem;
   align-items: center;
   user-select: none;
+  flex-wrap: wrap;
 
   .ellipsis {
     color: var(--text-dimmed);
