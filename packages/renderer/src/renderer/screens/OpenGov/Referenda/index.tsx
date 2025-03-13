@@ -33,6 +33,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { ReferendaProps } from '../types';
+import { DialogFindReferendum } from './Dialogs';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
@@ -163,6 +164,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         >
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
+
+        {/* Find Referendum */}
+        <DialogFindReferendum />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />

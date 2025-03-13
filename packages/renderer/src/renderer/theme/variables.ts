@@ -61,6 +61,9 @@ export const darkTheme = {
   menuTextDisabled: '#636363',
   cardShadowColor: 'rgb(28 24 28 / 25%)',
 
+  /* Dialog */
+  dialogContentBackground: 'rgb(36, 36, 36)',
+
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#afafaf',
 
@@ -115,7 +118,7 @@ export const lightThene = {
   backgroundPrimary: '#e1e1e1',
   backgroundPrimaryHover: '#dedede',
   backgroundOverlay: 'rgba(120, 120, 120, 0.5)',
-  backgroundSurfaceOverlay: 'rgba(245, 245, 245, 0.7)',
+  backgroundOverlaySurface: 'rgba(245, 245, 245, 0.7)',
   backgroundDropDown: '#eee',
 
   accentPrimary: '#ac2461',
@@ -166,6 +169,9 @@ export const lightThene = {
   menuButtonHover: '#ccc',
   menuTextDisabled: '#9c9c9c',
   cardShadowColor: '#d1d1d1',
+
+  /* Dialog */
+  dialogContentBackground: 'rgb(242, 242, 242)',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#505050',

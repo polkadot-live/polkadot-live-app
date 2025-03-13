@@ -50,6 +50,9 @@ export const TabsRoot = styled(Tabs.Root)`
   .TabsContent {
   }
   .TabsContent:focus {
+    outline: none;
+  }
+  .TabsContent:focus {
   }
 `;
 
