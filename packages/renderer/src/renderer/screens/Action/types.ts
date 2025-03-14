@@ -7,6 +7,8 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export interface ExtrinsicItemContentProps {
   info: ExtrinsicInfo;
+  setDialogInfo: React.Dispatch<React.SetStateAction<ExtrinsicInfo | null>>;
+  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface SubmitProps {

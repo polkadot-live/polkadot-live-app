@@ -1,16 +1,15 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { planckToUnit } from '@w3ux/utils';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
 import { FlexRow, ResponsiveRow } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
-import { DialogExtrinsicSummary } from './Dialogs';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
 
@@ -20,9 +19,16 @@ import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
  */
 export const ExtrinsicItemContent = ({
   info,
+  setDialogInfo,
+  setDialogOpen,
 }: ExtrinsicItemContentProps): React.ReactNode => {
   const { isBuildingExtrinsic } = useConnections();
   const { chainId, data } = info.actionMeta;
+
+  const onClickSummary = () => {
+    setDialogInfo(info);
+    setDialogOpen(true);
+  };
 
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
@@ -41,7 +47,7 @@ export const ExtrinsicItemContent = ({
         <ExtrinsicItemContentWrapper>
           <div className="WarningBox">
             <FlexRow $gap={'0.75rem'}>
-              <FontAwesomeIcon icon={faExclamationTriangle} />
+              <FontAwesomeIcon icon={FA.faExclamationTriangle} />
               <span>
                 Make sure that you confirm the send amount and recipient on your
                 signing device before signing the transaction.
@@ -55,7 +61,18 @@ export const ExtrinsicItemContent = ({
             </p>
 
             <FlexRow>
-              <DialogExtrinsicSummary info={info} />
+              <button
+                className="SummaryButton"
+                onClick={() => onClickSummary()}
+              >
+                <FlexRow $gap={'0.5rem'}>
+                  <FontAwesomeIcon
+                    icon={FA.faTableList}
+                    transform={'shrink-2'}
+                  />
+                  <span>Summary</span>
+                </FlexRow>
+              </button>
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
@@ -78,7 +95,6 @@ export const ExtrinsicItemContent = ({
             <p style={{ flex: 1 }}>Compound {fmtAmount}.</p>
 
             <FlexRow>
-              <DialogExtrinsicSummary info={info} />
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
@@ -101,7 +117,6 @@ export const ExtrinsicItemContent = ({
             <p style={{ flex: 1 }}>Claim {fmtAmount}.</p>
 
             <FlexRow>
-              <DialogExtrinsicSummary info={info} />
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}

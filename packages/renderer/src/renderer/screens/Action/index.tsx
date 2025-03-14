@@ -26,9 +26,11 @@ import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import type { TxStatus } from '@polkadot-live/types/tx';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 import { LinksFooter } from '@ren/renderer/Utils';
+import { DialogExtrinsicSummary } from './Dialogs';
+import { useState } from 'react';
 
 const TriggerRightIcon = ({
   text,
@@ -63,6 +65,9 @@ export const Action = () => {
 
   const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+
+  const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
@@ -173,6 +178,13 @@ export const Action = () => {
           style={{ margin: '2rem 0 0.25rem' }}
         />
 
+        <DialogExtrinsicSummary
+          info={dialogInfo}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          renderTrigger={false}
+        />
+
         {Array.from(extrinsics.keys()).length === 0 && (
           <EmptyExtrinsicsWrapper>
             <div>
@@ -265,7 +277,11 @@ export const Action = () => {
                     </div>
                   </FlexRow>
                   <UI.AccordionContent>
-                    <ExtrinsicItemContent info={info} />
+                    <ExtrinsicItemContent
+                      info={info}
+                      setDialogInfo={setDialogInfo}
+                      setDialogOpen={setDialogOpen}
+                    />
                   </UI.AccordionContent>
                 </Accordion.Item>
               ))}

@@ -16,6 +16,17 @@ export const ExtrinsicItemContentWrapper = styled.div`
     color: var(--accent-warning);
     padding: 0.5rem 0;
   }
+  .SummaryButton {
+    background-color: var(--button-background-primary);
+    border-radius: var(--button-border-radius-small);
+    padding: 0.6rem 1rem;
+    font-size: var(--button-font-size-small);
+    transition: background-color 0.2s ease-out;
+
+    &:hover {
+      background-color: var(--button-background-primary-hover);
+    }
+  }
 `;
 
 export const TriggerRightIconWrapper = styled.div`

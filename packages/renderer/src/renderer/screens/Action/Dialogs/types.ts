@@ -4,5 +4,8 @@
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export interface DialogExtrinsicSummaryProps {
-  info: ExtrinsicInfo;
+  info: ExtrinsicInfo | null;
+  dialogOpen?: boolean;
+  setDialogOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  renderTrigger?: boolean;
 }

@@ -11,7 +11,6 @@ import {
 } from '../../OpenGov/Referenda/Dialogs/Wrappers';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { useConnections } from '@app/contexts/common/Connections';
-import { useState } from 'react';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
@@ -25,12 +24,12 @@ import type { DialogExtrinsicSummaryProps } from './types';
 
 export const DialogExtrinsicSummary = ({
   info,
+  dialogOpen,
+  setDialogOpen,
+  renderTrigger = true,
 }: DialogExtrinsicSummaryProps) => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const { chainId } = info.actionMeta;
 
   /**
    * Utils.
@@ -54,7 +53,7 @@ export const DialogExtrinsicSummary = ({
   );
 
   const renderEstimatedFee = () => {
-    if (!info.estimatedFee) {
+    if (!info || !info.estimatedFee) {
       return (
         <span className="RightItem">
           <TooltipRx text={''} theme={theme}>
@@ -64,6 +63,7 @@ export const DialogExtrinsicSummary = ({
       );
     }
 
+    const { chainId } = info.actionMeta;
     const currency = chainCurrency(chainId);
     const bnPlanck = new BigNumber(info.estimatedFee!);
     const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
@@ -81,7 +81,11 @@ export const DialogExtrinsicSummary = ({
    * Renders specific summary information based on the extrinsic type.
    */
   const renderSummaryForTx = () => {
-    const { data } = info.actionMeta;
+    if (!info) {
+      return;
+    }
+
+    const { chainId, data } = info.actionMeta;
 
     switch (info.actionMeta.action) {
       case 'balances_transferKeepAlive': {
@@ -151,23 +155,18 @@ export const DialogExtrinsicSummary = ({
     }
   };
 
-  /**
-   * Reset state when dialog closed.
-   */
-  const handleOpenChange = (open: boolean) => {
-    setDialogOpen(open);
-  };
-
   return (
-    <Dialog.Root open={dialogOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger $theme={theme}>
-        <div className="Dialog__GenericButton">
-          <Styles.FlexRow $gap={'0.5rem'}>
-            <FontAwesomeIcon icon={faTableList} transform={'shrink-1'} />
-            <span>Summary</span>
-          </Styles.FlexRow>
-        </div>
-      </DialogTrigger>
+    <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+      {renderTrigger && (
+        <DialogTrigger $theme={theme}>
+          <div className="Dialog__GenericButton">
+            <Styles.FlexRow $gap={'0.5rem'}>
+              <FontAwesomeIcon icon={faTableList} transform={'shrink-1'} />
+              <span>Summary</span>
+            </Styles.FlexRow>
+          </div>
+        </DialogTrigger>
+      )}
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
@@ -191,7 +190,9 @@ export const DialogExtrinsicSummary = ({
               <InfoPanel $theme={theme}>
                 <div>
                   <span className="LeftItem">Network</span>
-                  <span className="RightItem">{chainId}</span>
+                  <span className="RightItem">
+                    {info ? info.actionMeta.chainId : '-'}
+                  </span>
                 </div>
               </InfoPanel>
 
@@ -199,7 +200,9 @@ export const DialogExtrinsicSummary = ({
               <InfoPanel $theme={theme}>
                 <div>
                   <span className="LeftItem">Pallet</span>
-                  <span className="RightItem">{info.actionMeta.pallet}</span>
+                  <span className="RightItem">
+                    {info ? info.actionMeta.pallet : '-'}
+                  </span>
                 </div>
               </InfoPanel>
 
@@ -207,7 +210,9 @@ export const DialogExtrinsicSummary = ({
               <InfoPanel $theme={theme}>
                 <div>
                   <span className="LeftItem">Method</span>
-                  <span className="RightItem">{info.actionMeta.method}</span>
+                  <span className="RightItem">
+                    {info ? info.actionMeta.method : '-'}
+                  </span>
                 </div>
               </InfoPanel>
 
@@ -215,15 +220,17 @@ export const DialogExtrinsicSummary = ({
               <InfoPanel $theme={theme}>
                 <div>
                   <span className="LeftItem">Sender</span>
-                  {renderAccountItem(
-                    info.actionMeta.from,
-                    info.actionMeta.accountName
-                  )}
+                  {info
+                    ? renderAccountItem(
+                        info.actionMeta.from,
+                        info.actionMeta.accountName
+                      )
+                    : '-'}
                 </div>
               </InfoPanel>
 
               {/** Transaction Specific Data */}
-              {renderSummaryForTx()}
+              {info && renderSummaryForTx()}
 
               {/** Estimated Fee */}
               <InfoPanel $theme={theme}>

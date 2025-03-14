@@ -60,6 +60,27 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   padding: 2.25rem 2rem;
   animation: dialog_contentShow 400ms cubic-bezier(0.16, 1, 0.3, 1);
 
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: ${(props) =>
+      props.$theme.dialogScrollbarTrackBackgroundColor};
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) =>
+      props.$theme.dialogScrollbarThumbBackgroundColor};
+    &:hover {
+      background-color: ${(props) =>
+        props.$theme.dialogScrollbarThumbBackgroundColorHover};
+    }
+  }
+
   &:focus {
     outline: none;
   }
