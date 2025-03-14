@@ -26,9 +26,11 @@ import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import type { TxStatus } from '@polkadot-live/types/tx';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 import { LinksFooter } from '@ren/renderer/Utils';
+import { DialogExtrinsicSummary } from './Dialogs';
+import { useEffect, useState } from 'react';
 
 const TriggerRightIcon = ({
   text,
@@ -64,6 +66,9 @@ export const Action = () => {
   const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
   // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
     switch (txStatus) {
@@ -88,6 +93,12 @@ export const Action = () => {
 
   const fadeTxIcon = (txStatus: TxStatus) =>
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
+
+  useEffect(() => {
+    if (!dialogOpen) {
+      setDialogInfo(null);
+    }
+  }, [dialogOpen]);
 
   return (
     <UI.ScrollableMax>
@@ -173,6 +184,14 @@ export const Action = () => {
           style={{ margin: '2rem 0 0.25rem' }}
         />
 
+        {/* Summary Dialog */}
+        <DialogExtrinsicSummary
+          info={dialogInfo}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          renderTrigger={false}
+        />
+
         {Array.from(extrinsics.keys()).length === 0 && (
           <EmptyExtrinsicsWrapper>
             <div>
@@ -256,6 +275,12 @@ export const Action = () => {
                     </UI.AccordionTrigger>
                     <div className="HeaderContentDropdownWrapper">
                       <ExtrinsicDropdownMenu
+                        onSummaryClick={() => {
+                          // Remove pointer events style applied by Radix-ui dropdown.
+                          document.body.style.pointerEvents = '';
+                          setDialogInfo(info);
+                          setDialogOpen(true);
+                        }}
                         isBuilt={info.estimatedFee !== undefined}
                         txStatus={info.txStatus}
                         onDelete={async () => await removeExtrinsic(info)}
@@ -265,7 +290,13 @@ export const Action = () => {
                     </div>
                   </FlexRow>
                   <UI.AccordionContent>
-                    <ExtrinsicItemContent info={info} />
+                    <ExtrinsicItemContent
+                      info={info}
+                      onClickSummary={() => {
+                        setDialogInfo(info);
+                        setDialogOpen(true);
+                      }}
+                    />
                   </UI.AccordionContent>
                 </Accordion.Item>
               ))}

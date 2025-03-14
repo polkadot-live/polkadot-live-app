@@ -9,4 +9,5 @@ export interface ExtrinsicDropdownMenuProps {
   onSign: () => void;
   onMockSign: () => void;
   onDelete: () => void;
+  onSummaryClick: () => void;
 }

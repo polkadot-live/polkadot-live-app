@@ -63,6 +63,9 @@ SPDX-License-Identifier: GPL-3.0-only */
 
   /* Dialog */
   --dialog-content-background: rgb(36, 36, 36);
+  --dialog-scrollbar-track-background-color: #121212;
+  --dialog-scrollbar-thumb-background-color: #191919;
+  --dialog-scrollbar-thumb-background-color-hover: #2a2a2a;
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #afafaf;
@@ -173,6 +176,9 @@ SPDX-License-Identifier: GPL-3.0-only */
 
   /* Dialog */
   --dialog-content-background: rgb(242, 242, 242);
+  --dialog-scrollbar-track-background-color: #d8d8d8;
+  --dialog-scrollbar-thumb-background-color: #afafaf;
+  --dialog-scrollbar-thumb-background-color-hover: #9b9b9b;
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #505050;
