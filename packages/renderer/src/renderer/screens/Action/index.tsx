@@ -30,7 +30,7 @@ import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 import { LinksFooter } from '@ren/renderer/Utils';
 import { DialogExtrinsicSummary } from './Dialogs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const TriggerRightIcon = ({
   text,
@@ -93,6 +93,12 @@ export const Action = () => {
 
   const fadeTxIcon = (txStatus: TxStatus) =>
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
+
+  useEffect(() => {
+    if (!dialogOpen) {
+      setDialogInfo(null);
+    }
+  }, [dialogOpen]);
 
   return (
     <UI.ScrollableMax>
@@ -178,6 +184,7 @@ export const Action = () => {
           style={{ margin: '2rem 0 0.25rem' }}
         />
 
+        {/* Summary Dialog */}
         <DialogExtrinsicSummary
           info={dialogInfo}
           dialogOpen={dialogOpen}
@@ -268,6 +275,12 @@ export const Action = () => {
                     </UI.AccordionTrigger>
                     <div className="HeaderContentDropdownWrapper">
                       <ExtrinsicDropdownMenu
+                        onSummaryClick={() => {
+                          // Remove pointer events style applied by Radix-ui dropdown.
+                          document.body.style.pointerEvents = '';
+                          setDialogInfo(info);
+                          setDialogOpen(true);
+                        }}
                         isBuilt={info.estimatedFee !== undefined}
                         txStatus={info.txStatus}
                         onDelete={async () => await removeExtrinsic(info)}
@@ -279,8 +292,10 @@ export const Action = () => {
                   <UI.AccordionContent>
                     <ExtrinsicItemContent
                       info={info}
-                      setDialogInfo={setDialogInfo}
-                      setDialogOpen={setDialogOpen}
+                      onClickSummary={() => {
+                        setDialogInfo(info);
+                        setDialogOpen(true);
+                      }}
                     />
                   </UI.AccordionContent>
                 </Accordion.Item>

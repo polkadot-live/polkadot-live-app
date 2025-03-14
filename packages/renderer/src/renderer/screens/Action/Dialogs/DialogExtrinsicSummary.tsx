@@ -170,7 +170,10 @@ export const DialogExtrinsicSummary = ({
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
-        <DialogContent $theme={theme}>
+        <DialogContent
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          $theme={theme}
+        >
           <Dialog.Close className="Dialog__IconButton">
             <Cross2Icon />
           </Dialog.Close>

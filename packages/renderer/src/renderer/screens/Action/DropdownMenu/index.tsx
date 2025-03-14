@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEllipsis,
   faGlobe,
+  faTableList,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -22,8 +23,8 @@ import {
   DropdownMenuSubContent,
   IconButton,
 } from './Wrappers';
-import type { ExtrinsicDropdownMenuProps } from './types';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
+import type { ExtrinsicDropdownMenuProps } from './types';
 
 /**
  * Dropdown menu component for extrinsic items.
@@ -34,6 +35,7 @@ export const ExtrinsicDropdownMenu = ({
   onSign,
   onMockSign,
   onDelete,
+  onSummaryClick,
 }: ExtrinsicDropdownMenuProps) => {
   const { showMockUI } = useTxMeta();
   const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
@@ -70,6 +72,16 @@ export const ExtrinsicDropdownMenu = ({
               <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
             </div>
             <span>Sign</span>
+          </DropdownMenu.Item>
+
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            onSelect={() => onSummaryClick()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faTableList} transform={'shrink-3'} />
+            </div>
+            <span>Summary</span>
           </DropdownMenu.Item>
 
           {showMockUI && (

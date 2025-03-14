@@ -19,16 +19,19 @@ import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
  */
 export const ExtrinsicItemContent = ({
   info,
-  setDialogInfo,
-  setDialogOpen,
+  onClickSummary,
 }: ExtrinsicItemContentProps): React.ReactNode => {
   const { isBuildingExtrinsic } = useConnections();
   const { chainId, data } = info.actionMeta;
 
-  const onClickSummary = () => {
-    setDialogInfo(info);
-    setDialogOpen(true);
-  };
+  const renderSummaryButton = () => (
+    <button className="SummaryButton" onClick={() => onClickSummary()}>
+      <FlexRow $gap={'0.5rem'}>
+        <FontAwesomeIcon icon={FA.faTableList} transform={'shrink-2'} />
+        <span>Summary</span>
+      </FlexRow>
+    </button>
+  );
 
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
@@ -61,18 +64,7 @@ export const ExtrinsicItemContent = ({
             </p>
 
             <FlexRow>
-              <button
-                className="SummaryButton"
-                onClick={() => onClickSummary()}
-              >
-                <FlexRow $gap={'0.5rem'}>
-                  <FontAwesomeIcon
-                    icon={FA.faTableList}
-                    transform={'shrink-2'}
-                  />
-                  <span>Summary</span>
-                </FlexRow>
-              </button>
+              {renderSummaryButton()}
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
@@ -95,6 +87,7 @@ export const ExtrinsicItemContent = ({
             <p style={{ flex: 1 }}>Compound {fmtAmount}.</p>
 
             <FlexRow>
+              {renderSummaryButton()}
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
@@ -117,6 +110,7 @@ export const ExtrinsicItemContent = ({
             <p style={{ flex: 1 }}>Claim {fmtAmount}.</p>
 
             <FlexRow>
+              {renderSummaryButton()}
               <Signer
                 info={info}
                 valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
