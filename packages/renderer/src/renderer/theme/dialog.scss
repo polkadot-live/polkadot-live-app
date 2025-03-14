@@ -1,0 +1,18 @@
+/* Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
+SPDX-License-Identifier: GPL-3.0-only */
+
+.Dialog__Overlay {
+  position: fixed;
+  inset: 0;
+  animation: dialog_overlayShadow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: brightness(70%) blur(4px);
+  transition: backdrop-filter 0.65s;
+}
+@keyframes dialog_overlayShadow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

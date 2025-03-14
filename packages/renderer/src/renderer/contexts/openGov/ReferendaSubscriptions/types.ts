@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export interface ReferendaSubscriptionsContextInterface {
@@ -15,16 +15,16 @@ export interface ReferendaSubscriptionsContextInterface {
   removeReferendaSubscription: (task: IntervalSubscription) => void;
   updateReferendaSubscription: (task: IntervalSubscription) => void;
   isSubscribedToTask: (
-    referendum: ActiveReferendaInfo,
+    referendum: ReferendaInfo,
     task: IntervalSubscription
   ) => boolean;
   isSubscribedToReferendum: (
     chainId: ChainID,
-    referendum: ActiveReferendaInfo
+    referendum: ReferendaInfo
   ) => boolean;
   isNotSubscribedToAny: (chainId: ChainID) => boolean;
   allSubscriptionsAdded: (
     chainId: ChainID,
-    referendum: ActiveReferendaInfo
+    referendum: ReferendaInfo
   ) => boolean;
 }

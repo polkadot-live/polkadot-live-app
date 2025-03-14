@@ -9,6 +9,8 @@ export const darkTheme = {
   backgroundPrimaryHover: '#212121',
   backgroundOverlay: 'rgb(22 18 22 / 70%)',
   backgroundOverlaySurface: 'rgba(32, 32, 32, 0.7)',
+  backgroundDropDown: '#272727',
+
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#dd9b22',
@@ -45,6 +47,7 @@ export const darkTheme = {
   textHighlight: '#f1f1f1',
   textDimmed: '#4e4e4e',
   textBright: '#ececec',
+  textActive: '#ececec',
   textColorPrimary: '#b8b3b9',
   textColorSecondary: '#938e94',
   textColorTertiary: '#c7c7c7',
@@ -57,6 +60,9 @@ export const darkTheme = {
   menuButtonHover: '#333',
   menuTextDisabled: '#636363',
   cardShadowColor: 'rgb(28 24 28 / 25%)',
+
+  /* Dialog */
+  dialogContentBackground: 'rgb(36, 36, 36)',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#afafaf',
@@ -112,7 +118,9 @@ export const lightThene = {
   backgroundPrimary: '#e1e1e1',
   backgroundPrimaryHover: '#dedede',
   backgroundOverlay: 'rgba(120, 120, 120, 0.5)',
-  backgroundSurfaceOverlay: 'rgba(245, 245, 245, 0.7)',
+  backgroundOverlaySurface: 'rgba(245, 245, 245, 0.7)',
+  backgroundDropDown: '#eee',
+
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#c3590e',
@@ -148,6 +156,7 @@ export const lightThene = {
   textHighlight: '#0e0e0e',
   textDimmed: '#a5a5a5',
   textBright: '#ececec',
+  textActive: '#0e0e0e',
   textColorPrimary: '#4a4a4a',
   textColorSecondary: '#6b6b6b',
   textColorTertiary: '#4f4f4f',
@@ -160,6 +169,9 @@ export const lightThene = {
   menuButtonHover: '#ccc',
   menuTextDisabled: '#9c9c9c',
   cardShadowColor: '#d1d1d1',
+
+  /* Dialog */
+  dialogContentBackground: 'rgb(242, 242, 242)',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#505050',

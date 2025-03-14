@@ -24,36 +24,37 @@ export const TreasuryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Active treasury chain ID.
+  // Active treasury chain ID.
   const [treasuryChainId, setTreasuryChainId] = useState<ChainID>('Polkadot');
 
-  /// Flag to determine whether treasury data is being fetched.
-  const [fetchingTreasuryData, setFetchingTreasuryData] = useState(true);
+  // Flag to determine whether treasury data is being fetched.
+  const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
 
-  /// Treasury raw public key.
+  // Treasury raw public key.
   const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
 
-  /// Treasury free balance.
+  // Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
     new BigNumber(0)
   );
 
-  /// Next burn amount.
+  // Next burn amount.
   const [treasuryNextBurn, setTreasuryNextBurn] = useState(new BigNumber(0));
 
-  /// To be awarded at the end of the spend period.
+  // To be awarded at the end of the spend period.
   const [toBeAwarded, setToBeAwarded] = useState(new BigNumber(0));
 
-  /// Spend period.
+  // Spend period.
   const [spendPeriod, setSpendPeriod] = useState(new BigNumber(0));
   const [elapsedSpendPeriod, setElapsedSpendPeriod] = useState(
     new BigNumber(0)
   );
 
-  /// Ref to indicate if data is has been fetched and cached.
+  // Ref to indicate if data is has been fetched and cached.
   const dataCachedRef = useRef(false);
 
-  /// Initialize context when OpenGov window loads.
+  // Initialize context when OpenGov window loads.
   const initTreasury = (chainId: ChainID) => {
     if (dataCachedRef.current && chainId === treasuryChainId) {
       return;
@@ -69,7 +70,7 @@ export const TreasuryProvider = ({
     });
   };
 
-  /// Re-fetch treasury stats.
+  // Re-fetch treasury stats.
   const refetchStats = () => {
     setFetchingTreasuryData(true);
 
@@ -79,7 +80,7 @@ export const TreasuryProvider = ({
     });
   };
 
-  /// Setter for treasury public key.
+  // Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
     const {
       publicKey,
@@ -100,6 +101,7 @@ export const TreasuryProvider = ({
     );
 
     setFetchingTreasuryData(false);
+    setHasFetched(true);
 
     // Update cached flag.
     dataCachedRef.current = true;
@@ -113,35 +115,47 @@ export const TreasuryProvider = ({
 
   /// Get readable free balance to render.
   const getFormattedFreeBalance = (): string => {
-    const formatted = treasuryFreeBalance
-      .dividedBy(1_000_000)
-      .decimalPlaces(2)
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (!hasFetched) {
+      return `0 ${chainCurrency(treasuryChainId)}`;
+    } else {
+      const formatted = treasuryFreeBalance
+        .dividedBy(1_000_000)
+        .decimalPlaces(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}M ${chainCurrency(treasuryChainId)}`;
+      return `${formatted}M ${chainCurrency(treasuryChainId)}`;
+    }
   };
 
   /// Get readable next burn amount to render.
   const getFormattedNextBurn = (): string => {
-    const formatted = treasuryNextBurn
-      .dividedBy(1_000)
-      .decimalPlaces(2)
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (!hasFetched) {
+      return `0 ${chainCurrency(treasuryChainId)}`;
+    } else {
+      const formatted = treasuryNextBurn
+        .dividedBy(1_000)
+        .decimalPlaces(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}K ${chainCurrency(treasuryChainId)}`;
+      return `${formatted}K ${chainCurrency(treasuryChainId)}`;
+    }
   };
 
   /// Get readable to be awarded.
   const getFormattedToBeAwarded = (): string => {
-    const formatted = toBeAwarded
-      .dividedBy(1_000_000)
-      .decimalPlaces(2)
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (!hasFetched) {
+      return `0 ${chainCurrency(treasuryChainId)}`;
+    } else {
+      const formatted = toBeAwarded
+        .dividedBy(1_000_000)
+        .decimalPlaces(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return `${formatted}M ${chainCurrency(treasuryChainId)}`;
+      return `${formatted}M ${chainCurrency(treasuryChainId)}`;
+    }
   };
 
   /// Get readable elapsed spend period.
@@ -161,12 +175,16 @@ export const TreasuryProvider = ({
 
   /// Get spend period progress as percentage.
   const getSpendPeriodProgress = (): string => {
-    const progress = elapsedSpendPeriod
-      .div(spendPeriod)
-      .multipliedBy(100)
-      .decimalPlaces(0);
+    if (!hasFetched) {
+      return '0%';
+    } else {
+      const progress = elapsedSpendPeriod
+        .div(spendPeriod)
+        .multipliedBy(100)
+        .decimalPlaces(0);
 
-    return `${progress.isNaN() ? '0' : progress.toString()}%`;
+      return `${progress.isNaN() ? '0' : progress.toString()}%`;
+    }
   };
 
   return (
@@ -176,6 +194,7 @@ export const TreasuryProvider = ({
         treasuryChainId,
         treasuryU8Pk,
         fetchingTreasuryData,
+        hasFetched,
         setFetchingTreasuryData,
         setTreasuryData,
         getTreasuryEncodedAddress,

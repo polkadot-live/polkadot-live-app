@@ -3,7 +3,11 @@
 
 import BigNumber from 'bignumber.js';
 import { Track } from '@ren/model/Track';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type {
+  RefDeciding,
+  ReferendaInfo,
+  RefStatus,
+} from '@polkadot-live/types/openGov';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -101,10 +105,20 @@ export function makeLinearCurve(length: string, floor: string, ceil: string) {
  */
 export const getMinApprovalSupport = async (
   api: ApiPromise,
-  referendumInfo: ActiveReferendaInfo,
+  referendumInfo: ReferendaInfo,
   track: Track
 ) => {
-  if (!referendumInfo.Ongoing.deciding) {
+  // Confirm referendum status is valid.
+  if (
+    !(['Deciding', 'Confirming'] as RefStatus[]).includes(
+      referendumInfo.refStatus
+    )
+  ) {
+    return null;
+  }
+
+  const info = referendumInfo.info as RefDeciding;
+  if (!info.deciding) {
     return null;
   }
 
@@ -114,7 +128,7 @@ export const getMinApprovalSupport = async (
   const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());
   const bnDecisionPeriod = new BigNumber(rmChars(String(track.decisionPeriod)));
 
-  const { since } = referendumInfo.Ongoing.deciding;
+  const { since } = info.deciding;
   const bnSince = new BigNumber(rmChars(String(since)));
   const bnElapsed = bnCurrentBlock.minus(bnSince);
 
@@ -156,8 +170,16 @@ export const getMinApprovalSupport = async (
  * @name renderOrigin
  * @summary Get referendum origin as string.
  */
-export const renderOrigin = (referendum: ActiveReferendaInfo) => {
-  const originData = referendum.Ongoing.origin;
+export const renderOrigin = (referendum: ReferendaInfo) => {
+  if (
+    !(
+      ['Queueing', 'Preparing', 'Confirming', 'Deciding'] as RefStatus[]
+    ).includes(referendum.refStatus)
+  ) {
+    return 'Unknown';
+  }
+
+  const originData = (referendum.info as RefDeciding).origin;
 
   const origin =
     'system' in originData
@@ -213,6 +235,7 @@ export const getSpacedOrigin = (origin: string) => {
 /**
  * @name getOrderedOrigins
  * @summary Get referedum origins in the desired order.
+ * @deprecated
  */
 export const getOrderedOrigins = () => [
   'Root',

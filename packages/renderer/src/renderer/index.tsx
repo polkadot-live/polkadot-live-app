@@ -15,6 +15,7 @@ import '@app/theme/accents/polkadot-relay.css';
 import './theme/theme.scss';
 import './theme/index.scss';
 import './theme/utils.scss';
+import './theme/dialog.scss';
 
 // Library styles.
 import '@polkadot-live/ui/kits/buttons/index.scss';

@@ -8,7 +8,7 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
 import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
@@ -37,12 +37,13 @@ export const useOpenGovMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
-              receiveTracksData(getTracks(ev.data.data.result));
+              const { result, chainId } = ev.data.data;
+              receiveTracksData(getTracks(result), chainId);
               break;
             }
             case 'openGov:referenda:receive': {
               const { json } = ev.data.data;
-              const parsed: ActiveReferendaInfo[] = JSON.parse(json);
+              const parsed: ReferendaInfo[] = JSON.parse(json);
               await receiveReferendaData(parsed);
               break;
             }

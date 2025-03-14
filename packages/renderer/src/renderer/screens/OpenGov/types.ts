@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { Track } from '@ren/model/Track';
-import type { ActiveReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface TracksProps {
   setSection: (section: number) => void;
@@ -17,6 +17,6 @@ export interface ReferendaProps {
 }
 
 export interface ReferendumRowProps {
-  referendum: ActiveReferendaInfo;
+  referendum: ReferendaInfo;
   index: number;
 }

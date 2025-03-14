@@ -9,6 +9,8 @@ SPDX-License-Identifier: GPL-3.0-only */
   --background-primary-hover: #212121;
   --background-overlay: rgb(22 18 22 / 70%);
   --background-overlay-surface: rgba(32, 32, 32, 0.7);
+  --background-drop-down: #272727;
+
   --accent-primary: #ac2461;
   --accent-secondary: #a94a75;
   --accent-warning: #b1832f;
@@ -45,6 +47,7 @@ SPDX-License-Identifier: GPL-3.0-only */
   --text-highlight: #f1f1f1;
   --text-dimmed: #4e4e4e;
   --text-bright: #ececec;
+  --text-active: #ececec;
   --text-color-primary: #b8b3b9;
   --text-color-secondary: #938e94;
   --text-color-tertiary: #c7c7c7;
@@ -57,6 +60,9 @@ SPDX-License-Identifier: GPL-3.0-only */
   --menu-button-hover: #333;
   --menu-text-disabled: #636363;
   --card-shadow-color: rgb(28 24 28 / 25%);
+
+  /* Dialog */
+  --dialog-content-background: rgb(36, 36, 36);
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #afafaf;
@@ -113,6 +119,8 @@ SPDX-License-Identifier: GPL-3.0-only */
   --background-primary-hover: #d8d8d8;
   --background-overlay: rgba(120, 120, 120, 0.5);
   --background-overlay-surface: rgba(245, 245, 245, 0.7);
+  --background-drop-down: #eee;
+
   --accent-primary: #ac2461;
   --accent-secondary: #a94a75;
   --accent-warning: #c3590e;
@@ -149,6 +157,7 @@ SPDX-License-Identifier: GPL-3.0-only */
   --text-highlight: #0e0e0e;
   --text-dimmed: #a5a5a5;
   --text-bright: #ececec;
+  --text-active: #0e0e0e;
   --text-color-primary: #4a4a4a;
   --text-color-secondary: #6b6b6b;
   --text-color-tertiary: #4f4f4f;
@@ -161,6 +170,9 @@ SPDX-License-Identifier: GPL-3.0-only */
   --menu-button-hover: #ccc;
   --menu-text-disabled: #9c9c9c;
   --card-shadow-color: #d1d1d1;
+
+  /* Dialog */
+  --dialog-content-background: rgb(242, 242, 242);
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #505050;

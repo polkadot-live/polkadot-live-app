@@ -1,19 +1,92 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled, { css } from 'styled-components';
+import * as Tabs from '@radix-ui/react-tabs';
+import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/ui/components';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { RefStatus } from '@polkadot-live/types/openGov';
 
-const mixinRowButton = css`
-  font-size: 1.3rem;
-  padding: 0.4rem 1rem;
-  transition: color 150ms ease-out;
-  cursor: pointer;
-`;
-
-export const TitleWithOrigin = styled.div`
+export const TabsRoot = styled(Tabs.Root)`
   display: flex;
   flex-direction: column;
+  width: 100%;
+
+  .TabsList {
+    flex-shrink: 0;
+    display: flex;
+    margin-bottom: 2px;
+  }
+  .TabsTrigger {
+    font-size: 1.1rem;
+    background-color: var(--background-surface);
+    color: var(--text-color-primary);
+    padding: 1.35rem 1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer;
+  }
+  .TabsTrigger:first-child {
+    border-top-left-radius: 0.375rem;
+    margin-right: 1px;
+  }
+  .TabsTrigger:last-child {
+    margin-left: 1px;
+    border-top-right-radius: 0.375rem;
+  }
+  .TabsTrigger:hover {
+    color: var(--text-active);
+  }
+  .TabsTrigger[data-state='active'] {
+    background-color: var(--background-primary);
+    color: var(--text-active);
+  }
+  .TabsTrigger:focus {
+    position: relative;
+  }
+  .TabsContent {
+  }
+  .TabsContent:focus {
+    outline: none;
+  }
+  .TabsContent:focus {
+  }
+`;
+
+export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
+  color: #cfcfcf;
+  font-size: 0.92rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  background-color: ${(props) => {
+    switch (props.$status) {
+      case 'Deciding':
+      case 'Queueing':
+        return '#053e94';
+      case 'Preparing':
+        return '#294a7c';
+      case 'Approved':
+      case 'Confirming':
+        return '#125715';
+      case 'Cancelled':
+      case 'Killed':
+      case 'Rejected':
+        return '#7f1515';
+      case 'TimedOut':
+        return '#3b3b3b';
+      default:
+        return '#3b3b3b';
+    }
+  }};
+`;
+
+export const TitleWithOrigin = styled.div<{ $direction?: 'row' | 'column' }>`
+  display: flex;
+  flex-direction: ${(props) =>
+    props.$direction ? props.$direction : 'column'};
   flex: 1;
   gap: 0.5rem;
   min-width: 0; // Allows address overflow
@@ -26,10 +99,9 @@ export const TitleWithOrigin = styled.div`
     text-overflow: ellipsis;
     font-size: 1.1rem !important;
   }
-  > h5 {
+  .origin {
     color: var(--text-color-secondary);
     margin: 0;
-    font-size: 1rem !important;
   }
 `;
 
@@ -98,6 +170,57 @@ export const NoteWrapper = styled.div`
   }
 `;
 
+export const PaginationRow = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  user-select: none;
+  flex-wrap: wrap;
+
+  .ellipsis {
+    color: var(--text-dimmed);
+    margin: 0 0.5rem;
+  }
+  .btn {
+    background-color: var(--background-surface);
+    border: 1px solid var(--background-surface);
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease-out;
+    min-width: 34px;
+    cursor: pointer;
+
+    &:hover:not(.disable):not(.selected):not(.fetching) {
+      background-color: var(--background-primary-hover);
+    }
+    &.selected {
+      background-color: var(--background-primary-hover);
+      color: var(--text-active);
+    }
+    &.middle {
+      border: 1px solid var(--border-subtle);
+    }
+    &.disable {
+      color: var(--text-dimmed);
+      cursor: not-allowed;
+    }
+    &.placeholder {
+      color: var(--text-dimmed);
+      width: 31.75px;
+      align-self: stretch;
+      position: relative;
+      cursor: not-allowed;
+      .icon {
+        position: absolute;
+        bottom: 2px;
+        left: 10px;
+      }
+    }
+    &.fetching {
+      cursor: not-allowed;
+    }
+  }
+`;
+
 export const ReferendumRowWrapper = styled.div`
   position: relative;
   padding: 1rem 1.25rem;
@@ -105,67 +228,12 @@ export const ReferendumRowWrapper = styled.div`
 
   /* Stats */
   .RefID {
+    min-width: 50px;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
     column-gap: 0.4rem;
     border-radius: 0.375rem;
-    margin-right: 1.5rem;
-  }
-
-  /* Buttons */
-  .LinksWrapper {
-    min-width: fit-content;
-    opacity: 0.5;
-    transition: opacity 0.2s ease-out;
-
-    .BtnMore {
-      ${mixinRowButton}
-      color: var(--text-color-secondary);
-      &:hover {
-        color: var(--text-highlight);
-      }
-    }
-    .BtnPolkassembly {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(172 80 122);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    .BtnSubsquare {
-      ${mixinRowButton}
-      opacity: 0.8;
-      color: rgb(92 129 177);
-      transition: opacity 0.15s ease-out;
-      &:hover {
-        opacity: 1;
-      }
-    }
-    @media (max-width: 550px) {
-      display: none;
-    }
-  }
-  .ControlsWrapper {
-    position: relative;
-    padding: 0.25rem 0.5rem;
-    min-width: fit-content;
-
-    // TODO: Remove when augmenting control button components.
-    .icon-wrapper {
-      background-color: var(--button-background-secondary);
-      border-color: var(--button-background-secondary);
-      padding: 0.4rem 0.6rem;
-      border: none;
-      font-size: 0.85rem;
-      transition: all 150ms ease-out;
-
-      &:hover {
-        filter: brightness(90%);
-      }
-    }
   }
 
   /* Collapsable Section */
@@ -182,11 +250,9 @@ export const ReferendumRowWrapper = styled.div`
 
       .SubscriptionGrid {
         width: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
 
         div {
+          flex: 1;
           justify-content: center;
         }
         // Keep for tweaking later.
@@ -257,9 +323,76 @@ export const ReferendumRowWrapper = styled.div`
     &:hover {
       color: var(--text-highlight);
     }
+    &.Disable {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    &.Disable:hover {
+      color: var(--text-dimmed);
+    }
 
     @media (max-width: 550px) {
       padding: 0.25rem 0.75rem !important;
+    }
+  }
+`;
+
+export const TracksFilterList = styled.div<{ $chainId?: ChainID }>`
+  background-color: var(--background-surface);
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  .container {
+    user-select: none;
+    > p {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--text-color-secondary);
+      font-weight: bolder;
+      transition: color 0.2s ease-out;
+      cursor: pointer;
+
+      &.selected {
+        color: ${(props) =>
+          props.$chainId === 'Kusama' ? '#8571b1' : 'var(--accent-secondary)'};
+        font-weight: 600;
+      }
+      &.disable {
+        cursor: not-allowed;
+      }
+    }
+    > span {
+      color: var(--text-dimmed);
+      font-size: 1rem;
+    }
+    &:hover {
+      > p:not(.selected):not(.disable) {
+        color: var(--text-color-primary);
+      }
+    }
+  }
+
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: var(--background-surface);
+    border-radius: 0.375rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-background-color);
+    &:hover {
+      background-color: var(--scrollbar-thumb-background-color-hover);
     }
   }
 `;

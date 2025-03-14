@@ -69,7 +69,13 @@ export const NavCardThin = ({
     <div>
       <div>
         <div className="thin-content">
-          <div style={{ minHeight: '26px', ...styleLogoCont }}>
+          <div
+            style={{
+              minHeight: '26px',
+              color: 'var(--text-color-secondary)',
+              ...styleLogoCont,
+            }}
+          >
             {childrenLogo}
           </div>
           <h1>{title}</h1>
