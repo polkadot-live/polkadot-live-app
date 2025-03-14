@@ -12,7 +12,6 @@ import {
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';
-import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
@@ -68,7 +67,6 @@ interface DialogExtrinsicSummaryProps {
 export const DialogExtrinsicSummary = ({
   info,
 }: DialogExtrinsicSummaryProps) => {
-  const { getCategoryTitle } = useTxMeta();
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
@@ -172,7 +170,7 @@ export const DialogExtrinsicSummary = ({
         const title =
           info.actionMeta.action === 'nominationPools_pendingRewards_bond'
             ? 'Compound Amount'
-            : 'Widthdraw Amount';
+            : 'Withdraw Amount';
 
         /** Compount Amount */
         return (
@@ -238,11 +236,19 @@ export const DialogExtrinsicSummary = ({
                 </div>
               </InfoPanel>
 
-              {/** Category */}
+              {/** Pallet */}
               <InfoPanel $theme={theme}>
                 <div>
-                  <span className="LeftItem">Category</span>
-                  <span className="RightItem">{getCategoryTitle(info)}</span>
+                  <span className="LeftItem">Pallet</span>
+                  <span className="RightItem">{info.actionMeta.pallet}</span>
+                </div>
+              </InfoPanel>
+
+              {/** Method */}
+              <InfoPanel $theme={theme}>
+                <div>
+                  <span className="LeftItem">Method</span>
+                  <span className="RightItem">{info.actionMeta.method}</span>
                 </div>
               </InfoPanel>
 
