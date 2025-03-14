@@ -15,54 +15,13 @@ import { useState } from 'react';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type {
-  ExTransferKeepAliveData,
-  ExtrinsicInfo,
-} from '@polkadot-live/types/tx';
 import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { truncateDecimalPlaces } from '../Helpers';
-
-const InfoPanel = styled.div.attrs<{
-  $theme: AnyData;
-}>((props) => ({
-  $theme: props.$theme,
-}))`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  font-size: 1rem;
-  padding: 1rem;
-  background-color: ${({ $theme }) => $theme.backgroundSurface};
-  border-radius: 0.375rem;
-
-  > div {
-    display: flex;
-    width: 100%;
-    gap: 0.5rem;
-    align-items: center;
-
-    > .LeftItem {
-      color: ${({ $theme }) => $theme.textColorPrimary};
-    }
-    > .RightItem {
-      color: ${({ $theme }) => $theme.textColorSecondary};
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      justify-content: flex-end;
-      text-align: right;
-    }
-  }
-`;
-
-interface DialogExtrinsicSummaryProps {
-  info: ExtrinsicInfo;
-}
+import { InfoPanel } from './Wrappers';
+import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import type { DialogExtrinsicSummaryProps } from './types';
 
 export const DialogExtrinsicSummary = ({
   info,
