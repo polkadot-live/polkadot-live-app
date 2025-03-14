@@ -27,6 +27,19 @@ export const DialogTrigger = styled(Dialog.Trigger).attrs<{
       background-color: ${(props) => props.$theme.backgroundPrimaryHover};
     }
   }
+
+  .Dialog__GenericButton {
+    color: ${(props) => props.$theme.textColorPrimary};
+    background-color: ${(props) => props.$theme.buttonBackgroundPrimary};
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    transition: background-color 0.2s ease-out;
+
+    &:hover {
+      background-color: ${(props) => props.$theme.buttonBackgroundPrimaryHover};
+    }
+  }
 `;
 
 export const DialogContent = styled(Dialog.Content).attrs<{
@@ -57,7 +70,8 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   }
   .Dialog__Description {
     color: ${({ $theme }) => $theme.textColorSecondary};
-    font-size: 1.1rem;
+    margin: 0;
+    font-size: 1.05rem;
     line-height: 1.75rem;
   }
   .Dialog__Button {
