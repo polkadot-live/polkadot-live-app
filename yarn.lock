@@ -4244,19 +4244,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect-discovery@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@substrate/connect-discovery@npm:0.0.6"
-  dependencies:
-    "@substrate/discovery": "npm:^0.0.1"
-  checksum: 0ddcc1846472b171344a1a4f77ef607c068d434241a484bcfad5a3e3c781777f27dba50b31b8161f8279c323904510fc76d28f556af9eb2d7a84fb4247e13834
-  languageName: node
-  linkType: hard
-
 "@substrate/connect-extension-protocol@npm:^2.0.0":
   version: 2.0.0
   resolution: "@substrate/connect-extension-protocol@npm:2.0.0"
   checksum: 14a7c96b49e686dbc710214abe0fe312a366011a3521952f2317684e2463d75d54080fe358bdd8ff8d972c9de7f0e7f508dfc5210cf694574943dd8ecc490e89
+  languageName: node
+  linkType: hard
+
+"@substrate/connect-extension-protocol@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@substrate/connect-extension-protocol@npm:2.2.2"
+  checksum: 11eb887841a40ae9eafb34fd6f6aabddf4df1cc27aa144edd9be308baa10445b8c14b7b6ccf8de05683d84449cce5cabf43c59ef782eb91e2288c2139f7f6441
   languageName: node
   linkType: hard
 
@@ -4267,10 +4265,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect-known-chains@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "@substrate/connect-known-chains@npm:1.1.6"
-  checksum: 1457106ed701d731eefe9214f4b23c23c8b60d642617c7de87b71a3fb2593b110a03c2df452ba76a40427af610d1444aeb6895fe20327ad9ee0a239310a8829a
+"@substrate/connect-known-chains@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@substrate/connect-known-chains@npm:1.9.2"
+  checksum: 730ed1420ae0cf33d7c9479cf180ca386edae72f6b9261cc8ac1381cd803142eb0b75df35ad939a4d8c7a0acb83da2840d948066c2950b201c9037f4ef75287c
   languageName: node
   linkType: hard
 
@@ -4286,23 +4284,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/connect@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@substrate/connect@npm:1.0.2"
+"@substrate/connect@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "@substrate/connect@npm:2.1.4"
   dependencies:
-    "@substrate/connect-discovery": "npm:^0.0.6"
-    "@substrate/connect-extension-protocol": "npm:^2.0.0"
-    "@substrate/connect-known-chains": "npm:^1.1.6"
-    "@substrate/smoldot-discovery": "npm:^0.0.6"
-    smoldot: "npm:2.0.29"
-  checksum: 5fe2891f75e8821a88e60e48cd907e3cc598f614056479093f7457792289f3dbafb07ed84862afb51ee60c3356ad2940b2e49b7f8381e9839f396f0aa0ee6fdc
+    "@substrate/connect-extension-protocol": "npm:^2.2.2"
+    "@substrate/connect-known-chains": "npm:^1.9.2"
+    "@substrate/smoldot-discovery": "npm:^2.0.2"
+    smoldot: "npm:^2.0.34"
+  checksum: 16bde09b13f2625b3fc12bd64fbcf851a2261144bad38b2e0c2609e5a04a6daf456cb4a20cda1c1b8549c59918b8d1a33e7b2107383f640af2b3e8f71218773a
   languageName: node
   linkType: hard
 
-"@substrate/discovery@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@substrate/discovery@npm:0.0.1"
-  checksum: c5ed807322e5dc1901c3f86aa9b1a2a1794fb845637be66ae54da306a8bf66cedfcd460c36aa424efbaaa750b526e5cc082b45facfcf4524a0828dbb82681309
+"@substrate/discovery@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@substrate/discovery@npm:0.2.2"
+  checksum: 7c1093da88742d285483231d65bd84d82f781b299791509c1c7e381aab584f8e250084db9014730a7bf1db0ed0eece90ca6e97f2ac7a681c03fcfe3e4246f809
   languageName: node
   linkType: hard
 
@@ -4323,12 +4320,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@substrate/smoldot-discovery@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@substrate/smoldot-discovery@npm:0.0.6"
+"@substrate/smoldot-discovery@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@substrate/smoldot-discovery@npm:2.0.2"
   dependencies:
-    "@substrate/discovery": "npm:^0.0.1"
-  checksum: 743f9352ec6016e54e91c1a8ea6a7b3efd8e69ac196c067890100a0584eee89acb6a847c7ca1a6545a2346b86f86e025093ec52a2e89be5ff0d48c2e26d27990
+    "@substrate/discovery": "npm:^0.2.2"
+  checksum: 178589015a76ba04550d9663eda95c693ceebb1d2204a3d89c9ab7c6288a4c85f5bbbcb9118fef769f8aa10828c2fba6ffac63b4bdf6d89335fadf63f5d92e38
   languageName: node
   linkType: hard
 
@@ -13073,7 +13070,7 @@ __metadata:
     "@radix-ui/react-tabs": "npm:^1.1.3"
     "@radix-ui/react-toggle-group": "npm:^1.1.2"
     "@radix-ui/react-tooltip": "npm:^1.1.7"
-    "@substrate/connect": "npm:^1.0.2"
+    "@substrate/connect": "npm:^2.1.4"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
@@ -14576,12 +14573,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smoldot@npm:2.0.29":
-  version: 2.0.29
-  resolution: "smoldot@npm:2.0.29"
+"smoldot@npm:^2.0.34":
+  version: 2.0.34
+  resolution: "smoldot@npm:2.0.34"
   dependencies:
     ws: "npm:^8.8.1"
-  checksum: 9b807cfd4cc35a47c646cf330edf5efa1a3296cd06d7e3fe5385764b7b4f7c4d7821274dd529a01d364880d499b0a9f835f49b30d74d78c315ecb7c6d85438a6
+  checksum: b9079a70706c54ee16d0ec0b626f6f13807b6130856c570b84ca8dd0506283110017bcc7696d08f3a15e70c9bf2d5ba8a2d7249665347185593193beb1907d1e
   languageName: node
   linkType: hard
 
