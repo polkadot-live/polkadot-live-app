@@ -47,7 +47,7 @@ export const DialogFindReferendum = ({
    */
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value;
-    if (isStrictPositiveInteger(val) || val === '' || val === '0') {
+    if (isStrictPositiveInteger(val) || val === '') {
       setInputVal(val === '' ? null : Number(val));
     }
   };

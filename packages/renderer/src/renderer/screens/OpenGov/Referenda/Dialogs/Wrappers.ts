@@ -50,7 +50,6 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   &:focus {
     outline: none;
   }
-
   .Dialog__Title {
     color: ${({ $theme }) => $theme.textColorPrimary};
     font-size: 1.3rem;
@@ -101,12 +100,12 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     right: 10px;
     transition: filter 200ms ease-out;
     cursor: pointer !important;
-  }
-  .Dialog__IconButton:hover {
-    filter: brightness(80%);
-  }
-  .Dialog__IconButton:focus {
-    // focus
+
+    &:hover {
+      filter: brightness(80%);
+    }
+    &:focus {
+    }
   }
   .Dialog__FieldSet {
     flex: 1;
@@ -130,17 +129,16 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     border-radius: 0.375rem;
     font-size: 1.1rem;
 
+    &::placeholder {
+      color: ${({ $theme }) => $theme.textDimmed};
+    }
+    &:focus {
+    }
     &[type='number']::-webkit-inner-spin-button,
     &[type='number']::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
-  }
-  .Dialog__Input::placeholder {
-    color: ${({ $theme }) => $theme.textDimmed};
-  }
-  .Dialog__Input:focus {
-    // focus
   }
 
   @keyframes dialog_contentShow {
