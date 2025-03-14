@@ -33,6 +33,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { ReferendaProps } from '../types';
+import { DialogFindReferendum } from './Dialogs';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
@@ -164,6 +165,15 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
 
+        {/* Find Active Referendum */}
+        <DialogFindReferendum
+          title="Find Active Referendum"
+          tab={'active'}
+          description={
+            'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
+          }
+        />
+
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />
         )}
@@ -216,6 +226,15 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         >
           <FontAwesomeIcon icon={faCaretRight} />
         </button>
+
+        {/* Find Active Referendum */}
+        <DialogFindReferendum
+          title="Find Referendum"
+          tab={'history'}
+          description={
+            'Jump to a referendum by entering its ID and clicking the search button.'
+          }
+        />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />

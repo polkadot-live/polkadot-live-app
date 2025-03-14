@@ -13,6 +13,8 @@ export const defaultReferendaContext: ReferendaContextInterface = {
   tabVal: 'active',
   fetchReferendaData: (c) => {},
   getActiveReferenda: (d) => [],
+  getHistoryReferenda: () => [],
+  getItemsPerPage: () => 1,
   getPageNumbers: () => [],
   getReferendaCount: () => 0,
   getTrackFilter: () => null,
