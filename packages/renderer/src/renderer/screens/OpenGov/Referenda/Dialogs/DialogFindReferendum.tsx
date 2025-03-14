@@ -110,27 +110,34 @@ export const DialogFindReferendum = ({
               </Dialog.Description>
             </FlexColumn>
 
-            <FlexRow $gap={'1rem'}>
-              <FlexRow className="Dialog__FieldSet">
-                <label className="Dialog__Label" htmlFor="refId">
-                  #
-                </label>
-                <input
-                  value={inputVal || ''}
-                  onChange={onInputChange}
-                  className="Dialog__Input"
-                  id="refId"
-                  placeholder="123"
-                />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSearchClick();
+              }}
+            >
+              <FlexRow $gap={'1rem'}>
+                <FlexRow className="Dialog__FieldSet">
+                  <label className="Dialog__Label" htmlFor="refId">
+                    #
+                  </label>
+                  <input
+                    value={inputVal || ''}
+                    onChange={onInputChange}
+                    className="Dialog__Input"
+                    id="refId"
+                    placeholder="123"
+                  />
+                </FlexRow>
+                <button
+                  type="submit"
+                  className="Dialog__Button"
+                  disabled={isInvalidNumber(inputVal) || fetchingMetadata}
+                >
+                  Search
+                </button>
               </FlexRow>
-              <button
-                className="Dialog__Button"
-                disabled={isInvalidNumber(inputVal) || fetchingMetadata}
-                onClick={() => onSearchClick()}
-              >
-                Search
-              </button>
-            </FlexRow>
+            </form>
           </FlexColumn>
         </DialogContent>
       </Dialog.Portal>
