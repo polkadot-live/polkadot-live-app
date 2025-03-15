@@ -4,6 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../theme/variables';
 
 import { ellipsisFn } from '@w3ux/utils';
@@ -15,22 +16,16 @@ import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleDot,
-  faClock,
-  faTag,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
-import type { TriggerRightIconProps } from './types';
 import { LinksFooter } from '@ren/renderer/Utils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
+import type { TriggerRightIconProps } from './types';
 
 const TriggerRightIcon = ({
   text,
@@ -226,7 +221,7 @@ export const Action = () => {
                       >
                         <div className="stat" style={{ minWidth: '80px' }}>
                           <FontAwesomeIcon
-                            icon={faCircleDot}
+                            icon={FA.faCircleDot}
                             fade={fadeTxIcon(info.txStatus)}
                             transform={'shrink-2'}
                           />
@@ -249,7 +244,7 @@ export const Action = () => {
                           <TriggerRightIcon
                             text={info.actionMeta.accountName}
                             theme={theme}
-                            icon={faUser}
+                            icon={FA.faUser}
                             iconTransform={'grow-2'}
                           />
                         </div>
@@ -257,7 +252,7 @@ export const Action = () => {
                           <TriggerRightIcon
                             text={getCategoryTitle(info)}
                             theme={theme}
-                            icon={faTag}
+                            icon={FA.faTag}
                             iconTransform={'grow-2'}
                           />
                         </div>
@@ -268,7 +263,7 @@ export const Action = () => {
                               { addSuffix: true }
                             )}
                             theme={theme}
-                            icon={faClock}
+                            icon={FA.faClock}
                           />
                         </div>
                       </FlexRow>
