@@ -5,6 +5,26 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import styled, { css } from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
+export const FilterButton = styled.button`
+  background-color: var(--background-primary);
+  color: var(--text-color-secondary);
+  border-radius: 0.375rem;
+  align-self: stretch;
+
+  .wrapper {
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    padding: 0 1.5rem;
+  }
+  &:hover {
+    color: var(--text-color-primary);
+    background-color: var(--background-primary-hover);
+  }
+`;
+
 export const IconButton = styled.span`
   display: flex;
   justify-content: center;
@@ -23,7 +43,7 @@ const dropdownMixin = css`
   background-color: var(--background-primary);
   min-width: 130px;
   border-radius: 6px;
-  padding: 5px;
+  padding: 1rem 5px 1rem 5px;
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16 1, 0.3, 1);
   will-change: transform opacity;
@@ -51,7 +71,7 @@ const dropdownMixin = css`
     position: relative;
     max-height: 25px;
     font-size: 13px;
-    padding: 1.2rem 0.75rem;
+    padding: 1.2rem 1rem 1.2rem 0.1rem;
     border-radius: 0.375rem;
     user-select: none;
     outline: none;
@@ -78,8 +98,8 @@ const dropdownMixin = css`
 
   .DropdownMenuLabel {
     color: var(--text-secondary);
-    padding-left: 25px;
-    font-size: 12px;
+    padding: 0 2px 2px 10px;
+    font-size: 1rem;
     line-height: 25px;
   }
 
@@ -102,7 +122,7 @@ const dropdownMixin = css`
     fill: var(--background-primary);
   }
   .LeftSlot {
-    padding-right: 1.25rem;
+    padding: 0 1.25rem 0 0.5rem;
     color: var(--text-secondary);
   }
   .RightSlot {

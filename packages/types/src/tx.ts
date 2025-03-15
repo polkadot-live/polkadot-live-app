@@ -12,6 +12,12 @@ export interface PagedExtrinsicItems {
   items: ExtrinsicInfo[];
 }
 
+export interface ExtFilterOption {
+  filter: TxStatus;
+  label: string;
+  selected: boolean;
+}
+
 export type TxStatus =
   | 'pending'
   | 'submitted'
@@ -19,7 +25,7 @@ export type TxStatus =
   | 'finalized'
   | 'error'
   // Used when the app was closed before extrinsic was finalized.
-  | 'submitted-unkown';
+  | 'submitted-unknown';
 
 export type TxActionUid =
   | 'nominationPools_pendingRewards_bond'

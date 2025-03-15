@@ -12,7 +12,7 @@ import {
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from './Wrappers';
-import { DropdownMenuContent } from '../../Action/DropdownMenu/Wrappers';
+import { DropdownMenuContent } from '../../Action/DropdownMenus/Wrappers';
 import { InfoOverlay } from '../Referenda/InfoOverlay';
 import type { ReferendumDropdownMenuProps } from './types';
 
