@@ -7,43 +7,13 @@ import * as themeVariables from '@ren/renderer/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useConnections } from '@app/contexts/common/Connections';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DropdownMenuContent } from './Wrappers';
-
-// TMP
-import styled from 'styled-components';
-import { CheckboxRoot } from '../../Import/Wrappers';
-import { CheckIcon } from '@radix-ui/react-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
-import { TooltipRx } from '@polkadot-live/ui/components';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
-import type { AnyData } from '@polkadot-live/types/misc';
-
-const FilterButton = styled.button`
-  background-color: var(--background-primary);
-  color: var(--text-color-secondary);
-  border-radius: 0.375rem;
-  align-self: stretch;
-
-  .wrapper {
-    display: flex;
-    align-self: stretch;
-    align-items: center;
-    height: 100%;
-    justify-content: center;
-    padding: 0 1.5rem;
-  }
-  &:hover {
-    color: var(--text-color-primary);
-    background-color: var(--background-primary-hover);
-  }
-`;
-
-interface CheckboxRxProps {
-  selected: boolean;
-  theme: AnyData;
-  onChecked: () => void;
-}
+import { TooltipRx } from '@polkadot-live/ui/components';
+import { CheckboxRoot, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { CheckIcon } from '@radix-ui/react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { DropdownMenuContent, FilterButton } from './Wrappers';
+import type { CheckboxRxProps } from './types';
 
 const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
   <CheckboxRoot

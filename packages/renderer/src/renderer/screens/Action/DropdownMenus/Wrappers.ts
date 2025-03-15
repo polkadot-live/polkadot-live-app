@@ -5,6 +5,26 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import styled, { css } from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
+export const FilterButton = styled.button`
+  background-color: var(--background-primary);
+  color: var(--text-color-secondary);
+  border-radius: 0.375rem;
+  align-self: stretch;
+
+  .wrapper {
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    padding: 0 1.5rem;
+  }
+  &:hover {
+    color: var(--text-color-primary);
+    background-color: var(--background-primary-hover);
+  }
+`;
+
 export const IconButton = styled.span`
   display: flex;
   justify-content: center;

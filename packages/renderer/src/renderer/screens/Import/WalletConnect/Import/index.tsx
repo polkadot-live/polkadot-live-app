@@ -29,11 +29,7 @@ import { useWalletConnectImport } from '@app/contexts/import/WalletConnectImport
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';
-import {
-  AddressListFooter,
-  CheckboxRoot,
-  ImportAddressRow,
-} from '../../Wrappers';
+import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
@@ -259,13 +255,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   <div className="addressInfo">
                                     <h2>{chainId}</h2>
                                   </div>
-                                  <CheckboxRoot
+                                  <Styles.CheckboxRoot
                                     $theme={theme}
                                     className="CheckboxRoot"
                                     id={`c${i}`}
                                     checked={selected}
                                     disabled={false}
-                                    onCheckedChange={(checked) =>
+                                    onCheckedChange={(
+                                      checked: Checkbox.CheckedState
+                                    ) =>
                                       setWcNetworks((prev) => {
                                         const updated = prev.map((data) =>
                                           data.chainId === chainId
@@ -285,7 +283,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                     <Checkbox.Indicator className="CheckboxIndicator">
                                       <CheckIcon />
                                     </Checkbox.Indicator>
-                                  </CheckboxRoot>
+                                  </Styles.CheckboxRoot>
                                 </ImportAddressRow>
                               )
                             )}
@@ -383,20 +381,22 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                     {isAlreadyImported(encoded) ? (
                                       <span className="imported">Imported</span>
                                     ) : (
-                                      <CheckboxRoot
+                                      <Styles.CheckboxRoot
                                         $theme={theme}
                                         className="CheckboxRoot"
                                         id={`${i + 1}-${chainId}`}
                                         checked={selected}
                                         disabled={false}
-                                        onCheckedChange={(checked) => {
+                                        onCheckedChange={(
+                                          checked: Checkbox.CheckedState
+                                        ) => {
                                           handleSelectAddress(encoded, checked);
                                         }}
                                       >
                                         <Checkbox.Indicator className="CheckboxIndicator">
                                           <CheckIcon />
                                         </Checkbox.Indicator>
-                                      </CheckboxRoot>
+                                      </Styles.CheckboxRoot>
                                     )}
                                   </div>
                                 </ImportAddressRow>
