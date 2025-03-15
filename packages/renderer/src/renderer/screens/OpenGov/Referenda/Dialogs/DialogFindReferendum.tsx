@@ -103,7 +103,7 @@ export const DialogFindReferendum = ({
             <Cross2Icon />
           </Dialog.Close>
           <FlexColumn $rowGap={'1.5rem'}>
-            <FlexColumn $rowGap={'0.25rem'}>
+            <FlexColumn $rowGap={'0.75rem'}>
               <Dialog.Title className="Dialog__Title">{title}</Dialog.Title>
               <Dialog.Description className="Dialog__Description">
                 {description}

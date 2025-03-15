@@ -63,6 +63,9 @@ export const darkTheme = {
 
   /* Dialog */
   dialogContentBackground: 'rgb(36, 36, 36)',
+  dialogScrollbarTrackBackgroundColor: '#121212',
+  dialogScrollbarThumbBackgroundColor: '#191919',
+  dialogScrollbarThumbBackgroundColorHover: '#2a2a2a',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#afafaf',
@@ -172,6 +175,9 @@ export const lightThene = {
 
   /* Dialog */
   dialogContentBackground: 'rgb(242, 242, 242)',
+  dialogScrollbarTrackBackgroundColor: '#d8d8d8',
+  dialogScrollbarThumbBackgroundColor: '#afafaf',
+  dialogScrollbarThumbBackgroundColorHover: '#9b9b9b',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#505050',

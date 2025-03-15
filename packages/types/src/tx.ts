@@ -6,6 +6,18 @@ import type { ChainID } from './chains';
 import type BigNumber from 'bignumber.js';
 import type { AccountSource } from './accounts';
 
+export interface PagedExtrinsicItems {
+  page: number;
+  pageCount: number;
+  items: ExtrinsicInfo[];
+}
+
+export interface ExtFilterOption {
+  filter: TxStatus;
+  label: string;
+  selected: boolean;
+}
+
 export type TxStatus =
   | 'pending'
   | 'submitted'
@@ -13,7 +25,7 @@ export type TxStatus =
   | 'finalized'
   | 'error'
   // Used when the app was closed before extrinsic was finalized.
-  | 'submitted-unkown';
+  | 'submitted-unknown';
 
 export type TxActionUid =
   | 'nominationPools_pendingRewards_bond'

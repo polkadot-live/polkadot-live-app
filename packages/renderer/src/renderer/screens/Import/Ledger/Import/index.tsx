@@ -38,11 +38,7 @@ import {
   faX,
 } from '@fortawesome/free-solid-svg-icons';
 import { ConnectButton } from './Wrappers';
-import {
-  AddressListFooter,
-  CheckboxRoot,
-  ImportAddressRow,
-} from '../../Wrappers';
+import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
@@ -414,13 +410,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   {isAlreadyImported(address) ? (
                                     <span className="imported">Imported</span>
                                   ) : (
-                                    <CheckboxRoot
+                                    <Styles.CheckboxRoot
                                       $theme={theme}
                                       className="CheckboxRoot"
                                       id={`c${i}`}
                                       checked={ledger.getChecked(pubKey)}
                                       disabled={ledger.isFetching}
-                                      onCheckedChange={(checked) =>
+                                      onCheckedChange={(
+                                        checked: Checkbox.CheckedState
+                                      ) =>
                                         handleCheckboxClick(
                                           checked,
                                           pubKey,
@@ -431,7 +429,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       <Checkbox.Indicator className="CheckboxIndicator">
                                         <CheckIcon />
                                       </Checkbox.Indicator>
-                                    </CheckboxRoot>
+                                    </Styles.CheckboxRoot>
                                   )}
                                 </div>
                               </ImportAddressRow>

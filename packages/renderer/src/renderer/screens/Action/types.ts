@@ -7,6 +7,7 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export interface ExtrinsicItemContentProps {
   info: ExtrinsicInfo;
+  onClickSummary: () => void;
 }
 
 export interface SubmitProps {
