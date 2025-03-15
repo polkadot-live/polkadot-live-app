@@ -1,28 +1,17 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../theme/variables';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
-import {
-  CopyButton,
-  Identicon,
-  TooltipRx,
-  TxInfoBadge,
-} from '@polkadot-live/ui/components';
-import {
-  faExclamationTriangle,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
+import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
-import { FlexRow, FlexRowWrap, ResponsiveRow } from '@polkadot-live/ui/styles';
-import { EstimatedFeeBadge, SignerBadge } from './Helpers';
-import type { ExtrinsicItemContentProps } from './types';
-import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import { FlexRow, ResponsiveRow } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
+import type { ExtrinsicItemContentProps } from './types';
+import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
 
 /**
  * @name ExtrinsicItemContent
@@ -30,17 +19,25 @@ import { ExtrinsicItemContentWrapper } from './Wrappers';
  */
 export const ExtrinsicItemContent = ({
   info,
+  onClickSummary,
 }: ExtrinsicItemContentProps): React.ReactNode => {
-  const { isBuildingExtrinsic, darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { isBuildingExtrinsic } = useConnections();
   const { chainId, data } = info.actionMeta;
+
+  const renderSummaryButton = () => (
+    <button className="SummaryButton" onClick={() => onClickSummary()}>
+      <FlexRow $gap={'0.5rem'}>
+        <FontAwesomeIcon icon={FA.faTableList} transform={'shrink-2'} />
+        <span>Summary</span>
+      </FlexRow>
+    </button>
+  );
 
   switch (info.actionMeta.action) {
     case 'balances_transferKeepAlive': {
       const {
         sendAmount: planck,
         recipientAccountName,
-        recipientAddress,
       }: ExTransferKeepAliveData = data;
 
       const units = chainUnits(chainId);
@@ -53,53 +50,26 @@ export const ExtrinsicItemContent = ({
         <ExtrinsicItemContentWrapper>
           <div className="WarningBox">
             <FlexRow $gap={'0.75rem'}>
-              <FontAwesomeIcon icon={faExclamationTriangle} />
+              <FontAwesomeIcon icon={FA.faExclamationTriangle} />
               <span>
                 Make sure that you confirm the send amount and recipient on your
                 signing device before signing the transaction.
               </span>
             </FlexRow>
           </div>
-          <p>
-            Transfer {fmtAmount} to account <b>{recipientAccountName}</b>.
-          </p>
 
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
-            <FlexRowWrap>
-              {/* Signing Account */}
-              <SignerBadge info={info} theme={theme} />
-              {/* Recipient */}
-              <TxInfoBadge icon={faUser} label={'Recipient'}>
-                <FlexRow $gap={'0.75rem'}>
-                  <TooltipRx
-                    text={ellipsisFn(recipientAddress, 12)}
-                    theme={theme}
-                  >
-                    <span>
-                      <Identicon value={recipientAddress} fontSize={'1.5rem'} />
-                    </span>
-                  </TooltipRx>
-                  <span>{recipientAccountName}</span>
-                  <span>
-                    <CopyButton
-                      iconFontSize={'0.95rem'}
-                      theme={theme}
-                      onCopyClick={async () =>
-                        await window.myAPI.copyToClipboard(recipientAddress)
-                      }
-                    />
-                  </span>
-                </FlexRow>
-              </TxInfoBadge>
-              {/* Estimated Fee */}
-              <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRowWrap>
+            <p style={{ flex: 1 }}>
+              Transfer {fmtAmount} to account <b>{recipientAccountName}</b>.
+            </p>
 
-            {/* Signer */}
-            <Signer
-              info={info}
-              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
-            />
+            <FlexRow>
+              {renderSummaryButton()}
+              <Signer
+                info={info}
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+              />
+            </FlexRow>
           </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );
@@ -113,18 +83,16 @@ export const ExtrinsicItemContent = ({
 
       return (
         <ExtrinsicItemContentWrapper>
-          <p>Compound {fmtAmount}.</p>
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
-            <FlexRowWrap>
-              <SignerBadge info={info} theme={theme} />
-              <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRowWrap>
+            <p style={{ flex: 1 }}>Compound {fmtAmount}.</p>
 
-            {/* Signer */}
-            <Signer
-              info={info}
-              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
-            />
+            <FlexRow>
+              {renderSummaryButton()}
+              <Signer
+                info={info}
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+              />
+            </FlexRow>
           </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );
@@ -138,18 +106,16 @@ export const ExtrinsicItemContent = ({
 
       return (
         <ExtrinsicItemContentWrapper>
-          <p>Claim {fmtAmount}.</p>
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
-            <FlexRowWrap>
-              <SignerBadge info={info} theme={theme} />
-              <EstimatedFeeBadge info={info} theme={theme} />
-            </FlexRowWrap>
+            <p style={{ flex: 1 }}>Claim {fmtAmount}.</p>
 
-            {/* Signer */}
-            <Signer
-              info={info}
-              valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
-            />
+            <FlexRow>
+              {renderSummaryButton()}
+              <Signer
+                info={info}
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
+              />
+            </FlexRow>
           </ResponsiveRow>
         </ExtrinsicItemContentWrapper>
       );

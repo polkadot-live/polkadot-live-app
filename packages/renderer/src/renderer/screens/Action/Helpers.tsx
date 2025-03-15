@@ -91,6 +91,7 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
 /**
  * @name SignerBadge
  * @summary Render signer badge for extrinsic item.
+ * @deprecated
  */
 export const SignerBadge = ({
   info,
@@ -123,6 +124,7 @@ export const SignerBadge = ({
 /**
  * @name EstimatedFeeBadge
  * @summary Render an estimated fee badge for extrinsic item.
+ * @deprecated
  */
 export const EstimatedFeeBadge = ({
   info,
