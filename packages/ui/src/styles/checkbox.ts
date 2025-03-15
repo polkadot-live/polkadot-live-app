@@ -18,7 +18,6 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px var(--black-a7);
   transition: background-color 0.2s ease-out;
 
   &:disabled {
@@ -28,6 +27,24 @@ export const CheckboxRoot = styled(Checkbox.Root).attrs<{
   &:hover:not(:disabled) {
     background-color: var(--background-secondary-color);
   }
+  .CheckboxIndicator {
+    color: var(--violet-11);
+  }
+`;
+
+export const CheckboxRootSimple = styled(Checkbox.Root).attrs<{
+  $theme: AnyData;
+}>((props) => ({
+  $theme: props.$theme,
+}))`
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease-out;
+
   .CheckboxIndicator {
     color: var(--violet-11);
   }
