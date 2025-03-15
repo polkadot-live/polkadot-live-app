@@ -7,6 +7,10 @@ import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../theme/variables';
 
+import {
+  DropdownExtrinsicsFilter,
+  ExtrinsicDropdownMenu,
+} from './DropdownMenus';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
@@ -16,7 +20,6 @@ import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ExtrinsicDropdownMenu } from './DropdownMenus';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -24,9 +27,9 @@ import { BarLoader } from 'react-spinners';
 import { LinksFooter } from '@ren/renderer/Utils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
+import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
-import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
 
 const TriggerRightIcon = ({
   text,
@@ -129,66 +132,75 @@ export const Action = () => {
           text={'Filter'}
           style={{ margin: '0.85rem 0 1rem 0' }}
         />
-        <Select.Root
-          value={selectedFilter}
-          defaultValue="all"
-          onValueChange={onFilterChange}
-        >
-          <UI.SelectTrigger
-            aria-label="Address Filter"
-            $theme={theme}
+
+        <FlexRow $gap={'0.5rem'}>
+          <Select.Root
             value={selectedFilter}
+            defaultValue="all"
+            onValueChange={onFilterChange}
           >
-            <Select.Value placeholder="All Accounts" />
-            <Select.Icon className="SelectIcon">
-              <ChevronDownIcon />
-            </Select.Icon>
-          </UI.SelectTrigger>
-          <Select.Portal>
-            <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
-              <Select.ScrollUpButton className="SelectScrollButton">
-                <ChevronUpIcon />
-              </Select.ScrollUpButton>
-              <Select.Viewport className="SelectViewport">
-                <Select.Group>
-                  <UI.SelectItem key={'all-extrinsics'} value={'all'}>
-                    <div className="innerRow">
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          height: '2.25rem',
-                        }}
-                      >
-                        All Accounts
-                      </div>
-                    </div>
-                  </UI.SelectItem>
-                  {getOrderedAddressInfo().map(({ accountName, address }) => (
-                    <UI.SelectItem key={address} value={address}>
+            <UI.SelectTrigger
+              aria-label="Address Filter"
+              $theme={theme}
+              value={selectedFilter}
+            >
+              <Select.Value placeholder="All Accounts" />
+              <Select.Icon className="SelectIcon">
+                <ChevronDownIcon />
+              </Select.Icon>
+            </UI.SelectTrigger>
+            <Select.Portal>
+              <UI.SelectContent $theme={theme} position="popper" sideOffset={3}>
+                <Select.ScrollUpButton className="SelectScrollButton">
+                  <ChevronUpIcon />
+                </Select.ScrollUpButton>
+                <Select.Viewport className="SelectViewport">
+                  <Select.Group>
+                    <UI.SelectItem key={'all-extrinsics'} value={'all'}>
                       <div className="innerRow">
-                        <FlexRow $gap={'1rem'}>
-                          <UI.TooltipRx
-                            theme={theme}
-                            text={ellipsisFn(address, 12)}
-                          >
-                            <span style={{ marginLeft: '1rem' }}>
-                              <UI.Identicon value={address} fontSize={'2rem'} />
-                            </span>
-                          </UI.TooltipRx>
-                          <span className="text-ellipsis">{accountName}</span>
-                        </FlexRow>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            height: '2.25rem',
+                          }}
+                        >
+                          All Accounts
+                        </div>
                       </div>
                     </UI.SelectItem>
-                  ))}
-                </Select.Group>
-              </Select.Viewport>
-              <Select.ScrollDownButton className="SelectScrollButton">
-                <ChevronDownIcon />
-              </Select.ScrollDownButton>
-            </UI.SelectContent>
-          </Select.Portal>
-        </Select.Root>
+                    {getOrderedAddressInfo().map(({ accountName, address }) => (
+                      <UI.SelectItem key={address} value={address}>
+                        <div className="innerRow">
+                          <FlexRow $gap={'1rem'}>
+                            <UI.TooltipRx
+                              theme={theme}
+                              text={ellipsisFn(address, 12)}
+                            >
+                              <span style={{ marginLeft: '1rem' }}>
+                                <UI.Identicon
+                                  value={address}
+                                  fontSize={'2rem'}
+                                />
+                              </span>
+                            </UI.TooltipRx>
+                            <span className="text-ellipsis">{accountName}</span>
+                          </FlexRow>
+                        </div>
+                      </UI.SelectItem>
+                    ))}
+                  </Select.Group>
+                </Select.Viewport>
+                <Select.ScrollDownButton className="SelectScrollButton">
+                  <ChevronDownIcon />
+                </Select.ScrollDownButton>
+              </UI.SelectContent>
+            </Select.Portal>
+          </Select.Root>
+
+          {/* Filters Dropdown */}
+          <DropdownExtrinsicsFilter />
+        </FlexRow>
 
         {/* Summary Dialog */}
         <DialogExtrinsicSummary
