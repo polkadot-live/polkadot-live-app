@@ -4,6 +4,11 @@
 import styled from 'styled-components';
 
 export const TriggerHeader = styled.h3`
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
   > span {
     color: var(--text-color-secondary);
     margin-left: 1rem;
