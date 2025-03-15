@@ -4,6 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../theme/variables';
 
 import { ellipsisFn } from '@w3ux/utils';
@@ -15,22 +16,17 @@ import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleDot,
-  faClock,
-  faTag,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons';
 import { ExtrinsicDropdownMenu } from './DropdownMenu';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
-import type { TriggerRightIconProps } from './types';
 import { LinksFooter } from '@ren/renderer/Utils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
+import type { TriggerRightIconProps } from './types';
+import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
 
 const TriggerRightIcon = ({
   text,
@@ -54,14 +50,30 @@ export const Action = () => {
   const {
     addressesInfo,
     extrinsics,
+    pagedExtrinsics,
     selectedFilter,
     getCategoryTitle,
-    getFilteredExtrinsics,
+    getPageNumbers,
     initTxDynamicInfo,
     onFilterChange,
     removeExtrinsic,
+    setPage,
     submitMockTx,
   } = useTxMeta();
+
+  const { page, pageCount, items: pageItems } = pagedExtrinsics;
+
+  const onPageClick = (val: number) => {
+    if (pagedExtrinsics.page !== val) {
+      setPage(val);
+    }
+  };
+
+  const onPageArrowClick = (dir: 'prev' | 'next') => {
+    dir === 'prev'
+      ? setPage(page > 1 ? page - 1 : page)
+      : setPage(page < pageCount ? page + 1 : page);
+  };
 
   const { isBuildingExtrinsic, darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -178,18 +190,18 @@ export const Action = () => {
           </Select.Portal>
         </Select.Root>
 
-        <UI.ActionItem
-          showIcon={false}
-          text={'Manage Extrinsics'}
-          style={{ margin: '2rem 0 0.25rem' }}
-        />
-
         {/* Summary Dialog */}
         <DialogExtrinsicSummary
           info={dialogInfo}
           dialogOpen={dialogOpen}
           setDialogOpen={setDialogOpen}
           renderTrigger={false}
+        />
+
+        <UI.ActionItem
+          showIcon={false}
+          text={'Manage Extrinsics'}
+          style={{ margin: '2rem 0 1rem' }}
         />
 
         {Array.from(extrinsics.keys()).length === 0 && (
@@ -200,14 +212,50 @@ export const Action = () => {
           </EmptyExtrinsicsWrapper>
         )}
 
-        {Array.from(extrinsics.keys()).length > 0 && (
+        {/* Pagination */}
+        {pageItems.length > 0 && (
+          <PaginationRow>
+            <button
+              className={`btn ${page === 1 && 'disable'}`}
+              disabled={page === 1}
+              onClick={() => onPageArrowClick('prev')}
+            >
+              <FontAwesomeIcon icon={FA.faCaretLeft} />
+            </button>
+            {getPageNumbers().map((i, j) => (
+              <FlexRow key={i} $row={'0.75rem'}>
+                {j === 2 && getPageNumbers().length !== 5 && pageCount > 4 && (
+                  <button className="btn placeholder">
+                    <FontAwesomeIcon className="icon" icon={FA.faEllipsis} />
+                  </button>
+                )}
+                <button
+                  onClick={() => onPageClick(i)}
+                  className={`btn ${page === i && 'selected'} ${j === 2 && getPageNumbers().length === 5 && 'middle'}`}
+                >
+                  {i}
+                </button>
+              </FlexRow>
+            ))}
+            <button
+              className={`btn ${page === pageCount && 'disable'}`}
+              disabled={page === pageCount}
+              onClick={() => onPageArrowClick('next')}
+            >
+              <FontAwesomeIcon icon={FA.faCaretRight} />
+            </button>
+          </PaginationRow>
+        )}
+
+        {/* Extrinsic Items */}
+        {pageItems.length > 0 && (
           <UI.AccordionWrapper>
             <Accordion.Root
               className="AccordionRoot"
               type="multiple"
               defaultValue={[]}
             >
-              {getFilteredExtrinsics().map((info) => (
+              {pageItems.map((info) => (
                 <Accordion.Item
                   key={info.txId}
                   className="AccordionItem"
@@ -226,7 +274,7 @@ export const Action = () => {
                       >
                         <div className="stat" style={{ minWidth: '80px' }}>
                           <FontAwesomeIcon
-                            icon={faCircleDot}
+                            icon={FA.faCircleDot}
                             fade={fadeTxIcon(info.txStatus)}
                             transform={'shrink-2'}
                           />
@@ -249,7 +297,7 @@ export const Action = () => {
                           <TriggerRightIcon
                             text={info.actionMeta.accountName}
                             theme={theme}
-                            icon={faUser}
+                            icon={FA.faUser}
                             iconTransform={'grow-2'}
                           />
                         </div>
@@ -257,7 +305,7 @@ export const Action = () => {
                           <TriggerRightIcon
                             text={getCategoryTitle(info)}
                             theme={theme}
-                            icon={faTag}
+                            icon={FA.faTag}
                             iconTransform={'grow-2'}
                           />
                         </div>
@@ -268,7 +316,7 @@ export const Action = () => {
                               { addSuffix: true }
                             )}
                             theme={theme}
-                            icon={faClock}
+                            icon={FA.faClock}
                           />
                         </div>
                       </FlexRow>

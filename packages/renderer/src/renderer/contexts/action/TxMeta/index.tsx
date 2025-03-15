@@ -20,6 +20,7 @@ import type {
   ExTransferKeepAliveData,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
+  PagedExtrinsicItems,
   TxStatus,
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
@@ -29,6 +30,8 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { generateUID } from '@ren/utils/AccountUtils';
 import { WalletConnectModal } from '@walletconnect/modal';
+
+const PAGINATION_ITEMS_PER_PAGE = 10;
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -47,6 +50,42 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const extrinsicsRef = useRef<Map<string, ExtrinsicInfo>>(extrinsics);
   const [updateCache, setUpdateCache] = useState(false);
+
+  /**
+   * Pagination state for extrinsic items.
+   */
+  const [pagedExtrinsics, setPagedExtrinsics] = useState<PagedExtrinsicItems>({
+    page: 1,
+    pageCount: 1,
+    items: [],
+  });
+
+  const getPageCount = (): number => {
+    const len = getFilteredExtrinsics().length;
+    return Math.ceil(len / PAGINATION_ITEMS_PER_PAGE);
+  };
+
+  const getExtrinsicsPage = (page: number): ExtrinsicInfo[] => {
+    const start = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
+    const end = start + PAGINATION_ITEMS_PER_PAGE;
+    return getFilteredExtrinsics().slice(start, end);
+  };
+
+  const getPageNumbers = (): number[] => {
+    const { page, pageCount } = pagedExtrinsics;
+    if (pageCount <= 4) {
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    } else {
+      const start = [1, 2];
+      const end = [pageCount - 1, pageCount];
+      const insert = !start.includes(page) && !end.includes(page);
+      return insert ? [...start, page, ...end] : [...start, ...end];
+    }
+  };
+
+  const setPage = (page: number) => {
+    setPagedExtrinsics((pv) => ({ ...pv, page }));
+  };
 
   /**
    * Minimal account info to associate extrinsics with an address.
@@ -174,6 +213,22 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       setUpdateCache(false);
     }
   }, [updateCache]);
+
+  /**
+   * Update paged extrinsics on state changes.
+   */
+  useEffect(() => {
+    const items = getExtrinsicsPage(pagedExtrinsics.page);
+    const pageCount = getPageCount();
+    setPagedExtrinsics((pv) => ({ ...pv, pageCount, items }));
+  }, [pagedExtrinsics.page, updateCache, selectedFilter]);
+
+  /**
+   * Reset active page when filter changes.
+   */
+  useEffect(() => {
+    setPage(1);
+  }, [selectedFilter]);
 
   /**
    * Initialize an extrinsic.
@@ -654,11 +709,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         addressesInfo,
         extrinsics,
+        pagedExtrinsics,
         showMockUI,
         selectedFilter,
         getCategoryTitle,
+        getExtrinsicsPage,
         getFilteredExtrinsics,
         getGenesisHash,
+        getPageCount,
+        getPageNumbers,
         getTxPayload,
         handleOpenCloseWcModal,
         importExtrinsics,
@@ -666,14 +725,15 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         initTxDynamicInfo,
         onFilterChange,
         notifyInvalidExtrinsic,
+        removeExtrinsic,
         setEstimatedFee,
+        setPage,
         setTxDynamicInfo,
         setTxSignature,
         submitMockTx,
         submitTx,
         updateAccountName,
         updateTxStatus,
-        removeExtrinsic,
       }}
     >
       {children}
