@@ -12,6 +12,12 @@ export interface PagedExtrinsicItems {
   items: ExtrinsicInfo[];
 }
 
+export interface ExtFilterOption {
+  filter: TxStatus;
+  label: string;
+  selected: boolean;
+}
+
 export type TxStatus =
   | 'pending'
   | 'submitted'

@@ -17,6 +17,7 @@ import type { TxMetaContextInterface } from './types';
 import type {
   ActionMeta,
   AddressInfo,
+  ExtFilterOption,
   ExTransferKeepAliveData,
   ExtrinsicDynamicInfo,
   ExtrinsicInfo,
@@ -32,12 +33,6 @@ import { generateUID } from '@ren/utils/AccountUtils';
 import { WalletConnectModal } from '@walletconnect/modal';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
-
-export interface ExtFilterOption {
-  filter: TxStatus;
-  label: string;
-  selected: boolean;
-}
 
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
@@ -751,9 +746,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TxMetaContext.Provider
       value={{
-        getSortedFilterOptions,
-        setFilterOption,
-
         addressesInfo,
         extrinsics,
         pagedExtrinsics,
@@ -765,6 +757,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         getGenesisHash,
         getPageCount,
         getPageNumbers,
+        getSortedFilterOptions,
         getTxPayload,
         handleOpenCloseWcModal,
         importExtrinsics,
@@ -774,6 +767,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         notifyInvalidExtrinsic,
         removeExtrinsic,
         setEstimatedFee,
+        setFilterOption,
         setPage,
         setTxDynamicInfo,
         setTxSignature,

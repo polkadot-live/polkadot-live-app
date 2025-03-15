@@ -5,9 +5,6 @@
 import type { TxMetaContextInterface } from './types';
 
 export const defaultTxMeta: TxMetaContextInterface = {
-  getSortedFilterOptions: () => [],
-  setFilterOption: () => {},
-
   addressesInfo: [],
   extrinsics: new Map(),
   pagedExtrinsics: { page: 1, pageCount: 1, items: [] },
@@ -19,6 +16,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   getGenesisHash: () => null,
   getPageCount: () => 1,
   getPageNumbers: () => [],
+  getSortedFilterOptions: () => [],
   getTxPayload: () => null,
   handleOpenCloseWcModal: () => new Promise(() => {}),
   importExtrinsics: () => {},
@@ -28,6 +26,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   notifyInvalidExtrinsic: () => {},
   removeExtrinsic: () => new Promise(() => {}),
   setEstimatedFee: () => new Promise(() => {}),
+  setFilterOption: () => {},
   setPage: () => {},
   setTxDynamicInfo: () => {},
   setTxSignature: () => {},
