@@ -33,6 +33,12 @@ import { WalletConnectModal } from '@walletconnect/modal';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
+export interface ExtFilterOption {
+  filter: TxStatus;
+  label: string;
+  selected: boolean;
+}
+
 export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
 );
@@ -50,6 +56,35 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const extrinsicsRef = useRef<Map<string, ExtrinsicInfo>>(extrinsics);
   const [updateCache, setUpdateCache] = useState(false);
+
+  /**
+   * State for filter options.
+   */
+  const [filterOptions, setFilterOptions] = useState<ExtFilterOption[]>([
+    { filter: 'pending', label: 'Pending', selected: true },
+    { filter: 'finalized', label: 'Finalized', selected: true },
+    { filter: 'in_block', label: 'In Block', selected: true },
+    { filter: 'submitted', label: 'Submitted', selected: true },
+    { filter: 'error', label: 'Error', selected: true },
+    { filter: 'submitted-unknown', label: 'Unknown', selected: true },
+  ]);
+
+  const setFilterOption = (filter: TxStatus, selected: boolean) => {
+    setFilterOptions((pv) =>
+      pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+    );
+  };
+
+  const getSortedFilterOptions = (section: 'top' | 'bottom') => {
+    const filters =
+      section === 'top'
+        ? ['error', 'finalized', 'pending']
+        : ['in_block', 'submitted', 'submitted-unknown'];
+
+    return filterOptions
+      .filter(({ filter }) => filters.includes(filter))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  };
 
   /**
    * Pagination state for extrinsic items.
@@ -164,7 +199,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       // Set status to `submitted-unknown` if app was closed before tx was finalized.
       for (const info of parsedB) {
         if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
-          info.txStatus = 'submitted-unkown';
+          info.txStatus = 'submitted-unknown';
 
           await window.myAPI.sendExtrinsicsTaskAsync({
             action: 'extrinsics:update',
@@ -221,7 +256,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     const items = getExtrinsicsPage(pagedExtrinsics.page);
     const pageCount = getPageCount();
     setPagedExtrinsics((pv) => ({ ...pv, pageCount, items }));
-  }, [pagedExtrinsics.page, updateCache, selectedFilter]);
+  }, [pagedExtrinsics.page, updateCache, selectedFilter, filterOptions]);
 
   /**
    * Reset active page when filter changes.
@@ -582,17 +617,26 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Filter extrinsics base on signer's address and sort alphabetically.
+   * Filter extrinsics based on selected account and filter options.
    */
   const getFilteredExtrinsics = () => {
     let values = Array.from(extrinsics.values());
+
+    // Apply account filter.
     if (selectedFilterRef.current !== 'all') {
       values = values.filter(
         ({ actionMeta: { from } }) => from === selectedFilterRef.current
       );
     }
 
-    return values.sort((a, b) => b.timestamp - a.timestamp);
+    // Apply selected filters.
+    const selected = filterOptions
+      .filter((f) => f.selected)
+      .map((f) => f.filter);
+
+    return values
+      .filter(({ txStatus }) => selected.includes(txStatus))
+      .sort((a, b) => b.timestamp - a.timestamp);
   };
 
   /**
@@ -707,6 +751,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <TxMetaContext.Provider
       value={{
+        getSortedFilterOptions,
+        setFilterOption,
+
         addressesInfo,
         extrinsics,
         pagedExtrinsics,

@@ -97,7 +97,7 @@ export const Action = () => {
         return 'Finalized';
       default:
         return 'Error Occured';
-      case 'submitted-unkown':
+      case 'submitted-unknown':
         return 'Submitted';
     }
   };
@@ -220,6 +220,14 @@ export const Action = () => {
           <EmptyExtrinsicsWrapper>
             <div>
               <p>No extrinsics have been added yet.</p>
+            </div>
+          </EmptyExtrinsicsWrapper>
+        )}
+
+        {Array.from(extrinsics.keys()).length > 0 && pageItems.length === 0 && (
+          <EmptyExtrinsicsWrapper>
+            <div>
+              <p>No extrinsics match the filters.</p>
             </div>
           </EmptyExtrinsicsWrapper>
         )}

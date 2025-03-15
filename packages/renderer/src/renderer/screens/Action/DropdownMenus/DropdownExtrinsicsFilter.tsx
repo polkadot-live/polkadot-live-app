@@ -6,7 +6,6 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '@ren/renderer/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
-import { useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DropdownMenuContent } from './Wrappers';
@@ -15,8 +14,9 @@ import { DropdownMenuContent } from './Wrappers';
 import styled from 'styled-components';
 import { CheckboxRoot } from '../../Import/Wrappers';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
+import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 const FilterButton = styled.button`
@@ -31,7 +31,7 @@ const FilterButton = styled.button`
     align-items: center;
     height: 100%;
     justify-content: center;
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
   }
   &:hover {
     color: var(--text-color-primary);
@@ -58,31 +58,10 @@ const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
   </CheckboxRoot>
 );
 
-interface ExtrinsicFilter {
-  label: string;
-  selected: boolean;
-}
-
 export const DropdownExtrinsicsFilter = () => {
+  const { getSortedFilterOptions, setFilterOption } = useTxMeta();
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const [checkboxState, setCheckboxState] = useState<ExtrinsicFilter[]>([
-    {
-      label: 'Finalized',
-      selected: true,
-    },
-    {
-      label: 'Pending',
-      selected: true,
-    },
-  ]);
-
-  const onToggleFilter = (label: string, selected: boolean) => {
-    setCheckboxState((pv) =>
-      pv.map((cb) => (cb.label === label ? { ...cb, selected } : cb))
-    );
-  };
 
   return (
     <DropdownMenu.Root>
@@ -104,25 +83,61 @@ export const DropdownExtrinsicsFilter = () => {
           avoidCollisions={false}
           sideOffset={5}
         >
-          {checkboxState.map(({ label, selected }, i) => (
-            <DropdownMenu.Item
-              key={`${i}-${label}`}
-              className="DropdownMenuItem"
-              onSelect={(e) => {
-                e.preventDefault();
-                onToggleFilter(label, !selected);
-              }}
-            >
-              <FlexRow>
-                <CheckboxRx
-                  selected={selected}
-                  theme={theme}
-                  onChecked={() => onToggleFilter(label, !selected)}
-                />
-                <span>{label}</span>
-              </FlexRow>
-            </DropdownMenu.Item>
-          ))}
+          <DropdownMenu.Label className="DropdownMenuLabel">
+            Status
+          </DropdownMenu.Label>
+          <FlexColumn $rowGap={'0.25rem'}>
+            {getSortedFilterOptions('top').map(
+              ({ filter, label, selected }, i) => (
+                <DropdownMenu.Item
+                  key={`${i}-${filter}`}
+                  className="DropdownMenuItem"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setFilterOption(filter, !selected);
+                  }}
+                >
+                  <FlexRow>
+                    <CheckboxRx
+                      selected={selected}
+                      theme={theme}
+                      onChecked={() => setFilterOption(filter, !selected)}
+                    />
+                    <span>{label}</span>
+                  </FlexRow>
+                </DropdownMenu.Item>
+              )
+            )}
+          </FlexColumn>
+
+          <DropdownMenu.Separator className="DropdownMenuSeparator" />
+
+          <DropdownMenu.Label className="DropdownMenuLabel">
+            In Progress
+          </DropdownMenu.Label>
+          <FlexColumn $rowGap={'0.25rem'}>
+            {getSortedFilterOptions('bottom').map(
+              ({ filter, label, selected }, i) => (
+                <DropdownMenu.Item
+                  key={`${i}-${filter}`}
+                  className="DropdownMenuItem"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setFilterOption(filter, !selected);
+                  }}
+                >
+                  <FlexRow>
+                    <CheckboxRx
+                      selected={selected}
+                      theme={theme}
+                      onChecked={() => setFilterOption(filter, !selected)}
+                    />
+                    <span>{label}</span>
+                  </FlexRow>
+                </DropdownMenu.Item>
+              )
+            )}
+          </FlexColumn>
 
           {/** Arrow */}
           <DropdownMenu.Arrow className="DropdownMenuArrow" />

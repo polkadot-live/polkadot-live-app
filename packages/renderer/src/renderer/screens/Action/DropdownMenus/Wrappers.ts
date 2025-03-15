@@ -23,7 +23,7 @@ const dropdownMixin = css`
   background-color: var(--background-primary);
   min-width: 130px;
   border-radius: 6px;
-  padding: 5px;
+  padding: 0.5rem 5px 1rem 5px;
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16 1, 0.3, 1);
   will-change: transform opacity;
@@ -51,7 +51,7 @@ const dropdownMixin = css`
     position: relative;
     max-height: 25px;
     font-size: 13px;
-    padding: 1.2rem 0.75rem;
+    padding: 1.2rem 1rem 1.2rem 0.1rem;
     border-radius: 0.375rem;
     user-select: none;
     outline: none;
@@ -78,8 +78,8 @@ const dropdownMixin = css`
 
   .DropdownMenuLabel {
     color: var(--text-secondary);
-    padding-left: 25px;
-    font-size: 12px;
+    padding: 2px 2px 2px 10px;
+    font-size: 1rem;
     line-height: 25px;
   }
 

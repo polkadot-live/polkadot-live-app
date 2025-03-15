@@ -5,6 +5,9 @@
 import type { TxMetaContextInterface } from './types';
 
 export const defaultTxMeta: TxMetaContextInterface = {
+  getSortedFilterOptions: () => [],
+  setFilterOption: () => {},
+
   addressesInfo: [],
   extrinsics: new Map(),
   pagedExtrinsics: { page: 1, pageCount: 1, items: [] },

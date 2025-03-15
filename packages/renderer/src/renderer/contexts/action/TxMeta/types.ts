@@ -10,8 +10,12 @@ import type {
   PagedExtrinsicItems,
   TxStatus,
 } from '@polkadot-live/types/tx';
+import type { ExtFilterOption } from '.';
 
 export interface TxMetaContextInterface {
+  getSortedFilterOptions: (section: 'top' | 'bottom') => ExtFilterOption[];
+  setFilterOption: (filter: TxStatus, selected: boolean) => void;
+
   addressesInfo: AddressInfo[];
   extrinsics: Map<string, ExtrinsicInfo>;
   pagedExtrinsics: PagedExtrinsicItems;
