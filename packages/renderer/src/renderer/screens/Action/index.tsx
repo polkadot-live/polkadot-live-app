@@ -263,11 +263,26 @@ export const Action = () => {
                 >
                   <FlexRow $gap={'2px'} style={{ marginTop: '10px' }}>
                     <UI.AccordionTrigger>
-                      <ChevronDownIcon
-                        className="AccordionChevron"
-                        aria-hidden
-                      />
-                      {getExtrinsicTitle(info)}
+                      <FlexRow $gap={'1.25rem'} style={{ flex: 1 }}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+
+                        <UI.TooltipRx
+                          text={ellipsisFn(info.actionMeta.from, 12)}
+                          theme={theme}
+                        >
+                          <span>
+                            <UI.Identicon
+                              value={info.actionMeta.from}
+                              fontSize={'1.5rem'}
+                            />
+                          </span>
+                        </UI.TooltipRx>
+                        {getExtrinsicTitle(info)}
+                      </FlexRow>
+
                       <FlexRow
                         $gap={'1.5rem'}
                         className="right extrinsics-right"
@@ -279,19 +294,6 @@ export const Action = () => {
                             transform={'shrink-2'}
                           />
                           {getTxStatusTitle(info.txStatus)}
-                        </div>
-                        <div className="stat">
-                          <UI.TooltipRx
-                            text={ellipsisFn(info.actionMeta.from, 12)}
-                            theme={theme}
-                          >
-                            <span>
-                              <UI.Identicon
-                                value={info.actionMeta.from}
-                                fontSize={'1.5rem'}
-                              />
-                            </span>
-                          </UI.TooltipRx>
                         </div>
                         <div className="stat">
                           <TriggerRightIcon
