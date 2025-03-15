@@ -16,7 +16,7 @@ import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ExtrinsicDropdownMenu } from './DropdownMenu';
+import { ExtrinsicDropdownMenu } from './DropdownMenus';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -126,7 +126,7 @@ export const Action = () => {
         )}
         <UI.ActionItem
           showIcon={false}
-          text={'Account Filter'}
+          text={'Filter'}
           style={{ margin: '0.85rem 0 1rem 0' }}
         />
         <Select.Root
@@ -200,7 +200,7 @@ export const Action = () => {
 
         <UI.ActionItem
           showIcon={false}
-          text={'Manage Extrinsics'}
+          text={'Extrinsics'}
           style={{ margin: '2rem 0 1rem' }}
         />
 

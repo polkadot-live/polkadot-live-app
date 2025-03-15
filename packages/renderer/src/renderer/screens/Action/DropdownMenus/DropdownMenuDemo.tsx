@@ -3,124 +3,17 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/renderer/theme/variables';
+import * as Icons from '@radix-ui/react-icons';
 
 import { useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
-import {
-  DotFilledIcon,
-  CheckIcon,
-  ChevronRightIcon,
-} from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEllipsis,
-  faGlobe,
-  faTableList,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import {
   DropdownMenuContent,
   DropdownMenuSubContent,
   IconButton,
 } from './Wrappers';
-import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
-import type { ExtrinsicDropdownMenuProps } from './types';
-
-/**
- * Dropdown menu component for extrinsic items.
- */
-export const ExtrinsicDropdownMenu = ({
-  isBuilt,
-  txStatus,
-  onSign,
-  onMockSign,
-  onDelete,
-  onSummaryClick,
-}: ExtrinsicDropdownMenuProps) => {
-  const { showMockUI } = useTxMeta();
-  const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const [open, setOpen] = useState<boolean>(false);
-
-  const disableSign = () =>
-    !getOnlineMode() ||
-    isBuildingExtrinsic ||
-    !isBuilt ||
-    txStatus !== 'pending';
-
-  return (
-    <DropdownMenu.Root open={open} onOpenChange={(val) => setOpen(val)}>
-      <DropdownMenu.Trigger asChild>
-        <IconButton aria-label="Extrinsic Actions">
-          <FontAwesomeIcon icon={faEllipsis} transform={'grow-10'} />
-        </IconButton>
-      </DropdownMenu.Trigger>
-
-      <DropdownMenu.Portal>
-        <DropdownMenuContent
-          $theme={theme}
-          align="end"
-          side="bottom"
-          avoidCollisions={false}
-          sideOffset={5}
-        >
-          <DropdownMenu.Item
-            className="DropdownMenuItem"
-            disabled={disableSign()}
-            onSelect={() => onSign()}
-          >
-            <div className="LeftSlot">
-              <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
-            </div>
-            <span>Sign</span>
-          </DropdownMenu.Item>
-
-          <DropdownMenu.Item
-            className="DropdownMenuItem"
-            onSelect={() => {
-              onSummaryClick();
-              setOpen(false);
-            }}
-          >
-            <div className="LeftSlot">
-              <FontAwesomeIcon icon={faTableList} transform={'shrink-3'} />
-            </div>
-            <span>Summary</span>
-          </DropdownMenu.Item>
-
-          {showMockUI && (
-            <DropdownMenu.Item
-              className="DropdownMenuItem"
-              disabled={disableSign()}
-              onSelect={() => onMockSign()}
-            >
-              <div className="LeftSlot">
-                <FontAwesomeIcon icon={faGlobe} transform={'shrink-3'} />
-              </div>
-              <span>Mock Sign</span>
-            </DropdownMenu.Item>
-          )}
-
-          <DropdownMenu.Separator className="DropdownMenuSeparator" />
-          <DropdownMenu.Item
-            className="DropdownMenuItem"
-            disabled={!isBuilt || isBuildingExtrinsic}
-            onSelect={() => onDelete()}
-          >
-            <div className="LeftSlot">
-              <FontAwesomeIcon icon={faTrash} transform={'shrink-3'} />
-            </div>
-            <span>Delete</span>
-          </DropdownMenu.Item>
-
-          {/** Arrow */}
-          <DropdownMenu.Arrow className="DropdownMenuArrow" />
-        </DropdownMenuContent>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
-  );
-};
 
 /**
  * Dropdown menu demo component showcasing features.
@@ -167,7 +60,7 @@ export const DropdownMenuDemo = () => {
             <DropdownMenu.SubTrigger className="DropdownMenuSubTrigger">
               More Items
               <div className="RightSlot">
-                <ChevronRightIcon />
+                <Icons.ChevronRightIcon />
               </div>
             </DropdownMenu.SubTrigger>
             <DropdownMenu.Portal>
@@ -200,7 +93,7 @@ export const DropdownMenuDemo = () => {
             onCheckedChange={setBoxOneChecked}
           >
             <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
-              <CheckIcon />
+              <Icons.CheckIcon />
             </DropdownMenu.ItemIndicator>
             Checkbox 1 <div className="RightSlot">⌘+5</div>
           </DropdownMenu.CheckboxItem>
@@ -210,7 +103,7 @@ export const DropdownMenuDemo = () => {
             onCheckedChange={setBoxTwoChecked}
           >
             <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
-              <CheckIcon />
+              <Icons.CheckIcon />
             </DropdownMenu.ItemIndicator>
             Checkbox 2
           </DropdownMenu.CheckboxItem>
@@ -227,7 +120,7 @@ export const DropdownMenuDemo = () => {
               value="radio-val-1"
             >
               <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
-                <DotFilledIcon />
+                <Icons.DotFilledIcon />
               </DropdownMenu.ItemIndicator>
               Radio Item 1
             </DropdownMenu.RadioItem>
@@ -236,7 +129,7 @@ export const DropdownMenuDemo = () => {
               value="radio-val-2"
             >
               <DropdownMenu.ItemIndicator className="DropdownMenuItemIndicator">
-                <DotFilledIcon />
+                <Icons.DotFilledIcon />
               </DropdownMenu.ItemIndicator>
               Radio Item 2
             </DropdownMenu.RadioItem>
