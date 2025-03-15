@@ -6,6 +6,12 @@ import type { ChainID } from './chains';
 import type BigNumber from 'bignumber.js';
 import type { AccountSource } from './accounts';
 
+export interface PagedExtrinsicItems {
+  page: number;
+  pageCount: number;
+  items: ExtrinsicInfo[];
+}
+
 export type TxStatus =
   | 'pending'
   | 'submitted'

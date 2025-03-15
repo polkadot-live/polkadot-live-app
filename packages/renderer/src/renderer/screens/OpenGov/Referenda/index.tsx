@@ -32,8 +32,8 @@ import { useReferendaSubscriptions } from '@app/contexts/openGov/ReferendaSubscr
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
-import type { ReferendaProps } from '../types';
 import { DialogFindReferendum } from './Dialogs';
+import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
   const { darkMode, getOnlineMode } = useConnections();
@@ -144,7 +144,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         {getPageNumbers('active').map((i, j) => (
           <Styles.FlexRow key={i} $row={'0.75rem'}>
             {j === 2 && !showPageEllipsis('active') && activePageCount > 4 && (
-              <button className={`btn placeholder`}>
+              <button className="btn placeholder">
                 <FontAwesomeIcon className="icon" icon={faEllipsis} />
               </button>
             )}
