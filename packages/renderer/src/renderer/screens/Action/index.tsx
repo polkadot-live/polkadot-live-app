@@ -276,8 +276,6 @@ export const Action = () => {
                     <div className="HeaderContentDropdownWrapper">
                       <ExtrinsicDropdownMenu
                         onSummaryClick={() => {
-                          // Remove pointer events style applied by Radix-ui dropdown.
-                          document.body.style.pointerEvents = '';
                           setDialogInfo(info);
                           setDialogOpen(true);
                         }}

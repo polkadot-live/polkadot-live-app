@@ -41,6 +41,8 @@ export const ExtrinsicDropdownMenu = ({
   const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const [open, setOpen] = useState<boolean>(false);
+
   const disableSign = () =>
     !getOnlineMode() ||
     isBuildingExtrinsic ||
@@ -48,7 +50,7 @@ export const ExtrinsicDropdownMenu = ({
     txStatus !== 'pending';
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={open} onOpenChange={(val) => setOpen(val)}>
       <DropdownMenu.Trigger asChild>
         <IconButton aria-label="Extrinsic Actions">
           <FontAwesomeIcon icon={faEllipsis} transform={'grow-10'} />
@@ -76,7 +78,10 @@ export const ExtrinsicDropdownMenu = ({
 
           <DropdownMenu.Item
             className="DropdownMenuItem"
-            onSelect={() => onSummaryClick()}
+            onSelect={() => {
+              onSummaryClick();
+              setOpen(false);
+            }}
           >
             <div className="LeftSlot">
               <FontAwesomeIcon icon={faTableList} transform={'shrink-3'} />
