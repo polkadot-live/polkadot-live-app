@@ -135,52 +135,58 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const renderListed = () => (
     <>
       <Wrappers.PaginationRow>
-        <button
-          className={`btn ${activePage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={activePage === 1}
-          onClick={() => onPageArrowClick('active', 'prev')}
-        >
-          <FontAwesomeIcon icon={faCaretLeft} />
-        </button>
-        {getPageNumbers('active').map((i, j) => (
-          <Styles.FlexRow key={i} $row={'0.75rem'}>
-            {j === 2 && !showPageEllipsis('active') && activePageCount > 4 && (
-              <button className="btn placeholder">
-                <FontAwesomeIcon className="icon" icon={faEllipsis} />
-              </button>
-            )}
-            <button
-              onClick={() => onPageClick('active', i)}
-              className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+        <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
+          <button
+            className={`btn ${activePage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
+            disabled={activePage === 1}
+            onClick={() => onPageArrowClick('active', 'prev')}
+          >
+            <FontAwesomeIcon icon={faCaretLeft} />
+          </button>
+          {getPageNumbers('active').map((i, j) => (
+            <Styles.FlexRow key={i} $row={'0.75rem'}>
+              {j === 2 &&
+                !showPageEllipsis('active') &&
+                activePageCount > 4 && (
+                  <button className="btn placeholder">
+                    <FontAwesomeIcon className="icon" icon={faEllipsis} />
+                  </button>
+                )}
+              <button
+                onClick={() => onPageClick('active', i)}
+                className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}
               ${j === 2 && getPageNumbers('active').length === 5 && 'middle'}`}
-            >
-              {i}
-            </button>
-          </Styles.FlexRow>
-        ))}
-        <button
-          className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={activePage === activePageCount}
-          onClick={() => onPageArrowClick('active', 'next')}
-        >
-          <FontAwesomeIcon icon={faCaretRight} />
-        </button>
+              >
+                {i}
+              </button>
+            </Styles.FlexRow>
+          ))}
+          <button
+            className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
+            disabled={activePage === activePageCount}
+            onClick={() => onPageArrowClick('active', 'next')}
+          >
+            <FontAwesomeIcon icon={faCaretRight} />
+          </button>
 
-        {/* Find Active Referendum */}
-        <DialogFindReferendum
-          title="Find Active Referendum"
-          tab={'active'}
-          description={
-            'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
-          }
-        />
+          {/* Loading Spinner */}
+          {fetchingMetadata && (
+            <PuffLoader size={20} color={'var(--text-color-primary)'} />
+          )}
+        </Styles.FlexRow>
+        <Styles.FlexRow $gap={'0.75rem'}>
+          {/* Find Active Referendum */}
+          <DialogFindReferendum
+            title="Find Active Referendum"
+            tab={'active'}
+            description={
+              'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
+            }
+          />
 
-        {/* Filter Referenda */}
-        <DropdownReferendaFilter />
-
-        {fetchingMetadata && (
-          <PuffLoader size={20} color={'var(--text-color-primary)'} />
-        )}
+          {/* Filter Referenda */}
+          <DropdownReferendaFilter />
+        </Styles.FlexRow>
       </Wrappers.PaginationRow>
 
       <ItemsColumn>

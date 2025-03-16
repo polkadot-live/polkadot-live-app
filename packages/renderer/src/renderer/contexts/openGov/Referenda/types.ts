@@ -18,16 +18,20 @@ export interface ReferendaContextInterface {
   tabVal: 'active' | 'history';
   fetchReferendaData: (chainId: ChainID) => void;
   getActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
-  setFilterOption: (filter: RefStatus, selected: boolean) => void;
   getHistoryReferenda: () => ReferendaInfo[];
   getItemsPerPage: (directory: 'active' | 'history') => number;
   getPageNumbers: (directory: 'active' | 'history') => number[];
   getReferendaCount: (trackId: string | null) => number;
-  getSortedFilterOptions: (target: 'all' | 'active') => RefFilterOption[];
+  getSortedFilterOptions: (tab: 'active' | 'history') => RefFilterOption[];
   getTrackFilter: () => string | null;
   receiveReferendaData: (info: ReferendaInfo[]) => Promise<void>;
   refetchReferenda: () => void;
   setFetchingReferenda: (flag: boolean) => void;
+  setFilterOption: (
+    tab: 'active' | 'history',
+    filter: RefStatus,
+    selected: boolean
+  ) => void;
   setPage: (page: number, directory: 'active' | 'history') => void;
   setReferendaMap: React.Dispatch<
     React.SetStateAction<Map<ChainID, ReferendaInfo[]>>

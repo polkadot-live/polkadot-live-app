@@ -8,6 +8,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
+import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckIcon } from '@radix-ui/react-icons';
@@ -30,10 +31,10 @@ const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
 );
 
 export const DropdownReferendaFilter = () => {
+  const { getSortedFilterOptions, setFilterOption } = useReferenda();
+  const { fetchingMetadata } = usePolkassembly();
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-
-  const { getSortedFilterOptions, setFilterOption } = useReferenda();
 
   return (
     <DropdownMenu.Root>
@@ -64,16 +65,23 @@ export const DropdownReferendaFilter = () => {
                 <DropdownMenu.Item
                   key={`${i}-${filter}`}
                   className="DropdownMenuItem"
+                  disabled={fetchingMetadata}
                   onSelect={(e) => {
-                    e.preventDefault();
-                    setFilterOption(filter, !selected);
+                    if (!fetchingMetadata) {
+                      e.preventDefault();
+                      setFilterOption('active', filter, !selected);
+                    }
                   }}
                 >
                   <Styles.FlexRow>
                     <CheckboxRx
                       selected={selected}
                       theme={theme}
-                      onChecked={() => setFilterOption(filter, !selected)}
+                      onChecked={() => {
+                        if (!fetchingMetadata) {
+                          setFilterOption('active', filter, !selected);
+                        }
+                      }}
                     />
                     <span>{label}</span>
                   </Styles.FlexRow>

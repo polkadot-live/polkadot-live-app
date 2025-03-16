@@ -85,30 +85,72 @@ export const ReferendaProvider = ({
     val: string | null;
   }>({ trigger: false, val: null });
 
-  // Status filter state.
-  const [statusFilters, setStatusFilters] = useState<RefFilterOption[]>([
-    { filter: 'Approved', label: 'Approved', selected: true },
-    { filter: 'Cancelled', label: 'Cancelled', selected: true },
-    { filter: 'Confirming', label: 'Confirming', selected: true },
-    { filter: 'Deciding', label: 'Deciding', selected: true },
-    { filter: 'Queueing', label: 'Queueing', selected: true },
-    { filter: 'Killed', label: 'Killed', selected: true },
-    { filter: 'Preparing', label: 'Preparing', selected: true },
-    { filter: 'Rejected', label: 'Rejected', selected: true },
-    { filter: 'TimedOut', label: 'Timed Out', selected: true },
-  ]);
+  const initStatusFilters = (tab: 'active' | 'history'): RefFilterOption[] => {
+    const ongoing: RefFilterOption[] = [
+      { filter: 'Confirming', label: 'Confirming', selected: true },
+      { filter: 'Deciding', label: 'Deciding', selected: true },
+      { filter: 'Preparing', label: 'Preparing', selected: true },
+      { filter: 'Queueing', label: 'Queueing', selected: true },
+    ];
 
-  const setFilterOption = (filter: RefStatus, selected: boolean) => {
-    setStatusFilters((pv) =>
-      pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
-    );
+    return tab === 'active'
+      ? ongoing
+      : ongoing.concat([
+          { filter: 'Approved', label: 'Approved', selected: true },
+          { filter: 'Cancelled', label: 'Cancelled', selected: true },
+          { filter: 'Killed', label: 'Killed', selected: true },
+          { filter: 'Rejected', label: 'Rejected', selected: true },
+          { filter: 'TimedOut', label: 'Timed Out', selected: true },
+        ]);
   };
 
-  const getSortedFilterOptions = (target: 'all' | 'active') => {
-    const all = target === 'all';
-    return statusFilters
-      .filter(({ filter }) => (all ? true : ongoingStatuses.includes(filter)))
-      .sort((a, b) => a.label.localeCompare(b.label));
+  // Active referenda status filters.
+  const [statusFilters, setStatusFilters] = useState<RefFilterOption[]>(
+    initStatusFilters('active')
+  );
+
+  // History referenda status filters.
+  const [historyStatusFilters, setHistoryStatusFilters] = useState<
+    RefFilterOption[]
+  >(initStatusFilters('history'));
+
+  const setFilterOption = (
+    tab: 'active' | 'history',
+    filter: RefStatus,
+    selected: boolean
+  ) => {
+    setPage(1, tab);
+
+    switch (tab) {
+      case 'active': {
+        setStatusFilters((pv) =>
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+        );
+        break;
+      }
+      case 'history': {
+        setHistoryStatusFilters((pv) =>
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+        );
+        break;
+      }
+    }
+  };
+
+  const getSortedFilterOptions = (tab: 'active' | 'history') => {
+    const sortFn = (a: RefFilterOption, b: RefFilterOption) =>
+      a.label.localeCompare(b.label);
+
+    switch (tab) {
+      case 'active': {
+        return statusFilters
+          .filter(({ filter }) => ongoingStatuses.includes(filter))
+          .sort(sortFn);
+      }
+      case 'history': {
+        return historyStatusFilters.sort(sortFn);
+      }
+    }
   };
 
   /**
@@ -150,7 +192,7 @@ export const ReferendaProvider = ({
       const len = items ? items.length : 1;
       return Math.ceil(len / getItemsPerPage(directory));
     },
-    [referendaMap, trackFilter]
+    [referendaMap, trackFilter, statusFilters]
   );
 
   // Get referenda data for a specific page.
@@ -240,8 +282,8 @@ export const ReferendaProvider = ({
     const sortFn = (a: ReferendaInfo, b: ReferendaInfo) => b.refId - a.refId;
     const chainId = activeReferendaChainRef.current;
 
-    // Filter active referenda on status and selected track.
-    const filterFn = (ref: ReferendaInfo) => {
+    // Filter active referenda based on selected track.
+    const fnA = (ref: ReferendaInfo) => {
       if (!ongoingStatuses.includes(ref.refStatus)) {
         return false;
       }
@@ -250,9 +292,15 @@ export const ReferendaProvider = ({
       return curTrack === null ? true : track === curTrack;
     };
 
+    // Filter any unselected status in the filter dropdown.
+    const selected = statusFilters
+      .filter((f) => f.selected)
+      .map((f) => f.filter);
+    const fnB = (ref: ReferendaInfo) => selected.includes(ref.refStatus);
+
     return other
-      ? other.filter(filterFn).sort(sortFn)
-      : referendaMap.get(chainId)?.filter(filterFn).sort(sortFn) || [];
+      ? other.filter(fnA).filter(fnB).sort(sortFn)
+      : referendaMap.get(chainId)?.filter(fnA).filter(fnB).sort(sortFn) || [];
   };
 
   // Get fully sorted historical referenda.
@@ -345,6 +393,11 @@ export const ReferendaProvider = ({
     };
     execute();
   }, [refTrigger]);
+
+  // Trigger referenda pages when status filters change.
+  useEffect(() => {
+    setRefTrigger(true);
+  }, [statusFilters]);
 
   // Fetch referenda for new page.
   useEffect(() => {
