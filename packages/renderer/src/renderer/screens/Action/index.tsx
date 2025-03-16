@@ -130,7 +130,7 @@ export const Action = () => {
         <UI.ActionItem
           showIcon={false}
           text={'Filter'}
-          style={{ margin: '0.85rem 0 1rem 0' }}
+          style={{ marginBottom: '1rem' }}
         />
 
         <FlexRow $gap={'0.5rem'}>
