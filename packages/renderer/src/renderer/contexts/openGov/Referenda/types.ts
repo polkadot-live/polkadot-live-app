@@ -5,6 +5,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PagedReferenda,
   ReferendaInfo,
+  RefFilterOption,
+  RefStatus,
 } from '@polkadot-live/types/openGov';
 
 export interface ReferendaContextInterface {
@@ -16,10 +18,12 @@ export interface ReferendaContextInterface {
   tabVal: 'active' | 'history';
   fetchReferendaData: (chainId: ChainID) => void;
   getActiveReferenda: (other?: ReferendaInfo[]) => ReferendaInfo[];
+  setFilterOption: (filter: RefStatus, selected: boolean) => void;
   getHistoryReferenda: () => ReferendaInfo[];
   getItemsPerPage: (directory: 'active' | 'history') => number;
   getPageNumbers: (directory: 'active' | 'history') => number[];
   getReferendaCount: (trackId: string | null) => number;
+  getSortedFilterOptions: (target: 'all' | 'active') => RefFilterOption[];
   getTrackFilter: () => string | null;
   receiveReferendaData: (info: ReferendaInfo[]) => Promise<void>;
   refetchReferenda: () => void;

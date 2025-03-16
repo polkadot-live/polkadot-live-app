@@ -12,6 +12,12 @@ export interface PagedReferenda {
   referenda: ReferendaInfo[];
 }
 
+export interface RefFilterOption {
+  filter: RefStatus;
+  label: string;
+  selected: boolean;
+}
+
 export type RefStatus =
   | 'Approved'
   | 'Cancelled'

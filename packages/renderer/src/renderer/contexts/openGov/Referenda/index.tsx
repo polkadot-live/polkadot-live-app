@@ -20,6 +20,7 @@ import type {
   PagedReferenda,
   RefDeciding,
   ReferendaInfo,
+  RefFilterOption,
   RefOngoing,
   RefStatus,
 } from '@polkadot-live/types/openGov';
@@ -52,6 +53,7 @@ export const ReferendaProvider = ({
     new Map<ChainID, ReferendaInfo[]>()
   );
 
+  // The current rendered tab.
   const [tabVal, setTabVal] = useState<'active' | 'history'>('active');
 
   // Chain ID for currently rendered referenda.
@@ -82,6 +84,32 @@ export const ReferendaProvider = ({
     trigger: boolean;
     val: string | null;
   }>({ trigger: false, val: null });
+
+  // Status filter state.
+  const [statusFilters, setStatusFilters] = useState<RefFilterOption[]>([
+    { filter: 'Approved', label: 'Approved', selected: true },
+    { filter: 'Cancelled', label: 'Cancelled', selected: true },
+    { filter: 'Confirming', label: 'Confirming', selected: true },
+    { filter: 'Deciding', label: 'Deciding', selected: true },
+    { filter: 'Queueing', label: 'Queueing', selected: true },
+    { filter: 'Killed', label: 'Killed', selected: true },
+    { filter: 'Preparing', label: 'Preparing', selected: true },
+    { filter: 'Rejected', label: 'Rejected', selected: true },
+    { filter: 'TimedOut', label: 'Timed Out', selected: true },
+  ]);
+
+  const setFilterOption = (filter: RefStatus, selected: boolean) => {
+    setStatusFilters((pv) =>
+      pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+    );
+  };
+
+  const getSortedFilterOptions = (target: 'all' | 'active') => {
+    const all = target === 'all';
+    return statusFilters
+      .filter(({ filter }) => (all ? true : ongoingStatuses.includes(filter)))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  };
 
   /**
    * Pagination state for active referenda.
@@ -363,11 +391,13 @@ export const ReferendaProvider = ({
         getHistoryReferenda,
         getItemsPerPage,
         getPageNumbers,
+        getSortedFilterOptions,
         getReferendaCount,
         getTrackFilter,
         receiveReferendaData,
         refetchReferenda,
         setFetchingReferenda,
+        setFilterOption,
         setPage,
         setReferendaMap,
         setRefTrigger,

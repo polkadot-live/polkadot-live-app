@@ -8,6 +8,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
 import { LinksFooter } from '@app/Utils';
 import { HistoryRow } from './HistoryRow';
+import { DropdownReferendaFilter } from '../DropdownMenus/DropdownReferendaFilter';
 
 import {
   ControlsWrapper,
@@ -173,6 +174,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
           }
         />
+
+        {/* Filter Referenda */}
+        <DropdownReferendaFilter />
 
         {fetchingMetadata && (
           <PuffLoader size={20} color={'var(--text-color-primary)'} />
