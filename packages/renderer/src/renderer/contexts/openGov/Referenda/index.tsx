@@ -105,9 +105,9 @@ export const ReferendaProvider = ({
   };
 
   // Active referenda status filters.
-  const [statusFilters, setStatusFilters] = useState<RefFilterOption[]>(
-    initStatusFilters('active')
-  );
+  const [activeStatusFilters, setActiveStatusFilters] = useState<
+    RefFilterOption[]
+  >(initStatusFilters('active'));
 
   // History referenda status filters.
   const [historyStatusFilters, setHistoryStatusFilters] = useState<
@@ -123,7 +123,7 @@ export const ReferendaProvider = ({
 
     switch (tab) {
       case 'active': {
-        setStatusFilters((pv) =>
+        setActiveStatusFilters((pv) =>
           pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
         );
         break;
@@ -143,7 +143,7 @@ export const ReferendaProvider = ({
 
     switch (tab) {
       case 'active': {
-        return statusFilters
+        return activeStatusFilters
           .filter(({ filter }) => ongoingStatuses.includes(filter))
           .sort(sortFn);
       }
@@ -192,7 +192,7 @@ export const ReferendaProvider = ({
       const len = items ? items.length : 1;
       return Math.ceil(len / getItemsPerPage(directory));
     },
-    [referendaMap, trackFilter, statusFilters]
+    [referendaMap, trackFilter, activeStatusFilters, historyStatusFilters]
   );
 
   // Get referenda data for a specific page.
@@ -293,7 +293,7 @@ export const ReferendaProvider = ({
     };
 
     // Filter any unselected status in the filter dropdown.
-    const selected = statusFilters
+    const selected = activeStatusFilters
       .filter((f) => f.selected)
       .map((f) => f.filter);
     const fnB = (ref: ReferendaInfo) => selected.includes(ref.refStatus);
@@ -305,8 +305,14 @@ export const ReferendaProvider = ({
 
   // Get fully sorted historical referenda.
   const getHistoryReferenda = () => {
-    const chainId = activeReferendaChainRef.current;
-    return referendaMap.get(chainId)?.sort((a, b) => b.refId - a.refId) || [];
+    // Filter any unselected status in the filter dropdown.
+    const selected = historyStatusFilters
+      .filter((f) => f.selected)
+      .map((f) => f.filter);
+
+    return (referendaMap.get(activeReferendaChainRef.current) || [])
+      .filter((r) => selected.includes(r.refStatus))
+      .sort((a, b) => b.refId - a.refId);
   };
 
   // Update the fetched flag state and ref.
@@ -397,7 +403,7 @@ export const ReferendaProvider = ({
   // Trigger referenda pages when status filters change.
   useEffect(() => {
     setRefTrigger(true);
-  }, [statusFilters]);
+  }, [activeStatusFilters, historyStatusFilters]);
 
   // Fetch referenda for new page.
   useEffect(() => {

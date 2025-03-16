@@ -30,7 +30,13 @@ const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
   </Styles.CheckboxRootSimple>
 );
 
-export const DropdownReferendaFilter = () => {
+interface DropdownReferendaFilterProps {
+  tab: 'active' | 'history';
+}
+
+export const DropdownReferendaFilter = ({
+  tab,
+}: DropdownReferendaFilterProps) => {
   const { getSortedFilterOptions, setFilterOption } = useReferenda();
   const { fetchingMetadata } = usePolkassembly();
   const { darkMode } = useConnections();
@@ -53,14 +59,15 @@ export const DropdownReferendaFilter = () => {
           $theme={theme}
           align="end"
           side="bottom"
-          avoidCollisions={false}
+          avoidCollisions={true}
           sideOffset={5}
+          sticky="always"
         >
           <DropdownMenu.Label className="DropdownMenuLabel">
             Status
           </DropdownMenu.Label>
           <Styles.FlexColumn $rowGap={'0.25rem'}>
-            {getSortedFilterOptions('active').map(
+            {getSortedFilterOptions(tab).map(
               ({ filter, label, selected }, i) => (
                 <DropdownMenu.Item
                   key={`${i}-${filter}`}
@@ -69,7 +76,7 @@ export const DropdownReferendaFilter = () => {
                   onSelect={(e) => {
                     if (!fetchingMetadata) {
                       e.preventDefault();
-                      setFilterOption('active', filter, !selected);
+                      setFilterOption(tab, filter, !selected);
                     }
                   }}
                 >
@@ -79,7 +86,7 @@ export const DropdownReferendaFilter = () => {
                       theme={theme}
                       onChecked={() => {
                         if (!fetchingMetadata) {
-                          setFilterOption('active', filter, !selected);
+                          setFilterOption(tab, filter, !selected);
                         }
                       }}
                     />

@@ -180,12 +180,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             title="Find Active Referendum"
             tab={'active'}
             description={
-              'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
+              'Jump to an active referendum from the current list. Enter a referendum ID and click the search button.'
             }
           />
 
           {/* Filter Referenda */}
-          <DropdownReferendaFilter />
+          <DropdownReferendaFilter tab={'active'} />
         </Styles.FlexRow>
       </Wrappers.PaginationRow>
 
@@ -204,51 +204,57 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const renderHistory = () => (
     <Styles.FlexColumn style={{ marginTop: '1rem' }}>
       <Wrappers.PaginationRow>
-        <button
-          className={`btn ${historyPage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={historyPage === 1}
-          onClick={() => onPageArrowClick('history', 'prev')}
-        >
-          <FontAwesomeIcon icon={faCaretLeft} />
-        </button>
-        {getPageNumbers('history').map((i, j) => (
-          <Styles.FlexRow key={i} $row={'0.75rem'}>
-            {j === 2 &&
-              !showPageEllipsis('history') &&
-              historyPageCount > 4 && (
-                <button className={`btn placeholder`}>
-                  <FontAwesomeIcon className="icon" icon={faEllipsis} />
-                </button>
-              )}
-            <button
-              onClick={() => onPageClick('history', i)}
-              className={`btn ${historyPage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+        <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
+          <button
+            className={`btn ${historyPage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
+            disabled={historyPage === 1}
+            onClick={() => onPageArrowClick('history', 'prev')}
+          >
+            <FontAwesomeIcon icon={faCaretLeft} />
+          </button>
+          {getPageNumbers('history').map((i, j) => (
+            <Styles.FlexRow key={i} $row={'0.75rem'}>
+              {j === 2 &&
+                !showPageEllipsis('history') &&
+                historyPageCount > 4 && (
+                  <button className={`btn placeholder`}>
+                    <FontAwesomeIcon className="icon" icon={faEllipsis} />
+                  </button>
+                )}
+              <button
+                onClick={() => onPageClick('history', i)}
+                className={`btn ${historyPage === i && 'selected'} ${fetchingMetadata && 'fetching'}
               ${j === 2 && getPageNumbers('history').length === 5 && 'middle'}`}
-            >
-              {i}
-            </button>
-          </Styles.FlexRow>
-        ))}
-        <button
-          className={`btn ${historyPage === historyPageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={historyPage === historyPageCount}
-          onClick={() => onPageArrowClick('history', 'next')}
-        >
-          <FontAwesomeIcon icon={faCaretRight} />
-        </button>
+              >
+                {i}
+              </button>
+            </Styles.FlexRow>
+          ))}
+          <button
+            className={`btn ${historyPage === historyPageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
+            disabled={historyPage === historyPageCount}
+            onClick={() => onPageArrowClick('history', 'next')}
+          >
+            <FontAwesomeIcon icon={faCaretRight} />
+          </button>
 
-        {/* Find Active Referendum */}
-        <DialogFindReferendum
-          title="Find Referendum"
-          tab={'history'}
-          description={
-            'Jump to a referendum by entering its ID and clicking the search button.'
-          }
-        />
+          {fetchingMetadata && (
+            <PuffLoader size={20} color={'var(--text-color-primary)'} />
+          )}
+        </Styles.FlexRow>
+        <Styles.FlexRow $gap={'0.75rem'}>
+          {/* Find Active Referendum */}
+          <DialogFindReferendum
+            title="Find Referendum"
+            tab={'history'}
+            description={
+              'Jump to a referendum from the current list by entering its ID and clicking the search button.'
+            }
+          />
 
-        {fetchingMetadata && (
-          <PuffLoader size={20} color={'var(--text-color-primary)'} />
-        )}
+          {/* Filter Referenda */}
+          <DropdownReferendaFilter tab={'history'} />
+        </Styles.FlexRow>
       </Wrappers.PaginationRow>
       <ItemsColumn>
         {historyPagedReferenda.referenda.map((referendum, i) => (
