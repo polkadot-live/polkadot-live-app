@@ -189,15 +189,23 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         </Styles.FlexRow>
       </Wrappers.PaginationRow>
 
-      <ItemsColumn>
-        {activePagedReferenda.referenda.map((referendum, i) => (
-          <ReferendumRow
-            key={`${i}_${referendum.refId}`}
-            referendum={referendum}
-            index={i}
-          />
-        ))}
-      </ItemsColumn>
+      {activePagedReferenda.referenda.length === 0 ? (
+        <Styles.EmptyWrapper>
+          <div>
+            <p>No referenda match the filters.</p>
+          </div>
+        </Styles.EmptyWrapper>
+      ) : (
+        <ItemsColumn>
+          {activePagedReferenda.referenda.map((referendum, i) => (
+            <ReferendumRow
+              key={`${i}_${referendum.refId}`}
+              referendum={referendum}
+              index={i}
+            />
+          ))}
+        </ItemsColumn>
+      )}
     </>
   );
 
@@ -256,11 +264,20 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           <DropdownReferendaFilter tab={'history'} />
         </Styles.FlexRow>
       </Wrappers.PaginationRow>
-      <ItemsColumn>
-        {historyPagedReferenda.referenda.map((referendum, i) => (
-          <HistoryRow key={`${i}_${referendum.refId}`} info={referendum} />
-        ))}
-      </ItemsColumn>
+
+      {historyPagedReferenda.referenda.length === 0 ? (
+        <Styles.EmptyWrapper>
+          <div>
+            <p>No referenda match the filters.</p>
+          </div>
+        </Styles.EmptyWrapper>
+      ) : (
+        <ItemsColumn>
+          {historyPagedReferenda.referenda.map((referendum, i) => (
+            <HistoryRow key={`${i}_${referendum.refId}`} info={referendum} />
+          ))}
+        </ItemsColumn>
+      )}
     </Styles.FlexColumn>
   );
 

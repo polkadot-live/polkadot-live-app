@@ -18,10 +18,10 @@ import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
+import { EmptyWrapper, FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { EmptyExtrinsicsWrapper, TriggerRightIconWrapper } from './Wrappers';
+import { TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
 import { LinksFooter } from '@ren/renderer/Utils';
@@ -217,19 +217,19 @@ export const Action = () => {
         />
 
         {Array.from(extrinsics.keys()).length === 0 && (
-          <EmptyExtrinsicsWrapper>
+          <EmptyWrapper>
             <div>
               <p>No extrinsics have been added yet.</p>
             </div>
-          </EmptyExtrinsicsWrapper>
+          </EmptyWrapper>
         )}
 
         {Array.from(extrinsics.keys()).length > 0 && pageItems.length === 0 && (
-          <EmptyExtrinsicsWrapper>
+          <EmptyWrapper>
             <div>
               <p>No extrinsics match the filters.</p>
             </div>
-          </EmptyExtrinsicsWrapper>
+          </EmptyWrapper>
         )}
 
         {/* Pagination */}
