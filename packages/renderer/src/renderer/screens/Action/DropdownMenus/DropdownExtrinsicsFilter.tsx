@@ -37,13 +37,27 @@ export const DropdownExtrinsicsFilter = () => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const renderFilterMark = (): boolean =>
+    [
+      ...getSortedFilterOptions('top'),
+      ...getSortedFilterOptions('bottom'),
+    ].find(({ selected }) => !selected)
+      ? true
+      : false;
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <FilterButton aria-label="Filter Extrinsics">
           <TooltipRx text={'Filter Status'} theme={theme}>
             <div className="wrapper">
-              <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-2'} />
+              {renderFilterMark() && (
+                <FontAwesomeIcon
+                  className="exclaim"
+                  icon={FA.faCircleExclamation}
+                />
+              )}
+              <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-0'} />
             </div>
           </TooltipRx>
         </FilterButton>

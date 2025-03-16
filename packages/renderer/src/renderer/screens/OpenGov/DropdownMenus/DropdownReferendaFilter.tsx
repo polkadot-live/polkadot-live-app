@@ -42,12 +42,28 @@ export const DropdownReferendaFilter = ({
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
+  const renderFilterMark = (): boolean =>
+    getSortedFilterOptions(tab).find(({ selected }) => !selected)
+      ? true
+      : false;
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <span>
           <TooltipRx text={'Filter Referenda'} theme={theme}>
-            <button className="btn" aria-label="Filter Referenda">
+            <button
+              className="btn"
+              style={{ position: 'relative' }}
+              aria-label="Filter Referenda"
+            >
+              {renderFilterMark() && (
+                <FontAwesomeIcon
+                  className="exclaim"
+                  icon={FA.faCircleExclamation}
+                />
+              )}
+
               <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-2'} />
             </button>
           </TooltipRx>

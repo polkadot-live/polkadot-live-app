@@ -18,6 +18,15 @@ export const FilterButton = styled.button`
     height: 100%;
     justify-content: center;
     padding: 0 1.5rem;
+    position: relative;
+
+    .exclaim {
+      color: #cd8500;
+      font-size: 0.8rem;
+      position: absolute;
+      top: 11px;
+      right: 11px;
+    }
   }
   &:hover {
     color: var(--text-color-primary);
