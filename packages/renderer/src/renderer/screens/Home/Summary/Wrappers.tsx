@@ -6,6 +6,7 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import {
   faCaretRight,
+  faCircleDot,
   faComments,
   faInfo,
 } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +22,7 @@ import {
 import styled from 'styled-components';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { FlattenedAccountData } from 'packages/types/src';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 /**
  * SideTriggerButtonWrapper components.
@@ -103,6 +105,7 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   }
 
   h3 {
+    color: var(--text-color-secondary);
     flex: 1;
     font-size: 1.1rem;
     overflow-x: hidden;
@@ -119,6 +122,7 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   }
   .meter {
     padding-right: 0.5rem;
+    font-weight: bolder;
   }
   .help {
     width: 1.6rem;
@@ -141,19 +145,25 @@ export const StatItemRow = ({
   helpKey,
   flattened,
   style,
+  icon,
+  category,
 }: {
   kind: string;
   meterValue: number;
   flattened?: FlattenedAccountData;
   helpKey?: HelpItemKey;
   style?: React.CSSProperties;
+  icon?: IconDefinition;
+  category?: string;
 }) => {
   const { openHelp } = useHelp();
   const { darkMode } = useConnections();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const meterColor =
-    kind === 'total' ? 'var(--text-highlight)' : 'var(--text-color-primary)';
+    kind === 'total'
+      ? 'var(--text-color-primary)'
+      : 'var(--text-color-secondary)';
 
   return (
     <StatItemRowWrapper style={style} $total={kind === 'total'}>
@@ -191,6 +201,43 @@ export const StatItemRow = ({
             <FontAwesomeIcon icon={faComments} transform={'grow-1'} />
           </div>
           <h3>Referenda</h3>
+          <div className="meter">
+            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
+          </div>
+        </FlexRow>
+      )}
+      {kind === 'event' && (
+        <FlexRow>
+          <div className="left">
+            {icon && (
+              <FontAwesomeIcon
+                style={{
+                  color: 'var(--text-color-secondary)',
+                  opacity: '0.4',
+                }}
+                icon={icon}
+              />
+            )}
+          </div>
+          <h3>{category || 'Unknown'}</h3>
+          <div className="meter">
+            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
+          </div>
+        </FlexRow>
+      )}
+      {kind === 'import' && (
+        <FlexRow>
+          <div className="left">
+            <FontAwesomeIcon
+              style={{
+                color: 'var(--accent-secondary)',
+                opacity: '0.45',
+              }}
+              icon={faCircleDot}
+              transform={'shrink-6'}
+            />
+          </div>
+          <h3>{category || 'Unknown'}</h3>
           <div className="meter">
             <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
           </div>

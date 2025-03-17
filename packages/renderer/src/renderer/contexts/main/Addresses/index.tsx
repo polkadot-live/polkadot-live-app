@@ -112,26 +112,6 @@ export const AddressesProvider = ({
     return result.find((account) => account.address === address) ?? null;
   };
 
-  /// Get addresses count by chain ID.
-  const getAddressesCountByChain = (chainId?: ChainID): number =>
-    addresses.size === 0
-      ? 0
-      : chainId === undefined
-        ? [...addresses.values()].reduce((acc, as) => acc + as.length, 0)
-        : addresses.get(chainId)?.length || 0;
-
-  /// Get addresses count by import method.
-  const getAddressesCountBySource = (target: AccountSource): number =>
-    [...addresses.values()].reduce(
-      (acc, as) =>
-        acc +
-        as.reduce(
-          (accIn, { source }) => (source === target ? accIn + 1 : accIn),
-          0
-        ),
-      0
-    );
-
   /// Get all imported account names.
   const getAllAccounts = (): FlattenedAccountData[] =>
     [...addresses.values()].reduce(
@@ -203,8 +183,6 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
-        getAddressesCountByChain,
-        getAddressesCountBySource,
         getAllAccountSources,
         getReadableAccountSource,
         getAllAccounts,
