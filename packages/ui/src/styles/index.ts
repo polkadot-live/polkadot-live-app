@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './checkbox';
+export * from './dropdown';
 export * from './flex';
 export * from './grid';
 

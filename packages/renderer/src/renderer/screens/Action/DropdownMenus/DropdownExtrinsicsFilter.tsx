@@ -8,6 +8,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import {
   CheckboxRootSimple,
+  DropdownMenuContent,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
@@ -16,7 +17,7 @@ import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { CheckIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DropdownMenuContent, FilterButton } from './Wrappers';
+import { FilterButton } from './Wrappers';
 import type { CheckboxRxProps } from './types';
 
 const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (

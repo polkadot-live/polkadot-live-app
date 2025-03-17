@@ -4,16 +4,15 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/renderer/theme/variables';
 import * as Icons from '@radix-ui/react-icons';
-
+import {
+  DropdownMenuContent,
+  DropdownMenuSubContent,
+} from '@polkadot-live/ui/styles';
 import { useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
-import {
-  DropdownMenuContent,
-  DropdownMenuSubContent,
-  IconButton,
-} from './Wrappers';
+import { IconButton } from './Wrappers';
 
 /**
  * Dropdown menu demo component showcasing features.

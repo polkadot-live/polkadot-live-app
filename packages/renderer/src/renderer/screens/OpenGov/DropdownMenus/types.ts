@@ -7,6 +7,10 @@ import type {
   ReferendaInfo,
 } from '@polkadot-live/types/openGov';
 
+export interface DropdownReferendaFilterProps {
+  tab: 'active' | 'history';
+}
+
 export interface ReferendumDropdownMenuProps {
   chainId: ChainID;
   proposalData: PolkassemblyProposal | null;

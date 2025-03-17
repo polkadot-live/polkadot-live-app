@@ -12,9 +12,9 @@ import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CheckIcon } from '@radix-ui/react-icons';
+import type { DropdownReferendaFilterProps } from './types';
 
 // TODO: Move to UI library
-import { DropdownMenuContent } from '../../Action/DropdownMenus/Wrappers';
 import type { CheckboxRxProps } from '../../Action/DropdownMenus/types';
 
 const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
@@ -29,10 +29,6 @@ const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
     </Checkbox.Indicator>
   </Styles.CheckboxRootSimple>
 );
-
-interface DropdownReferendaFilterProps {
-  tab: 'active' | 'history';
-}
 
 export const DropdownReferendaFilter = ({
   tab,
@@ -71,7 +67,7 @@ export const DropdownReferendaFilter = ({
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
-        <DropdownMenuContent
+        <Styles.DropdownMenuContent
           $theme={theme}
           align="end"
           side="bottom"
@@ -115,7 +111,7 @@ export const DropdownReferendaFilter = ({
 
           {/** Arrow */}
           <DropdownMenu.Arrow className="DropdownMenuArrow" />
-        </DropdownMenuContent>
+        </Styles.DropdownMenuContent>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
