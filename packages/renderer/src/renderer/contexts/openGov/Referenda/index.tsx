@@ -431,6 +431,13 @@ export const ReferendaProvider = ({
     const execute = async () => {
       setActivePagedReferenda((pv) => ({ ...pv, page: 1 }));
       setHistoryPagedReferenda((pv) => ({ ...pv, page: 1 }));
+
+      // Reset status filters.
+      setActiveStatusFilters((pv) => pv.map((f) => ({ ...f, selected: true })));
+      setHistoryStatusFilters((pv) =>
+        pv.map((f) => ({ ...f, selected: true }))
+      );
+
       setRefTrigger(true);
     };
     execute();
