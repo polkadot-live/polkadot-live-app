@@ -52,7 +52,7 @@ export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
       case 'active':
         return 'Jump to an active referendum in the current list. Enter a referendum ID and click the search button.';
       case 'history':
-        return 'Jump to a referendum in the current list by entering its ID and clicking the search button.';
+        return 'Jump to a referendum in the current list. Enter a referendum ID and click the search button.';
     }
   };
 
