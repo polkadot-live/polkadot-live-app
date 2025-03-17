@@ -2,7 +2,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export interface DialogFindReferendumProps {
-  description: string;
-  title: string;
   tab: 'active' | 'history';
 }
