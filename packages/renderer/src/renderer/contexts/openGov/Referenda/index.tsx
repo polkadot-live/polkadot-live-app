@@ -20,6 +20,7 @@ import type {
   PagedReferenda,
   RefDeciding,
   ReferendaInfo,
+  RefFilterOption,
   RefOngoing,
   RefStatus,
 } from '@polkadot-live/types/openGov';
@@ -52,6 +53,7 @@ export const ReferendaProvider = ({
     new Map<ChainID, ReferendaInfo[]>()
   );
 
+  // The current rendered tab.
   const [tabVal, setTabVal] = useState<'active' | 'history'>('active');
 
   // Chain ID for currently rendered referenda.
@@ -82,6 +84,74 @@ export const ReferendaProvider = ({
     trigger: boolean;
     val: string | null;
   }>({ trigger: false, val: null });
+
+  const initStatusFilters = (tab: 'active' | 'history'): RefFilterOption[] => {
+    const ongoing: RefFilterOption[] = [
+      { filter: 'Confirming', label: 'Confirming', selected: true },
+      { filter: 'Deciding', label: 'Deciding', selected: true },
+      { filter: 'Preparing', label: 'Preparing', selected: true },
+      { filter: 'Queueing', label: 'Queueing', selected: true },
+    ];
+
+    return tab === 'active'
+      ? ongoing
+      : ongoing.concat([
+          { filter: 'Approved', label: 'Approved', selected: true },
+          { filter: 'Cancelled', label: 'Cancelled', selected: true },
+          { filter: 'Killed', label: 'Killed', selected: true },
+          { filter: 'Rejected', label: 'Rejected', selected: true },
+          { filter: 'TimedOut', label: 'Timed Out', selected: true },
+        ]);
+  };
+
+  // Active referenda status filters.
+  const [activeStatusFilters, setActiveStatusFilters] = useState<
+    RefFilterOption[]
+  >(initStatusFilters('active'));
+
+  // History referenda status filters.
+  const [historyStatusFilters, setHistoryStatusFilters] = useState<
+    RefFilterOption[]
+  >(initStatusFilters('history'));
+
+  const setFilterOption = (
+    tab: 'active' | 'history',
+    filter: RefStatus,
+    selected: boolean
+  ) => {
+    setPage(1, tab);
+
+    switch (tab) {
+      case 'active': {
+        setActiveStatusFilters((pv) =>
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+        );
+        break;
+      }
+      case 'history': {
+        setHistoryStatusFilters((pv) =>
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+        );
+        break;
+      }
+    }
+  };
+
+  const getSortedFilterOptions = (tab: 'active' | 'history') => {
+    const sortFn = (a: RefFilterOption, b: RefFilterOption) =>
+      a.label.localeCompare(b.label);
+
+    switch (tab) {
+      case 'active': {
+        return activeStatusFilters
+          .filter(({ filter }) => ongoingStatuses.includes(filter))
+          .sort(sortFn);
+      }
+      case 'history': {
+        return historyStatusFilters.sort(sortFn);
+      }
+    }
+  };
 
   /**
    * Pagination state for active referenda.
@@ -122,7 +192,7 @@ export const ReferendaProvider = ({
       const len = items ? items.length : 1;
       return Math.ceil(len / getItemsPerPage(directory));
     },
-    [referendaMap, trackFilter]
+    [referendaMap, trackFilter, activeStatusFilters, historyStatusFilters]
   );
 
   // Get referenda data for a specific page.
@@ -212,8 +282,8 @@ export const ReferendaProvider = ({
     const sortFn = (a: ReferendaInfo, b: ReferendaInfo) => b.refId - a.refId;
     const chainId = activeReferendaChainRef.current;
 
-    // Filter active referenda on status and selected track.
-    const filterFn = (ref: ReferendaInfo) => {
+    // Filter active referenda based on selected track.
+    const fnA = (ref: ReferendaInfo) => {
       if (!ongoingStatuses.includes(ref.refStatus)) {
         return false;
       }
@@ -222,15 +292,27 @@ export const ReferendaProvider = ({
       return curTrack === null ? true : track === curTrack;
     };
 
+    // Filter any unselected status in the filter dropdown.
+    const selected = activeStatusFilters
+      .filter((f) => f.selected)
+      .map((f) => f.filter);
+    const fnB = (ref: ReferendaInfo) => selected.includes(ref.refStatus);
+
     return other
-      ? other.filter(filterFn).sort(sortFn)
-      : referendaMap.get(chainId)?.filter(filterFn).sort(sortFn) || [];
+      ? other.filter(fnA).filter(fnB).sort(sortFn)
+      : referendaMap.get(chainId)?.filter(fnA).filter(fnB).sort(sortFn) || [];
   };
 
   // Get fully sorted historical referenda.
   const getHistoryReferenda = () => {
-    const chainId = activeReferendaChainRef.current;
-    return referendaMap.get(chainId)?.sort((a, b) => b.refId - a.refId) || [];
+    // Filter any unselected status in the filter dropdown.
+    const selected = historyStatusFilters
+      .filter((f) => f.selected)
+      .map((f) => f.filter);
+
+    return (referendaMap.get(activeReferendaChainRef.current) || [])
+      .filter((r) => selected.includes(r.refStatus))
+      .sort((a, b) => b.refId - a.refId);
   };
 
   // Update the fetched flag state and ref.
@@ -318,6 +400,11 @@ export const ReferendaProvider = ({
     execute();
   }, [refTrigger]);
 
+  // Trigger referenda pages when status filters change.
+  useEffect(() => {
+    setRefTrigger(true);
+  }, [activeStatusFilters, historyStatusFilters]);
+
   // Fetch referenda for new page.
   useEffect(() => {
     const execute = async () => {
@@ -344,6 +431,13 @@ export const ReferendaProvider = ({
     const execute = async () => {
       setActivePagedReferenda((pv) => ({ ...pv, page: 1 }));
       setHistoryPagedReferenda((pv) => ({ ...pv, page: 1 }));
+
+      // Reset status filters.
+      setActiveStatusFilters((pv) => pv.map((f) => ({ ...f, selected: true })));
+      setHistoryStatusFilters((pv) =>
+        pv.map((f) => ({ ...f, selected: true }))
+      );
+
       setRefTrigger(true);
     };
     execute();
@@ -363,11 +457,13 @@ export const ReferendaProvider = ({
         getHistoryReferenda,
         getItemsPerPage,
         getPageNumbers,
+        getSortedFilterOptions,
         getReferendaCount,
         getTrackFilter,
         receiveReferendaData,
         refetchReferenda,
         setFetchingReferenda,
+        setFilterOption,
         setPage,
         setReferendaMap,
         setRefTrigger,

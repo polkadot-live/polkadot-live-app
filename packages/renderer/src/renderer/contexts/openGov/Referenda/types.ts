@@ -5,6 +5,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PagedReferenda,
   ReferendaInfo,
+  RefFilterOption,
+  RefStatus,
 } from '@polkadot-live/types/openGov';
 
 export interface ReferendaContextInterface {
@@ -20,10 +22,16 @@ export interface ReferendaContextInterface {
   getItemsPerPage: (directory: 'active' | 'history') => number;
   getPageNumbers: (directory: 'active' | 'history') => number[];
   getReferendaCount: (trackId: string | null) => number;
+  getSortedFilterOptions: (tab: 'active' | 'history') => RefFilterOption[];
   getTrackFilter: () => string | null;
   receiveReferendaData: (info: ReferendaInfo[]) => Promise<void>;
   refetchReferenda: () => void;
   setFetchingReferenda: (flag: boolean) => void;
+  setFilterOption: (
+    tab: 'active' | 'history',
+    filter: RefStatus,
+    selected: boolean
+  ) => void;
   setPage: (page: number, directory: 'active' | 'history') => void;
   setReferendaMap: React.Dispatch<
     React.SetStateAction<Map<ChainID, ReferendaInfo[]>>

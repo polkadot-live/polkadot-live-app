@@ -218,6 +218,13 @@ export const PaginationRow = styled.div`
     &.fetching {
       cursor: not-allowed;
     }
+    .exclaim {
+      color: #cd8500;
+      font-size: 0.75rem;
+      position: absolute;
+      top: 4px;
+      right: 8px;
+    }
   }
 `;
 

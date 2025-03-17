@@ -64,7 +64,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   }, []);
 
   return (
-    <ContentWrapper style={{ padding: '1.5rem 1.75rem' }}>
+    <ContentWrapper style={{ padding: '0.75rem 1.75rem' }}>
       <UI.ActionItem showIcon={false} text={'Import Accounts'} />
       <GridTwoCol>
         {/* Read-only */}

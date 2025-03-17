@@ -3,6 +3,26 @@
 
 import styled from 'styled-components';
 
+export const EmptyWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: left;
+
+    p {
+      color: var(--text-color-secondary);
+      opacity: 0.8;
+      font-size: 1.25rem;
+      text-align: left;
+    }
+  }
+`;
+
 export const MaxContainer = styled.div`
   width: 100%;
   max-width: 1024px;

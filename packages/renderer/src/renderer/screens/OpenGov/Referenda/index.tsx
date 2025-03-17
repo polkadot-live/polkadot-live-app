@@ -8,6 +8,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
 import { LinksFooter } from '@app/Utils';
 import { HistoryRow } from './HistoryRow';
+import { DropdownReferendaFilter } from '../DropdownMenus/DropdownReferendaFilter';
 
 import {
   ControlsWrapper,
@@ -131,122 +132,91 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   };
 
   // Render referenda as single list.
-  const renderListed = () => (
-    <>
-      <Wrappers.PaginationRow>
-        <button
-          className={`btn ${activePage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={activePage === 1}
-          onClick={() => onPageArrowClick('active', 'prev')}
-        >
-          <FontAwesomeIcon icon={faCaretLeft} />
-        </button>
-        {getPageNumbers('active').map((i, j) => (
-          <Styles.FlexRow key={i} $row={'0.75rem'}>
-            {j === 2 && !showPageEllipsis('active') && activePageCount > 4 && (
-              <button className="btn placeholder">
-                <FontAwesomeIcon className="icon" icon={faEllipsis} />
-              </button>
-            )}
+  const renderListed = (tab: 'active' | 'history') => {
+    const curPage = tab === 'active' ? activePage : historyPage;
+    const pageCount = tab === 'active' ? activePageCount : historyPageCount;
+
+    const referenda =
+      tab === 'active'
+        ? activePagedReferenda.referenda
+        : historyPagedReferenda.referenda;
+
+    return (
+      <Styles.FlexColumn style={{ marginTop: '1rem' }}>
+        <Wrappers.PaginationRow>
+          <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
             <button
-              onClick={() => onPageClick('active', i)}
-              className={`btn ${activePage === i && 'selected'} ${fetchingMetadata && 'fetching'}
-              ${j === 2 && getPageNumbers('active').length === 5 && 'middle'}`}
+              className={`btn ${curPage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
+              disabled={curPage === 1}
+              onClick={() => onPageArrowClick(tab, 'prev')}
             >
-              {i}
+              <FontAwesomeIcon icon={faCaretLeft} />
             </button>
-          </Styles.FlexRow>
-        ))}
-        <button
-          className={`btn ${activePage === activePageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={activePage === activePageCount}
-          onClick={() => onPageArrowClick('active', 'next')}
-        >
-          <FontAwesomeIcon icon={faCaretRight} />
-        </button>
-
-        {/* Find Active Referendum */}
-        <DialogFindReferendum
-          title="Find Active Referendum"
-          tab={'active'}
-          description={
-            'Jump to an active referendum under the selected track. Enter a referendum ID and click the search button.'
-          }
-        />
-
-        {fetchingMetadata && (
-          <PuffLoader size={20} color={'var(--text-color-primary)'} />
-        )}
-      </Wrappers.PaginationRow>
-
-      <ItemsColumn>
-        {activePagedReferenda.referenda.map((referendum, i) => (
-          <ReferendumRow
-            key={`${i}_${referendum.refId}`}
-            referendum={referendum}
-            index={i}
-          />
-        ))}
-      </ItemsColumn>
-    </>
-  );
-
-  const renderHistory = () => (
-    <Styles.FlexColumn style={{ marginTop: '1rem' }}>
-      <Wrappers.PaginationRow>
-        <button
-          className={`btn ${historyPage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={historyPage === 1}
-          onClick={() => onPageArrowClick('history', 'prev')}
-        >
-          <FontAwesomeIcon icon={faCaretLeft} />
-        </button>
-        {getPageNumbers('history').map((i, j) => (
-          <Styles.FlexRow key={i} $row={'0.75rem'}>
-            {j === 2 &&
-              !showPageEllipsis('history') &&
-              historyPageCount > 4 && (
-                <button className={`btn placeholder`}>
-                  <FontAwesomeIcon className="icon" icon={faEllipsis} />
+            {getPageNumbers(tab).map((i, j) => (
+              <Styles.FlexRow key={i} $row={'0.75rem'}>
+                {j === 2 && !showPageEllipsis(tab) && curPage > 4 && (
+                  <button className="btn placeholder">
+                    <FontAwesomeIcon className="icon" icon={faEllipsis} />
+                  </button>
+                )}
+                <button
+                  onClick={() => onPageClick(tab, i)}
+                  className={`btn ${curPage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+              ${j === 2 && getPageNumbers(tab).length === 5 && 'middle'}`}
+                >
+                  {i}
                 </button>
-              )}
+              </Styles.FlexRow>
+            ))}
             <button
-              onClick={() => onPageClick('history', i)}
-              className={`btn ${historyPage === i && 'selected'} ${fetchingMetadata && 'fetching'}
-              ${j === 2 && getPageNumbers('history').length === 5 && 'middle'}`}
+              className={`btn ${curPage === pageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
+              disabled={curPage === pageCount}
+              onClick={() => onPageArrowClick(tab, 'next')}
             >
-              {i}
+              <FontAwesomeIcon icon={faCaretRight} />
             </button>
+
+            {/* Loading Spinner */}
+            {fetchingMetadata && (
+              <PuffLoader size={20} color={'var(--text-color-primary)'} />
+            )}
           </Styles.FlexRow>
-        ))}
-        <button
-          className={`btn ${historyPage === historyPageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
-          disabled={historyPage === historyPageCount}
-          onClick={() => onPageArrowClick('history', 'next')}
-        >
-          <FontAwesomeIcon icon={faCaretRight} />
-        </button>
 
-        {/* Find Active Referendum */}
-        <DialogFindReferendum
-          title="Find Referendum"
-          tab={'history'}
-          description={
-            'Jump to a referendum by entering its ID and clicking the search button.'
-          }
-        />
+          {/* Find and Filter */}
+          <Styles.FlexRow $gap={'0.75rem'}>
+            <DialogFindReferendum tab={tab} />
+            <DropdownReferendaFilter tab={tab} />
+          </Styles.FlexRow>
+        </Wrappers.PaginationRow>
 
-        {fetchingMetadata && (
-          <PuffLoader size={20} color={'var(--text-color-primary)'} />
+        {referenda.length === 0 ? (
+          <Styles.EmptyWrapper>
+            <div>
+              <p>No referenda match the filters.</p>
+            </div>
+          </Styles.EmptyWrapper>
+        ) : (
+          <ItemsColumn>
+            {tab === 'active' &&
+              referenda.map((referendum, i) => (
+                <ReferendumRow
+                  key={`${i}_${referendum.refId}`}
+                  referendum={referendum}
+                  index={i}
+                />
+              ))}
+            {tab === 'history' &&
+              referenda.map((referendum, i) => (
+                <HistoryRow
+                  key={`${i}_${referendum.refId}`}
+                  info={referendum}
+                />
+              ))}
+          </ItemsColumn>
         )}
-      </Wrappers.PaginationRow>
-      <ItemsColumn>
-        {historyPagedReferenda.referenda.map((referendum, i) => (
-          <HistoryRow key={`${i}_${referendum.refId}`} info={referendum} />
-        ))}
-      </ItemsColumn>
-    </Styles.FlexColumn>
-  );
+      </Styles.FlexColumn>
+    );
+  };
 
   // Render subscribed referenda as a single list.
   const renderSubscribedListed = () =>
@@ -445,13 +415,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                               </Wrappers.TracksFilterList>
                             </Styles.FlexRow>
                           </section>
-
-                          {!onlySubscribed && renderListed()}
-                          {onlySubscribed && renderSubscribedListed()}
                         </Styles.FlexColumn>
+
+                        {!onlySubscribed && renderListed('active')}
+                        {onlySubscribed && renderSubscribedListed()}
                       </Tabs.Content>
                       <Tabs.Content className="TabsContent" value="history">
-                        {renderHistory()}
+                        {renderListed('history')}
                       </Tabs.Content>
                     </Wrappers.TabsRoot>
                   )}

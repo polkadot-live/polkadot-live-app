@@ -18,11 +18,7 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
-export const DialogFindReferendum = ({
-  description,
-  title,
-  tab,
-}: DialogFindReferendumProps) => {
+export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
@@ -41,6 +37,24 @@ export const DialogFindReferendum = ({
 
   const isStrictPositiveInteger = (value: string): boolean =>
     /^\d+$/.test(value);
+
+  const getTitle = () => {
+    switch (tab) {
+      case 'active':
+        return 'Find Active Referendum';
+      case 'history':
+        return 'Find Referendum';
+    }
+  };
+
+  const getDescription = () => {
+    switch (tab) {
+      case 'active':
+        return 'Jump to an active referendum in the current list. Enter a referendum ID and click the search button.';
+      case 'history':
+        return 'Jump to a referendum in the current list. Enter a referendum ID and click the search button.';
+    }
+  };
 
   /**
    * Handle input change.
@@ -104,9 +118,11 @@ export const DialogFindReferendum = ({
           </Dialog.Close>
           <FlexColumn $rowGap={'1.5rem'}>
             <FlexColumn $rowGap={'0.75rem'}>
-              <Dialog.Title className="Dialog__Title">{title}</Dialog.Title>
+              <Dialog.Title className="Dialog__Title">
+                {getTitle()}
+              </Dialog.Title>
               <Dialog.Description className="Dialog__Description">
-                {description}
+                {getDescription()}
               </Dialog.Description>
             </FlexColumn>
 

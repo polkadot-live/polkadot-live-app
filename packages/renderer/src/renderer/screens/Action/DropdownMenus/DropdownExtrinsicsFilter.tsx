@@ -2,40 +2,32 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '@ren/renderer/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import {
-  CheckboxRootSimple,
+  DropdownMenuContent,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
-import { TooltipRx } from '@polkadot-live/ui/components';
-import { CheckIcon } from '@radix-ui/react-icons';
+import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DropdownMenuContent, FilterButton } from './Wrappers';
-import type { CheckboxRxProps } from './types';
-
-const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
-  <CheckboxRootSimple
-    $theme={theme}
-    className="CheckboxRoot"
-    checked={selected}
-    onCheckedChange={() => onChecked()}
-  >
-    <Checkbox.Indicator className="CheckboxIndicator">
-      <CheckIcon />
-    </Checkbox.Indicator>
-  </CheckboxRootSimple>
-);
+import { FilterButton } from './Wrappers';
 
 export const DropdownExtrinsicsFilter = () => {
   const { getSortedFilterOptions, setFilterOption } = useTxMeta();
   const { darkMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+
+  const renderFilterMark = (): boolean =>
+    [
+      ...getSortedFilterOptions('top'),
+      ...getSortedFilterOptions('bottom'),
+    ].find(({ selected }) => !selected)
+      ? true
+      : false;
 
   return (
     <DropdownMenu.Root>
@@ -43,7 +35,13 @@ export const DropdownExtrinsicsFilter = () => {
         <FilterButton aria-label="Filter Extrinsics">
           <TooltipRx text={'Filter Status'} theme={theme}>
             <div className="wrapper">
-              <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-2'} />
+              {renderFilterMark() && (
+                <FontAwesomeIcon
+                  className="exclaim"
+                  icon={FA.faCircleExclamation}
+                />
+              )}
+              <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-0'} />
             </div>
           </TooltipRx>
         </FilterButton>

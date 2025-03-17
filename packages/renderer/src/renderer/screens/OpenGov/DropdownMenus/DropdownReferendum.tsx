@@ -3,8 +3,10 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/renderer/theme/variables';
+
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
+import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleInfo,
@@ -12,7 +14,6 @@ import {
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from './Wrappers';
-import { DropdownMenuContent } from '../../Action/DropdownMenus/Wrappers';
 import { InfoOverlay } from '../Referenda/InfoOverlay';
 import type { ReferendumDropdownMenuProps } from './types';
 

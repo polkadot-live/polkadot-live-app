@@ -7,8 +7,9 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
+import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DropdownMenuContent, IconButton } from './Wrappers';
+import { IconButton } from './Wrappers';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
 import type { ExtrinsicDropdownMenuProps } from './types';
 

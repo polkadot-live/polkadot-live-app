@@ -96,45 +96,48 @@ export const Settings: React.FC = () => {
   return (
     <UI.ScrollableMax>
       <Styles.PadWrapper>
-        <UI.AccordionWrapper $onePart={true}>
-          <Accordion.Root
-            className="AccordionRoot"
-            type="single"
-            value={accordionValue}
-            onValueChange={(val) => setAccordionValue(val)}
-          >
-            <Styles.FlexColumn>
-              {Array.from(getSortedSettings().entries()).map(
-                ([category, settings]) => (
-                  <Accordion.Item
-                    key={`settings_${category}`}
-                    className="AccordionItem"
-                    value={`settings-${category}`}
-                  >
-                    <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
-                        className="AccordionChevron"
-                        aria-hidden
-                      />
-                      <UI.TriggerHeader>{category}</UI.TriggerHeader>
-                    </UI.AccordionTrigger>
-                    <UI.AccordionContent transparent={true}>
-                      <ItemsColumn>
-                        {settings.map((setting, j) => (
-                          <Setting
-                            key={j}
-                            setting={setting}
-                            handleSetting={handleSetting}
-                          />
-                        ))}
-                      </ItemsColumn>
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                )
-              )}
-            </Styles.FlexColumn>
-          </Accordion.Root>
-        </UI.AccordionWrapper>
+        <Styles.FlexColumn>
+          <UI.ActionItem showIcon={false} text="Application Settings" />
+          <UI.AccordionWrapper $onePart={true}>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="single"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val)}
+            >
+              <Styles.FlexColumn>
+                {Array.from(getSortedSettings().entries()).map(
+                  ([category, settings]) => (
+                    <Accordion.Item
+                      key={`settings_${category}`}
+                      className="AccordionItem"
+                      value={`settings-${category}`}
+                    >
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {settings.map((setting, j) => (
+                            <Setting
+                              key={j}
+                              setting={setting}
+                              handleSetting={handleSetting}
+                            />
+                          ))}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  )
+                )}
+              </Styles.FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        </Styles.FlexColumn>
 
         {/* Workspaces Accordion Item */}
         {/* <Workspaces /> */}
