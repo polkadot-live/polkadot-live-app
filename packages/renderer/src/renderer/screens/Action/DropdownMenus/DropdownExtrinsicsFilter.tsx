@@ -2,36 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '@ren/renderer/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import {
-  CheckboxRootSimple,
   DropdownMenuContent,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useTxMeta } from '@ren/renderer/contexts/action/TxMeta';
-import { TooltipRx } from '@polkadot-live/ui/components';
-import { CheckIcon } from '@radix-ui/react-icons';
+import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterButton } from './Wrappers';
-import type { CheckboxRxProps } from './types';
-
-const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
-  <CheckboxRootSimple
-    $theme={theme}
-    className="CheckboxRoot"
-    checked={selected}
-    onCheckedChange={() => onChecked()}
-  >
-    <Checkbox.Indicator className="CheckboxIndicator">
-      <CheckIcon />
-    </Checkbox.Indicator>
-  </CheckboxRootSimple>
-);
 
 export const DropdownExtrinsicsFilter = () => {
   const { getSortedFilterOptions, setFilterOption } = useTxMeta();

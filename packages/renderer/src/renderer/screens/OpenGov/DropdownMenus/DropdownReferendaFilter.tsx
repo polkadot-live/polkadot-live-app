@@ -2,33 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as Checkbox from '@radix-ui/react-checkbox';
 import * as themeVariables from '@app/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CheckIcon } from '@radix-ui/react-icons';
 import type { DropdownReferendaFilterProps } from './types';
-
-// TODO: Move to UI library
-import type { CheckboxRxProps } from '../../Action/DropdownMenus/types';
-
-const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (
-  <Styles.CheckboxRootSimple
-    $theme={theme}
-    className="CheckboxRoot"
-    checked={selected}
-    onCheckedChange={() => onChecked()}
-  >
-    <Checkbox.Indicator className="CheckboxIndicator">
-      <CheckIcon />
-    </Checkbox.Indicator>
-  </Styles.CheckboxRootSimple>
-);
 
 export const DropdownReferendaFilter = ({
   tab,
