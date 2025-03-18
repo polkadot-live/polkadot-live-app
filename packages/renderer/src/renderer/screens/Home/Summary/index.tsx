@@ -13,8 +13,9 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { SideTriggerButton, StatItemRow } from './Wrappers';
+import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';
+import { StatItemRow } from './StatItemRow';
 
 import type {
   AccountSource,

@@ -1,30 +1,14 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
-import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
-import {
-  faCaretRight,
-  faCircleDot,
-  faComments,
-  faInfo,
-} from '@fortawesome/free-solid-svg-icons';
-import { ellipsisFn } from '@w3ux/utils';
+import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexRow } from '@polkadot-live/ui/styles';
-import {
-  Identicon,
-  ShiftingMeter,
-  StatItemWrapper,
-  TooltipRx,
-} from '@polkadot-live/ui/components';
+import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-
 import type { HelpItemKey } from '@polkadot-live/types/help';
-import type { FlattenedAccountData } from 'packages/types/src';
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const HoverGradient = styled(motion.span).attrs<{
   $dark: boolean;
@@ -137,10 +121,7 @@ export const StatItem = ({
   );
 };
 
-/**
- * StatItemRow components.
- */
-const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
+export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   padding: 1rem;
   background-color: ${(props) =>
     props.$total
@@ -190,111 +171,3 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
     }
   }
 `;
-
-export const StatItemRow = ({
-  kind,
-  meterValue,
-  helpKey,
-  flattened,
-  style,
-  icon,
-  category,
-}: {
-  kind: string;
-  meterValue: number;
-  flattened?: FlattenedAccountData;
-  helpKey?: HelpItemKey;
-  style?: React.CSSProperties;
-  icon?: IconDefinition;
-  category?: string;
-}) => {
-  const { openHelp } = useHelp();
-  const { darkMode } = useConnections();
-
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-  const meterColor =
-    kind === 'total'
-      ? 'var(--text-color-primary)'
-      : 'var(--text-color-secondary)';
-
-  return (
-    <StatItemRowWrapper style={style} $total={kind === 'total'}>
-      {kind === 'total' && (
-        <FlexRow>
-          {helpKey && (
-            <div className="left help" onClick={() => openHelp(helpKey)}>
-              <FontAwesomeIcon icon={faInfo} />
-            </div>
-          )}
-          <h3 className="total">Total</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'account' && flattened && (
-        <FlexRow>
-          <div className="left">
-            <TooltipRx text={ellipsisFn(flattened.address, 12)} theme={theme}>
-              <span>
-                <Identicon value={flattened.address} fontSize="1.5rem" />
-              </span>
-            </TooltipRx>
-          </div>
-          <h3>{flattened.name}</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'referenda' && (
-        <FlexRow>
-          <div className="left">
-            <FontAwesomeIcon icon={faComments} transform={'grow-1'} />
-          </div>
-          <h3>Referenda</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'event' && (
-        <FlexRow>
-          <div className="left">
-            {icon && (
-              <FontAwesomeIcon
-                style={{
-                  color: 'var(--text-color-secondary)',
-                  opacity: '0.4',
-                }}
-                icon={icon}
-              />
-            )}
-          </div>
-          <h3>{category || 'Unknown'}</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'import' && (
-        <FlexRow>
-          <div className="left">
-            <FontAwesomeIcon
-              style={{
-                color: 'var(--accent-secondary)',
-                opacity: '0.45',
-              }}
-              icon={faCircleDot}
-              transform={'shrink-6'}
-            />
-          </div>
-          <h3>{category || 'Unknown'}</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-    </StatItemRowWrapper>
-  );
-};
