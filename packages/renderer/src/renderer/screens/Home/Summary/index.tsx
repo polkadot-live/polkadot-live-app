@@ -95,25 +95,19 @@ export const Summary: React.FC = () => {
       }
 
       // Extrinsics.
-      extrinsicCountsRef.current.set(
-        'pending',
-        Number(
-          await window.myAPI.sendExtrinsicsTaskAsync({
-            action: 'extrinsics:getCount',
-            data: { status: 'pending' as TxStatus },
-          })
-        )
-      );
+      const getCount = async (status: TxStatus) =>
+        (await window.myAPI.sendExtrinsicsTaskAsync({
+          action: 'extrinsics:getCount',
+          data: { status },
+        })) || '0';
 
-      extrinsicCountsRef.current.set(
-        'finalized',
-        Number(
-          await window.myAPI.sendExtrinsicsTaskAsync({
-            action: 'extrinsics:getCount',
-            data: { status: 'finalized' as TxStatus },
-          })
-        )
-      );
+      const counts = await Promise.all([
+        getCount('pending'),
+        getCount('finalized'),
+      ]);
+
+      extrinsicCountsRef.current.set('pending', Number(counts[0]));
+      extrinsicCountsRef.current.set('finalized', Number(counts[1]));
 
       // Trigger state update.
       setTrigger(true);
