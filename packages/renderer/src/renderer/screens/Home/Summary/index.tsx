@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
+import { useEffect, useRef, useState } from 'react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useEvents } from '@app/contexts/main/Events';
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -12,8 +13,8 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useEffect, useRef, useState } from 'react';
 import { SideTriggerButton, StatItemRow } from './Wrappers';
+import { OpenViewButton } from './OpenViewButton';
 
 import type {
   AccountSource,
@@ -132,6 +133,33 @@ export const Summary: React.FC = () => {
       {/* Title */}
       <MainHeading>Summary</MainHeading>
 
+      <FlexRow $gap={'0.75rem'}>
+        <OpenViewButton
+          title="Accounts"
+          target="import"
+          umamiEvent="window-open-accounts"
+          icon={FA.faWallet}
+        />
+        <OpenViewButton
+          title="Extrinsics"
+          target="action"
+          umamiEvent="window-open-extrinsics"
+          icon={FA.faFileSignature}
+        />
+        <OpenViewButton
+          title="OpenGov"
+          target="openGov"
+          umamiEvent="window-open-openGov"
+          icon={FA.faComments}
+        />
+        <OpenViewButton
+          title="Settings"
+          target="settings"
+          umamiEvent="window-open-settings"
+          icon={FA.faGear}
+        />
+      </FlexRow>
+
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
           className="AccordionRoot"
@@ -141,7 +169,7 @@ export const Summary: React.FC = () => {
             setAccordionValue(val as SummaryAccordionValue)
           }
         >
-          <FlexColumn $rowGap={'1.5rem'}>
+          <FlexColumn $rowGap={'1rem'}>
             {/* Active Accounts */}
             <Accordion.Item className="AccordionItem" value="summary-accounts">
               <FlexRow $gap={'2px'}>

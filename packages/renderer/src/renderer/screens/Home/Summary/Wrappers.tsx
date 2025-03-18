@@ -20,9 +20,61 @@ import {
   TooltipRx,
 } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { FlattenedAccountData } from 'packages/types/src';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+
+export const HoverGradient = styled(motion.span).attrs<{
+  $dark: boolean;
+}>((props) => ({ $dark: props.$dark }))`
+  --hover-color: ${({ $dark }) =>
+    $dark ? 'rgba(119, 93, 181, 0.411) 41%' : 'rgba(255, 255, 255, 0.837) 41%'};
+
+  position: absolute;
+  transition: 0.35s;
+  background-size: 200% auto;
+  background-image: linear-gradient(
+    45deg,
+    var(--background-primary) 0%,
+    var(--hover-color) 41%,
+    var(--background-primary) 100%
+  );
+
+  border-radius: 0.375rem;
+  inset: 0px;
+  z-index: 0;
+`;
+
+export const OpenViewButtonWrapper = styled(motion.button).attrs<{
+  $active: boolean;
+}>((props) => ({ $active: props.$active }))`
+  flex: 1;
+  background-color: var(--background-primary);
+
+  position: relative;
+  min-height: 65px;
+  padding: 1.5rem 0.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  user-select: none;
+
+  .icon {
+    color: var(--nav-button-text);
+    z-index: 2;
+    font-size: 1.5rem;
+  }
+  h2 {
+    color: var(--nav-button-text);
+    z-index: 2;
+    font-size: 1rem;
+    line-height: 1.75rem;
+  }
+  &:hover {
+    background-color: var(--background-primary-hover);
+  }
+`;
 
 /**
  * SideTriggerButtonWrapper components.
