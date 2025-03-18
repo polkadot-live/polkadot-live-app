@@ -74,6 +74,7 @@ export type HelpItemKey =
   | 'help:interval:openGov:referendumThresholds'
   | 'help:docs:disclaimer'
   | 'help:docs:privacy'
-  | 'help:summary:activeAccounts'
+  | 'help:summary:accounts'
   | 'help:summary:events'
+  | 'help:summary:extrinsics'
   | 'help:summary:subscriptions';

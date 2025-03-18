@@ -67,6 +67,7 @@ export interface IpcTask {
     | 'events:import'
     // Extrinsics
     | 'extrinsics:getAll'
+    | 'extrinsics:getCount'
     | 'extrinsics:import'
     | 'extrinsics:persist'
     | 'extrinsics:remove'

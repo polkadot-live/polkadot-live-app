@@ -3,17 +3,27 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 
+import { useEffect, useRef, useState } from 'react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useEvents } from '@app/contexts/main/Events';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { MainHeading, StatsGrid } from '@polkadot-live/ui/components';
+import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-import { SideTriggerButton, StatItem, StatItemRow } from './Wrappers';
+import { SideTriggerButton } from './Wrappers';
+import { OpenViewButton } from './OpenViewButton';
+import { StatItemRow } from './StatItemRow';
+
+import type {
+  AccountSource,
+  LedgerLocalAddress,
+  LocalAddress,
+} from '@polkadot-live/types/accounts';
 import type { SummaryAccordionValue } from './types';
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
@@ -22,8 +32,6 @@ export const Summary: React.FC = () => {
     useEvents();
 
   const {
-    getAddressesCountByChain,
-    getAddressesCountBySource,
     getReadableAccountSource,
     getAllAccountSources,
     getAllAccounts,
@@ -32,11 +40,113 @@ export const Summary: React.FC = () => {
   } = useAddresses();
 
   /**
+   * Addresses fetched from main process.
+   */
+  const [addressMap, setAddressMap] = useState(
+    new Map<AccountSource, (LocalAddress | LedgerLocalAddress)[]>()
+  );
+  const addressMapRef = useRef<typeof addressMap>(addressMap);
+  const [trigger, setTrigger] = useState<boolean>(false);
+
+  /**
+   * Extrinsic counts.
+   */
+  const [extrinsicCounts, setExtrinsicCounts] = useState(
+    new Map<TxStatus, number>()
+  );
+  const extrinsicCountsRef = useRef(extrinsicCounts);
+
+  /**
+   * Utils.
+   */
+  const getTotalAccounts = () =>
+    Array.from(addressMap.values()).reduce((pv, cur) => (pv += cur.length), 0);
+
+  /**
+   * Fetch stored addresss from main when component loads.
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      // Accounts.
+      const serialized = (await window.myAPI.rawAccountTask({
+        action: 'raw-account:getAll',
+        data: null,
+      })) as string;
+
+      const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
+      for (const [source, ser] of parsedMap.entries()) {
+        switch (source) {
+          case 'vault':
+          case 'read-only':
+          case 'wallet-connect': {
+            const parsed: LocalAddress[] = JSON.parse(ser);
+            addressMapRef.current.set(source, parsed);
+            break;
+          }
+          case 'ledger': {
+            const parsed: LedgerLocalAddress[] = JSON.parse(ser);
+            addressMapRef.current.set(source, parsed);
+            break;
+          }
+          default: {
+            continue;
+          }
+        }
+      }
+
+      // Extrinsics.
+      const getCount = async (status: TxStatus) =>
+        (await window.myAPI.sendExtrinsicsTaskAsync({
+          action: 'extrinsics:getCount',
+          data: { status },
+        })) || '0';
+
+      const counts = await Promise.all([
+        getCount('pending'),
+        getCount('finalized'),
+      ]);
+
+      extrinsicCountsRef.current.set('pending', Number(counts[0]));
+      extrinsicCountsRef.current.set('finalized', Number(counts[1]));
+
+      // Trigger state update.
+      setTrigger(true);
+    };
+
+    fetch();
+  }, []);
+
+  /**
+   * Trigger to update state.
+   */
+  useEffect(() => {
+    if (trigger) {
+      setAddressMap(addressMapRef.current);
+      setExtrinsicCounts(extrinsicCountsRef.current);
+      setTrigger(false);
+    }
+  }, [trigger]);
+
+  /**
    * Accordion state.
    */
-  const [accordionValue, setAccordionValue] = useState<SummaryAccordionValue[]>(
-    ['summary-accounts', 'summary-events', 'summary-subscriptions']
-  );
+  const [accordionValue, setAccordionValue] =
+    useState<SummaryAccordionValue>('summary-accounts');
+
+  const getEventIcon = (category: string) => {
+    switch (category) {
+      case 'balances':
+        return FA.faWallet;
+      case 'nominationPools':
+        return FA.faUsers;
+      case 'nominating':
+        return FA.faArrowUpRightDots;
+      case 'openGov':
+        return FA.faFileContract;
+      default:
+        return FA.faCircleNodes;
+    }
+  };
 
   return (
     <div
@@ -50,22 +160,49 @@ export const Summary: React.FC = () => {
       {/* Title */}
       <MainHeading>Summary</MainHeading>
 
+      <FlexRow $gap={'0.75rem'}>
+        <OpenViewButton
+          title="Accounts"
+          target="import"
+          umamiEvent="window-open-accounts"
+          icon={FA.faWallet}
+        />
+        <OpenViewButton
+          title="Extrinsics"
+          target="action"
+          umamiEvent="window-open-extrinsics"
+          icon={FA.faFileSignature}
+        />
+        <OpenViewButton
+          title="OpenGov"
+          target="openGov"
+          umamiEvent="window-open-openGov"
+          icon={FA.faComments}
+        />
+        <OpenViewButton
+          title="Settings"
+          target="settings"
+          umamiEvent="window-open-settings"
+          icon={FA.faGear}
+        />
+      </FlexRow>
+
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
           className="AccordionRoot"
-          type="multiple"
+          type="single"
           value={accordionValue}
           onValueChange={(val) =>
-            setAccordionValue(val as SummaryAccordionValue[])
+            setAccordionValue(val as SummaryAccordionValue)
           }
         >
-          <FlexColumn>
-            {/** Active Accounts */}
+          <FlexColumn $rowGap={'1rem'}>
+            {/* Active Accounts */}
             <Accordion.Item className="AccordionItem" value="summary-accounts">
               <FlexRow $gap={'2px'}>
                 <UI.AccordionTrigger narrow={true}>
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <UI.TriggerHeader>Active Accounts</UI.TriggerHeader>
+                  <UI.TriggerHeader>Accounts</UI.TriggerHeader>
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton
@@ -78,25 +215,27 @@ export const Summary: React.FC = () => {
               </FlexRow>
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
-                  <StatsGrid>
-                    <StatItem
-                      title="Total"
-                      total={true}
-                      helpKey={'help:summary:activeAccounts'}
-                      meterValue={getAddressesCountByChain()}
+                  <FlexColumn $rowGap={'2px'}>
+                    <StatItemRow
+                      style={{ backgroundColor: 'var(--background-primary)' }}
+                      kind="total"
+                      helpKey="help:summary:accounts"
+                      meterValue={getTotalAccounts()}
                     />
+
                     {getAllAccountSources().map((source) => {
-                      if (getAddressesCountBySource(source) > 0) {
+                      if ((addressMap.get(source) || []).length > 0) {
                         return (
-                          <StatItem
-                            key={`total_${source}_addresses`}
-                            title={getReadableAccountSource(source)}
-                            meterValue={getAddressesCountBySource(source)}
+                          <StatItemRow
+                            key={`total_${source}_accounts`}
+                            kind="import"
+                            category={getReadableAccountSource(source)}
+                            meterValue={(addressMap.get(source) || []).length}
                           />
                         );
                       }
                     })}
-                  </StatsGrid>
+                  </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>
             </Accordion.Item>
@@ -114,25 +253,70 @@ export const Summary: React.FC = () => {
               </FlexRow>
               <UI.AccordionContent transparent={true}>
                 <UI.StatsSectionWrapper>
-                  <StatsGrid>
-                    <StatItem
-                      title="Total"
-                      total={true}
-                      helpKey={'help:summary:events'}
+                  <FlexColumn $rowGap={'2px'}>
+                    <StatItemRow
+                      style={{ backgroundColor: 'var(--background-primary)' }}
+                      kind="total"
+                      helpKey="help:summary:events"
                       meterValue={getEventsCount()}
                     />
-                    {getAllEventCategoryKeys().map((category) => {
-                      if (getEventsCount(category) > 0) {
-                        return (
-                          <StatItem
-                            key={`total_${category}_events`}
-                            title={getReadableEventCategory(category)}
-                            meterValue={getEventsCount(category)}
-                          />
-                        );
+
+                    {getAllEventCategoryKeys().map((category) => (
+                      <StatItemRow
+                        key={`total_${category}_events`}
+                        kind="event"
+                        category={getReadableEventCategory(category)}
+                        meterValue={getEventsCount(category)}
+                        icon={getEventIcon(category)}
+                      />
+                    ))}
+                  </FlexColumn>
+                </UI.StatsSectionWrapper>
+              </UI.AccordionContent>
+            </Accordion.Item>
+
+            {/* Extrinsics */}
+            <Accordion.Item
+              className="AccordionItem"
+              value="summary-extrinsics"
+            >
+              <FlexRow $gap={'2px'}>
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <UI.TriggerHeader>Extrinsics</UI.TriggerHeader>
+                </UI.AccordionTrigger>
+                <div className="HeaderContentDropdownWrapper">
+                  <SideTriggerButton
+                    onClick={() => {
+                      window.myAPI.openWindow('action');
+                      window.myAPI.umamiEvent('window-open-extrinsics', null);
+                    }}
+                  />
+                </div>
+              </FlexRow>
+              <UI.AccordionContent transparent={true}>
+                <UI.StatsSectionWrapper>
+                  <FlexColumn $rowGap={'2px'}>
+                    <StatItemRow
+                      style={{ backgroundColor: 'var(--background-primary)' }}
+                      kind="total"
+                      helpKey="help:summary:extrinsics"
+                      meterValue={
+                        (extrinsicCounts.get('pending') || 0) +
+                        (extrinsicCounts.get('finalized') || 0)
                       }
-                    })}
-                  </StatsGrid>
+                    />
+                    <StatItemRow
+                      category="Pending"
+                      kind="import"
+                      meterValue={extrinsicCounts.get('pending') || 0}
+                    />
+                    <StatItemRow
+                      category="Finalized"
+                      kind="import"
+                      meterValue={extrinsicCounts.get('finalized') || 0}
+                    />
+                  </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>
             </Accordion.Item>
