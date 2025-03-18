@@ -504,11 +504,10 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
-    key: 'help:summary:activeAccounts',
+    key: 'help:summary:accounts',
     title: 'Accounts Summary',
     definition: [
-      'The accounts summary displays the total number of accounts you have added to the main window.',
-      'Separate stat boxes display the total number of accounts you have added to the main window according to the import method.',
+      'Displays the total number of accounts that are being managed by the application, along with a breakdown of the import method.',
     ],
   },
   {

@@ -219,7 +219,7 @@ export const Summary: React.FC = () => {
                     <StatItemRow
                       style={{ backgroundColor: 'var(--background-primary)' }}
                       kind="total"
-                      helpKey="help:summary:activeAccounts"
+                      helpKey="help:summary:accounts"
                       meterValue={getTotalAccounts()}
                     />
 
