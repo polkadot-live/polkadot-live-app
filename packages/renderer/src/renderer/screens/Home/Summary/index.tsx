@@ -22,6 +22,7 @@ import type {
   LocalAddress,
 } from '@polkadot-live/types/accounts';
 import type { SummaryAccordionValue } from './types';
+import type { TxStatus } from '@polkadot-live/types/tx';
 
 export const Summary: React.FC = () => {
   const { setSelectedId } = useSideNav();
@@ -47,6 +48,14 @@ export const Summary: React.FC = () => {
   const [trigger, setTrigger] = useState<boolean>(false);
 
   /**
+   * Extrinsic counts.
+   */
+  const [extrinsicCounts, setExtrinsicCounts] = useState(
+    new Map<TxStatus, number>()
+  );
+  const extrinsicCountsRef = useRef(extrinsicCounts);
+
+  /**
    * Utils.
    */
   const getTotalAccounts = () =>
@@ -57,13 +66,13 @@ export const Summary: React.FC = () => {
    */
   useEffect(() => {
     const fetch = async () => {
+      // Accounts.
       const serialized = (await window.myAPI.rawAccountTask({
         action: 'raw-account:getAll',
         data: null,
       })) as string;
 
       const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
-
       for (const [source, ser] of parsedMap.entries()) {
         switch (source) {
           case 'vault':
@@ -71,13 +80,11 @@ export const Summary: React.FC = () => {
           case 'wallet-connect': {
             const parsed: LocalAddress[] = JSON.parse(ser);
             addressMapRef.current.set(source, parsed);
-            setTrigger(true);
             break;
           }
           case 'ledger': {
             const parsed: LedgerLocalAddress[] = JSON.parse(ser);
             addressMapRef.current.set(source, parsed);
-            setTrigger(true);
             break;
           }
           default: {
@@ -85,6 +92,30 @@ export const Summary: React.FC = () => {
           }
         }
       }
+
+      // Extrinsics.
+      extrinsicCountsRef.current.set(
+        'pending',
+        Number(
+          await window.myAPI.sendExtrinsicsTaskAsync({
+            action: 'extrinsics:getCount',
+            data: { status: 'pending' as TxStatus },
+          })
+        )
+      );
+
+      extrinsicCountsRef.current.set(
+        'finalized',
+        Number(
+          await window.myAPI.sendExtrinsicsTaskAsync({
+            action: 'extrinsics:getCount',
+            data: { status: 'finalized' as TxStatus },
+          })
+        )
+      );
+
+      // Trigger state update.
+      setTrigger(true);
     };
 
     fetch();
@@ -96,6 +127,7 @@ export const Summary: React.FC = () => {
   useEffect(() => {
     if (trigger) {
       setAddressMap(addressMapRef.current);
+      setExtrinsicCounts(extrinsicCountsRef.current);
       setTrigger(false);
     }
   }, [trigger]);
@@ -243,6 +275,52 @@ export const Summary: React.FC = () => {
                         icon={getEventIcon(category)}
                       />
                     ))}
+                  </FlexColumn>
+                </UI.StatsSectionWrapper>
+              </UI.AccordionContent>
+            </Accordion.Item>
+
+            {/* Extrinsics */}
+            <Accordion.Item
+              className="AccordionItem"
+              value="summary-extrinsics"
+            >
+              <FlexRow $gap={'2px'}>
+                <UI.AccordionTrigger narrow={true}>
+                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                  <UI.TriggerHeader>Extrinsics</UI.TriggerHeader>
+                </UI.AccordionTrigger>
+                <div className="HeaderContentDropdownWrapper">
+                  <SideTriggerButton
+                    onClick={() => {
+                      window.myAPI.openWindow('action');
+                      window.myAPI.umamiEvent('window-open-extrinsics', null);
+                    }}
+                  />
+                </div>
+              </FlexRow>
+              <UI.AccordionContent transparent={true}>
+                <UI.StatsSectionWrapper>
+                  <FlexColumn $rowGap={'2px'}>
+                    <StatItemRow
+                      style={{ backgroundColor: 'var(--background-primary)' }}
+                      kind="total"
+                      helpKey="help:summary:extrinsics"
+                      meterValue={
+                        (extrinsicCounts.get('pending') || 0) +
+                        (extrinsicCounts.get('finalized') || 0)
+                      }
+                    />
+                    <StatItemRow
+                      category="Pending"
+                      kind="import"
+                      meterValue={extrinsicCounts.get('pending') || 0}
+                    />
+                    <StatItemRow
+                      category="Finalized"
+                      kind="import"
+                      meterValue={extrinsicCounts.get('finalized') || 0}
+                    />
                   </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>

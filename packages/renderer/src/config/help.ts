@@ -520,6 +520,13 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
+    key: 'help:summary:extrinsics',
+    title: 'Extrinsics Summary',
+    definition: [
+      'View the total number of pending and finalized extrinsics that are being managed by the application.',
+    ],
+  },
+  {
     key: 'help:summary:subscriptions',
     title: 'Subscriptions Summary',
     definition: [

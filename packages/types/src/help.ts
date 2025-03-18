@@ -76,4 +76,5 @@ export type HelpItemKey =
   | 'help:docs:privacy'
   | 'help:summary:activeAccounts'
   | 'help:summary:events'
+  | 'help:summary:extrinsics'
   | 'help:summary:subscriptions';
