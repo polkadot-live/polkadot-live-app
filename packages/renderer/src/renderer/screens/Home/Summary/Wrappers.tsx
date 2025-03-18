@@ -237,7 +237,7 @@ export const StatItemRow = ({
           <div className="left">
             <TooltipRx text={ellipsisFn(flattened.address, 12)} theme={theme}>
               <span>
-                <Identicon value={flattened.address} fontSize="1.8rem" />
+                <Identicon value={flattened.address} fontSize="1.5rem" />
               </span>
             </TooltipRx>
           </div>
