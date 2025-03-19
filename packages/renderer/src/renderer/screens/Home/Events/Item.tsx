@@ -2,44 +2,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '../../../theme/variables';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
+
+import { useEffect, useState, memo } from 'react';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useEvents } from '@app/contexts/main/Events';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
-import {
-  faAngleLeft,
-  faAngleRight,
-  faExternalLinkAlt,
-  faTimes,
-  faAngleDown,
-  faAngleUp,
-  faClock,
-} from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faClock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId } from '@ren/utils/EventUtils';
 import { renderTimeAgo } from '@ren/utils/TextUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { Identicon, TooltipRx } from '@polkadot-live/ui/components';
-import { useEffect, useState, memo } from 'react';
-import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useConnections } from '@app/contexts/common/Connections';
-import { useEvents } from '@app/contexts/main/Events';
-import type { ActionMeta } from 'packages/types/src';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import { DividerVerticalIcon } from '@radix-ui/react-icons';
+import { ActionsDropdown } from './Dropdowns';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
-import Governance from '@ren/config/svg/governance.svg?react';
 
 const FADE_TRANSITION = 200;
-
-type ActionsActiveSide = 'left' | 'right';
 
 export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
-  const { isConnecting } = useBootstrapping();
-  const { darkMode, getOnlineMode, isBuildingExtrinsic } = useConnections();
+  const { darkMode } = useConnections();
   const { dismissEvent } = useEvents();
 
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -50,12 +37,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).address
       : 'Chain Event';
-
-  // Extract account source from event.
-  const source: AccountSource =
-    event.who.origin === 'account'
-      ? (event.who.data as EventAccountData).source
-      : 'ledger';
 
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
@@ -88,70 +69,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
     }
   }, [display]);
 
-  // Flag to determine if primary actions exist for this event.
-  const hasTxActions: boolean = txActions.length > 0 && source !== 'read-only';
-  const hasUriActions: boolean = uriActions.length > 0;
-
-  // Variants for actions section.
-  const actionsVariants = {
-    openLeft: { height: 'auto', marginLeft: 0 },
-    openRight: {
-      height: 'auto',
-      marginLeft: hasTxActions ? '-114%' : '-100%',
-    },
-    closedLeft: { height: 0, marginLeft: 0 },
-    closedRight: {
-      height: 0,
-      marginLeft: hasUriActions ? '-114%' : '-100%',
-    },
-  };
-
-  // Flag indicating if action buttons are showing.
-  const [showActions, setShowActions] = useState(hasTxActions);
-  const [activeSide, setActiveSide] = useState<ActionsActiveSide>(() =>
-    hasTxActions ? 'left' : hasUriActions ? 'right' : 'left'
-  );
-
-  const getActionsVariant = () =>
-    showActions
-      ? activeSide === 'left'
-        ? 'openLeft'
-        : 'openRight'
-      : activeSide === 'left'
-        ? 'closedLeft'
-        : 'closedRight';
-
-  /**
-   * Open action window and initialize with the event's tx data.
-   */
-  const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
-    // Relay building extrinsic flag to app.
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
-
-    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
-    if (!extrinsicsViewOpen) {
-      // Relay init task to extrinsics window after its DOM has loaded.
-      window.myAPI.openWindow('action', {
-        windowId: 'action',
-        task: 'action:init',
-        serData: JSON.stringify(txMeta),
-      });
-
-      // Analytics.
-      window.myAPI.umamiEvent('window-open-extrinsics', {
-        action: `${event.category}-${btnLabel?.toLowerCase()}`,
-      });
-    } else {
-      window.myAPI.openWindow('action');
-
-      // Send init task directly to extrinsics window if it's already open.
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:init',
-        data: JSON.stringify(txMeta),
-      });
-    }
-  };
-
   return (
     <AnimatePresence>
       {/* Event item wrapper */}
@@ -178,147 +95,62 @@ export const Item = memo(function Item({ event }: ItemProps) {
             ease: 'easeInOut',
           }}
         >
-          {/* Time ago */}
-          <TooltipRx
-            text={renderTimeAgo(event.timestamp)}
-            side="left"
-            theme={theme}
-          >
-            <div className="time-ago-btn">
-              <FontAwesomeIcon icon={faClock} />
-            </div>
-          </TooltipRx>
-
-          {/* Dismiss button */}
-          <div
-            className="dismiss-btn"
-            onClick={async () => await handleDismissEvent()}
-          >
-            <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
-          </div>
-
-          {/* Expand actions button */}
-          {hasUriActions && (
-            <div
-              className="show-actions-btn"
-              onClick={() => setShowActions(!showActions)}
-            >
-              <FontAwesomeIcon
-                icon={showActions ? faAngleUp : faAngleDown}
-                transform={'grow-2'}
-              />
-            </div>
-          )}
-
           {/* Main content */}
           <div>
-            <section className="item-main">
-              <div>
-                <div className="icon ">
-                  {event.category === 'openGov' ? (
-                    <Governance
-                      width="32px"
-                      height="32px"
-                      style={{ opacity: '0.85' }}
-                    />
-                  ) : (
-                    <TooltipRx
-                      text={ellipsisFn(address, 12)}
-                      side="right"
-                      theme={theme}
-                    >
-                      <span>
-                        <Identicon value={address} fontSize={'2.75rem'} />
-                      </span>
-                    </TooltipRx>
-                  )}
-                </div>
-              </div>
-              <div>
-                <h4>{accountName}</h4>
-                <h5>{title}</h5>
-                <p>{subtitle}</p>
-              </div>
-            </section>
+            <FlexColumn>
+              <FlexRow>
+                <FlexRow $gap={'0.35rem'} style={{ flex: 1, minWidth: 0 }}>
+                  <h4>{accountName}</h4>
 
-            {(hasTxActions || hasUriActions) && (
-              <motion.section
-                className="actions-wrapper"
-                initial={{ marginLeft: 0 }}
-                animate={getActionsVariant()}
-                variants={actionsVariants}
-                transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
-              >
-                {/** Tx Actions */}
-                <div className="actions">
-                  {txActions.map(({ label, txMeta }, i) => {
-                    if (source === 'ledger') {
-                      return (
-                        <TooltipRx
-                          key={`action_${uid}_${i}`}
-                          text={'Ledger Signing Coming Soon'}
-                          theme={theme}
-                        >
+                  {event.category !== 'openGov' && (
+                    <div className="icon-wrapper">
+                      <div className="icon ">
+                        <TooltipRx text={ellipsisFn(address, 12)} theme={theme}>
                           <span>
-                            <ButtonMono disabled={true} text={label} />
+                            <Identicon value={address} fontSize={'1.3rem'} />
                           </span>
                         </TooltipRx>
-                      );
-                    } else if (source !== 'read-only') {
-                      return (
-                        <ButtonMono
-                          disabled={
-                            isBuildingExtrinsic ||
-                            event.stale ||
-                            !getOnlineMode() ||
-                            (getOnlineMode() && isConnecting)
-                          }
-                          key={`action_${uid}_${i}`}
-                          text={label}
-                          onClick={async () => openActionWindow(txMeta, label)}
-                        />
-                      );
-                    }
-                  })}
-
-                  {hasUriActions && (
-                    <ButtonMonoInvert
-                      text="Links"
-                      iconRight={faAngleRight}
-                      iconTransform="shrink-2"
-                      onClick={() => setActiveSide('right')}
-                    />
-                  )}
-                </div>
-
-                {/** URI Actions */}
-                <div className="actions">
-                  {hasTxActions && (
-                    <ButtonMono
-                      text=""
-                      iconLeft={faAngleLeft}
-                      iconTransform="shrink-2"
-                      onClick={() => setActiveSide('left')}
-                    />
+                      </div>
+                    </div>
                   )}
 
-                  {uriActions.map(({ uri, label }, i) => (
-                    <ButtonMonoInvert
-                      key={`action_${uid}_${i}`}
-                      text={label}
-                      iconRight={faExternalLinkAlt}
-                      iconTransform="shrink-2"
-                      onClick={() => {
-                        window.myAPI.openBrowserURL(uri);
-                        window.myAPI.umamiEvent('link-open', {
-                          dest: label.toLowerCase(),
-                        });
-                      }}
-                    />
-                  ))}
-                </div>
-              </motion.section>
-            )}
+                  <DividerVerticalIcon className="DividerVertical" />
+                  <h5 className="text-ellipsis">{title}</h5>
+                </FlexRow>
+
+                {/** Buttons */}
+                <FlexRow style={{ minWidth: 'fit-content' }}>
+                  <TooltipRx
+                    text={renderTimeAgo(event.timestamp)}
+                    theme={theme}
+                  >
+                    <div className="TimeAgoBtn">
+                      <FontAwesomeIcon icon={faClock} transform={'shrink-2'} />
+                    </div>
+                  </TooltipRx>
+
+                  <div
+                    className="DismissBtn"
+                    onClick={async () => await handleDismissEvent()}
+                  >
+                    <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
+                  </div>
+                </FlexRow>
+              </FlexRow>
+
+              {uriActions.length + txActions.length > 0 ? (
+                <FlexRow style={{ paddingRight: '0.5rem' }}>
+                  <ActionsDropdown
+                    txActions={txActions}
+                    uriActions={uriActions}
+                    event={event}
+                  />
+                  <p>{subtitle}</p>
+                </FlexRow>
+              ) : (
+                <p>{subtitle}</p>
+              )}
+            </FlexColumn>
           </div>
         </EventItem>
       )}

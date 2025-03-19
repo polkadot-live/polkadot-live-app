@@ -28,8 +28,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
-import { ReferendumDropdownMenu } from '../DropdownMenus';
-import { RoundLeftButton, RoundRightButton } from '../DropdownMenus/Wrappers';
+import { ReferendumDropdownMenu } from '../Dropdowns';
+import { RoundLeftButton, RoundRightButton } from '../Dropdowns/Wrappers';
 import type { RefStatus } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
 
