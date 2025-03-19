@@ -97,9 +97,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
         >
           {/* Main content */}
           <div>
-            <FlexColumn style={{ flex: 1, gap: '0.9rem' }}>
+            <FlexColumn>
               <FlexRow>
-                <FlexRow $gap={'0.3rem'} style={{ flex: 1 }}>
+                <FlexRow $gap={'0.3rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>
 
                   {event.category !== 'openGov' && (
@@ -117,11 +117,12 @@ export const Item = memo(function Item({ event }: ItemProps) {
                   <DividerVerticalIcon
                     style={{ color: 'var(--text-dimmed)', opacity: '0.5' }}
                   />
-                  <h5 style={{ flex: 1 }}>{title}</h5>
+
+                  <h5 className="text-ellipsis">{title}</h5>
                 </FlexRow>
 
                 {/** Buttons */}
-                <FlexRow>
+                <FlexRow style={{ minWidth: 'fit-content' }}>
                   <TooltipRx
                     text={renderTimeAgo(event.timestamp)}
                     theme={theme}

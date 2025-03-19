@@ -117,11 +117,13 @@ export const EventItem = styled(motion.div)`
     // All direct divs
     .icon-wrapper {
       padding-left: 0.6rem;
+      min-width: fit-content;
       align-self: start;
       padding-top: 0.1rem;
     }
     h4 {
       color: var(--text-color-secondary);
+      min-width: fit-content;
       font-size: 1.05rem;
       font-weight: 600;
     }
