@@ -14,20 +14,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from '@app/screens/OpenGov/Dropdowns/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
-import type {
-  EventAccountData,
-  EventCallback,
-  TxAction,
-  UriAction,
-} from '@polkadot-live/types/reporter';
+import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ActionMeta } from '@polkadot-live/types/tx';
-
-interface ActionsDropdownProps {
-  event: EventCallback;
-  txActions: TxAction[];
-  uriActions: UriAction[];
-}
+import type { ActionsDropdownProps } from './types';
 
 export const ActionsDropdown = ({
   event,
