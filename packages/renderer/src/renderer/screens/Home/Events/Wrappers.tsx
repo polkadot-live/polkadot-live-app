@@ -114,64 +114,27 @@ export const EventItem = styled(motion.div)`
     flex-direction: column;
     justify-content: center;
 
-    > section {
-      display: flex;
-      justify-content: center;
-      column-gap: 0.5rem;
-
-      // All direct divs
-      > div {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        row-gap: 0.5rem;
-
-        .icon-wrapper {
-          padding-left: 0.6rem;
-          align-self: start;
-          padding-top: 0.1rem;
-        }
-
-        &:first-child {
-          width: var(--event-item-left-width);
-          display: flex;
-          justify-content: start;
-
-          > .icon {
-            position: relative;
-            width: 3.25rem;
-
-            > .tooltip {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              z-index: 99;
-            }
-          }
-        }
-        &:last-child {
-          flex-grow: 1;
-        }
-
-        h4 {
-          color: var(--text-color-secondary);
-          font-size: 1.05rem;
-          font-weight: 600;
-        }
-        h5 {
-          color: var(--text-color-secondary);
-          font-size: 0.98rem;
-          margin: 0.35rem 0;
-        }
-        p {
-          color: var(--text-color-primary);
-          margin: 0;
-          font-weight: 600;
-          font-size: 1.03rem;
-        }
-      }
+    // All direct divs
+    .icon-wrapper {
+      padding-left: 0.6rem;
+      align-self: start;
+      padding-top: 0.1rem;
+    }
+    h4 {
+      color: var(--text-color-secondary);
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    h5 {
+      color: var(--text-color-secondary);
+      font-size: 0.98rem;
+      margin: 0.35rem 0;
+    }
+    p {
+      color: var(--text-color-primary);
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.03rem;
     }
   }
 

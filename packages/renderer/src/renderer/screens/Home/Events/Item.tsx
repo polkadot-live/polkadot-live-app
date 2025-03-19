@@ -17,8 +17,6 @@ import { ellipsisFn } from '@w3ux/utils';
 import { Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { DividerVerticalIcon } from '@radix-ui/react-icons';
 import { ActionsDropdown } from './Dropdowns/DropdownActions';
-
-import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 
@@ -39,12 +37,6 @@ export const Item = memo(function Item({ event }: ItemProps) {
     event.who.origin === 'account'
       ? (event.who.data as EventAccountData).address
       : 'Chain Event';
-
-  // Extract account source from event.
-  const source: AccountSource =
-    event.who.origin === 'account'
-      ? (event.who.data as EventAccountData).source
-      : 'ledger';
 
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
@@ -105,71 +97,62 @@ export const Item = memo(function Item({ event }: ItemProps) {
         >
           {/* Main content */}
           <div>
-            <section>
-              <FlexColumn style={{ flex: 1, gap: '0.9rem' }}>
-                <FlexRow>
-                  <FlexRow $gap={'0.3rem'} style={{ flex: 1 }}>
-                    <h4>{accountName}</h4>
+            <FlexColumn style={{ flex: 1, gap: '0.9rem' }}>
+              <FlexRow>
+                <FlexRow $gap={'0.3rem'} style={{ flex: 1 }}>
+                  <h4>{accountName}</h4>
 
-                    {event.category !== 'openGov' && (
-                      <div className="icon-wrapper">
-                        <div className="icon ">
-                          <TooltipRx
-                            text={ellipsisFn(address, 12)}
-                            theme={theme}
-                          >
-                            <span>
-                              <Identicon value={address} fontSize={'1.3rem'} />
-                            </span>
-                          </TooltipRx>
-                        </div>
+                  {event.category !== 'openGov' && (
+                    <div className="icon-wrapper">
+                      <div className="icon ">
+                        <TooltipRx text={ellipsisFn(address, 12)} theme={theme}>
+                          <span>
+                            <Identicon value={address} fontSize={'1.3rem'} />
+                          </span>
+                        </TooltipRx>
                       </div>
-                    )}
-
-                    <DividerVerticalIcon
-                      style={{ color: 'var(--text-dimmed)', opacity: '0.5' }}
-                    />
-                    <h5 style={{ flex: 1 }}>{title}</h5>
-                  </FlexRow>
-
-                  {/** Buttons */}
-                  <FlexRow>
-                    <TooltipRx
-                      text={renderTimeAgo(event.timestamp)}
-                      theme={theme}
-                    >
-                      <div className="time-ago-btn">
-                        <FontAwesomeIcon
-                          icon={faClock}
-                          transform={'shrink-2'}
-                        />
-                      </div>
-                    </TooltipRx>
-
-                    <div
-                      className="dismiss-btn"
-                      onClick={async () => await handleDismissEvent()}
-                    >
-                      <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
                     </div>
-                  </FlexRow>
+                  )}
+
+                  <DividerVerticalIcon
+                    style={{ color: 'var(--text-dimmed)', opacity: '0.5' }}
+                  />
+                  <h5 style={{ flex: 1 }}>{title}</h5>
                 </FlexRow>
 
-                {uriActions.length + txActions.length > 0 ? (
-                  <FlexRow style={{ paddingRight: '0.5rem' }}>
-                    <ActionsDropdown
-                      txActions={txActions}
-                      uriActions={uriActions}
-                      event={event}
-                      source={source}
-                    />
-                    <p>{subtitle}</p>
-                  </FlexRow>
-                ) : (
+                {/** Buttons */}
+                <FlexRow>
+                  <TooltipRx
+                    text={renderTimeAgo(event.timestamp)}
+                    theme={theme}
+                  >
+                    <div className="time-ago-btn">
+                      <FontAwesomeIcon icon={faClock} transform={'shrink-2'} />
+                    </div>
+                  </TooltipRx>
+
+                  <div
+                    className="dismiss-btn"
+                    onClick={async () => await handleDismissEvent()}
+                  >
+                    <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
+                  </div>
+                </FlexRow>
+              </FlexRow>
+
+              {uriActions.length + txActions.length > 0 ? (
+                <FlexRow style={{ paddingRight: '0.5rem' }}>
+                  <ActionsDropdown
+                    txActions={txActions}
+                    uriActions={uriActions}
+                    event={event}
+                  />
                   <p>{subtitle}</p>
-                )}
-              </FlexColumn>
-            </section>
+                </FlexRow>
+              ) : (
+                <p>{subtitle}</p>
+              )}
+            </FlexColumn>
           </div>
         </EventItem>
       )}

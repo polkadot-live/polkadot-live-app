@@ -15,6 +15,7 @@ import {
 import { MenuButton } from '@app/screens/OpenGov/DropdownMenus/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import type {
+  EventAccountData,
   EventCallback,
   TxAction,
   UriAction,
@@ -24,14 +25,12 @@ import type { ActionMeta } from '@polkadot-live/types/tx';
 
 interface ActionsDropdownProps {
   event: EventCallback;
-  source: AccountSource;
   txActions: TxAction[];
   uriActions: UriAction[];
 }
 
 export const ActionsDropdown = ({
   event,
-  source,
   txActions,
   uriActions,
 }: ActionsDropdownProps) => {
@@ -39,9 +38,13 @@ export const ActionsDropdown = ({
   const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
-  /**
-   * Open action window and initialize with the event's tx data.
-   */
+  // Extract account source from event.
+  const source: AccountSource | null =
+    event.who.origin === 'account'
+      ? (event.who.data as EventAccountData).source
+      : null;
+
+  // Open action window and initialize with the event's tx data.
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
     // Relay building extrinsic flag to app.
     window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
@@ -107,7 +110,10 @@ export const ActionsDropdown = ({
                 Extrinsics
               </DropdownMenu.Label>
 
-              {!(['read-only', 'ledger'] as AccountSource[]).includes(source) &&
+              {source &&
+                !(['read-only', 'ledger'] as AccountSource[]).includes(
+                  source
+                ) &&
                 txActions.map(({ txMeta, label }, i) => (
                   <DropdownMenu.Item
                     key={`tx_action_${i}`}
