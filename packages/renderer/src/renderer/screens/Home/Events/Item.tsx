@@ -16,7 +16,7 @@ import { renderTimeAgo } from '@ren/utils/TextUtils';
 import { ellipsisFn } from '@w3ux/utils';
 import { Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { DividerVerticalIcon } from '@radix-ui/react-icons';
-import { ActionsDropdown } from './Dropdowns/DropdownActions';
+import { ActionsDropdown } from './Dropdowns';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 
