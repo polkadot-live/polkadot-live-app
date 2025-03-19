@@ -99,7 +99,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
           <div>
             <FlexColumn>
               <FlexRow>
-                <FlexRow $gap={'0.3rem'} style={{ flex: 1, minWidth: 0 }}>
+                <FlexRow $gap={'0.35rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>
 
                   {event.category !== 'openGov' && (
@@ -114,10 +114,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     </div>
                   )}
 
-                  <DividerVerticalIcon
-                    style={{ color: 'var(--text-dimmed)', opacity: '0.5' }}
-                  />
-
+                  <DividerVerticalIcon className="DividerVertical" />
                   <h5 className="text-ellipsis">{title}</h5>
                 </FlexRow>
 
@@ -127,13 +124,13 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     text={renderTimeAgo(event.timestamp)}
                     theme={theme}
                   >
-                    <div className="time-ago-btn">
+                    <div className="TimeAgoBtn">
                       <FontAwesomeIcon icon={faClock} transform={'shrink-2'} />
                     </div>
                   </TooltipRx>
 
                   <div
-                    className="dismiss-btn"
+                    className="DismissBtn"
                     onClick={async () => await handleDismissEvent()}
                   >
                     <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />

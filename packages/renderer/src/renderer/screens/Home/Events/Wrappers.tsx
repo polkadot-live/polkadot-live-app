@@ -89,14 +89,15 @@ export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
   position: relative;
 
-  // Dismiss button
-  .dismiss-btn {
+  .DismissBtn {
     ${eventBtnBase}
   }
-
-  // Time ago button
-  .time-ago-btn {
+  .TimeAgoBtn {
     ${eventBtnBase}
+  }
+  .DividerVertical {
+    color: var(--text-dimmed);
+    opacity: 0.5;
   }
 
   // Show actions buttons
@@ -116,7 +117,7 @@ export const EventItem = styled(motion.div)`
 
     // All direct divs
     .icon-wrapper {
-      padding-left: 0.6rem;
+      padding-left: 0.7rem;
       min-width: fit-content;
       align-self: start;
       padding-top: 0.1rem;
