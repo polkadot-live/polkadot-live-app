@@ -88,7 +88,7 @@ const dropdownMixin = css`
     fill: var(--background-primary);
   }
   .LeftSlot {
-    padding: 0 1.25rem 0 0.5rem;
+    padding: 0 1.25rem 0 0.75rem;
     color: var(--text-secondary);
   }
   .RightSlot {
