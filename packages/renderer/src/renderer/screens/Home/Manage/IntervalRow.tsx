@@ -111,7 +111,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <FontAwesomeIcon
           className="enabled"
           icon={faAnglesDown}
-          transform={'grow-4'}
+          transform={'grow-3'}
           onClick={async () =>
             await handleIntervalOneShot(task, setOneShotProcessing)
           }
@@ -124,7 +124,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           className="processing"
           fade
           icon={faAnglesDown}
-          transform={'grow-4'}
+          transform={'grow-3'}
         />
       )}
 
@@ -133,7 +133,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <FontAwesomeIcon
           className="disabled"
           icon={faAnglesDown}
-          transform={'grow-4'}
+          transform={'grow-3'}
         />
       )}
     </div>
@@ -166,7 +166,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 <FontAwesomeIcon
                   className="enabled"
                   icon={faXmark}
-                  transform={'grow-6'}
+                  transform={'grow-4'}
                   onClick={() => {
                     removeTimeoutRef.current = setTimeout(() => {
                       removeTimeoutRef.current !== null &&
@@ -269,7 +269,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                       : 'disabled'
                   }
                   icon={faList}
-                  transform={'grow-4'}
+                  transform={'grow-3'}
                 />
 
                 {/* Check overlay icon when clicked */}
@@ -278,7 +278,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                     <FontAwesomeIcon
                       className={task.status === 'disable' ? 'disable' : ''}
                       icon={faCircleCheck}
-                      transform={'shrink-3'}
+                      transform={'shrink-5'}
                     />
                   </div>
                 )}
