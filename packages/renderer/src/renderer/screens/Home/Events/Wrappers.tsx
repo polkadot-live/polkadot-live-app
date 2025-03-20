@@ -69,9 +69,6 @@ export const EventGroup = styled.div`
 
 // Mixin for event item buttons.
 const eventBtnBase = css`
-  position: absolute;
-  width: 2rem;
-  height: 2rem;
   font-size: 1.1rem;
   padding: 0;
   cursor: pointer;
@@ -92,24 +89,21 @@ export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
   position: relative;
 
-  // Dismiss button
-  > .dismiss-btn {
+  .DismissBtn {
     ${eventBtnBase}
-    top: 1rem;
-    right: 10px;
   }
-
-  // Time ago button
-  > .time-ago-btn {
+  .TimeAgoBtn {
     ${eventBtnBase}
-    top: 3.1rem;
-    right: 10px;
+  }
+  .DividerVertical {
+    color: var(--text-dimmed);
+    opacity: 0.5;
   }
 
   // Show actions buttons
   .show-actions-btn {
     ${eventBtnBase}
-    top: 5.2rem;
+    top: 4.2rem;
     right: 10px;
   }
 
@@ -121,61 +115,29 @@ export const EventItem = styled(motion.div)`
     flex-direction: column;
     justify-content: center;
 
-    > section {
-      display: flex;
-      justify-content: center;
-      column-gap: 0.5rem;
-
-      // All direct divs
-      > div {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        row-gap: 0.5rem;
-
-        &:first-child {
-          width: var(--event-item-left-width);
-          display: flex;
-          justify-content: center;
-
-          > .icon {
-            position: relative;
-            width: 3.25rem;
-
-            > .tooltip {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              z-index: 99;
-            }
-          }
-        }
-        &:last-child {
-          flex-grow: 1;
-        }
-
-        h4,
-        h5 {
-          font-size: 1.15rem;
-        }
-        h4 {
-          color: var(--text-color-primary);
-          font-weight: 600;
-        }
-        h5 {
-          color: var(--text-color-secondary);
-          margin: 0.35rem 0;
-        }
-        p {
-          color: var(--text-color-primary);
-          font-weight: 600;
-          margin: 0.2rem 0 0.4rem;
-          font-size: 1.2rem;
-          padding-right: 2.25rem;
-        }
-      }
+    // All direct divs
+    .icon-wrapper {
+      padding-left: 0.7rem;
+      min-width: fit-content;
+      align-self: start;
+      padding-top: 0.1rem;
+    }
+    h4 {
+      color: var(--text-color-secondary);
+      min-width: fit-content;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    h5 {
+      color: var(--text-color-secondary);
+      font-size: 0.98rem;
+      margin: 0.35rem 0;
+    }
+    p {
+      color: var(--text-color-primary);
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.03rem;
     }
   }
 

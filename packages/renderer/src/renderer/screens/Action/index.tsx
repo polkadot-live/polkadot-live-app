@@ -7,10 +7,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../theme/variables';
 
-import {
-  DropdownExtrinsicsFilter,
-  ExtrinsicDropdownMenu,
-} from './DropdownMenus';
+import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useTxMeta } from '@app/contexts/action/TxMeta';

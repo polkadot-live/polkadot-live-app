@@ -356,7 +356,7 @@ export class EventsController {
               source,
             } as EventAccountData,
           },
-          title: 'Unclaimed Nomination Pool Rewards',
+          title: 'Nomination Pool Rewards',
           subtitle: getBalanceText(pendingRewardsPlanck, chainId),
           data: { pendingRewards: poolPendingRewards?.toString() },
           timestamp: getUnixTime(new Date()),

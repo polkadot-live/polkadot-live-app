@@ -1,26 +1,64 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
-import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
-import {
-  faCaretRight,
-  faComments,
-  faInfo,
-} from '@fortawesome/free-solid-svg-icons';
-import { ellipsisFn } from '@w3ux/utils';
+import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexRow } from '@polkadot-live/ui/styles';
-import {
-  Identicon,
-  ShiftingMeter,
-  StatItemWrapper,
-  TooltipRx,
-} from '@polkadot-live/ui/components';
+import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import type { HelpItemKey } from '@polkadot-live/types/help';
-import type { FlattenedAccountData } from 'packages/types/src';
+
+export const HoverGradient = styled(motion.span).attrs<{
+  $dark: boolean;
+}>((props) => ({ $dark: props.$dark }))`
+  --hover-color: ${({ $dark }) =>
+    $dark ? 'rgba(119, 93, 181, 0.411) 41%' : 'rgba(255, 255, 255, 0.837) 41%'};
+
+  position: absolute;
+  transition: 0.35s;
+  background-size: 200% auto;
+  background-image: linear-gradient(
+    45deg,
+    var(--background-primary) 0%,
+    var(--hover-color) 41%,
+    var(--background-primary) 100%
+  );
+
+  border-radius: 0.375rem;
+  inset: 0px;
+  z-index: 0;
+`;
+
+export const OpenViewButtonWrapper = styled(motion.button).attrs<{
+  $active: boolean;
+}>((props) => ({ $active: props.$active }))`
+  flex: 1;
+  background-color: var(--background-primary);
+
+  position: relative;
+  min-height: 65px;
+  padding: 1.5rem 0.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  user-select: none;
+
+  .icon {
+    color: var(--nav-button-text);
+    z-index: 2;
+    font-size: 1.5rem;
+  }
+  h2 {
+    color: var(--nav-button-text);
+    z-index: 2;
+    font-size: 1rem;
+    line-height: 1.75rem;
+  }
+  &:hover {
+    background-color: var(--background-primary-hover);
+  }
+`;
 
 /**
  * SideTriggerButtonWrapper components.
@@ -83,10 +121,7 @@ export const StatItem = ({
   );
 };
 
-/**
- * StatItemRow components.
- */
-const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
+export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   padding: 1rem;
   background-color: ${(props) =>
     props.$total
@@ -103,6 +138,7 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   }
 
   h3 {
+    color: var(--text-color-secondary);
     flex: 1;
     font-size: 1.1rem;
     overflow-x: hidden;
@@ -119,6 +155,7 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   }
   .meter {
     padding-right: 0.5rem;
+    font-weight: bolder;
   }
   .help {
     width: 1.6rem;
@@ -134,68 +171,3 @@ const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
     }
   }
 `;
-
-export const StatItemRow = ({
-  kind,
-  meterValue,
-  helpKey,
-  flattened,
-  style,
-}: {
-  kind: string;
-  meterValue: number;
-  flattened?: FlattenedAccountData;
-  helpKey?: HelpItemKey;
-  style?: React.CSSProperties;
-}) => {
-  const { openHelp } = useHelp();
-  const { darkMode } = useConnections();
-
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
-  const meterColor =
-    kind === 'total' ? 'var(--text-highlight)' : 'var(--text-color-primary)';
-
-  return (
-    <StatItemRowWrapper style={style} $total={kind === 'total'}>
-      {kind === 'total' && (
-        <FlexRow>
-          {helpKey && (
-            <div className="left help" onClick={() => openHelp(helpKey)}>
-              <FontAwesomeIcon icon={faInfo} />
-            </div>
-          )}
-          <h3 className="total">Total</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'account' && flattened && (
-        <FlexRow>
-          <div className="left">
-            <TooltipRx text={ellipsisFn(flattened.address, 12)} theme={theme}>
-              <span>
-                <Identicon value={flattened.address} fontSize="1.8rem" />
-              </span>
-            </TooltipRx>
-          </div>
-          <h3>{flattened.name}</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-      {kind === 'referenda' && (
-        <FlexRow>
-          <div className="left">
-            <FontAwesomeIcon icon={faComments} transform={'grow-1'} />
-          </div>
-          <h3>Referenda</h3>
-          <div className="meter">
-            <ShiftingMeter color={meterColor} value={meterValue} size={1.1} />
-          </div>
-        </FlexRow>
-      )}
-    </StatItemRowWrapper>
-  );
-};

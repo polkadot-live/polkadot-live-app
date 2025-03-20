@@ -10,7 +10,7 @@ import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
-import { ReferendumDropdownMenu } from '../DropdownMenus';
+import { ReferendumDropdownMenu } from '../Dropdowns';
 
 interface HistoryRowProps {
   info: OG.ReferendaInfo;

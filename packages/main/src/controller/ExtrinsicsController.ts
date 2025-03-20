@@ -7,6 +7,7 @@ import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,
+  TxStatus,
 } from '@polkadot-live/types/tx';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -20,6 +21,9 @@ export class ExtrinsicsController {
     switch (task.action) {
       case 'extrinsics:getAll': {
         return this.getAll();
+      }
+      case 'extrinsics:getCount': {
+        return this.getCount(task);
       }
       case 'extrinsics:import': {
         return this.import(task);
@@ -59,6 +63,18 @@ export class ExtrinsicsController {
    */
   private static getAll(): string {
     return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+  }
+
+  /**
+   * Get count of extrinsics with optional status.
+   */
+  private static getCount(task: IpcTask): string {
+    const { status }: { status: TxStatus } = task.data;
+    const stored = this.getExtrinsicsFromStore();
+
+    return !status
+      ? stored.length.toString()
+      : stored.filter(({ txStatus }) => status === txStatus).length.toString();
   }
 
   /**

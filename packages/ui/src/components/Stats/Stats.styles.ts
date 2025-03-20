@@ -6,7 +6,7 @@ import { mixinHelpIcon } from '../Common';
 
 export const MainHeading = styled.h1`
   color: var(--text-main-heading);
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   margin-bottom: 1rem;
 `;
 
