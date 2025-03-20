@@ -97,7 +97,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
         >
           {/* Main content */}
           <div>
-            <FlexColumn>
+            <FlexColumn $rowGap={'0.6rem'}>
               <FlexRow>
                 <FlexRow $gap={'0.35rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>

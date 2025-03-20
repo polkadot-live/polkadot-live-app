@@ -208,7 +208,7 @@ export const Accounts = ({
                                     <span>
                                       <Identicon
                                         value={address}
-                                        fontSize={'2.25rem'}
+                                        fontSize={'1.75rem'}
                                       />
                                     </span>
                                   </UI.TooltipRx>
