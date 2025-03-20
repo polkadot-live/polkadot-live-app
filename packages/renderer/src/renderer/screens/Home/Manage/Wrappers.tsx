@@ -36,7 +36,7 @@ export const ItemsColumn = styled.div`
 export const ItemEntryWrapper = styled(motion.div)`
   width: 100%;
   position: relative;
-  padding: 1.15rem 1rem;
+  padding: 1.1rem 1rem;
   cursor: pointer;
 
   > .inner {
@@ -73,7 +73,7 @@ export const ItemEntryWrapper = styled(motion.div)`
           white-space: nowrap;
           overflow: hidden;
           margin: 0;
-          font-size: 1.05rem;
+          font-size: 1.03rem;
         }
       }
     }
@@ -84,7 +84,7 @@ export const TaskEntryWrapper = styled(motion.div)`
   background: var(--background-primary);
   width: 100%;
   position: relative;
-  padding: 1.15rem 1rem;
+  padding: 0.75rem 1rem;
   max-height: 54px;
   overflow: hidden;
 
@@ -95,18 +95,16 @@ export const TaskEntryWrapper = styled(motion.div)`
     .native-content {
       position: relative;
     }
-
     .checked-icon-wrapper {
       color: var(--text-color-tertiary);
       position: absolute;
-      bottom: 0;
-      right: -2px;
+      bottom: 1px;
+      right: 0;
 
       .disable {
         opacity: 0.4;
       }
     }
-
     .checked {
       transition: opacity 0.1s ease-in-out;
       padding: 0.5rem;
@@ -262,7 +260,7 @@ export const TaskEntryWrapper = styled(motion.div)`
             white-space: nowrap;
             overflow: hidden;
             margin: 0;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
 
             .icon-wrapper {
               color: var(--text-dimmed);
