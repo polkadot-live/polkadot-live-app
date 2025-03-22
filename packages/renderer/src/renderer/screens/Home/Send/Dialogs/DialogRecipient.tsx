@@ -84,19 +84,20 @@ export const DialogRecipient = ({
    * Handle input change.
    */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const managed = allAddresses.current.find(
-      ({ address }) => address === event.target.value
-    )
+    // Trim any whitespace.
+    const val = event.target.value.trim();
+
+    const managed = allAddresses.current.find(({ address }) => address === val)
       ? true
       : false;
 
-    setInputVal((pv) => ({ ...pv, address: event.target.value, managed }));
+    setInputVal((pv) => ({ ...pv, address: val, managed }));
     setIsInputValid(validateAddressInput());
 
-    event.target.value === ''
+    val === ''
       ? setFilteredAddresses(allAddresses.current)
       : setFilteredAddresses((pv) =>
-          pv.filter(({ address }) => address.startsWith(event.target.value))
+          pv.filter(({ address }) => address.startsWith(val))
         );
   };
 
