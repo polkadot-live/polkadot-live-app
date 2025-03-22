@@ -479,30 +479,32 @@ export const Send: React.FC = () => {
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
 
-      <FlexColumn $rowGap={'0.75rem'}>
-        <UI.InfoCard
-          icon={FA.faWarning}
-          style={{ color: 'var(--accent-warning)' }}
-        >
-          <FlexColumn>
-            <div
-              style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
-            >
-              This alpha release supports native transfers of up to <b>100</b>{' '}
-              tokens on <b>Kusama</b> and <b>Westend</b> networks.
-            </div>
-          </FlexColumn>
-        </UI.InfoCard>
-
+      <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>
         <UI.InfoCard icon={FA.faInfoCircle} style={{ marginTop: '0' }}>
           <FlexColumn>
             <div>Send native tokens to a recipient on the same network.</div>
           </FlexColumn>
         </UI.InfoCard>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <ProgressBar value={progress} max={100} />
-        </div>
+        <FlexColumn $rowGap={'0.5rem'}>
+          <UI.InfoCard
+            icon={FA.faWarning}
+            style={{ color: 'var(--accent-warning)', marginTop: '0' }}
+          >
+            <FlexColumn>
+              <div
+                style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
+              >
+                This alpha release supports native transfers of up to <b>100</b>{' '}
+                tokens on <b>Kusama</b> and <b>Westend</b> networks.
+              </div>
+            </FlexColumn>
+          </UI.InfoCard>
+
+          <div>
+            <ProgressBar value={progress} max={100} />
+          </div>
+        </FlexColumn>
       </FlexColumn>
 
       <UI.AccordionWrapper $onePart={true}>
