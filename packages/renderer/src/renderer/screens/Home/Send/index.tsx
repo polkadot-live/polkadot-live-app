@@ -41,16 +41,10 @@ import type {
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SendAccordionValue } from './types';
+import type { SendAccordionValue, SendRecipient } from './types';
 import { DialogRecipient } from './Dialogs';
 
 const TOKEN_TRANSFER_LIMIT = 100;
-
-export interface SendRecipient {
-  address: string;
-  accountName: string | null;
-  managed: boolean;
-}
 
 export const Send: React.FC = () => {
   /**

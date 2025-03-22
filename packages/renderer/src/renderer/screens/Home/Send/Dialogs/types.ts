@@ -6,7 +6,7 @@ import type {
   LocalAddress,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SendRecipient } from '..';
+import type { SendRecipient } from '../types';
 
 export interface DialogRecipientProps {
   addresses: (LocalAddress | LedgerLocalAddress)[];

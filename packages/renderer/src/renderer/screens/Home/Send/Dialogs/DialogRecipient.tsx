@@ -7,7 +7,6 @@ import * as themeVariables from '../../../../theme/variables';
 import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-import type { SendRecipient } from '..';
 
 // TODO: Move to ui library
 import {
@@ -29,6 +28,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import type { DialogRecipientProps } from './types';
 import type { ChangeEvent } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { SendRecipient } from '../types';
 
 export const DialogRecipient = ({
   addresses,
