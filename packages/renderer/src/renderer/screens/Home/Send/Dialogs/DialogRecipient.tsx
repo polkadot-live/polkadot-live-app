@@ -185,15 +185,18 @@ export const DialogRecipient = ({
 
           <Styles.FlexColumn $rowGap={'1.5rem'}>
             <Styles.FlexColumn $rowGap={'0.75rem'}>
-              <Dialog.Title className="Dialog__Title">
-                Choose Recipient
-              </Dialog.Title>
+              <Dialog.Title className="Dialog__Title">Recipient</Dialog.Title>
 
               <Dialog.Description className="Dialog__Description">
                 <Styles.FlexColumn
                   $rowGap={'0.75rem'}
                   style={{ marginTop: '1rem' }}
                 >
+                  <div>
+                    <p style={{ margin: '0.5rem 0' }}>
+                      Enter an address or select one from the list.
+                    </p>
+                  </div>
                   {/** Input */}
                   <Styles.FlexRow $gap={'0.5rem'}>
                     <Styles.FlexRow $gap={'0'} style={{ flex: 1 }}>
@@ -215,6 +218,7 @@ export const DialogRecipient = ({
                     </Styles.FlexRow>
 
                     <ConfirmBtn
+                      className={validateAddressInput() ? 'valid' : undefined}
                       disabled={!isInputValid}
                       $theme={theme}
                       onClick={() => handleConfirmClick()}
