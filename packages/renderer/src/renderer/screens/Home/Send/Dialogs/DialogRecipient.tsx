@@ -107,8 +107,9 @@ export const DialogRecipient = ({
     setIsInputValid(validateAddressInput());
 
     if (inputVal.address === clickedAddress) {
-      setInputVal({ address: '', accountName: '', managed: false });
+      setInputVal({ address: '', accountName: null, managed: false });
       setFilteredAddresses(allAddresses.current);
+      setReceiver(null);
       return;
     }
 
@@ -141,7 +142,7 @@ export const DialogRecipient = ({
     setFilteredAddresses(addresses);
     setInputVal({ address: '', accountName: '', managed: false });
     setIsInputValid(false);
-  }, [addresses, sender]);
+  }, [sender]);
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -153,17 +154,17 @@ export const DialogRecipient = ({
             <SelectedAddressItem $theme={theme}>
               <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
                 <div style={{ minWidth: 'fit-content' }}>
-                  <Identicon value={recipient.address} fontSize="1.9rem" />
+                  <Identicon value={inputVal.address} fontSize="1.9rem" />
                 </div>
                 <Styles.FlexColumn
                   $rowGap={'0.5rem'}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  {recipient.accountName ? (
-                    <h3 className="text-ellipsis">{recipient.accountName}</h3>
+                  {inputVal.accountName ? (
+                    <h3 className="text-ellipsis">{inputVal.accountName}</h3>
                   ) : (
                     <h3 className="text-ellipsis">
-                      {ellipsisFn(recipient.address, 8)}
+                      {ellipsisFn(inputVal.address, 8)}
                     </h3>
                   )}
                 </Styles.FlexColumn>
