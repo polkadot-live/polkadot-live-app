@@ -39,13 +39,6 @@ export const AddressesWrapper = styled.div<{ $theme: AnyData }>`
 export const SelectedAddressItem = styled.div<{
   $theme: AnyData;
 }>`
-  --background: ${(props) => props.$theme.backgroundPrimary};
-  --background-hover: ${(props) => props.$theme.backgroundPrimaryHover};
-  --text-primary: ${(props) => props.$theme.textColorPrimary};
-  --text-secondary: ${(props) => props.$theme.textColorSecondary};
-  --text-bright: ${(props) => props.$theme.textBright};
-  --background-success: ${(props) => props.$theme.accentSuccess};
-
   cursor: pointer;
   width: 100%;
   border-radius: 0.375rem;
@@ -62,11 +55,11 @@ export const SelectedAddressItem = styled.div<{
     font-weight: normal;
   }
   h3 {
-    color: var(--text-primary);
+    color: ${(props) => props.$theme.textColorPrimary};
     font-size: 1.03rem;
   }
   h4 {
-    color: var(--text-secondary);
+    color: ${(props) => props.$theme.textColorSecondary};
     font-size: 1rem;
   }
 `;
@@ -133,11 +126,7 @@ export const InputIdenticonWrapper = styled.div`
 `;
 
 export const InputWrapper = styled.div<{ $theme: AnyData }>`
-  --background: ${(props) => props.$theme.backgroundPrimary};
-  --text-primary: ${(props) => props.$theme.textColorPrimary};
-  --text-secondary: ${(props) => props.$theme.textColorSecondary};
-
-  background-color: var(--background);
+  background-color: ${(props) => props.$theme.backgroundPrimary};
   display: flex;
   align-items: center;
   padding: 1.25rem;
@@ -145,7 +134,7 @@ export const InputWrapper = styled.div<{ $theme: AnyData }>`
   border-bottom-right-radius: 0.375rem;
 
   input {
-    color: var(--text-primary);
+    color: ${(props) => props.$theme.textColorPrimary};
     padding: 0;
     font-size: 1.05rem;
     font-weight: 500;
@@ -154,7 +143,7 @@ export const InputWrapper = styled.div<{ $theme: AnyData }>`
     cursor: default;
 
     &::placeholder {
-      color: var(--text-secondary);
+      color: ${(props) => props.$theme.textColorSecondary};
       opacity: 0.5;
     }
     &:disabled {
@@ -183,13 +172,8 @@ export const ConfirmBtn = styled.button<{ $theme: AnyData }>`
 `;
 
 export const TriggerButton = styled.button<{ $theme: AnyData }>`
-  --background: ${(props) => props.$theme.backgroundPrimary};
-  --background-hover: ${(props) => props.$theme.backgroundPrimaryHover};
-  --text-primary: ${(props) => props.$theme.textColorPrimary};
-  --text-secondary: ${(props) => props.$theme.textColorSecondary};
-
-  background-color: var(--background);
-  color: var(--text-primary);
+  background-color: ${(props) => props.$theme.backgroundPrimary};
+  color: ${(props) => props.$theme.textColorPrimary};
 
   display: inline-flex;
   align-items: center;
@@ -200,6 +184,6 @@ export const TriggerButton = styled.button<{ $theme: AnyData }>`
   font-size: 1.1rem;
 
   &:hover {
-    background-color: var(--background-hover);
+    background-color: ${(props) => props.$theme.backgroundPrimaryHover};
   }
 `;
