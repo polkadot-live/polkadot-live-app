@@ -723,19 +723,11 @@ export const Send: React.FC = () => {
                     {!sender ? (
                       '-'
                     ) : (
-                      <FlexRow $gap={'0.75rem'}>
-                        <AccountNameWithTooltip
-                          theme={theme}
-                          address={sender}
-                          accountName={getSenderAccountName()}
-                        />
-                        <UI.CopyButton
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(sender)
-                          }
-                        />
-                      </FlexRow>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={sender}
+                        accountName={getSenderAccountName()}
+                      />
                     )}
                   </InfoPanel>
 
@@ -744,22 +736,14 @@ export const Send: React.FC = () => {
                     {!receiver ? (
                       '-'
                     ) : (
-                      <FlexRow $gap={'0.75rem'}>
-                        <AccountNameWithTooltip
-                          theme={theme}
-                          address={receiver.address}
-                          accountName={
-                            receiver.accountName ||
-                            ellipsisFn(receiver.address, 8)
-                          }
-                        />
-                        <UI.CopyButton
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(receiver.address)
-                          }
-                        />
-                      </FlexRow>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={receiver.address}
+                        accountName={
+                          receiver.accountName ||
+                          ellipsisFn(receiver.address, 8)
+                        }
+                      />
                     )}
                   </InfoPanel>
 
