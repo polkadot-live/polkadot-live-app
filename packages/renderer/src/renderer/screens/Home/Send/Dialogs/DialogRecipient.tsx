@@ -47,8 +47,26 @@ export const DialogRecipient = ({
     accountName: null,
     managed: false,
   });
+
   const [filteredAddresses, setFilteredAddresses] = useState(addresses);
   const allAddresses = useRef(addresses);
+  const [trigger, setTrigger] = useState(false);
+
+  useEffect(() => {
+    setTrigger(true);
+  }, []);
+
+  useEffect(() => {
+    if (trigger) {
+      if (recipient !== null) {
+        setInputVal({ ...recipient });
+        setFilteredAddresses((pv) =>
+          pv.filter(({ address }) => address.startsWith(recipient.address))
+        );
+      }
+      setTrigger(false);
+    }
+  }, [trigger]);
 
   const ChainPrefix = new Map<ChainID, number>([
     ['Polkadot', 0],
@@ -124,7 +142,7 @@ export const DialogRecipient = ({
    * Handle clicking the confirm button.
    */
   const handleConfirmClick = () => {
-    setReceiver(inputVal);
+    setReceiver({ ...inputVal });
     setIsOpen(false);
   };
 
@@ -149,25 +167,23 @@ export const DialogRecipient = ({
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger $theme={theme}>
         <TriggerButton $theme={theme}>
-          {recipient === null ? (
+          {recipient === null || recipient.address === '' ? (
             <span style={{ textAlign: 'left', flex: 1 }}>Select Recipient</span>
           ) : (
             <SelectedAddressItem $theme={theme}>
               <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
                 <div style={{ minWidth: 'fit-content' }}>
-                  <Identicon value={inputVal.address} fontSize="1.9rem" />
+                  <Identicon value={recipient.address} fontSize="1.9rem" />
                 </div>
                 <Styles.FlexColumn
                   $rowGap={'0.5rem'}
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  {inputVal.accountName ? (
-                    <h3 className="text-ellipsis">{inputVal.accountName}</h3>
-                  ) : (
-                    <h3 className="text-ellipsis">
-                      {ellipsisFn(inputVal.address, 8)}
-                    </h3>
-                  )}
+                  <h3>
+                    {recipient.accountName !== null
+                      ? recipient.accountName
+                      : ellipsisFn(recipient.address, 8)}
+                  </h3>
                 </Styles.FlexColumn>
               </Styles.FlexRow>
             </SelectedAddressItem>
@@ -193,9 +209,9 @@ export const DialogRecipient = ({
                   style={{ marginTop: '1rem' }}
                 >
                   <div>
-                    <p style={{ margin: '0.5rem 0' }}>
+                    <span style={{ margin: '0.5rem 0' }}>
                       Enter an address or select one from the list.
-                    </p>
+                    </span>
                   </div>
                   {/** Input */}
                   <Styles.FlexRow $gap={'0.5rem'}>
@@ -218,14 +234,12 @@ export const DialogRecipient = ({
                     </Styles.FlexRow>
 
                     <ConfirmBtn
-                      className={validateAddressInput() ? 'valid' : undefined}
-                      disabled={!isInputValid}
+                      role="button"
+                      className={`${validateAddressInput() && 'valid'} ${!isInputValid && 'disabled'}`}
                       $theme={theme}
-                      onClick={() => handleConfirmClick()}
+                      onClick={() => isInputValid && handleConfirmClick()}
                     >
-                      <span>
-                        <Icons.CheckIcon />
-                      </span>
+                      <Icons.CheckIcon />
                     </ConfirmBtn>
                   </Styles.FlexRow>
 
@@ -274,14 +288,14 @@ export const DialogRecipient = ({
                           )
                         )
                       ) : (
-                        <p
+                        <span
                           style={{
                             textAlign: 'center',
                             color: theme.textColorSecondary,
                           }}
                         >
                           No addresses match input.
-                        </p>
+                        </span>
                       )}
                     </div>
                   </AddressesWrapper>

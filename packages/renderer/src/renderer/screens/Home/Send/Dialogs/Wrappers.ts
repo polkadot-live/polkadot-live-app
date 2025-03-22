@@ -153,29 +153,31 @@ export const InputWrapper = styled.div<{ $theme: AnyData }>`
   }
 `;
 
-export const ConfirmBtn = styled.button<{ $theme: AnyData }>`
+export const ConfirmBtn = styled.div<{ $theme: AnyData }>`
   --background: ${(props) => props.$theme.backgroundPrimary};
   --accent-success: ${(props) => props.$theme.accentSuccess};
   --text-bright: ${(props) => props.$theme.textBright};
+  --text-dimmed: ${(props) => props.$theme.textDimmed};
 
   background-color: var(--background);
   align-self: stretch;
   padding: 0 1.4rem;
   border-radius: 0.375rem;
   border: 1px solid var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &.valid {
     animation: borderColorChange 1.5s infinite alternate;
   }
-  &:hover:not([disabled]) {
+  &.disabled {
+    color: var(--text-dimmed);
+    cursor: not-allowed;
+  }
+  &:hover:not(.disabled) {
     background-color: var(--accent-success);
     color: var(--text-bright);
-  }
-  &:disabled {
-    cursor: not-allowed;
-    > span {
-      opacity: 0.3;
-    }
   }
   @keyframes borderColorChange {
     0% {
