@@ -167,6 +167,7 @@ export const ConfirmBtn = styled.div<{ $theme: AnyData }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
   &.valid {
     animation: borderColorChange 1.5s infinite alternate;

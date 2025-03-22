@@ -105,7 +105,9 @@ export const DialogRecipient = ({
     // Trim any whitespace.
     const val = event.target.value.trim();
 
-    const managed = allAddresses.current.find(({ address }) => address === val)
+    const managed = allAddresses.current.find(
+      ({ address }) => address.toLowerCase() === val.toLowerCase()
+    )
       ? true
       : false;
 
@@ -114,8 +116,10 @@ export const DialogRecipient = ({
 
     val === ''
       ? setFilteredAddresses(allAddresses.current)
-      : setFilteredAddresses((pv) =>
-          pv.filter(({ address }) => address.startsWith(val))
+      : setFilteredAddresses(
+          allAddresses.current.filter(({ address }) =>
+            address.toLowerCase().startsWith(val.toLowerCase())
+          )
         );
   };
 
@@ -288,14 +292,17 @@ export const DialogRecipient = ({
                           )
                         )
                       ) : (
-                        <span
-                          style={{
-                            textAlign: 'center',
-                            color: theme.textColorSecondary,
-                          }}
-                        >
-                          No addresses match input.
-                        </span>
+                        <Styles.FlexRow>
+                          <span
+                            style={{
+                              width: '100%',
+                              textAlign: 'center',
+                              color: theme.textColorSecondary,
+                            }}
+                          >
+                            No addresses match input.
+                          </span>
+                        </Styles.FlexRow>
                       )}
                     </div>
                   </AddressesWrapper>
