@@ -3,6 +3,7 @@
 
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
 import { useConnections } from '@app/contexts/common/Connections';
@@ -41,9 +42,18 @@ export const AccountNameWithTooltip = ({
   address,
   accountName,
 }: AccountNameWithTooltipProps) => (
-  <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
+  <Styles.FlexRow $gap={'0.75rem'}>
+    <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
+      <span>
+        <UI.Identicon value={address} fontSize="1.5rem" />
+      </span>
+    </UI.TooltipRx>
     <span style={{ cursor: 'default' }}>{accountName}</span>
-  </UI.TooltipRx>
+    <UI.CopyButton
+      theme={theme}
+      onCopyClick={async () => await window.myAPI.copyToClipboard(address)}
+    />
+  </Styles.FlexRow>
 );
 
 /**
