@@ -122,44 +122,44 @@ export const InputIdenticonWrapper = styled.div`
   justify-content: center;
   border-top-left-radius: 0.375rem;
   border-bottom-left-radius: 0.375rem;
-  padding: 1rem 0.25rem 1rem 1rem;
+  padding: 1.2rem 0rem 0.8rem 1rem;
 `;
 
-export const InputWrapper = styled.div<{ $theme: AnyData }>`
+export const InputWrapper = styled.input<{ $theme: AnyData }>`
   background-color: ${(props) => props.$theme.backgroundPrimary};
+  color: ${(props) => props.$theme.textColorPrimary};
+
   display: flex;
   align-items: center;
   padding: 1.25rem;
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
 
-  input {
-    color: ${(props) => props.$theme.textColorPrimary};
-    padding: 0;
-    font-size: 1.05rem;
-    font-weight: 500;
-    width: 100%;
-    text-align: left;
-    cursor: default;
+  font-size: 1.05rem;
+  font-weight: 500;
+  width: 100%;
+  text-align: left;
+  cursor: default;
 
-    &::placeholder {
-      color: ${(props) => props.$theme.textColorSecondary};
-      opacity: 0.5;
-    }
-    &:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+  &::placeholder {
+    color: ${(props) => props.$theme.textColorSecondary};
+    opacity: 0.5;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 `;
 
-export const ConfirmBtn = styled.div<{ $theme: AnyData }>`
+export const ConfirmBtn = styled.button<{ $theme: AnyData }>`
   --background: ${(props) => props.$theme.backgroundPrimary};
   --accent-success: ${(props) => props.$theme.accentSuccess};
+  --text-primary: ${(props) => props.$theme.textColorPrimary};
   --text-bright: ${(props) => props.$theme.textBright};
   --text-dimmed: ${(props) => props.$theme.textDimmed};
 
   background-color: var(--background);
+  color: var(--text-primary);
   align-self: stretch;
   padding: 0 1.4rem;
   border-radius: 0.375rem;
@@ -172,16 +172,17 @@ export const ConfirmBtn = styled.div<{ $theme: AnyData }>`
   &.valid {
     animation: borderColorChange 1.5s infinite alternate;
   }
-  &.disabled {
+  &:disabled {
     color: var(--text-dimmed);
     cursor: not-allowed;
   }
-  &:hover:not(.disabled) {
+  &:hover:not([disabled]) {
     background-color: var(--accent-success);
     color: var(--text-bright);
   }
   @keyframes borderColorChange {
     0% {
+      animation-timing-function: cubicBezier(0.15, 1, 0.1, 1);
       border-color: var(--background);
     }
     100% {
@@ -190,7 +191,7 @@ export const ConfirmBtn = styled.div<{ $theme: AnyData }>`
   }
 `;
 
-export const TriggerButton = styled.button<{ $theme: AnyData }>`
+export const TriggerButton = styled.div<{ $theme: AnyData }>`
   background-color: ${(props) => props.$theme.backgroundPrimary};
   color: ${(props) => props.$theme.textColorPrimary};
 

@@ -207,107 +207,96 @@ export const DialogRecipient = ({
             <Styles.FlexColumn $rowGap={'0.75rem'}>
               <Dialog.Title className="Dialog__Title">Recipient</Dialog.Title>
 
-              <Dialog.Description className="Dialog__Description">
-                <Styles.FlexColumn
-                  $rowGap={'0.75rem'}
-                  style={{ marginTop: '1rem' }}
-                >
-                  <div>
-                    <span style={{ margin: '0.5rem 0' }}>
-                      Enter an address or select one from the list.
-                    </span>
-                  </div>
-                  {/** Input */}
-                  <Styles.FlexRow $gap={'0.5rem'}>
-                    <Styles.FlexRow $gap={'0'} style={{ flex: 1 }}>
-                      <InputIdenticonWrapper
-                        style={{ backgroundColor: theme.backgroundPrimary }}
-                      >
-                        <Identicon value={inputVal.address} fontSize="1.5rem" />
-                      </InputIdenticonWrapper>
-                      <InputWrapper $theme={theme} style={{ flex: 1 }}>
-                        <input
-                          disabled={false}
-                          placeholder="Input Address"
-                          onChange={(e) => handleChange(e)}
-                          value={inputVal.address}
-                          //onFocus={() => handleFocus()}
-                          //onBlur={() => handleBlur()}
-                        />
-                      </InputWrapper>
-                    </Styles.FlexRow>
+              <Styles.FlexColumn $rowGap={'0.75rem'}>
+                <Dialog.Description>
+                  <span style={{ color: theme.textColorSecondary }}>
+                    Enter an address or select one from the list.
+                  </span>
+                </Dialog.Description>
 
-                    <ConfirmBtn
-                      role="button"
-                      className={`${validateAddressInput() && 'valid'} ${!isInputValid && 'disabled'}`}
-                      $theme={theme}
-                      onClick={() => isInputValid && handleConfirmClick()}
+                {/** Input */}
+                <Styles.FlexRow $gap={'0.5rem'}>
+                  <Styles.FlexRow $gap={'0'} style={{ flex: 1 }}>
+                    <InputIdenticonWrapper
+                      style={{ backgroundColor: theme.backgroundPrimary }}
                     >
-                      <Icons.CheckIcon />
-                    </ConfirmBtn>
+                      <Identicon value={inputVal.address} fontSize="1.5rem" />
+                    </InputIdenticonWrapper>
+                    <InputWrapper
+                      $theme={theme}
+                      style={{ flex: 1 }}
+                      disabled={false}
+                      placeholder="Input Address"
+                      onChange={(e) => handleChange(e)}
+                      value={inputVal.address}
+                    ></InputWrapper>
                   </Styles.FlexRow>
 
-                  <AddressesWrapper $theme={theme}>
-                    <div className="Container">
-                      {filteredAddresses.length > 0 ? (
-                        filteredAddresses.map(
-                          ({ name: accountName, address }) => (
-                            <AddressItem
-                              role="button"
-                              selected={inputVal.address === address}
-                              onClick={() =>
-                                handleAddressClick(address, accountName)
-                              }
-                              $theme={theme}
-                              key={`recipient-${address}`}
-                            >
-                              <Styles.FlexRow
-                                $gap={'1.25rem'}
-                                style={{ width: '100%' }}
-                              >
-                                <div style={{ minWidth: 'fit-content' }}>
-                                  <Identicon
-                                    value={address}
-                                    fontSize="1.9rem"
-                                  />
-                                </div>
-                                <Styles.FlexColumn
-                                  $rowGap={'0.5rem'}
-                                  style={{ flex: 1, minWidth: 0 }}
-                                >
-                                  <h3 className="text-ellipsis">
-                                    {accountName}
-                                  </h3>
-                                  <h4 className="text-ellipsis">
-                                    {ellipsisFn(address, 12)}
-                                  </h4>
-                                </Styles.FlexColumn>
-                                {inputVal.address === address && (
-                                  <span className="ClearBtn">
-                                    <Icons.Cross1Icon />
-                                  </span>
-                                )}
-                              </Styles.FlexRow>
-                            </AddressItem>
-                          )
-                        )
-                      ) : (
-                        <Styles.FlexRow>
-                          <span
-                            style={{
-                              width: '100%',
-                              textAlign: 'center',
-                              color: theme.textColorSecondary,
-                            }}
+                  <ConfirmBtn
+                    className={`${validateAddressInput() && 'valid'}`}
+                    disabled={!isInputValid}
+                    $theme={theme}
+                    onClick={() => isInputValid && handleConfirmClick()}
+                  >
+                    <Icons.CheckIcon />
+                  </ConfirmBtn>
+                </Styles.FlexRow>
+
+                <AddressesWrapper $theme={theme}>
+                  <div className="Container">
+                    {filteredAddresses.length > 0 ? (
+                      filteredAddresses.map(
+                        ({ name: accountName, address }) => (
+                          <AddressItem
+                            role="button"
+                            selected={inputVal.address === address}
+                            onClick={() =>
+                              handleAddressClick(address, accountName)
+                            }
+                            $theme={theme}
+                            key={`recipient-${address}`}
                           >
-                            No addresses match input.
-                          </span>
-                        </Styles.FlexRow>
-                      )}
-                    </div>
-                  </AddressesWrapper>
-                </Styles.FlexColumn>
-              </Dialog.Description>
+                            <Styles.FlexRow
+                              $gap={'1.25rem'}
+                              style={{ width: '100%' }}
+                            >
+                              <div style={{ minWidth: 'fit-content' }}>
+                                <Identicon value={address} fontSize="1.9rem" />
+                              </div>
+                              <Styles.FlexColumn
+                                $rowGap={'0.5rem'}
+                                style={{ flex: 1, minWidth: 0 }}
+                              >
+                                <h3 className="text-ellipsis">{accountName}</h3>
+                                <h4 className="text-ellipsis">
+                                  {ellipsisFn(address, 12)}
+                                </h4>
+                              </Styles.FlexColumn>
+                              {inputVal.address === address && (
+                                <span className="ClearBtn">
+                                  <Icons.Cross1Icon />
+                                </span>
+                              )}
+                            </Styles.FlexRow>
+                          </AddressItem>
+                        )
+                      )
+                    ) : (
+                      <Styles.FlexRow>
+                        <span
+                          style={{
+                            width: '100%',
+                            textAlign: 'center',
+                            color: theme.textColorSecondary,
+                          }}
+                        >
+                          No addresses match input.
+                        </span>
+                      </Styles.FlexRow>
+                    )}
+                  </div>
+                </AddressesWrapper>
+              </Styles.FlexColumn>
             </Styles.FlexColumn>
             <Dialog.Close className="Dialog__Button">Close</Dialog.Close>
           </Styles.FlexColumn>
