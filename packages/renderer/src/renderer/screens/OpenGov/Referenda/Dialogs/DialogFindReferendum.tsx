@@ -8,12 +8,16 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useState } from 'react';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import {
+  FlexColumn,
+  FlexRow,
+  DialogContent,
+  DialogTrigger,
+} from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import { DialogContent, DialogTrigger } from './Wrappers';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
