@@ -64,7 +64,7 @@ export const ActionButton = styled.button<{ $backgroundColor: string }>`
 export const ProgressBarWrapper = styled.div`
   background-color: var(--background-surface);
   width: 100%;
-  height: 10px;
+  height: 6px;
   border-radius: 5px;
   overflow: hidden;
 

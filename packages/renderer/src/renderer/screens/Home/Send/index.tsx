@@ -3,6 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../../theme/variables';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
@@ -15,13 +16,6 @@ import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { getAddressChainId } from '@app/Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
-import {
-  faBurst,
-  faCheck,
-  faChevronRight,
-  faInfoCircle,
-  faWarning,
-} from '@fortawesome/free-solid-svg-icons';
 import { getSpendableBalance } from '@ren/utils/AccountUtils';
 import { getBalanceText } from '@ren/utils/TextUtils';
 import {
@@ -47,7 +41,8 @@ import type {
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SendAccordionValue } from './types';
+import type { SendAccordionValue, SendRecipient } from './types';
+import { DialogRecipient } from './Dialogs';
 
 const TOKEN_TRANSFER_LIMIT = 100;
 
@@ -63,7 +58,7 @@ export const Send: React.FC = () => {
   const [progress, setProgress] = useState(0);
 
   const [sender, setSender] = useState<null | string>(null);
-  const [receiver, setReceiver] = useState<null | string>(null);
+  const [receiver, setReceiver] = useState<null | SendRecipient>(null);
   const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
   const [sendAmount, setSendAmount] = useState<string>('0');
 
@@ -188,9 +183,13 @@ export const Send: React.FC = () => {
       ({ address }) => address === sender
     )!;
 
-    const recipientObj = getReceiverAccounts().find(
-      ({ address }) => address === receiver
-    )!;
+    const recipientObj = {
+      address: receiver.address,
+      accountName:
+        receiver.managed && receiver.accountName
+          ? receiver.accountName
+          : ellipsisFn(receiver.address, 8),
+    };
 
     const sendAmountPlanck: string = unitToPlanck(
       sendAmount.toString(),
@@ -200,7 +199,7 @@ export const Send: React.FC = () => {
     // Specific data for transfer extrinsic.
     const balanceData: ExTransferKeepAliveData = {
       recipientAddress: recipientObj.address,
-      recipientAccountName: recipientObj.name,
+      recipientAccountName: recipientObj.accountName,
       sendAmount: sendAmountPlanck,
     };
 
@@ -214,7 +213,7 @@ export const Send: React.FC = () => {
       method: 'transferKeepAlive',
       chainId: senderNetwork,
       data: JSON.stringify(balanceData),
-      args: [receiver, sendAmountPlanck],
+      args: [recipientObj.address, sendAmountPlanck],
     };
 
     // Send extrinsic to action window.
@@ -421,6 +420,8 @@ export const Send: React.FC = () => {
             return getAddressChainId(address) === senderNetwork;
           }
         })
+        // NOTE: Disable Polkadot transfers in alpha releases.
+        .filter(({ address }) => getAddressChainId(address) !== 'Polkadot')
         // Don't include sender in list.
         .filter(({ address }) => address !== sender)
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -471,12 +472,6 @@ export const Send: React.FC = () => {
       : getSenderAccounts().find(({ address }) => address === sender)?.name ||
         ellipsisFn(sender, 12);
 
-  const getRecipientAccountName = () =>
-    !receiver
-      ? '-'
-      : getReceiverAccounts().find(({ address }) => address === receiver)
-          ?.name || ellipsisFn(receiver, 12);
-
   const emptySenders = getSenderAccounts().length === 0;
   const emptyReceivers = getReceiverAccounts().length === 0;
 
@@ -484,30 +479,32 @@ export const Send: React.FC = () => {
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
 
-      <FlexColumn $rowGap={'0.75rem'}>
-        <UI.InfoCard
-          icon={faWarning}
-          style={{ color: 'var(--accent-warning)' }}
-        >
-          <FlexColumn>
-            <div
-              style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
-            >
-              This alpha release supports native transfers of up to <b>100</b>{' '}
-              tokens on <b>Kusama</b> and <b>Westend</b> networks.
-            </div>
-          </FlexColumn>
-        </UI.InfoCard>
-
-        <UI.InfoCard icon={faInfoCircle} style={{ marginTop: '0' }}>
+      <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>
+        <UI.InfoCard icon={FA.faInfoCircle} style={{ marginTop: '0' }}>
           <FlexColumn>
             <div>Send native tokens to a recipient on the same network.</div>
           </FlexColumn>
         </UI.InfoCard>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <ProgressBar value={progress} max={100} />
-        </div>
+        <FlexColumn $rowGap={'0.5rem'}>
+          <UI.InfoCard
+            icon={FA.faWarning}
+            style={{ color: 'var(--accent-warning)', marginTop: '0' }}
+          >
+            <FlexColumn>
+              <div
+                style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
+              >
+                This alpha release supports native transfers of up to <b>100</b>{' '}
+                tokens on <b>Kusama</b> and <b>Westend</b> networks.
+              </div>
+            </FlexColumn>
+          </UI.InfoCard>
+
+          <div>
+            <ProgressBar value={progress} max={100} />
+          </div>
+        </FlexColumn>
       </FlexColumn>
 
       <UI.AccordionWrapper $onePart={true}>
@@ -605,29 +602,15 @@ export const Send: React.FC = () => {
               </UI.AccordionTrigger>
               <UI.AccordionContent narrow={true}>
                 <FlexColumn $rowGap={'2px'}>
-                  <SelectBox
-                    disabled={emptyReceivers}
-                    value={receiver || ''}
-                    ariaLabel="Recipient"
-                    placeholder="Select Recipient"
-                    onValueChange={(val) => setReceiver(val)}
-                  >
-                    {getReceiverAccounts().map(
-                      ({ name: accountName, address }) => (
-                        <UI.SelectItem
-                          key={`receiver-${address}`}
-                          value={address}
-                        >
-                          <div className="innerRow">
-                            <div>
-                              <Identicon value={address} fontSize={'2.1rem'} />
-                            </div>
-                            <div>{accountName}</div>
-                          </div>
-                        </UI.SelectItem>
-                      )
-                    )}
-                  </SelectBox>
+                  {/** Dialog */}
+                  <DialogRecipient
+                    addresses={getReceiverAccounts()}
+                    recipient={receiver}
+                    chainId={senderNetwork}
+                    sender={sender}
+                    setReceiver={setReceiver}
+                  />
+
                   {emptyReceivers ? (
                     <InfoPanelSingle>
                       <span style={{ color: 'var(--accent-warning)' }}>
@@ -651,12 +634,12 @@ export const Send: React.FC = () => {
                           <>
                             <AddressWithTooltip
                               theme={theme}
-                              address={receiver}
+                              address={receiver.address}
                             />
                             <UI.CopyButton
                               theme={theme}
                               onCopyClick={async () =>
-                                await handleClipboardCopy(receiver)
+                                await handleClipboardCopy(receiver.address)
                               }
                             />
                           </>
@@ -736,19 +719,11 @@ export const Send: React.FC = () => {
                     {!sender ? (
                       '-'
                     ) : (
-                      <FlexRow $gap={'0.75rem'}>
-                        <AccountNameWithTooltip
-                          theme={theme}
-                          address={sender}
-                          accountName={getSenderAccountName()}
-                        />
-                        <UI.CopyButton
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(sender)
-                          }
-                        />
-                      </FlexRow>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={sender}
+                        accountName={getSenderAccountName()}
+                      />
                     )}
                   </InfoPanel>
 
@@ -757,19 +732,14 @@ export const Send: React.FC = () => {
                     {!receiver ? (
                       '-'
                     ) : (
-                      <FlexRow $gap={'0.75rem'}>
-                        <AccountNameWithTooltip
-                          theme={theme}
-                          address={receiver}
-                          accountName={getRecipientAccountName()}
-                        />
-                        <UI.CopyButton
-                          theme={theme}
-                          onCopyClick={async () =>
-                            await handleClipboardCopy(receiver)
-                          }
-                        />
-                      </FlexRow>
+                      <AccountNameWithTooltip
+                        theme={theme}
+                        address={receiver.address}
+                        accountName={
+                          receiver.accountName ||
+                          ellipsisFn(receiver.address, 8)
+                        }
+                      />
                     )}
                   </InfoPanel>
 
@@ -787,7 +757,10 @@ export const Send: React.FC = () => {
                       onClick={() => handleResetClick()}
                       disabled={false}
                     >
-                      <FontAwesomeIcon icon={faBurst} transform={'shrink-4'} />
+                      <FontAwesomeIcon
+                        icon={FA.faBurst}
+                        transform={'shrink-4'}
+                      />
                       <span>Reset</span>
                     </ActionButton>
                     <ActionButton
@@ -797,7 +770,7 @@ export const Send: React.FC = () => {
                       disabled={proceedDisabled()}
                     >
                       <FontAwesomeIcon
-                        icon={summaryComplete ? faCheck : faChevronRight}
+                        icon={summaryComplete ? FA.faCheck : FA.faChevronRight}
                         transform={'shrink-4'}
                       />
                       <span>{summaryComplete ? 'Completed' : 'Proceed'}</span>

@@ -28,3 +28,9 @@ export interface SelectBoxProps {
   disabled?: boolean;
   onValueChange: (val: string) => void;
 }
+
+export interface SendRecipient {
+  address: string;
+  accountName: string | null;
+  managed: boolean;
+}
