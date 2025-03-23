@@ -5,10 +5,6 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as themeVariables from '../../../theme/variables';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import {
-  DialogContent,
-  DialogTrigger,
-} from '../../OpenGov/Referenda/Dialogs/Wrappers';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Cross2Icon } from '@radix-ui/react-icons';
@@ -158,19 +154,19 @@ export const DialogExtrinsicSummary = ({
   return (
     <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
       {renderTrigger && (
-        <DialogTrigger $theme={theme}>
+        <Styles.DialogTrigger $theme={theme}>
           <div className="Dialog__GenericButton">
             <Styles.FlexRow $gap={'0.5rem'}>
               <FontAwesomeIcon icon={faTableList} transform={'shrink-1'} />
               <span>Summary</span>
             </Styles.FlexRow>
           </div>
-        </DialogTrigger>
+        </Styles.DialogTrigger>
       )}
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
-        <DialogContent $theme={theme}>
+        <Styles.DialogContent $theme={theme}>
           <Dialog.Close className="Dialog__IconButton">
             <Cross2Icon />
           </Dialog.Close>
@@ -242,7 +238,7 @@ export const DialogExtrinsicSummary = ({
             </Styles.FlexColumn>
             <Dialog.Close className="Dialog__Button">Close</Dialog.Close>
           </Styles.FlexColumn>
-        </DialogContent>
+        </Styles.DialogContent>
       </Dialog.Portal>
     </Dialog.Root>
   );

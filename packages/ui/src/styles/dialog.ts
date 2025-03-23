@@ -27,7 +27,6 @@ export const DialogTrigger = styled(Dialog.Trigger).attrs<{
       background-color: ${(props) => props.$theme.backgroundPrimaryHover};
     }
   }
-
   .Dialog__GenericButton {
     color: ${(props) => props.$theme.textColorPrimary};
     background-color: ${(props) => props.$theme.buttonBackgroundPrimary};

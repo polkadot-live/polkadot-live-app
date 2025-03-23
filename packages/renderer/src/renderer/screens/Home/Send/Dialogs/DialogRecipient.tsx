@@ -5,14 +5,10 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../../theme/variables';
 import * as Icons from '@radix-ui/react-icons';
+
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useRef, useState } from 'react';
-
-// TODO: Move to ui library
-import {
-  DialogContent,
-  DialogTrigger,
-} from '@app/screens/OpenGov/Referenda/Dialogs/Wrappers';
+import { checkAddress } from '@polkadot/util-crypto';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ellipsisFn } from '@w3ux/utils';
 import {
@@ -24,7 +20,7 @@ import {
   SelectedAddressItem,
   TriggerButton,
 } from './Wrappers';
-import { checkAddress } from '@polkadot/util-crypto';
+
 import type { DialogRecipientProps } from './types';
 import type { ChangeEvent } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -169,7 +165,7 @@ export const DialogRecipient = ({
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger $theme={theme}>
+      <Styles.DialogTrigger $theme={theme}>
         <TriggerButton $theme={theme}>
           {recipient === null || recipient.address === '' ? (
             <span style={{ textAlign: 'left', flex: 1 }}>Select Recipient</span>
@@ -194,11 +190,11 @@ export const DialogRecipient = ({
           )}
           <Icons.ChevronDownIcon />
         </TriggerButton>
-      </DialogTrigger>
+      </Styles.DialogTrigger>
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
-        <DialogContent $theme={theme}>
+        <Styles.DialogContent $theme={theme}>
           <Dialog.Close className="Dialog__IconButton">
             <Icons.Cross2Icon />
           </Dialog.Close>
@@ -229,7 +225,7 @@ export const DialogRecipient = ({
                       placeholder="Input Address"
                       onChange={(e) => handleChange(e)}
                       value={inputVal.address}
-                    ></InputWrapper>
+                    />
                   </Styles.FlexRow>
 
                   <ConfirmBtn
@@ -300,7 +296,7 @@ export const DialogRecipient = ({
             </Styles.FlexColumn>
             <Dialog.Close className="Dialog__Button">Close</Dialog.Close>
           </Styles.FlexColumn>
-        </DialogContent>
+        </Styles.DialogContent>
       </Dialog.Portal>
     </Dialog.Root>
   );
