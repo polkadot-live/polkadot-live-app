@@ -34,7 +34,7 @@
     "electron-store": "^8.1.0",
     "electron-unhandled": "^4.0.1",
     "ip": "^2.0.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.8.1"
   },
   "packageManager": "yarn@4.0.2"
 }
