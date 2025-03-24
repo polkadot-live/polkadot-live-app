@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.7.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.2-alpha...v0.7.0-alpha) (2025-03-24)
+
+
+### Features
+
+* base window resize toggles ([#905](https://github.com/polkadot-live/polkadot-live-app/issues/905)) ([b238a78](https://github.com/polkadot-live/polkadot-live-app/commit/b238a78138f047473aedae3e32bf3036e0603b15))
+* extrinsic item pagination ([#919](https://github.com/polkadot-live/polkadot-live-app/issues/919)) ([ee185d8](https://github.com/polkadot-live/polkadot-live-app/commit/ee185d8bfd386a859a657370b02a27ecb33d52cb))
+* extrinsic items filter ([#920](https://github.com/polkadot-live/polkadot-live-app/issues/920)) ([830922b](https://github.com/polkadot-live/polkadot-live-app/commit/830922ba1abb9245e80f30d9482ca940b45e7b00))
+* extrinsic summary dialog ([#916](https://github.com/polkadot-live/polkadot-live-app/issues/916)) ([aadcebb](https://github.com/polkadot-live/polkadot-live-app/commit/aadcebb1891c71639ec963494f8f50ae2c17fa92))
+* filter referenda by track ([#912](https://github.com/polkadot-live/polkadot-live-app/issues/912)) ([6c6fe91](https://github.com/polkadot-live/polkadot-live-app/commit/6c6fe9121f2b3d76529b98d82d2a0bcaa5ecc162))
+* find referendum dialog ([#915](https://github.com/polkadot-live/polkadot-live-app/issues/915)) ([26cb755](https://github.com/polkadot-live/polkadot-live-app/commit/26cb7554513e55bf90074d1c112550294d9b07cd))
+* ongoing referenda iteration ([#913](https://github.com/polkadot-live/polkadot-live-app/issues/913)) ([3bb05f7](https://github.com/polkadot-live/polkadot-live-app/commit/3bb05f7306627523b70e4475cc5cf68866bed7aa))
+* referenda filters ([#921](https://github.com/polkadot-live/polkadot-live-app/issues/921)) ([ef3533d](https://github.com/polkadot-live/polkadot-live-app/commit/ef3533d85e074afa34b5add69b8de507862ac564))
+* referenda history ([#914](https://github.com/polkadot-live/polkadot-live-app/issues/914)) ([7c89e32](https://github.com/polkadot-live/polkadot-live-app/commit/7c89e32dc6ae87d936b43fbf43c5eb342ae4de43))
+* responsive accounts view ([#887](https://github.com/polkadot-live/polkadot-live-app/issues/887)) ([288d894](https://github.com/polkadot-live/polkadot-live-app/commit/288d89498869833915df7ae133fbfaba49a9eb82))
+* responsive extrinsics view ([#890](https://github.com/polkadot-live/polkadot-live-app/issues/890)) ([998e214](https://github.com/polkadot-live/polkadot-live-app/commit/998e214601e5bc80fca55d6ed9c2a16159b939fc))
+* responsive open gov view ([#891](https://github.com/polkadot-live/polkadot-live-app/issues/891)) ([7b0db02](https://github.com/polkadot-live/polkadot-live-app/commit/7b0db0263861178341df9ccfd249658f320c5bd7))
+* responsive settings view ([#889](https://github.com/polkadot-live/polkadot-live-app/issues/889)) ([3aea493](https://github.com/polkadot-live/polkadot-live-app/commit/3aea4935e09075c80a04d57ccdd38d889c3e0dcc))
+* responsive tabs view ([#892](https://github.com/polkadot-live/polkadot-live-app/issues/892)) ([f32e78a](https://github.com/polkadot-live/polkadot-live-app/commit/f32e78a882682efc0fc40a8f6c3e3a25cc56941e))
+* responsive views ([#888](https://github.com/polkadot-live/polkadot-live-app/issues/888)) ([8d2e8d6](https://github.com/polkadot-live/polkadot-live-app/commit/8d2e8d600ca676bdd5a4aad598cf0a434af43697))
+* send screen recipient dialog ([#926](https://github.com/polkadot-live/polkadot-live-app/issues/926)) ([55cdb88](https://github.com/polkadot-live/polkadot-live-app/commit/55cdb8832ed34dedf0312e778bd9054118b6b068))
+* view footer ([#904](https://github.com/polkadot-live/polkadot-live-app/issues/904)) ([f99d55c](https://github.com/polkadot-live/polkadot-live-app/commit/f99d55cc97dc82b5b588e0b2375e05777ae30e4b))
+
+
+### Bug Fixes
+
+* extrinsic item dropdown state ([#918](https://github.com/polkadot-live/polkadot-live-app/issues/918)) ([625a294](https://github.com/polkadot-live/polkadot-live-app/commit/625a29431e472d25cee14e36fecaef28be18f5ed))
+* open gov port ([#929](https://github.com/polkadot-live/polkadot-live-app/issues/929)) ([9e7103e](https://github.com/polkadot-live/polkadot-live-app/commit/9e7103e2371790ff9cfe1119fe1fcb637aa31f54))
+
 ## [0.6.2-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.1-alpha...v0.6.2-alpha) (2025-02-23)
 
 
