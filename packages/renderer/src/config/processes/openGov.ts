@@ -8,21 +8,19 @@
 export class Config {
   // Cache the Open Gov window's message port to facilitate communication to the `main` renderer.
   private static _portOpenGov: MessagePort;
+  static _portExists = false;
 
   // Accessors.
   static get portOpenGov(): MessagePort {
-    if (!Config._portOpenGov) {
+    if (!this._portExists) {
       throw new Error('_portOpenGov still undefined');
     }
 
-    return Config._portOpenGov;
+    return this._portOpenGov;
   }
 
   static set portOpenGov(port: MessagePort) {
-    Config._portOpenGov = port;
-  }
-
-  static portExists() {
-    return this._portOpenGov !== undefined;
+    this._portOpenGov = port;
+    this._portExists = true;
   }
 }

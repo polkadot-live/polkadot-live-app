@@ -29,23 +29,21 @@ export const OpenGov: React.FC = () => {
 
   // Initialize treasury data when window opens.
   useEffect(() => {
-    // Wait until the port has been initialized before attempting
-    // to send the initialization message to the main renderer.
-    if (!ConfigOpenGov.portExists()) {
-      const intervalId = setInterval(() => {
-        if (ConfigOpenGov.portExists()) {
-          clearInterval(intervalId);
-          getOnlineMode() && initTreasury(treasuryChainId);
-        }
-      }, 1_000);
-    } else {
+    if (ConfigOpenGov._portExists) {
       getOnlineMode() && initTreasury(treasuryChainId);
     }
   }, []);
 
+  // Initialize treasury data when port is received.
+  useEffect(() => {
+    if (ConfigOpenGov._portExists) {
+      getOnlineMode() && initTreasury(treasuryChainId);
+    }
+  }, [ConfigOpenGov._portExists]);
+
   // Reload treasury data if app goes online from offline mode.
   useEffect(() => {
-    if (getOnlineMode()) {
+    if (getOnlineMode() && ConfigOpenGov._portExists) {
       initTreasury(treasuryChainId);
     }
   }, [getOnlineMode()]);
