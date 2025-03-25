@@ -2,12 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
 import { ChainList } from '@ren/config/chains';
 import { MainDebug } from '@ren/utils/DebugUtils';
-import { rmCommas } from '@w3ux/utils';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { APIConstants } from '@polkadot-live/types/chains/polkadot';
 import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
@@ -17,25 +13,18 @@ const debug = MainDebug.extend('Api');
 /**
  * Creates an API instance of a chain.
  * @class
- * @property {string} endpoint - the endpoint of the chain.
- * @property {WsProvider} provider - the provider of the chain.
  * @property {ApiPromise | null} api - the API instance of the chain.
  * @property {string | null} chain - the chain name.
- * @property {APIConstants | null} consts - the constants of the chain.
+ * @property {string} endpoint - the endpoint of the chain.
  * @property {string[]} rpcs - rpc endpoints for connecting to the chain network.
+ * @property {ChainStatus} status - API connection status.
  */
 export class Api {
-  private _endpoint: string;
-
   private _api: ApiPromise | null;
-
   private _chain: ChainID;
-
-  private _status: ChainStatus = 'disconnected';
-
-  private _consts: APIConstants | null = null;
-
+  private _endpoint: string;
   private _rpcs: string[] = [];
+  private _status: ChainStatus = 'disconnected';
 
   constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
     this._chain = chainId;
@@ -47,7 +36,7 @@ export class Api {
 
   /**
    * @name connect
-   * @summary Create the `ApiPromise` and get consts with metadata.
+   * @summary Create the `ApiPromise`.
    */
   connect = async () => {
     // Do nothing if instance is already connected.
@@ -72,7 +61,6 @@ export class Api {
     }
 
     this.setApi(api, chainId as ChainID);
-    await this.getConsts();
     this.status = 'connected';
   };
 
@@ -112,14 +100,6 @@ export class Api {
     this._chain = value;
   }
 
-  get consts() {
-    return this._consts;
-  }
-
-  set consts(value: AnyJson) {
-    this._consts = value;
-  }
-
   /**
    * @name setApi
    * @summary Set instance API properties.
@@ -153,51 +133,6 @@ export class Api {
       console.log('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
     });
-  };
-
-  /**
-   * @name getConsts
-   * @summary Bootstrap chain constants.
-   */
-  getConsts = async () => {
-    const { api } = this;
-
-    debug.extend(this.chain)('🛠️ Bootstrapping constants');
-    const result = await Promise.all([
-      api.consts.staking.bondingDuration,
-      api.consts.staking.sessionsPerEra,
-      api.consts.babe.expectedBlockTime,
-      api.consts.babe.epochDuration,
-      api.consts.balances.existentialDeposit,
-      api.consts.staking.historyDepth,
-      api.consts.fastUnstake.deposit,
-      api.consts.nominationPools.palletId,
-    ]);
-
-    const takeResult = (item: AnyData, index: number) =>
-      new BigNumber(rmCommas(item[index].toString()));
-
-    const bondDuration = takeResult(result, 0);
-    const sessionsPerEra = takeResult(result, 1);
-    const expectedBlockTime = takeResult(result, 2);
-    const epochDuration = takeResult(result, 3);
-    const existentialDeposit = takeResult(result, 4);
-    const historyDepth = takeResult(result, 5);
-    const fastUnstakeDeposit = takeResult(result, 6);
-    const poolsPalletId = result[7].toU8a();
-
-    const consts = {
-      bondDuration,
-      sessionsPerEra,
-      historyDepth,
-      epochDuration,
-      expectedBlockTime,
-      poolsPalletId,
-      existentialDeposit,
-      fastUnstakeDeposit,
-    };
-
-    this.consts = consts;
   };
 
   /**
