@@ -27,8 +27,6 @@ const debug = MainDebug.extend('Api');
 export class Api {
   private _endpoint: string;
 
-  private _provider: ProviderInterface | null;
-
   private _api: ApiPromise | null;
 
   private _chain: ChainID;
@@ -43,7 +41,6 @@ export class Api {
     this._chain = chainId;
     this._endpoint = endpoint;
     this._status = 'disconnected';
-    this._provider = null;
     this._api = null;
     this._rpcs = rpcs;
   }
@@ -61,13 +58,10 @@ export class Api {
 
     this.status = 'connecting';
 
-    // Add listeners to provider.
+    // Add listeners to provider before API is ready.
     const provider = new WsProvider(this.endpoint);
-    this._provider = provider;
-
-    // Add listeners before API is ready.
-    const api = new ApiPromise({ provider: this._provider });
-    this.initEvents();
+    const api = new ApiPromise({ provider });
+    this.initEvents(provider);
     await api.isReady;
 
     const chainId = (await api.rpc.system.chain()).toString();
@@ -118,14 +112,6 @@ export class Api {
     this._chain = value;
   }
 
-  get provider() {
-    return this._provider;
-  }
-
-  set provider(value: ProviderInterface | null) {
-    this._provider = value;
-  }
-
   get consts() {
     return this._consts;
   }
@@ -153,17 +139,17 @@ export class Api {
    * @name initEvents
    * @summary Initialise the event listeners for the provider.
    */
-  initEvents = () => {
-    this.provider?.on('connected', () => {
+  initEvents = (provider: ProviderInterface) => {
+    provider.on('connected', () => {
       console.log('⭕ %o', this.endpoint, ' CONNECTED');
     });
 
-    this.provider?.on('disconnected', async () => {
+    provider.on('disconnected', async () => {
       console.log('❌ %o', this.endpoint, ' DISCONNECTED');
       this.status = 'disconnected';
     });
 
-    this.provider?.on('error', async () => {
+    provider.on('error', async () => {
       console.log('❗ %o', this.endpoint, ' ERROR');
       this.status = 'disconnected';
     });
@@ -226,17 +212,11 @@ export class Api {
         data: null,
       })) || false;
 
-    if (isOnline) {
-      this._api &&
-        this._api.isConnected &&
-        (await this._api.disconnect().catch(console.error));
-
-      this._provider &&
-        this._provider.isConnected &&
-        this._provider.disconnect().catch(console.error);
+    if (isOnline && this._api !== null) {
+      await this._api.disconnect().catch(console.error);
     }
 
-    this.provider = null;
+    // Re-connecting requires a new WsProvider.
     this._api = null;
     this.status = 'disconnected';
   };
