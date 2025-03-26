@@ -117,20 +117,17 @@ export const BootstrappingProvider = ({
       window.myAPI.relayModeFlag('isOnlineMode', isConnected);
       window.myAPI.relayModeFlag('isConnected', isConnected);
 
-      // Initialize accounts from persisted state.
-      await AccountsController.initialize();
-
       // Initialize chain APIs.
       APIsController.initialize(Array.from(ChainList.keys()));
+
+      // Initialize accounts from persisted state.
+      await AccountsController.initialize();
 
       // Fetch up-to-date account data.
       if (isConnected && !aborted) {
         // Connect required API instances before continuing.
-        await Promise.all(
-          Array.from(AccountsController.accounts.keys()).map((chainId) =>
-            APIsController.connectApi(chainId)
-          )
-        );
+        const chainIds = Array.from(AccountsController.accounts.keys());
+        await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
 
         await Promise.all([
           fetchAccountBalances(),
@@ -150,13 +147,13 @@ export const BootstrappingProvider = ({
       // Initialise intervals controller and interval subscriptions.
       await initIntervalsController(isConnected);
 
-      // Set accounts to render.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
-
       // Disconnect from any API instances that are not currently needed.
       if (isConnected) {
         await handleApiDisconnects();
       }
+
+      // Set accounts to render.
+      setAddresses(AccountsController.getAllFlattenedAccountData());
 
       // Set application state.
       setSubscriptionsAndChainConnections();
@@ -237,7 +234,7 @@ export const BootstrappingProvider = ({
 
     // Connect required API instances before continuing.
     const chainIds = Array.from(AccountsController.accounts.keys());
-    await Promise.all(chainIds.map((cid) => APIsController.connectApi(cid)));
+    await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
 
     // Fetch up-to-date account data.
     if (!aborted) {
