@@ -49,7 +49,6 @@ export const BootstrappingProvider = ({
 
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
-  const refAbortInterval = useRef<NodeJS.Timeout | null>(null);
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
@@ -103,32 +102,6 @@ export const BootstrappingProvider = ({
       data: null,
     })) || false;
 
-  /// Util: Destroy interval.
-  const destroyInterval = () => {
-    if (refAbortInterval.current) {
-      clearInterval(refAbortInterval.current);
-      refAbortInterval.current = null;
-    }
-  };
-
-  /// Util: Abort interval.
-  const initAbortInterval = () => {
-    destroyInterval();
-    refAborted.current = false;
-
-    refAbortInterval.current = setInterval(() => {
-      if (RendererConfig.abortConnecting) {
-        RendererConfig.abortConnecting = false;
-        refAborted.current = true;
-
-        if (refAbortInterval.current) {
-          clearInterval(refAbortInterval.current);
-          refAbortInterval.current = null;
-        }
-      }
-    }, 1_000);
-  };
-
   /// Handle event listeners.
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -140,12 +113,19 @@ export const BootstrappingProvider = ({
     };
   }, []);
 
+  /// Handle abort flag.
+  useEffect(() => {
+    if (RendererConfig.abortConnecting) {
+      RendererConfig.abortConnecting = false;
+      refAborted.current = true;
+    }
+  }, [RendererConfig.abortConnecting]);
+
   /// Handle app initialization.
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
       initChainAPIs(); // Initialize chain APIs.
-      initAbortInterval(); // Start abort interval.
 
       // Initialise online status controller and set online state.
       await window.myAPI.sendConnectionTaskAsync({
@@ -178,7 +158,6 @@ export const BootstrappingProvider = ({
       // Set application state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
       setSubscriptionsAndChainConnections();
-      destroyInterval(); // Stop interval.
       refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
@@ -224,7 +203,6 @@ export const BootstrappingProvider = ({
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
-    initAbortInterval(); // Start abort interval.
 
     const initTasks: (() => Promise<AnyData>)[] = [
       connectAPIs,
@@ -244,7 +222,6 @@ export const BootstrappingProvider = ({
     }
 
     setSubscriptionsAndChainConnections(); // Set application state.
-    destroyInterval(); // Stop interval.
 
     if (refAborted.current) {
       refAborted.current = false;
