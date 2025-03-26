@@ -48,6 +48,8 @@ export const BootstrappingProvider = ({
   const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
+  const refAborted = useRef(false);
+  const refAbortInterval = useRef<NodeJS.Timeout | null>(null);
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
@@ -101,6 +103,32 @@ export const BootstrappingProvider = ({
       data: null,
     })) || false;
 
+  /// Util: Destroy interval.
+  const destroyInterval = () => {
+    if (refAbortInterval.current) {
+      clearInterval(refAbortInterval.current);
+      refAbortInterval.current = null;
+    }
+  };
+
+  /// Util: Abort interval.
+  const initAbortInterval = () => {
+    destroyInterval();
+    refAborted.current = false;
+
+    refAbortInterval.current = setInterval(() => {
+      if (RendererConfig.abortConnecting) {
+        RendererConfig.abortConnecting = false;
+        refAborted.current = true;
+
+        if (refAbortInterval.current) {
+          clearInterval(refAbortInterval.current);
+          refAbortInterval.current = null;
+        }
+      }
+    }, 1_000);
+  };
+
   /// Handle event listeners.
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -116,21 +144,8 @@ export const BootstrappingProvider = ({
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
-
-      let aborted = false;
-      let intervalRunning = true;
-
-      // Start an interval to check if the abort flag has been set.
-      const intervalId = setInterval(() => {
-        if (RendererConfig.abortConnecting) {
-          RendererConfig.abortConnecting = false;
-          aborted = true;
-
-          // Stop this interval.
-          clearInterval(intervalId);
-          intervalRunning = false;
-        }
-      }, 1000);
+      initChainAPIs(); // Initialize chain APIs.
+      initAbortInterval(); // Start abort interval.
 
       // Initialise online status controller and set online state.
       await window.myAPI.sendConnectionTaskAsync({
@@ -141,9 +156,6 @@ export const BootstrappingProvider = ({
       const isConnected: boolean = await getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', isConnected);
       window.myAPI.relayModeFlag('isConnected', isConnected);
-
-      // Initialize chain APIs.
-      initChainAPIs();
 
       const initTasks: (() => Promise<AnyData>)[] = [
         initAccounts,
@@ -158,7 +170,7 @@ export const BootstrappingProvider = ({
         if (index === 4) {
           // Always initialize intervals controller.
           await task();
-        } else if (!aborted && isConnected) {
+        } else if (!refAborted.current && isConnected) {
           await task();
         }
       }
@@ -166,13 +178,12 @@ export const BootstrappingProvider = ({
       // Set application state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
       setSubscriptionsAndChainConnections();
-
-      // Stop abort checking interval.
-      intervalRunning && clearInterval(intervalId);
-      refAppInitialized.current = true;
+      destroyInterval(); // Stop interval.
+      refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
-      if (aborted) {
+      if (refAborted.current) {
+        refAborted.current = false;
         await handleInitializeAppOffline();
         setIsAborting(false);
       }
@@ -206,29 +217,14 @@ export const BootstrappingProvider = ({
 
   /// Handle switching to online mode.
   const handleInitializeAppOnline = async () => {
-    // Return if app is already initializing online mode.
     if (RendererConfig.switchingToOnlineMode) {
       return;
     }
 
-    let aborted = false;
-    let intervalRunning = true;
-
-    // Start an interval to check if the abort flag has been set.
-    const intervalId = setInterval(() => {
-      if (RendererConfig.abortConnecting) {
-        RendererConfig.abortConnecting = false;
-        aborted = true;
-
-        // Stop this interval.
-        clearInterval(intervalId);
-        intervalRunning = false;
-      }
-    }, 1000);
-
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
+    initAbortInterval(); // Start abort interval.
 
     const initTasks: (() => Promise<AnyData>)[] = [
       connectAPIs,
@@ -238,23 +234,24 @@ export const BootstrappingProvider = ({
     ];
 
     for (const [index, task] of initTasks.entries()) {
-      if (!aborted && index === 3) {
+      if (!refAborted.current && index === 3) {
         // Initialise intervals controller before disconnecting APIs.
         IntervalsController.initIntervals(true);
         await task();
-      } else if (!aborted) {
+      } else if (!refAborted.current) {
         await task();
       }
     }
 
-    // Set application state.
-    setSubscriptionsAndChainConnections();
+    setSubscriptionsAndChainConnections(); // Set application state.
+    destroyInterval(); // Stop interval.
 
-    // Report online status to renderers.
-    if (aborted) {
+    if (refAborted.current) {
+      refAborted.current = false;
       setIsAborting(false);
       await handleInitializeAppOffline();
     } else {
+      // Report online status to renderers.
       const status = await getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', status);
       window.myAPI.relayModeFlag('isConnected', status);
@@ -262,7 +259,6 @@ export const BootstrappingProvider = ({
 
     // Switch flag and clear interval.
     RendererConfig.switchingToOnlineMode = false;
-    intervalRunning && clearInterval(intervalId);
   };
 
   /// Re-subscribe to tasks when switching to a different endpoint.
