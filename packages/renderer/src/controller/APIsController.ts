@@ -3,7 +3,6 @@
 
 import { Api } from '@ren/model/Api';
 import { ChainList } from '@ren/config/chains';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
@@ -32,7 +31,6 @@ export class APIsController {
    */
   static new = (chainId: ChainID) => {
     const chainMetaData = ChainList.get(chainId);
-
     if (!chainMetaData) {
       throw new Error(
         `APIsController::new: Chain metadata not found for chain ID ${chainId}`
@@ -42,12 +40,9 @@ export class APIsController {
     const endpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;
 
-    console.log('🤖 Creating new api interface: %o', endpoint);
-
     // Create API instance.
+    console.log('🤖 Creating new api interface: %o', endpoint);
     const instance = new Api(endpoint, chainId, rpcs);
-
-    // Set remaining instance properties and add to instances.
     this.instances.push(instance);
 
     console.log(
@@ -83,10 +78,10 @@ export class APIsController {
   };
 
   /**
-   * @name setEndpointForApi
-   * @summary Set the default endpoint for an API instance.
+   * @name setApiEndpoint
+   * @summary Set the endpoint for an API instance.
    */
-  static setEndpointForApi = (chainId: ChainID, newEndpoint: string) => {
+  static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
     const instance = this.get(chainId);
     if (!instance) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
@@ -97,57 +92,65 @@ export class APIsController {
   };
 
   /**
+   * @name tryConnect
+   * @summary Determins if an API instance is connected. Waits a maximum of 15 seconds.
+   */
+  static async tryConnect(chainId: ChainID) {
+    const MAX_TRIES = 15;
+    const INTERVAL_MS = 1_000;
+
+    for (let i = 0; i < MAX_TRIES; ++i) {
+      if (this.get(chainId)?.status === 'connected') {
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
+    }
+
+    return false;
+  }
+
+  /**
+   * @name waitMs
+   * @summary Waits the given milliseconds and returns the provided boolean result.
+   */
+  static waitMs = async (ms: number, result: boolean): Promise<boolean> =>
+    new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));
+
+  /**
    * @name fetchConnectedInstance
    * @summary Returns the connected API instance for a specific chain ID.
    */
-  static fetchConnectedInstance = async (chainId: ChainID) => {
-    const instance = this.get(chainId);
-
-    if (!instance) {
+  static fetchConnectedInstance = async (
+    chainId: ChainID
+  ): Promise<Api | null> => {
+    if (!this.get(chainId)) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
+    const instance = this.get(chainId)!;
+    if (instance.status === 'disconnected') {
+      // Wait up to 30 seconds to connect.
+      const result = await Promise.race([
+        instance.connect().then(() => true),
+        this.waitMs(30_000, false),
+      ]);
 
-    // Wait until the requested API instance is connected if it is currently connecting.
-    if (instance.status === 'connecting') {
-      console.log(`${chainId} is connecting. Entering while loop...`);
-
-      // Lambda to wait for 1 second.
-      const waitOneSecond = (): Promise<void> =>
-        new Promise<void>((resolve) => {
-          setTimeout(resolve, 1000);
-        });
-
-      // Enter loop to check for the connected instance every second.
-      let secondsWaited = 0;
-      while (instance.status === 'connecting') {
-        await waitOneSecond();
-        ++secondsWaited;
-
-        // Re-fetch the API instance and check if it's now connected.
-        const newInstance = this.get(chainId);
-        if (newInstance?.status === 'connected' && newInstance.api !== null) {
-          console.log(`${chainId} connected, waited ${secondsWaited} seconds.`);
-          return newInstance;
-        } else if (secondsWaited > ConfigRenderer.processingTimeout) {
-          // If we have waited for more than 10 seconds, return null.
-          const seconds = ConfigRenderer.processingTimeout;
-          console.log(`Waited ${seconds} seconds to connect, return null.`);
-          return null;
-        }
-      }
+      // Return the connected instance if connection was successful.
+      return result ? this.get(chainId)! : null;
     } else {
-      await instance.connect();
-      this.set(instance);
-      return instance;
+      return (await this.tryConnect(chainId)) ? this.get(chainId)! : null;
     }
   };
 
-  static connectInstance = async (chainId: ChainID) => {
+  /**
+   * @name connectApi
+   * @summary Ensures an API instance is connected.
+   */
+  static connectApi = async (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
       throw new Error(`connectInstance: API for ${chainId} not found`);
     }
-    await instance?.connect();
+    await instance.connect();
     this.set(instance);
   };
 

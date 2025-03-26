@@ -215,7 +215,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.handleApiDisconnects();
+    await ApiUtils.disconnectAPIs();
 
     // Update chain state.
     for (const apiData of APIsController.getAllFlattenedAPIData()) {

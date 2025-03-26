@@ -18,14 +18,8 @@ export class Config {
   private static _enableAutomaticSubscriptions = true;
   private static _keepOutdatedEvents = true;
 
-  // Flag set to `true` when app is switching to online mode.
-  private static _switchingToOnlineMode = false;
-
   // Flag set to `true` when app wants to abort connection processing.
   private static _abortConnecting = false;
-
-  // Time in seconds app should wait for processing a one-shot and API connection.
-  private static _processingTimeout = 10;
 
   // Accessors for `action` port.
   static get portToAction(): MessagePort | null {
@@ -91,23 +85,11 @@ export class Config {
     this._keepOutdatedEvents = flag;
   }
 
-  // Accessors for `_switchingToOnlineMode` flag.
-  static get switchingToOnlineMode(): boolean {
-    return this._switchingToOnlineMode;
-  }
-  static set switchingToOnlineMode(flag: boolean) {
-    this._switchingToOnlineMode = flag;
-  }
-
   // Accessors for `_abortConnecting` flag.
   static get abortConnecting(): boolean {
     return this._abortConnecting;
   }
   static set abortConnecting(flag: boolean) {
     this._abortConnecting = flag;
-  }
-
-  static get processingTimeout(): number {
-    return this._processingTimeout;
   }
 }
