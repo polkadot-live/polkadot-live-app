@@ -14,10 +14,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@ren/utils/AccountUtils';
-import {
-  getApiInstanceOrThrow,
-  handleApiDisconnects,
-} from '@ren/utils/ApiUtils';
+import { getApiInstanceOrThrow, disconnectAPIs } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -248,7 +245,7 @@ export const useMainMessagePorts = () => {
     );
 
     // Disconnect from any API instances that are not currently needed.
-    await handleApiDisconnects();
+    await disconnectAPIs();
 
     // Report chain connections to UI.
     for (const apiData of APIsController.getAllFlattenedAPIData()) {

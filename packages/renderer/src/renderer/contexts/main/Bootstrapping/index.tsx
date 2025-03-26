@@ -1,18 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { defaultBootstrappingContext } from './default';
-import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/APIsController';
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { ChainList } from '@ren/config/chains';
-import {
-  fetchAccountBalances,
-  fetchAccountNominatingData,
-  fetchAccountNominationPoolData,
-} from '@ren/utils/AccountUtils';
-import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { IntervalsController } from '@ren/controller/IntervalsController';
+import * as AccountUtils from '@ren/utils/AccountUtils';
 import React, {
   createContext,
   useContext,
@@ -20,15 +9,23 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { defaultBootstrappingContext } from './default';
+import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
+import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { ChainList } from '@ren/config/chains';
+import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
+import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useChains } from '@app/contexts/main/Chains';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { handleApiDisconnects } from '@ren/utils/ApiUtils';
+import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -68,6 +65,42 @@ export const BootstrappingProvider = ({
     });
   };
 
+  /// Step 1: Initialize chain APIs (disconnected).
+  const initChainAPIs = () =>
+    APIsController.initialize(Array.from(ChainList.keys()));
+
+  /// Step 2: Initialize accounts.
+  const initAccounts = async () => await AccountsController.initialize();
+
+  /// Step 3: Connect necessary API instances.
+  const connectAPIs = async () => {
+    const chainIds = Array.from(AccountsController.accounts.keys());
+    await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+  };
+
+  /// Step 4: Fetch current account data.
+  const fetchAccountData = async () =>
+    await Promise.all([
+      AccountUtils.fetchAccountBalances(),
+      AccountUtils.fetchAccountNominationPoolData(),
+      AccountUtils.fetchAccountNominatingData(),
+    ]);
+
+  /// Step 5: Initiate subscriptions.
+  const initSubscriptions = async () => {
+    await Promise.all([
+      AccountsController.subscribeAccounts(),
+      SubscriptionsController.initChainSubscriptions(),
+    ]);
+  };
+
+  /// Util: Get connection status.
+  const getOnlineStatus = async () =>
+    (await window.myAPI.sendConnectionTaskAsync({
+      action: 'connection:getStatus',
+      data: null,
+    })) || false;
+
   /// Handle event listeners.
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -90,10 +123,7 @@ export const BootstrappingProvider = ({
       // Start an interval to check if the abort flag has been set.
       const intervalId = setInterval(() => {
         if (RendererConfig.abortConnecting) {
-          // Reset abort connecting flag.
           RendererConfig.abortConnecting = false;
-
-          // Set flag to stop processing this function.
           aborted = true;
 
           // Stop this interval.
@@ -108,60 +138,38 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
-
+      const isConnected: boolean = await getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', isConnected);
       window.myAPI.relayModeFlag('isConnected', isConnected);
 
       // Initialize chain APIs.
-      APIsController.initialize(Array.from(ChainList.keys()));
+      initChainAPIs();
 
-      // Initialize accounts from persisted state.
-      await AccountsController.initialize();
+      const initTasks: (() => Promise<AnyData>)[] = [
+        initAccounts,
+        connectAPIs,
+        fetchAccountData,
+        initSubscriptions,
+        initIntervalsController,
+        disconnectAPIs,
+      ];
 
-      // Fetch up-to-date account data.
-      if (isConnected && !aborted) {
-        // Connect required API instances before continuing.
-        const chainIds = Array.from(AccountsController.accounts.keys());
-        await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
-
-        await Promise.all([
-          fetchAccountBalances(),
-          fetchAccountNominationPoolData(),
-          fetchAccountNominatingData(),
-        ]);
+      for (const [index, task] of initTasks.entries()) {
+        if (index === 4) {
+          // Always initialize intervals controller.
+          await task();
+        } else if (!aborted && isConnected) {
+          await task();
+        }
       }
-
-      // Initialize account and chain subscriptions.
-      if (!aborted && isConnected) {
-        await Promise.all([
-          AccountsController.subscribeAccounts(),
-          SubscriptionsController.initChainSubscriptions(),
-        ]);
-      }
-
-      // Initialise intervals controller and interval subscriptions.
-      await initIntervalsController(isConnected);
-
-      // Disconnect from any API instances that are not currently needed.
-      if (isConnected) {
-        await handleApiDisconnects();
-      }
-
-      // Set accounts to render.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
 
       // Set application state.
+      setAddresses(AccountsController.getAllFlattenedAccountData());
       setSubscriptionsAndChainConnections();
-
-      refAppInitialized.current = true;
 
       // Stop abort checking interval.
       intervalRunning && clearInterval(intervalId);
+      refAppInitialized.current = true;
 
       // Set app in offline mode if connection processing was aborted.
       if (aborted) {
@@ -186,16 +194,9 @@ export const BootstrappingProvider = ({
     // Stop subscription intervals timer.
     IntervalsController.stopInterval();
 
-    // Get the system's actual online connection status.
-    const isConnected =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
     // Report online status to renderers.
     window.myAPI.relayModeFlag('isOnlineMode', false);
-    window.myAPI.relayModeFlag('isConnected', isConnected);
+    window.myAPI.relayModeFlag('isConnected', await getOnlineStatus());
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -216,10 +217,7 @@ export const BootstrappingProvider = ({
     // Start an interval to check if the abort flag has been set.
     const intervalId = setInterval(() => {
       if (RendererConfig.abortConnecting) {
-        // Reset abort connecting flag.
         RendererConfig.abortConnecting = false;
-
-        // Set flag to stop processing this function.
         aborted = true;
 
         // Stop this interval.
@@ -232,61 +230,39 @@ export const BootstrappingProvider = ({
     // this function's logic whilst the connection status is online.
     RendererConfig.switchingToOnlineMode = true;
 
-    // Connect required API instances before continuing.
-    const chainIds = Array.from(AccountsController.accounts.keys());
-    await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    const initTasks: (() => Promise<AnyData>)[] = [
+      connectAPIs,
+      fetchAccountData,
+      initSubscriptions,
+      disconnectAPIs,
+    ];
 
-    // Fetch up-to-date account data.
-    if (!aborted) {
-      await Promise.all([
-        fetchAccountBalances(),
-        fetchAccountNominationPoolData(),
-        fetchAccountNominatingData(),
-      ]);
+    for (const [index, task] of initTasks.entries()) {
+      if (!aborted && index === 3) {
+        // Initialise intervals controller before disconnecting APIs.
+        IntervalsController.initIntervals(true);
+        await task();
+      } else if (!aborted) {
+        await task();
+      }
     }
-
-    // Re-subscribe account and chain tasks.
-    if (!aborted) {
-      await Promise.all([
-        AccountsController.subscribeAccounts(),
-        SubscriptionsController.resubscribeChains(),
-      ]);
-    }
-
-    // Initialise intervals controller and interval subscriptions.
-    if (!aborted) {
-      await IntervalsController.initIntervals(true);
-    }
-
-    // Disconnect from any API instances that are not currently needed.
-    await handleApiDisconnects();
 
     // Set application state.
     setSubscriptionsAndChainConnections();
 
     // Report online status to renderers.
-    if (!aborted) {
-      const status =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
-
+    if (aborted) {
+      setIsAborting(false);
+      await handleInitializeAppOffline();
+    } else {
+      const status = await getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', status);
       window.myAPI.relayModeFlag('isConnected', status);
     }
 
-    // Set config flag to false.
+    // Switch flag and clear interval.
     RendererConfig.switchingToOnlineMode = false;
-
-    // Stop abort checking interval.
     intervalRunning && clearInterval(intervalId);
-
-    // Set app in offline mode if connection processing was aborted.
-    if (aborted) {
-      await handleInitializeAppOffline();
-      setIsAborting(false);
-    }
   };
 
   /// Re-subscribe to tasks when switching to a different endpoint.
@@ -319,7 +295,13 @@ export const BootstrappingProvider = ({
   };
 
   /// Utility.
-  const initIntervalsController = async (isOnline: boolean) => {
+  const initIntervalsController = async () => {
+    const isOnline: boolean =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);

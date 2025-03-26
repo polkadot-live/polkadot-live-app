@@ -128,10 +128,10 @@ export class APIsController {
     }
     const instance = this.get(chainId)!;
     if (instance.status === 'disconnected') {
-      // Wait up to 15 seconds to connect.
+      // Wait up to 30 seconds to connect.
       const result = await Promise.race([
         instance.connect().then(() => true),
-        this.waitMs(15_000, false),
+        this.waitMs(30_000, false),
       ]);
 
       // Return the connected instance if connection was successful.
