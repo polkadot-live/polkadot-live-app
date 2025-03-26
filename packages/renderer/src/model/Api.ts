@@ -3,12 +3,9 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ChainList } from '@ren/config/chains';
-import { MainDebug } from '@ren/utils/DebugUtils';
 import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 import type { ProviderInterface } from '@polkadot/rpc-provider/types';
-
-const debug = MainDebug.extend('Api');
 
 /**
  * Creates an API instance of a chain.
@@ -41,7 +38,7 @@ export class Api {
   connect = async () => {
     // Do nothing if instance is already connected.
     if (this.status !== 'disconnected') {
-      debug('🟠 API instance for %o is already connected!', this.chain);
+      console.log('🟠 API instance for %o is already connected!', this.chain);
       return;
     }
 
@@ -53,14 +50,15 @@ export class Api {
     this.initEvents(provider);
     await api.isReady;
 
-    const chainId = (await api.rpc.system.chain()).toString();
+    const chainId = (await api.rpc.system.chain()).toString() as ChainID;
 
     // Disconnect and return if chain ID isn't recognized.
-    if (!ChainList.get(chainId as ChainID)) {
+    if (!ChainList.get(chainId)) {
       await this.disconnect();
     }
 
-    this.setApi(api, chainId as ChainID);
+    this.api = api;
+    this.chain = chainId;
     this.status = 'connected';
   };
 
@@ -99,21 +97,6 @@ export class Api {
   set chain(value: ChainID) {
     this._chain = value;
   }
-
-  /**
-   * @name setApi
-   * @summary Set instance API properties.
-   * @param {ApiPromise} api - the api instance.
-   * @param {ChainID} chain - the chain the account belongs to.
-   */
-  setApi = (api: ApiPromise, chain: ChainID) => {
-    this.api = api;
-    this.chain = chain;
-    debug.extend(this.chain)(
-      '🛠️  Bootstrap accounts via event listener for %o',
-      this.chain
-    );
-  };
 
   /**
    * @name initEvents
