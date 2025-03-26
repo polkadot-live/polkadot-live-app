@@ -18,9 +18,6 @@ export class Config {
   private static _enableAutomaticSubscriptions = true;
   private static _keepOutdatedEvents = true;
 
-  // Flag set to `true` when app is switching to online mode.
-  private static _switchingToOnlineMode = false;
-
   // Flag set to `true` when app wants to abort connection processing.
   private static _abortConnecting = false;
 
@@ -86,14 +83,6 @@ export class Config {
   }
   static set keepOutdatedEvents(flag: boolean) {
     this._keepOutdatedEvents = flag;
-  }
-
-  // Accessors for `_switchingToOnlineMode` flag.
-  static get switchingToOnlineMode(): boolean {
-    return this._switchingToOnlineMode;
-  }
-  static set switchingToOnlineMode(flag: boolean) {
-    this._switchingToOnlineMode = flag;
   }
 
   // Accessors for `_abortConnecting` flag.

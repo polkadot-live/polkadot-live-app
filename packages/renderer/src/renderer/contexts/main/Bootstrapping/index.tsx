@@ -49,6 +49,7 @@ export const BootstrappingProvider = ({
 
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
+  const refSwitchingToOnline = useRef(false);
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
@@ -125,7 +126,7 @@ export const BootstrappingProvider = ({
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
-      initChainAPIs(); // Initialize chain APIs.
+      initChainAPIs();
 
       // Initialise online status controller and set online state.
       await window.myAPI.sendConnectionTaskAsync({
@@ -179,7 +180,7 @@ export const BootstrappingProvider = ({
   const handleInitializeAppOffline = async () => {
     // Set config flag to false to re-start the online mode initialization
     // when connection status goes back online.
-    RendererConfig.switchingToOnlineMode = false;
+    refSwitchingToOnline.current = false;
 
     // Stop subscription intervals timer.
     IntervalsController.stopInterval();
@@ -196,13 +197,13 @@ export const BootstrappingProvider = ({
 
   /// Handle switching to online mode.
   const handleInitializeAppOnline = async () => {
-    if (RendererConfig.switchingToOnlineMode) {
+    if (refSwitchingToOnline.current) {
       return;
     }
 
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
-    RendererConfig.switchingToOnlineMode = true;
+    refSwitchingToOnline.current = true;
 
     const initTasks: (() => Promise<AnyData>)[] = [
       connectAPIs,
@@ -222,6 +223,7 @@ export const BootstrappingProvider = ({
     }
 
     setSubscriptionsAndChainConnections(); // Set application state.
+    refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
       refAborted.current = false;
@@ -233,9 +235,6 @@ export const BootstrappingProvider = ({
       window.myAPI.relayModeFlag('isOnlineMode', status);
       window.myAPI.relayModeFlag('isConnected', status);
     }
-
-    // Switch flag and clear interval.
-    RendererConfig.switchingToOnlineMode = false;
   };
 
   /// Re-subscribe to tasks when switching to a different endpoint.
