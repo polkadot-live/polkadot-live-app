@@ -126,9 +126,10 @@ export const BootstrappingProvider = ({
       // Fetch up-to-date account data.
       if (isConnected && !aborted) {
         // Connect required API instances before continuing.
-        const chainIds = Array.from(AccountsController.accounts.keys());
         await Promise.all(
-          chainIds.map((cid) => APIsController.connectInstance(cid))
+          Array.from(AccountsController.accounts.keys()).map((chainId) =>
+            APIsController.connectApi(chainId)
+          )
         );
 
         await Promise.all([
@@ -236,9 +237,7 @@ export const BootstrappingProvider = ({
 
     // Connect required API instances before continuing.
     const chainIds = Array.from(AccountsController.accounts.keys());
-    await Promise.all(
-      chainIds.map((cid) => APIsController.connectInstance(cid))
-    );
+    await Promise.all(chainIds.map((cid) => APIsController.connectApi(cid)));
 
     // Fetch up-to-date account data.
     if (!aborted) {
@@ -302,14 +301,14 @@ export const BootstrappingProvider = ({
 
     if (currentStatus === 'disconnected') {
       // Set new endpoint.
-      APIsController.setEndpointForApi(chainId, newEndpoint);
+      APIsController.setApiEndpoint(chainId, newEndpoint);
     } else {
       // Disconnect from chain and set new endpoint.
       await APIsController.close(chainId);
-      APIsController.setEndpointForApi(chainId, newEndpoint);
+      APIsController.setApiEndpoint(chainId, newEndpoint);
 
       // Connect to new endpoint.
-      await APIsController.connectInstance(chainId);
+      await APIsController.connectApi(chainId);
 
       // Re-subscribe account and chain tasks.
       await Promise.all([

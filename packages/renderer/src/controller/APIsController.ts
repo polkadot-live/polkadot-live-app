@@ -32,7 +32,6 @@ export class APIsController {
    */
   static new = (chainId: ChainID) => {
     const chainMetaData = ChainList.get(chainId);
-
     if (!chainMetaData) {
       throw new Error(
         `APIsController::new: Chain metadata not found for chain ID ${chainId}`
@@ -42,12 +41,9 @@ export class APIsController {
     const endpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;
 
-    console.log('🤖 Creating new api interface: %o', endpoint);
-
     // Create API instance.
+    console.log('🤖 Creating new api interface: %o', endpoint);
     const instance = new Api(endpoint, chainId, rpcs);
-
-    // Set remaining instance properties and add to instances.
     this.instances.push(instance);
 
     console.log(
@@ -83,10 +79,10 @@ export class APIsController {
   };
 
   /**
-   * @name setEndpointForApi
-   * @summary Set the default endpoint for an API instance.
+   * @name setApiEndpoint
+   * @summary Set the endpoint for an API instance.
    */
-  static setEndpointForApi = (chainId: ChainID, newEndpoint: string) => {
+  static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
     const instance = this.get(chainId);
     if (!instance) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
@@ -142,12 +138,16 @@ export class APIsController {
     }
   };
 
-  static connectInstance = async (chainId: ChainID) => {
+  /**
+   * @name connectApi
+   * @summary Ensures an API instance is connected.
+   */
+  static connectApi = async (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
       throw new Error(`connectInstance: API for ${chainId} not found`);
     }
-    await instance?.connect();
+    await instance.connect();
     this.set(instance);
   };
 
