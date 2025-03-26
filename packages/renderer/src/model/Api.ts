@@ -31,6 +31,41 @@ export class Api {
     this._rpcs = rpcs;
   }
 
+  get api(): ApiPromise {
+    if (!this._api) {
+      throw new Error('_api property is null');
+    } else {
+      return this._api;
+    }
+  }
+
+  set api(value: ApiPromise) {
+    this._api = value;
+  }
+
+  get chain() {
+    return this._chain;
+  }
+
+  set chain(value: ChainID) {
+    this._chain = value;
+  }
+  get endpoint() {
+    return this._endpoint;
+  }
+
+  set endpoint(value: string) {
+    this._endpoint = value;
+  }
+
+  get status() {
+    return this._status;
+  }
+
+  set status(value: ChainStatus) {
+    this._status = value;
+  }
+
   /**
    * @name connect
    * @summary Create the `ApiPromise`.
@@ -61,42 +96,6 @@ export class Api {
     this.chain = chainId;
     this.status = 'connected';
   };
-
-  get endpoint() {
-    return this._endpoint;
-  }
-
-  set endpoint(value: string) {
-    this._endpoint = value;
-  }
-
-  get api(): ApiPromise {
-    if (!this._api) {
-      throw new Error('_api property is null');
-    } else {
-      return this._api;
-    }
-  }
-
-  set api(value: ApiPromise) {
-    this._api = value;
-  }
-
-  get status() {
-    return this._status;
-  }
-
-  set status(value: ChainStatus) {
-    this._status = value;
-  }
-
-  get chain() {
-    return this._chain;
-  }
-
-  set chain(value: ChainID) {
-    this._chain = value;
-  }
 
   /**
    * @name initEvents
