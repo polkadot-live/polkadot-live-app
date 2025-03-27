@@ -128,9 +128,7 @@ export class APIsController {
    * @name fetchConnectedInstance
    * @summary Returns the connected API instance for a specific chain ID.
    */
-  static fetchConnectedInstance = async (
-    chainId: ChainID
-  ): Promise<Api | null> => {
+  static getConnectedApi = async (chainId: ChainID): Promise<Api | null> => {
     if (!this.get(chainId)) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }

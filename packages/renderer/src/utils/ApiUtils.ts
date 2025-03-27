@@ -19,7 +19,7 @@ const debug = MainDebug.extend('ApiUtils');
  * @summary Connects an API instance to an endpoint and returns it.
  */
 export const getApiInstance = async (chainId: ChainID) => {
-  const instance = await APIsController.fetchConnectedInstance(chainId);
+  const instance = await APIsController.getConnectedApi(chainId);
   return instance ? instance : null;
 };
 
