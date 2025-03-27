@@ -13,10 +13,23 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
  */
 export class APIsController {
   static instances: Api[] = [];
+  static setUiTrigger: React.Dispatch<React.SetStateAction<boolean>>;
+  static cachedSetChains: React.Dispatch<
+    React.SetStateAction<Map<ChainID, FlattenedAPIData>>
+  >;
+
+  /**
+   * @name updateUiChainState
+   * @summary Updates react state for UI.
+   */
+  private static updateUiChainState = (instance: Api) => {
+    this.cachedSetChains((pv) => pv.set(instance.chain, instance.flatten()));
+    this.setUiTrigger(true);
+  };
 
   /**
    * @name initialize
-   * @summary Instantiates a disconnected API instance for each supported chain.
+   * @summary Instantiates a disconnected chain API instance.
    */
   static initialize = (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
@@ -26,8 +39,7 @@ export class APIsController {
 
   /**
    * @name new
-   * @summary Instantiates a new disconnected API instance and adds it to the `instances` property.
-   * @param {string} endpoint - the api endpoint.
+   * @summary Pushes a disconnected API instance to the `instances` property.
    */
   static new = (chainId: ChainID) => {
     const chainMetaData = ChainList.get(chainId);
@@ -43,7 +55,7 @@ export class APIsController {
     // Create API instance.
     console.log('🤖 Creating new api interface: %o', endpoint);
     const instance = new Api(endpoint, chainId, rpcs);
-    this.instances.push(instance);
+    this.instances = [...this.instances, instance];
 
     console.log(
       '🔧 New api disconnected instances: %o',
@@ -61,6 +73,7 @@ export class APIsController {
     if (instance?.status === 'connected') {
       console.log('🔷 Disconnect chain API instance %o.', chain);
       await instance.disconnect();
+      this.updateUiChainState(instance);
     }
   };
 
@@ -89,6 +102,7 @@ export class APIsController {
 
     instance.endpoint = newEndpoint;
     this.set(instance);
+    this.updateUiChainState(instance);
   };
 
   /**
@@ -135,9 +149,12 @@ export class APIsController {
       ]);
 
       // Return the connected instance if connection was successful.
+      result && this.updateUiChainState(this.get(chainId)!);
       return result ? this.get(chainId)! : null;
     } else {
-      return (await this.tryConnect(chainId)) ? this.get(chainId)! : null;
+      const connected = await this.tryConnect(chainId);
+      connected && this.updateUiChainState(this.get(chainId)!);
+      return connected ? this.get(chainId)! : null;
     }
   };
 
@@ -152,26 +169,8 @@ export class APIsController {
     }
     await instance.connect();
     this.set(instance);
+    this.updateUiChainState(instance);
   };
-
-  /**
-   * @name get
-   * @summary Gets an API instance from the `instances` property.
-   * @param {ChainID} chain - the chain the instance belongs to.
-   * @returns {(API|undefined)}
-   */
-  static get = (chain: ChainID): Api | undefined =>
-    this.instances?.find((c) => c.chain === chain) || undefined;
-
-  /**
-   * @name set
-   * @summary Updates an API instance in the `instances` property.
-   * @param {API} instance - the API instance to set.
-   */
-  static set = (instance: Api) =>
-    (this.instances =
-      this.instances?.map((a) => (a.chain === instance.chain ? instance : a)) ||
-      []);
 
   /**
    * @name getAllFlattenedAPIData
@@ -179,4 +178,20 @@ export class APIsController {
    */
   static getAllFlattenedAPIData = (): FlattenedAPIData[] =>
     this.instances.map((api) => api.flatten());
+
+  /**
+   * @name get
+   * @summary Gets an API instance from the `instances` property.
+   */
+  private static get = (chain: ChainID): Api | undefined =>
+    this.instances?.find((c) => c.chain === chain) || undefined;
+
+  /**
+   * @name set
+   * @summary Updates an API instance in the `instances` property.
+   */
+  private static set = (instance: Api) =>
+    (this.instances =
+      this.instances?.map((a) => (a.chain === instance.chain ? instance : a)) ||
+      []);
 }

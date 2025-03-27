@@ -140,8 +140,7 @@ export class Api {
 
   /**
    * @name flatten
-   * @summary Return `FlattenedAPIData` for this instance which can be sent to
-   * the frontend.
+   * @summary Return `FlattenedAPIData` for this instance which can be sent to the frontend.
    */
   flatten = () =>
     ({
