@@ -17,8 +17,6 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { useChains } from '@app/contexts/main/Chains';
-import { APIsController } from '@ren/controller/APIsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =
@@ -33,8 +31,6 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { addChain } = useChains();
-
   /// Store received chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
@@ -216,11 +212,6 @@ export const SubscriptionsProvider = ({
 
     // Disconnect from API instance if there are no tasks that require it.
     await ApiUtils.disconnectAPIs();
-
-    // Update chain state.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   /// Execute queued subscription task.
@@ -288,11 +279,6 @@ export const SubscriptionsProvider = ({
 
     // Disconnect from API instance if there are no tasks that require it.
     await ApiUtils.checkAndHandleApiDisconnect(task);
-
-    // Update chain state.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   return (

@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Utils from '@ren/utils/CommonUtils';
 import * as AccountUtils from '@ren/utils/AccountUtils';
 import React, {
   createContext,
@@ -17,7 +18,6 @@ import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useChains } from '@app/contexts/main/Chains';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
@@ -42,7 +42,6 @@ export const BootstrappingProvider = ({
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription } = useIntervalSubscriptions();
@@ -96,13 +95,6 @@ export const BootstrappingProvider = ({
     ]);
   };
 
-  /// Util: Get connection status.
-  const getOnlineStatus = async () =>
-    (await window.myAPI.sendConnectionTaskAsync({
-      action: 'connection:getStatus',
-      data: null,
-    })) || false;
-
   /// Handle event listeners.
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -134,7 +126,7 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean = await getOnlineStatus();
+      const isConnected: boolean = await Utils.getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', isConnected);
       window.myAPI.relayModeFlag('isConnected', isConnected);
 
@@ -158,7 +150,7 @@ export const BootstrappingProvider = ({
 
       // Set application state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
-      setSubscriptionsAndChainConnections();
+      setSubscriptionsState();
       refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
@@ -187,7 +179,7 @@ export const BootstrappingProvider = ({
 
     // Report online status to renderers.
     window.myAPI.relayModeFlag('isOnlineMode', false);
-    window.myAPI.relayModeFlag('isConnected', await getOnlineStatus());
+    window.myAPI.relayModeFlag('isConnected', await Utils.getOnlineStatus());
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -222,7 +214,7 @@ export const BootstrappingProvider = ({
       }
     }
 
-    setSubscriptionsAndChainConnections(); // Set application state.
+    setSubscriptionsState();
     refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
@@ -231,7 +223,7 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const status = await getOnlineStatus();
+      const status = await Utils.getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', status);
       window.myAPI.relayModeFlag('isConnected', status);
     }
@@ -242,20 +234,10 @@ export const BootstrappingProvider = ({
     chainId: ChainID,
     newEndpoint: string
   ) => {
-    const currentStatus = APIsController.getStatus(chainId);
+    await APIsController.connectEndpoint(chainId, newEndpoint);
 
-    if (currentStatus === 'disconnected') {
-      // Set new endpoint.
-      APIsController.setApiEndpoint(chainId, newEndpoint);
-    } else {
-      // Disconnect from chain and set new endpoint.
-      await APIsController.close(chainId);
-      APIsController.setApiEndpoint(chainId, newEndpoint);
-
-      // Connect to new endpoint.
-      await APIsController.connectApi(chainId);
-
-      // Re-subscribe account and chain tasks.
+    // Re-subscribe account and chain tasks.
+    if (APIsController.getStatus(chainId) === 'connected') {
       await Promise.all([
         AccountsController.subscribeAccountsForChain(chainId),
         SubscriptionsController.resubscribeChain(chainId),
@@ -263,23 +245,18 @@ export const BootstrappingProvider = ({
     }
 
     // Set application state.
-    setSubscriptionsAndChainConnections();
+    setSubscriptionsState();
   };
 
   /// Utility.
   const initIntervalsController = async () => {
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isConnected: boolean = await Utils.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.
-    IntervalsController.insertSubscriptions(tasks, isOnline);
+    IntervalsController.insertSubscriptions(tasks, isConnected);
 
     // Add tasks to React state in main window.
     // When the OpenGov view is open, the task state is synced in a separate function.
@@ -288,7 +265,7 @@ export const BootstrappingProvider = ({
     }
   };
 
-  const setSubscriptionsAndChainConnections = () => {
+  const setSubscriptionsState = () => {
     // Set chain subscriptions data for rendering.
     setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
 
@@ -298,11 +275,6 @@ export const BootstrappingProvider = ({
         AccountsController.accounts
       )
     );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   /// Called when initializing the openGov window.

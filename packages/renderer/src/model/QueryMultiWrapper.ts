@@ -1,6 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Utils from '@ren/utils/CommonUtils';
+import { APIsController } from '@ren/controller/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
@@ -11,7 +13,6 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@polkadot-live/types/subscriptions';
-import * as ApiUtils from '@ren/utils/ApiUtils';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -247,7 +248,10 @@ export class QueryMultiWrapper {
     // Construct the argument for new queryMulti call.
     const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
     const origin = 'QueryMultiWrapper.build';
-    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+    const instance = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      origin
+    );
 
     // Call queryMulti api.
     const unsub = await instance.api.queryMulti(
@@ -499,9 +503,7 @@ export class QueryMultiWrapper {
               }
 
               // Otherwise, check if action args are the same.
-              if (
-                ApiUtils.arraysAreEqual(task.actionArgs!, innerT.actionArgs!)
-              ) {
+              if (Utils.arraysAreEqual(task.actionArgs!, innerT.actionArgs!)) {
                 task.dataIndex = innerT.dataIndex;
 
                 dataIndexRegistry.push({

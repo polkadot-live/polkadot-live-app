@@ -14,7 +14,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@ren/utils/AccountUtils';
-import { getApiInstanceOrThrow, disconnectAPIs } from '@ren/utils/ApiUtils';
+import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -26,7 +26,6 @@ import { getAddressChainId } from '../Utils';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
@@ -52,7 +51,6 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -102,11 +100,6 @@ export const useMainMessagePorts = () => {
         AccountsController.accounts
       )
     );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   /**
@@ -247,11 +240,6 @@ export const useMainMessagePorts = () => {
     // Disconnect from any API instances that are not currently needed.
     await disconnectAPIs();
 
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
-
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
 
@@ -375,7 +363,10 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
     const result = api.consts.referenda.tracks.toHuman();
 
     ConfigRenderer.portToOpenGov?.postMessage({
@@ -391,7 +382,10 @@ export const useMainMessagePorts = () => {
   const handleGetReferenda = async (ev: MessageEvent) => {
     // Make API call to fetch referenda entries.
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
     const results = await api.query.referenda.referendumInfoFor.entries();
 
     // Populate referenda map.
@@ -474,7 +468,10 @@ export const useMainMessagePorts = () => {
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
 
     // Get raw treasury public key.
     const EMPTY_U8A_32 = new Uint8Array(32);

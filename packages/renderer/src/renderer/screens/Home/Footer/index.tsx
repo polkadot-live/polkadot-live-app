@@ -23,22 +23,20 @@ export const Footer = () => {
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  /// Calculate total active connections.
-  const totalActiveConnections = () =>
-    Array.from(chains.values()).filter(
-      (apiData) => apiData.status === 'connected'
-    ).length;
+  const connectionsCount = () =>
+    Array.from(chains.values()).filter(({ status }) => status === 'connected')
+      .length;
 
   /// Get header text.
   const getHeadingText = () =>
     getOnlineMode() && !isConnecting && !isAborting
-      ? `Connected to ${totalActiveConnections()} network${chains.size === 1 ? '' : 's'}`
+      ? `Connected to ${connectionsCount()} network${connectionsCount() === 1 ? '' : 's'}`
       : 'Offline';
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
       <section className="status">
-        {totalActiveConnections() ? (
+        {connectionsCount() ? (
           <FontAwesomeIcon icon={faCircle} transform="shrink-6" />
         ) : (
           <FontAwesomeIcon icon={faCircleRegular} transform="shrink-6" />
