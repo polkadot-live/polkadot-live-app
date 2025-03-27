@@ -20,15 +20,6 @@ export class APIsController {
   >;
 
   /**
-   * @name updateUiChainState
-   * @summary Updates react state for UI.
-   */
-  private static updateUiChainState = (instance: Api) => {
-    this.cachedSetChains((pv) => pv.set(instance.chain, instance.flatten()));
-    this.setUiTrigger(true);
-  };
-
-  /**
    * @name initialize
    * @summary Instantiates a disconnected chain API instance.
    */
@@ -36,32 +27,6 @@ export class APIsController {
     for (const chainId of chainIds) {
       this.new(chainId);
     }
-  };
-
-  /**
-   * @name new
-   * @summary Pushes a disconnected API instance to the `instances` property.
-   */
-  static new = (chainId: ChainID) => {
-    const chainMetaData = ChainList.get(chainId);
-    if (!chainMetaData) {
-      throw new Error(
-        `APIsController::new: Chain metadata not found for chain ID ${chainId}`
-      );
-    }
-
-    const endpoint = chainMetaData.endpoints.rpcs[0];
-    const rpcs = chainMetaData.endpoints.rpcs;
-
-    // Create API instance.
-    console.log('🤖 Creating new api interface: %o', endpoint);
-    const instance = new Api(endpoint, chainId, rpcs);
-    this.instances = [...this.instances, instance];
-
-    console.log(
-      '🔧 New api disconnected instances: %o',
-      this.instances.map((i) => i.chain)
-    );
   };
 
   /**
@@ -79,53 +44,28 @@ export class APIsController {
   };
 
   /**
-   * @name getStatus
-   * @summary Get status of an API instance.
+   * @name connectApi
+   * @summary Ensures an API instance is connected.
    */
-  static getStatus = (chainId: ChainID) => {
+  static connectApi = async (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
-      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+      throw new Error(`connectInstance: API for ${chainId} not found`);
     }
-
-    return instance.status;
-  };
-
-  /**
-   * @name setApiEndpoint
-   * @summary Set the endpoint for an API instance.
-   */
-  static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
-    const instance = this.get(chainId);
-    if (!instance) {
-      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
-    }
-
-    instance.endpoint = newEndpoint;
+    await instance.connect();
     this.set(instance);
     this.updateUiChainState(instance);
   };
 
   /**
-   * @name tryConnect
-   * @summary Determins if an API instance is connected. Waits a maximum of 15 seconds.
+   * @name getAllFlattenedAPIData
+   * @summary Return an array of all flattened API data for all APIs managed by this class.
    */
-  static async tryConnect(chainId: ChainID) {
-    const MAX_TRIES = 15;
-    const INTERVAL_MS = 1_000;
-
-    for (let i = 0; i < MAX_TRIES; ++i) {
-      if (this.get(chainId)?.status === 'connected') {
-        return true;
-      }
-      await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
-    }
-
-    return false;
-  }
+  static getAllFlattenedAPIData = (): FlattenedAPIData[] =>
+    this.instances.map((api) => api.flatten());
 
   /**
-   * @name fetchConnectedInstance
+   * @name getConnectedApi
    * @summary Returns the connected API instance for a specific chain ID.
    */
   static getConnectedApi = async (chainId: ChainID): Promise<Api | null> => {
@@ -158,25 +98,17 @@ export class APIsController {
   };
 
   /**
-   * @name connectApi
-   * @summary Ensures an API instance is connected.
+   * @name getStatus
+   * @summary Get status of an API instance.
    */
-  static connectApi = async (chainId: ChainID) => {
+  static getStatus = (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
-      throw new Error(`connectInstance: API for ${chainId} not found`);
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
-    await instance.connect();
-    this.set(instance);
-    this.updateUiChainState(instance);
-  };
 
-  /**
-   * @name getAllFlattenedAPIData
-   * @summary Return an array of all flattened API data for all APIs managed by this class.
-   */
-  static getAllFlattenedAPIData = (): FlattenedAPIData[] =>
-    this.instances.map((api) => api.flatten());
+    return instance.status;
+  };
 
   /**
    * @name get
@@ -186,6 +118,32 @@ export class APIsController {
     this.instances?.find((c) => c.chain === chain) || undefined;
 
   /**
+   * @name new
+   * @summary Pushes a disconnected API instance to the `instances` property.
+   */
+  private static new = (chainId: ChainID) => {
+    const chainMetaData = ChainList.get(chainId);
+    if (!chainMetaData) {
+      throw new Error(
+        `APIsController::new: Chain metadata not found for chain ID ${chainId}`
+      );
+    }
+
+    const endpoint = chainMetaData.endpoints.rpcs[0];
+    const rpcs = chainMetaData.endpoints.rpcs;
+
+    // Create API instance.
+    console.log('🤖 Creating new api interface: %o', endpoint);
+    const instance = new Api(endpoint, chainId, rpcs);
+    this.instances = [...this.instances, instance];
+
+    console.log(
+      '🔧 New api disconnected instances: %o',
+      this.instances.map((i) => i.chain)
+    );
+  };
+
+  /**
    * @name set
    * @summary Updates an API instance in the `instances` property.
    */
@@ -193,4 +151,46 @@ export class APIsController {
     (this.instances =
       this.instances?.map((a) => (a.chain === instance.chain ? instance : a)) ||
       []);
+
+  /**
+   * @name setApiEndpoint
+   * @summary Set the endpoint for an API instance.
+   */
+  static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
+    const instance = this.get(chainId);
+    if (!instance) {
+      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+    }
+
+    instance.endpoint = newEndpoint;
+    this.set(instance);
+    this.updateUiChainState(instance);
+  };
+
+  /**
+   * @name tryConnect
+   * @summary Determins if an API instance is connected. Waits a maximum of 15 seconds.
+   */
+  private static async tryConnect(chainId: ChainID) {
+    const MAX_TRIES = 15;
+    const INTERVAL_MS = 1_000;
+
+    for (let i = 0; i < MAX_TRIES; ++i) {
+      if (this.get(chainId)?.status === 'connected') {
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
+    }
+
+    return false;
+  }
+
+  /**
+   * @name updateUiChainState
+   * @summary Updates react state for UI.
+   */
+  private static updateUiChainState = (instance: Api) => {
+    this.cachedSetChains((pv) => pv.set(instance.chain, instance.flatten()));
+    this.setUiTrigger(true);
+  };
 }
