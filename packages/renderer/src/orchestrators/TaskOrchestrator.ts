@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainDebug } from '@ren/utils/DebugUtils';
+import { APIsController } from '@ren/controller/APIsController';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import * as ApiUtils from '@ren/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 
@@ -194,7 +194,10 @@ export class TaskOrchestrator {
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
     const origin = 'TaskOrchestrator.getApiCall';
-    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+    const instance = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      origin
+    );
 
     switch (action) {
       case 'subscribe:chain:timestamp':

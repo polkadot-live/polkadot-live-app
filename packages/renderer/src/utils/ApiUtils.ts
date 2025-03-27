@@ -1,10 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/**
- * @todo Move to `utils/renderer`
- */
-
 import { APIsController } from '@ren/controller/APIsController';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { AccountsController } from '@ren/controller/AccountsController';
@@ -13,21 +9,6 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 const debug = MainDebug.extend('ApiUtils');
-
-/**
- * @name getApiInstanceOrThrow
- * @summary Same as `getApiInstance` but throws an error if the endpoint fails to connect.
- */
-export const getApiInstanceOrThrow = async (
-  chainId: ChainID,
-  error: string
-) => {
-  const instance = await APIsController.getConnectedApi(chainId);
-  if (!instance) {
-    throw new Error(`${error} - Could not get API instance.`);
-  }
-  return instance;
-};
 
 /**
  * @name checkAndHandleApiDisconnect

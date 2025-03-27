@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ApiUtils from '@ren/utils/ApiUtils';
+import { APIsController } from '@ren/controller/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import BigNumber from 'bignumber.js';
 import {
@@ -73,7 +73,10 @@ export const fetchBalanceForAccount = async (account: Account) => {
   }
 
   const origin = 'fetchBalanceForAccount';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(
+    account.chain,
+    origin
+  );
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
@@ -95,7 +98,7 @@ export const getBalanceForAccount = async (
   chainId: ChainID
 ): Promise<AccountBalance> => {
   const origin = 'getBalanceForAccount';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(chainId, origin);
   const result: AnyJson = await api.query.system.account(address);
 
   const balance: AccountBalance = {
@@ -123,7 +126,7 @@ export const getExistentialDeposit = async (
   chainId: ChainID
 ): Promise<BigNumber> => {
   const origin = 'getExistentialDeposit';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(chainId, origin);
   return new BigNumber(
     rmCommas(String(api.consts.balances.existentialDeposit))
   );
@@ -188,7 +191,10 @@ export const setNominatingDataForAccount = async (account: Account) => {
   }
 
   const origin = 'setNominatingDataForAccount';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(
+    account.chain,
+    origin
+  );
 
   // Set account's nominator data.
   const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -228,7 +234,7 @@ export const getNominationPoolRewards = async (
   chainId: ChainID
 ) => {
   const origin = 'getNominationPoolRewards';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(chainId, origin);
 
   const result: AnyJson =
     await api.call.nominationPoolsApi.pendingRewards(address);
@@ -247,7 +253,10 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   }
 
   const origin = 'setNominationPoolDataForAccount';
-  const { api } = await ApiUtils.getApiInstanceOrThrow(account.chain, origin);
+  const { api } = await APIsController.getConnectedApiOrThrow(
+    account.chain,
+    origin
+  );
   const result: AnyJson = (
     await api.query.nominationPools.poolMembers(account.address)
   ).toJSON();
@@ -338,7 +347,7 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  */
 export const getAddressNonce = async (address: string, chainId: ChainID) => {
   const origin = 'getAddressNonce';
-  const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+  const instance = await APIsController.getConnectedApiOrThrow(chainId, origin);
   const result: AnyData = await instance.api.query.system.account(address);
   return new BigNumber(rmCommas(String(result.nonce)));
 };

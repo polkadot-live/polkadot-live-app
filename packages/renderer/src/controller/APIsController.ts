@@ -98,6 +98,18 @@ export class APIsController {
   };
 
   /**
+   * @name getConnectedApiOrThrow
+   * @summary Same as `getConnectedApi` but throws an error when connection fails.
+   */
+  static getConnectedApiOrThrow = async (chainId: ChainID, error: string) => {
+    const instance = await this.getConnectedApi(chainId);
+    if (!instance) {
+      throw new Error(`${error} - Could not get API instance.`);
+    }
+    return instance;
+  };
+
+  /**
    * @name getStatus
    * @summary Get status of an API instance.
    */
