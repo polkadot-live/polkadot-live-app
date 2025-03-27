@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
@@ -145,12 +146,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Fetch account data from network.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     if (isOnline) {
       await fetchBalanceForAccount(account);
       await fetchNominationPoolDataForAccount(account);

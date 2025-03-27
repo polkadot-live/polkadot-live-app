@@ -9,6 +9,7 @@ export const useInitIpcHandlers = () => {
     handleInitializeApp,
     handleInitializeAppOffline,
     handleInitializeAppOnline,
+    setIsConnecting,
   } = useBootstrapping();
 
   useEffect(() => {
@@ -24,7 +25,9 @@ export const useInitIpcHandlers = () => {
     });
 
     window.myAPI.initializeAppOnline(async () => {
+      setIsConnecting(true);
       await handleInitializeAppOnline();
+      setIsConnecting(false);
     });
   }, []);
 };

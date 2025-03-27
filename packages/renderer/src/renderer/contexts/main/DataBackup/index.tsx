@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
@@ -188,11 +189,7 @@ export const DataBackupProvider = ({
           : (JSON.parse(ser) as LocalAddress[]);
 
       // Check connection status and set isImported to `false` if app is offline.
-      const isOnline: boolean =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
+      const isOnline: boolean = await getOnlineStatus();
 
       // Process parsed addresses.
       for (const a of parsed) {
