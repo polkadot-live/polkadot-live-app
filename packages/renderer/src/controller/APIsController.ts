@@ -133,20 +133,27 @@ export class APIsController {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
     const instance = this.get(chainId)!;
-    if (instance.status === 'disconnected') {
-      // Wait up to 30 seconds to connect.
-      const result = await Promise.race([
-        instance.connect().then(() => true),
-        ApiUtils.waitMs(30_000, false),
-      ]);
+    switch (instance.status) {
+      case 'connected': {
+        return instance;
+      }
+      case 'connecting': {
+        // Wait up to 15 seconds for instance to finish connecting.
+        const connected = await this.tryConnect(chainId);
+        connected && this.updateUiChainState(this.get(chainId)!);
+        return connected ? this.get(chainId)! : null;
+      }
+      case 'disconnected': {
+        // Wait up to 30 seconds to connect.
+        const result = await Promise.race([
+          instance.connect().then(() => true),
+          ApiUtils.waitMs(30_000, false),
+        ]);
 
-      // Return the connected instance if connection was successful.
-      result && this.updateUiChainState(this.get(chainId)!);
-      return result ? this.get(chainId)! : null;
-    } else {
-      const connected = await this.tryConnect(chainId);
-      connected && this.updateUiChainState(this.get(chainId)!);
-      return connected ? this.get(chainId)! : null;
+        // Return the connected instance if connection was successful.
+        result && this.updateUiChainState(this.get(chainId)!);
+        return result ? this.get(chainId)! : null;
+      }
     }
   };
 
