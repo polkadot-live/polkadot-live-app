@@ -27,11 +27,6 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [uiTrigger]);
 
-  // Adds a chain instance.
-  const addChain = (apiData: FlattenedAPIData) => {
-    setChains((prev) => prev.set(apiData.chainId, apiData));
-  };
-
   // Cache chain state setter in controler for updaing UI.
   useEffect(() => {
     APIsController.cachedSetChains = setChains;
@@ -42,7 +37,6 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
     <ChainsContext.Provider
       value={{
         chains,
-        addChain,
       }}
     >
       {children}

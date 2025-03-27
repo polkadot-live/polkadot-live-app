@@ -6,5 +6,4 @@ import type { ChainsContextInterface } from './types';
 
 export const defaultChainsContext: ChainsContextInterface = {
   chains: new Map(),
-  addChain: (d) => {},
 };

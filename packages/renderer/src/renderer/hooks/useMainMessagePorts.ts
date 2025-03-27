@@ -26,7 +26,6 @@ import { getAddressChainId } from '../Utils';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
@@ -52,7 +51,6 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { addChain } = useChains();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -102,11 +100,6 @@ export const useMainMessagePorts = () => {
         AccountsController.accounts
       )
     );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   /**
@@ -246,11 +239,6 @@ export const useMainMessagePorts = () => {
 
     // Disconnect from any API instances that are not currently needed.
     await disconnectAPIs();
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
 
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });

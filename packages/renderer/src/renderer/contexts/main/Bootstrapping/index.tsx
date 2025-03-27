@@ -17,7 +17,6 @@ import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useAddresses } from '@app/contexts/main/Addresses';
-import { useChains } from '@app/contexts/main/Chains';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
@@ -42,7 +41,6 @@ export const BootstrappingProvider = ({
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { addChain } = useChains();
   const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription } = useIntervalSubscriptions();
@@ -158,7 +156,7 @@ export const BootstrappingProvider = ({
 
       // Set application state.
       setAddresses(AccountsController.getAllFlattenedAccountData());
-      setSubscriptionsAndChainConnections();
+      setSubscriptionsState();
       refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
@@ -222,7 +220,7 @@ export const BootstrappingProvider = ({
       }
     }
 
-    setSubscriptionsAndChainConnections(); // Set application state.
+    setSubscriptionsState();
     refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
@@ -253,7 +251,7 @@ export const BootstrappingProvider = ({
     }
 
     // Set application state.
-    setSubscriptionsAndChainConnections();
+    setSubscriptionsState();
   };
 
   /// Utility.
@@ -273,7 +271,7 @@ export const BootstrappingProvider = ({
     }
   };
 
-  const setSubscriptionsAndChainConnections = () => {
+  const setSubscriptionsState = () => {
     // Set chain subscriptions data for rendering.
     setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
 
@@ -283,11 +281,6 @@ export const BootstrappingProvider = ({
         AccountsController.accounts
       )
     );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   /// Called when initializing the openGov window.

@@ -27,6 +27,11 @@ export class APIsController {
     for (const chainId of chainIds) {
       this.new(chainId);
     }
+
+    // Set initial react state.
+    const map = new Map<ChainID, FlattenedAPIData>();
+    this.instances.map((api) => map.set(api.chain, api.flatten()));
+    this.cachedSetChains(map);
   };
 
   /**
@@ -77,13 +82,6 @@ export class APIsController {
       }
     }
   };
-
-  /**
-   * @name getAllFlattenedAPIData
-   * @summary Return an array of all flattened API data for all APIs managed by this class.
-   */
-  static getAllFlattenedAPIData = (): FlattenedAPIData[] =>
-    this.instances.map((api) => api.flatten());
 
   /**
    * @name getConnectedApi

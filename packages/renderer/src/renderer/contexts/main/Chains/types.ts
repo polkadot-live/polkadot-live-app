@@ -14,5 +14,4 @@ export interface ChainInstance {
 
 export interface ChainsContextInterface {
   chains: Map<ChainID, FlattenedAPIData>;
-  addChain: (data: FlattenedAPIData) => void;
 }
