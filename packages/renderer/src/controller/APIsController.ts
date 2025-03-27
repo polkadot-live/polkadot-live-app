@@ -58,6 +58,27 @@ export class APIsController {
   };
 
   /**
+   * @name connectEndpoint
+   * @summary Set and connect to a new endpoint for a given chain.
+   */
+  static connectEndpoint = async (chainId: ChainID, endpoint: string) => {
+    const status = this.getStatus(chainId);
+
+    switch (status) {
+      case 'disconnected': {
+        this.setApiEndpoint(chainId, endpoint);
+        break;
+      }
+      default: {
+        await this.close(chainId);
+        this.setApiEndpoint(chainId, endpoint);
+        await this.connectApi(chainId);
+        break;
+      }
+    }
+  };
+
+  /**
    * @name getAllFlattenedAPIData
    * @summary Return an array of all flattened API data for all APIs managed by this class.
    */
@@ -168,12 +189,8 @@ export class APIsController {
    * @name setApiEndpoint
    * @summary Set the endpoint for an API instance.
    */
-  static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
-    const instance = this.get(chainId);
-    if (!instance) {
-      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
-    }
-
+  private static setApiEndpoint = (chainId: ChainID, newEndpoint: string) => {
+    const instance = this.get(chainId)!;
     instance.endpoint = newEndpoint;
     this.set(instance);
     this.updateUiChainState(instance);

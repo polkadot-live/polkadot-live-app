@@ -242,20 +242,10 @@ export const BootstrappingProvider = ({
     chainId: ChainID,
     newEndpoint: string
   ) => {
-    const currentStatus = APIsController.getStatus(chainId);
+    await APIsController.connectEndpoint(chainId, newEndpoint);
 
-    if (currentStatus === 'disconnected') {
-      // Set new endpoint.
-      APIsController.setApiEndpoint(chainId, newEndpoint);
-    } else {
-      // Disconnect from chain and set new endpoint.
-      await APIsController.close(chainId);
-      APIsController.setApiEndpoint(chainId, newEndpoint);
-
-      // Connect to new endpoint.
-      await APIsController.connectApi(chainId);
-
-      // Re-subscribe account and chain tasks.
+    // Re-subscribe account and chain tasks.
+    if (APIsController.getStatus(chainId) === 'connected') {
       await Promise.all([
         AccountsController.subscribeAccountsForChain(chainId),
         SubscriptionsController.resubscribeChain(chainId),
