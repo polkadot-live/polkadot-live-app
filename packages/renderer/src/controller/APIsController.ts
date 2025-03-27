@@ -54,7 +54,7 @@ export class APIsController {
   static connectApi = async (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
-      throw new Error(`connectInstance: API for ${chainId} not found`);
+      throw new Error(`connectApi: API for ${chainId} not found`);
     }
     await instance.connect();
     this.set(instance);
@@ -88,7 +88,7 @@ export class APIsController {
    */
   static getConnectedApi = async (chainId: ChainID): Promise<Api | null> => {
     if (!this.get(chainId)) {
-      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+      throw new Error(`getConnectedApi: API for ${chainId} not found`);
     }
 
     const instance = this.get(chainId)!;
@@ -135,7 +135,7 @@ export class APIsController {
   static getStatus = (chainId: ChainID) => {
     const instance = this.get(chainId);
     if (!instance) {
-      throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
+      throw new Error(`getStatus: API for ${chainId} not found`);
     }
     return instance.status;
   };

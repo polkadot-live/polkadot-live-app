@@ -22,7 +22,7 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
 
 /**
  * @name getOnlineStatus
- * @summary Util: Get connection status.
+ * @summary Get connection status.
  */
 export const getOnlineStatus = async () =>
   (await window.myAPI.sendConnectionTaskAsync({
